@@ -15,7 +15,7 @@ use alloc::sync::Arc;
 /// [`Date`].
 ///
 /// This can be constructed manually from a [`Date`] and [`Time`], or can be constructed
-/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
 /// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
@@ -50,7 +50,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// Construct a datetime from from era/month codes and fields,
     /// and some calendar representation
     #[inline]
-    pub fn new_from_codes(
+    pub fn try_new_from_codes(
         era: types::Era,
         year: i32,
         month_code: types::MonthCode,
@@ -58,7 +58,7 @@ impl<A: AsCalendar> DateTime<A> {
         time: Time,
         calendar: A,
     ) -> Result<Self, DateTimeError> {
-        let date = Date::new_from_codes(era, year, month_code, day, calendar)?;
+        let date = Date::try_new_from_codes(era, year, month_code, day, calendar)?;
         Ok(DateTime { date, time })
     }
 

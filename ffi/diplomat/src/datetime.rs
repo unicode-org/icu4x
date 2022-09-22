@@ -232,7 +232,7 @@ pub mod ffi {
                 .into()
         }
         /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
-        #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_from_codes, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_from_codes_in_calendar(
             era_code: &str,
@@ -260,7 +260,7 @@ pub mod ffi {
                 second,
                 nanosecond,
             };
-            DateTime::new_from_codes(era, year, month, day, time, cal)
+            DateTime::try_new_from_codes(era, year, month, day, time, cal)
                 .map(|dt| Box::new(ICU4XDateTime(dt)))
                 .map_err(Into::into)
                 .into()

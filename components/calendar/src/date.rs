@@ -87,7 +87,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
 /// This can be constructed  constructed
-/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
 /// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
@@ -109,7 +109,7 @@ pub struct Date<A: AsCalendar> {
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
     #[inline]
-    pub fn new_from_codes(
+    pub fn try_new_from_codes(
         era: types::Era,
         year: i32,
         month_code: types::MonthCode,

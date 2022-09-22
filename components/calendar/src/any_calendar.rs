@@ -14,7 +14,6 @@ use crate::japanese::{Japanese, JapaneseExtended};
 use crate::{
     types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
 };
-use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
@@ -55,7 +54,7 @@ use core::fmt;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
@@ -877,7 +876,7 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
+        let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
             panic!(
                 "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
                 calendar.debug_name(),
@@ -926,7 +925,7 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::new_from_codes(era, year, month, day, calendar);
+        let date = Date::try_new_from_codes(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
