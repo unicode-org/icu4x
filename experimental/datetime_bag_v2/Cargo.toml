@@ -1,3 +1,8 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+
 [package]
 name = "icu_datetime_bag_v2"
 description = "New components bag API for DateTimeFormatter"
@@ -27,6 +32,8 @@ path = "src/lib.rs"
 [dependencies]
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
 icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["datagen", "experimental"] }
+bitflags = "1.3"
+displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

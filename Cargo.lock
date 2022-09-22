@@ -1569,7 +1569,9 @@ dependencies = [
 name = "icu_datetime_bag_v2"
 version = "0.1.0"
 dependencies = [
+ "bitflags",
  "databake",
+ "displaydoc",
  "icu_datetime",
  "icu_provider",
  "serde",

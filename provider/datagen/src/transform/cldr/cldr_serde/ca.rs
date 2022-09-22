@@ -119,6 +119,14 @@ pub struct LengthPatterns {
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
+pub struct LengthSkeletons {
+    pub full: String,
+    pub long: String,
+    pub medium: String,
+    pub short: String,
+}
+
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct DateTimeFormats {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -145,8 +153,12 @@ pub struct Dates {
     pub day_periods: day_periods::Contexts,
     #[serde(rename = "dateFormats")]
     pub date_formats: LengthPatterns,
+    #[serde(rename = "dateSkeletons")]
+    pub date_skeletons: LengthSkeletons,
     #[serde(rename = "timeFormats")]
     pub time_formats: LengthPatterns,
+    #[serde(rename = "timeSkeletons")]
+    pub time_skeletons: LengthSkeletons,
     #[serde(rename = "dateTimeFormats")]
     pub datetime_formats: DateTimeFormats,
 }
