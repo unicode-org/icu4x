@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::*;
+use crate::grapheme::GraphemeClusterSegmenter;
 use crate::indices::*;
 use crate::provider::*;
 use crate::symbols::*;
 use crate::SegmenterError;
-
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -197,6 +197,7 @@ pub struct LineSegmenter {
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
+    grapheme: Option<GraphemeClusterSegmenter>,
 }
 
 impl LineSegmenter {
@@ -204,7 +205,10 @@ impl LineSegmenter {
     #[cfg(feature = "lstm")]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
     {
         Self::try_new_with_options_unstable(provider, Default::default())
     }
@@ -215,6 +219,7 @@ impl LineSegmenter {
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
         Self::try_new_with_options_unstable(provider, Default::default())
@@ -229,9 +234,13 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, SegmenterError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
 
         let burmese = Self::load_lstm(provider, locale!("my")).ok();
         let khmer = Self::load_lstm(provider, locale!("km")).ok();
@@ -248,6 +257,7 @@ impl LineSegmenter {
                 lao,
                 thai,
             },
+            grapheme,
         })
     }
 
@@ -260,9 +270,11 @@ impl LineSegmenter {
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
 
         let khmer = Self::load_dictionary(provider, locale!("km")).ok();
         let lao = Self::load_dictionary(provider, locale!("lo")).ok();
@@ -280,6 +292,7 @@ impl LineSegmenter {
                 cj: None,
             },
             lstm: LstmPayloads::default(),
+            grapheme,
         })
     }
 
@@ -331,6 +344,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.as_ref(),
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -349,6 +363,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.as_ref(),
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -362,6 +377,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.as_ref(),
         }
     }
 
@@ -376,6 +392,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.as_ref(),
         }
     }
 }
@@ -621,6 +638,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
     lstm: &'l LstmPayloads,
+    grapheme: Option<&'l GraphemeClusterSegmenter>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -891,7 +909,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
+    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
     iter.result_cache = breaks;
     let mut i = iter.current_pos_data.unwrap().1.len_utf8();
     loop {
@@ -987,7 +1005,12 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary, iterator.lstm, &s);
+        let breaks = complex_language_segment_utf16(
+            iterator.dictionary,
+            iterator.lstm,
+            iterator.grapheme,
+            &s,
+        );
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

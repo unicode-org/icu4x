@@ -96,6 +96,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
     /// Create a sentence break iterator for a potentially ill-formed UTF8 string
@@ -113,6 +114,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
@@ -128,6 +130,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
 
@@ -141,6 +144,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
 }

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::{Dictionary, LstmPayloads};
+use crate::grapheme::GraphemeClusterSegmenter;
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
 
@@ -44,6 +45,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) data: &'l RuleBreakDataV1<'l>,
     pub(crate) dictionary: &'l Dictionary,
     pub(crate) lstm: &'l LstmPayloads,
+    pub(crate) grapheme: Option<&'l GraphemeClusterSegmenter>,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {

@@ -11,7 +11,8 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
-        LstmDataV1Marker, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
+        GraphemeClusterBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
+        WordBreakDataV1Marker,
     };
     use icu_segmenter::{
         WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
@@ -46,6 +47,7 @@ pub mod ffi {
             D: DataProvider<WordBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + DataProvider<LstmDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
             WordSegmenter::try_new_unstable(provider)
