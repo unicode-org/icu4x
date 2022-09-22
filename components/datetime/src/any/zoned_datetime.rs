@@ -40,6 +40,8 @@ use writeable::Writeable;
 ///
 /// # Examples
 ///
+/// Using a GMT time zone:
+///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
@@ -71,6 +73,49 @@ use writeable::Writeable;
 ///       .format(&any_datetime, &time_zone)
 ///       .expect("Calendars should match"),
 ///     "Sep 1, 2020, 12:34:28 PM GMT+05:00");
+/// ```
+///
+/// Using a non-GMT time zone, specified by id:
+///
+/// ```
+/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
+/// use icu::locid::locale;
+/// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator};
+/// use tinystr::TinyAsciiStr;
+/// use writeable::assert_writeable_eq;
+///
+/// let options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Long,
+/// );
+/// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     options.into(),
+///     Default::default(),
+/// )
+/// .expect("Failed to create ZonedDateTimeFormatter instance.");
+///
+/// // Create a DateTime at September 1, 2020 at 12:34:28 PM
+/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
+/// let any_datetime = datetime.to_any();
+///
+/// // Create a time zone for America/Chicago at GMT-6:
+/// let mut time_zone = CustomTimeZone::new_empty();
+/// time_zone.gmt_offset = "-06:00".parse::<GmtOffset>().ok();
+/// time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+///
+/// // Compute the metazone during `datetime` (September 1, 2020 at 12:34:28 PM):
+/// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+///
+/// assert_writeable_eq!(
+///     zdtf
+///       .format(&any_datetime, &time_zone)
+///       .expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM GMT-06:00");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
