@@ -69,7 +69,8 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 .attributes
                 .iter()
                 .map(|v| {
-                    unicode::Attribute::try_from_bytes(v.as_bytes()).expect("Parsing attribute failed.")
+                    unicode::Attribute::try_from_bytes(v.as_bytes())
+                        .expect("Parsing attribute failed.")
                 })
                 .collect();
             ext.unicode.attributes = unicode::Attributes::from_vec_unchecked(v);
