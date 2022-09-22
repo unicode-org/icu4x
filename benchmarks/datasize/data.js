@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663870739954,
+  "lastUpdate": 1663881902411,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27983,6 +27983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ecc0df29d672febd7ecaa3d2f09fe7b91e9efd61"
         },
         "date": 1663870672746,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0dab7a3d29529739f5ac6c9f218fb894fe7acf4",
+          "message": "Fix wasm demo (#2611)\n\n* Fix wasm demo\r\n\r\n* ethiopian -> ethiopian",
+          "timestamp": "2022-09-22T21:20:18Z",
+          "tree_id": "c08f81924a2ef3db5a13880d59d91fcddf378a3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0dab7a3d29529739f5ac6c9f218fb894fe7acf4"
+        },
+        "date": 1663881832608,
         "tool": "ndjson",
         "benches": [
           {
