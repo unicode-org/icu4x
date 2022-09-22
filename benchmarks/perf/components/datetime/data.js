@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663868614421,
+  "lastUpdate": 1663871312457,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -72281,6 +72281,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4641,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "srl295@gmail.com",
+            "name": "Steven R. Loomis",
+            "username": "srl295"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ecc0df29d672febd7ecaa3d2f09fe7b91e9efd61",
+          "message": "Update CONTRIBUTING.md to mention the new CLA (#2468)\n\n* Update CONTRIBUTING.md to mention the new CLA\r\n\r\n* Update CONTRIBUTING.md\r\n\r\nlinkify the CLA",
+          "timestamp": "2022-09-22T18:16:13Z",
+          "tree_id": "cc44c53f532e327f53b08abcaa699b30a24a0d98",
+          "url": "https://github.com/unicode-org/icu4x/commit/ecc0df29d672febd7ecaa3d2f09fe7b91e9efd61"
+        },
+        "date": 1663871258133,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63001,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107141,
+            "range": "± 697",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58097,
+            "range": "± 175",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 66429,
+            "range": "± 211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 63306,
+            "range": "± 235",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71219,
+            "range": "± 338",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 102258,
+            "range": "± 197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 115908,
+            "range": "± 448",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 107470,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 120153,
+            "range": "± 386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5056,
+            "range": "± 45",
             "unit": "ns/iter"
           }
         ]
