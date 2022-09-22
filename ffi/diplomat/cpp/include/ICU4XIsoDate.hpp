@@ -41,7 +41,7 @@ class ICU4XIsoDate {
    * 
    * See the [Rust documentation for `new_iso_date`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date) for more information.
    */
-  static diplomat::result<ICU4XIsoDate, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day);
+  static diplomat::result<ICU4XIsoDate, ICU4XError> create(int32_t year, uint8_t month, uint8_t day);
 
   /**
    * Convert this date to one in a different calendar
@@ -137,8 +137,8 @@ class ICU4XIsoDate {
 #include "ICU4XWeekCalculator.hpp"
 #include "ICU4XWeekOf.hpp"
 
-inline diplomat::result<ICU4XIsoDate, ICU4XError> ICU4XIsoDate::try_new(int32_t year, uint8_t month, uint8_t day) {
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_try_new(year, month, day);
+inline diplomat::result<ICU4XIsoDate, ICU4XError> ICU4XIsoDate::create(int32_t year, uint8_t month, uint8_t day) {
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_create(year, month, day);
   diplomat::result<ICU4XIsoDate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XIsoDate>(std::move(ICU4XIsoDate(diplomat_result_raw_out_value.ok)));

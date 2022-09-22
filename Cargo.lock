@@ -1839,6 +1839,7 @@ dependencies = [
  "bytes",
  "cargo_metadata",
  "clap",
+ "criterion",
  "displaydoc",
  "eyre",
  "futures",

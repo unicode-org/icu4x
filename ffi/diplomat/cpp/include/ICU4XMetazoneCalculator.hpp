@@ -37,7 +37,7 @@ class ICU4XMetazoneCalculator {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider);
   inline const capi::ICU4XMetazoneCalculator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XMetazoneCalculator* AsFFIMut() { return this->inner.get(); }
   inline ICU4XMetazoneCalculator(capi::ICU4XMetazoneCalculator* i) : inner(i) {}
@@ -50,8 +50,8 @@ class ICU4XMetazoneCalculator {
 
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XMetazoneCalculator, ICU4XError> ICU4XMetazoneCalculator::try_new(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XMetazoneCalculator_try_new(provider.AsFFI());
+inline diplomat::result<ICU4XMetazoneCalculator, ICU4XError> ICU4XMetazoneCalculator::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XMetazoneCalculator_create(provider.AsFFI());
   diplomat::result<ICU4XMetazoneCalculator, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XMetazoneCalculator>(std::move(ICU4XMetazoneCalculator(diplomat_result_raw_out_value.ok)));

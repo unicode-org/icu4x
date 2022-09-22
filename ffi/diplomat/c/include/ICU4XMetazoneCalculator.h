@@ -21,7 +21,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XMetazoneCalculator_ICU4XError ICU4XMetazoneCalculator_try_new(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XMetazoneCalculator_ICU4XError ICU4XMetazoneCalculator_create(const ICU4XDataProvider* provider);
 void ICU4XMetazoneCalculator_destroy(ICU4XMetazoneCalculator* self);
 
 #ifdef __cplusplus

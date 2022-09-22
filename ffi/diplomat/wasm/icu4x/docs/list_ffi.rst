@@ -6,12 +6,12 @@
     A list of strings
 
 
-    .. js:staticfunction:: new()
+    .. js:staticfunction:: create()
 
         Create a new list of strings
 
 
-    .. js:staticfunction:: with_capacity(capacity)
+    .. js:staticfunction:: create_with_capacity(capacity)
 
         Create a new list of strings with preallocated space to hold at least ``capacity`` elements
 
@@ -33,21 +33,21 @@
     See the `Rust documentation for ListFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/list/struct.ListFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_and(provider, locale, style)
+    .. js:staticfunction:: create_and_with_style(provider, locale, style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
         See the `Rust documentation for try_new_and_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_or(provider, locale, style)
+    .. js:staticfunction:: create_or_with_style(provider, locale, style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
         See the `Rust documentation for try_new_or_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_unit(provider, locale, style)
+    .. js:staticfunction:: create_unit_with_style(provider, locale, style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 

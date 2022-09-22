@@ -13,7 +13,7 @@
 
 class ICU4XDataProvider;
 class ICU4XLocale;
-struct ICU4XCollatorOptions;
+struct ICU4XCollatorOptionsV1;
 class ICU4XCollator;
 #include "ICU4XError.hpp"
 #include "ICU4XOrdering.hpp"
@@ -40,7 +40,7 @@ class ICU4XCollator {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options);
+  static diplomat::result<ICU4XCollator, ICU4XError> create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options);
 
   /**
    * Compare potentially ill-formed UTF-8 strings.
@@ -82,11 +82,11 @@ class ICU4XCollator {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XCollatorOptions.hpp"
+#include "ICU4XCollatorOptionsV1.hpp"
 
-inline diplomat::result<ICU4XCollator, ICU4XError> ICU4XCollator::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options) {
-  ICU4XCollatorOptions diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XCollator_try_new(provider.AsFFI(), locale.AsFFI(), capi::ICU4XCollatorOptions{ .strength = static_cast<capi::ICU4XCollatorStrength>(diplomat_wrapped_struct_options.strength), .alternate_handling = static_cast<capi::ICU4XCollatorAlternateHandling>(diplomat_wrapped_struct_options.alternate_handling), .case_first = static_cast<capi::ICU4XCollatorCaseFirst>(diplomat_wrapped_struct_options.case_first), .max_variable = static_cast<capi::ICU4XCollatorMaxVariable>(diplomat_wrapped_struct_options.max_variable), .case_level = static_cast<capi::ICU4XCollatorCaseLevel>(diplomat_wrapped_struct_options.case_level), .numeric = static_cast<capi::ICU4XCollatorNumeric>(diplomat_wrapped_struct_options.numeric), .backward_second_level = static_cast<capi::ICU4XCollatorBackwardSecondLevel>(diplomat_wrapped_struct_options.backward_second_level) });
+inline diplomat::result<ICU4XCollator, ICU4XError> ICU4XCollator::create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options) {
+  ICU4XCollatorOptionsV1 diplomat_wrapped_struct_options = options;
+  auto diplomat_result_raw_out_value = capi::ICU4XCollator_create_v1(provider.AsFFI(), locale.AsFFI(), capi::ICU4XCollatorOptionsV1{ .strength = static_cast<capi::ICU4XCollatorStrength>(diplomat_wrapped_struct_options.strength), .alternate_handling = static_cast<capi::ICU4XCollatorAlternateHandling>(diplomat_wrapped_struct_options.alternate_handling), .case_first = static_cast<capi::ICU4XCollatorCaseFirst>(diplomat_wrapped_struct_options.case_first), .max_variable = static_cast<capi::ICU4XCollatorMaxVariable>(diplomat_wrapped_struct_options.max_variable), .case_level = static_cast<capi::ICU4XCollatorCaseLevel>(diplomat_wrapped_struct_options.case_level), .numeric = static_cast<capi::ICU4XCollatorNumeric>(diplomat_wrapped_struct_options.numeric), .backward_second_level = static_cast<capi::ICU4XCollatorBackwardSecondLevel>(diplomat_wrapped_struct_options.backward_second_level) });
   diplomat::result<ICU4XCollator, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCollator>(std::move(ICU4XCollator(diplomat_result_raw_out_value.ok)));

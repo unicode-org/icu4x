@@ -1,5 +1,5 @@
-#ifndef ICU4XCollatorOptions_HPP
-#define ICU4XCollatorOptions_HPP
+#ifndef ICU4XCollatorOptionsV1_HPP
+#define ICU4XCollatorOptionsV1_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XCollatorOptions.h"
+#include "ICU4XCollatorOptionsV1.h"
 
 #include "ICU4XCollatorStrength.hpp"
 #include "ICU4XCollatorAlternateHandling.hpp"
@@ -20,11 +20,11 @@
 #include "ICU4XCollatorBackwardSecondLevel.hpp"
 
 /**
- * A destruction policy for using ICU4XCollatorOptions with std::unique_ptr.
+ * A destruction policy for using ICU4XCollatorOptionsV1 with std::unique_ptr.
  */
-struct ICU4XCollatorOptionsDeleter {
-  void operator()(capi::ICU4XCollatorOptions* l) const noexcept {
-    capi::ICU4XCollatorOptions_destroy(l);
+struct ICU4XCollatorOptionsV1Deleter {
+  void operator()(capi::ICU4XCollatorOptionsV1* l) const noexcept {
+    capi::ICU4XCollatorOptionsV1_destroy(l);
   }
 };
 
@@ -33,7 +33,7 @@ struct ICU4XCollatorOptionsDeleter {
  * 
  * See the [Rust documentation for `CollatorOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html) for more information.
  */
-struct ICU4XCollatorOptions {
+struct ICU4XCollatorOptionsV1 {
  public:
   ICU4XCollatorStrength strength;
   ICU4XCollatorAlternateHandling alternate_handling;

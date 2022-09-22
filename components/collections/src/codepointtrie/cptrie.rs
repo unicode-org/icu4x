@@ -411,7 +411,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let converted_data = self.data.try_into_converted()?;
         let error_ule = self.error_value.to_unaligned();
         let slice = &[error_ule];
-        let error_vec = ZeroVec::<T>::Borrowed(slice);
+        let error_vec = ZeroVec::<T>::new_borrowed(slice);
         let error_converted = error_vec.try_into_converted::<P>()?;
         #[allow(clippy::expect_used)] // we know this cannot fail
         Ok(CodePointTrie {
@@ -1106,14 +1106,8 @@ mod tests {
         assert_eq!(&trie.index, &trie_deserialized.index);
         assert_eq!(&trie.data, &trie_deserialized.data);
 
-        assert!(matches!(
-            trie_deserialized.index,
-            zerovec::ZeroVec::Borrowed(_)
-        ));
-        assert!(matches!(
-            trie_deserialized.data,
-            zerovec::ZeroVec::Borrowed(_)
-        ));
+        assert!(!trie_deserialized.index.is_owned());
+        assert!(!trie_deserialized.data.is_owned());
 
         Ok(())
     }

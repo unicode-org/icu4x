@@ -8,7 +8,7 @@
     See the `Rust documentation for CanonicalCombiningClassMap <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
@@ -38,7 +38,7 @@
     See the `Rust documentation for CanonicalComposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCanonicalComposition, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XCanonicalComposition, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XCanonicalComposition instance for NFC
 
@@ -61,7 +61,7 @@
     See the `Rust documentation for CanonicalDecomposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XCanonicalDecomposition instance for NFC
 

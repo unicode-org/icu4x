@@ -3,16 +3,22 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XFixedDecimalFormatter.h"
+#include "decimal_bn_en.h"
 #include <string.h>
 #include <stdio.h>
 
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create_bn();
-    ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
+    diplomat_result_box_ICU4XDataProvider_ICU4XError provider_result = ICU4XDataProvider_create_from_byte_slice(DECIMAL_BN_EN_POSTCARD, DECIMAL_BN_EN_POSTCARD_LEN);
+    if (!provider_result.is_ok) {
+        printf("Failed to create ICU4XDataProvider\n");
+        return 1;
+    }
+    ICU4XDataProvider* provider = provider_result.ok;
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
 
     diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError fdf_result =
-        ICU4XFixedDecimalFormatter_try_new_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
+        ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
         return 1;

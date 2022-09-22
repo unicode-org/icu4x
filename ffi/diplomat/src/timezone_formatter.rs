@@ -60,7 +60,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::try_new_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatterOptions, Struct, hidden)]
-        pub fn try_new_with_localized_gmt_fallback(
+        pub fn create_with_localized_gmt_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
@@ -82,7 +82,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::try_new_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatterOptions, Struct, hidden)]
-        pub fn try_new_with_iso_8601_fallback(
+        pub fn create_with_iso_8601_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XIsoTimeZoneOptions,

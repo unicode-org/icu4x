@@ -94,7 +94,7 @@ fn sum_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec/sum/sample/zerovec_aligned", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::Borrowed(black_box(aligned_ule_slice))
+            ZeroVec::<u32>::new_borrowed(black_box(aligned_ule_slice))
                 .iter()
                 .fold(0u32, |sum, val| sum.wrapping_add(val))
         });
@@ -102,7 +102,7 @@ fn sum_benches(c: &mut Criterion) {
 
     c.bench_function("zerovec/sum/sample/zerovec_unaligned", |b| {
         b.iter(|| {
-            ZeroVec::<u32>::Borrowed(black_box(unalign_ule_slice))
+            ZeroVec::<u32>::new_borrowed(black_box(unalign_ule_slice))
                 .iter()
                 .fold(0u32, |sum, val| sum.wrapping_add(val))
         });

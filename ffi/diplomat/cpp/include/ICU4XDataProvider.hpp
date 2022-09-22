@@ -57,7 +57,7 @@ class ICU4XDataProvider {
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
 
   /**
-   * Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
+   * Constructs an empty [`ICU4XDataProvider`].
    * 
    * See the [Rust documentation for `EmptyDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
    */

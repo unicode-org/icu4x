@@ -37,14 +37,14 @@ class ICU4XComposingNormalizer {
    * 
    * See the [Rust documentation for `try_new_nfc_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable) for more information.
    */
-  static diplomat::result<ICU4XComposingNormalizer, ICU4XError> try_new_nfc(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfc(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XComposingNormalizer instance for NFKC
    * 
    * See the [Rust documentation for `try_new_nfkc_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfkc_unstable) for more information.
    */
-  static diplomat::result<ICU4XComposingNormalizer, ICU4XError> try_new_nfkc(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfkc(const ICU4XDataProvider& provider);
 
   /**
    * Normalize a (potentially ill-formed) UTF8 string
@@ -84,8 +84,8 @@ class ICU4XComposingNormalizer {
 
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNormalizer::try_new_nfc(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_try_new_nfc(provider.AsFFI());
+inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNormalizer::create_nfc(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_create_nfc(provider.AsFFI());
   diplomat::result<ICU4XComposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(std::move(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok)));
@@ -94,8 +94,8 @@ inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNorm
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNormalizer::try_new_nfkc(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_try_new_nfkc(provider.AsFFI());
+inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNormalizer::create_nfkc(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_create_nfkc(provider.AsFFI());
   diplomat::result<ICU4XComposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(std::move(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok)));

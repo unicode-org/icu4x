@@ -19,7 +19,7 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::try_new_nfc_unstable,
             FnInStruct
         )]
-        pub fn try_new_nfc(
+        pub fn create_nfc(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XComposingNormalizer>, ICU4XError> {
             ComposingNormalizer::try_new_nfc_unstable(&provider.0)
@@ -33,7 +33,7 @@ pub mod ffi {
             icu::normalizer::ComposingNormalizer::try_new_nfkc_unstable,
             FnInStruct
         )]
-        pub fn try_new_nfkc(
+        pub fn create_nfkc(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XComposingNormalizer>, ICU4XError> {
             ComposingNormalizer::try_new_nfkc_unstable(&provider.0)
@@ -97,7 +97,7 @@ pub mod ffi {
             icu::normalizer::DecomposingNormalizer::try_new_nfd_unstable,
             FnInStruct
         )]
-        pub fn try_new_nfd(
+        pub fn create_nfd(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
             DecomposingNormalizer::try_new_nfd_unstable(&provider.0)
@@ -111,7 +111,7 @@ pub mod ffi {
             icu::normalizer::DecomposingNormalizer::try_new_nfkd_unstable,
             FnInStruct
         )]
-        pub fn try_new_nfkd(
+        pub fn create_nfkd(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
             DecomposingNormalizer::try_new_nfkd_unstable(&provider.0)
