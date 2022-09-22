@@ -135,7 +135,7 @@ impl Unicode {
         let mut current_type = vec![];
 
         while let Some(subtag) = iter.peek() {
-            if let Ok(attr) = Attribute::from_bytes(subtag) {
+            if let Ok(attr) = Attribute::try_from_bytes(subtag) {
                 if let Err(idx) = attributes.binary_search(&attr) {
                     attributes.insert(idx, attr);
                 }
@@ -152,7 +152,7 @@ impl Unicode {
                     keywords.try_insert(kw, Value::from_vec_unchecked(current_type));
                     current_type = vec![];
                 }
-                current_keyword = Some(Key::from_bytes(subtag)?);
+                current_keyword = Some(Key::try_from_bytes(subtag)?);
             } else if current_keyword.is_some() {
                 match Value::parse_subtag(subtag) {
                     Ok(Some(t)) => current_type.push(t),

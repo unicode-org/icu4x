@@ -74,7 +74,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub(crate) const fn from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(Self::Unicode),
@@ -85,7 +85,7 @@ impl ExtensionType {
         }
     }
 
-    pub(crate) const fn from_bytes_manual_slice(
+    pub(crate) const fn try_from_bytes_manual_slice(
         bytes: &[u8],
         start: usize,
         end: usize,
@@ -94,7 +94,7 @@ impl ExtensionType {
             return Err(ParserError::InvalidExtension);
         }
         #[allow(clippy::indexing_slicing)]
-        Self::from_byte(bytes[start])
+        Self::try_from_byte(bytes[start])
     }
 }
 
@@ -211,7 +211,7 @@ impl Extensions {
 
         let mut st = iter.next();
         while let Some(subtag) = st {
-            match subtag.get(0).map(|b| ExtensionType::from_byte(*b)) {
+            match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }

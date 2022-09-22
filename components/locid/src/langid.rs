@@ -80,11 +80,11 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_bytes(b"en-US").expect("Parsing failed.");
+    /// let li = LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
     }
 
@@ -92,7 +92,7 @@ impl LanguageIdentifier {
     #[allow(clippy::type_complexity)]
     // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
-    pub const fn from_bytes_with_single_variant(
+    pub const fn try_from_bytes_with_single_variant(
         v: &[u8],
     ) -> Result<
         (
@@ -121,7 +121,7 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
-    pub fn from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
@@ -158,7 +158,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let lang_id = Self::from_bytes(input.as_ref())?;
+        let lang_id = Self::try_from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
     }
 
@@ -282,7 +282,7 @@ impl LanguageIdentifier {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -349,7 +349,7 @@ impl FromStr for LanguageIdentifier {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 

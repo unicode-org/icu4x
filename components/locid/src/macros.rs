@@ -38,7 +38,7 @@
 macro_rules! langid {
     ($langid:literal) => {{
         const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::from_bytes_with_single_variant($langid.as_bytes()) {
+            match $crate::LanguageIdentifier::try_from_bytes_with_single_variant($langid.as_bytes()) {
                 Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
                     language,
                     script,
@@ -115,7 +115,7 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::Locale::from_bytes_with_single_variant_single_keyword_unicode_extension(
+            match $crate::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(
                 $locale.as_bytes(),
             ) {
                 Ok((language, script, region, variant, keyword)) => $crate::Locale {
