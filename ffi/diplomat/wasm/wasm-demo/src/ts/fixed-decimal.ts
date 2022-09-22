@@ -21,7 +21,7 @@ export class FixedDecimalDemo {
     }
 
     setLocale(locid: string): void {
-        this.#locale = result(() => ICU4XLocale.create(locid));
+        this.#locale = result(() => ICU4XLocale.create_from_string(locid));
         this.#updateFormatter()
     }
 
@@ -31,12 +31,12 @@ export class FixedDecimalDemo {
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => ICU4XFixedDecimal.create_from_str(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => ICU4XFixedDecimal.create_from_string(digits));
         this.#render();
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XFixedDecimalFormatter.try_new_with_grouping_strategy(
+        this.#formatter = result(() => ICU4XFixedDecimalFormatter.create_with_grouping_strategy(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#groupingStrategy,
