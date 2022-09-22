@@ -22,7 +22,7 @@ fn try_from_range<'data, 'r>(
         let set = vec![from, till];
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&set);
         #[allow(clippy::unwrap_used)] // valid
-        Ok(CodePointInversionList::from_inversion_list(inv_list).unwrap())
+        Ok(CodePointInversionList::try_from_inversion_list(inv_list).unwrap())
     } else {
         Err(CodePointSetError::InvalidRange(from, till))
     }
@@ -175,7 +175,7 @@ mod tests {
             RangeInclusive::new(0xC000, 0xFFFF),
         ];
         let ranges_iter = ranges.into_iter();
-        let expected = CodePointInversionList::from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+        let expected = CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
         let actual = CodePointInversionList::from_iter(ranges_iter);
         assert_eq!(expected, actual);
     }
