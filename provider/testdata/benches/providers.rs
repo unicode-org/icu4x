@@ -10,7 +10,6 @@ use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::AsDeserializingBufferProvider;
 use icu_provider_blob::BlobDataProvider;
-use icu_provider_blob::StaticDataProvider;
 
 static POSTCARD_BYTES: &[u8] = include_bytes!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -23,9 +22,8 @@ mod baked {
 }
 
 #[inline(never)]
-fn create_static_data_provider() -> StaticDataProvider {
-    icu_provider_blob::StaticDataProvider::try_new_from_static_blob(black_box(POSTCARD_BYTES))
-        .unwrap()
+fn create_static_data_provider() -> BlobDataProvider {
+    icu_provider_blob::BlobDataProvider::try_new_from_static_blob(POSTCARD_BYTES).unwrap()
 }
 
 #[inline(never)]
