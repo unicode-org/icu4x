@@ -31,19 +31,6 @@ fn test_parsing_operands() {
             assert_eq!(operands, test.output.into());
         }
     }
-
-    for test in test_set.floats {
-        let t = test.clone();
-        let operands: PluralOperands = t.output.try_into().expect("Failed to parse to operands.");
-        let expected: f64 = t.input.abs();
-        let actual = (operands.n() - expected).abs();
-        assert!(
-            actual < f64::EPSILON,
-            "actual: {}, for test: {:?}",
-            actual,
-            &test
-        );
-    }
 }
 
 #[test]
