@@ -17,12 +17,17 @@ This crate is `no_std` and will not typically build as a staticlib on its own, i
 using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
 an allocator and panic hook.
 
+More information on using ICU4X from C++ can be found in [our tutorial].
+
+
 To re-generate the bindings run:
 
 ```sh
 cargo make diplomat-install
 cargo make diplomat-gen
 ```
+
+[our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
 
 ## More Information
 
