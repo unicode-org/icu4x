@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663871312457,
+  "lastUpdate": 1663882489536,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -72371,6 +72371,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5056,
             "range": "± 45",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0dab7a3d29529739f5ac6c9f218fb894fe7acf4",
+          "message": "Fix wasm demo (#2611)\n\n* Fix wasm demo\r\n\r\n* ethiopian -> ethiopian",
+          "timestamp": "2022-09-22T21:20:18Z",
+          "tree_id": "c08f81924a2ef3db5a13880d59d91fcddf378a3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0dab7a3d29529739f5ac6c9f218fb894fe7acf4"
+        },
+        "date": 1663882420112,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 81558,
+            "range": "± 4055",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 140827,
+            "range": "± 6562",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 78218,
+            "range": "± 7346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 87489,
+            "range": "± 2849",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 82503,
+            "range": "± 3359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 91282,
+            "range": "± 3742",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 136179,
+            "range": "± 5385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 152662,
+            "range": "± 8261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 143656,
+            "range": "± 12112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 157984,
+            "range": "± 9058",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6129,
+            "range": "± 521",
             "unit": "ns/iter"
           }
         ]
