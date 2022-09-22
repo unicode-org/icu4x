@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663868612290,
+  "lastUpdate": 1663871304734,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52451,6 +52451,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 63301,
             "range": "± 708",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "srl295@gmail.com",
+            "name": "Steven R. Loomis",
+            "username": "srl295"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ecc0df29d672febd7ecaa3d2f09fe7b91e9efd61",
+          "message": "Update CONTRIBUTING.md to mention the new CLA (#2468)\n\n* Update CONTRIBUTING.md to mention the new CLA\r\n\r\n* Update CONTRIBUTING.md\r\n\r\nlinkify the CLA",
+          "timestamp": "2022-09-22T18:16:13Z",
+          "tree_id": "cc44c53f532e327f53b08abcaa699b30a24a0d98",
+          "url": "https://github.com/unicode-org/icu4x/commit/ecc0df29d672febd7ecaa3d2f09fe7b91e9efd61"
+        },
+        "date": 1663871252176,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116901,
+            "range": "± 538",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23372,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63067,
+            "range": "± 353",
             "unit": "ns/iter"
           },
           {
