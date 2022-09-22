@@ -175,7 +175,8 @@ mod tests {
             RangeInclusive::new(0xC000, 0xFFFF),
         ];
         let ranges_iter = ranges.into_iter();
-        let expected = CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+        let expected =
+            CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
         let actual = CodePointInversionList::from_iter(ranges_iter);
         assert_eq!(expected, actual);
     }

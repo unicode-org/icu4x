@@ -251,7 +251,11 @@ impl Date<Coptic> {
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn try_new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
+    pub fn try_new_coptic_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Coptic>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
             month,

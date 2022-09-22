@@ -740,7 +740,9 @@ impl Japanese {
             if year <= 0 {
                 return Err(DateTimeError::OutOfRange);
             }
-            return Ok(Date::try_new_iso_date(year, month, day)?.to_calendar(cal).inner);
+            return Ok(Date::try_new_iso_date(year, month, day)?
+                .to_calendar(cal)
+                .inner);
         }
 
         let (era_start, next_era_start) = self.japanese_era_range_for(era.0)?;
@@ -776,12 +778,13 @@ mod tests {
     fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::try_new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
-            panic!(
-                "Failed to construct date with {:?}, {}, {}, {}: {}",
-                era, year, month, day, e
-            )
-        });
+        let date =
+            Date::try_new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct date with {:?}, {}, {}, {}: {}",
+                    era, year, month, day, e
+                )
+            });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(

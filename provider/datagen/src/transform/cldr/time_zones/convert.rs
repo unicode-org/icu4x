@@ -478,7 +478,8 @@ fn metazone_periods_iter(
                 let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
                 let hour = time_parts[0].parse::<u8>().unwrap();
                 let minute = time_parts[1].parse::<u8>().unwrap();
-                let iso = DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+                let iso =
+                    DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
                 let minutes = iso.minutes_since_local_unix_epoch();
 
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {

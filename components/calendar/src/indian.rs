@@ -253,7 +253,11 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
-    pub fn try_new_indian_date(year: i32, month: u8, day: u8) -> Result<Date<Indian>, DateTimeError> {
+    pub fn try_new_indian_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Indian>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
             month,

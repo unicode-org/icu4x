@@ -55,7 +55,8 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     let minute: u8 = input[14..16].parse()?;
     validate(b':', 16)?;
     let second: u8 = input[17..19].parse()?;
-    let mut datetime = DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)?;
+    let mut datetime =
+        DateTime::try_new_gregorian_datetime(year, month, day, hour, minute, second)?;
     if input.len() > 20 {
         validate(b'.', 19)?;
         let fraction_str = &input[20..29.min(input.len())];

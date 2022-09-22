@@ -667,9 +667,10 @@ mod tests {
     #[test]
     fn test_add_codepointinversionlist() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        let check =
-            CodePointInversionList::try_from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33])
-                .unwrap();
+        let check = CodePointInversionList::try_from_inversion_list_slice(&[
+            0x5, 0xA, 0x16, 0x21, 0x2C, 0x33,
+        ])
+        .unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
@@ -804,7 +805,8 @@ mod tests {
     fn test_remove_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
         let remove =
-            CodePointInversionList::try_from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B]).unwrap();
+            CodePointInversionList::try_from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B])
+                .unwrap();
         builder.remove_set(&remove);
         let expected = vec![0x28, 0x2D, 0x4B, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -836,9 +838,10 @@ mod tests {
     #[test]
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let retain =
-            CodePointInversionList::try_from_inversion_list_slice(&[0xE, 0x14, 0x19, 0x37, 0x4D, 0x51])
-                .unwrap();
+        let retain = CodePointInversionList::try_from_inversion_list_slice(&[
+            0xE, 0x14, 0x19, 0x37, 0x4D, 0x51,
+        ])
+        .unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -916,8 +919,8 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(vec![0x43, 0x4E]);
-        let set =
-            CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+        let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A])
+            .unwrap();
         builder.complement_set(&set);
         let expected = vec![0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);

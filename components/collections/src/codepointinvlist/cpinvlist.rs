@@ -114,7 +114,9 @@ impl<'data> CodePointInversionList<'data> {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
-    pub fn try_from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, CodePointSetError> {
+    pub fn try_from_inversion_list(
+        inv_list: ZeroVec<'data, u32>,
+    ) -> Result<Self, CodePointSetError> {
         #[allow(clippy::indexing_slicing)] // chunks
         if is_valid_zv(&inv_list) {
             let size = inv_list
@@ -161,7 +163,9 @@ impl<'data> CodePointInversionList<'data> {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
-    pub fn try_from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, CodePointSetError> {
+    pub fn try_from_inversion_list_slice(
+        inv_list: &'data [u32],
+    ) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(inv_list);
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
@@ -201,7 +205,9 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// assert!(!&codepointinversionlists.iter().any(|set| set.contains32(0x40000)));
     /// ```
-    pub fn try_clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
+    pub fn try_clone_from_inversion_list_slice(
+        inv_list: &[u32],
+    ) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
@@ -802,7 +808,8 @@ mod tests {
     fn test_serde_deserialize() {
         let inv_list_str = "[65,70,75,85]";
         let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
-        let exp_uniset = CodePointInversionList::try_from_inversion_list_slice(&exp_inv_list).unwrap();
+        let exp_uniset =
+            CodePointInversionList::try_from_inversion_list_slice(&exp_inv_list).unwrap();
         let act_uniset: CodePointInversionList = serde_json::from_str(inv_list_str).unwrap();
         assert_eq!(act_uniset, exp_uniset);
     }
