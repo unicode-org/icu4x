@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use tinystr::{TinyStr16, TinyStr4};
+use icu_locid::extensions::unicode::Value;
+use tinystr::{tinystr, TinyStr16, TinyStr4};
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
@@ -55,5 +56,20 @@ pub enum DateTimeError {
 impl From<core::num::ParseIntError> for DateTimeError {
     fn from(_: core::num::ParseIntError) -> Self {
         DateTimeError::Parse
+    }
+}
+
+impl DateTimeError {
+    pub(crate) fn unknown_kind_from_bytes(bytes: &[u8]) -> Self {
+        let tiny = bytes
+            .get(0..16)
+            .and_then(|x| TinyStr16::from_bytes(x).ok())
+            .unwrap_or(tinystr!(16, "invalid"));
+        Self::UnknownAnyCalendarKind(tiny)
+    }
+
+    pub(crate) fn unknown_kind_from_value(value: &Value) -> Self {
+        let string = writeable::Writeable::write_to_string(value);
+        Self::unknown_kind_from_bytes(string.as_bytes())
     }
 }

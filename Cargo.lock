@@ -1361,6 +1361,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr 0.6.2",
+ "writeable",
  "zerovec 0.8.1",
 ]
 
