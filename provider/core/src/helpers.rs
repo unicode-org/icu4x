@@ -195,12 +195,12 @@ macro_rules! gen_any_buffer_docs {
             "Creates a new instance using an [`AnyProvider`](",
             stringify!($krate),
             "::AnyProvider).\n\n",
-            "[📚 Help choosing a constructor](",
-            stringify!($krate),
-            "::constructors)\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
             "`]"
+            "[📚 Help choosing a constructor](",
+            stringify!($krate),
+            "::constructors)\n\n",
         )
     };
     (BUFFER, $krate:path, $see_also:path) => {
@@ -209,12 +209,12 @@ macro_rules! gen_any_buffer_docs {
             "Creates a new instance using a [`BufferProvider`](",
             stringify!($krate),
             "::BufferProvider).\n\n",
-            "[📚 Help choosing a constructor](",
-            stringify!($krate),
-            "::constructors)\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
             "`]"
+            "[📚 Help choosing a constructor](",
+            stringify!($krate),
+            "::constructors)\n\n",
         )
     };
 }

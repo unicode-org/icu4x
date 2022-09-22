@@ -29,7 +29,7 @@
 //! Use this constructor if your data provider implements the [`DataProvider`] trait for all
 //! data structs in *current and future* ICU4X versions. Examples:
 //!
-//! 1. `BakedDataProvider`
+//! 1. `BakedDataProvider` auto-regenerated on new ICU4X versions
 //! 2. Anything with a _blanket_ [`DataProvider`] impl
 //!
 //! Since the exact set of bounds may change at any time, including in minor SemVer releases,
@@ -51,27 +51,27 @@
 //! All such providers should implement [`BufferProvider`]. Examples:
 //!
 //! 1. [`BlobDataProvider`]
-//! 2. [`StaticDataProvider`]
-//! 3. [`FsDataProvider`]
-//! 4. [`ForkByKeyProvider`] between any of the above
+//! 2. [`FsDataProvider`]
+//! 3. [`ForkByKeyProvider`] between any of the above
 //!
 //! Please note that you must enable the `"serde"` feature on each crate in which you use the
 //! `*_with_buffer_provider` constructor.
 //!
 //! # Data Versioning Policy
 //!
-//! The `*_with_any_provider` and `*_with_buffer_provider` functions will succeed if given
-//! a data provider supporting all of the keys required for the object being constructed, either
-//! the current or any previous version within the same SemVer major release. For example, if a
-//! data file is built to support FooFormatter version 1.1, then FooFormatter version 1.2 will be
-//! able to read the same data file. Likewise, backwards-compatible keys can always be included
-//! by `icu_datagen` to support older library versions.
+//! The `*_with_any_provider` and `*_with_buffer_provider` functions will succeed to compile and
+//! run if given a data provider supporting all of the keys required for the object being
+//! constructed, either the current or any previous version within the same SemVer major release.
+//! For example, if a data file is built to support FooFormatter version 1.1, then FooFormatter
+//! version 1.2 will be able to read the same data file. Likewise, backwards-compatible keys can
+//! always be included by `icu_datagen` to support older library versions.
 //!
 //! The `*_unstable` functions are only guaranteed to work on data built for the exact same version
 //! of ICU4X. The advantage of the `*_unstable` functions is that they result in the smallest code
 //! size and allow for automatic data slicing when `BakedDataProvider` is used. However, the type
 //! bounds of this function may change over time, breaking SemVer guarantees. These functions
-//! should therefore only be used when you have full control over your data lifecycle.
+//! should therefore only be used when you have full control over your data lifecycle at compile
+//! time.
 //!
 //! # Data Providers Over FFI
 //!
