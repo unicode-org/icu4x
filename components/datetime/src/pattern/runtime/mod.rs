@@ -14,6 +14,12 @@ pub(crate) mod helpers;
 mod pattern;
 mod plural;
 
+#[cfg(feature = "experimental")]
+mod mixed;
+
 pub use generic::GenericPattern;
 pub use pattern::Pattern;
 pub use plural::{PatternPlurals, PluralPattern};
+
+#[cfg(feature = "experimental")]
+pub use mixed::MixedPattern;

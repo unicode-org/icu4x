@@ -4,14 +4,15 @@
 
 use super::{
     super::error::PatternError,
-    super::{GenericPatternItem, PatternItem},
+    super::{GenericPatternItem, MixedPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
+
 use crate::fields::FieldSymbol;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::convert::{TryFrom, TryInto};
+use core::convert::TryFrom;
 
 #[derive(Debug, PartialEq)]
 enum Segment {
@@ -35,12 +36,16 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn handle_quoted_literal(
+    fn handle_quoted_literal<P>(
         &mut self,
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
-        result: &mut Vec<PatternItem>,
-    ) -> Result<bool, PatternError> {
+        result: &mut Vec<P>,
+    ) -> Result<bool, PatternError>
+    where
+        P: TryFrom<MixedPatternItem>,
+        PatternError: From<P::Error>,
+    {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (
@@ -56,7 +61,9 @@ impl<'p> Parser<'p> {
                     *quoted = !*quoted;
                 }
                 (Segment::Symbol { symbol, length }, true) => {
-                    result.push((*symbol, *length).try_into()?);
+                    result.push(P::try_from(MixedPatternItem::try_from((
+                        *symbol, *length,
+                    ))?)?);
                     self.state = Segment::Literal {
                         literal: String::from(ch),
                         quoted: false,
@@ -64,7 +71,9 @@ impl<'p> Parser<'p> {
                     chars.next();
                 }
                 (Segment::Symbol { symbol, length }, false) => {
-                    result.push((*symbol, *length).try_into()?);
+                    result.push(P::try_from(MixedPatternItem::try_from((
+                        *symbol, *length,
+                    ))?)?);
                     self.state = Segment::Literal {
                         literal: String::new(),
                         quoted: true,
@@ -84,82 +93,54 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn handle_generic_quoted_literal(
-        &mut self,
-        ch: char,
-        chars: &mut core::iter::Peekable<core::str::Chars>,
-    ) -> Result<bool, PatternError> {
-        if ch == '\'' {
-            match (&mut self.state, chars.peek() == Some(&'\'')) {
-                (
-                    Segment::Literal {
-                        ref mut literal, ..
-                    },
-                    true,
-                ) => {
-                    literal.push('\'');
-                    chars.next();
-                }
-                (Segment::Literal { ref mut quoted, .. }, false) => {
-                    *quoted = !*quoted;
-                }
-                #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                _ => panic!(),
-            }
-            Ok(true)
-        } else if let Segment::Literal {
-            ref mut literal,
-            quoted: true,
-        } = self.state
-        {
-            literal.push(ch);
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
-
-    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+    fn collect_segment<P>(state: Segment, result: &mut Vec<P>) -> Result<(), PatternError>
+    where
+        P: TryFrom<MixedPatternItem>,
+        PatternError: From<P::Error>,
+    {
         match state {
             Segment::Symbol { symbol, length } => {
-                result.push((symbol, length).try_into()?);
+                result.push(P::try_from(MixedPatternItem::try_from((symbol, length))?)?);
             }
             Segment::Literal { quoted, .. } if quoted => {
                 return Err(PatternError::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
-                result.extend(literal.chars().map(PatternItem::from));
-            }
-        }
-        Ok(())
-    }
-
-    fn collect_generic_segment(
-        state: Segment,
-        result: &mut Vec<GenericPatternItem>,
-    ) -> Result<(), PatternError> {
-        match state {
-            Segment::Literal { quoted, .. } if quoted => {
-                return Err(PatternError::UnclosedLiteral);
-            }
-            Segment::Literal { literal, .. } => {
-                if !literal.is_empty() {
-                    result.extend(literal.chars().map(GenericPatternItem::from))
+                for ch in literal.chars() {
+                    result.push(P::try_from(MixedPatternItem::Literal(ch))?);
                 }
             }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!(),
         }
         Ok(())
     }
 
-    pub fn parse(mut self) -> Result<Vec<PatternItem>, PatternError> {
+    fn parse_items<P>(mut self) -> Result<Vec<P>, PatternError>
+    where
+        P: TryFrom<MixedPatternItem>,
+        PatternError: From<P::Error>,
+    {
         let mut chars = self.source.chars().peekable();
         let mut result = vec![];
-
         while let Some(ch) = chars.next() {
             if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
-                if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
+                if ch == '{' {
+                    Self::collect_segment(self.state, &mut result)?;
+
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    let idx = ch
+                        .to_digit(10)
+                        .ok_or(PatternError::UnknownSubstitution(ch))?
+                        as u8;
+                    result.push(P::try_from(MixedPatternItem::Placeholder(idx))?);
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    if ch != '}' {
+                        return Err(PatternError::UnclosedPlaceholder);
+                    }
+                    self.state = Segment::Literal {
+                        literal: String::new(),
+                        quoted: false,
+                    };
+                } else if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
                     match self.state {
                         Segment::Symbol {
                             ref symbol,
@@ -178,7 +159,8 @@ impl<'p> Parser<'p> {
                 } else {
                     match self.state {
                         Segment::Symbol { symbol, length } => {
-                            result.push((symbol, length).try_into()?);
+                            result
+                                .push(P::try_from(MixedPatternItem::try_from((symbol, length))?)?);
                             self.state = Segment::Literal {
                                 literal: String::from(ch),
                                 quoted: false,
@@ -197,43 +179,17 @@ impl<'p> Parser<'p> {
         Ok(result)
     }
 
-    pub fn parse_generic(mut self) -> Result<Vec<GenericPatternItem>, PatternError> {
-        let mut chars = self.source.chars().peekable();
-        let mut result = vec![];
+    pub fn parse(self) -> Result<Vec<PatternItem>, PatternError> {
+        self.parse_items()
+    }
 
-        while let Some(ch) = chars.next() {
-            if !self.handle_generic_quoted_literal(ch, &mut chars)? {
-                if ch == '{' {
-                    Self::collect_generic_segment(self.state, &mut result)?;
+    pub fn parse_generic(self) -> Result<Vec<GenericPatternItem>, PatternError> {
+        self.parse_items()
+    }
 
-                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    let idx = ch
-                        .to_digit(10)
-                        .ok_or(PatternError::UnknownSubstitution(ch))?
-                        as u8;
-                    result.push(GenericPatternItem::Placeholder(idx));
-                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    if ch != '}' {
-                        return Err(PatternError::UnclosedPlaceholder);
-                    }
-                    self.state = Segment::Literal {
-                        literal: String::new(),
-                        quoted: false,
-                    };
-                } else if let Segment::Literal {
-                    ref mut literal, ..
-                } = self.state
-                {
-                    literal.push(ch);
-                } else {
-                    unreachable!()
-                }
-            }
-        }
-
-        Self::collect_generic_segment(self.state, &mut result)?;
-
-        Ok(result)
+    #[cfg(feature = "experimental")]
+    pub fn parse_mixed(self) -> Result<Vec<MixedPatternItem>, PatternError> {
+        self.parse_items()
     }
 
     pub fn parse_placeholders(
@@ -623,6 +579,52 @@ mod tests {
             assert_eq!(
                 Parser::new(string).parse_placeholders(replacements),
                 Err(error),
+            );
+        }
+    }
+
+    #[cfg(feature = "experimental")]
+    #[test]
+    fn pattern_parse_mixed() {
+        let samples = vec![
+            (
+                "EEEE {0}",
+                vec![
+                    (fields::Weekday::Format.into(), FieldLength::Wide).into(),
+                    ' '.into(),
+                    0.into(),
+                ],
+            ),
+            (
+                "{1} G",
+                vec![
+                    1.into(),
+                    ' '.into(),
+                    // BUG: this apparently returns `One` instead of `Abbreviated`?
+                    (FieldSymbol::Era, FieldLength::One).into(),
+                ],
+            ),
+            (
+                "MMMMM {2} d, yy",
+                vec![
+                    (fields::Month::Format.into(), FieldLength::Narrow).into(),
+                    ' '.into(),
+                    2.into(),
+                    ' '.into(),
+                    (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
+                    ','.into(),
+                    ' '.into(),
+                    (fields::Year::Calendar.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+        ];
+
+        for (string, pattern) in samples {
+            assert_eq!(
+                Parser::new(string)
+                    .parse_mixed()
+                    .expect("Parsing pattern failed."),
+                pattern,
             );
         }
     }

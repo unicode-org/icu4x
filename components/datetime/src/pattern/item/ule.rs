@@ -7,6 +7,9 @@ use crate::fields;
 use core::convert::TryFrom;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
+#[cfg(feature = "experimental")]
+mod mixed;
+
 /// `PatternItemULE` is a type optimized for efficent storing and
 /// deserialization of `TypedDateTimeFormatter` `PatternItem` elements using
 /// `ZeroVec` model.

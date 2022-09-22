@@ -8,6 +8,9 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
+
+#[cfg(feature = "experimental")]
+use super::{super::MixedPatternItem, MixedPattern};
 use alloc::string::String;
 use core::fmt::{self, Write};
 
@@ -109,6 +112,36 @@ impl fmt::Display for GenericPattern {
                 }
                 GenericPatternItem::Literal(ch) => {
                     buffer.push(*ch);
+                }
+            }
+        }
+        dump_buffer_into_formatter(&buffer, formatter)?;
+        buffer.clear();
+        Ok(())
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl fmt::Display for MixedPattern {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let mut buffer = alloc::string::String::new();
+        for pattern_item in self.items.iter() {
+            match pattern_item {
+                MixedPatternItem::Placeholder(idx) => {
+                    dump_buffer_into_formatter(&buffer, formatter)?;
+                    buffer.clear();
+                    write!(formatter, "{{{idx}}}")?;
+                }
+                MixedPatternItem::Literal(ch) => {
+                    buffer.push(*ch);
+                }
+                MixedPatternItem::Field(field) => {
+                    dump_buffer_into_formatter(&buffer, formatter)?;
+                    buffer.clear();
+                    let ch: char = field.symbol.into();
+                    for _ in 0..field.length.to_len() {
+                        formatter.write_char(ch)?;
+                    }
                 }
             }
         }

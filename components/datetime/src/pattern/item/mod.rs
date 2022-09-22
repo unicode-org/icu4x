@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod generic;
+mod mixed;
 mod ule;
 
 use crate::fields::{Field, FieldLength, FieldSymbol};
 use crate::pattern::PatternError;
 use core::convert::TryFrom;
 pub use generic::GenericPatternItem;
+pub use mixed::MixedPatternItem;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(

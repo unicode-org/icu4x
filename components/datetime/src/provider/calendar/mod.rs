@@ -83,6 +83,9 @@ pub mod patterns {
     use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
     use icu_provider::{yoke, zerofrom};
 
+    #[cfg(feature = "experimental")]
+    use crate::pattern::runtime::MixedPattern;
+
     /// Data struct for date/time patterns broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
@@ -161,6 +164,30 @@ pub mod patterns {
 
     impl<'data> From<GenericPattern<'data>> for GenericPatternV1<'data> {
         fn from(pattern: GenericPattern<'data>) -> Self {
+            Self(pattern)
+        }
+    }
+
+    #[cfg(feature = "experimental")]
+    #[icu_provider::data_struct]
+    #[derive(Debug, PartialEq, Clone, Default)]
+    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+    pub struct MixedPatternV1<'data>(
+        #[cfg_attr(feature = "serde", serde(borrow))] pub MixedPattern<'data>,
+    );
+
+    #[cfg(feature = "experimental")]
+    pub(crate) struct MixedPatternV1Marker;
+
+    #[cfg(feature = "experimental")]
+    impl DataMarker for MixedPatternV1Marker {
+        type Yokeable = MixedPatternV1<'static>;
+    }
+
+    #[cfg(feature = "experimental")]
+    impl<'data> From<MixedPattern<'data>> for MixedPatternV1<'data> {
+        fn from(pattern: MixedPattern<'data>) -> Self {
             Self(pattern)
         }
     }
