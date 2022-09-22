@@ -71,7 +71,7 @@ where
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
-/// use icu::datetime::time_zone::TimeZoneFormatter;
+/// use icu::datetime::{DateTimeFormatterError, time_zone::TimeZoneFormatter};
 /// use icu::locid::locale;
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
@@ -80,28 +80,51 @@ where
 /// //   1. The GMT offset
 /// //   2. The BCP-47 time zone ID
 /// //   3. A datetime (for metazone resolution)
-/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+///
+/// // Set up the Metazone calculator and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
 /// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
-/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 ///
-/// // Set up the formatter:
+/// // Set up the formatter
 /// let mut tzf = TimeZoneFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.load_generic_non_location_long(&icu_testdata::unstable()).unwrap();
+/// tzf.load_generic_non_location_long(&icu_testdata::unstable())?
+///     .load_generic_non_location_short(&icu_testdata::unstable())?;
 ///
-/// // Check the result:
+/// // "uschi"
+/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
 ///     "Central Time"
 /// );
+///
+/// // "ushnl"
+/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "Hawaii-Aleutian Time"
+/// );
+///
+/// // "frpar"
+/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "frpar").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "Central European Time"
+/// );
+///
+/// # Ok::<(), DateTimeFormatterError>(())
 /// ```
 ///
 /// [data provider]: icu_provider
