@@ -27,7 +27,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XTimeFormatter_ICU4XError ICU4XTimeFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XTimeLength length);
+diplomat_result_box_ICU4XTimeFormatter_ICU4XError ICU4XTimeFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XTimeLength length);
 
 diplomat_result_void_ICU4XError ICU4XTimeFormatter_format_time(const ICU4XTimeFormatter* self, const ICU4XTime* value, DiplomatWriteable* write);
 

@@ -107,9 +107,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/diplomat/c/examples/fixeddecimal_tiny
-rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_test.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_test_small.a
+rm -f ../../../../../target/debug/libicu_capi_staticlib.a
+rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
+rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
 exec --fail-on-error make
 exec ls -l
 '''
@@ -141,6 +141,9 @@ exec --fail-on-error make
 cd ../fixeddecimal_wasm
 rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make test-host
+cd ../locale
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
+exec --fail-on-error make
 '''
 
 [tasks.test-cppdoc]

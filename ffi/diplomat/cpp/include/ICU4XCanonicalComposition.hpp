@@ -39,7 +39,7 @@ class ICU4XCanonicalComposition {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XCanonicalComposition, ICU4XError> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XCanonicalComposition, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Performs canonical composition (including Hangul) on a pair of characters
@@ -60,8 +60,8 @@ class ICU4XCanonicalComposition {
 
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XCanonicalComposition, ICU4XError> ICU4XCanonicalComposition::try_new(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalComposition_try_new(provider.AsFFI());
+inline diplomat::result<ICU4XCanonicalComposition, ICU4XError> ICU4XCanonicalComposition::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalComposition_create(provider.AsFFI());
   diplomat::result<ICU4XCanonicalComposition, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCanonicalComposition>(std::move(ICU4XCanonicalComposition(diplomat_result_raw_out_value.ok)));

@@ -38,7 +38,7 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Constructs an empty `StaticDataProvider` and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}.
+   * Constructs an empty {@link ICU4XDataProvider `ICU4XDataProvider`}.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html Rust documentation for `EmptyDataProvider`} for more information.
    */

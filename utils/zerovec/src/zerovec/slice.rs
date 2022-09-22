@@ -49,7 +49,7 @@ where
     /// so it is recommended to convert it to a [`ZeroVec`] before doing anything.
     #[inline]
     pub const fn as_zerovec(&self) -> ZeroVec<'_, T> {
-        ZeroVec::Borrowed(&self.0)
+        ZeroVec::new_borrowed(&self.0)
     }
 
     /// Attempt to construct a `&ZeroSlice<T>` from a byte slice, returning an error

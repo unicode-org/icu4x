@@ -20,13 +20,13 @@ pub mod ffi {
 
     impl ICU4XList {
         /// Create a new list of strings
-        pub fn new() -> Box<ICU4XList> {
+        pub fn create() -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::new()))
         }
 
         /// Create a new list of strings with preallocated space to hold
         /// at least `capacity` elements
-        pub fn with_capacity(capacity: usize) -> Box<ICU4XList> {
+        pub fn create_with_capacity(capacity: usize) -> Box<ICU4XList> {
             Box::new(ICU4XList(Vec::with_capacity(capacity)))
         }
 
@@ -60,7 +60,7 @@ pub mod ffi {
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_and_unstable, FnInStruct)]
-        pub fn try_new_and(
+        pub fn create_and_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             style: ICU4XListStyle,
@@ -73,7 +73,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_or_unstable, FnInStruct)]
-        pub fn try_new_or(
+        pub fn create_or_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             style: ICU4XListStyle,
@@ -86,7 +86,7 @@ pub mod ffi {
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
         #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_unit_unstable, FnInStruct)]
-        pub fn try_new_unit(
+        pub fn create_unit_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             style: ICU4XListStyle,

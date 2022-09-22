@@ -24,7 +24,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XWordBreakSegmenter_ICU4XError ICU4XWordBreakSegmenter_try_new(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XWordBreakSegmenter_ICU4XError ICU4XWordBreakSegmenter_create(const ICU4XDataProvider* provider);
 
 ICU4XWordBreakIteratorUtf8* ICU4XWordBreakSegmenter_segment_utf8(const ICU4XWordBreakSegmenter* self, const char* input_data, size_t input_len);
 

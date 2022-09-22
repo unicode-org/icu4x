@@ -1,5 +1,5 @@
-#ifndef ICU4XLineBreakOptions_H
-#define ICU4XLineBreakOptions_H
+#ifndef ICU4XLineBreakOptionsV1_H
+#define ICU4XLineBreakOptionsV1_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -12,11 +12,11 @@
 namespace capi {
 #endif
 
-typedef struct ICU4XLineBreakOptions {
+typedef struct ICU4XLineBreakOptionsV1 {
     ICU4XLineBreakRule line_break_rule;
     ICU4XWordBreakRule word_break_rule;
     bool ja_zh;
-} ICU4XLineBreakOptions;
+} ICU4XLineBreakOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -27,7 +27,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XLineBreakOptions_destroy(ICU4XLineBreakOptions* self);
+void ICU4XLineBreakOptionsV1_destroy(ICU4XLineBreakOptionsV1* self);
 
 #ifdef __cplusplus
 } // extern "C"

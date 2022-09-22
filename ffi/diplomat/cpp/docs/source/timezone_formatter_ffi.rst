@@ -47,7 +47,7 @@
     See the `Rust documentation for TimeZoneFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Creates a new :cpp:class:`ICU4XTimeZoneFormatter` from locale data.
 
@@ -58,7 +58,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options)
 
         Creates a new :cpp:class:`ICU4XTimeZoneFormatter` from locale data.
 
@@ -126,8 +126,6 @@
 
         See the `Rust documentation for format_to_string <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write>`__ for more information.
-
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> format_custom_time_zone(const ICU4XCustomTimeZone& value) const
 
@@ -136,6 +134,4 @@
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format>`__ for more information.
 
         See the `Rust documentation for format_to_string <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string>`__ for more information.
-
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write>`__ for more information.
 

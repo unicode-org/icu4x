@@ -52,10 +52,12 @@ macro_rules! impl_sized_kv {
     };
 }
 
+impl_sized_kv!(u8);
 impl_sized_kv!(u16);
 impl_sized_kv!(u32);
 impl_sized_kv!(u64);
 impl_sized_kv!(u128);
+impl_sized_kv!(i8);
 impl_sized_kv!(i16);
 impl_sized_kv!(i32);
 impl_sized_kv!(i64);
@@ -73,7 +75,7 @@ impl<'a> ZeroMapKV<'a> for usize {
 
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where
-    T: AsULE + 'static,
+    Option<T>: AsULE + 'static,
 {
     type Container = ZeroVec<'a, Option<T>>;
     type Slice = ZeroSlice<Option<T>>;

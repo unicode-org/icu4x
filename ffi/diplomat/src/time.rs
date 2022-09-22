@@ -19,7 +19,7 @@ pub mod ffi {
     impl ICU4XTime {
         /// Creates a new [`ICU4XTime`] given field values
         #[diplomat::rust_link(icu::calendar::types::Time, Struct)]
-        pub fn try_new(
+        pub fn create(
             hour: u8,
             minute: u8,
             second: u8,

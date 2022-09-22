@@ -9,7 +9,7 @@ The crate exposes three kinds of providers, corresponding to the three types of 
 in ICU:
 * [`unstable`], [`unstable_no_fallback`]
 * [`any`], [`any_no_fallback`]
-* [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`buffer` feature)
+* [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
 
 
 Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
@@ -32,7 +32,7 @@ $ cargo run --bin --features=bin icu4x-testdata-datagen
 ## Examples
 
 ```rust
-use icu_locid::locale;
+use icu::locid::locale;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 

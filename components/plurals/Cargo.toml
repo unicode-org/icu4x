@@ -42,13 +42,12 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
-icu_locid = { version = "1.0.0-beta1", path = "../locid" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
+icu = { path = "../icu" }
 
 [lib]
 path = "src/lib.rs"

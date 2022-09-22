@@ -10,7 +10,7 @@
 
 int main() {
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
-    auto bidi = ICU4XBidi::try_new(dp).ok().value();
+    auto bidi = ICU4XBidi::create(dp).ok().value();
 
     // Written char-by-char to avoid messing up certain text editors.
     std::string_view str = 

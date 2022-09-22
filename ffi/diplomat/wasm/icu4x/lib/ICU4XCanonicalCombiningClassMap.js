@@ -16,10 +16,10 @@ export class ICU4XCanonicalCombiningClassMap {
     }
   }
 
-  static try_new(arg_provider) {
+  static create(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCanonicalCombiningClassMap_try_new(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCanonicalCombiningClassMap_create(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCanonicalCombiningClassMap(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

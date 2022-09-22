@@ -1,5 +1,5 @@
 import { FFIError } from "./diplomat-runtime"
-import { ICU4XCollatorOptions } from "./ICU4XCollatorOptions";
+import { ICU4XCollatorOptionsV1 } from "./ICU4XCollatorOptionsV1";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
@@ -18,7 +18,7 @@ export class ICU4XCollator {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptions): ICU4XCollator | never;
+  static create_v1(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptionsV1): ICU4XCollator | never;
 
   /**
 

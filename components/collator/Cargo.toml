@@ -50,6 +50,7 @@ zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer"] }
 atoi = "1.0.0"
 arraystring = "0.3.0"
+icu = { path = "../icu" }
 
 [lib]
 path = "src/lib.rs"

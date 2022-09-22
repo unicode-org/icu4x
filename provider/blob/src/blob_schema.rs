@@ -4,14 +4,27 @@
 
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
+use serde::Deserialize;
 use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
+
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub(crate) enum BlobSchema<'data> {
     #[serde(borrow)]
     V001(BlobSchemaV1<'data>),
+}
+
+impl<'data> BlobSchema<'data> {
+    pub fn deserialize_v1<D: serde::Deserializer<'data>>(
+        de: D,
+    ) -> Result<BlobSchemaV1<'data>, D::Error> {
+        let BlobSchema::V001(blob) = Self::deserialize(de)?;
+        #[cfg(debug_assertions)]
+        blob.check_invariants();
+        Ok(blob)
+    }
 }
 
 /// Version 1 of the ICU4X data blob schema.
@@ -39,9 +52,25 @@ impl Default for BlobSchemaV1<'_> {
 }
 
 impl<'data> BlobSchemaV1<'data> {
+    pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
+        let idx = self
+            .keys
+            .get0(&key.hashed())
+            .ok_or(DataErrorKind::MissingDataKey)
+            .and_then(|cursor| {
+                cursor
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
+                    .ok_or(DataErrorKind::MissingLocale)
+            })
+            .map_err(|kind| kind.with_req(key, req))?;
+        self.buffers
+            .get(idx)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
+    }
+
     /// Verifies the weak invariants using debug assertions
     #[cfg(debug_assertions)]
-    pub(crate) fn check_invariants(&self) {
+    fn check_invariants(&self) {
         use zerovec::maps::ZeroVecLike;
         if self.keys.is_empty() && self.buffers.is_empty() {
             return;

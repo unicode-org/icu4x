@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::*;
-use icu_locid::langid;
 use icu_provider::KeyedDataMarker;
 use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
@@ -79,16 +78,6 @@ fn main() {
             .collect::<Vec<_>>(),
         &source_data,
         vec![json_out, blob_out, mod_out, postcard_out],
-    )
-    .unwrap();
-
-    icu_datagen::datagen(
-        Some(&[langid!("en"), langid!("bn")]),
-        &icu_datagen::keys(&["decimal/symbols@1[u-nu]"]),
-        &source_data,
-        vec![Out::Blob(Box::new(
-            File::create(paths::data_root().join("decimal-bn-en.postcard")).unwrap(),
-        ))],
     )
     .unwrap();
 }

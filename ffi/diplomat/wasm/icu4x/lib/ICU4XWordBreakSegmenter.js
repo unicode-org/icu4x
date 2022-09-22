@@ -19,10 +19,10 @@ export class ICU4XWordBreakSegmenter {
     }
   }
 
-  static try_new(arg_provider) {
+  static create(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XWordBreakSegmenter_try_new(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XWordBreakSegmenter_create(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XWordBreakSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

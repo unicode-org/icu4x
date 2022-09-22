@@ -70,7 +70,7 @@ impl FromStr for Pattern<'_> {
 impl Default for Pattern<'_> {
     fn default() -> Self {
         Self {
-            items: ZeroVec::Owned(Vec::new()),
+            items: ZeroVec::new(),
             time_granularity: TimeGranularity::default(),
         }
     }

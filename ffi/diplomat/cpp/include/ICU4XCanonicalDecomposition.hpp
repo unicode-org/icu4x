@@ -40,7 +40,7 @@ class ICU4XCanonicalDecomposition {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Performs non-recursive canonical decomposition (including for Hangul).
@@ -61,8 +61,8 @@ class ICU4XCanonicalDecomposition {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XDecomposed.hpp"
 
-inline diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> ICU4XCanonicalDecomposition::try_new(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalDecomposition_try_new(provider.AsFFI());
+inline diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> ICU4XCanonicalDecomposition::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCanonicalDecomposition_create(provider.AsFFI());
   diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCanonicalDecomposition>(std::move(ICU4XCanonicalDecomposition(diplomat_result_raw_out_value.ok)));

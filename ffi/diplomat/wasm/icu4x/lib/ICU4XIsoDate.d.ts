@@ -22,7 +22,7 @@ export class ICU4XIsoDate {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date Rust documentation for `new_iso_date`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(year: i32, month: u8, day: u8): ICU4XIsoDate | never;
+  static create(year: i32, month: u8, day: u8): ICU4XIsoDate | never;
 
   /**
 

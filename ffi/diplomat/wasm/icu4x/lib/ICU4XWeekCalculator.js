@@ -17,10 +17,10 @@ export class ICU4XWeekCalculator {
     }
   }
 
-  static try_new(arg_provider, arg_locale) {
+  static create(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XWeekCalculator_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      wasm.ICU4XWeekCalculator_create(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XWeekCalculator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -34,8 +34,8 @@ export class ICU4XWeekCalculator {
     })();
   }
 
-  static new_with_first_day_of_week_and_min_week_days(arg_first_weekday, arg_min_week_days) {
-    return new ICU4XWeekCalculator(wasm.ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday_js_to_rust[arg_first_weekday], arg_min_week_days), true, []);
+  static create_from_first_day_of_week_and_min_week_days(arg_first_weekday, arg_min_week_days) {
+    return new ICU4XWeekCalculator(wasm.ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday_js_to_rust[arg_first_weekday], arg_min_week_days), true, []);
   }
 
   first_weekday() {

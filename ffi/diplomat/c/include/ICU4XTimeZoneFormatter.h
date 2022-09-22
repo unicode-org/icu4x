@@ -25,9 +25,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XTimeZoneFormatter_ICU4XError ICU4XTimeZoneFormatter_try_new_with_localized_gmt_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XTimeZoneFormatter_ICU4XError ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XTimeZoneFormatter_ICU4XError ICU4XTimeZoneFormatter_try_new_with_iso_8601_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XIsoTimeZoneOptions options);
+diplomat_result_box_ICU4XTimeZoneFormatter_ICU4XError ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XIsoTimeZoneOptions options);
 
 diplomat_result_void_ICU4XError ICU4XTimeZoneFormatter_load_generic_non_location_long(ICU4XTimeZoneFormatter* self, const ICU4XDataProvider* provider);
 

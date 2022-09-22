@@ -8,6 +8,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::{DateTime, Gregorian};
     use icu_datetime::{options::length, TypedZonedDateTimeFormatter, ZonedDateTimeFormatter};
+    use writeable::Writeable;
 
     use crate::{
         datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XIsoDateTime,
@@ -38,7 +39,7 @@ pub mod ffi {
             icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -65,7 +66,7 @@ pub mod ffi {
             icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new_with_iso_8601_time_zone_fallback(
+        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -86,15 +87,7 @@ pub mod ffi {
         }
 
         /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
-        #[diplomat::rust_link(
-            icu::datetime::TypedZonedDateTimeFormatter::format_to_write,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::datetime::TypedZonedDateTimeFormatter::format,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::datetime::TypedZonedDateTimeFormatter::format_to_string,
             FnInStruct,
@@ -109,7 +102,8 @@ pub mod ffi {
             let greg = DateTime::new_from_iso(datetime.0, Gregorian);
             let result = self
                 .0
-                .format_to_write(write, &greg, &time_zone.0)
+                .format(&greg, &time_zone.0)
+                .write_to(write)
                 .map_err(Into::into)
                 .into();
             write.flush();
@@ -128,7 +122,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -152,7 +146,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
         /// fallback for the time zone with the given configurations.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new_with_iso_8601_time_zone_fallback(
+        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -173,8 +167,7 @@ pub mod ffi {
         }
 
         /// Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format_to_write, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::datetime::ZonedDateTimeFormatter::format_to_string,
             FnInStruct,
@@ -188,16 +181,16 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = self
                 .0
-                .format_to_write(write, &datetime.0, &time_zone.0)
+                .format(&datetime.0, &time_zone.0)
                 .map_err(Into::into)
+                .and_then(|f| f.write_to(write).map_err(Into::into))
                 .into();
             write.flush();
             result
         }
 
         /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format_to_write, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct)]
         #[diplomat::rust_link(
             icu::datetime::ZonedDateTimeFormatter::format_to_string,
             FnInStruct,
@@ -211,8 +204,9 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = self
                 .0
-                .format_to_write(write, &datetime.0.to_any(), &time_zone.0)
+                .format(&datetime.0.to_any(), &time_zone.0)
                 .map_err(Into::into)
+                .and_then(|f| f.write_to(write).map_err(Into::into))
                 .into();
             write.flush();
             result

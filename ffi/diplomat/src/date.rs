@@ -36,7 +36,7 @@ pub mod ffi {
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::Date::new_iso_date, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             year: i32,
             month: u8,
             day: u8,
@@ -143,7 +143,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XDate`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct)]
-        pub fn try_new_from_iso_in_calendar(
+        pub fn create_from_iso_in_calendar(
             year: i32,
             month: u8,
             day: u8,
@@ -158,7 +158,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::Date::new_from_codes, FnInStruct)]
-        pub fn try_new_from_codes_in_calendar(
+        pub fn create_from_codes_in_calendar(
             era_code: &str,
             year: i32,
             month_code: &str,

@@ -54,7 +54,7 @@ where
         while let Some(value) = seq.next_element::<T>()? {
             vec.push(T::to_unaligned(value));
         }
-        Ok(ZeroVec::Owned(vec))
+        Ok(ZeroVec::new_owned(vec))
     }
 }
 
@@ -108,7 +108,7 @@ where
         D: Deserializer<'de>,
     {
         let mut zv = ZeroVec::<T>::deserialize(deserializer)?;
-        let vec = mem::take(zv.to_mut());
+        let vec = zv.with_mut(mem::take);
         Ok(ZeroSlice::from_boxed_slice(vec.into_boxed_slice()))
     }
 }
@@ -129,14 +129,14 @@ where
             ))
         } else {
             let deserialized: ZeroVec<'a, T> = ZeroVec::deserialize(deserializer)?;
-            let borrowed = if let ZeroVec::Borrowed(b) = deserialized {
+            let borrowed = if let Some(b) = deserialized.as_maybe_borrowed() {
                 b
             } else {
                 return Err(de::Error::custom(
                     "&ZeroSlice can only deserialize in zero-copy ways",
                 ));
             };
-            Ok(ZeroSlice::from_ule_slice(borrowed))
+            Ok(borrowed)
         }
     }
 }
@@ -181,7 +181,7 @@ mod test {
         let zerovec_new: ZeroVec<u32> =
             serde_json::from_str(&json_str).expect("deserialize from buffer to ZeroVec");
         assert_eq!(zerovec_orig, zerovec_new);
-        assert!(matches!(zerovec_new, ZeroVec::Owned(_)));
+        assert!(zerovec_new.is_owned());
     }
 
     #[test]
@@ -194,7 +194,8 @@ mod test {
         let zerovec_new: ZeroVec<u32> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to ZeroVec");
         assert_eq!(zerovec_orig, zerovec_new);
-        assert!(matches!(zerovec_new, ZeroVec::Borrowed(_)));
+
+        assert!(!zerovec_new.is_owned());
     }
 
     #[test]
@@ -205,7 +206,8 @@ mod test {
         let zerovec_new: ZeroVec<char> =
             bincode::deserialize(&bincode_buf).expect("deserialize from buffer to ZeroVec");
         assert_eq!(zerovec_orig, zerovec_new);
-        assert!(matches!(zerovec_new, ZeroVec::Borrowed(_)));
+
+        assert!(!zerovec_new.is_owned());
     }
 
     #[test]

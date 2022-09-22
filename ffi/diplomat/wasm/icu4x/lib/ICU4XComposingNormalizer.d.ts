@@ -15,7 +15,7 @@ export class ICU4XComposingNormalizer {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable Rust documentation for `try_new_nfc_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_nfc(provider: ICU4XDataProvider): ICU4XComposingNormalizer | never;
+  static create_nfc(provider: ICU4XDataProvider): ICU4XComposingNormalizer | never;
 
   /**
 
@@ -24,7 +24,7 @@ export class ICU4XComposingNormalizer {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfkc_unstable Rust documentation for `try_new_nfkc_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_nfkc(provider: ICU4XDataProvider): ICU4XComposingNormalizer | never;
+  static create_nfkc(provider: ICU4XDataProvider): ICU4XComposingNormalizer | never;
 
   /**
 

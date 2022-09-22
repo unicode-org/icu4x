@@ -40,7 +40,7 @@ class ICU4XWordBreakSegmenter {
    * 
    * See the [Rust documentation for `try_new`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Segments a (potentially ill-formed) UTF-8 string.
@@ -77,8 +77,8 @@ class ICU4XWordBreakSegmenter {
 #include "ICU4XWordBreakIteratorUtf16.hpp"
 #include "ICU4XWordBreakIteratorLatin1.hpp"
 
-inline diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> ICU4XWordBreakSegmenter::try_new(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWordBreakSegmenter_try_new(provider.AsFFI());
+inline diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> ICU4XWordBreakSegmenter::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XWordBreakSegmenter_create(provider.AsFFI());
   diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XWordBreakSegmenter>(std::move(ICU4XWordBreakSegmenter(diplomat_result_raw_out_value.ok)));
