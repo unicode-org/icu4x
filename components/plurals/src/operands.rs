@@ -33,15 +33,17 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     PluralOperands::from_ivwftc(
-///         2, // i
-///         0, // v
-///         0, // w
-///         0, // f
-///         0, // t
-///         0, // c
-///     ),
+///     PluralOperands::from(RawPluralOperands {
+///         i: 2, // i
+///         v: 0, // v
+///         w: 0, // w
+///         f: 0, // f
+///         t: 0, // t
+///         c: 0, // c
+///     }),
 ///     PluralOperands::from(2_usize)
 /// );
 /// ```
@@ -50,15 +52,17 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     Ok(PluralOperands::from_ivwftc(
-///         123, // i
-///         2,   // v
-///         2,   // w
-///         45,  // f
-///         45,  // t
-///         0,   // c
-///     )),
+///     Ok(PluralOperands::from(RawPluralOperands {
+///         i: 123, // i
+///         v: 2,   // v
+///         w: 2,   // w
+///         f: 45,  // f
+///         t: 45,  // t
+///         c: 0,   // c
+///     })),
 ///     "123.45".parse()
 /// );
 /// ```
@@ -68,15 +72,17 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     PluralOperands::from_ivwftc(
-///         123, // i
-///         2,   // v
-///         2,   // w
-///         45,  // f
-///         45,  // t
-///         0,   // c
-///     ),
+///     PluralOperands::from(RawPluralOperands {
+///         i: 123, // i
+///         v: 2,   // v
+///         w: 2,   // w
+///         f: 45,  // f
+///         t: 45,  // t
+///         c: 0,   // c
+///     }),
 ///     (&FixedDecimal::from(12345)
 ///         .multiplied_pow10(-2))
 ///         .into()
@@ -97,13 +103,6 @@ pub struct PluralOperands {
     pub(crate) t: u64,
     /// Exponent of the power of 10 used in compact decimal formatting
     pub(crate) c: usize,
-}
-
-impl PluralOperands {
-    #[doc(hidden)] // unstable
-    pub fn from_ivwftc(i: u64, v: usize, w: usize, f: u64, t: u64, c: usize) -> PluralOperands {
-        PluralOperands { i, v, w, f, t, c }
-    }
 }
 
 #[derive(Display, Debug, PartialEq, Eq)]

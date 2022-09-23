@@ -153,8 +153,14 @@
 //! [`Sample`]: super::rules::reference::ast::Samples
 //! [`AST`]: super::rules::reference::ast
 
+#[doc(hidden)]
 pub mod reference;
 // Need to expose it for `icu_datagen` use, but we don't
 // have a reason to make it fully public, so hiding docs for now.
+#[cfg(feature = "experimental")]
+mod raw_operands;
 #[doc(hidden)]
 pub mod runtime;
+
+#[cfg(feature = "experimental")]
+pub use raw_operands::RawPluralOperands;

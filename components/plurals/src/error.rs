@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "experimental")]
 use crate::rules::reference::parser::ParserError;
 use displaydoc::Display;
 use icu_provider::prelude::DataError;
@@ -11,6 +12,7 @@ use icu_provider::prelude::DataError;
 #[non_exhaustive]
 pub enum PluralRulesError {
     /// A parsing error for the plural rules.
+    #[cfg(feature = "experimental")]
     #[displaydoc("Parser error: {0}")]
     Parser(ParserError),
     /// An error originating from [`icu_provider`].
@@ -21,6 +23,7 @@ pub enum PluralRulesError {
 #[cfg(feature = "std")]
 impl std::error::Error for PluralRulesError {}
 
+#[cfg(feature = "experimental")]
 impl From<ParserError> for PluralRulesError {
     fn from(e: ParserError) -> Self {
         PluralRulesError::Parser(e)

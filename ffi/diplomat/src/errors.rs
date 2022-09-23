@@ -281,7 +281,6 @@ impl From<PluralRulesError> for ICU4XError {
     fn from(e: PluralRulesError) -> Self {
         let ret = match e {
             PluralRulesError::DataProvider(e) => e.into(),
-            PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
