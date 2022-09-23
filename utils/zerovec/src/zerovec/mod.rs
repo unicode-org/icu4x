@@ -106,7 +106,6 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        //
         let slice: &[T::ULE] = self.vector.as_slice();
         ZeroSlice::from_ule_slice(slice)
     }
