@@ -65,14 +65,13 @@ use writeable::Writeable;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let time_zone: CustomTimeZone =
-///     "+05:00".parse().expect("Time zone should parse");
+/// let time_zone = CustomTimeZone::utc();
 ///
 /// assert_writeable_eq!(
 ///     zdtf
 ///       .format(&any_datetime, &time_zone)
 ///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT+05:00");
+///     "Sep 1, 2020, 12:34:28 PM GMT");
 /// ```
 ///
 /// Using a non-GMT time zone, specified by id:
@@ -81,13 +80,13 @@ use writeable::Writeable;
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
-/// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator};
+/// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
 /// use tinystr::TinyAsciiStr;
 /// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
-///     length::Time::Long,
+///     length::Time::Full,
 /// );
 /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -106,6 +105,7 @@ use writeable::Writeable;
 /// let mut time_zone = CustomTimeZone::new_empty();
 /// time_zone.gmt_offset = "-06:00".parse::<GmtOffset>().ok();
 /// time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+/// time_zone.zone_variant = Some(ZoneVariant::daylight());
 ///
 /// // Compute the metazone during `datetime` (September 1, 2020 at 12:34:28 PM):
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
@@ -115,7 +115,7 @@ use writeable::Writeable;
 ///     zdtf
 ///       .format(&any_datetime, &time_zone)
 ///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT-06:00");
+///     "Sep 1, 2020, 12:34:28 PM Central Daylight Time");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
