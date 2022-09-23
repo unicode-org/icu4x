@@ -109,6 +109,14 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: AsULE> Drop for ZeroVec<'a, T> {
+    #[inline]
+    fn drop(&mut self) {
+        let this = mem::take(self);
+        let _ = this.into_cow();
+    }
+}
+
 impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
     fn clone(&self) -> Self {
         if self.is_owned() {
@@ -786,6 +794,10 @@ where
             Cow::Owned(vec)
         } else {
             let slice = unsafe { &*self.buf };
+            // The borrowed destructor is a no-op, but we want to prevent
+            // the check being run (and also prevent recursion in our Drop
+            // impl, which calls into_cow)
+            mem::forget(self);
             Cow::Borrowed(slice)
         }
     }
