@@ -8,7 +8,7 @@ Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate (
 
 Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
 
-_We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out _
+_We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out_
 
 ## Building and linking ICU4X
 
