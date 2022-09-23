@@ -194,7 +194,7 @@ impl LineBreakSegmenter {
     where
         D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
-        Self::try_new_with_options(provider, Default::default())
+        Self::try_new_with_options_unstable(provider, Default::default())
     }
 
     /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
@@ -205,7 +205,7 @@ impl LineBreakSegmenter {
             + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
-        Self::try_new_with_options(provider, Default::default())
+        Self::try_new_with_options_unstable(provider, Default::default())
     }
 
     icu_provider::gen_any_buffer_constructors!(
@@ -216,7 +216,7 @@ impl LineBreakSegmenter {
 
     /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
-    pub fn try_new_with_options<D>(
+    pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
@@ -245,7 +245,7 @@ impl LineBreakSegmenter {
 
     /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new_with_options<D>(
+    pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
@@ -282,7 +282,7 @@ impl LineBreakSegmenter {
         functions: [
             Self::try_new_with_options_unstable,
             try_new_with_options_with_any_provider,
-            try_new_with_options_with_buffer_provider,
+            try_new_with_options_with_buffer_provider
         ]
     );
 

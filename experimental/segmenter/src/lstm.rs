@@ -85,7 +85,7 @@ pub struct LstmSegmenter<'l> {
 }
 
 impl<'l> LstmSegmenter<'l> {
-    pub fn try_new(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
+    pub fn try_new_unstable(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
         let lstm = Lstm::try_new(payload).unwrap();
 
         Ok(Self { lstm })
