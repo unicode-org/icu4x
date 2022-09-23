@@ -23,7 +23,7 @@ fn line_break_iter_latin1(c: &mut Criterion) {
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineBreakSegmenter::try_new_unstable_with_options(&icu_testdata::unstable(), options)
+        LineBreakSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {
@@ -77,7 +77,7 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineBreakSegmenter::try_new_unstable_with_options(&icu_testdata::unstable(), options)
+        LineBreakSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {

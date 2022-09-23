@@ -81,7 +81,7 @@ pub mod ffi {
         }
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
-        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new_unstable_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new_with_options_unstable, FnInStruct)]
         pub fn create_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
@@ -99,7 +99,7 @@ pub mod ffi {
                 + DataProvider<LstmDataV1Marker>
                 + ?Sized,
         {
-            LineBreakSegmenter::try_new_unstable_with_options(provider, options.into())
+            LineBreakSegmenter::try_new_with_options_unstable(provider, options.into())
                 .map(|o| Box::new(ICU4XLineBreakSegmenter(o)))
                 .map_err(Into::into)
                 .into()

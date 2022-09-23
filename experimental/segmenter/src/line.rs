@@ -164,7 +164,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// options.word_break_rule = WordBreakRule::BreakAll;
 /// options.ja_zh = false;
 /// let segmenter =
-///     LineBreakSegmenter::try_new_unstable_with_options(&icu_testdata::unstable(), options).expect("Data exists");
+///     LineBreakSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
