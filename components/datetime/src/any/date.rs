@@ -49,7 +49,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(df
 ///     .format(&any_date)
-///     .expect("calendars should match"), "Sep 1, 2020");
+///     .expect("Calendars should match"), "Sep 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -123,7 +123,7 @@ impl DateFormatter {
     ///
     /// assert_writeable_eq!(df
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020");
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -175,7 +175,7 @@ impl DateFormatter {
     ///
     /// assert_writeable_eq!(df
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020");
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(

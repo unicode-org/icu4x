@@ -325,6 +325,7 @@ icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", de
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
+criterion = "0.3"
 
 [features]
 default = [
@@ -342,7 +343,7 @@ default = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
-buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
+buffer = ["icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "lazy_static"]
 std = []
 bin = [
     "bytes",
@@ -380,3 +381,7 @@ required-features = ["bin"]
 name = "icu4x-testdata-datagen"
 path = "src/bin/datagen.rs"
 required-features = ["bin"]
+
+[[bench]]
+name = "providers"
+harness = false

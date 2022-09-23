@@ -43,7 +43,6 @@ serde = ["icu_capi/serde"]
 buffer_provider = ["icu_capi/buffer_provider"]
 provider_fs = ["icu_capi/provider_fs"]
 provider_test = ["icu_capi/provider_test"]
-smaller_test = ["icu_capi/smaller_test"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
 
@@ -55,9 +54,7 @@ wasm_default = ["provider_test", "buffer_provider", "logging"]
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# x86tiny is not relevant in normal environments,
-# smaller_test gets tested on the FFI job anyway
 # logging enables a feature of a dependency that has no externally visible API changes
 # serde enables dependency features but buffer_provider affects the actual code
 # wasm_default is a metafeature
-denylist = ["bench", "serde", "smaller_test", "logging", "wasm_default"]
+denylist = ["bench", "serde", "logging", "wasm_default"]

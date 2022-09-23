@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::convert::TryFrom;
 use core::isize;
 use core::num::ParseIntError;
 use core::str::FromStr;
@@ -210,6 +209,7 @@ impl FromStr for PluralOperands {
 macro_rules! impl_integer_type {
     ($ty:ident) => {
         impl From<$ty> for PluralOperands {
+            #[inline]
             fn from(input: $ty) -> Self {
                 Self {
                     i: input as u64,
@@ -229,18 +229,10 @@ macro_rules! impl_integer_type {
 
 macro_rules! impl_signed_integer_type {
     ($ty:ident) => {
-        impl TryFrom<$ty> for PluralOperands {
-            type Error = OperandsError;
-            fn try_from(input: $ty) -> Result<Self, Self::Error> {
-                let x = input.checked_abs().ok_or(OperandsError::Invalid)?;
-                Ok(Self {
-                    i: x as u64,
-                    v: 0,
-                    w: 0,
-                    f: 0,
-                    t: 0,
-                    c: 0,
-                })
+        impl From<$ty> for PluralOperands {
+            #[inline]
+            fn from(input: $ty) -> Self {
+                input.unsigned_abs().into()
             }
         }
     };

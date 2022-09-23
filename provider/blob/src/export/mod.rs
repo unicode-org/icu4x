@@ -2,12 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Utilities for dumping data to an ICU4X filesystem tree.
-//!
-//! The `export` feature enables you to pull all data from some other data provider and persist it
-//! in a blob of data to be read by [`StaticDataProvider`](crate::StaticDataProvider) at runtime.
-//!
-//! For a command-line user interface, see the `icu_datagen` crate.
+//! Data generation for [`BlobDataProvider`](crate::BlobDataProvider) data. See the `icu_datagen` crate.
 //!
 //! # Examples
 //!

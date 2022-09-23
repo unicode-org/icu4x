@@ -1762,6 +1762,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "tinystr 0.6.2",
+ "writeable",
  "yoke",
  "zerovec 0.8.1",
 ]
@@ -1839,6 +1840,7 @@ dependencies = [
  "bytes",
  "cargo_metadata",
  "clap",
+ "criterion",
  "displaydoc",
  "eyre",
  "futures",

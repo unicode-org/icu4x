@@ -11,6 +11,9 @@ use zerofrom::ZeroFrom;
 
 /// A data provider that returns clones of a fixed type-erased payload.
 ///
+/// [`AnyPayloadProvider`] implements [`AnyProvider`], so it can be used in
+/// `*_with_any_provider` constructors across ICU4X.
+///
 /// # Examples
 ///
 /// ```
@@ -18,21 +21,20 @@ use zerofrom::ZeroFrom;
 /// use icu_provider::prelude::*;
 /// use icu_provider_adapters::any_payload::AnyPayloadProvider;
 /// use std::borrow::Cow;
+/// use writeable::assert_writeable_eq;
 ///
 /// let provider =
 ///     AnyPayloadProvider::from_static::<HelloWorldV1Marker>(&HelloWorldV1 {
-///         message: Cow::Borrowed("hello world"),
+///         message: Cow::Borrowed("custom hello world"),
 ///     });
 ///
-/// let payload: DataPayload<HelloWorldV1Marker> = provider
-///     .load_any(HelloWorldV1Marker::KEY, Default::default())
-///     .expect("Load should succeed")
-///     .downcast()
-///     .expect("Types should match")
-///     .take_payload()
-///     .expect("Data should be present");
-///
-/// assert_eq!(payload.get().message, "hello world");
+/// // Check that it works:
+/// let formatter = HelloWorldFormatter::try_new_with_any_provider(
+///     &provider,
+///     &icu_locid::Locale::UND.into()
+/// )
+/// .expect("key matches");
+/// assert_writeable_eq!(formatter.format(), "custom hello world");
 ///
 /// // Requests for invalid keys get MissingDataKey
 /// assert!(matches!(

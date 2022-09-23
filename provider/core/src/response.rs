@@ -681,17 +681,8 @@ impl DataPayload<BufferMarker> {
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoked_buffer: Yoke<&'static [u8], RcWrap<[u8]>>) -> Self {
-        Self {
-            yoke: yoked_buffer.wrap_cart_in_option(),
-        }
-    }
-
-    /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
-        Self {
-            yoke: Yoke::new_owned(buffer),
-        }
+    pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<RcWrap<[u8]>>>) -> Self {
+        Self { yoke }
     }
 }
 

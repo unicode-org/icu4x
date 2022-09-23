@@ -28,6 +28,7 @@ pub struct DateSkeletonPatternsV1<'data>(
     pub LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
 
+/// Marker type for [`DateSkeletonPatternsV1`].
 #[cfg(feature = "experimental")]
 pub struct DateSkeletonPatternsV1Marker;
 #[cfg(feature = "experimental")]

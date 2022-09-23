@@ -82,7 +82,7 @@
 //! assert_eq!(deserialized.chars.get(1), Some('冇'));
 //! assert_eq!(deserialized.strs.get(1), Some("world"));
 //! // The deserialization will not have allocated anything
-//! assert!(matches!(deserialized.nums, ZeroVec::Borrowed(_)));
+//! assert!(!deserialized.nums.is_owned());
 //! # } // feature = "serde"
 //! ```
 //!

@@ -610,7 +610,7 @@ impl crate::DatagenProvider {
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
-            break_state_table: RuleBreakStateTable(ZeroVec::Owned(break_state_table)),
+            break_state_table: RuleBreakStateTable(ZeroVec::new_owned(break_state_table)),
             property_count: property_length as u8,
             last_codepoint_property: (simple_properties_count - 1) as i8,
             sot_property: (property_length - 2) as u8,

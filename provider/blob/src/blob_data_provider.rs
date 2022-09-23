@@ -6,15 +6,15 @@ use crate::blob_schema::{BlobSchema, BlobSchemaV1};
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::RcWrap;
-use serde::de::Deserialize;
 use yoke::*;
 
-/// A data provider loading data from blobs dynamically created at runtime.
+/// A data provider that reads from serialized blobs of data.
 ///
-/// This enables data blobs to be read from the filesystem or from an HTTP request dynamically
-/// at runtime, so that the code and data can be shipped separately.
+/// This enables data blobs to be read from arbitrary sources at runtime, allowing code and data
+/// to be separated. Alternatively, blobs can also be statically included at compile time.
 ///
-/// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
+/// [`BlobDataProvider`] implements [`BufferProvider`], so it can be used in
+/// `*_with_buffer_provider` constructors across ICU4X.
 ///
 /// # `Sync + Send`
 ///
@@ -23,57 +23,91 @@ use yoke::*;
 ///
 /// # Examples
 ///
+/// ## Dynamic loading
+///
+/// Load "hello world" data from a postcard blob loaded at runtime:
+///
 /// ```
 /// use icu_locid::locale;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_blob::BlobDataProvider;
-/// use std::fs;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = fs::read(concat!(
+/// let blob = std::fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
 /// ))
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_blob(blob)
+///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
-/// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .as_deserializing()
-///     .load(DataRequest {
-///         locale: &locale!("la").into(),
-///         metadata: Default::default(),
-///     })
-///     .expect("Data should be valid")
-///     .take_payload()
-///     .expect("Data should be present");
+/// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     &locale!("la").into()
+/// )
+/// .expect("locale exists");
 ///
-/// assert_eq!(response.get().message, "Ave, munde");
+/// assert_writeable_eq!(formatter.format(), "Ave, munde");
 /// ```
 ///
-/// [`StaticDataProvider`]: crate::StaticDataProvider
+/// ## Static loading
+///
+/// Load "hello world" data from a postcard blob statically linked at compile time:
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::HelloWorldFormatter;
+/// use icu_provider_blob::BlobDataProvider;
+/// use writeable::assert_writeable_eq;
+///
+/// // Read an ICU4X data blob statically:
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/hello_world.postcard"
+/// ));
+///
+/// // Create a DataProvider from it:
+/// let provider = BlobDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
+///     .expect("Deserialization should succeed");
+///
+/// // Check that it works:
+/// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     &locale!("la").into()
+/// )
+/// .expect("locale exists");
+///
+/// assert_writeable_eq!(formatter.format(), "Ave, munde");
+/// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, RcWrap<[u8]>>,
+    data: Yoke<BlobSchemaV1<'static>, Option<RcWrap<[u8]>>>,
 }
 
 impl BlobDataProvider {
-    /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    /// Create a [`BlobDataProvider`] from a blob of data. The data will be transformed into
+    /// a `Rc<[u8]>`/`Arc<[u8]>` (per the `"sync"` feature), which will allocate unless the
+    /// blob is already of that shape.
     pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
-        Ok(BlobDataProvider {
+        Ok(Self {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
-                BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
-                    |blob| {
-                        let BlobSchema::V001(blob) = blob;
-                        #[cfg(debug_assertions)]
-                        blob.check_invariants();
-                        blob
-                    },
-                )
-            })?,
+                BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
+            })?
+            .wrap_cart_in_option(),
+        })
+    }
+
+    /// Create a [`BlobDataProvider`] from a static blob. This is a special case of
+    /// [`try_new_from_blob`](BlobDataProvider::try_new_from_blob) and is allocation-free.
+    pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+        Ok(Self {
+            data: Yoke::new_owned(BlobSchema::deserialize_v1(
+                &mut postcard::Deserializer::from_bytes(blob),
+            )?),
         })
     }
 }
@@ -89,21 +123,8 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data.try_map_project_cloned(|blob, _| {
-                    let idx = blob
-                        .keys
-                        .get0(&key.hashed())
-                        .ok_or(DataErrorKind::MissingDataKey)
-                        .and_then(|cursor| {
-                            cursor
-                                .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
-                                .ok_or(DataErrorKind::MissingLocale)
-                        })
-                        .map_err(|kind| kind.with_req(key, req))?;
-                    blob.buffers
-                        .get(idx)
-                        .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
-                })?,
+                self.data
+                    .try_map_project_cloned(|blob, _| blob.load(key, req))?,
             )),
         })
     }

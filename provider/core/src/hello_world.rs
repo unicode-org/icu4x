@@ -16,6 +16,7 @@ use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
+use writeable::Writeable;
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
@@ -177,6 +178,88 @@ impl BufferProvider for HelloWorldJsonProvider {
             metadata,
             payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
         })
+    }
+}
+
+/// A type that formats localized "hello world" strings.
+///
+/// This type is intended to take the shape of a typical ICU4X formatter API.
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider::hello_world::{HelloWorldProvider, HelloWorldFormatter};
+/// use writeable::assert_writeable_eq;
+/// use icu_locid::locale;
+///
+/// let fmt = HelloWorldFormatter::try_new_unstable(
+///     &HelloWorldProvider,
+///     &locale!("eo").into()
+/// )
+/// .expect("locale exists");
+///
+/// assert_writeable_eq!(fmt.format(), "Saluton, Mondo");
+/// ```
+pub struct HelloWorldFormatter {
+    data: DataPayload<HelloWorldV1Marker>,
+}
+
+/// A formatted hello world message. Implements [`Writeable`].
+///
+/// For an example, see [`HelloWorldFormatter`].
+pub struct FormattedHelloWorld<'l> {
+    data: &'l HelloWorldV1<'l>,
+}
+
+impl HelloWorldFormatter {
+    /// Creates a new [`HelloWorldFormatter`] for the specified locale.
+    ///
+    /// See [`HelloWorldFormatter`] for an example.
+    ///
+    /// [📚 Help choosing a constructor](crate::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    where
+        P: DataProvider<HelloWorldV1Marker>,
+    {
+        let data = provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        Ok(Self { data })
+    }
+
+    crate::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
+
+    /// Formats a hello world message, returning a [`FormattedHelloWorld`].
+    #[allow(clippy::needless_lifetimes)] // documentary example
+    pub fn format<'l>(&'l self) -> FormattedHelloWorld<'l> {
+        FormattedHelloWorld {
+            data: self.data.get(),
+        }
+    }
+
+    /// Formats a hello world message, returning a [`String`].
+    pub fn format_to_string(&self) -> String {
+        self.format().write_to_string().into_owned()
+    }
+}
+
+impl<'l> Writeable for FormattedHelloWorld<'l> {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        self.data.message.write_to(sink)
+    }
+
+    fn write_to_string(&self) -> Cow<str> {
+        self.data.message.clone()
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        self.data.message.writeable_length_hint()
     }
 }
 
