@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663895636935,
+  "lastUpdate": 1663898045369,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28073,6 +28073,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/15eb279623daefef4c0fee077eb05af20340f6cd"
         },
         "date": 1663895579879,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "42b574d447e952d201136478cafe76311c6245f7",
+          "message": "More updates to datetime docs (#2550)",
+          "timestamp": "2022-09-23T01:51:51Z",
+          "tree_id": "39549412022fadd9bfba4c5d7e5fe6bfa2385f3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/42b574d447e952d201136478cafe76311c6245f7"
+        },
+        "date": 1663897991869,
         "tool": "ndjson",
         "benches": [
           {
