@@ -37,12 +37,12 @@ use fixed_decimal::FixedDecimal;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
-///         i: 2, // i
-///         v: 0, // v
-///         w: 0, // w
-///         f: 0, // f
-///         t: 0, // t
-///         c: 0, // c
+///         i: 2,
+///         v: 0,
+///         w: 0,
+///         f: 0,
+///         t: 0,
+///         c: 0,
 ///     }),
 ///     PluralOperands::from(2_usize)
 /// );
@@ -56,12 +56,12 @@ use fixed_decimal::FixedDecimal;
 ///
 /// assert_eq!(
 ///     Ok(PluralOperands::from(RawPluralOperands {
-///         i: 123, // i
-///         v: 2,   // v
-///         w: 2,   // w
-///         f: 45,  // f
-///         t: 45,  // t
-///         c: 0,   // c
+///         i: 123,
+///         v: 2,
+///         w: 2,
+///         f: 45,
+///         t: 45,
+///         c: 0,
 ///     })),
 ///     "123.45".parse()
 /// );
@@ -76,12 +76,12 @@ use fixed_decimal::FixedDecimal;
 ///
 /// assert_eq!(
 ///     PluralOperands::from(RawPluralOperands {
-///         i: 123, // i
-///         v: 2,   // v
-///         w: 2,   // w
-///         f: 45,  // f
-///         t: 45,  // t
-///         c: 0,   // c
+///         i: 123,
+///         v: 2,
+///         w: 2,
+///         f: 45,
+///         t: 45,
+///         c: 0,
 ///     }),
 ///     (&FixedDecimal::from(12345)
 ///         .multiplied_pow10(-2))
