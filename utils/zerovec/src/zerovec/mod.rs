@@ -88,6 +88,8 @@ where
     T: AsULE,
 {
     /// Pointer to data
+    /// This pointer is *always* valid, the reason it is represented as a raw pointer
+    /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
     buf: *mut [T::ULE],
     /// Borrowed if zero. Capacity of buffer above if not
     capacity: usize,
@@ -97,14 +99,20 @@ where
     marker: PhantomData<(Vec<T::ULE>, &'a [T::ULE])>,
 }
 
+// Send inherits as long as all fields are Send, but also references are Send only
+// when their contents are Sync (this is the core purpose of Sync), so
+// we need a Send+Sync bound since this struct can logically be a vector or a slice.
 unsafe impl<'a, T: AsULE> Send for ZeroVec<'a, T> where T::ULE: Send + Sync {}
+// Sync typically inherits as long as all fields are Sync
 unsafe impl<'a, T: AsULE> Sync for ZeroVec<'a, T> where T::ULE: Sync {}
 
 impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice = unsafe { &*self.buf };
+        // `buf` is either a valid vector or slice of `T::ULE`s, either
+        // way it's always valid
+        let slice: &[T::ULE] = unsafe { &*self.buf };
         ZeroSlice::from_ule_slice(slice)
     }
 }
@@ -224,6 +232,9 @@ where
     /// [`Self::alloc_from_slice()`].
     #[inline]
     pub fn new_owned(vec: Vec<T::ULE>) -> Self {
+        // Deconstruct the vector into parts
+        // This is the only part of the code that goes from Vec
+        // to ZeroVec, all other such operations should use this function
         let slice: &[T::ULE] = &*vec;
         let slice = slice as *const [_] as *mut [_];
         let capacity = vec.capacity();
@@ -480,6 +491,8 @@ where
         if self.is_owned() {
             None
         } else {
+            // `buf` is either a valid vector or slice of `T::ULE`s, either
+            // way it's always valid
             let ule_slice = unsafe { &*self.buf };
             Some(ZeroSlice::from_ule_slice(ule_slice))
         }
@@ -726,7 +739,7 @@ where
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
@@ -756,7 +769,7 @@ where
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
@@ -764,11 +777,13 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
-    /// zerovec.to_mut_slice().push(12_u16.to_unaligned());
+    /// zerovec.to_mut_slice()[1] = 5u16.to_unaligned();
     /// assert!(zerovec.is_owned());
     /// ```
     pub fn to_mut_slice(&mut self) -> &mut [T::ULE] {
         if !self.is_owned() {
+            // `buf` is either a valid vector or slice of `T::ULE`s, either
+            // way it's always valid
             let slice = unsafe { &*self.buf };
             *self = ZeroVec::new_owned(slice.into());
         }
@@ -785,6 +800,9 @@ where
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
         if self.is_owned() {
             let vec = unsafe {
+                // If self is owned, then we know
+                // for a fact that it came from the parts of a Vec
+                // (via Self::new_owned())
                 let len = (&*self.buf).len();
                 let ptr = self.buf as *mut T::ULE;
                 let capacity = self.capacity;
@@ -793,6 +811,8 @@ where
             };
             Cow::Owned(vec)
         } else {
+            // `buf` is either a valid vector or slice of `T::ULE`s, either
+            // way it's always valid
             let slice = unsafe { &*self.buf };
             // The borrowed destructor is a no-op, but we want to prevent
             // the check being run (and also prevent recursion in our Drop
