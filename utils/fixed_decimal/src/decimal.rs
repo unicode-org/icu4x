@@ -119,8 +119,9 @@ pub struct FixedDecimal {
 }
 
 /// A specification of the sign used when formatting a number.
-#[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[allow(clippy::exhaustive_enums)]
+// There are only 3 sign values, and they correspond to the low-level data model of FixedDecimal and UTS 35.
 pub enum Sign {
     /// No sign (implicitly positive, e.g., 1729).
     None,
