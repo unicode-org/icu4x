@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663898656629,
+  "lastUpdate": 1663914225085,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52756,6 +52756,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff1d4b370b834281e3524118fb41883341a7e2bd",
+          "message": "Warn against breaking the Pernosco integration of CharacterAndClass (#2604)",
+          "timestamp": "2022-09-23T09:11:25+03:00",
+          "tree_id": "8b03fd8dc329ce1a6b4612a00bcd8a009a2710a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/ff1d4b370b834281e3524118fb41883341a7e2bd"
+        },
+        "date": 1663914171021,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116866,
+            "range": "± 604",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23341,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63332,
+            "range": "± 664",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
             "range": "± 0",
             "unit": "ns/iter"
           },
