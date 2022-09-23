@@ -80,6 +80,7 @@ where
 /// //   1. The GMT offset
 /// //   2. The BCP-47 time zone ID
 /// //   3. A datetime (for metazone resolution)
+/// //   4. Note: we do not need the zone variant because of `load_generic_*()`
 ///
 /// // Set up the Metazone calculator and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
@@ -94,8 +95,8 @@ where
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.load_generic_non_location_long(&icu_testdata::unstable())?
-///     .load_generic_non_location_short(&icu_testdata::unstable())?;
+/// tzf.load_generic_non_location_short(&icu_testdata::unstable())?
+///     .load_generic_non_location_long(&icu_testdata::unstable())?;
 ///
 /// // "uschi"
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
@@ -103,7 +104,7 @@ where
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
-///     "Central Time"
+///     "CT"
 /// );
 ///
 /// // "ushnl"
@@ -112,7 +113,7 @@ where
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
-///     "Hawaii-Aleutian Time"
+///     "HST"
 /// );
 ///
 /// // "frpar"
