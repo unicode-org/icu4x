@@ -157,3 +157,11 @@ pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
 pub use icu_timezone as timezone;
+
+extern crate alloc;
+
+#[doc = include_str!("../../../docs/tutorials/intro.md")]
+#[doc = include_str!("../../../docs/tutorials/data_provider.md")]
+#[doc = include_str!("../../../docs/tutorials/writing_a_new_data_struct.md")]
+#[cfg(doctest)]
+pub struct Docs;

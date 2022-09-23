@@ -45,6 +45,17 @@ icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter
 
 # For docs links
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", default-features = false }
+icu_provider_fs = { version = "1.0.0-beta1", path = "../../provider/fs", optional = true }
+icu_provider_blob = { version = "1.0.0-beta1", path = "../../provider/blob", optional = true }
+icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true }
+zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", optional = true }
+serde = { version = "1.0", features = ["derive", "alloc", "std"] }
+icu_datagen = { version = "1.0.0-beta1", path = "../../provider/datagen", optional = true }
+yoke = { version = "0.6.0", path = "../../utils/yoke", optional = true }
+displaydoc = { version = "0.2.3", optional = true }
+litemap = { version = "0.5", path = "../../utils/litemap", optional = true }
+tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc"], default-features = false }
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
