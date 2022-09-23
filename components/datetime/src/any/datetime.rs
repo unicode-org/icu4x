@@ -58,7 +58,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(dtf
 ///     .format(&any_datetime)
-///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
@@ -100,10 +100,10 @@ use writeable::Writeable;
 /// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let manual_value = dtf.format(&manual_datetime).expect("calendars should match");
+/// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");
 /// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
-/// let converted_value = dtf.format(&iso_converted).expect("calendars should match");
+/// let converted_value = dtf.format(&iso_converted).expect("Calendars should match");
 /// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
@@ -177,7 +177,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -228,7 +228,7 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("calendars should match"), "September 2020");
+    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("Calendars should match"), "September 2020");
     /// ```
     #[cfg(feature = "experimental")]
     #[inline(never)]
@@ -320,7 +320,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -413,7 +413,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -550,7 +550,7 @@ mod tests {
         )
         .unwrap();
         writeable::assert_writeable_eq!(
-            dtf.format(datetime).expect("calendars should match"),
+            dtf.format(datetime).expect("Calendars should match"),
             expected
         );
     }

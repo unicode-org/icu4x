@@ -11,13 +11,32 @@ use writeable::Writeable;
 
 /// A data provider that reads ICU4X data from a filesystem directory.
 ///
+/// [`FsDataProvider`] implements [`BufferProvider`], so it can be used in
+/// `*_with_buffer_provider` constructors across ICU4X.
+///
 /// # Examples
 ///
 /// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::HelloWorldFormatter;
 /// use icu_provider_fs::FsDataProvider;
+/// use writeable::assert_writeable_eq;
 ///
-/// let provider = FsDataProvider::try_new("/path/to/data/directory")
-///     .expect_err("Specify a real directory in the line above");
+/// // Create a DataProvider from data files stored in a filesystem directory:
+/// let provider = FsDataProvider::try_new(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/json",
+/// ))
+/// .expect("Directory exists");
+///
+/// // Check that it works:
+/// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     &locale!("la").into()
+/// )
+/// .expect("locale exists");
+///
+/// assert_writeable_eq!(formatter.format(), "Ave, munde");
 /// ```
 #[derive(Debug, PartialEq, Clone)]
 pub struct FsDataProvider {

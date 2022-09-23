@@ -44,7 +44,7 @@ pub struct DateSymbolsV1<'data> {
     pub eras: Eras<'data>,
 }
 
-/// Symbol data for the day periods needed to format a time.
+/// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 pub(crate) struct ErasedDateSymbolsV1Marker;
@@ -53,6 +53,9 @@ impl DataMarker for ErasedDateSymbolsV1Marker {
     type Yokeable = DateSymbolsV1<'static>;
 }
 
+/// Symbol data for the day periods needed to format a time.
+///
+/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

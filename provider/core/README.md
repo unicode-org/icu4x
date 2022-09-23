@@ -2,6 +2,12 @@
 
 `icu_provider` is one of the [`ICU4X`] components.
 
+Unicode's experience with ICU4X's parent projects, ICU4C and ICU4J, led the team to realize
+that data management is the most critical aspect of deploying i18n, and that it requires
+a high level of customization for the needs of the platform it is embedded in. As a result
+ICU4X comes with a selection of providers that should allow for ICU4X to naturally fit into
+different business and technological needs of customers.
+
 `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
 [`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
@@ -32,6 +38,12 @@ All nontrivial data providers can fit into one of two classes.
 1. [`AnyProvider`]: Those whose data originates as structured Rust objects
 2. [`BufferProvider`]: Those whose data originates as unstructured `[u8]` buffers
 
+**✨ Key Insight:** A given data provider is generally *either* an [`AnyProvider`] *or* a
+[`BufferProvider`]. Which type depends on the data source, and it is not generally possible
+to convert one to the other.
+
+See also [crate::constructors].
+
 #### AnyProvider
 
 These providers are able to return structured data cast into `dyn Any` trait objects. Users
@@ -55,29 +67,6 @@ Examples of BufferProviders:
 
 - [`FsDataProvider`] reads individual buffers from the filesystem.
 - [`BlobDataProvider`] reads buffers from a large in-memory blob.
-
-### ICU4X Constructors and Data Versioning Policy
-
-A design goal of ICU4X is to enable data sharing across ICU4X library versions. In order
-to achieve this stability and still allow data structs to evolve, there are 3 versions of
-all ICU4X functions that take a data provider:
-
-1. `*_unstable`
-2. `*_with_any_provider`
-3. `*_with_buffer_provider`
-
-The `*_with_any_provider` and `*_with_buffer_provider` functions will succeed if given
-a data provider supporting all of the keys required for the object being constructed, either
-the current or any previous version within the same SemVer major release. For example, if a
-data file is built to support FooFormatter version 1.1, then FooFormatter version 1.2 will be
-able to read the same data file. Likewise, backwards-compatible keys can always be included
-by [`icu_datagen`] to support older library versions.
-
-The `*_unstable` functions are only guaranteed to work on data built for the exact same version
-of ICU4X. The advantage of the `*_unstable` functions is that they result in the smallest code
-size and allow for automatic data slicing when `BakedDataProvider` is used. However, the type
-bounds of this function may change over time, breaking SemVer guarantees. These functions
-should therefore only be used when you have full control over your data lifecycle.
 
 ### Provider Adapters
 

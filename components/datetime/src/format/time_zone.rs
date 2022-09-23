@@ -79,8 +79,9 @@ where
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, DateTimeFormatterError};
-    /// use icu_locid::locale;
+    /// use icu::datetime::DateTimeFormatterError;
+    /// use icu::datetime::time_zone::TimeZoneFormatter;
+    /// use icu::locid::locale;
     /// use tinystr::tinystr;
     ///
     /// let mut tzf = TimeZoneFormatter::try_new_unstable(

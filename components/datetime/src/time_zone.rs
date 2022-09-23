@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A formatter specifically for the time zone.
+
 use crate::provider::time_zones::TimeZoneBcp47Id;
 use alloc::borrow::Cow;
 use alloc::format;
@@ -20,6 +22,9 @@ use crate::{
 };
 use icu_provider::prelude::*;
 use writeable::Writeable;
+
+#[cfg(doc)]
+use crate::ZonedDateTimeFormatter;
 
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
@@ -44,6 +49,10 @@ where
     Ok(())
 }
 
+/// [`TimeZoneFormatter`] is available for users who need to separately control the formatting of time
+/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`], which includes default time zone
+/// formatting according to the calendar.
+///
 /// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
 /// to format time zones into that locale.
 ///
@@ -59,11 +68,15 @@ where
 ///
 /// # Examples
 ///
+/// Here, we configure the [`TimeZoneFormatter`] to first look for time zone formatting symbol
+/// data for `generic_non_location_short`, and if it does not exist, to subsequently check
+/// for `generic_non_location_long` data.
+///
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
-/// use icu_datetime::TimeZoneFormatter;
-/// use icu_locid::locale;
+/// use icu::datetime::{DateTimeFormatterError, time_zone::TimeZoneFormatter};
+/// use icu::locid::locale;
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
 ///
@@ -71,28 +84,60 @@ where
 /// //   1. The GMT offset
 /// //   2. The BCP-47 time zone ID
 /// //   3. A datetime (for metazone resolution)
-/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+/// //   4. Note: we do not need the zone variant because of `load_generic_*()`
+///
+/// // Set up the Metazone calculator and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
 /// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
-/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 ///
-/// // Set up the formatter:
+/// // Set up the formatter
 /// let mut tzf = TimeZoneFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.load_generic_non_location_long(&icu_testdata::unstable()).unwrap();
+/// tzf.load_generic_non_location_short(&icu_testdata::unstable())?
+///     .load_generic_non_location_long(&icu_testdata::unstable())?;
 ///
-/// // Check the result:
+/// // "uschi" - has metazone symbol data for generic_non_location_short
+/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
-///     "Central Time"
+///     "CT"
 /// );
+///
+/// // "ushnl" - has time zone override symbol data for generic_non_location_short
+/// let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "HST"
+/// );
+///
+/// // "frpar" - does not have symbol data for generic_non_location_short, so falls
+/// //           back to generic_non_location_long
+/// let mut time_zone = "+0100".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "frpar").into());
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "Central European Time"
+/// );
+///
+/// // GMT with offset - used when metazone is not available
+/// let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "GMT+05:30"
+/// );
+///
+/// # Ok::<(), DateTimeFormatterError>(())
 /// ```
 ///
 /// [data provider]: icu_provider
@@ -366,8 +411,8 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
-    /// use icu_locid::locale;
+    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
@@ -598,8 +643,8 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
-    /// use icu_locid::locale;
+    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
@@ -746,11 +791,15 @@ pub(crate) enum ZeroPadding {
     Off,
 }
 
-/// An enum for fallback formats.
+/// An enum for time zone fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
 pub enum FallbackFormat {
+    /// The ISO 8601 format for time zone format fallback.
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
+    /// The localized GMT format for time zone format fallback.
+    ///
+    /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
     LocalizedGmt,
 }
 
@@ -764,6 +813,9 @@ impl Default for FallbackFormat {
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
 pub struct TimeZoneFormatterOptions {
+    /// The time zone format fallback option.
+    ///
+    /// See [UTS 35 on Dates](https://unicode.org/reports/tr35/tr35-dates.html#71-time-zone-format-terminology) for more information.
     pub fallback_format: FallbackFormat,
 }
 

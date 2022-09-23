@@ -65,7 +65,7 @@
 //! // prefer using ISO dates with DateTimeFormatter
 //! let date = typed_date.to_iso().to_any();
 //!
-//! let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+//! let formatted_date = dtf.format(&date).expect("Calendars should match");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
@@ -106,6 +106,7 @@
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 //! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+//! [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -140,7 +141,6 @@ pub(crate) mod raw;
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
 #[cfg(feature = "experimental_skeleton_matching")]
 pub mod skeleton;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod time_zone;
 mod zoned_datetime;
 
@@ -154,6 +154,4 @@ pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
-pub use time_zone::TimeZoneFormatter;
-pub use time_zone::TimeZoneFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
