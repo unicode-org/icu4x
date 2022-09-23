@@ -2,6 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! 🚧 \[Experimental\] Data Structures and conversions for directly constructing the plural rule
+//! operands of a number
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. Use with caution.
+//! <a href="https://github.com/unicode-org/icu4x/issues/1091">#1091</a>
+//! </div>
+
 use crate::PluralOperands;
 
 #[cfg(doc)]
@@ -17,6 +26,12 @@ use crate::PluralRules;
 /// Most users with numerical data inputs for places where [`PluralOperands`] is
 /// accepted, like [`PluralRules::category_for`], should convert to [`PluralOperands`].
 /// See [`PluralOperands`] for details.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1091">#1091</a>
+/// </div>
 #[cfg(feature = "experimental")]
 #[allow(clippy::exhaustive_structs)] // experimental
 pub struct RawPluralOperands {

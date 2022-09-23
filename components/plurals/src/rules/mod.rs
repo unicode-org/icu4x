@@ -4,15 +4,15 @@
 
 //! 🚧 \[Experimental\] APIs and Data Structures for Plural Rules
 //!
+//! A single Plural Rule is an expression which tests the value of [`PluralOperands`]
+//! against a condition. If the condition is truthful, then the [`PluralCategory`]
+//! to which the Rule is assigned should be used.
+//!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 //! including in SemVer minor releases. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/1091">#1091</a>
 //! </div>
-//!
-//! A single Plural Rule is an expression which tests the value of [`PluralOperands`]
-//! against a condition. If the condition is truthful, then the [`PluralCategory`]
-//! to which the Rule is assigned should be used.
 //!
 //! # Examples
 //!
