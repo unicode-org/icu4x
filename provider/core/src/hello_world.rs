@@ -236,6 +236,7 @@ impl HelloWorldFormatter {
     crate::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
 
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
+    #[allow(clippy::needless_lifetimes)] // documentary example
     pub fn format<'l>(&'l self) -> FormattedHelloWorld<'l> {
         FormattedHelloWorld {
             data: self.data.get(),
