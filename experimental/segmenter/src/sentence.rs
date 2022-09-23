@@ -41,7 +41,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 ///
 /// ```rust
 /// use icu_segmenter::SentenceBreakSegmenter;
-/// let segmenter = SentenceBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
@@ -51,7 +51,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 ///
 /// ```rust
 /// use icu_segmenter::SentenceBreakSegmenter;
-/// let segmenter = SentenceBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
@@ -64,7 +64,7 @@ pub struct SentenceBreakSegmenter {
 
 impl SentenceBreakSegmenter {
     /// Construct a [`SentenceBreakSegmenter`].
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
@@ -77,6 +77,12 @@ impl SentenceBreakSegmenter {
             lstm,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: DataError
+    );
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {

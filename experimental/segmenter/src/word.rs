@@ -43,7 +43,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
@@ -53,7 +53,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
@@ -67,7 +67,7 @@ pub struct WordBreakSegmenter {
 impl WordBreakSegmenter {
     /// Construct a [`WordBreakSegmenter`].
     #[cfg(feature = "lstm")]
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -108,7 +108,7 @@ impl WordBreakSegmenter {
 
     /// Construct a [`WordBreakSegmenter`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -146,6 +146,12 @@ impl WordBreakSegmenter {
             lstm: LstmPayloads::default(),
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: DataError
+    );
 
     fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,

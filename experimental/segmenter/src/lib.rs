@@ -32,7 +32,7 @@
 //!```rust
 //! use icu::segmenter::LineBreakSegmenter;
 //!
-//! let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
+//! let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
@@ -53,7 +53,7 @@
 //!```rust
 //! use icu::segmenter::WordBreakSegmenter;
 //!
-//! let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
+//! let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
