@@ -605,13 +605,15 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Construct from a BCP-47 string
     ///
-    /// Returns None if the calendar is unknown
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
         Self::get_for_bcp47_bytes(x.as_bytes())
     }
     /// Construct from a BCP-47 byte string
     ///
-    /// Returns None if the calendar is unknown
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
         Some(match x {
             b"gregory" => AnyCalendarKind::Gregorian,
@@ -628,7 +630,8 @@ impl AnyCalendarKind {
     }
     /// Construct from a BCP-47 [`Value`]
     ///
-    /// Returns None if the calendar is unknown
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
         Some(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
@@ -685,8 +688,8 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`Locale`]
     ///
-    /// Will not perform any kind of fallbacking and will error for
-    /// unknown or unspecified calendar kinds
+    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
     pub fn get_for_locale(l: &Locale) -> Option<Self> {
         l.extensions
             .unicode
@@ -697,8 +700,8 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`DataLocale`]
     ///
-    /// Will NOT perform any kind of fallbacking and will error for
-    /// unknown or unspecified calendar kinds
+    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
     fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
         l.get_unicode_ext(&key!("ca"))
             .and_then(|v| Self::get_for_bcp47_value(&v))

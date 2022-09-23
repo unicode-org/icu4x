@@ -75,7 +75,7 @@ impl DateTimeError {
     ///     .expect_err("Māori calendar is not yet supported");
     /// ```
     ///
-    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
+    /// [`AnyCalendarKind`]: crate::AnyCalendarKind
     pub fn unknown_any_calendar_kind(description: impl Writeable) -> Self {
         let tiny = description
             .write_to_string()
