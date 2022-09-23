@@ -8,8 +8,8 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::DateTimeFormatterOptions;
-use icu::datetime::{TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
+use icu::datetime::time_zone::TimeZoneFormatterOptions;
+use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;

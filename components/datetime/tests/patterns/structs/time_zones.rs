@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{time_zone, DateTimeFormatterError, TimeZoneFormatter};
+use icu_datetime::time_zone;
+use icu_datetime::time_zone::TimeZoneFormatter;
+use icu_datetime::DateTimeFormatterError;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 

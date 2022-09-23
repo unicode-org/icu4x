@@ -17,7 +17,11 @@ use writeable::Writeable;
 
 use super::datetime;
 
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+#[cfg(doc)]
+use crate::ZonedDateTimeFormatter;
+
+/// [`FormattedTimeZone`] is a intermediate structure which can be retrieved
+/// as an output from [`ZonedDateTimeFormatter`].
 pub struct FormattedZonedDateTime<'l> {
     pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
     pub(crate) datetime: ExtractedDateTimeInput,

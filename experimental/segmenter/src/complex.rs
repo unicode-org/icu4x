@@ -144,13 +144,13 @@ pub fn complex_language_segment_str(
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use super::*;
     use icu_locid::locale;
     use icu_provider::prelude::*;
 
     #[test]
-    #[cfg(feature = "serde")]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let data_locale = locale!("th").into();

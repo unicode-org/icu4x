@@ -4,7 +4,7 @@ Types for resolving and manipulating time zones.
 
 ## Fields
 
-In ICU4X, a formattable time zone consists of four different fields:
+In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
 
 1. The offset from GMT
 2. The time zone ID
@@ -59,6 +59,10 @@ this is called the _zone variant_. There are two zone variants:
 
 1. `"dt"` = daylight or summer time
 2. `"st"` = standard or winter time
+
+Note: It is optional (not required) to set the zone variant when constructing a
+[`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
+to represent the lack of a preference.
 
 ## Calculations
 
