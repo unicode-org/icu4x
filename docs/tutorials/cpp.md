@@ -77,7 +77,7 @@ int main() {
 
 Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [freertos port]. ICU4X is happy to accept such ports upstream.
 
-The `icu_capi_staticlib` crate additionally supports an `x86tiny` for highly size-optimized builds, to be run with `cargo panic-abort-build` (shorthand for `build` with `-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort`).
+The `icu_capi_staticlib` crate additionally supports an `x86tiny` for highly size-optimized builds, to be run with `cargo panic-abort-build` (shorthand for `build` with `-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort`). This requires a nighly compiler; it has been tested to work on `nightly-2022-04-05`.
 
 ## Tips
 
