@@ -57,7 +57,7 @@ pub mod ffi {
         /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
         ///
         /// Errors if the calendar is not known or supported.
-        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_bcp47, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_bcp47_value, FnInEnum)]
         #[diplomat::rust_link(
             icu::calendar::AnyCalendarKind::get_for_bcp47_string,
             FnInEnum,

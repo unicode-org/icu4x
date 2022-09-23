@@ -378,6 +378,10 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
 
+        // Constructing an error is not useful over FFI because it gets turned into
+        // a flat ICU4XError anyway
+        "icu::calendar::DateTimeError::unknown_any_calendar_kind",
+
         // Rusty input trait
         "icu::datetime::input",
 
