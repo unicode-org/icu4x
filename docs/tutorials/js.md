@@ -5,7 +5,7 @@ ICU4X's core functionality is completely available from JS and TypeScript via We
 
 A generated package can be found under [`ffi/diplomat/wasm/icu4x`], with Sphinx docs at [`ffi/diplomat/wasm/icu4x/docs`]. You can also run `tsdoc` on the package to get TypeScript docs.
 
-_We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out _
+_We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out_
 
 # Building the package
 
