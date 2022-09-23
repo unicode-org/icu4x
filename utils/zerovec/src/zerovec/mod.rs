@@ -141,16 +141,32 @@ impl<U> EyepatchHackVector<U> {
     fn as_slice<'a>(&'a self) -> &'a [U] {
         unsafe { &*self.buf }
     }
+
+    /// Return this type as a vector
+    ///
+    /// Data MUST be known to be owned beforehand
+    ///
+    /// Because this borrows self, this is effectively creating two owners to the same
+    /// data, make sure that `self` is cleaned up after this
+    ///
+    /// (this does not simply take `self` since then it wouldn't be usable from the Drop impl)
+    unsafe fn get_vec(&self) -> Vec<U> {
+        debug_assert!(self.capacity != 0);
+        let slice: &[U] = self.as_slice();
+        let len = slice.len();
+        // Safety: we are assuming owned, and in owned cases
+        // this always represents a valid vector
+        Vec::from_raw_parts(self.buf as *mut U, len, self.capacity)
+    }
 }
 
 impl<U> Drop for EyepatchHackVector<U> {
     #[inline]
     fn drop(&mut self) {
         if self.capacity != 0 {
-            let slice: &[U] = self.as_slice();
-            let len = slice.len();
             unsafe {
-                let _: Vec<U> = Vec::from_raw_parts(self.buf as *mut U, len, self.capacity);
+                // we don't need to clean up self here since we're already in a Drop impl
+                let _ = self.get_vec();
             }
         }
     }
@@ -837,15 +853,11 @@ where
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
         if self.is_owned() {
             let vec = unsafe {
-                // If self is owned, then we know
-                // for a fact that it came from the parts of a Vec
-                // (via Self::new_owned())
-                let len = (&*self.vector.buf).len();
-                let ptr = self.vector.buf as *mut T::ULE;
-                let capacity = self.vector.capacity;
-                mem::forget(self);
-                Vec::from_raw_parts(ptr, len, capacity)
+                // safe to call: we know it's owned,
+                // and we mem::forget self immediately afterwards
+                self.vector.get_vec()
             };
+            mem::forget(self);
             Cow::Owned(vec)
         } else {
             // We can extend the lifetime of the slice to 'a
