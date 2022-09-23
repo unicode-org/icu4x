@@ -68,6 +68,10 @@ where
 ///
 /// # Examples
 ///
+/// Here, we configure the [`TimeZoneFormatter`] to first look for time zone formatting symbol
+/// data for `generic_non_location_short`, and if it does not exist, to subsequently check
+/// for `generic_non_location_long` data.
+///
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
@@ -98,7 +102,7 @@ where
 /// tzf.load_generic_non_location_short(&icu_testdata::unstable())?
 ///     .load_generic_non_location_long(&icu_testdata::unstable())?;
 ///
-/// // "uschi"
+/// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
 /// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
@@ -107,8 +111,8 @@ where
 ///     "CT"
 /// );
 ///
-/// // "ushnl"
-/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// // "ushnl" - has time zone override symbol data for generic_non_location_short
+/// let mut time_zone = "-1000".parse::<CustomTimeZone>().unwrap();
 /// time_zone.time_zone_id = Some(tinystr!(8, "ushnl").into());
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
@@ -116,13 +120,21 @@ where
 ///     "HST"
 /// );
 ///
-/// // "frpar"
-/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// // "frpar" - does not have symbol data for generic_non_location_short, so falls
+/// //           back to generic_non_location_long
+/// let mut time_zone = "+0100".parse::<CustomTimeZone>().unwrap();
 /// time_zone.time_zone_id = Some(tinystr!(8, "frpar").into());
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
 ///     "Central European Time"
+/// );
+///
+/// // GMT with offset - used when metazone is not available
+/// let mut time_zone = "+0530".parse::<CustomTimeZone>().unwrap();
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
+///     "GMT+05:30"
 /// );
 ///
 /// # Ok::<(), DateTimeFormatterError>(())
