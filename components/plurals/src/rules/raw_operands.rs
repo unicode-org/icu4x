@@ -61,3 +61,16 @@ impl From<RawPluralOperands> for PluralOperands {
         }
     }
 }
+
+impl From<PluralOperands> for RawPluralOperands {
+    fn from(po: PluralOperands) -> RawPluralOperands {
+        Self {
+            i: po.i,
+            v: po.v,
+            w: po.w,
+            f: po.f,
+            t: po.t,
+            c: po.c,
+        }
+    }
+}
