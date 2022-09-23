@@ -12,7 +12,8 @@ We plan to release ICU4X on NPM soon, and hope to fill in these docs over time w
 
 Similar to C++, the JS APIs mirror the Rust code in the `icu_capi` crate, which can be explored on [docs.rs][rust-docs], though the precise types used may be different.
 
-
+ [discussions forum]: https://github.com/unicode-org/icu4x/discussions
+ [Diplomat]: https://github.com/rust-diplomat/diplomat
  [`ffi/diplomat/wasm/icu4x/`]: https://github.com/unicode-org/icu4x/tree/main/ffi/diplomat/wasm/icu4x/
  [`ffi/diplomat/wasm/icu4x/docs`]: https://github.com/unicode-org/icu4x/tree/main/ffi/diplomat/wasm/icu4x/docs
  [`ffi/diplomat/wasm/icu4x/wasm-demo`]: https://github.com/unicode-org/icu4x/tree/main/ffi/diplomat/wasm/icu4x/wasm-demo
