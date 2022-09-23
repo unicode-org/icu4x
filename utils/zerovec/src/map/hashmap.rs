@@ -3,25 +3,46 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
-use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
+use crate::ZeroVec;
 use ahash::AHasher;
 use alloc::borrow::Borrow;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 
+// Split the 64bit hash into (g, f0, f1)
+// g == highest 16 bits of h
+// f0 == middle 24 bits of h
+// f1 == lowest 24 bits of h
 #[inline]
-fn compute_hash<K: Hash>(seed: u32, k: &K, m: usize) -> usize {
-    let mut hasher = AHasher::new_with_keys(seed.into(), 0xaabbccdd);
+const fn split_hash64(hash: u64, m: u32) -> (usize, u32, u32) {
+    (
+        ((hash >> 48) as u32 % m) as usize,
+        (hash >> 24) as u32 & 0xffffff,
+        ((hash & 0xffffff) as u32),
+    )
+}
+
+// Compute (f0 + f1 * d0 + d1) % m
+// where
+// f0, f1 are 24 bits
+#[inline]
+fn compute_displacement(f: (u32, u32), d: (u32, u32), m: u32) -> usize {
+    (f.1.wrapping_mul(d.0).wrapping_add(f.0).wrapping_add(d.1) % m) as usize
+}
+
+#[inline]
+fn compute_hash<K: Hash>(k: &K, m: usize) -> (usize, u32, u32) {
+    let mut hasher = AHasher::new_with_keys(0x00, 0xaabbccdd);
     k.hash(&mut hasher);
-    hasher.finish() as usize % m
+    split_hash64(hasher.finish(), m as u32)
 }
 
 #[derive(Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 struct HashIndex<'a> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    displacements: FlexZeroVec<'a>,
+    displacements: ZeroVec<'a, (u32, u32)>,
 }
 
 impl<'a> HashIndex<'a> {
@@ -46,27 +67,26 @@ impl<'a> HashIndex<'a> {
 
         // Compute initial displacement and bucket sizes
         for i in 0..len {
-            // Compute first level hash of the key bytes.
-            // First level uses a seed value of 0.
-            let l1 = K::Container::zvl_get_as_t(
+            // Compute (g, f0, f1) of the key bytes.
+            let h = K::Container::zvl_get_as_t(
                 // 0 <= i < keys.len()
                 keys.zvl_get(i).unwrap(),
-                |k| compute_hash(0x00, &k, len),
+                |k| compute_hash(&k, len),
             );
 
-            // 0 <= l1 < keys.len()
-            bucket_sizes[l1] += 1;
-            bucket_flatten.push((l1, i));
+            // 0 <= g < keys.len()
+            bucket_sizes[h.0] += 1;
+            bucket_flatten.push((h, i));
         }
 
         // Sort by decreasing order of bucket_sizes.
         bucket_flatten.sort_by(|&(ha, _), &(hb, _)| {
-            // ha, hb are always within bounds of `bucket_sizes`
-            (bucket_sizes[hb as usize], hb).cmp(&(bucket_sizes[ha as usize], ha))
+            // ha.0, hb.0 are always within bounds of `bucket_sizes`
+            (bucket_sizes[hb.0], hb).cmp(&(bucket_sizes[ha.0], ha))
         });
 
         // Generation count while iterating buckets.
-        // Each trial of (seed, bucket chain) is a new generation.
+        // Each trial of ((d0, d1), bucket chain) is a new generation.
         // We use this to track which all slots are assigned for the current bucket chain.
         let mut generation = 0;
 
@@ -82,59 +102,58 @@ impl<'a> HashIndex<'a> {
         // Vec to store the displacements (saves us a recomputation of hash while assigning slots).
         let mut current_displacements = Vec::with_capacity(16);
 
-        // As seed generation starts from 1, 0 can never be a valid seed hence using 0 as sentinal
-        // for non-existing first level hashes.
-        let mut displacements = vec![0; len];
+        // (d0, d1) which splits the bucket into different slots
+        let mut displacements = vec![(0, 0); len];
 
         // Vec to store mapping to the original order of keys.
-        // Normally this container should store (K, V) but we instead store the index of (K, V) in
-        // the original container.
+        // This is a permutation which will be applied to keys, values at the end.
         let mut reverse_mapping = vec![0; len];
 
         let mut start = 0;
         while start < len {
             // Bucket span with the same first level hash
             // start is always within bounds of `bucket_flatten`
-            let l1 = bucket_flatten[start].0;
-            // l1 is always within bounds of `bucket_sizes`
-            let end = start + bucket_sizes[l1];
+            let g = bucket_flatten[start].0 .0;
+            // g is always within bounds of `bucket_sizes`
+            let end = start + bucket_sizes[g];
             // start, end - 1 are always within bounds of `bucket_sizes`
             let buckets = &bucket_flatten[start..end];
 
-            'seed: for seed in 0x1u32.. {
-                current_displacements.clear();
-                generation += 1;
+            'd0: for d0 in 0..len as u32 {
+                'd1: for d1 in 0..len as u32 {
+                    current_displacements.clear();
+                    generation += 1;
 
-                for (_, i) in buckets {
-                    let displacement_idx = K::Container::zvl_get_as_t(
-                        //  0 <= i < keys.len()
-                        keys.zvl_get(*i).unwrap(),
-                        |k| compute_hash(seed, &k, len),
-                    );
+                    for ((_, f0, f1), _) in buckets {
+                        let displacement_idx =
+                            compute_displacement((*f0, *f1), (d0, d1), len as u32);
 
-                    // displacement_idx is always within bounds
-                    if occupied[displacement_idx] || assignments[displacement_idx] == generation {
-                        continue 'seed;
+                        // displacement_idx is always within bounds
+                        if occupied[displacement_idx] || assignments[displacement_idx] == generation
+                        {
+                            continue 'd1;
+                        }
+                        assignments[displacement_idx] = generation;
+
+                        current_displacements.push(displacement_idx);
                     }
-                    assignments[displacement_idx] = generation;
 
-                    current_displacements.push(displacement_idx);
+                    // Successfully found a (d0, d1), store it as index g.
+                    // g < displacements.len() due to modulo operation
+                    displacements[g] = (d0, d1);
+
+                    for (i, displacement_idx) in current_displacements.iter().enumerate() {
+                        // `current_displacements` has same size as `buckets`
+                        let (_, idx) = &buckets[i];
+
+                        // displacement_idx is always within bounds
+                        occupied[*displacement_idx] = true;
+                        reverse_mapping[*displacement_idx] = *idx;
+                    }
+                    break 'd0;
                 }
-
-                // Successfully found a seed, store it as index l1.
-                // l1 < displacements.len() due to modulo operation
-                displacements[l1] = seed as usize;
-
-                for (i, displacement_idx) in current_displacements.iter().enumerate() {
-                    // `current_displacements` has same size as `buckets`
-                    let (_, idx) = &buckets[i];
-
-                    // displacement_idx is always within bounds
-                    occupied[*displacement_idx] = true;
-                    reverse_mapping[*displacement_idx] = *idx;
-                }
-                break;
             }
+
             start = end;
         }
 
@@ -142,9 +161,7 @@ impl<'a> HashIndex<'a> {
         values.zvl_permute(&mut reverse_mapping);
 
         Self {
-            displacements: FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(
-                displacements.into_iter(),
-            )),
+            displacements: ZeroVec::alloc_from_slice(&displacements),
         }
     }
 
@@ -153,15 +170,13 @@ impl<'a> HashIndex<'a> {
     where
         K: Hash,
     {
-        let l1 = compute_hash(0, k, self.displacements.len());
-
-        #[allow(clippy::unwrap_used)] // l1 is in 0..self.displacements.len()
-        let seed = self.displacements.get(l1).unwrap();
-        if seed == 0 {
-            None
-        } else {
-            Some(compute_hash(seed as u32, k, self.displacements.len()))
-        }
+        let (g, f0, f1) = compute_hash(k, self.displacements.len());
+        let (d0, d1) = self.displacements.get(g).unwrap();
+        Some(compute_displacement(
+            (f0, f1),
+            (d0, d1),
+            self.displacements.len() as u32,
+        ))
     }
 }
 
@@ -256,7 +271,7 @@ mod tests {
 
     #[test]
     fn test_zhms_u64k_u64v() {
-        const N: usize = 1000000;
+        const N: usize = 65530;
         let seed = u64::from_le_bytes(*b"testseed");
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
