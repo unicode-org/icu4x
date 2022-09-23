@@ -87,12 +87,8 @@ pub struct ZeroVec<'a, T>
 where
     T: AsULE,
 {
-    /// Pointer to data
-    /// This pointer is *always* valid, the reason it is represented as a raw pointer
-    /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
-    buf: *mut [T::ULE],
-    /// Borrowed if zero. Capacity of buffer above if not
-    capacity: usize,
+    vector: EyepatchHackVector<T::ULE>,
+
     /// Marker type, signalling variance and dropck behavior
     /// by containing all potential types this type represents
     #[allow(clippy::type_complexity)] // needed to get correct marker type behavior
@@ -110,20 +106,53 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        // `buf` is either a valid vector or slice of `T::ULE`s, either
-        // way it's always valid
-        let slice: &[T::ULE] = unsafe { &*self.buf };
+        //
+        let slice: &[T::ULE] = self.vector.as_slice();
         ZeroSlice::from_ule_slice(slice)
     }
 }
 
-// Todo: after https://github.com/rust-lang/rust/issues/34761 stabilizes,
-// use #[may_dangle]
-impl<'a, T: AsULE> Drop for ZeroVec<'a, T> {
+// Represents an unsafe potentially-owned vector/slice type, without a lifetime
+// working around dropck limitations.
+//
+// Must either be constructed by deconstructing a Vec<U>, or from &[U] with capacity set to
+// zero. Should not outlive its source &[U] in the borrowed case; this type does not in
+// and of itself uphold this guarantee, but the .as_slice() method assumes it.
+//
+// After https://github.com/rust-lang/rust/issues/34761 stabilizes,
+// we should remove this type and use #[may_dangle]
+struct EyepatchHackVector<U> {
+    /// Pointer to data
+    /// This pointer is *always* valid, the reason it is represented as a raw pointer
+    /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
+    buf: *mut [U],
+    /// Borrowed if zero. Capacity of buffer above if not
+    capacity: usize,
+}
+
+impl<U> EyepatchHackVector<U> {
+    // Return a slice to the inner data for an arbitrary caller-specified lifetime
+    #[inline]
+    unsafe fn as_arbitrary_slice<'a>(&self) -> &'a [U] {
+        &*self.buf
+    }
+    // Return a slice to the inner data
+    #[inline]
+    fn as_slice<'a>(&'a self) -> &'a [U] {
+        unsafe { &*self.buf }
+    }
+}
+
+impl<U> Drop for EyepatchHackVector<U> {
     #[inline]
     fn drop(&mut self) {
-        let this = mem::take(self);
-        let _ = this.into_cow();
+        if self.capacity != 0 {
+            let slice: &[U] = self.as_slice();
+            let len = slice.len();
+            unsafe {
+                let _: Vec<U> = Vec::from_raw_parts(self.buf as *mut U, len, self.capacity);
+            }
+        }
     }
 }
 
@@ -133,8 +162,10 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
             ZeroVec::new_owned(self.as_ule_slice().into())
         } else {
             Self {
-                buf: self.buf,
-                capacity: 0,
+                vector: EyepatchHackVector {
+                    buf: self.vector.buf,
+                    capacity: 0,
+                },
                 marker: PhantomData,
             }
         }
@@ -242,8 +273,10 @@ where
         let capacity = vec.capacity();
         mem::forget(vec);
         Self {
-            buf: slice,
-            capacity,
+            vector: EyepatchHackVector {
+                buf: slice,
+                capacity,
+            },
             marker: PhantomData,
         }
     }
@@ -254,8 +287,10 @@ where
     pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
         let slice = slice as *const [_] as *mut [_];
         Self {
-            buf: slice,
-            capacity: 0,
+            vector: EyepatchHackVector {
+                buf: slice,
+                capacity: 0,
+            },
             marker: PhantomData,
         }
     }
@@ -483,7 +518,7 @@ where
     /// Check if this type is fully owned
     #[inline]
     pub fn is_owned(&self) -> bool {
-        self.capacity != 0
+        self.vector.capacity != 0
     }
 
     /// If this is a borrowed ZeroVec, return it as a slice that covers
@@ -493,9 +528,9 @@ where
         if self.is_owned() {
             None
         } else {
-            // `buf` is either a valid vector or slice of `T::ULE`s, either
-            // way it's always valid
-            let ule_slice = unsafe { &*self.buf };
+            // We can extend the lifetime of the slice to 'a
+            // since we know it is borrowed
+            let ule_slice = unsafe { self.vector.as_arbitrary_slice() };
             Some(ZeroSlice::from_ule_slice(ule_slice))
         }
     }
@@ -786,10 +821,10 @@ where
         if !self.is_owned() {
             // `buf` is either a valid vector or slice of `T::ULE`s, either
             // way it's always valid
-            let slice = unsafe { &*self.buf };
+            let slice = self.vector.as_slice();
             *self = ZeroVec::new_owned(slice.into());
         }
-        unsafe { &mut *self.buf }
+        unsafe { &mut *self.vector.buf }
     }
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
@@ -805,20 +840,19 @@ where
                 // If self is owned, then we know
                 // for a fact that it came from the parts of a Vec
                 // (via Self::new_owned())
-                let len = (&*self.buf).len();
-                let ptr = self.buf as *mut T::ULE;
-                let capacity = self.capacity;
+                let len = (&*self.vector.buf).len();
+                let ptr = self.vector.buf as *mut T::ULE;
+                let capacity = self.vector.capacity;
                 mem::forget(self);
                 Vec::from_raw_parts(ptr, len, capacity)
             };
             Cow::Owned(vec)
         } else {
-            // `buf` is either a valid vector or slice of `T::ULE`s, either
-            // way it's always valid
-            let slice = unsafe { &*self.buf };
+            // We can extend the lifetime of the slice to 'a
+            // since we know it is borrowed
+            let slice = unsafe { self.vector.as_arbitrary_slice() };
             // The borrowed destructor is a no-op, but we want to prevent
-            // the check being run (and also prevent recursion in our Drop
-            // impl, which calls into_cow)
+            // the check being run
             mem::forget(self);
             Cow::Borrowed(slice)
         }
