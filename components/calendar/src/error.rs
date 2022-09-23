@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_locid::extensions::unicode::Value;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
+use writeable::Writeable;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
@@ -60,16 +60,28 @@ impl From<core::num::ParseIntError> for DateTimeError {
 }
 
 impl DateTimeError {
-    pub(crate) fn unknown_kind_from_bytes(bytes: &[u8]) -> Self {
-        let tiny = bytes
+    /// Create an error when an [`AnyCalendarKind`] is expected but not available.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::AnyCalendarKind;
+    /// use icu_calendar::DateTimeError;
+    ///
+    /// let cal_str = "maori";
+    ///
+    /// AnyCalendarKind::get_for_bcp47_string(cal_str)
+    ///     .ok_or_else(|| DateTimeError::unknown_any_calendar_kind(cal_str))
+    ///     .expect_err("Māori calendar is not yet supported");
+    /// ```
+    ///
+    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
+    pub fn unknown_any_calendar_kind(description: impl Writeable) -> Self {
+        let tiny = description
+            .write_to_string()
             .get(0..16)
-            .and_then(|x| TinyStr16::from_bytes(x).ok())
+            .and_then(|x| TinyStr16::from_str(x).ok())
             .unwrap_or(tinystr!(16, "invalid"));
         Self::UnknownAnyCalendarKind(tiny)
-    }
-
-    pub(crate) fn unknown_kind_from_value(value: &Value) -> Self {
-        let string = writeable::Writeable::write_to_string(value);
-        Self::unknown_kind_from_bytes(string.as_bytes())
     }
 }

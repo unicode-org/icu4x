@@ -47,9 +47,10 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
         WriteableError = 0x01,
-
         // Some input was out of bounds
         OutOfBoundsError = 0x02,
+        // An optional value is not present (not necesarilly an error)
+        OptionNoneError = 0x03,
 
         // general data errors
         // See DataError
@@ -120,7 +121,6 @@ pub mod ffi {
         // timezone errors
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
-        TimeZoneMissingInputError = 0xA_02,
 
         // normalizer errors
         NormalizerFutureExtensionError = 0xB_00,

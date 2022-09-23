@@ -20,7 +20,6 @@ use icu_locid::{
     subtags_language as language, Locale,
 };
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 use core::fmt;
 
@@ -607,14 +606,14 @@ impl AnyCalendarKind {
     /// Construct from a BCP-47 string
     ///
     /// Returns None if the calendar is unknown
-    pub fn try_from_bcp47_string(x: &str) -> Result<Self, DateTimeError> {
-        Self::try_from_bcp47_bytes(x.as_bytes())
+    pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
+        Self::get_for_bcp47_bytes(x.as_bytes())
     }
     /// Construct from a BCP-47 byte string
     ///
     /// Returns None if the calendar is unknown
-    pub fn try_from_bcp47_bytes(x: &[u8]) -> Result<Self, DateTimeError> {
-        Ok(match x {
+    pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
+        Some(match x {
             b"gregory" => AnyCalendarKind::Gregorian,
             b"buddhist" => AnyCalendarKind::Buddhist,
             b"japanese" => AnyCalendarKind::Japanese,
@@ -624,14 +623,14 @@ impl AnyCalendarKind {
             b"iso" => AnyCalendarKind::Iso,
             b"ethiopic" => AnyCalendarKind::Ethiopian,
             b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
-            _ => return Err(DateTimeError::unknown_kind_from_bytes(x)),
+            _ => return None,
         })
     }
     /// Construct from a BCP-47 [`Value`]
     ///
-    /// Returns an error if the calendar is unknown
-    pub fn try_from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
-        Ok(if *x == value!("gregory") {
+    /// Returns None if the calendar is unknown
+    pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
+        Some(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
@@ -650,7 +649,7 @@ impl AnyCalendarKind {
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::EthiopianAmeteAlem
         } else {
-            return Err(DateTimeError::unknown_kind_from_value(x));
+            return None;
         })
     }
 
@@ -688,35 +687,27 @@ impl AnyCalendarKind {
     ///
     /// Will not perform any kind of fallbacking and will error for
     /// unknown or unspecified calendar kinds
-    pub fn try_from_locale(l: &Locale) -> Result<Self, DateTimeError> {
+    pub fn get_for_locale(l: &Locale) -> Option<Self> {
         l.extensions
             .unicode
             .keywords
             .get(&key!("ca"))
-            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
-                16,
-                "(unspecified)"
-            )))
-            .and_then(Self::try_from_bcp47)
+            .and_then(Self::get_for_bcp47_value)
     }
 
     /// Extract the calendar component from a [`DataLocale`]
     ///
     /// Will NOT perform any kind of fallbacking and will error for
     /// unknown or unspecified calendar kinds
-    fn try_from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
+    fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
         l.get_unicode_ext(&key!("ca"))
-            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
-                16,
-                "(unspecified)"
-            )))
-            .and_then(|v| Self::try_from_bcp47(&v))
+            .and_then(|v| Self::get_for_bcp47_value(&v))
     }
 
     // Do not make public, this will eventually need fallback
     // data from the provider
     fn from_data_locale_with_fallback(l: &DataLocale) -> Self {
-        if let Ok(kind) = Self::try_from_data_locale(l) {
+        if let Some(kind) = Self::get_for_data_locale(l) {
             kind
         } else {
             let lang = l.language();

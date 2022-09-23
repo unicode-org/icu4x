@@ -88,7 +88,7 @@ fn test_fixture(fixture_name: &str) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Ok(kind) = AnyCalendarKind::try_from_locale(&locale) {
+            if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
