@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663965777084,
+  "lastUpdate": 1663973537276,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28163,6 +28163,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/531b59e7f50157f0b6d8242966d726dfe868e4a6"
         },
         "date": 1663965719597,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4cb5ed130c8a7557c310a4fa0fa7ebf4d8e5270c",
+          "message": "Add module declaration-level notes about special-casing in Pernosco (#2619)",
+          "timestamp": "2022-09-23T22:44:56Z",
+          "tree_id": "d341576f93e6094d54d81a320b8eac045a6907a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/4cb5ed130c8a7557c310a4fa0fa7ebf4d8e5270c"
+        },
+        "date": 1663973479167,
         "tool": "ndjson",
         "benches": [
           {
