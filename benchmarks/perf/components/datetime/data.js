@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663974683244,
+  "lastUpdate": 1663975533268,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -73001,6 +73001,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5124,
             "range": "± 15",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2e29bd30a695d032bc82fb8606e3f6439991613",
+          "message": "Fixes the bidi documentation (#2621)\n\nFix bidi documentation",
+          "timestamp": "2022-09-24T01:11:20+02:00",
+          "tree_id": "85845f20eba917337c6c8a7704c365a330bcb182",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2e29bd30a695d032bc82fb8606e3f6439991613"
+        },
+        "date": 1663975469153,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77242,
+            "range": "± 488",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 129813,
+            "range": "± 351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 70554,
+            "range": "± 836",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 80658,
+            "range": "± 300",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77353,
+            "range": "± 194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 85988,
+            "range": "± 443",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 123713,
+            "range": "± 343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 139608,
+            "range": "± 631",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 129549,
+            "range": "± 363",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 145026,
+            "range": "± 451",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6047,
+            "range": "± 79",
             "unit": "ns/iter"
           }
         ]
