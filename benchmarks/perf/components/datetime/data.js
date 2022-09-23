@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663898663673,
+  "lastUpdate": 1663914285302,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -72731,6 +72731,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5047,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff1d4b370b834281e3524118fb41883341a7e2bd",
+          "message": "Warn against breaking the Pernosco integration of CharacterAndClass (#2604)",
+          "timestamp": "2022-09-23T09:11:25+03:00",
+          "tree_id": "8b03fd8dc329ce1a6b4612a00bcd8a009a2710a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/ff1d4b370b834281e3524118fb41883341a7e2bd"
+        },
+        "date": 1663914221218,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75795,
+            "range": "± 461",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 128106,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 69849,
+            "range": "± 583",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 79483,
+            "range": "± 264",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75911,
+            "range": "± 178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 85057,
+            "range": "± 222",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 121424,
+            "range": "± 216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 137590,
+            "range": "± 361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 127862,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 143411,
+            "range": "± 471",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6180,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
