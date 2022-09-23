@@ -117,6 +117,8 @@ impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     }
 }
 
+// Todo: after https://github.com/rust-lang/rust/issues/34761 stabilizes,
+// use #[may_dangle]
 impl<'a, T: AsULE> Drop for ZeroVec<'a, T> {
     #[inline]
     fn drop(&mut self) {
