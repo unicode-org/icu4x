@@ -4,11 +4,11 @@
 
 use super::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
-use ahash::AHasher;
 use alloc::borrow::Borrow;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
+use wyhash::WyHash;
 
 // Split the 64bit hash into (g, f0, f1)
 // g == highest 16 bits of h
@@ -33,7 +33,7 @@ fn compute_displacement(f: (u32, u32), d: (u32, u32), m: u32) -> usize {
 
 #[inline]
 fn compute_hash<K: Hash>(k: &K, m: usize) -> (usize, u32, u32) {
-    let mut hasher = AHasher::new_with_keys(0x00, 0xaabbccdd);
+    let mut hasher = WyHash::with_seed(0xaabbccdd);
     k.hash(&mut hasher);
     split_hash64(hasher.finish(), m as u32)
 }
