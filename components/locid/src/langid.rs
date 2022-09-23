@@ -114,7 +114,7 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_locale_bytes(b"en-US-x-posix").expect("Parsing failed.");
+    /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
