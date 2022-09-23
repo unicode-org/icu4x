@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663898045369,
+  "lastUpdate": 1663913619466,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28103,6 +28103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/42b574d447e952d201136478cafe76311c6245f7"
         },
         "date": 1663897991869,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ff1d4b370b834281e3524118fb41883341a7e2bd",
+          "message": "Warn against breaking the Pernosco integration of CharacterAndClass (#2604)",
+          "timestamp": "2022-09-23T09:11:25+03:00",
+          "tree_id": "8b03fd8dc329ce1a6b4612a00bcd8a009a2710a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/ff1d4b370b834281e3524118fb41883341a7e2bd"
+        },
+        "date": 1663913564784,
         "tool": "ndjson",
         "benches": [
           {
