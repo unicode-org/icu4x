@@ -240,7 +240,7 @@ fn assert_fixture_element<A>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_unstable(
+            let tf = TimeFormatter::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.time.unwrap(),
@@ -259,7 +259,7 @@ fn assert_fixture_element<A>(
 
             assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_unstable(
+            let tf = TimeFormatter::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.time.unwrap(),

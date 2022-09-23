@@ -41,7 +41,7 @@ pub mod ffi {
 
     impl ICU4XTimeFormatter {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::TimeFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::try_new_with_length_unstable, FnInStruct)]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -49,7 +49,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TimeFormatter::try_new_unstable(&provider.0, &locale, length.into())
+            TimeFormatter::try_new_with_length_unstable(&provider.0, &locale, length.into())
                 .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
