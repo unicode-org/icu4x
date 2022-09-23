@@ -4,8 +4,7 @@
 
 //! This module exposes tooling for running the [unicode bidi algorithm](https://unicode.org/reports/tr9/) using ICU4X data.
 //!
-//!   NOTE:
-//!     `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`].
+//! `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`], an external crate implementing UAX #9.
 //!
 //! # Examples
 //!
