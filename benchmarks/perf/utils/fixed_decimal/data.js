@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663896293045,
+  "lastUpdate": 1663898656629,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52696,6 +52696,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 188,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "42b574d447e952d201136478cafe76311c6245f7",
+          "message": "More updates to datetime docs (#2550)",
+          "timestamp": "2022-09-23T01:51:51Z",
+          "tree_id": "39549412022fadd9bfba4c5d7e5fe6bfa2385f3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/42b574d447e952d201136478cafe76311c6245f7"
+        },
+        "date": 1663898604331,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117246,
+            "range": "± 679",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23625,
+            "range": "± 183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63679,
+            "range": "± 654",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
             "range": "± 0",
             "unit": "ns/iter"
           },
