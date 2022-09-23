@@ -97,7 +97,7 @@ use writeable::Writeable;
 /// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
 /// // Create a DateTime at September 1, 2020 at 12:34:28 PM
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///

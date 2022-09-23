@@ -68,7 +68,7 @@
 
         Errors if the calendar is not known or supported.
 
-        See the `Rust documentation for get_for_bcp47 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47>`__ for more information.
+        See the `Rust documentation for get_for_bcp47_value <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> bcp47_to_writeable(W& write)
