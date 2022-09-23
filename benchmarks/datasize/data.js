@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663887354581,
+  "lastUpdate": 1663895636935,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28043,6 +28043,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a9e2ba4d54db7a3718f7bb849941c6f871c1ecbc"
         },
         "date": 1663887286554,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15eb279623daefef4c0fee077eb05af20340f6cd",
+          "message": "Initial constructor documentation overhaul (#2573)",
+          "timestamp": "2022-09-22T18:11:41-07:00",
+          "tree_id": "236370aaf7004fc97dd267d72d9b6521a7ceb17f",
+          "url": "https://github.com/unicode-org/icu4x/commit/15eb279623daefef4c0fee077eb05af20340f6cd"
+        },
+        "date": 1663895579879,
         "tool": "ndjson",
         "benches": [
           {
