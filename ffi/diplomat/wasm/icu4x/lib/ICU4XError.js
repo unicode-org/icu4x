@@ -5,6 +5,7 @@ export const ICU4XError_js_to_rust = {
   "UnknownError": 0,
   "WriteableError": 1,
   "OutOfBoundsError": 2,
+  "OptionNoneError": 3,
   "DataMissingDataKeyError": 256,
   "DataMissingVariantError": 257,
   "DataMissingLocaleError": 258,
@@ -51,7 +52,6 @@ export const ICU4XError_js_to_rust = {
   "TinyStrNonAsciiError": 2306,
   "TimeZoneOffsetOutOfBoundsError": 2560,
   "TimeZoneInvalidOffsetError": 2561,
-  "TimeZoneMissingInputError": 2562,
   "NormalizerFutureExtensionError": 2816,
   "NormalizerValidationError": 2817,
 };
@@ -60,6 +60,7 @@ export const ICU4XError_rust_to_js = {
   [0]: "UnknownError",
   [1]: "WriteableError",
   [2]: "OutOfBoundsError",
+  [3]: "OptionNoneError",
   [256]: "DataMissingDataKeyError",
   [257]: "DataMissingVariantError",
   [258]: "DataMissingLocaleError",
@@ -106,7 +107,6 @@ export const ICU4XError_rust_to_js = {
   [2306]: "TinyStrNonAsciiError",
   [2560]: "TimeZoneOffsetOutOfBoundsError",
   [2561]: "TimeZoneInvalidOffsetError",
-  [2562]: "TimeZoneMissingInputError",
   [2816]: "NormalizerFutureExtensionError",
   [2817]: "NormalizerValidationError",
 };
@@ -115,6 +115,7 @@ export const ICU4XError = {
   "UnknownError": "UnknownError",
   "WriteableError": "WriteableError",
   "OutOfBoundsError": "OutOfBoundsError",
+  "OptionNoneError": "OptionNoneError",
   "DataMissingDataKeyError": "DataMissingDataKeyError",
   "DataMissingVariantError": "DataMissingVariantError",
   "DataMissingLocaleError": "DataMissingLocaleError",
@@ -161,7 +162,6 @@ export const ICU4XError = {
   "TinyStrNonAsciiError": "TinyStrNonAsciiError",
   "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
   "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
-  "TimeZoneMissingInputError": "TimeZoneMissingInputError",
   "NormalizerFutureExtensionError": "NormalizerFutureExtensionError",
   "NormalizerValidationError": "NormalizerValidationError",
 };

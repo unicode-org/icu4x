@@ -23,6 +23,9 @@ export enum ICU4XError {
   OutOfBoundsError = 'OutOfBoundsError',
   /**
    */
+  OptionNoneError = 'OptionNoneError',
+  /**
+   */
   DataMissingDataKeyError = 'DataMissingDataKeyError',
   /**
    */
@@ -165,9 +168,6 @@ export enum ICU4XError {
   /**
    */
   TimeZoneInvalidOffsetError = 'TimeZoneInvalidOffsetError',
-  /**
-   */
-  TimeZoneMissingInputError = 'TimeZoneMissingInputError',
   /**
    */
   NormalizerFutureExtensionError = 'NormalizerFutureExtensionError',

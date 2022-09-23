@@ -22,6 +22,8 @@
 
     .. cpp:enumerator:: OutOfBoundsError
 
+    .. cpp:enumerator:: OptionNoneError
+
     .. cpp:enumerator:: DataMissingDataKeyError
 
     .. cpp:enumerator:: DataMissingVariantError
@@ -122,8 +124,6 @@
     .. cpp:enumerator:: TimeZoneOffsetOutOfBoundsError
 
     .. cpp:enumerator:: TimeZoneInvalidOffsetError
-
-    .. cpp:enumerator:: TimeZoneMissingInputError
 
     .. cpp:enumerator:: NormalizerFutureExtensionError
 

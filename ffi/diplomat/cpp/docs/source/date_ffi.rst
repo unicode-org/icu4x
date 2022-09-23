@@ -19,7 +19,7 @@
 
         Creates a new :cpp:class:`ICU4XDate` from the given codes, which are interpreted in the given calendar system
 
-        See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes>`__ for more information.
+        See the `Rust documentation for try_new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.try_new_from_codes>`__ for more information.
 
 
     .. cpp:function:: ICU4XDate to_calendar(const ICU4XCalendar& calendar) const
@@ -153,7 +153,7 @@
 
         Creates a new :cpp:class:`ICU4XIsoDate` from the specified date and time.
 
-        See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
+        See the `Rust documentation for try_new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.try_new_iso_date>`__ for more information.
 
 
     .. cpp:function:: ICU4XDate to_calendar(const ICU4XCalendar& calendar) const

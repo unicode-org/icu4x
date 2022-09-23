@@ -8,23 +8,27 @@
     See the `Rust documentation for AnyCalendarKind <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html>`__ for more information.
 
 
-    .. js:staticfunction:: from_locale(locale)
+    .. js:staticfunction:: get_for_locale(locale)
 
-        Read the calendar type off of the -u-ca- extension on a locale
+        Read the calendar type off of the -u-ca- extension on a locale.
 
-        See the `Rust documentation for from_locale <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.from_locale>`__ for more information.
+        Errors if there is no calendar on the locale or if the locale's calendar is not known or supported.
+
+        See the `Rust documentation for get_for_locale <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale>`__ for more information.
 
 
-    .. js:staticfunction:: from_bcp47(s)
+    .. js:staticfunction:: get_for_bcp47(s)
 
-        Obtain the calendar type given a BCP-47 -u-ca- extension string
+        Obtain the calendar type given a BCP-47 -u-ca- extension string.
 
-        See the `Rust documentation for from_bcp47 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.from_bcp47>`__ for more information.
+        Errors if the calendar is not known or supported.
+
+        See the `Rust documentation for get_for_bcp47 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47>`__ for more information.
 
 
     .. js:function:: bcp47()
 
-        Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale
+        Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
 
         See the `Rust documentation for as_bcp47_string <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string>`__ for more information.
 

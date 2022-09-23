@@ -14,7 +14,7 @@ export class ICU4XLocale {
 
    * Construct an {@link ICU4XLocale `ICU4XLocale`} from an locale identifier.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation for `from_bytes`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_string(name: string): ICU4XLocale | never;
@@ -78,7 +78,7 @@ export class ICU4XLocale {
 
    * Set the language part of the {@link ICU4XLocale `ICU4XLocale`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation for `from_bytes`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   set_language(bytes: string): void | never;
@@ -96,7 +96,7 @@ export class ICU4XLocale {
 
    * Set the region part of the {@link ICU4XLocale `ICU4XLocale`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation for `from_bytes`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   set_region(bytes: string): void | never;
@@ -114,7 +114,7 @@ export class ICU4XLocale {
 
    * Set the script part of the {@link ICU4XLocale `ICU4XLocale`}. Pass an empty string to remove the script.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation for `from_bytes`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   set_script(bytes: string): void | never;
