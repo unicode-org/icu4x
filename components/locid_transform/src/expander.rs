@@ -94,6 +94,11 @@ fn update_langid(
 
 impl LocaleExpander {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleExpander`].
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, DataError>
     where
         P: DataProvider<LikelySubtagsV1Marker> + ?Sized,

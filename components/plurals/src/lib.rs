@@ -293,6 +293,11 @@ impl PluralRules {
     ///
     /// This constructor will fail if the [`Data Provider`] does not have the data.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// ```
@@ -337,6 +342,11 @@ impl PluralRules {
     ///
     /// * [`One`]: `1 day`
     /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -394,6 +404,11 @@ impl PluralRules {
     /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
     /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
     /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///

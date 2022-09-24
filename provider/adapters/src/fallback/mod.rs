@@ -242,6 +242,11 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>

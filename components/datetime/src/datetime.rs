@@ -68,6 +68,11 @@ impl TimeFormatter {
     /// a list of preferences, then collects all data necessary to format date and time values into the given locale,
     /// using the short style.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// ```
@@ -209,6 +214,11 @@ pub struct TypedDateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -507,6 +517,11 @@ where {
 
     /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
