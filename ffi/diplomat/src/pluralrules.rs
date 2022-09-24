@@ -31,11 +31,11 @@ pub mod ffi {
     impl ICU4XPluralCategory {
         /// Construct from a string in the format
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
-        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_string, FnInEnum)]
-        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_bytes, FnInEnum)]
-        pub fn create_from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
+        #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
+        #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
+        pub fn get_for_cldr_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
             let s = s.as_bytes(); // #2520
-            PluralCategory::from_tr35_bytes(s)
+            PluralCategory::get_for_cldr_bytes(s)
                 .map(Into::into)
                 .ok_or(())
                 .into()
