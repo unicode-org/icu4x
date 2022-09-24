@@ -8,7 +8,7 @@
 //! Those extensions are treated as a pass-through, and no Unicode related
 //! behavior depends on them.
 //!
-//! The main struct for this extension is [`Other`] which is a list of [`Keys`].
+//! The main struct for this extension is [`Other`] which is a list of [`Subtag`]s.
 //!
 //! # Examples
 //!
@@ -18,8 +18,6 @@
 //!
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
-//!
-//! [`Keys`]: Key
 
 mod subtag;
 
@@ -37,12 +35,12 @@ pub use subtag::Subtag;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::other::{Key, Other};
+/// use icu::locid::extensions::other::{Subtag, Other};
 ///
-/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+/// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
-/// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
+/// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
 /// assert_eq!(&other.to_string(), "-a-foo-bar");
 /// ```
 ///
@@ -52,7 +50,7 @@ pub use subtag::Subtag;
 pub struct Other((u8, Vec<Subtag>));
 
 impl Other {
-    /// A constructor which takes a pre-sorted list of [`Key`].
+    /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Panics
     ///
@@ -61,12 +59,12 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::{Key, Other};
+    /// use icu::locid::extensions::other::{Subtag, Other};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
+    /// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
     /// assert_eq!(&other.to_string(), "-a-foo-bar");
     /// ```
     pub fn from_vec_unchecked(ext: u8, input: Vec<Subtag>) -> Self {

@@ -8,7 +8,7 @@
 //! Those extensions are treated as a pass-through, and no Unicode related
 //! behavior depends on them.
 //!
-//! The main struct for this extension is [`Private`] which is a list of [`Keys`].
+//! The main struct for this extension is [`Private`] which is a list of [`Subtag`]s.
 //!
 //! # Examples
 //!
@@ -24,8 +24,6 @@
 //! loc.extensions.private.clear();
 //! assert_eq!(loc.to_string(), "en-US");
 //! ```
-//!
-//! [`Keys`]: Key
 
 mod other;
 
@@ -46,12 +44,12 @@ use crate::parser::SubtagIterator;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::private::{Key, Private};
+/// use icu::locid::extensions::private::{Subtag, Private};
 ///
-/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+/// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
-/// let private = Private::from_vec_unchecked(vec![key1, key2]);
+/// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
 /// assert_eq!(&private.to_string(), "-x-foo-bar");
 /// ```
 ///
@@ -75,17 +73,17 @@ impl Private {
         Self(Vec::new())
     }
 
-    /// A constructor which takes a pre-sorted list of [`Key`].
+    /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Key, Private};
+    /// use icu::locid::extensions::private::{Subtag, Private};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let private = Private::from_vec_unchecked(vec![key1, key2]);
+    /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     /// ```
     pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
@@ -97,11 +95,11 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Key, Private};
+    /// use icu::locid::extensions::private::{Subtag, Private};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
-    /// let mut private = Private::from_vec_unchecked(vec![key1, key2]);
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
+    /// let mut private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     ///
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     ///
