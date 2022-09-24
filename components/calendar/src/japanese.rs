@@ -115,6 +115,11 @@ pub struct JapaneseDateInner {
 
 impl Japanese {
     /// Creates a new [`Japanese`] from locale data using only modern eras (post-meiji).
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
@@ -154,6 +159,11 @@ impl Japanese {
 
 impl JapaneseExtended {
     /// Creates a new [`Japanese`] from locale data using all eras (including pre-meiji).
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {

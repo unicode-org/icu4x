@@ -405,6 +405,11 @@ impl TimeZoneFormatter {
     ///
     /// To enable other time zone styles, use one of the `load` methods.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// Default format is Localized GMT:

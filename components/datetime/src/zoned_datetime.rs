@@ -171,6 +171,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// ```

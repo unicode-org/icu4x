@@ -21,6 +21,11 @@ pub struct MetazoneCalculator {
 impl MetazoneCalculator {
     /// Constructor that loads data before calculating metazone id.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// ```
