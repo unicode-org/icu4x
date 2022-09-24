@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663975533268,
+  "lastUpdate": 1663982940684,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -73091,6 +73091,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6047,
             "range": "± 79",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ec486db756badb05f08e85818211437ee0fe6cc",
+          "message": "Post-review zerovec fixes (#2622)\n\n* dtor\n\n* docs and tests\n\n* may_dangle\n\n* Add EyepatchHackVector\n\n* Update utils/zerovec/src/zerovec/mod.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* review\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T18:17:00-07:00",
+          "tree_id": "003a21d2688e02eb0a8bd46b04770afea6ace8a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ec486db756badb05f08e85818211437ee0fe6cc"
+        },
+        "date": 1663982886881,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64490,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107600,
+            "range": "± 257",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 59986,
+            "range": "± 565",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 67887,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64749,
+            "range": "± 196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71726,
+            "range": "± 273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 102708,
+            "range": "± 751",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 114806,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 107669,
+            "range": "± 263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 119728,
+            "range": "± 593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5166,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
