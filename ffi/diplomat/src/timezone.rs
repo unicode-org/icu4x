@@ -96,7 +96,7 @@ pub mod ffi {
             self.0
                 .gmt_offset
                 .map(|v| v.offset_seconds())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -108,7 +108,7 @@ pub mod ffi {
             self.0
                 .gmt_offset
                 .map(|v| v.is_positive())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -120,7 +120,7 @@ pub mod ffi {
             self.0
                 .gmt_offset
                 .map(|v| v.is_zero())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -132,7 +132,7 @@ pub mod ffi {
             self.0
                 .gmt_offset
                 .map(|v| v.has_minutes())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -144,7 +144,7 @@ pub mod ffi {
             self.0
                 .gmt_offset
                 .map(|v| v.has_seconds())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -183,7 +183,7 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = match self.0.time_zone_id {
                 Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
-                None => Err(ICU4XError::OptionNoneError),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
             .into();
             write.flush();
@@ -225,7 +225,7 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = match self.0.metazone_id {
                 Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
-                None => Err(ICU4XError::OptionNoneError),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
             .into();
             write.flush();
@@ -267,7 +267,7 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = match self.0.zone_variant {
                 Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
-                None => Err(ICU4XError::OptionNoneError),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
             .into();
             write.flush();
@@ -298,7 +298,7 @@ pub mod ffi {
                 .zone_variant
                 .as_ref()
                 .map(|v| v == &ZoneVariant::standard())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -312,7 +312,7 @@ pub mod ffi {
                 .zone_variant
                 .as_ref()
                 .map(|v| v == &ZoneVariant::daylight())
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 

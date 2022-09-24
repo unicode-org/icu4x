@@ -53,7 +53,7 @@
         The kind of a Coptic calendar
 
 
-    .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, ICU4XError> get_for_locale(const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, std::monostate> get_for_locale(const ICU4XLocale& locale)
 
         Read the calendar type off of the -u-ca- extension on a locale.
 
@@ -62,7 +62,7 @@
         See the `Rust documentation for get_for_locale <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, ICU4XError> get_for_bcp47(const std::string_view s)
+    .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, std::monostate> get_for_bcp47(const std::string_view s)
 
         Obtain the calendar type given a BCP-47 -u-ca- extension string.
 

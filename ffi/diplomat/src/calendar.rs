@@ -45,12 +45,10 @@ pub mod ffi {
         /// Errors if there is no calendar on the locale or if the locale's calendar
         /// is not known or supported.
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::get_for_locale, FnInEnum)]
-        pub fn get_for_locale(
-            locale: &ICU4XLocale,
-        ) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
+        pub fn get_for_locale(locale: &ICU4XLocale) -> DiplomatResult<ICU4XAnyCalendarKind, ()> {
             AnyCalendarKind::get_for_locale(&locale.0)
                 .map(Into::into)
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(())
                 .into()
         }
 
@@ -68,11 +66,11 @@ pub mod ffi {
             FnInEnum,
             hidden
         )]
-        pub fn get_for_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
+        pub fn get_for_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ()> {
             let s = s.as_bytes(); // #2520
             AnyCalendarKind::get_for_bcp47_bytes(s)
                 .map(Into::into)
-                .ok_or(ICU4XError::OptionNoneError)
+                .ok_or(())
                 .into()
         }
 

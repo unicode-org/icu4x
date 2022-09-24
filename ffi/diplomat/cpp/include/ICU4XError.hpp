@@ -35,7 +35,6 @@ enum struct ICU4XError {
    */
   WriteableError = 1,
   OutOfBoundsError = 2,
-  OptionNoneError = 3,
   DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
@@ -94,6 +93,7 @@ enum struct ICU4XError {
   TinyStrNonAsciiError = 2306,
   TimeZoneOffsetOutOfBoundsError = 2560,
   TimeZoneInvalidOffsetError = 2561,
+  TimeZoneMissingInputError = 2562,
   NormalizerFutureExtensionError = 2816,
   NormalizerValidationError = 2817,
 };
