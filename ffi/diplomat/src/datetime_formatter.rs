@@ -130,7 +130,10 @@ pub mod ffi {
 
     impl ICU4XGregorianDateFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::try_new_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::datetime::TypedDateFormatter::try_new_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -246,7 +249,10 @@ pub mod ffi {
 
     impl ICU4XDateFormatter {
         /// Creates a new [`ICU4XDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::datetime::DateFormatter::try_new_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
