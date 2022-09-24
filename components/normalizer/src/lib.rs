@@ -438,6 +438,11 @@ impl CharacterAndTrieValue {
 /// Note that 0xFF is won't be assigned to an actual
 /// canonical combining class per definition D104
 /// in The Unicode Standard.
+//
+// NOTE: The Pernosco debugger has special knowledge
+// of this struct. Please do not change the bit layout
+// or the crate-module-qualified name of this struct
+// without coordination.
 #[derive(Debug)]
 struct CharacterAndClass(u32);
 
