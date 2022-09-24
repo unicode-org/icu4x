@@ -141,7 +141,7 @@ implement!(UnitListV1Marker);
 
 #[cfg(test)]
 mod tests {
-    use icu_list::{ListFormatter, ListStyle};
+    use icu_list::{ListFormatter, ListLength};
     use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
