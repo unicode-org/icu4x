@@ -114,7 +114,9 @@ impl Private {
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
-        let keys = iter.map(Subtag::from_bytes).collect::<Result<Vec<_>, _>>()?;
+        let keys = iter
+            .map(Subtag::from_bytes)
+            .collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self::from_vec_unchecked(keys))
     }
