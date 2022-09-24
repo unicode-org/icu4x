@@ -391,14 +391,14 @@ impl DateTimeFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(
+    /// let df = DateFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,

@@ -234,7 +234,7 @@ fn assert_fixture_element<A>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.date.unwrap(),
@@ -250,7 +250,7 @@ fn assert_fixture_element<A>(
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.date.unwrap(),

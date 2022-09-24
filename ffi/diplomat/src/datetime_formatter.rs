@@ -130,7 +130,7 @@ pub mod ffi {
 
     impl ICU4XGregorianDateFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::try_new_with_length_unstable, FnInStruct)]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -138,7 +138,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XGregorianDateFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TypedDateFormatter::try_new_unstable(&provider.0, &locale, length.into())
+            TypedDateFormatter::try_new_with_length_unstable(&provider.0, &locale, length.into())
                 .map(|df| Box::new(ICU4XGregorianDateFormatter(df)))
                 .map_err(Into::into)
                 .into()
@@ -246,7 +246,7 @@ pub mod ffi {
 
     impl ICU4XDateFormatter {
         /// Creates a new [`ICU4XDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_with_length_unstable, FnInStruct)]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -254,7 +254,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XDateFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            DateFormatter::try_new_unstable(&provider.0, &locale, date_length.into())
+            DateFormatter::try_new_with_length_unstable(&provider.0, &locale, date_length.into())
                 .map(|dtf| Box::new(ICU4XDateFormatter(dtf)))
                 .map_err(Into::into)
                 .into()

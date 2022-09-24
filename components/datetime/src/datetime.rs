@@ -193,7 +193,7 @@ impl TimeFormatter {
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+/// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     length::Date::Full,
@@ -224,7 +224,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Full
@@ -248,7 +248,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedDateFormatter::<Indian>::try_new_unstable(
+    /// let formatter = TypedDateFormatter::<Indian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-japanese").into(),
     ///     length::Date::Full
@@ -265,7 +265,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// [data provider]: icu_provider
     /// [`DateFormatter`]: crate::DateFormatter
     #[inline]
-    pub fn try_new_unstable<D>(
+    pub fn try_new_with_length_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Date,
@@ -293,7 +293,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         length: length::Date,
-        error: DateTimeFormatterError
+        error: DateTimeFormatterError,
+        functions: [
+            Self::try_new_with_length_unstable,
+            try_new_with_length_with_any_provider,
+            try_new_with_length_with_buffer_provider
+        ]
     );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -306,7 +311,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Full,
@@ -334,7 +339,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Short,
@@ -415,7 +420,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ///     length::Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Short,
