@@ -247,11 +247,11 @@ impl PluralCategory {
     }
 
     /// Returns the PluralCategory coresponding to given TR35 string.
-    pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
-        Self::from_tr35_bytes(category.as_bytes())
+    pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
+        Self::get_for_cldr_bytes(category.as_bytes())
     }
     /// Returns the PluralCategory coresponding to given TR35 string as bytes
-    pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
+    pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),
             b"one" => Some(PluralCategory::One),

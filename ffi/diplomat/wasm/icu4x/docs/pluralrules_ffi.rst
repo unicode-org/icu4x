@@ -25,13 +25,13 @@
     See the `Rust documentation for PluralCategory <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_tr35_string(s)
+    .. js:staticfunction:: get_for_cldr_string(s)
 
         Construct from a string in the format `specified in TR35 <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>`__
 
-        See the `Rust documentation for from_tr35_string <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.from_tr35_string>`__ for more information.
+        See the `Rust documentation for get_for_cldr_string <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string>`__ for more information.
 
-        See the `Rust documentation for from_tr35_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.from_tr35_bytes>`__ for more information.
+        See the `Rust documentation for get_for_cldr_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes>`__ for more information.
 
 
 .. js:class:: ICU4XPluralOperands
