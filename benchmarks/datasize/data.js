@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663982359223,
+  "lastUpdate": 1663993370925,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28253,6 +28253,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2ec486db756badb05f08e85818211437ee0fe6cc"
         },
         "date": 1663982301758,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15afab068be56984abfff0896054c32e17b884d3",
+          "message": "Add FFI tutorials and tutorial landing page (#2624)\n\n* Fix example\n\n* icu_capi docs\n\n* Add cpp docs\n\n* Note tutorial in capi docs\n\n* fmt\n\n* add js doc\n\n* add js tutorial\n\n* add index docs\n\n* review\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/js.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T21:20:39-07:00",
+          "tree_id": "9d2ecef046e277196cc9d8f238e71a6d37203996",
+          "url": "https://github.com/unicode-org/icu4x/commit/15afab068be56984abfff0896054c32e17b884d3"
+        },
+        "date": 1663993317252,
         "tool": "ndjson",
         "benches": [
           {
