@@ -41,7 +41,10 @@ pub mod ffi {
 
     impl ICU4XTimeFormatter {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::TimeFormatter::try_new_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::datetime::TimeFormatter::try_new_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
