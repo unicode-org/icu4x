@@ -197,10 +197,10 @@ macro_rules! gen_any_buffer_docs {
             "::AnyProvider).\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
-            "`]",
+            "`]\n\n",
             "[📚 Help choosing a constructor](",
             stringify!($krate),
-            "::constructors)\n\n",
+            "::constructors)",
         )
     };
     (BUFFER, $krate:path, $see_also:path) => {
@@ -211,10 +211,10 @@ macro_rules! gen_any_buffer_docs {
             "::BufferProvider).\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
-            "`]",
+            "`]\n\n",
             "[📚 Help choosing a constructor](",
             stringify!($krate),
-            "::constructors)\n\n",
+            "::constructors)",
         )
     };
 }
