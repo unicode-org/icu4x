@@ -204,6 +204,8 @@ impl<'data> PatternPlurals<'data> {
     /// # Panics
     ///
     /// Panics if there is not a single pattern.
+    ///
+    /// TODO(#2627) - Evaluate instead propagating the error.
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
