@@ -106,7 +106,8 @@ impl Iterator for TestContentIterator {
 #[test]
 fn run_line_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
-    let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter =
+        LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -137,7 +138,8 @@ fn run_line_break_test() {
 #[test]
 fn run_word_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
-    let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter =
+        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -168,8 +170,8 @@ fn run_word_break_test() {
 #[test]
 fn run_grapheme_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
-    let segmenter =
-        GraphemeClusterBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+        .expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

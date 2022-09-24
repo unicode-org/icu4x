@@ -147,11 +147,7 @@ impl WordBreakSegmenter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,

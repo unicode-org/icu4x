@@ -78,11 +78,7 @@ impl SentenceBreakSegmenter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {

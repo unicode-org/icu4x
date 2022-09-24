@@ -208,11 +208,7 @@ impl LineBreakSegmenter {
         Self::try_new_with_options_unstable(provider, Default::default())
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
@@ -1159,8 +1155,9 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-            .expect("Data exists");
+        let segmenter =
+            LineBreakSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());

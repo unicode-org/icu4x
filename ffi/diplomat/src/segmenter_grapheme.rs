@@ -39,7 +39,10 @@ pub mod ffi {
 
     impl ICU4XGraphemeClusterBreakSegmenter {
         /// Construct an [`ICU4XGraphemeClusterBreakSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakSegmenter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakSegmenter::try_new_unstable,
+            FnInStruct
+        )]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XGraphemeClusterBreakSegmenter>, ICU4XError> {

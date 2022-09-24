@@ -81,7 +81,10 @@ pub mod ffi {
         }
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
-        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new_with_options_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakSegmenter::try_new_with_options_unstable,
+            FnInStruct
+        )]
         pub fn create_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
