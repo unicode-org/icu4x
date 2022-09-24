@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663975744385,
+  "lastUpdate": 1663983151914,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -105779,6 +105779,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 229,
             "range": "± 38",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ec486db756badb05f08e85818211437ee0fe6cc",
+          "message": "Post-review zerovec fixes (#2622)\n\n* dtor\n\n* docs and tests\n\n* may_dangle\n\n* Add EyepatchHackVector\n\n* Update utils/zerovec/src/zerovec/mod.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* review\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T18:17:00-07:00",
+          "tree_id": "003a21d2688e02eb0a8bd46b04770afea6ace8a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ec486db756badb05f08e85818211437ee0fe6cc"
+        },
+        "date": 1663983086830,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3994,
+            "range": "± 245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 986,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1020,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 587,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 149,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1037,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 398,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2726,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4920,
+            "range": "± 355",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2155,
+            "range": "± 82",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1713,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1139,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 256,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2210,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 583,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4210,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 191,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 146,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 177,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 224,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
