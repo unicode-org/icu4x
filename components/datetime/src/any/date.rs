@@ -143,8 +143,8 @@ impl DateFormatter {
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
     /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
-    /// may also be used if compile stability is desired.
+    /// appropriate. The [`Self::try_new_with_length_with_buffer_provider()`], [`Self::try_new_with_length_with_any_provider()`]
+    /// constructors may also be used if compile stability is desired.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
