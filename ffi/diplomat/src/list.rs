@@ -59,7 +59,10 @@ pub mod ffi {
 
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_and_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_and_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_and_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -72,7 +75,10 @@ pub mod ffi {
                 .into()
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_or_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_or_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_or_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -85,7 +91,10 @@ pub mod ffi {
                 .into()
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_unit_with_length_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_unit_with_length_unstable,
+            FnInStruct
+        )]
         pub fn create_unit_with_style(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

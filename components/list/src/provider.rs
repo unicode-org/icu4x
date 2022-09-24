@@ -426,11 +426,20 @@ pub(crate) mod test {
     fn size_hint_works() {
         let pattern = test_patterns();
 
-        assert_eq!(pattern.size_hint(ListLength::Short, 0), LengthHint::exact(0));
-        assert_eq!(pattern.size_hint(ListLength::Short, 1), LengthHint::exact(0));
+        assert_eq!(
+            pattern.size_hint(ListLength::Short, 0),
+            LengthHint::exact(0)
+        );
+        assert_eq!(
+            pattern.size_hint(ListLength::Short, 1),
+            LengthHint::exact(0)
+        );
 
         // pair pattern "{0}123{1}456"
-        assert_eq!(pattern.size_hint(ListLength::Short, 2), LengthHint::exact(6));
+        assert_eq!(
+            pattern.size_hint(ListLength::Short, 2),
+            LengthHint::exact(6)
+        );
 
         // patterns "{0}1{1}", "{0}12{1}" (x197), and "{0}12{1}34"
         assert_eq!(
