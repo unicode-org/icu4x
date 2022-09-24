@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663974836422,
+  "lastUpdate": 1663982359223,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28223,6 +28223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c2e29bd30a695d032bc82fb8606e3f6439991613"
         },
         "date": 1663974771767,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2ec486db756badb05f08e85818211437ee0fe6cc",
+          "message": "Post-review zerovec fixes (#2622)\n\n* dtor\n\n* docs and tests\n\n* may_dangle\n\n* Add EyepatchHackVector\n\n* Update utils/zerovec/src/zerovec/mod.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* review\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T18:17:00-07:00",
+          "tree_id": "003a21d2688e02eb0a8bd46b04770afea6ace8a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/2ec486db756badb05f08e85818211437ee0fe6cc"
+        },
+        "date": 1663982301758,
         "tool": "ndjson",
         "benches": [
           {
