@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663982985653,
+  "lastUpdate": 1663994023850,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -20255,6 +20255,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42643738,
             "range": "± 377342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15afab068be56984abfff0896054c32e17b884d3",
+          "message": "Add FFI tutorials and tutorial landing page (#2624)\n\n* Fix example\n\n* icu_capi docs\n\n* Add cpp docs\n\n* Note tutorial in capi docs\n\n* fmt\n\n* add js doc\n\n* add js tutorial\n\n* add index docs\n\n* review\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/js.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T21:20:39-07:00",
+          "tree_id": "9d2ecef046e277196cc9d8f238e71a6d37203996",
+          "url": "https://github.com/unicode-org/icu4x/commit/15afab068be56984abfff0896054c32e17b884d3"
+        },
+        "date": 1663993969610,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 537,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 320,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 344,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 369,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 746,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 869,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 324,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 342,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 369,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 422,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 739,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 42960457,
+            "range": "± 194461",
             "unit": "ns/iter"
           },
           {
