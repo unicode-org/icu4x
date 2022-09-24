@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663982940684,
+  "lastUpdate": 1663993971267,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -73181,6 +73181,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5166,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15afab068be56984abfff0896054c32e17b884d3",
+          "message": "Add FFI tutorials and tutorial landing page (#2624)\n\n* Fix example\n\n* icu_capi docs\n\n* Add cpp docs\n\n* Note tutorial in capi docs\n\n* fmt\n\n* add js doc\n\n* add js tutorial\n\n* add index docs\n\n* review\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/cpp.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* Update docs/tutorials/js.md\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-23T21:20:39-07:00",
+          "tree_id": "9d2ecef046e277196cc9d8f238e71a6d37203996",
+          "url": "https://github.com/unicode-org/icu4x/commit/15afab068be56984abfff0896054c32e17b884d3"
+        },
+        "date": 1663993914412,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63232,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 110063,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58995,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 66873,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 63328,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 70526,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 104358,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 117959,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109943,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 122012,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4620,
+            "range": "± 30",
             "unit": "ns/iter"
           }
         ]
