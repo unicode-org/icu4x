@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664040891500,
+  "lastUpdate": 1664082878854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28343,6 +28343,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e14f99bfcd725d72d85e00eb61c2749d5c16183b"
         },
         "date": 1664040825885,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee45dc4f3e4cbee4a07f92020434d28e63959fe4",
+          "message": "Fix \"help choosing a constructor\" docs (#2631)",
+          "timestamp": "2022-09-24T22:12:27-07:00",
+          "tree_id": "b865fcadcb08e8f06ad469d64fd407e1cbfdc73a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee45dc4f3e4cbee4a07f92020434d28e63959fe4"
+        },
+        "date": 1664082823994,
         "tool": "ndjson",
         "benches": [
           {
