@@ -351,7 +351,7 @@ macro_rules! impl_tinystr_subtag {
             /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
             /// is `self.as_str().as_bytes()`.
             #[inline]
-            pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+            pub fn strict_cmp(self, other: &[u8]) -> core::cmp::Ordering {
                 self.as_str().as_bytes().cmp(other)
             }
 
@@ -361,7 +361,7 @@ macro_rules! impl_tinystr_subtag {
             /// BCP-47 string and then performed a structural comparison.
             ///
             #[inline]
-            pub fn normalizing_eq(&self, other: &str) -> bool {
+            pub fn normalizing_eq(self, other: &str) -> bool {
                 self.as_str().eq_ignore_ascii_case(other)
             }
         }
