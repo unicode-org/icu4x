@@ -43,11 +43,11 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::transform::Value;
     ///
-    /// let value = Value::from_bytes(b"hybrid").expect("Parsing failed.");
+    /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
     ///
     /// assert_eq!(&value.to_string(), "hybrid");
     /// ```
-    pub fn from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = vec![];
         let mut has_value = false;
 
@@ -111,7 +111,7 @@ impl FromStr for Value {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 

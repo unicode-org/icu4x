@@ -8,12 +8,12 @@
 //! use icu::calendar::{buddhist::Buddhist, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_buddhist = DateTime::new_from_iso(datetime_iso, Buddhist);
 //!
@@ -161,18 +161,18 @@ impl Date<Buddhist> {
     /// use std::convert::TryFrom;
     ///
     /// let date_buddhist =
-    ///     Date::new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
+    ///     Date::try_new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
-    pub fn new_buddhist_date(
+    pub fn try_new_buddhist_date(
         year: i32,
         month: u8,
         day: u8,
     ) -> Result<Date<Buddhist>, DateTimeError> {
-        Date::new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
+        Date::try_new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
 }
@@ -185,7 +185,7 @@ impl DateTime<Buddhist> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_buddhist = DateTime::new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
+    /// let datetime_buddhist = DateTime::try_new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Buddhist DateTime instance.");
     ///
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
@@ -195,7 +195,7 @@ impl DateTime<Buddhist> {
     /// assert_eq!(datetime_buddhist.time.minute.number(), 1);
     /// assert_eq!(datetime_buddhist.time.second.number(), 0);
     /// ```
-    pub fn new_buddhist_datetime(
+    pub fn try_new_buddhist_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -204,7 +204,7 @@ impl DateTime<Buddhist> {
         second: u8,
     ) -> Result<DateTime<Buddhist>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_buddhist_date(year, month, day)?,
+            date: Date::try_new_buddhist_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

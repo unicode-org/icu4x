@@ -18,7 +18,7 @@ export class ICU4XGregorianDateFormatter {
 
    * Creates a new {@link ICU4XGregorianDateFormatter `ICU4XGregorianDateFormatter`} from locale data.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length_unstable Rust documentation for `try_new_with_length_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XDateLength): ICU4XGregorianDateFormatter | never;

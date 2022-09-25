@@ -273,16 +273,16 @@ macro_rules! impl_tinystr_subtag {
             /// ```
             #[doc = concat!("use icu_locid::", stringify!($($full_name)::+), ";")]
             ///
-            #[doc = concat!("assert!(", stringify!($name), "::from_bytes(b", stringify!($good_example), ").is_ok());")]
-            #[doc = concat!("assert!(", stringify!($name), "::from_bytes(b", stringify!($bad_example), ").is_err());")]
+            #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($good_example), ").is_ok());")]
+            #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($bad_example), ").is_err());")]
             /// ```
-            pub const fn from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParserError> {
-                Self::from_bytes_manual_slice(v, 0, v.len())
+            pub const fn try_from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParserError> {
+                Self::try_from_bytes_manual_slice(v, 0, v.len())
             }
 
-            /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+            /// Equivalent to [`try_from_bytes(bytes[start..end])`](Self::try_from_bytes),
             /// but callable in a `const` context (which range indexing is not).
-            pub const fn from_bytes_manual_slice(
+            pub const fn try_from_bytes_manual_slice(
                 v: &[u8],
                 start: usize,
                 end: usize,
@@ -301,7 +301,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc = concat!("Safely creates a [`", stringify!($name), "`] from its raw format")]
-            /// as returned by [`Self::into_raw`]. Unlike [`Self::from_bytes`],
+            /// as returned by [`Self::into_raw`]. Unlike [`Self::try_from_bytes`],
             /// this constructor only takes normalized values.
             pub const fn try_from_raw(
                 v: [u8; $len_end],
@@ -318,7 +318,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc = concat!("Unsafely creates a [`", stringify!($name), "`] from its raw format")]
-            /// as returned by [`Self::into_raw`]. Unlike [`Self::from_bytes`],
+            /// as returned by [`Self::into_raw`]. Unlike [`Self::try_from_bytes`],
             /// this constructor only takes normalized values.
             ///
             /// # Safety
@@ -370,7 +370,7 @@ macro_rules! impl_tinystr_subtag {
             type Err = crate::parser::errors::ParserError;
 
             fn from_str(source: &str) -> Result<Self, Self::Err> {
-                Self::from_bytes(source.as_bytes())
+                Self::try_from_bytes(source.as_bytes())
             }
         }
 
@@ -421,7 +421,7 @@ macro_rules! impl_tinystr_subtag {
             ($string:literal) => {{
                 use $crate::$($full_name)::+;
                 const R: $name =
-                    match $name::from_bytes($string.as_bytes()) {
+                    match $name::try_from_bytes($string.as_bytes()) {
                         Ok(r) => r,
                         #[allow(clippy::panic)] // const context
                         _ => panic!(concat!("Invalid ", stringify!($name), ": ", $string)),
@@ -441,19 +441,19 @@ macro_rules! impl_tinystr_subtag {
 
         #[test]
         fn test_construction() {
-            let maybe = $name::from_bytes($good_example.as_bytes());
+            let maybe = $name::try_from_bytes($good_example.as_bytes());
             assert!(maybe.is_ok());
             assert_eq!(maybe, $name::try_from_raw(maybe.unwrap().into_raw()));
             assert_eq!(maybe.unwrap().as_str(), $good_example);
             $(
-                let maybe = $name::from_bytes($more_good_examples.as_bytes());
+                let maybe = $name::try_from_bytes($more_good_examples.as_bytes());
                 assert!(maybe.is_ok());
                 assert_eq!(maybe, $name::try_from_raw(maybe.unwrap().into_raw()));
                 assert_eq!(maybe.unwrap().as_str(), $more_good_examples);
             )*
-            assert!($name::from_bytes($bad_example.as_bytes()).is_err());
+            assert!($name::try_from_bytes($bad_example.as_bytes()).is_err());
             $(
-                assert!($name::from_bytes($more_bad_examples.as_bytes()).is_err());
+                assert!($name::try_from_bytes($more_bad_examples.as_bytes()).is_err());
             )*
         }
 

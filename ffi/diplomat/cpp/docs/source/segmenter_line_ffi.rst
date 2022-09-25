@@ -57,14 +57,14 @@
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with default options.
 
-        See the `Rust documentation for try_new <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_unstable>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with custom options.
 
-        See the `Rust documentation for try_new_with_options <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options>`__ for more information.
+        See the `Rust documentation for try_new_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options_unstable>`__ for more information.
 
 
     .. cpp:function:: ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const

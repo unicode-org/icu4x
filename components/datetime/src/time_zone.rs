@@ -89,7 +89,7 @@ where
 /// // Set up the Metazone calculator and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
-/// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
+/// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
 /// // Set up the formatter
@@ -404,6 +404,11 @@ impl TimeZoneFormatter {
     /// Creates a new [`TimeZoneFormatter`] with a GMT or ISO format.
     ///
     /// To enable other time zone styles, use one of the `load` methods.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///

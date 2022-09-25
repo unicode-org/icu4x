@@ -156,7 +156,7 @@ use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 
 fn main() {
-    let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
 
     let options = length::Bag {

@@ -565,6 +565,11 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 /// Returns a [`ScriptWithExtensionsPropertyV1`] struct that represents the data for the Script
 /// and Script_Extensions properties.
 ///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+/// <div class="stab unstable">
+/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+/// </div>
+///
 /// # Examples
 ///
 /// ```

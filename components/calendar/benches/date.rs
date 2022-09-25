@@ -43,7 +43,7 @@ fn bench_calendar<C: Clone + Calendar>(
                 let mut instantiated_date_calendar = calendar_date_init(fx.year, fx.month, fx.day);
 
                 // Conversion from ISO
-                let date_iso = Date::new_iso_date(fx.year, fx.month, fx.day).unwrap();
+                let date_iso = Date::try_new_iso_date(fx.year, fx.month, fx.day).unwrap();
                 let mut converted_date_calendar = Date::new_from_iso(date_iso, calendar.clone());
 
                 bench_date(&mut instantiated_date_calendar);
@@ -62,7 +62,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/overview",
         &fxs,
         icu::calendar::iso::Iso,
-        |y, m, d| Date::new_iso_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_iso_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -71,7 +71,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/buddhist",
         &fxs,
         icu::calendar::buddhist::Buddhist,
-        |y, m, d| Date::new_buddhist_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_buddhist_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -80,7 +80,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/coptic",
         &fxs,
         icu::calendar::coptic::Coptic,
-        |y, m, d| Date::new_coptic_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_coptic_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -90,7 +90,7 @@ fn date_benches(c: &mut Criterion) {
         &fxs,
         icu::calendar::ethiopian::Ethiopian::new(),
         |y, m, d| {
-            Date::new_ethiopian_date(
+            Date::try_new_ethiopian_date(
                 icu::calendar::ethiopian::EthiopianEraStyle::AmeteMihret,
                 y,
                 m,
@@ -106,7 +106,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/indian",
         &fxs,
         icu::calendar::indian::Indian,
-        |y, m, d| Date::new_indian_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_indian_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -115,7 +115,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/julian",
         &fxs,
         icu::calendar::julian::Julian,
-        |y, m, d| Date::new_julian_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_julian_date(y, m, d).unwrap(),
     );
 
     #[cfg(feature = "bench")]
@@ -124,7 +124,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/gregorian",
         &fxs,
         icu::calendar::gregorian::Gregorian,
-        |y, m, d| Date::new_gregorian_date(y, m, d).unwrap(),
+        |y, m, d| Date::try_new_gregorian_date(y, m, d).unwrap(),
     );
 
     group.finish();

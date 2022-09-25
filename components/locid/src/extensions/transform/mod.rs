@@ -132,7 +132,7 @@ impl Transform {
         let mut tfields = LiteMap::new();
 
         if let Some(subtag) = iter.peek() {
-            if Language::from_bytes(subtag).is_ok() {
+            if Language::try_from_bytes(subtag).is_ok() {
                 tlang = Some(parse_language_identifier_from_iter(
                     iter,
                     ParserMode::Partial,
@@ -158,7 +158,7 @@ impl Transform {
                     current_tkey = None;
                     continue;
                 }
-            } else if let Ok(tkey) = Key::from_bytes(subtag) {
+            } else if let Ok(tkey) = Key::try_from_bytes(subtag) {
                 current_tkey = Some(tkey);
             } else {
                 break;

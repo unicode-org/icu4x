@@ -80,7 +80,7 @@ impl Other {
             if !Subtag::valid_key(subtag) {
                 break;
             }
-            if let Ok(key) = Subtag::from_bytes(subtag) {
+            if let Ok(key) = Subtag::try_from_bytes(subtag) {
                 keys.push(key);
             }
             iter.next();

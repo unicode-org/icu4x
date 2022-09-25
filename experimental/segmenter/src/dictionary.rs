@@ -137,7 +137,7 @@ pub struct DictionarySegmenter<'l> {
 }
 
 impl<'l> DictionarySegmenter<'l> {
-    pub fn try_new(
+    pub fn try_new_unstable(
         payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
     ) -> Result<Self, DataError> {
         // TODO: no way to verify trie data
@@ -201,7 +201,7 @@ mod tests {
             trie_data: BURMESE_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
+        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -215,7 +215,7 @@ mod tests {
     #[test]
     fn cj_dictionary_test() {
         let payload = get_payload(locale!("ja")).unwrap();
-        let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
+        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
 
         // Match case
         let s = "龟山岛龟山岛";
@@ -255,7 +255,7 @@ mod tests {
             trie_data: KHMER_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
+        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![27, 54, 81]);
@@ -283,7 +283,7 @@ mod tests {
             trie_data: LAO_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
+        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);

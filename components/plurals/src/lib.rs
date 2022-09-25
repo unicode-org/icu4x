@@ -247,11 +247,11 @@ impl PluralCategory {
     }
 
     /// Returns the PluralCategory coresponding to given TR35 string.
-    pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
-        Self::from_tr35_bytes(category.as_bytes())
+    pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
+        Self::get_for_cldr_bytes(category.as_bytes())
     }
     /// Returns the PluralCategory coresponding to given TR35 string as bytes
-    pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
+    pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),
             b"one" => Some(PluralCategory::One),
@@ -292,6 +292,11 @@ impl PluralRules {
     /// Constructs a new `PluralRules` for a given locale, [`type`] and [`data provider`].
     ///
     /// This constructor will fail if the [`Data Provider`] does not have the data.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -337,6 +342,11 @@ impl PluralRules {
     ///
     /// * [`One`]: `1 day`
     /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -394,6 +404,11 @@ impl PluralRules {
     /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
     /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
     /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///

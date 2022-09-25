@@ -43,6 +43,9 @@ icu_timezone = { version = "1.0.0-beta1", path = "../timezone", default-features
 icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", default-features = false, optional = true }
 
+# For docs links
+icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", default-features = false }
+
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
 

@@ -62,7 +62,6 @@ pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
 pub use cpinvlist::CodePointInversionList;
 use displaydoc::Display;
-pub use utils::*;
 
 /// Custom Errors for [`CodePointInversionList`].
 #[derive(Display, Debug)]

@@ -1520,6 +1520,11 @@ pub struct DecomposingNormalizer {
 
 impl DecomposingNormalizer {
     /// NFD constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1563,6 +1568,11 @@ impl DecomposingNormalizer {
     );
 
     /// NFKD constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfkd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1982,6 +1992,11 @@ pub struct ComposingNormalizer {
 
 impl ComposingNormalizer {
     /// NFC constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2012,6 +2027,11 @@ impl ComposingNormalizer {
     );
 
     /// NFKC constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfkc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2071,7 +2091,7 @@ impl ComposingNormalizer {
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. It can be enabled with the "experimental" feature
     /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// <a href="https://github.com/unicode-org/icu4x/issues/2614">#2614</a>
     /// </div>
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(

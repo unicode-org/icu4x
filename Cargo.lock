@@ -1313,6 +1313,7 @@ dependencies = [
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
+ "icu_provider",
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
@@ -1361,6 +1362,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr 0.6.2",
+ "writeable",
  "zerovec 0.8.1",
 ]
 

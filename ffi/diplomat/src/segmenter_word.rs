@@ -34,7 +34,7 @@ pub mod ffi {
 
     impl ICU4XWordBreakSegmenter {
         /// Construct an [`ICU4XWordBreakSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XWordBreakSegmenter>, ICU4XError> {
@@ -48,7 +48,7 @@ pub mod ffi {
                 + DataProvider<LstmDataV1Marker>
                 + ?Sized,
         {
-            WordBreakSegmenter::try_new(provider)
+            WordBreakSegmenter::try_new_unstable(provider)
                 .map(|o| Box::new(ICU4XWordBreakSegmenter(o)))
                 .map_err(Into::into)
                 .into()
