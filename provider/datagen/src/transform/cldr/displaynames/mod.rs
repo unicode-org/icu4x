@@ -8,8 +8,8 @@ use crate::transform::cldr::cldr_serde;
 use icu_displaynames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
 use tinystr::TinyAsciiStr;
+use zerovec::ZeroMap;
 
 impl DataProvider<TerritoryDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(

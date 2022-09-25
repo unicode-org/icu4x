@@ -76,7 +76,7 @@ impl CldrCache {
             format!("cldr-localenames-{}/main", self.locale_subset),
         )
     }
-    
+
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.cache,
