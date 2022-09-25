@@ -62,6 +62,6 @@ required-features = ["lstm"]
 default = []
 std = []
 lstm = ["std", "ndarray", "num-traits", "serde"] # requires std because of f32::exp
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "icu_collections/databake"]
 lstm-grapheme = ["lstm", "unicode-segmentation"]

@@ -17,7 +17,7 @@ export class ICU4XWordBreakSegmenter {
 
    * Construct an {@link ICU4XWordBreakSegmenter `ICU4XWordBreakSegmenter`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XWordBreakSegmenter | never;

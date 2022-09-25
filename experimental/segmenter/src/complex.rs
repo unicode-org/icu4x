@@ -71,7 +71,7 @@ pub fn complex_language_segment_utf16(
         #[cfg(feature = "lstm")]
         {
             if let Some(model) = lstm.best(str_per_lang[0] as u32) {
-                if let Ok(segmenter) = LstmSegmenter::try_new(model) {
+                if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model) {
                     let breaks = segmenter.segment_utf16(&str_per_lang);
                     let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
                     result.append(&mut r);
@@ -83,7 +83,7 @@ pub fn complex_language_segment_utf16(
         }
 
         if let Some(payload) = dictionary.best(str_per_lang[0] as u32) {
-            if let Ok(segmenter) = DictionarySegmenter::try_new(payload) {
+            if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload) {
                 let breaks = segmenter.segment_utf16(&str_per_lang);
                 let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
                 result.append(&mut r);
@@ -112,7 +112,7 @@ pub fn complex_language_segment_str(
         #[cfg(feature = "lstm")]
         {
             if let Some(model) = lstm.best(str_per_lang.chars().next().unwrap() as u32) {
-                if let Ok(segmenter) = LstmSegmenter::try_new(model) {
+                if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model) {
                     let breaks = segmenter.segment_str(&str_per_lang);
                     let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
                     result.append(&mut r);
@@ -124,7 +124,7 @@ pub fn complex_language_segment_str(
         }
 
         let segmenter = match dictionary.best(str_per_lang.chars().next().unwrap() as u32) {
-            Some(v) => DictionarySegmenter::try_new(v),
+            Some(v) => DictionarySegmenter::try_new_unstable(v),
             None => Err(DataError::custom("cannot find payload")),
         };
         match segmenter {

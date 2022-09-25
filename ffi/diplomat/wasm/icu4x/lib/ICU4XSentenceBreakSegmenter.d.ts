@@ -17,7 +17,7 @@ export class ICU4XSentenceBreakSegmenter {
 
    * Construct an {@link ICU4XSentenceBreakSegmenter `ICU4XSentenceBreakSegmenter`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XSentenceBreakSegmenter | never;
