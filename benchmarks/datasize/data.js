@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664082931118,
+  "lastUpdate": 1664083074508,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28403,6 +28403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/139e795cc84df7c5adc166beff851052554716e4"
         },
         "date": 1664082875141,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b4279d35203e3771542471388697fbfd15896bd3",
+          "message": "Add _with_length to TimeFormatter and [Typed]DateFormatter (#2617)",
+          "timestamp": "2022-09-24T22:15:17-07:00",
+          "tree_id": "72db3406581f4332e2fed7a01abe34c935f8acb4",
+          "url": "https://github.com/unicode-org/icu4x/commit/b4279d35203e3771542471388697fbfd15896bd3"
+        },
+        "date": 1664083010251,
         "tool": "ndjson",
         "benches": [
           {
