@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664083999759,
+  "lastUpdate": 1664084181843,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -73721,6 +73721,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5493,
             "range": "± 236",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3bd2e1444b62b6884eedc6b3439fcd2f032d7662",
+          "message": "Add constructor trio in icu_segmenter (#2616)",
+          "timestamp": "2022-09-24T22:16:00-07:00",
+          "tree_id": "e073750e671e6f29919abee5e9cef7ca0f9da786",
+          "url": "https://github.com/unicode-org/icu4x/commit/3bd2e1444b62b6884eedc6b3439fcd2f032d7662"
+        },
+        "date": 1664084116638,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75221,
+            "range": "± 807",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 127588,
+            "range": "± 1510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 69827,
+            "range": "± 664",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 78480,
+            "range": "± 1050",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75568,
+            "range": "± 1259",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 84223,
+            "range": "± 925",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 120893,
+            "range": "± 1096",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 134571,
+            "range": "± 1446",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 127224,
+            "range": "± 1736",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 140608,
+            "range": "± 1815",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6185,
+            "range": "± 82",
             "unit": "ns/iter"
           }
         ]
