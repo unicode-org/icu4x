@@ -52,9 +52,10 @@ impl From<&cldr_serde::displaynames::Resource> for TerritoryDisplayNamesV1<'stat
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.territories.iter() {
                 let region = entry.0;
-                let key = <TinyAsciiStr<3>>::from_str(region);
-                if !region.ends_with(ALT_VARIANT_SUFFIX) && key.is_ok() {
-                    names.insert(&key.unwrap(), entry.1.as_ref());
+                if !region.ends_with(ALT_VARIANT_SUFFIX) {
+                    if let Ok(key) = <TinyAsciiStr<3>>::from_str(region) {
+                        names.insert(&key, entry.1.as_ref());
+                    }
                 }
             }
         }
