@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664083099037,
+  "lastUpdate": 1664083431249,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28463,6 +28463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3bd2e1444b62b6884eedc6b3439fcd2f032d7662"
         },
         "date": 1664083041206,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dbb02a18b48a63100c748e6ef3f39d5c734810f9",
+          "message": "Consistently use try_ or get_for_ prefix on fallible functions (#2615)",
+          "timestamp": "2022-09-24T22:16:59-07:00",
+          "tree_id": "14174484487c0908eda88c7cdd95bc05c6512f45",
+          "url": "https://github.com/unicode-org/icu4x/commit/dbb02a18b48a63100c748e6ef3f39d5c734810f9"
+        },
+        "date": 1664083366319,
         "tool": "ndjson",
         "benches": [
           {
