@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664084032550,
+  "lastUpdate": 1664084166857,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53428,6 +53428,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3bd2e1444b62b6884eedc6b3439fcd2f032d7662",
+          "message": "Add constructor trio in icu_segmenter (#2616)",
+          "timestamp": "2022-09-24T22:16:00-07:00",
+          "tree_id": "e073750e671e6f29919abee5e9cef7ca0f9da786",
+          "url": "https://github.com/unicode-org/icu4x/commit/3bd2e1444b62b6884eedc6b3439fcd2f032d7662"
+        },
+        "date": 1664084088755,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 71882,
+            "range": "± 1250",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 15327,
+            "range": "± 236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 47765,
+            "range": "± 1139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 118,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 51,
             "range": "± 0",
             "unit": "ns/iter"
           }
