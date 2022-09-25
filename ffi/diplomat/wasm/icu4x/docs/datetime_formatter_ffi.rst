@@ -12,7 +12,7 @@
 
         Creates a new :js:class:`ICU4XDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
     .. js:function:: format_date(value)
@@ -93,7 +93,7 @@
 
         Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
     .. js:function:: format_iso_date(value)
@@ -142,7 +142,7 @@
 
         Creates a new :js:class:`ICU4XTimeFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
     .. js:function:: format_time(value)

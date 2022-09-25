@@ -509,7 +509,7 @@ mod tests {
         use icu::datetime::DateFormatter;
 
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_unstable(
+        let dtf = DateFormatter::try_new_with_length_unstable(
             &icu_testdata::unstable(),
             &locale.into(),
             length::Date::Medium,
