@@ -22,6 +22,7 @@ members = [
     "components/timezone",
     "experimental/bies",
     "experimental/casemapping",
+    "experimental/displaynames",
     "utils/databake",
     "utils/databake/derive",
     "experimental/segmenter",

@@ -42,6 +42,7 @@ icu_timezone = { version = "1.0.0-beta1", path = "../timezone", default-features
 
 icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", default-features = false, optional = true }
+icu_displaynames = { version = "1.0.0-beta1", path = "../../experimental/displaynames", default-features = false, optional = true }
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
@@ -55,6 +56,7 @@ std = [
     "icu_collections/std",
     "icu_datetime/std",
     "icu_decimal/std",
+    # "icu_displaynames/std",
     "icu_list/std",
     "icu_locid_transform/std",
     "icu_locid/std",
@@ -71,6 +73,7 @@ serde = [
     "icu_collections/serde",
     "icu_datetime/serde",
     "icu_decimal/serde",
+    # "icu_displaynames/serde",
     "icu_list/serde",
     "icu_locid_transform/serde",
     "icu_locid/serde",
@@ -83,7 +86,7 @@ serde = [
 serde_human = [
     "icu_list/serde_human"
 ]
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames"]
 
 [[example]]
 name = "tui"
