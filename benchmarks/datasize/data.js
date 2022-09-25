@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664083431249,
+  "lastUpdate": 1664133722055,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28493,6 +28493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dbb02a18b48a63100c748e6ef3f39d5c734810f9"
         },
         "date": 1664083366319,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9e307b8ad5de785184bba12558790602e4970d4",
+          "message": "Remove re-export of icu_calendar types (#2636)",
+          "timestamp": "2022-09-25T12:19:41-07:00",
+          "tree_id": "c87f8ed224e6feac4bc49c57e9e07d540f0421f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/f9e307b8ad5de785184bba12558790602e4970d4"
+        },
+        "date": 1664133663204,
         "tool": "ndjson",
         "benches": [
           {
