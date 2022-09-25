@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664083074508,
+  "lastUpdate": 1664083099037,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28433,6 +28433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b4279d35203e3771542471388697fbfd15896bd3"
         },
         "date": 1664083010251,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3bd2e1444b62b6884eedc6b3439fcd2f032d7662",
+          "message": "Add constructor trio in icu_segmenter (#2616)",
+          "timestamp": "2022-09-24T22:16:00-07:00",
+          "tree_id": "e073750e671e6f29919abee5e9cef7ca0f9da786",
+          "url": "https://github.com/unicode-org/icu4x/commit/3bd2e1444b62b6884eedc6b3439fcd2f032d7662"
+        },
+        "date": 1664083041206,
         "tool": "ndjson",
         "benches": [
           {
