@@ -12,7 +12,7 @@
 
         Construct an :js:class:`ICU4XLocale` from an locale identifier.
 
-        See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+        See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
     .. js:staticfunction:: create_en()
@@ -64,7 +64,7 @@
 
         Set the language part of the :js:class:`ICU4XLocale`.
 
-        See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+        See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
     .. js:function:: region()
@@ -78,7 +78,7 @@
 
         Set the region part of the :js:class:`ICU4XLocale`.
 
-        See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+        See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
     .. js:function:: script()
@@ -92,7 +92,7 @@
 
         Set the script part of the :js:class:`ICU4XLocale`. Pass an empty string to remove the script.
 
-        See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
+        See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
     .. js:staticfunction:: canonicalize(bytes)

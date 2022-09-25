@@ -8,12 +8,12 @@
 //! use icu::calendar::{ethiopian::Ethiopian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopian = Date::new_from_iso(date_iso, Ethiopian::new());
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_ethiopian = DateTime::new_from_iso(datetime_iso, Ethiopian::new());
 //!
@@ -259,7 +259,7 @@ impl Ethiopian {
         let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
 
         #[allow(clippy::unwrap_used)] // Coptic and Ethiopic have the same allowed ranges for dates
-        *Date::new_ethiopian_date(
+        *Date::try_new_ethiopian_date(
             EthiopianEraStyle::AmeteMihret,
             coptic_date.0.year,
             coptic_date.0.month,
@@ -312,14 +312,14 @@ impl Date<Ethiopian> {
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
     ///
     /// let date_ethiopian =
-    ///     Date::new_ethiopian_date(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
+    ///     Date::try_new_ethiopian_date(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
     ///     .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopian.year().number, 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);
     /// assert_eq!(date_ethiopian.day_of_month().0, 25);
     /// ```
-    pub fn new_ethiopian_date(
+    pub fn try_new_ethiopian_date(
         era_style: EthiopianEraStyle,
         mut year: i32,
         month: u8,
@@ -358,7 +358,7 @@ impl DateTime<Ethiopian> {
     /// use icu::calendar::DateTime;
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
     ///
-    /// let datetime_ethiopian = DateTime::new_ethiopian_datetime(EthiopianEraStyle::AmeteMihret, 2014, 8, 25, 13, 1, 0)
+    /// let datetime_ethiopian = DateTime::try_new_ethiopian_datetime(EthiopianEraStyle::AmeteMihret, 2014, 8, 25, 13, 1, 0)
     ///     .expect("Failed to initialize Ethiopian DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopian.date.year().number, 2014);
@@ -368,7 +368,7 @@ impl DateTime<Ethiopian> {
     /// assert_eq!(datetime_ethiopian.time.minute.number(), 1);
     /// assert_eq!(datetime_ethiopian.time.second.number(), 0);
     /// ```
-    pub fn new_ethiopian_datetime(
+    pub fn try_new_ethiopian_datetime(
         era_style: EthiopianEraStyle,
         year: i32,
         month: u8,
@@ -378,7 +378,7 @@ impl DateTime<Ethiopian> {
         second: u8,
     ) -> Result<DateTime<Ethiopian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_ethiopian_date(era_style, year, month, day)?,
+            date: Date::try_new_ethiopian_date(era_style, year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -391,7 +391,7 @@ mod test {
     #[test]
     fn test_leap_year() {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopian
-        let iso_date = Date::new_iso_date(2023, 9, 11).unwrap();
+        let iso_date = Date::try_new_iso_date(2023, 9, 11).unwrap();
         let ethiopian_date = Ethiopian::new().date_from_iso(iso_date);
         assert_eq!(ethiopian_date.0.year, 2015);
         assert_eq!(ethiopian_date.0.month, 13);
@@ -400,7 +400,7 @@ mod test {
 
     #[test]
     fn test_iso_to_ethiopian_conversion_and_back() {
-        let iso_date = Date::new_iso_date(1970, 1, 2).unwrap();
+        let iso_date = Date::try_new_iso_date(1970, 1, 2).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
 
         assert_eq!(date_ethiopian.inner.0.year, 1962);
@@ -409,7 +409,7 @@ mod test {
 
         assert_eq!(
             date_ethiopian.to_iso(),
-            Date::new_iso_date(1970, 1, 2).unwrap()
+            Date::try_new_iso_date(1970, 1, 2).unwrap()
         );
     }
 }

@@ -88,7 +88,7 @@
 //! store a BCP-47 string and parse it when needed.
 //!
 //! Since the string is stored in an unparsed state, it is not safe to `unwrap` the result from
-//! `Locale::from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
+//! `Locale::try_from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
@@ -113,12 +113,12 @@
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::from_bytes(&*value);
+//! let loc = Locale::try_from_bytes(&*value);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::from_bytes(&*err_value);
+//! let err_loc = Locale::try_from_bytes(&*err_value);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!

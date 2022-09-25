@@ -47,11 +47,11 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::unicode::Value;
     ///
-    /// let value = Value::from_bytes(b"buddhist").expect("Parsing failed.");
+    /// let value = Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     ///
     /// assert_eq!(&value.to_string(), "buddhist");
     /// ```
-    pub fn from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = ShortVec::new();
 
         if !input.is_empty() {
@@ -148,7 +148,7 @@ impl FromStr for Value {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 

@@ -14,14 +14,12 @@ use crate::japanese::{Japanese, JapaneseExtended};
 use crate::{
     types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
 };
-use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
     subtags_language as language, Locale,
 };
 use icu_provider::prelude::*;
-use tinystr::tinystr;
 
 use core::fmt;
 
@@ -55,19 +53,19 @@ use core::fmt;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::try_new_unstable(&icu_testdata::unstable()).unwrap();
-/// let japanese_datetime = DateTime::new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+/// let japanese_datetime = DateTime::try_new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();
@@ -612,14 +610,16 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Construct from a BCP-47 string
     ///
-    /// Returns None if the calendar is unknown
-    pub fn from_bcp47_string(x: &str) -> Option<Self> {
-        Self::from_bcp47_bytes(x.as_bytes())
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
+    pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
+        Self::get_for_bcp47_bytes(x.as_bytes())
     }
     /// Construct from a BCP-47 byte string
     ///
-    /// Returns None if the calendar is unknown
-    pub fn from_bcp47_bytes(x: &[u8]) -> Option<Self> {
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
+    pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
         Some(match x {
             b"gregory" => AnyCalendarKind::Gregorian,
             b"buddhist" => AnyCalendarKind::Buddhist,
@@ -635,9 +635,10 @@ impl AnyCalendarKind {
     }
     /// Construct from a BCP-47 [`Value`]
     ///
-    /// Returns an error if the calendar is unknown
-    pub fn from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
-        Ok(if *x == value!("gregory") {
+    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
+    pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
+        Some(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
@@ -656,10 +657,7 @@ impl AnyCalendarKind {
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::EthiopianAmeteAlem
         } else {
-            let mut string = x.to_string();
-            string.truncate(16);
-            let tiny = string.parse().unwrap_or(tinystr!(16, "unknown"));
-            return Err(DateTimeError::UnknownAnyCalendarKind(tiny));
+            return None;
         })
     }
 
@@ -695,37 +693,29 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`Locale`]
     ///
-    /// Will not perform any kind of fallbacking and will error for
-    /// unknown or unspecified calendar kinds
-    pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
+    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
+    pub fn get_for_locale(l: &Locale) -> Option<Self> {
         l.extensions
             .unicode
             .keywords
             .get(&key!("ca"))
-            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
-                16,
-                "(unspecified)"
-            )))
-            .and_then(Self::from_bcp47)
+            .and_then(Self::get_for_bcp47_value)
     }
 
     /// Extract the calendar component from a [`DataLocale`]
     ///
-    /// Will NOT perform any kind of fallbacking and will error for
-    /// unknown or unspecified calendar kinds
-    fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
+    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// [`DateTimeError::unknown_any_calendar_kind`].
+    fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
         l.get_unicode_ext(&key!("ca"))
-            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
-                16,
-                "(unspecified)"
-            )))
-            .and_then(|v| Self::from_bcp47(&v))
+            .and_then(|v| Self::get_for_bcp47_value(&v))
     }
 
     // Do not make public, this will eventually need fallback
     // data from the provider
     fn from_data_locale_with_fallback(l: &DataLocale) -> Self {
-        if let Ok(kind) = Self::from_data_locale(l) {
+        if let Some(kind) = Self::get_for_data_locale(l) {
             kind
         } else {
             let lang = l.language();
@@ -885,7 +875,7 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
+        let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
             panic!(
                 "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
                 calendar.debug_name(),
@@ -934,7 +924,7 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::new_from_codes(era, year, month, day, calendar);
+        let date = Date::try_new_from_codes(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),

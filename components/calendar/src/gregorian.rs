@@ -8,12 +8,12 @@
 //! use icu::calendar::{gregorian::Gregorian, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_gregorian = DateTime::new_from_iso(datetime_iso, Gregorian);
 //!
@@ -168,19 +168,19 @@ impl Date<Gregorian> {
     /// use std::convert::TryFrom;
     ///
     /// // Conversion from ISO to Gregorian
-    /// let date_gregorian = Date::new_gregorian_date(1970, 1, 2)
+    /// let date_gregorian = Date::try_new_gregorian_date(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
     /// assert_eq!(date_gregorian.year().number, 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
-    pub fn new_gregorian_date(
+    pub fn try_new_gregorian_date(
         year: i32,
         month: u8,
         day: u8,
     ) -> Result<Date<Gregorian>, DateTimeError> {
-        Date::new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
+        Date::try_new_iso_date(year, month, day).map(|d| Date::new_from_iso(d, Gregorian))
     }
 }
 
@@ -192,7 +192,7 @@ impl DateTime<Gregorian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_gregorian = DateTime::new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
+    /// let datetime_gregorian = DateTime::try_new_gregorian_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize Gregorian DateTime instance.");
     ///
     /// assert_eq!(datetime_gregorian.date.year().number, 1970);
@@ -202,7 +202,7 @@ impl DateTime<Gregorian> {
     /// assert_eq!(datetime_gregorian.time.minute.number(), 1);
     /// assert_eq!(datetime_gregorian.time.second.number(), 0);
     /// ```
-    pub fn new_gregorian_datetime(
+    pub fn try_new_gregorian_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -211,7 +211,7 @@ impl DateTime<Gregorian> {
         second: u8,
     ) -> Result<DateTime<Gregorian>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_gregorian_date(year, month, day)?,
+            date: Date::try_new_gregorian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

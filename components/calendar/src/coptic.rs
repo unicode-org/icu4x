@@ -8,12 +8,12 @@
 //! use icu::calendar::{coptic::Coptic, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
@@ -224,7 +224,7 @@ impl Coptic {
         let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
-        *Date::new_coptic_date(year, month, day).unwrap().inner()
+        *Date::try_new_coptic_date(year, month, day).unwrap().inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
@@ -245,13 +245,17 @@ impl Date<Coptic> {
     /// use icu::calendar::Date;
     ///
     /// let date_coptic =
-    ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
+    ///     Date::try_new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
+    pub fn try_new_coptic_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Coptic>, DateTimeError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -276,7 +280,7 @@ impl DateTime<Coptic> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
+    /// let datetime_coptic = DateTime::try_new_coptic_datetime(1686, 5, 6, 13, 1, 0)
     ///     .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
@@ -286,7 +290,7 @@ impl DateTime<Coptic> {
     /// assert_eq!(datetime_coptic.time.minute.number(), 1);
     /// assert_eq!(datetime_coptic.time.second.number(), 0);
     /// ```
-    pub fn new_coptic_datetime(
+    pub fn try_new_coptic_datetime(
         year: i32,
         month: u8,
         day: u8,
@@ -295,7 +299,7 @@ impl DateTime<Coptic> {
         second: u8,
     ) -> Result<DateTime<Coptic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_coptic_date(year, month, day)?,
+            date: Date::try_new_coptic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

@@ -89,7 +89,7 @@ where
 /// // Set up the Metazone calculator and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
-/// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
+/// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
 /// // Set up the formatter

@@ -19,7 +19,7 @@
 
         Creates a new :js:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
-        See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
+        See the `Rust documentation for try_new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_from_codes>`__ for more information.
 
 
     .. js:staticfunction:: create_from_date_and_time(date, time)
@@ -184,7 +184,7 @@
 
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 
-        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+        See the `Rust documentation for try_new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime>`__ for more information.
 
 
     .. js:staticfunction:: crate_from_date_and_time(date, time)
@@ -194,11 +194,11 @@
         See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_minutes_since_local_unix_epoch(minutes)
+    .. js:staticfunction:: create_try_from_minutes_since_local_unix_epoch(minutes)
 
         Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
-        See the `Rust documentation for from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch>`__ for more information.
+        See the `Rust documentation for try_from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_from_minutes_since_local_unix_epoch>`__ for more information.
 
 
     .. js:function:: date()

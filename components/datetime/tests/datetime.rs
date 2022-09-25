@@ -88,7 +88,7 @@ fn test_fixture(fixture_name: &str) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Ok(kind) = AnyCalendarKind::from_locale(&locale) {
+            if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
@@ -825,7 +825,7 @@ fn test_vertical_fallback_disabled() {
 
     // This should work for length bag. It doesn't currently work for components bag.
     assert_writeable_eq!(
-        dtf.format(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
+        dtf.format(&DateTime::try_new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
         "mardi 5 avril 2022 à 12:33",
     );
 }
