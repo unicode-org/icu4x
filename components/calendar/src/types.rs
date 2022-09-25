@@ -479,7 +479,7 @@ impl Time {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::input::IsoWeekday;
+/// use icu::calendar::types::IsoWeekday;
 ///
 /// assert_eq!(1, IsoWeekday::Monday as usize);
 /// assert_eq!(7, IsoWeekday::Sunday as usize);
@@ -511,7 +511,7 @@ impl From<usize> for IsoWeekday {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::IsoWeekday;
+    /// use icu::calendar::types::IsoWeekday;
     ///
     /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
