@@ -197,7 +197,7 @@ macro_rules! dt_unit {
 
         impl $name {
             /// Gets the numeric value for this component.
-            pub const fn number(&self) -> $storage {
+            pub const fn number(self) -> $storage {
                 self.0
             }
         }

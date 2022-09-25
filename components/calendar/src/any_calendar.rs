@@ -662,8 +662,8 @@ impl AnyCalendarKind {
     }
 
     /// Convert to a BCP-47 string
-    pub fn as_bcp47_string(&self) -> &'static str {
-        match *self {
+    pub fn as_bcp47_string(self) -> &'static str {
+        match self {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Buddhist => "buddhist",
             AnyCalendarKind::Japanese => "japanese",
@@ -677,8 +677,8 @@ impl AnyCalendarKind {
     }
 
     /// Convert to a BCP-47 `Value`
-    pub fn as_bcp47_value(&self) -> Value {
-        match *self {
+    pub fn as_bcp47_value(self) -> Value {
+        match self {
             AnyCalendarKind::Gregorian => value!("gregory"),
             AnyCalendarKind::Buddhist => value!("buddhist"),
             AnyCalendarKind::Japanese => value!("japanese"),
