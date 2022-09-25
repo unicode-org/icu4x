@@ -12,12 +12,12 @@ use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
 use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
-// TODO (Manishearth) fix up imports to directly import from icu_calendar
-pub use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, Era, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, MonthCode, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+// TODO(#2630) fix up imports to directly import from icu_calendar
+pub(crate) use icu_calendar::types::{
+    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
+    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
-pub use icu_calendar::DateTimeError;
+pub(crate) use icu_calendar::DateTimeError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
 /// solar days indexed by an era, year, month, and day.
