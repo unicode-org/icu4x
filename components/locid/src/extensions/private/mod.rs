@@ -13,14 +13,14 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions::private::{Key, Private};
+//! use icu::locid::extensions::private::{Subtag, Private};
 //! use icu::locid::Locale;
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
-//! let key: Key = "foo".parse().expect("Parsing key failed.");
-//! assert_eq!(loc.extensions.private.contains(&key), true);
-//! assert_eq!(loc.extensions.private.iter().next(), Some(&key));
+//! let subtag: Subtag = "foo".parse().expect("Parsing subtag failed.");
+//! assert_eq!(loc.extensions.private.contains(&subtag), true);
+//! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag));
 //! loc.extensions.private.clear();
 //! assert_eq!(loc.to_string(), "en-US");
 //! ```
