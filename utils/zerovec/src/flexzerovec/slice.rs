@@ -68,7 +68,7 @@ impl FlexZeroSlice {
     ///     0xFF, 0xFF, // third value
     /// ]) {
     ///     Ok(v) => v,
-    ///     Err(_) => panic!("invalid bytes")
+    ///     Err(_) => panic!("invalid bytes"),
     /// };
     ///
     /// assert!(!FZS.is_empty());

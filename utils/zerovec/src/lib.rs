@@ -73,11 +73,12 @@
 //!     chars: ZeroVec::alloc_from_slice(&['ö', '冇', 'म']),
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
-//! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+//! let bincode_bytes =
+//!     bincode::serialize(&data).expect("Serialization should be successful");
 //! assert_eq!(bincode_bytes.len(), 67);
 //!
-//! let deserialized: DataStruct =
-//!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+//! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
+//!     .expect("Deserialization should be successful");
 //! assert_eq!(deserialized.nums.first(), Some(211));
 //! assert_eq!(deserialized.chars.get(1), Some('冇'));
 //! assert_eq!(deserialized.strs.get(1), Some("world"));
@@ -336,7 +337,16 @@ pub mod vecs {
 /// use zerovec::ZeroVec;
 ///
 /// #[zerovec::make_ule(DateULE)]
-/// #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+/// #[derive(
+///     Copy,
+///     Clone,
+///     PartialEq,
+///     Eq,
+///     Ord,
+///     PartialOrd,
+///     serde::Serialize,
+///     serde::Deserialize,
+/// )]
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
@@ -369,11 +379,12 @@ pub mod vecs {
 ///     ]),
 /// };
 ///
-/// let bincode_bytes = bincode::serialize(&dates).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&dates).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Dates =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Dates = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
 /// assert_eq!(deserialized.dates.get(2).unwrap().d, 13);

@@ -29,13 +29,14 @@ pub trait NicheBytes<const N: usize> {
 /// # Example
 ///
 /// ```
-/// use zerovec::ZeroVec;
-/// use zerovec::ule::NichedOption;
 /// use core::num::NonZeroI8;
+/// use zerovec::ule::NichedOption;
+/// use zerovec::ZeroVec;
 ///
-/// let bytes = &[0x00, 0x01, 0x02, 0x00 ];
+/// let bytes = &[0x00, 0x01, 0x02, 0x00];
 /// let zv_no: ZeroVec<NichedOption<NonZeroI8, 1>> =
-///         ZeroVec::parse_byte_slice(bytes).expect("Unable to parse as NichedOption.");
+///     ZeroVec::parse_byte_slice(bytes)
+///         .expect("Unable to parse as NichedOption.");
 ///
 /// assert_eq!(zv_no.get(0).map(|e| e.0), Some(None));
 /// assert_eq!(zv_no.get(1).map(|e| e.0), Some(NonZeroI8::new(1)));

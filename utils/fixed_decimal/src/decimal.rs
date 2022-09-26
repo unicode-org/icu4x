@@ -456,8 +456,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let dec = FixedDecimal::from(42)
-    ///     .multiplied_pow10(3);
+    /// let dec = FixedDecimal::from(42).multiplied_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiplied_pow10(mut self, delta: i16) -> Self {
@@ -473,8 +472,14 @@ impl FixedDecimal {
     /// # use std::str::FromStr;
     ///
     /// assert_eq!(FixedDecimal::from_str("1729").unwrap().sign(), Sign::None);
-    /// assert_eq!(FixedDecimal::from_str("-1729").unwrap().sign(), Sign::Negative);
-    /// assert_eq!(FixedDecimal::from_str("+1729").unwrap().sign(), Sign::Positive);
+    /// assert_eq!(
+    ///     FixedDecimal::from_str("-1729").unwrap().sign(),
+    ///     Sign::Negative
+    /// );
+    /// assert_eq!(
+    ///     FixedDecimal::from_str("+1729").unwrap().sign(),
+    ///     Sign::Positive
+    /// );
     /// ```
     pub fn sign(&self) -> Sign {
         self.sign
@@ -512,9 +517,22 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Sign;
     ///
-    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign(Sign::Positive).to_string());
-    /// assert_eq!("1729", FixedDecimal::from(-1729).with_sign(Sign::None).to_string());
-    /// assert_eq!("-1729", FixedDecimal::from(1729).with_sign(Sign::Negative).to_string());
+    /// assert_eq!(
+    ///     "+1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign(Sign::Positive)
+    ///         .to_string()
+    /// );
+    /// assert_eq!(
+    ///     "1729",
+    ///     FixedDecimal::from(-1729).with_sign(Sign::None).to_string()
+    /// );
+    /// assert_eq!(
+    ///     "-1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign(Sign::Negative)
+    ///         .to_string()
+    /// );
     /// ```
     pub fn with_sign(mut self, sign: Sign) -> Self {
         self.set_sign(sign);
@@ -570,7 +588,12 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::SignDisplay::*;
     ///
-    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign_display(ExceptZero).to_string());
+    /// assert_eq!(
+    ///     "+1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign_display(ExceptZero)
+    ///         .to_string()
+    /// );
     /// ```
     pub fn with_sign_display(mut self, sign_display: SignDisplay) -> Self {
         self.apply_sign_display(sign_display);
@@ -616,8 +639,7 @@ impl FixedDecimal {
     ///
     /// ```
     /// # use fixed_decimal::FixedDecimal;
-    /// let mut dec = FixedDecimal::from(22)
-    ///     .multiplied_pow10(-4);
+    /// let mut dec = FixedDecimal::from(22).multiplied_pow10(-4);
     /// assert_eq!("0.0022", dec.to_string());
     ///
     /// dec.trim_start();
@@ -1064,7 +1086,7 @@ impl FixedDecimal {
     /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_trunc(0);
-    /// assert_eq!("1", dec.to_string());   
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_trunc(0);
     /// assert_eq!("1", dec.to_string());
@@ -1107,7 +1129,7 @@ impl FixedDecimal {
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
     /// assert_eq!("0", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.half_trunced(0).to_string());    
+    /// assert_eq!("1", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
     /// assert_eq!("1", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("3.954").unwrap();
@@ -1137,7 +1159,7 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.expand(0);
-    /// assert_eq!("1", dec.to_string());  
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.expand(0);
     /// assert_eq!("2", dec.to_string());
@@ -1189,7 +1211,7 @@ impl FixedDecimal {
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
     /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("1", dec.expanded(0).to_string());   
+    /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
     /// assert_eq!("2", dec.expanded(0).to_string());
     /// ```
@@ -1568,10 +1590,9 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let integer = FixedDecimal::from(123);
-    /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3);
+    /// let fraction = FixedDecimal::from(456).multiplied_pow10(-3);
     ///
-    /// let result =  integer.concatenated_end(fraction).expect("nonoverlapping");
+    /// let result = integer.concatenated_end(fraction).expect("nonoverlapping");
     ///
     /// assert_eq!("123.456", result.to_string());
     /// ```
@@ -1596,8 +1617,7 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut integer = FixedDecimal::from(123);
-    /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3);
+    /// let fraction = FixedDecimal::from(456).multiplied_pow10(-3);
     ///
     /// integer.concatenate_end(fraction);
     ///
@@ -1974,19 +1994,19 @@ impl FixedDecimal {
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
     /// use writeable::assert_writeable_eq;
     ///
-    /// let decimal = FixedDecimal::try_from_f64(
-    ///     -5.1,
-    ///     DoublePrecision::Magnitude(-2),
-    /// )
-    /// .expect("Finite quantity with limited precision");
+    /// let decimal =
+    ///     FixedDecimal::try_from_f64(-5.1, DoublePrecision::Magnitude(-2))
+    ///         .expect("Finite quantity with limited precision");
     /// assert_writeable_eq!(decimal, "-5.10");
     ///
-    /// let decimal = FixedDecimal::try_from_f64(0.012345678, DoublePrecision::Floating)
-    ///     .expect("Finite quantity");
+    /// let decimal =
+    ///     FixedDecimal::try_from_f64(0.012345678, DoublePrecision::Floating)
+    ///         .expect("Finite quantity");
     /// assert_writeable_eq!(decimal, "0.012345678");
     ///
-    /// let decimal = FixedDecimal::try_from_f64(12345678000., DoublePrecision::Integer)
-    ///     .expect("Finite, integer-valued quantity");
+    /// let decimal =
+    ///     FixedDecimal::try_from_f64(12345678000., DoublePrecision::Integer)
+    ///         .expect("Finite, integer-valued quantity");
     /// assert_writeable_eq!(decimal, "12345678000");
     /// ```
     ///
@@ -1999,7 +2019,8 @@ impl FixedDecimal {
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
     /// let negative_zero =
-    ///     FixedDecimal::try_from_f64(-0.0, DoublePrecision::Integer).expect("Negative zero");
+    ///     FixedDecimal::try_from_f64(-0.0, DoublePrecision::Integer)
+    ///         .expect("Negative zero");
     /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {

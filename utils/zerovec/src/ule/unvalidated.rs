@@ -23,14 +23,16 @@ use core::ops::Deref;
 /// Using an [`UnvalidatedStr`] as the key of a [`ZeroMap`]:
 ///
 /// ```
-/// use zerovec::ZeroMap;
 /// use zerovec::ule::UnvalidatedStr;
+/// use zerovec::ZeroMap;
 ///
 /// let map: ZeroMap<UnvalidatedStr, usize> = [
 ///     (UnvalidatedStr::from_str("abc"), 11),
 ///     (UnvalidatedStr::from_str("def"), 22),
-///     (UnvalidatedStr::from_str("ghi"), 33)
-/// ].into_iter().collect();
+///     (UnvalidatedStr::from_str("ghi"), 33),
+/// ]
+/// .into_iter()
+/// .collect();
 ///
 /// let key = "abc";
 /// let value = map.get_copied_by(|uvstr| uvstr.as_bytes().cmp(key.as_bytes()));
