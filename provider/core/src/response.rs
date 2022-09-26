@@ -9,6 +9,10 @@ use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 use alloc::boxed::Box;
+#[cfg(not(feature = "sync"))]
+use alloc::rc::Rc as SelectedRc;
+#[cfg(feature = "sync")]
+use alloc::sync::Arc as SelectedRc;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
@@ -72,10 +76,10 @@ where
 
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone)]
-pub struct Cart(
-    #[cfg(feature = "sync")] alloc::sync::Arc<Box<[u8]>>,
-    #[cfg(not(feature = "sync"))] alloc::rc::Rc<Box<[u8]>>,
-);
+#[allow(clippy::redundant_allocation)] // This is intended, we're optimising the creation of the cart from a Box<[u8]>,
+                                       // which would require a big allocation for `Arc<[u8]>`. This is only derefenced
+                                       // once anyway.
+pub struct Cart(SelectedRc<Box<[u8]>>);
 
 impl core::ops::Deref for Cart {
     type Target = Box<[u8]>;
@@ -83,13 +87,22 @@ impl core::ops::Deref for Cart {
         &*self.0
     }
 }
+// Safe because both Rc and Arc are CloneableCart
 unsafe impl stable_deref_trait::StableDeref for Cart {}
+// Safe because both Rc and Arc are StableDeref
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
-    /// Creates a cart from owned bytes.
-    pub fn from_bytes(bytes: Box<[u8]>) -> Self {
-        Self(bytes.into())
+    /// Creates a Yoke<Y, Cart> from owned bytes.
+    pub fn yoke_bytes<Y, F, E>(bytes: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
+    where
+        for<'a> Y: Yokeable<'a>,
+        F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
+    {
+        Ok(
+            Yoke::try_attach_to_cart(Cart(SelectedRc::new(bytes)), |b: &Box<[u8]>| f(&*b))?
+                .wrap_cart_in_option(),
+        )
     }
 }
 
@@ -484,8 +497,7 @@ impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
         Self {
-            yoke: Yoke::attach_to_cart(Cart::from_bytes(buffer), |b| &**b)
-                .wrap_cart_in_option(),
+            yoke: Cart::yoke_bytes::<_, _, core::convert::Infallible>(buffer, |b| Ok(&*b)).unwrap(),
         }
     }
 
