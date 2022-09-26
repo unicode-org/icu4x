@@ -60,16 +60,13 @@ pub mod ffi {
 
         /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
         #[diplomat::rust_link(
-            icu::calendar::DateTime::try_from_minutes_since_local_unix_epoch,
+            icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
             FnInStruct
         )]
-        pub fn create_try_from_minutes_since_local_unix_epoch(
+        pub fn create_from_minutes_since_local_unix_epoch(
             minutes: i32,
-        ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
-            DateTime::try_from_minutes_since_local_unix_epoch(minutes)
-                .map(|dt| Box::new(ICU4XIsoDateTime(dt)))
-                .map_err(Into::into)
-                .into()
+        ) -> Box<ICU4XIsoDateTime> {
+            Box::new(ICU4XIsoDateTime(DateTime::from_minutes_since_local_unix_epoch(minutes)))
         }
 
         /// Gets the date contained in this object
