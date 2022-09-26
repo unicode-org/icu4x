@@ -124,10 +124,7 @@ pub enum TimeZoneFormatterConfig {
 }
 
 impl TimeZoneFormatterConfig {
-    pub fn set_on_formatter(
-        self,
-        tzf: &mut TimeZoneFormatter,
-    ) -> Result<(), DateTimeError> {
+    pub fn set_on_formatter(self, tzf: &mut TimeZoneFormatter) -> Result<(), DateTimeError> {
         match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
                 tzf.load_generic_non_location_long(&icu_testdata::unstable())

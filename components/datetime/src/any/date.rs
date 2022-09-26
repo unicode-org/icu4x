@@ -229,10 +229,7 @@ impl DateFormatter {
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
     /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
-    pub fn format<'l, T>(
-        &'l self,
-        value: &T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeError>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateInput<Calendar = AnyCalendar>,
     {

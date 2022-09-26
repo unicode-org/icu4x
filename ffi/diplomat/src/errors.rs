@@ -218,9 +218,7 @@ impl From<CalendarError> for ICU4XError {
             CalendarError::UnknownEra(..) => ICU4XError::CalendarUnknownEraError,
             CalendarError::UnknownMonthCode(..) => ICU4XError::CalendarUnknownMonthCodeError,
             CalendarError::MissingInput(_) => ICU4XError::CalendarMissingInputError,
-            CalendarError::UnknownAnyCalendarKind(_) => {
-                ICU4XError::CalendarUnknownKindError
-            }
+            CalendarError::UnknownAnyCalendarKind(_) => ICU4XError::CalendarUnknownKindError,
             CalendarError::MissingCalendar => ICU4XError::CalendarMissingError,
             CalendarError::DataProvider(e) => e.into(),
             _ => ICU4XError::UnknownError,
@@ -236,25 +234,15 @@ impl From<DateTimeError> for ICU4XError {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
             DateTimeError::Format(err) => err.into(),
             DateTimeError::DataProvider(err) => err.into(),
-            DateTimeError::MissingInputField(_) => {
-                ICU4XError::DateTimeMissingInputFieldError
-            }
+            DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
             // TODO(#1324): Add back skeleton errors
             // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
-            DateTimeError::UnsupportedField(_) => {
-                ICU4XError::DateTimeUnsupportedFieldError
-            }
-            DateTimeError::UnsupportedOptions => {
-                ICU4XError::DateTimeUnsupportedOptionsError
-            }
+            DateTimeError::UnsupportedField(_) => ICU4XError::DateTimeUnsupportedFieldError,
+            DateTimeError::UnsupportedOptions => ICU4XError::DateTimeUnsupportedOptionsError,
             DateTimeError::PluralRules(err) => err.into(),
             DateTimeError::DateTimeInput(err) => err.into(),
-            DateTimeError::MissingWeekdaySymbol(_) => {
-                ICU4XError::DateTimeMissingWeekdaySymbolError
-            }
-            DateTimeError::MissingMonthSymbol(_) => {
-                ICU4XError::DateTimeMissingMonthSymbolError
-            }
+            DateTimeError::MissingWeekdaySymbol(_) => ICU4XError::DateTimeMissingWeekdaySymbolError,
+            DateTimeError::MissingMonthSymbol(_) => ICU4XError::DateTimeMissingMonthSymbolError,
             DateTimeError::FixedDecimal => ICU4XError::DateTimeFixedDecimalError,
             DateTimeError::FixedDecimalFormatter(err) => err.into(),
             DateTimeError::MismatchedAnyCalendar(_, _) => {

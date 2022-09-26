@@ -576,7 +576,10 @@ mod tests {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
         let inv_list = ZeroVec::from_slice_or_alloc(&check);
         let set = CodePointInversionList::try_from_inversion_list(inv_list);
-        assert!(matches!(set, Err(CodePointInversionListError::InvalidSet(_))));
+        assert!(matches!(
+            set,
+            Err(CodePointInversionListError::InvalidSet(_))
+        ));
         if let Err(CodePointInversionListError::InvalidSet(actual)) = set {
             assert_eq!(&check, &actual);
         }

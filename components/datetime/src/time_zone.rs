@@ -231,9 +231,7 @@ impl TimeZoneFormatter {
                 prev_symbol = Some(symbol);
             } else if prev_length != Some(length) && prev_symbol != Some(symbol) {
                 // We don't support the pattern that has multiple different timezone fields of different types.
-                return Err(DateTimeError::Pattern(
-                    PatternError::UnsupportedPluralPivot,
-                ));
+                return Err(DateTimeError::Pattern(PatternError::UnsupportedPluralPivot));
             }
 
             match symbol {
@@ -245,9 +243,9 @@ impl TimeZoneFormatter {
                         tz_format.load_specific_non_location_long(zone_provider)?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::LowerV => match length {
@@ -258,9 +256,9 @@ impl TimeZoneFormatter {
                         tz_format.load_generic_non_location_long(zone_provider)?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::UpperV => match length {
@@ -273,9 +271,9 @@ impl TimeZoneFormatter {
                         tz_format.load_generic_location_format(zone_provider)?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::UpperZ => match length {
@@ -297,9 +295,9 @@ impl TimeZoneFormatter {
                         )?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::LowerX => match length {
@@ -339,9 +337,9 @@ impl TimeZoneFormatter {
                         )?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::UpperX => match length {
@@ -381,9 +379,9 @@ impl TimeZoneFormatter {
                         )?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
                 TimeZone::UpperO => match length {
@@ -391,9 +389,9 @@ impl TimeZoneFormatter {
                         tz_format.load_localized_gmt_format()?;
                     }
                     _ => {
-                        return Err(DateTimeError::Pattern(
-                            PatternError::FieldLengthInvalid(FieldSymbol::TimeZone(symbol)),
-                        ))
+                        return Err(DateTimeError::Pattern(PatternError::FieldLengthInvalid(
+                            FieldSymbol::TimeZone(symbol),
+                        )))
                     }
                 },
             }
@@ -600,9 +598,7 @@ impl TimeZoneFormatter {
     }
 
     /// Load localized GMT format for timezone. For example, GMT-07:00.
-    pub fn load_localized_gmt_format(
-        &mut self,
-    ) -> Result<&mut TimeZoneFormatter, DateTimeError> {
+    pub fn load_localized_gmt_format(&mut self) -> Result<&mut TimeZoneFormatter, DateTimeError> {
         self.format_units
             .push(TimeZoneFormatterUnit::LocalizedGmt(LocalizedGmtFormat {}));
         Ok(self)
@@ -698,25 +694,19 @@ impl TimeZoneFormatter {
                 padding,
             ))
         } else {
-            Err(DateTimeError::MissingInputField(Some(
-                "gmt_offset",
-            )))
+            Err(DateTimeError::MissingInputField(Some("gmt_offset")))
         }
     }
 
     /// Formats the minutes as a [`String`] with zero-padding.
-    fn format_offset_minutes(
-        time_zone: &impl TimeZoneInput,
-    ) -> Result<String, DateTimeError> {
+    fn format_offset_minutes(time_zone: &impl TimeZoneInput) -> Result<String, DateTimeError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
                 (gmt_offset.offset_seconds() % 3600 / 60).abs() as u8,
                 ZeroPadding::On,
             ))
         } else {
-            Err(DateTimeError::MissingInputField(Some(
-                "gmt_offset",
-            )))
+            Err(DateTimeError::MissingInputField(Some("gmt_offset")))
         }
     }
 
@@ -731,9 +721,7 @@ impl TimeZoneFormatter {
                 ZeroPadding::On,
             )))
         } else {
-            Err(DateTimeError::MissingInputField(Some(
-                "gmt_offset",
-            )))
+            Err(DateTimeError::MissingInputField(Some("gmt_offset")))
         }
     }
 }
@@ -1113,9 +1101,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_hours
                             } else {
-                                return Err(DateTimeError::MissingInputField(Some(
-                                    "gmt_offset",
-                                )));
+                                return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
                             },
                         )
                         .replace(
@@ -1125,9 +1111,7 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_minutes
                             } else {
-                                return Err(DateTimeError::MissingInputField(Some(
-                                    "gmt_offset",
-                                )));
+                                return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
                             },
                         )
                         .replace(
@@ -1137,17 +1121,13 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_hours
                             } else {
-                                return Err(DateTimeError::MissingInputField(Some(
-                                    "gmt_offset",
-                                )));
+                                return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
                             },
                         ),
                 ))
             };
         };
-        Err(DateTimeError::MissingInputField(Some(
-            "gmt_offset",
-        )))
+        Err(DateTimeError::MissingInputField(Some("gmt_offset")))
     }
 }
 
@@ -1220,9 +1200,7 @@ impl FormatTimeZone for Iso8601Format {
                     return Ok(Err(e));
                 }
             } else {
-                return Err(DateTimeError::MissingInputField(Some(
-                    "gmt_offset",
-                )));
+                return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
             }
 
             match self.minutes {
@@ -1238,9 +1216,7 @@ impl FormatTimeZone for Iso8601Format {
                             return Ok(Err(e));
                         }
                     } else {
-                        return Err(DateTimeError::MissingInputField(Some(
-                            "gmt_offset",
-                        )));
+                        return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
                     }
                 }
                 IsoMinutes::Optional => {
@@ -1257,9 +1233,7 @@ impl FormatTimeZone for Iso8601Format {
                                 return Ok(Err(e));
                             }
                         } else {
-                            return Err(DateTimeError::MissingInputField(Some(
-                                "gmt_offset",
-                            )));
+                            return Err(DateTimeError::MissingInputField(Some("gmt_offset")));
                         }
                     }
                 }
@@ -1279,9 +1253,7 @@ impl FormatTimeZone for Iso8601Format {
             }
             return Ok(Ok(()));
         };
-        Err(DateTimeError::MissingInputField(Some(
-            "gmt_offset",
-        )))
+        Err(DateTimeError::MissingInputField(Some("gmt_offset")))
     }
 }
 
