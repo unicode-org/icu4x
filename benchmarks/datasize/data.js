@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664222391329,
+  "lastUpdate": 1664225760944,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28673,6 +28673,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0eaff6f63ad74ec7184bad089dd7a67de071ab8c"
         },
         "date": 1664222333586,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@amazon.com",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7929b6e0cd392cbe9026740ee9ad83bcf1f392c5",
+          "message": "Document inline clippy lints for datetime and plurals (#2572)",
+          "timestamp": "2022-09-26T20:53:40Z",
+          "tree_id": "7d57dda3c3614dd72b910f53dae533cc27401613",
+          "url": "https://github.com/unicode-org/icu4x/commit/7929b6e0cd392cbe9026740ee9ad83bcf1f392c5"
+        },
+        "date": 1664225701732,
         "tool": "ndjson",
         "benches": [
           {
