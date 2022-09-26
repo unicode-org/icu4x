@@ -303,4 +303,4 @@ pub use options::Numeric;
 pub use options::Strength;
 
 #[doc(inline)]
-use CollatorError as Error;
+pub use CollatorError as Error;
