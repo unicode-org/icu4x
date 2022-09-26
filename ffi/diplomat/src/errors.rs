@@ -274,7 +274,6 @@ impl From<PluralsError> for ICU4XError {
     fn from(e: PluralsError) -> Self {
         let ret = match e {
             PluralsError::Data(e) => e.into(),
-            PluralsError::Parser(..) => ICU4XError::PluralsParserError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -307,7 +306,7 @@ impl From<LocaleTransformError> for ICU4XError {
 impl From<SegmenterError> for ICU4XError {
     fn from(e: SegmenterError) -> Self {
         let ret = match e {
-            PluralsError::DataProvider(e) => e.into(),
+            SegmenterError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
