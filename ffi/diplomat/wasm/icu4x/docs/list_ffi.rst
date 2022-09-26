@@ -33,25 +33,25 @@
     See the `Rust documentation for ListFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/list/struct.ListFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_and_with_style(provider, locale, style)
+    .. js:staticfunction:: create_and_with_length(provider, locale, length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_and_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_unstable>`__ for more information.
+        See the `Rust documentation for try_new_and_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_or_with_style(provider, locale, style)
-
-        Construct a new ICU4XListFormatter instance for And patterns
-
-        See the `Rust documentation for try_new_or_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_unstable>`__ for more information.
-
-
-    .. js:staticfunction:: create_unit_with_style(provider, locale, style)
+    .. js:staticfunction:: create_or_with_length(provider, locale, length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_unit_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_unstable>`__ for more information.
+        See the `Rust documentation for try_new_or_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length_unstable>`__ for more information.
+
+
+    .. js:staticfunction:: create_unit_with_length(provider, locale, length)
+
+        Construct a new ICU4XListFormatter instance for And patterns
+
+        See the `Rust documentation for try_new_unit_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable>`__ for more information.
 
 
     .. js:function:: format(list)
@@ -59,7 +59,7 @@
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.format>`__ for more information.
 
 
-.. js:class:: ICU4XListStyle
+.. js:class:: ICU4XListLength
 
-    See the `Rust documentation for ListStyle <https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListStyle.html>`__ for more information.
+    See the `Rust documentation for ListLength <https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListLength.html>`__ for more information.
 

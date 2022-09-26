@@ -60,7 +60,7 @@ export { ICU4XLineBreakRule } from './ICU4XLineBreakRule.js';
 export { ICU4XLineBreakSegmenter } from './ICU4XLineBreakSegmenter.js';
 export { ICU4XList } from './ICU4XList.js';
 export { ICU4XListFormatter } from './ICU4XListFormatter.js';
-export { ICU4XListStyle } from './ICU4XListStyle.js';
+export { ICU4XListLength } from './ICU4XListLength.js';
 export { ICU4XLocale } from './ICU4XLocale.js';
 export { ICU4XLocaleCanonicalizer } from './ICU4XLocaleCanonicalizer.js';
 export { ICU4XLocaleExpander } from './ICU4XLocaleExpander.js';
