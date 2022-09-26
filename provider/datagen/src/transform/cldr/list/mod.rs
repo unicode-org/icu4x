@@ -141,7 +141,7 @@ implement!(UnitListV1Marker);
 
 #[cfg(test)]
 mod tests {
-    use icu_list::{ListFormatter, ListStyle};
+    use icu_list::{ListFormatter, ListLength};
     use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
@@ -150,7 +150,7 @@ mod tests {
             let f = ListFormatter::$type(
                 &crate::DatagenProvider::for_test(),
                 &locale!($locale).into(),
-                ListStyle::Wide
+                ListLength::Wide
             ).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);
@@ -160,14 +160,18 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        test!("fr", try_new_or_unstable, (["A", "B"], "A ou B"),);
+        test!(
+            "fr",
+            try_new_or_with_length_unstable,
+            (["A", "B"], "A ou B"),
+        );
     }
 
     #[test]
     fn test_spanish() {
         test!(
             "es",
-            try_new_and_unstable,
+            try_new_and_with_length_unstable,
             (["x", "Mallorca"], "x y Mallorca"),
             (["x", "Ibiza"], "x e Ibiza"),
             (["x", "Hidalgo"], "x e Hidalgo"),
@@ -176,7 +180,7 @@ mod tests {
 
         test!(
             "es",
-            try_new_or_unstable,
+            try_new_or_with_length_unstable,
             (["x", "Ibiza"], "x o Ibiza"),
             (["x", "Okinawa"], "x u Okinawa"),
             (["x", "8 más"], "x u 8 más"),
@@ -193,14 +197,18 @@ mod tests {
             (["x", "11.000,92"], "x u 11.000,92"),
         );
 
-        test!("es-AR", try_new_and_unstable, (["x", "Ibiza"], "x e Ibiza"),);
+        test!(
+            "es-AR",
+            try_new_and_with_length_unstable,
+            (["x", "Ibiza"], "x e Ibiza"),
+        );
     }
 
     #[test]
     fn test_hebrew() {
         test!(
             "he",
-            try_new_and_unstable,
+            try_new_and_with_length_unstable,
             (["x", "יפו"], "x ויפו"),
             (["x", "Ibiza"], "x ו-Ibiza"),
         );

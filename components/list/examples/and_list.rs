@@ -6,17 +6,17 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_list::{ListFormatter, ListStyle};
+use icu_list::{ListFormatter, ListLength};
 use icu_locid::locale;
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let list_formatter = ListFormatter::try_new_and_unstable(
+    let list_formatter = ListFormatter::try_new_and_with_length_unstable(
         &icu_testdata::unstable(),
         &locale!("es").into(),
-        ListStyle::Wide,
+        ListLength::Wide,
     )
     .unwrap();
 
