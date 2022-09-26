@@ -62,7 +62,11 @@ impl WeekCalculator {
             .map_err(Into::into)
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: include, options: skip, error: CalendarError);
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: skip,
+        error: CalendarError
+    );
 
     /// Returns the week of month according to a calendar with min_week_days = 1.
     ///

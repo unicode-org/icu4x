@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{indices::Utf16Indices, SegmenterError};
 use crate::provider::*;
+use crate::{indices::Utf16Indices, SegmenterError};
 
 use core::iter::Peekable;
 use core::str::CharIndices;

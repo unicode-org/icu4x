@@ -34,7 +34,9 @@ pub mod ffi {
     use crate::fallbacker::ffi::ICU4XLocaleFallbacker;
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
+    #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
+    #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 
     #[diplomat::opaque]
@@ -294,6 +296,7 @@ pub mod ffi {
             Struct,
             compact
         )]
+        #[allow(unused_variables)] // feature-gated
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &ICU4XLocaleFallbacker,

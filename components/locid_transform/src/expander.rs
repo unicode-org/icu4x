@@ -109,7 +109,11 @@ impl LocaleExpander {
         Ok(LocaleExpander { likely_subtags })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: LocaleTransformError);
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: LocaleTransformError
+    );
 
     /// The maximize method potentially updates a passed in locale in place
     /// depending up the results of running the 'Add Likely Subtags' algorithm

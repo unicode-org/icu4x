@@ -4,8 +4,8 @@
 
 //! The collection of code for locale canonicalization.
 
-use crate::LocaleTransformError;
 use crate::provider::*;
+use crate::LocaleTransformError;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
@@ -226,7 +226,11 @@ impl LocaleCanonicalizer {
         Ok(LocaleCanonicalizer { aliases, expander })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: LocaleTransformError);
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: LocaleTransformError
+    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm

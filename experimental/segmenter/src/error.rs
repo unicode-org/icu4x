@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::fmt::Debug;
 use displaydoc::Display;
 use icu_provider::prelude::DataError;
-use core::fmt::Debug;
 
 #[cfg(feature = "std")]
 impl std::error::Error for SegmenterError {}

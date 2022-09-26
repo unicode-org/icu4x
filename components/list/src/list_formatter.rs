@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
+use crate::ListError;
 use crate::ListStyle;
 use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
-use crate::ListError;
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.

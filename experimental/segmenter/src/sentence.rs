@@ -8,8 +8,8 @@ use icu_provider::prelude::*;
 
 use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::{provider::*, SegmenterError};
 use crate::rule_segmenter::*;
+use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
