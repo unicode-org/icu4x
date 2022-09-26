@@ -85,7 +85,7 @@ pub struct LstmSegmenter<'l> {
 }
 
 impl<'l> LstmSegmenter<'l> {
-    pub fn try_new(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
+    pub fn try_new_unstable(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
         let lstm = Lstm::try_new(payload).unwrap();
 
         Ok(Self { lstm })
@@ -123,7 +123,7 @@ mod tests {
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
-        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [12, 21, 33], "Thai test");
 
@@ -145,7 +145,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
         let data: LstmDataV1 = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks, [12, 18, 30], "Burmese test");
@@ -163,7 +163,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/km.json");
         let data: LstmDataV1 = serde_json::from_slice(KHMER_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: This small sample matches the ICU dictionary segmenter
         assert_eq!(breaks, [39, 48, 54, 72], "Khmer test");
@@ -180,7 +180,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/lo.json");
         let data: LstmDataV1 = serde_json::from_slice(LAO_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: LSTM finds a break at '12' that the dictionary does not find
         assert_eq!(breaks, [12, 21, 30, 39], "Lao test");

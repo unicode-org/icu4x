@@ -8,8 +8,8 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::calendar::{DateTime, Gregorian};
-use icu::datetime::DateTimeFormatterOptions;
-use icu::datetime::{TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
+use icu::datetime::time_zone::TimeZoneFormatterOptions;
+use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::timezone::CustomTimeZone;
@@ -51,7 +51,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create TypedDateTimeFormatter.");
-        let today_date = DateTime::new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
+        let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
         let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
 
         let formatted_dt = dtf.format(&today_date, &today_tz);

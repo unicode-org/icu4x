@@ -13,7 +13,6 @@ use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormat
 use icu_locid::Locale;
 use icu_provider::AsDeserializingBufferProvider;
 use icu_timezone::CustomTimeZone;
-use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
 mod mock;
@@ -110,6 +109,8 @@ fn datetime_benches(c: &mut Criterion) {
 
     #[cfg(feature = "bench")]
     {
+        use writeable::Writeable;
+
         let mut group = c.benchmark_group("datetime");
 
         let fxs = fixtures::get_fixture("lengths").unwrap();

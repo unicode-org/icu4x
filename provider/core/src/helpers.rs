@@ -189,6 +189,38 @@ fn test_hash_word_32() {
 
 #[doc(hidden)]
 #[macro_export]
+macro_rules! gen_any_buffer_docs {
+    (ANY, $krate:path, $see_also:path) => {
+        concat!(
+            "Creates a new instance using an [`AnyProvider`](",
+            stringify!($krate),
+            "::AnyProvider).\n\n",
+            "For details on the behavior of this function, see: [`",
+            stringify!($see_also),
+            "`]\n\n",
+            "[📚 Help choosing a constructor](",
+            stringify!($krate),
+            "::constructors)",
+        )
+    };
+    (BUFFER, $krate:path, $see_also:path) => {
+        concat!(
+            "✨ **Enabled with the `\"serde\"` feature.**\n\n",
+            "Creates a new instance using a [`BufferProvider`](",
+            stringify!($krate),
+            "::BufferProvider).\n\n",
+            "For details on the behavior of this function, see: [`",
+            stringify!($see_also),
+            "`]\n\n",
+            "[📚 Help choosing a constructor](",
+            stringify!($krate),
+            "::constructors)",
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
 macro_rules! gen_any_buffer_constructors {
     (locale: skip, options: skip, error: $error_ty:path) => {
         $crate::gen_any_buffer_constructors!(
@@ -203,27 +235,53 @@ macro_rules! gen_any_buffer_constructors {
         );
     };
     (locale: skip, options: skip, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized)) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $f1(&provider.as_downcasting())
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
         pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized)) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $f1(&provider.as_deserializing())
         }
     };
 
+    (locale: skip, $options_arg:ident: $options_ty:path, error: $error_ty:path) => {
+        $crate::gen_any_buffer_constructors!(
+            locale: skip,
+            $options_arg: $options_ty,
+            error: $error_ty,
+            functions: [
+                Self::try_new_unstable,
+                try_new_with_any_provider,
+                try_new_with_buffer_provider
+            ]
+        );
+    };
+    (locale: skip, $options_arg:ident: $options_ty:path, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
+        pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized), $options_arg: $options_ty) -> Result<Self, $error_ty> {
+            use $crate::AsDowncastingAnyProvider;
+            $f1(&provider.as_downcasting(), $options_arg)
+        }
+        #[cfg(feature = "serde")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
+        pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized), $options_arg: $options_ty) -> Result<Self, $error_ty> {
+            use $crate::AsDeserializingBufferProvider;
+            $f1(&provider.as_deserializing(), $options_arg)
+        }
+    };
+
     (locale: skip, options: skip, result: $result_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized)) -> $result_ty {
             use $crate::AsDowncastingAnyProvider;
             $f1(&provider.as_downcasting())
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
         pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized)) -> $result_ty {
             use $crate::AsDeserializingBufferProvider;
             $f1(&provider.as_deserializing())
@@ -243,13 +301,13 @@ macro_rules! gen_any_buffer_constructors {
         );
     };
     (locale: include, options: skip, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $f1(&provider.as_downcasting(), locale)
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
         pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $f1(&provider.as_deserializing(), locale)
@@ -270,13 +328,13 @@ macro_rules! gen_any_buffer_constructors {
         );
     };
     (locale: include, $config_arg:ident: $config_ty:path, $options_arg:ident: $options_ty:path, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $f1(&provider.as_downcasting(), locale, $config_arg, $options_arg)
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
         pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $f1(&provider.as_deserializing(), locale, $config_arg, $options_arg)
@@ -296,13 +354,13 @@ macro_rules! gen_any_buffer_constructors {
         );
     };
     (locale: include, $options_arg:ident: $options_ty:path, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(ANY, $crate, $f1)]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             $f1(&provider.as_downcasting(), locale, $options_arg)
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`", stringify!($f1), "`]")]
+        #[doc = $crate::gen_any_buffer_docs!(BUFFER, $crate, $f1)]
         pub fn $f3(provider: &(impl $crate::BufferProvider + ?Sized), locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             $f1(&provider.as_deserializing(), locale, $options_arg)

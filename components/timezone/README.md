@@ -4,7 +4,7 @@ Types for resolving and manipulating time zones.
 
 ## Fields
 
-In ICU4X, a formattable time zone consists of four different fields:
+In ICU4X, a [formattable time zone](CustomTimeZone) consists of four different fields:
 
 1. The offset from GMT
 2. The time zone ID
@@ -60,6 +60,10 @@ this is called the _zone variant_. There are two zone variants:
 1. `"dt"` = daylight or summer time
 2. `"st"` = standard or winter time
 
+Note: It is optional (not required) to set the zone variant when constructing a
+[`CustomTimeZone`]. Therefore, the list of possible variants does not include a generic variant
+to represent the lack of a preference.
+
 ## Calculations
 
 In date/time processing, normally only a subset of information is available, and the other
@@ -89,7 +93,7 @@ time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into)
 
 // Compute the metazone at January 1, 2022:
 let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
-let datetime = DateTime::new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
+let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 time_zone.maybe_calculate_metazone(&mzc, &datetime);
 
 assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());

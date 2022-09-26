@@ -47,7 +47,6 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
         WriteableError = 0x01,
-
         // Some input was out of bounds
         OutOfBoundsError = 0x02,
 

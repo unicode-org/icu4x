@@ -113,11 +113,11 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
+    /// let loc = Locale::try_from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
     ///
     /// assert_eq!(loc.to_string(), "en-US-u-hc-h12");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_locale(v)
     }
 
@@ -152,7 +152,7 @@ impl Locale {
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let locale = Self::from_bytes(input.as_ref())?;
+        let locale = Self::try_from_bytes(input.as_ref())?;
         Ok(locale.to_string())
     }
 
@@ -276,7 +276,7 @@ impl Locale {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -317,7 +317,7 @@ impl Locale {
 
     #[doc(hidden)]
     #[allow(clippy::type_complexity)]
-    pub const fn from_bytes_with_single_variant_single_keyword_unicode_extension(
+    pub const fn try_from_bytes_with_single_variant_single_keyword_unicode_extension(
         v: &[u8],
     ) -> Result<
         (
@@ -349,7 +349,7 @@ impl FromStr for Locale {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 

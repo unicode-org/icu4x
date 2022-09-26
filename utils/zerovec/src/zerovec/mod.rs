@@ -87,25 +87,87 @@ pub struct ZeroVec<'a, T>
 where
     T: AsULE,
 {
-    /// Pointer to data
-    buf: *mut [T::ULE],
-    /// Borrowed if zero. Capacity of buffer above if not
-    capacity: usize,
+    vector: EyepatchHackVector<T::ULE>,
+
     /// Marker type, signalling variance and dropck behavior
     /// by containing all potential types this type represents
     #[allow(clippy::type_complexity)] // needed to get correct marker type behavior
     marker: PhantomData<(Vec<T::ULE>, &'a [T::ULE])>,
 }
 
+// Send inherits as long as all fields are Send, but also references are Send only
+// when their contents are Sync (this is the core purpose of Sync), so
+// we need a Send+Sync bound since this struct can logically be a vector or a slice.
 unsafe impl<'a, T: AsULE> Send for ZeroVec<'a, T> where T::ULE: Send + Sync {}
+// Sync typically inherits as long as all fields are Sync
 unsafe impl<'a, T: AsULE> Sync for ZeroVec<'a, T> where T::ULE: Sync {}
 
 impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice = unsafe { &*self.buf };
+        let slice: &[T::ULE] = self.vector.as_slice();
         ZeroSlice::from_ule_slice(slice)
+    }
+}
+
+// Represents an unsafe potentially-owned vector/slice type, without a lifetime
+// working around dropck limitations.
+//
+// Must either be constructed by deconstructing a Vec<U>, or from &[U] with capacity set to
+// zero. Should not outlive its source &[U] in the borrowed case; this type does not in
+// and of itself uphold this guarantee, but the .as_slice() method assumes it.
+//
+// After https://github.com/rust-lang/rust/issues/34761 stabilizes,
+// we should remove this type and use #[may_dangle]
+struct EyepatchHackVector<U> {
+    /// Pointer to data
+    /// This pointer is *always* valid, the reason it is represented as a raw pointer
+    /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
+    buf: *mut [U],
+    /// Borrowed if zero. Capacity of buffer above if not
+    capacity: usize,
+}
+
+impl<U> EyepatchHackVector<U> {
+    // Return a slice to the inner data for an arbitrary caller-specified lifetime
+    #[inline]
+    unsafe fn as_arbitrary_slice<'a>(&self) -> &'a [U] {
+        &*self.buf
+    }
+    // Return a slice to the inner data
+    #[inline]
+    fn as_slice<'a>(&'a self) -> &'a [U] {
+        unsafe { &*self.buf }
+    }
+
+    /// Return this type as a vector
+    ///
+    /// Data MUST be known to be owned beforehand
+    ///
+    /// Because this borrows self, this is effectively creating two owners to the same
+    /// data, make sure that `self` is cleaned up after this
+    ///
+    /// (this does not simply take `self` since then it wouldn't be usable from the Drop impl)
+    unsafe fn get_vec(&self) -> Vec<U> {
+        debug_assert!(self.capacity != 0);
+        let slice: &[U] = self.as_slice();
+        let len = slice.len();
+        // Safety: we are assuming owned, and in owned cases
+        // this always represents a valid vector
+        Vec::from_raw_parts(self.buf as *mut U, len, self.capacity)
+    }
+}
+
+impl<U> Drop for EyepatchHackVector<U> {
+    #[inline]
+    fn drop(&mut self) {
+        if self.capacity != 0 {
+            unsafe {
+                // we don't need to clean up self here since we're already in a Drop impl
+                let _ = self.get_vec();
+            }
+        }
     }
 }
 
@@ -115,8 +177,10 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
             ZeroVec::new_owned(self.as_ule_slice().into())
         } else {
             Self {
-                buf: self.buf,
-                capacity: 0,
+                vector: EyepatchHackVector {
+                    buf: self.vector.buf,
+                    capacity: 0,
+                },
                 marker: PhantomData,
             }
         }
@@ -216,13 +280,18 @@ where
     /// [`Self::alloc_from_slice()`].
     #[inline]
     pub fn new_owned(vec: Vec<T::ULE>) -> Self {
+        // Deconstruct the vector into parts
+        // This is the only part of the code that goes from Vec
+        // to ZeroVec, all other such operations should use this function
         let slice: &[T::ULE] = &*vec;
         let slice = slice as *const [_] as *mut [_];
         let capacity = vec.capacity();
         mem::forget(vec);
         Self {
-            buf: slice,
-            capacity,
+            vector: EyepatchHackVector {
+                buf: slice,
+                capacity,
+            },
             marker: PhantomData,
         }
     }
@@ -233,8 +302,10 @@ where
     pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
         let slice = slice as *const [_] as *mut [_];
         Self {
-            buf: slice,
-            capacity: 0,
+            vector: EyepatchHackVector {
+                buf: slice,
+                capacity: 0,
+            },
             marker: PhantomData,
         }
     }
@@ -462,7 +533,7 @@ where
     /// Check if this type is fully owned
     #[inline]
     pub fn is_owned(&self) -> bool {
-        self.capacity != 0
+        self.vector.capacity != 0
     }
 
     /// If this is a borrowed ZeroVec, return it as a slice that covers
@@ -472,7 +543,9 @@ where
         if self.is_owned() {
             None
         } else {
-            let ule_slice = unsafe { &*self.buf };
+            // We can extend the lifetime of the slice to 'a
+            // since we know it is borrowed
+            let ule_slice = unsafe { self.vector.as_arbitrary_slice() };
             Some(ZeroSlice::from_ule_slice(ule_slice))
         }
     }
@@ -718,7 +791,7 @@ where
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
@@ -748,7 +821,7 @@ where
     ///
     /// # Example
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// # use crate::zerovec::ule::AsULE;
     /// use zerovec::ZeroVec;
     ///
@@ -756,15 +829,17 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
-    /// zerovec.to_mut_slice().push(12_u16.to_unaligned());
+    /// zerovec.to_mut_slice()[1] = 5u16.to_unaligned();
     /// assert!(zerovec.is_owned());
     /// ```
     pub fn to_mut_slice(&mut self) -> &mut [T::ULE] {
         if !self.is_owned() {
-            let slice = unsafe { &*self.buf };
+            // `buf` is either a valid vector or slice of `T::ULE`s, either
+            // way it's always valid
+            let slice = self.vector.as_slice();
             *self = ZeroVec::new_owned(slice.into());
         }
-        unsafe { &mut *self.buf }
+        unsafe { &mut *self.vector.buf }
     }
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
@@ -777,15 +852,19 @@ where
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
         if self.is_owned() {
             let vec = unsafe {
-                let len = (&*self.buf).len();
-                let ptr = self.buf as *mut T::ULE;
-                let capacity = self.capacity;
-                mem::forget(self);
-                Vec::from_raw_parts(ptr, len, capacity)
+                // safe to call: we know it's owned,
+                // and we mem::forget self immediately afterwards
+                self.vector.get_vec()
             };
+            mem::forget(self);
             Cow::Owned(vec)
         } else {
-            let slice = unsafe { &*self.buf };
+            // We can extend the lifetime of the slice to 'a
+            // since we know it is borrowed
+            let slice = unsafe { self.vector.as_arbitrary_slice() };
+            // The borrowed destructor is a no-op, but we want to prevent
+            // the check being run
+            mem::forget(self);
             Cow::Borrowed(slice)
         }
     }

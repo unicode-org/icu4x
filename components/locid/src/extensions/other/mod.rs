@@ -8,7 +8,7 @@
 //! Those extensions are treated as a pass-through, and no Unicode related
 //! behavior depends on them.
 //!
-//! The main struct for this extension is [`Other`] which is a list of [`Keys`].
+//! The main struct for this extension is [`Other`] which is a list of [`Subtag`]s.
 //!
 //! # Examples
 //!
@@ -18,15 +18,13 @@
 //!
 //! let mut loc: Locale = "en-US-a-foo-faa".parse().expect("Parsing failed.");
 //! ```
-//!
-//! [`Keys`]: Key
 
-mod key;
+mod subtag;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use alloc::vec::Vec;
-pub use key::Key;
+pub use subtag::Subtag;
 
 /// A list of [`Other Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.
@@ -37,22 +35,22 @@ pub use key::Key;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::other::{Key, Other};
+/// use icu::locid::extensions::other::{Subtag, Other};
 ///
-/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+/// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
-/// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
+/// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
 /// assert_eq!(&other.to_string(), "-a-foo-bar");
 /// ```
 ///
 /// [`Other Use Extensions`]: https://unicode.org/reports/tr35/#other_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Other((u8, Vec<Key>));
+pub struct Other((u8, Vec<Subtag>));
 
 impl Other {
-    /// A constructor which takes a pre-sorted list of [`Key`].
+    /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Panics
     ///
@@ -61,15 +59,15 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::{Key, Other};
+    /// use icu::locid::extensions::other::{Subtag, Other};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let other = Other::from_vec_unchecked(b'a', vec![key1, key2]);
+    /// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
     /// assert_eq!(&other.to_string(), "-a-foo-bar");
     /// ```
-    pub fn from_vec_unchecked(ext: u8, input: Vec<Key>) -> Self {
+    pub fn from_vec_unchecked(ext: u8, input: Vec<Subtag>) -> Self {
         assert!(ext.is_ascii_alphabetic());
         Self((ext, input))
     }
@@ -79,10 +77,10 @@ impl Other {
 
         let mut keys = Vec::new();
         while let Some(subtag) = iter.peek() {
-            if !Key::valid_key(subtag) {
+            if !Subtag::valid_key(subtag) {
                 break;
             }
-            if let Ok(key) = Key::from_bytes(subtag) {
+            if let Ok(key) = Subtag::try_from_bytes(subtag) {
                 keys.push(key);
             }
             iter.next();

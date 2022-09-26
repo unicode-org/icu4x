@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{time_zone::FallbackFormat, TimeZoneFormatterOptions};
+use icu_datetime::time_zone::{FallbackFormat, TimeZoneFormatterOptions};
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -16,7 +16,7 @@ pub mod ffi {
     use icu_datetime::time_zone::IsoFormat;
     use icu_datetime::time_zone::IsoMinutes;
     use icu_datetime::time_zone::IsoSeconds;
-    use icu_datetime::TimeZoneFormatter;
+    use icu_datetime::time_zone::TimeZoneFormatter;
     use writeable::Writeable;
 
     #[diplomat::opaque]

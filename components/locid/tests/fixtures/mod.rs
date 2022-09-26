@@ -54,11 +54,11 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 .iter()
                 .map(|(k, v)| {
                     (
-                        unicode::Key::from_bytes(k.as_bytes()).expect("Parsing key failed."),
+                        unicode::Key::try_from_bytes(k.as_bytes()).expect("Parsing key failed."),
                         v.as_ref().map_or(
-                            unicode::Value::from_bytes(b"").expect("Failed to parse Value"),
+                            unicode::Value::try_from_bytes(b"").expect("Failed to parse Value"),
                             |v| {
-                                unicode::Value::from_bytes(v.as_bytes())
+                                unicode::Value::try_from_bytes(v.as_bytes())
                                     .expect("Parsing type failed.")
                             },
                         ),
@@ -69,7 +69,8 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 .attributes
                 .iter()
                 .map(|v| {
-                    unicode::Attribute::from_bytes(v.as_bytes()).expect("Parsing attribute failed.")
+                    unicode::Attribute::try_from_bytes(v.as_bytes())
+                        .expect("Parsing attribute failed.")
                 })
                 .collect();
             ext.unicode.attributes = unicode::Attributes::from_vec_unchecked(v);
@@ -80,10 +81,10 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 .iter()
                 .map(|(k, v)| {
                     (
-                        transform::Key::from_bytes(k.as_bytes()).expect("Parsing key failed."),
+                        transform::Key::try_from_bytes(k.as_bytes()).expect("Parsing key failed."),
                         v.as_ref()
                             .map(|v| {
-                                transform::Value::from_bytes(v.as_bytes())
+                                transform::Value::try_from_bytes(v.as_bytes())
                                     .expect("Parsing value failed.")
                             })
                             .expect("Value cannot be empty."),
@@ -95,10 +96,10 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 ext.transform.lang = Some(tlang.parse().expect("Failed to parse tlang."));
             }
         }
-        let v: Vec<private::Key> = input
+        let v: Vec<private::Subtag> = input
             .private
             .iter()
-            .map(|v| private::Key::from_bytes(v.as_bytes()).expect("Failed to add field."))
+            .map(|v| private::Subtag::try_from_bytes(v.as_bytes()).expect("Failed to add field."))
             .collect();
         ext.private = private::Private::from_vec_unchecked(v);
         Ok(ext)
@@ -163,7 +164,7 @@ impl TryFrom<LocaleIdentifier> for LanguageIdentifier {
     type Error = ParserError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
-        LanguageIdentifier::from_locale_bytes(input.identifier.as_bytes())
+        LanguageIdentifier::try_from_locale_bytes(input.identifier.as_bytes())
     }
 }
 
@@ -171,7 +172,7 @@ impl TryFrom<LocaleIdentifier> for Locale {
     type Error = ParserError;
 
     fn try_from(input: LocaleIdentifier) -> Result<Self, Self::Error> {
-        Locale::from_bytes(input.identifier.as_bytes())
+        Locale::try_from_bytes(input.identifier.as_bytes())
     }
 }
 

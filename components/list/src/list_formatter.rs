@@ -18,7 +18,9 @@ pub struct ListFormatter {
 macro_rules! constructor {
     ($name: ident, $name_any: ident, $name_buffer: ident, $marker: ty, $doc: literal) => {
         #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.\n\nSee the [CLDR spec]",
-            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.")]
+            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)\n\n",
+            "<div class=\"stab unstable\">⚠️ The bounds on this function may change over time, including in SemVer minor releases.</div>")]
         pub fn $name<D: DataProvider<$marker> + ?Sized>(
             data_provider: &D,
             locale: &DataLocale,

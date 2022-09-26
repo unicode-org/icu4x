@@ -40,16 +40,16 @@ use writeable::Writeable;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
+/// let df = DateFormatter::try_new_with_length_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_iso_date(2020, 9, 1)
+/// let date = Date::try_new_iso_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
 /// assert_writeable_eq!(df
 ///     .format(&any_date)
-///     .expect("calendars should match"), "Sep 1, 2020");
+///     .expect("Calendars should match"), "Sep 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -72,7 +72,7 @@ impl DateFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     #[inline]
-    pub fn try_new_with_any_provider<P>(
+    pub fn try_new_with_length_with_any_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
@@ -81,7 +81,7 @@ impl DateFormatter {
         P: AnyProvider,
     {
         let downcasting = data_provider.as_downcasting();
-        Self::try_new_unstable(&downcasting, locale, length)
+        Self::try_new_with_length_unstable(&downcasting, locale, length)
     }
 
     /// Construct a new [`DateFormatter`] from a data provider that implements
@@ -110,24 +110,24 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_buffer_provider(
+    /// let df = DateFormatter::try_new_with_length_with_buffer_provider(
     ///     &icu_testdata::buffer(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_iso_date(2020, 9, 1)
+    /// let datetime = Date::try_new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(df
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020");
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider<P>(
+    pub fn try_new_with_length_with_buffer_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
@@ -136,15 +136,15 @@ impl DateFormatter {
         P: BufferProvider,
     {
         let deserializing = data_provider.as_deserializing();
-        Self::try_new_unstable(&deserializing, locale, length)
+        Self::try_new_with_length_unstable(&deserializing, locale, length)
     }
 
     /// Construct a new [`DateFormatter`] from a data provider that can provide all of the requested data.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
     /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
-    /// may also be used if compile stability is desired.
+    /// appropriate. The [`Self::try_new_with_length_with_buffer_provider()`], [`Self::try_new_with_length_with_any_provider()`]
+    /// constructors may also be used if compile stability is desired.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
@@ -162,23 +162,23 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(
+    /// let df = DateFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_iso_date(2020, 9, 1)
+    /// let datetime = Date::try_new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(df
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020");
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline(never)]
-    pub fn try_new_unstable<P>(
+    pub fn try_new_with_length_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,

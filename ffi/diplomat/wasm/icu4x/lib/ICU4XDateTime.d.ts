@@ -30,7 +30,7 @@ export class ICU4XDateTime {
 
    * Creates a new {@link ICU4XDateTime `ICU4XDateTime`} from the given codes, which are interpreted in the given calendar system
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes Rust documentation for `new_from_codes`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_from_codes Rust documentation for `try_new_from_codes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_codes_in_calendar(era_code: string, year: i32, month_code: string, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;

@@ -130,7 +130,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
     #[inline]
-    pub fn contains(&self, ch: char) -> bool {
+    pub fn contains(self, ch: char) -> bool {
         self.set.contains(ch)
     }
 
@@ -148,7 +148,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// assert!(alphabetic.contains32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
     #[inline]
-    pub fn contains32(&self, ch: u32) -> bool {
+    pub fn contains32(self, ch: u32) -> bool {
         self.set.contains32(ch)
     }
 
@@ -173,7 +173,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     /// assert_eq!(Some(0x0061..=0x007A), ranges.next()); // 'a'..'z'
     /// ```
     #[inline]
-    pub fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    pub fn iter_ranges(self) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.set.iter_ranges()
     }
 }

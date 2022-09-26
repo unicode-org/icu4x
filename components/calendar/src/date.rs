@@ -87,14 +87,14 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
 /// This can be constructed  constructed
-/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
 /// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::new_iso_date(1970, 1, 2)
+/// let date_iso = Date::try_new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);
@@ -109,7 +109,7 @@ pub struct Date<A: AsCalendar> {
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
     #[inline]
-    pub fn new_from_codes(
+    pub fn try_new_from_codes(
         era: types::Era,
         year: i32,
         month_code: types::MonthCode,
@@ -241,7 +241,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::types::IsoWeekday;
     ///
-    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
@@ -270,7 +270,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::week::RelativeUnit;
     /// use icu::calendar::week::WeekOf;
     ///
-    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///
     /// // The following info is usually locale-specific
     /// let week_calculator = WeekCalculator::default();

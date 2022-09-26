@@ -201,16 +201,19 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
-    /// # Panics
-    ///
-    /// Panics if there is not a single pattern.
-    ///
-    /// TODO(#2627) - Evaluate instead propagating the error.
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
-            #[allow(clippy::panic)]
-            _ => panic!("expect_pattern failed: {}", msg),
+
+            Self::MultipleVariants(patterns) => {
+                // Potentially change to log::warn! in #2648
+                debug_assert!(
+                    false,
+                    "expect_pattern called with bad data (falling back to `other` pattern): {}",
+                    msg
+                );
+                patterns.other
+            }
         }
     }
 

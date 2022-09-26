@@ -50,7 +50,7 @@ impl Region {
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region = Region::from_bytes(b"us").expect("Parsing failed.");
+    /// let region = Region::try_from_bytes(b"us").expect("Parsing failed.");
     ///
     /// assert_eq!(region.is_alphabetic(), true);
     /// ```

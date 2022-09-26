@@ -13,6 +13,9 @@ use yoke::*;
 /// This enables data blobs to be read from arbitrary sources at runtime, allowing code and data
 /// to be separated. Alternatively, blobs can also be statically included at compile time.
 ///
+/// [`BlobDataProvider`] implements [`BufferProvider`], so it can be used in
+/// `*_with_buffer_provider` constructors across ICU4X.
+///
 /// # `Sync + Send`
 ///
 /// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
@@ -22,67 +25,63 @@ use yoke::*;
 ///
 /// ## Dynamic loading
 ///
+/// Load "hello world" data from a postcard blob loaded at runtime:
+///
 /// ```
-/// # use icu_locid::locale;
-/// # use icu_provider::hello_world::*;
-/// # use icu_provider::prelude::*;
-/// # use icu_provider_blob::BlobDataProvider;
-/// # use std::fs;
-/// #
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::HelloWorldFormatter;
+/// use icu_provider_blob::BlobDataProvider;
+/// use writeable::assert_writeable_eq;
+///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = fs::read(concat!(
+/// let blob = std::fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
 ///     "/tests/data/hello_world.postcard",
 /// ))
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_blob(blob)
+///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
-/// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .as_deserializing()
-///     .load(DataRequest {
-///         locale: &locale!("la").into(),
-///         metadata: Default::default(),
-///     })
-///     .expect("Data should be valid")
-///     .take_payload()
-///     .expect("Data should be present");
+/// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     &locale!("la").into()
+/// )
+/// .expect("locale exists");
 ///
-/// assert_eq!(response.get().message, "Ave, munde");
+/// assert_writeable_eq!(formatter.format(), "Ave, munde");
 /// ```
 ///
 /// ## Static loading
 ///
+/// Load "hello world" data from a postcard blob statically linked at compile time:
+///
 /// ```
-/// # use icu_locid::locale;
-/// # use icu_provider::hello_world::*;
-/// # use icu_provider::prelude::*;
-/// # use icu_provider_blob::BlobDataProvider;
-/// # use std::fs;
-/// #
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::HelloWorldFormatter;
+/// use icu_provider_blob::BlobDataProvider;
+/// use writeable::assert_writeable_eq;
+///
 /// // Read an ICU4X data blob statically:
-/// static BLOB: &[u8] = include_bytes!(concat!(
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
-///     "/tests/data/hello_world.postcard",
+///     "/tests/data/hello_world.postcard"
 /// ));
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_static_blob(BLOB).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
+///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
-/// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .as_deserializing()
-///     .load(DataRequest {
-///         locale: &locale!("la").into(),
-///         metadata: Default::default(),
-///     })
-///     .expect("Data should be valid")
-///     .take_payload()
-///     .expect("Data should be present");
+/// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+///     &provider,
+///     &locale!("la").into()
+/// )
+/// .expect("locale exists");
 ///
-/// assert_eq!(response.get().message, "Ave, munde");
+/// assert_writeable_eq!(formatter.format(), "Ave, munde");
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {

@@ -46,7 +46,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterBreakSegmenter;
-/// let segmenter = GraphemeClusterBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
 /// // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
@@ -57,7 +57,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterBreakSegmenter;
-/// let segmenter = GraphemeClusterBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
@@ -70,7 +70,7 @@ pub struct GraphemeClusterBreakSegmenter {
 
 impl GraphemeClusterBreakSegmenter {
     /// Construct a [`GraphemeClusterBreakSegmenter`].
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
@@ -83,6 +83,8 @@ impl GraphemeClusterBreakSegmenter {
             lstm,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(

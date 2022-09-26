@@ -791,6 +791,11 @@ impl SentenceBreak {
 ///
 /// See `icu_normalizer::properties::CanonicalCombiningClassMap` for the API
 /// to look up the Canonical_Combining_Class property by scalar value.
+//
+// NOTE: The Pernosco debugger has special knowledge
+// of this struct. Please do not change the bit layout
+// or the crate-module-qualified name of this struct
+// without coordination.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]

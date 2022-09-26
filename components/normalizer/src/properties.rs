@@ -51,6 +51,13 @@ impl CanonicalComposition {
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
+    /// # Examples
+    ///
     /// ```
     /// let comp = icu_normalizer::properties::CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     ///
@@ -309,6 +316,11 @@ impl CanonicalDecomposition {
     }
 
     /// Construct from data provider.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -386,6 +398,11 @@ impl CanonicalCombiningClassMap {
     }
 
     /// Construct from data provider.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,

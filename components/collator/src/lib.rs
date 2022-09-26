@@ -278,7 +278,13 @@
 mod comparison;
 #[cfg(doc)]
 pub mod docs;
+
+// NOTE: The Pernosco debugger has special knowledge
+// of the `CharacterAndClass` struct inside the `elements`
+// module. Please do not change the crate-module-qualified
+// name of that struct without coordination.
 mod elements;
+
 mod error;
 mod options;
 pub mod provider;

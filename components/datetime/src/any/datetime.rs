@@ -52,13 +52,13 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
 /// assert_writeable_eq!(dtf
 ///     .format(&any_datetime)
-///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
@@ -84,13 +84,13 @@ use writeable::Writeable;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
@@ -100,10 +100,10 @@ use writeable::Writeable;
 /// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let manual_value = dtf.format(&manual_datetime).expect("calendars should match");
+/// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");
 /// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
-/// let converted_value = dtf.format(&iso_converted).expect("calendars should match");
+/// let converted_value = dtf.format(&iso_converted).expect("Calendars should match");
 /// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
@@ -171,13 +171,13 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -224,11 +224,11 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("calendars should match"), "September 2020");
+    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("Calendars should match"), "September 2020");
     /// ```
     #[cfg(feature = "experimental")]
     #[inline(never)]
@@ -314,13 +314,13 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -391,14 +391,14 @@ impl DateTimeFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(
+    /// let df = DateFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
@@ -407,13 +407,13 @@ impl DateTimeFormatter {
     ///
     /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_writeable_eq!(dtf
     ///     .format(&any_datetime)
-    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
+    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -550,7 +550,7 @@ mod tests {
         )
         .unwrap();
         writeable::assert_writeable_eq!(
-            dtf.format(datetime).expect("calendars should match"),
+            dtf.format(datetime).expect("Calendars should match"),
             expected
         );
     }
@@ -558,7 +558,7 @@ mod tests {
     #[test]
     fn test_fallback() {
         // We can rely on the code's ability to convert ISO datetimes
-        let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
+        let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
         test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");
@@ -593,7 +593,7 @@ mod tests {
             )
             .unwrap()
             .format_to_string(
-                &DateTime::new_iso_datetime(2022, 9, 20, 0, 0, 0)
+                &DateTime::try_new_iso_datetime(2022, 9, 20, 0, 0, 0)
                     .unwrap()
                     .to_any()
             )

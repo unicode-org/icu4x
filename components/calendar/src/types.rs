@@ -197,8 +197,13 @@ macro_rules! dt_unit {
 
         impl $name {
             /// Gets the numeric value for this component.
-            pub const fn number(&self) -> $storage {
+            pub const fn number(self) -> $storage {
                 self.0
+            }
+
+            /// Creates a new value at 0.
+            pub const fn zero() -> $name {
+                Self(0)
             }
         }
 
@@ -470,6 +475,138 @@ impl Time {
             nanosecond: nanosecond.try_into()?,
         })
     }
+
+    /// Takes a number of minutes, which could be positive or negative, and returns the Time
+    /// and the day number, which could be positive or negative.
+    pub(crate) fn from_minute_with_remainder_days(minute: i32) -> (Time, i32) {
+        let minutes_a_hour = 60;
+        let hours_a_day = 24;
+        let minutes_a_day = minutes_a_hour * hours_a_day;
+        let extra_days = minute / minutes_a_day;
+        #[allow(clippy::unwrap_used)] // values are moduloed to be in range
+        (
+            Self {
+                hour: (((minute / minutes_a_hour) % hours_a_day) as u8)
+                    .try_into()
+                    .unwrap(),
+                minute: ((minute % minutes_a_hour) as u8).try_into().unwrap(),
+                second: IsoSecond::zero(),
+                nanosecond: NanoSecond::zero(),
+            },
+            extra_days,
+        )
+    }
+}
+
+#[test]
+fn test_from_minute_with_remainder_days() {
+    #[derive(Debug)]
+    struct TestCase {
+        minute: i32,
+        expected_time: Time,
+        expected_remainder: i32,
+    }
+    let zero_time = Time::new(
+        IsoHour::zero(),
+        IsoMinute::zero(),
+        IsoSecond::zero(),
+        NanoSecond::zero(),
+    );
+    let first_minute_in_day = Time::new(
+        IsoHour::zero(),
+        IsoMinute::try_from(1u8).unwrap(),
+        IsoSecond::zero(),
+        NanoSecond::zero(),
+    );
+    let last_minute_in_day = Time::new(
+        IsoHour::try_from(23u8).unwrap(),
+        IsoMinute::try_from(59u8).unwrap(),
+        IsoSecond::zero(),
+        NanoSecond::zero(),
+    );
+    let cases = [
+        TestCase {
+            minute: 0,
+            expected_time: zero_time,
+            expected_remainder: 0,
+        },
+        TestCase {
+            minute: 30,
+            expected_time: Time::new(
+                IsoHour::zero(),
+                IsoMinute::try_from(30u8).unwrap(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: 0,
+        },
+        TestCase {
+            minute: 60,
+            expected_time: Time::new(
+                IsoHour::try_from(1u8).unwrap(),
+                IsoMinute::zero(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: 0,
+        },
+        TestCase {
+            minute: 90,
+            expected_time: Time::new(
+                IsoHour::try_from(1u8).unwrap(),
+                IsoMinute::try_from(30u8).unwrap(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: 0,
+        },
+        TestCase {
+            minute: 1439,
+            expected_time: last_minute_in_day,
+            expected_remainder: 0,
+        },
+        TestCase {
+            minute: 1440,
+            expected_time: Time::new(
+                IsoHour::zero(),
+                IsoMinute::zero(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: 1,
+        },
+        TestCase {
+            minute: 1441,
+            expected_time: first_minute_in_day,
+            expected_remainder: 1,
+        },
+        // TODO(#2643): Handle negative numbers correctly
+        // TestCase {
+        //     minute: -1,
+        //     expected_time: last_minute_in_day,
+        //     expected_remainder: -1,
+        // },
+        // TestCase {
+        //     minute: -1439,
+        //     expected_time: first_minute_in_day,
+        //     expected_remainder: -1,
+        // },
+        // TestCase {
+        //     minute: -1440,
+        //     expected_time: zero_time,
+        //     expected_remainder: -1,
+        // },
+        // TestCase {
+        //     minute: -1441,
+        //     expected_time: last_minute_in_day,
+        //     expected_remainder: -2,
+        // },
+    ];
+    for cas in cases {
+        let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
+        assert_eq!(actual_time, cas.expected_time, "{:?}", cas);
+        assert_eq!(actual_remainder, cas.expected_remainder, "{:?}", cas);
+    }
 }
 
 /// A weekday in a 7-day week, according to ISO-8601.
@@ -479,7 +616,7 @@ impl Time {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::input::IsoWeekday;
+/// use icu::calendar::types::IsoWeekday;
 ///
 /// assert_eq!(1, IsoWeekday::Monday as usize);
 /// assert_eq!(7, IsoWeekday::Sunday as usize);
@@ -511,7 +648,7 @@ impl From<usize> for IsoWeekday {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::input::IsoWeekday;
+    /// use icu::calendar::types::IsoWeekday;
     ///
     /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));

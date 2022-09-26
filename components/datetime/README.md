@@ -59,11 +59,11 @@ let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
 )
 .expect("Failed to create TypedDateTimeFormatter instance.");
 
-let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+let typed_date = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 // prefer using ISO dates with DateTimeFormatter
 let date = typed_date.to_iso().to_any();
 
-let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+let formatted_date = dtf.format(&date).expect("Calendars should match");
 let typed_formatted_date = typed_dtf.format(&typed_date);
 
 assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
@@ -104,6 +104,7 @@ we expect to add more ways to customize the output, like skeletons, and componen
 [`Calendar`]: calendar::{Calendar}
 [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+[`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 ## More Information
 

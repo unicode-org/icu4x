@@ -21,7 +21,7 @@ export class ICU4XIsoDateTime {
 
    * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime Rust documentation for `new_iso_datetime`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime Rust documentation for `try_new_iso_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
@@ -39,9 +39,8 @@ export class ICU4XIsoDateTime {
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime | never;
+  static create_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime;
 
   /**
 

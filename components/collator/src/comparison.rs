@@ -69,6 +69,11 @@ pub struct Collator {
 
 impl Collator {
     /// Instantiates a collator for a given locale with the given options
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,

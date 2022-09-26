@@ -28,7 +28,7 @@ pub mod ffi {
 
     impl ICU4XIsoDateTime {
         /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::new_iso_datetime, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso_datetime, FnInStruct)]
         pub fn create(
             year: i32,
             month: u8,
@@ -39,7 +39,7 @@ pub mod ffi {
             nanosecond: u32,
         ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
             let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::new_iso_datetime(year, month, day, hour, minute, second)
+            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
                 .map(|mut dt| {
                     dt.time.nanosecond = nanosecond;
                     Box::new(ICU4XIsoDateTime(dt))
@@ -63,13 +63,10 @@ pub mod ffi {
             icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
             FnInStruct
         )]
-        pub fn create_from_minutes_since_local_unix_epoch(
-            minutes: i32,
-        ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
-            DateTime::from_minutes_since_local_unix_epoch(minutes)
-                .map(|dt| Box::new(ICU4XIsoDateTime(dt)))
-                .map_err(Into::into)
-                .into()
+        pub fn create_from_minutes_since_local_unix_epoch(minutes: i32) -> Box<ICU4XIsoDateTime> {
+            Box::new(ICU4XIsoDateTime(
+                DateTime::from_minutes_since_local_unix_epoch(minutes),
+            ))
         }
 
         /// Gets the date contained in this object
@@ -223,7 +220,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
             let cal = calendar.0.clone();
             let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::new_iso_datetime(year, month, day, hour, minute, second)
+            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
                 .map(|mut dt| {
                     dt.time.nanosecond = nanosecond;
                     Box::new(ICU4XDateTime(dt.to_calendar(cal)))
@@ -232,7 +229,7 @@ pub mod ffi {
                 .into()
         }
         /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
-        #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_from_codes, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
         pub fn create_from_codes_in_calendar(
             era_code: &str,
@@ -260,7 +257,7 @@ pub mod ffi {
                 second,
                 nanosecond,
             };
-            DateTime::new_from_codes(era, year, month, day, time, cal)
+            DateTime::try_new_from_codes(era, year, month, day, time, cal)
                 .map(|dt| Box::new(ICU4XDateTime(dt)))
                 .map_err(Into::into)
                 .into()

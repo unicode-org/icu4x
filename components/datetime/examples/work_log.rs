@@ -42,7 +42,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let dates = DATES_ISO
         .iter()
         .copied()
-        .map(|(y, m, d, h, min, s)| DateTime::new_gregorian_datetime(y, m, d, h, min, s))
+        .map(|(y, m, d, h, min, s)| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s))
         .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
         .expect("Failed to parse dates.");
 

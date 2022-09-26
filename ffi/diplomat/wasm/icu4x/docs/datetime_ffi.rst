@@ -19,7 +19,7 @@
 
         Creates a new :js:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
-        See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
+        See the `Rust documentation for try_new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_from_codes>`__ for more information.
 
 
     .. js:staticfunction:: create_from_date_and_time(date, time)
@@ -184,7 +184,7 @@
 
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 
-        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+        See the `Rust documentation for try_new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime>`__ for more information.
 
 
     .. js:staticfunction:: crate_from_date_and_time(date, time)

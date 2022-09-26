@@ -21,11 +21,11 @@ use icu_plurals::provider::OrdinalV1Marker;
 use writeable::Writeable;
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
-/// date/times with timezones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
+/// date/times with time zones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
 /// please read the [crate root docs][crate].
 ///
 /// This is equivalently the composition of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
+/// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`].
 ///
 /// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
@@ -39,6 +39,8 @@ use writeable::Writeable;
 /// of the data using the instance.
 ///
 /// # Examples
+///
+/// Using a GMT time zone:
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
@@ -59,19 +61,64 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let time_zone: CustomTimeZone =
-///     "+05:00".parse().expect("Time zone should parse");
+/// let time_zone = CustomTimeZone::utc();
 ///
 /// assert_writeable_eq!(
 ///     zdtf
 ///       .format(&any_datetime, &time_zone)
-///       .expect("calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT+05:00");
+///       .expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM GMT");
 /// ```
+///
+/// Using a non-GMT time zone, specified by id:
+///
+/// ```
+/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
+/// use icu::locid::locale;
+/// use icu::timezone::{CustomTimeZone, GmtOffset, MetazoneCalculator, ZoneVariant};
+/// use tinystr::TinyAsciiStr;
+/// use writeable::assert_writeable_eq;
+///
+/// let options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Full,
+/// );
+/// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     options.into(),
+///     Default::default(),
+/// )
+/// .expect("Failed to create ZonedDateTimeFormatter instance.");
+///
+/// // Create a DateTime at September 1, 2020 at 12:34:28 PM
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
+/// let any_datetime = datetime.to_any();
+///
+/// // Create a time zone for America/Chicago at GMT-6:
+/// let mut time_zone = CustomTimeZone::new_empty();
+/// time_zone.gmt_offset = "-06:00".parse::<GmtOffset>().ok();
+/// time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+/// time_zone.zone_variant = Some(ZoneVariant::daylight());
+///
+/// // Compute the metazone during `datetime` (September 1, 2020 at 12:34:28 PM):
+/// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
+///
+/// assert_writeable_eq!(
+///     zdtf
+///       .format(&any_datetime, &time_zone)
+///       .expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM Central Daylight Time");
+/// ```
+///
+/// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
@@ -120,7 +167,7 @@ impl ZonedDateTimeFormatter {
     ///     Default::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -213,7 +260,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
@@ -228,7 +275,7 @@ impl ZonedDateTimeFormatter {
     ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -338,7 +385,7 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -396,7 +443,7 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
