@@ -50,8 +50,8 @@ use writeable::Writeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
-///     length::Date::Medium,
-///     length::Time::Long,
+///     Some(length::Date::Medium),
+///     Some(length::Time::Long),
 /// );
 /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -85,8 +85,8 @@ use writeable::Writeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
-///     length::Date::Medium,
-///     length::Time::Full,
+///     Some(length::Date::Medium),
+///     Some(length::Time::Full),
 /// );
 /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -265,7 +265,10 @@ impl ZonedDateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
@@ -374,7 +377,10 @@ impl ZonedDateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// ).into();
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
@@ -432,7 +438,10 @@ impl ZonedDateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// ).into();
     /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(

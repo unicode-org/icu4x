@@ -54,8 +54,8 @@ use crate::{
 /// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
-///     length::Date::Medium,
-///     length::Time::Long,
+///     Some(length::Date::Medium),
+///     Some(length::Time::Long),
 /// );
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -186,7 +186,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -266,7 +269,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -306,7 +312,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Long)
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),

@@ -389,8 +389,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
-///     length::Date::Medium,
-///     length::Time::Short,
+///     Some(length::Date::Medium),
+///     Some(length::Time::Short),
 /// );
 ///
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
@@ -541,7 +541,10 @@ where {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Medium)
+    /// );
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),

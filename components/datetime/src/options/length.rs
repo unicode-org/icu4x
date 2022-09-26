@@ -22,8 +22,8 @@
 //! use icu::datetime::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
-//!     length::Date::Medium, // "medium" date connector will be used
-//!     length::Time::Short,
+//!     Some(length::Date::Medium), // "medium" date connector will be used
+//!     Some(length::Time::Short),
 //! );
 //!
 //! let options = DateTimeFormatterOptions::Length(bag);
@@ -56,7 +56,10 @@ use serde::{Deserialize, Serialize};
 /// use icu::datetime::options::length;
 /// use icu::datetime::DateTimeFormatterOptions;
 ///
-/// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+/// let bag = length::Bag::from_date_time_style(
+///     Some(length::Date::Medium),
+///     Some(length::Time::Short)
+/// );
 ///
 /// let options = DateTimeFormatterOptions::Length(bag);
 /// ```
@@ -103,11 +106,8 @@ impl Bag {
     }
 
     /// Constructs a Bag given a date and time field
-    pub fn from_date_time_style(date: Date, time: Time) -> Self {
-        Self {
-            date: Some(date),
-            time: Some(time),
-        }
+    pub fn from_date_time_style(date: Option<Date>, time: Option<Time>) -> Self {
+        Self { date, time }
     }
 
     /// Constructs a Bag given a date field (time set to None)

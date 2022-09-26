@@ -41,8 +41,8 @@ use writeable::Writeable;
 /// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
-///     length::Date::Medium,
-///     length::Time::Short,
+///     Some(length::Date::Medium),
+///     Some(length::Time::Short),
 /// );
 ///
 /// let dtf = DateTimeFormatter::try_new_unstable(
@@ -95,7 +95,10 @@ use writeable::Writeable;
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 ///
-/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+/// let options = length::Bag::from_date_time_style(
+///     Some(length::Date::Medium),
+///     Some(length::Time::Short)
+/// );
 ///
 /// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
@@ -161,7 +164,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let mut options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Short)
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
@@ -304,7 +310,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     Some(length::Time::Short)
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
@@ -541,7 +550,8 @@ mod tests {
     use icu::locid::{locale, Locale};
 
     fn test_format(datetime: &DateTime<AnyCalendar>, locale: Locale, expected: &str) {
-        let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
+        let options =
+            length::Bag::from_date_time_style(Some(length::Date::Long), Some(length::Time::Short));
 
         let dtf = DateTimeFormatter::try_new_unstable(
             &icu_testdata::unstable(),

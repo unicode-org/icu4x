@@ -40,8 +40,8 @@
 //! // See the next code example for a more ergonomic example with .into().
 //! let options =
 //!     DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
-//!         length::Date::Medium,
-//!         length::Time::Short,
+//!         Some(length::Date::Medium),
+//!         Some(length::Time::Short),
 //!     ));
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
@@ -82,8 +82,8 @@
 //! };
 //! use icu::locid::locale;
 //! let options = length::Bag::from_date_time_style(
-//!     length::Date::Medium,
-//!     length::Time::Short,
+//!     Some(length::Date::Medium),
+//!     Some(length::Time::Short),
 //! )
 //! .into();
 //!
