@@ -488,12 +488,15 @@ where {
     /// use icu::locid::locale;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_style(length::Date::Medium).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     None
+    /// );
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-gregory").into(),
-    ///     options,
+    ///     options.into(),
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

@@ -28,7 +28,7 @@ fn assert_resolved_components(
 
 #[test]
 fn test_length_date() {
-    let length_bag = length::Bag::from_date_style(length::Date::Medium);
+    let length_bag = length::Bag::from_date_style(Some(length::Date::Medium));
 
     let mut components_bag = components::Bag::default();
     components_bag.year = Some(components::Year::Numeric);
@@ -43,7 +43,7 @@ fn test_length_date() {
 
 #[test]
 fn test_length_time() {
-    let length_bag = length::Bag::from_time_style(length::Time::Medium);
+    let length_bag = length::Bag::from_time_style(Some(length::Time::Medium));
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::Numeric);
     components_bag.minute = Some(components::Numeric::TwoDigit);
@@ -60,7 +60,7 @@ fn test_length_time() {
 
 #[test]
 fn test_length_time_preferences() {
-    let length_bag = length::Bag::from_time_style(length::Time::Medium);
+    let length_bag = length::Bag::from_time_style(Some(length::Time::Medium));
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);

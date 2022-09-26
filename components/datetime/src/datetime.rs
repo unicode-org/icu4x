@@ -608,7 +608,7 @@ where {
     /// use icu::datetime::TypedDateTimeFormatter;
     /// use writeable::assert_writeable_eq;
     /// use icu::locid::locale;
-    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
+    /// # let options = icu::datetime::options::length::Bag::from_time_style(Some(icu::datetime::options::length::Time::Medium));
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
@@ -633,7 +633,7 @@ where {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedDateTimeFormatter;
     /// use icu::locid::locale;
-    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
+    /// # let options = icu::datetime::options::length::Bag::from_time_style(Some(icu::datetime::options::length::Time::Medium));
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
@@ -662,11 +662,14 @@ where {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let options = length::Bag::from_date_style(length::Date::Medium).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     Some(length::Date::Medium),
+    ///     None
+    /// );
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
-    ///     options,
+    ///     options.into(),
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

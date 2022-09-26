@@ -111,18 +111,18 @@ impl Bag {
     }
 
     /// Constructs a Bag given a date field (time set to None)
-    pub fn from_date_style(date: Date) -> Self {
+    pub fn from_date_style(date: Option<Date>) -> Self {
         Self {
-            date: Some(date),
+            date,
             time: None,
         }
     }
 
     /// Constructs a Bag given a time field (date set to None)
-    pub fn from_time_style(time: Time) -> Self {
+    pub fn from_time_style(time: Option<Time>) -> Self {
         Self {
             date: None,
-            time: Some(time),
+            time,
         }
     }
 }
@@ -136,7 +136,7 @@ impl Bag {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag::from_date_style(length::Date::Long);
+/// let bag = length::Bag::from_date_style(Some(length::Date::Long));
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
@@ -208,7 +208,7 @@ pub enum Date {
 /// ```
 /// use icu::datetime::options::length;
 ///
-/// let bag = length::Bag::from_time_style(length::Time::Medium);
+/// let bag = length::Bag::from_time_style(Some(length::Time::Medium));
 /// ```
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
