@@ -55,9 +55,9 @@ class ICU4XIsoDateTime {
   /**
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
    * 
-   * See the [Rust documentation for `try_from_minutes_since_local_unix_epoch`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_from_minutes_since_local_unix_epoch) for more information.
+   * See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
    */
-  static diplomat::result<ICU4XIsoDateTime, ICU4XError> create_try_from_minutes_since_local_unix_epoch(int32_t minutes);
+  static ICU4XIsoDateTime create_from_minutes_since_local_unix_epoch(int32_t minutes);
 
   /**
    * Gets the date contained in this object
@@ -218,15 +218,8 @@ inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::create(i
 inline ICU4XIsoDateTime ICU4XIsoDateTime::crate_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time) {
   return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_crate_from_date_and_time(date.AsFFI(), time.AsFFI()));
 }
-inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::create_try_from_minutes_since_local_unix_epoch(int32_t minutes) {
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_create_try_from_minutes_since_local_unix_epoch(minutes);
-  diplomat::result<ICU4XIsoDateTime, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XIsoDateTime>(std::move(ICU4XIsoDateTime(diplomat_result_raw_out_value.ok)));
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value;
+inline ICU4XIsoDateTime ICU4XIsoDateTime::create_from_minutes_since_local_unix_epoch(int32_t minutes) {
+  return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes));
 }
 inline ICU4XIsoDate ICU4XIsoDateTime::date() const {
   return ICU4XIsoDate(capi::ICU4XIsoDateTime_date(this->inner.get()));
