@@ -91,14 +91,15 @@ pub mod ffi {
         PluralParserError = 0x6_00,
 
         // datetime errors
-        DateTimeParseError = 0x7_00,
-        DateTimeOverflowError = 0x7_01,
-        DateTimeUnderflowError = 0x7_02,
-        DateTimeOutOfRangeError = 0x7_03,
-        DateTimeUnknownEraError = 0x7_04,
-        DateTimeUnknownMonthCodeError = 0x7_05,
-        DateTimeMissingInputError = 0x7_06,
-        DateTimeUnknownAnyCalendarKindError = 0x7_07,
+        CalendarParseError = 0x7_00,
+        CalendarOverflowError = 0x7_01,
+        CalendarUnderflowError = 0x7_02,
+        CalendarOutOfRangeError = 0x7_03,
+        CalendarUnknownEraError = 0x7_04,
+        CalendarUnknownMonthCodeError = 0x7_05,
+        CalendarMissingInputError = 0x7_06,
+        CalendarUnknownAnyCalendarKindError = 0x7_07,
+        CalendarMissingError = 0x7_08,
 
         // datetime format errors
         DateTimeFormatPatternError = 0x8_00,
@@ -220,6 +221,8 @@ impl From<CalendarError> for ICU4XError {
             CalendarError::UnknownAnyCalendarKind(_) => {
                 ICU4XError::DateTimeUnknownAnyCalendarKindError
             }
+            CalendarError::MissingCalendar => ICU4XError::MissingCalendarError,
+            CalendarError::DataProvider(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

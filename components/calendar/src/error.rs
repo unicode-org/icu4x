@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use icu_provider::DataError;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 use writeable::Writeable;
 
@@ -53,11 +54,20 @@ pub enum CalendarError {
     /// An operation required a calendar but a calendar was not provided.
     #[displaydoc("An operation required a calendar but a calendar was not provided")]
     MissingCalendar,
+    /// An error originating inside of the [data provider](icu_provider).
+    #[displaydoc("{0}")]
+    DataProvider(DataError),
 }
 
 impl From<core::num::ParseIntError> for CalendarError {
     fn from(_: core::num::ParseIntError) -> Self {
         CalendarError::Parse
+    }
+}
+
+impl From<DataError> for CalendarError {
+    fn from(e: DataError) -> Self {
+        CalendarError::DataProvider(e)
     }
 }
 

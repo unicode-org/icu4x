@@ -373,7 +373,7 @@ impl AnyCalendar {
     pub fn try_new_with_any_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, CalendarError>
     where
         P: AnyProvider + ?Sized,
     {
@@ -412,7 +412,7 @@ impl AnyCalendar {
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
         kind: AnyCalendarKind,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, CalendarError>
     where
         P: BufferProvider + ?Sized,
     {
@@ -450,7 +450,7 @@ impl AnyCalendar {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -480,7 +480,7 @@ impl AnyCalendar {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: skip,
-        error: DataError,
+        error: CalendarError,
         functions: [
             Self::try_new_for_locale_unstable,
             try_new_for_locale_with_any_provider,
@@ -499,7 +499,7 @@ impl AnyCalendar {
     pub fn try_new_for_locale_unstable<P>(
         provider: &P,
         locale: &DataLocale,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>

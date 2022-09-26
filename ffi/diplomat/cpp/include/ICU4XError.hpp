@@ -18,7 +18,7 @@
  * 
  * The error names are stable and can be checked against as strings in the JS API
  * 
- *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html), [3](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html), [4](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html), [5](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html), [6](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html), [7](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html), [8](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html), [9](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html), [10](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/enum.TimeZoneError.html), [11](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CollatorError.html), [12](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.FixedDecimalFormatterError.html)
+ *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.CalendarError.html), [3](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html), [4](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html), [5](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html), [6](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html), [7](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html), [8](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html), [9](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html), [10](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/enum.TimeZoneError.html), [11](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CollatorError.html), [12](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.FixedDecimalFormatterError.html)
  */
 enum struct ICU4XError {
 
@@ -71,14 +71,15 @@ enum struct ICU4XError {
   FixedDecimalLimitError = 1280,
   FixedDecimalSyntaxError = 1281,
   PluralParserError = 1536,
-  DateTimeParseError = 1792,
-  DateTimeOverflowError = 1793,
-  DateTimeUnderflowError = 1794,
-  DateTimeOutOfRangeError = 1795,
-  DateTimeUnknownEraError = 1796,
-  DateTimeUnknownMonthCodeError = 1797,
-  DateTimeMissingInputError = 1798,
-  DateTimeUnknownAnyCalendarKindError = 1799,
+  CalendarParseError = 1792,
+  CalendarOverflowError = 1793,
+  CalendarUnderflowError = 1794,
+  CalendarOutOfRangeError = 1795,
+  CalendarUnknownEraError = 1796,
+  CalendarUnknownMonthCodeError = 1797,
+  CalendarMissingInputError = 1798,
+  CalendarUnknownAnyCalendarKindError = 1799,
+  CalendarMissingError = 1800,
   DateTimeFormatPatternError = 2048,
   DateTimeFormatMissingInputFieldError = 2049,
   DateTimeFormatSkeletonError = 2050,
