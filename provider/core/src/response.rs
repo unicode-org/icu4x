@@ -9,13 +9,15 @@ use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 use alloc::boxed::Box;
+use core::convert::TryFrom;
+use core::fmt::Debug;
+use core::marker::PhantomData;
+use core::ops::Deref;
+
 #[cfg(not(feature = "sync"))]
 use alloc::rc::Rc as SelectedRc;
 #[cfg(feature = "sync")]
 use alloc::sync::Arc as SelectedRc;
-use core::convert::TryFrom;
-use core::fmt::Debug;
-use core::marker::PhantomData;
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -76,13 +78,13 @@ where
 
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone)]
-#[allow(clippy::redundant_allocation)] // This is intended, we're optimising the creation of the cart from a Box<[u8]>,
-                                       // which would require a big allocation for `Arc<[u8]>`. This is only derefenced
-                                       // once anyway.
-pub struct Cart(SelectedRc<Box<[u8]>>);
+pub struct Cart(
+    #[cfg(feature = "sync")] yoke::erased::ErasedArcCart,
+    #[cfg(not(feature = "sync"))] yoke::erased::ErasedRcCart,
+);
 
-impl core::ops::Deref for Cart {
-    type Target = Box<[u8]>;
+impl Deref for Cart {
+    type Target = dyn yoke::erased::ErasedDestructor;
     fn deref(&self) -> &Self::Target {
         &*self.0
     }
@@ -93,16 +95,22 @@ unsafe impl stable_deref_trait::StableDeref for Cart {}
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
-    /// Creates a Yoke<Y, Cart> from owned bytes.
-    pub fn yoke_bytes<Y, F, E>(bytes: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
+    /// Creates a Yoke<Y, Option<Cart>> from some owned C by applying f.
+    pub fn make_yoke<Y, F, E, C, D>(cart: C, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,
-        F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
+        F: FnOnce(&D) -> Result<<Y as Yokeable>::Output, E>,
+        C: Deref<Target = D> + crate::MaybeSendSync + 'static,
+        D: 'static + ?Sized,
     {
-        Ok(
-            Yoke::try_attach_to_cart(Cart(SelectedRc::new(bytes)), |b: &Box<[u8]>| f(&*b))?
-                .wrap_cart_in_option(),
-        )
+        // Safe because the cart is only wrapped
+        unsafe {
+            Ok(
+                Yoke::try_attach_to_cart(SelectedRc::new(cart), |b: &C| f(&*b))?
+                    .replace_cart(|rc| Cart(rc))
+                    .wrap_cart_in_option(),
+            )
+        }
     }
 }
 
@@ -497,7 +505,11 @@ impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
         Self {
-            yoke: Cart::yoke_bytes::<_, _, core::convert::Infallible>(buffer, |b| Ok(&*b)).unwrap(),
+            // Safe because cart is wrapped
+            yoke: unsafe {
+                Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
+                    .replace_cart(|b| Some(Cart(b)))
+            },
         }
     }
 
