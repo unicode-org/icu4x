@@ -44,11 +44,12 @@ use core::iter::FromIterator;
 ///
 /// let data = Data { map };
 ///
-/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without any allocations
-/// let deserialized: Data =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(data.map.get(&1), Some("one"));
 /// assert_eq!(data.map.get(&2), Some("two"));

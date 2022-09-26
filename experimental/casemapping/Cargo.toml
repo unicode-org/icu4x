@@ -28,7 +28,7 @@ icu_collections = { version = "1.0.0-beta1", path = "../../components/collection
 icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
-zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 

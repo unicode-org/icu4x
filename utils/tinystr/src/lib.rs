@@ -24,7 +24,8 @@
 //! assert_eq!(s1.is_ascii_alphanumeric(), true);
 //! assert_eq!(s1.is_ascii_numeric(), false);
 //!
-//! let s2 = TinyAsciiStr::<8>::try_from_raw(*b"New York").expect("Failed to parse.");
+//! let s2 = TinyAsciiStr::<8>::try_from_raw(*b"New York")
+//!     .expect("Failed to parse.");
 //!
 //! assert_eq!(s2, "New York");
 //! assert_eq!(s2.to_ascii_uppercase(), "NEW YORK");
@@ -80,9 +81,6 @@ mod databake;
 
 #[cfg(feature = "zerovec")]
 mod ule;
-
-#[cfg(feature = "zerovec")]
-mod ule_07;
 
 #[cfg(any(feature = "serde", feature = "alloc"))]
 extern crate alloc;

@@ -24,13 +24,14 @@ pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 29] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 111,
-///     110, 101,
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+///     0, 0, 111, 110, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMapBorrowed<u32, str> =
-///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
+///     bincode::deserialize(BINCODE_BYTES)
+///         .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
 ///

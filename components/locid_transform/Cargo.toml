@@ -34,8 +34,8 @@ all-features = true
 icu_locid = { version = "1.0.0-beta1", path = "../locid", features = ["serde", "zerovec"] }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.6.0", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { path = "../../utils/zerovec", version = "0.8", features = ["yoke"] }
+tinystr = { version = "0.7", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec",  features = ["yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
