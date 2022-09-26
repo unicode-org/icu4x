@@ -5,7 +5,7 @@
 //! Some useful parsing functions for tests.
 
 use either::Either;
-use icu_calendar::{DateTime, DateTimeError, Gregorian};
+use icu_calendar::{CalendarError, DateTime, Gregorian};
 use icu_timezone::{CustomTimeZone, TimeZoneError};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
@@ -31,18 +31,18 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 ///     parse_gregorian_from_str("2020-10-14T13:21:00.101").expect("Failed to parse a datetime.");
 /// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
-pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
+pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, CalendarError> {
     #![allow(clippy::indexing_slicing)] // all indexing is gated
-    let validate = |c, i| -> Result<(), DateTimeError> {
+    let validate = |c, i| -> Result<(), CalendarError> {
         if input.as_bytes()[i] != c {
-            Err(DateTimeError::Parse)
+            Err(CalendarError::Parse)
         } else {
             Ok(())
         }
     };
 
     if input.len() < 19 || input.len() == 20 {
-        return Err(DateTimeError::Parse);
+        return Err(CalendarError::Parse);
     }
     let year: i32 = input[0..4].parse()?;
     validate(b'-', 4)?;
@@ -87,7 +87,7 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
-) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<DateTimeError, TimeZoneError>> {
+) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<CalendarError, TimeZoneError>> {
     match input.rfind(&['+', '-', '\u{2212}', 'Z']) {
         #[allow(clippy::indexing_slicing)] // valid index
         Some(index) => Ok((

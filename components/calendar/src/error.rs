@@ -7,13 +7,15 @@ use tinystr::{tinystr, TinyStr16, TinyStr4};
 use writeable::Writeable;
 
 #[cfg(feature = "std")]
-impl std::error::Error for DateTimeError {}
+impl std::error::Error for CalendarError {}
 
 /// A list of possible error outcomes for working with various inputs to DateTime inputs
 /// and operations.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum DateTimeError {
+pub enum CalendarError {
     /// An input could not be parsed.
     #[displaydoc("Could not parse as integer")]
     Parse,
@@ -53,13 +55,13 @@ pub enum DateTimeError {
     MissingCalendar,
 }
 
-impl From<core::num::ParseIntError> for DateTimeError {
+impl From<core::num::ParseIntError> for CalendarError {
     fn from(_: core::num::ParseIntError) -> Self {
-        DateTimeError::Parse
+        CalendarError::Parse
     }
 }
 
-impl DateTimeError {
+impl CalendarError {
     /// Create an error when an [`AnyCalendarKind`] is expected but not available.
     ///
     /// # Examples

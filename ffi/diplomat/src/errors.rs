@@ -5,7 +5,7 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
-use icu_calendar::DateTimeError;
+use icu_calendar::CalendarError;
 use icu_collator::CollatorError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
@@ -27,7 +27,7 @@ pub mod ffi {
     ///
     /// The error names are stable and can be checked against as strings in the JS API
     #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
-    #[diplomat::rust_link(icu::calendar::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::CalendarError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
@@ -207,17 +207,17 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
-impl From<DateTimeError> for ICU4XError {
-    fn from(e: DateTimeError) -> Self {
+impl From<CalendarError> for ICU4XError {
+    fn from(e: CalendarError) -> Self {
         let ret = match e {
-            DateTimeError::Parse => ICU4XError::DateTimeParseError,
-            DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
-            DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
-            DateTimeError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
-            DateTimeError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
-            DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
-            DateTimeError::UnknownAnyCalendarKind(_) => {
+            CalendarError::Parse => ICU4XError::DateTimeParseError,
+            CalendarError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
+            CalendarError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
+            CalendarError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            CalendarError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
+            CalendarError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
+            CalendarError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            CalendarError::UnknownAnyCalendarKind(_) => {
                 ICU4XError::DateTimeUnknownAnyCalendarKindError
             }
             _ => ICU4XError::UnknownError,

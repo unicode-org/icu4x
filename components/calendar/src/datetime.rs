@@ -4,7 +4,7 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
-use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
+use crate::{AsCalendar, Calendar, CalendarError, Date, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 
@@ -57,7 +57,7 @@ impl<A: AsCalendar> DateTime<A> {
         day: u8,
         time: Time,
         calendar: A,
-    ) -> Result<Self, DateTimeError> {
+    ) -> Result<Self, CalendarError> {
         let date = Date::try_new_from_codes(era, year, month_code, day, calendar)?;
         Ok(DateTime { date, time })
     }

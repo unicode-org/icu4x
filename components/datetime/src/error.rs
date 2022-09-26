@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldSymbol;
-use crate::input::DateTimeError;
+use crate::input::CalendarError;
 use crate::pattern::PatternError;
 #[cfg(feature = "experimental")]
 use crate::skeleton::SkeletonError;
@@ -46,7 +46,7 @@ pub enum DateTimeFormatterError {
     PluralRules(PluralRulesError),
     /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
     #[displaydoc("{0}")]
-    DateTimeInput(DateTimeError),
+    DateTimeInput(CalendarError),
     /// An error originating from a missing weekday symbol in the data.
     #[displaydoc("Data file missing weekday symbol for weekday {0}")]
     MissingWeekdaySymbol(usize),
@@ -107,8 +107,8 @@ impl From<PluralRulesError> for DateTimeFormatterError {
     }
 }
 
-impl From<DateTimeError> for DateTimeFormatterError {
-    fn from(e: DateTimeError) -> Self {
+impl From<CalendarError> for DateTimeFormatterError {
+    fn from(e: CalendarError) -> Self {
         DateTimeFormatterError::DateTimeInput(e)
     }
 }
