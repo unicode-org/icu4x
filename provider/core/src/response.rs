@@ -67,15 +67,31 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Cart>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<Cart>>,
 }
 
-#[cfg(feature = "sync")]
-/// The type of the "cart" that is used by `DataPayload`. This changes with the `sync` feature.
-pub type Cart = Option<alloc::sync::Arc<Box<[u8]>>>;
-#[cfg(not(feature = "sync"))]
-#[allow(missing_docs)] // docs are generated with all features
-pub type Cart = Option<alloc::rc::Rc<Box<[u8]>>>;
+/// The type of the "cart" that is used by `DataPayload`.
+#[derive(Clone)]
+pub struct Cart(
+    #[cfg(feature = "sync")] alloc::sync::Arc<Box<[u8]>>,
+    #[cfg(not(feature = "sync"))] alloc::rc::Rc<Box<[u8]>>,
+);
+
+impl core::ops::Deref for Cart {
+    type Target = Box<[u8]>;
+    fn deref(&self) -> &Self::Target {
+        &*self.0
+    }
+}
+unsafe impl stable_deref_trait::StableDeref for Cart {}
+unsafe impl yoke::CloneableCart for Cart {}
+
+impl Cart {
+    /// Creates a cart from owned bytes.
+    pub fn from_bytes(bytes: Box<[u8]>) -> Self {
+        Self(bytes.into())
+    }
+}
 
 impl<M> Debug for DataPayload<M>
 where
@@ -467,14 +483,14 @@ where
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
-        #[allow(clippy::borrowed_box)] // false positive, we need to be explicit about the box type
         Self {
-            yoke: Yoke::attach_to_cart(buffer.into(), |b: &Box<[u8]>| &**b).wrap_cart_in_option(),
+            yoke: Yoke::attach_to_cart(Cart::from_bytes(buffer), |b| &**b)
+                .wrap_cart_in_option(),
         }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Cart>) -> Self {
+    pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
         Self { yoke }
     }
 

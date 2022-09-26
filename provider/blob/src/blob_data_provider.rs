@@ -6,6 +6,7 @@ use crate::blob_schema::{BlobSchema, BlobSchemaV1};
 use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
+use icu_provider::Cart;
 use yoke::*;
 
 /// A data provider that reads from serialized blobs of data.
@@ -86,14 +87,14 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, icu_provider::Cart>,
+    data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
-            data: Yoke::try_attach_to_cart(blob.into(), |bytes: &Box<[u8]>| {
+            data: Yoke::try_attach_to_cart(Cart::from_bytes(blob), |bytes| {
                 BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
             })?
             .wrap_cart_in_option(),
