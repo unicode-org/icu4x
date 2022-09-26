@@ -91,10 +91,12 @@
 extern crate alloc;
 
 mod canonicalizer;
+mod error;
 mod expander;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
+pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.

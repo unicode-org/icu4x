@@ -37,6 +37,7 @@ serde = { version = "1.0", features = ["derive", "alloc"], optional = true, defa
 tinystr = { path = "../../utils/tinystr", version = "0.6.0", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { path = "../../utils/zerovec", version = "0.8", features = ["yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3.3"

@@ -31,7 +31,7 @@ pub enum DateTimeError {
     Format(core::fmt::Error),
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
@@ -86,7 +86,7 @@ impl From<PatternError> for DateTimeError {
 
 impl From<DataError> for DateTimeError {
     fn from(e: DataError) -> Self {
-        DateTimeError::DataProvider(e)
+        DateTimeError::Data(e)
     }
 }
 

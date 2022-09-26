@@ -10,6 +10,7 @@ use icu_collator::CollatorError;
 use icu_datetime::DateTimeError;
 use icu_decimal::DecimalError;
 use icu_locid::ParserError;
+use icu_locid_transform::LocaleTransformError;
 use icu_normalizer::NormalizerError;
 use icu_plurals::PluralsError;
 use icu_properties::PropertiesError;
@@ -185,7 +186,7 @@ impl From<CollatorError> for ICU4XError {
         let ret = match e {
             CollatorError::NotFound => ICU4XError::DataMissingPayloadError,
             CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
-            CollatorError::DataProvider(_) => ICU4XError::DataIoError,
+            CollatorError::Data(_) => ICU4XError::DataIoError,
             _ => ICU4XError::DataIoError,
         };
         log_conversion(&e, ret);
@@ -220,7 +221,7 @@ impl From<CalendarError> for ICU4XError {
             CalendarError::MissingInput(_) => ICU4XError::CalendarMissingInputError,
             CalendarError::UnknownAnyCalendarKind(_) => ICU4XError::CalendarUnknownKindError,
             CalendarError::MissingCalendar => ICU4XError::CalendarMissingError,
-            CalendarError::DataProvider(e) => e.into(),
+            CalendarError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -233,7 +234,7 @@ impl From<DateTimeError> for ICU4XError {
         let ret = match e {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
             DateTimeError::Format(err) => err.into(),
-            DateTimeError::DataProvider(err) => err.into(),
+            DateTimeError::Data(err) => err.into(),
             DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
             // TODO(#1324): Add back skeleton errors
             // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
@@ -270,7 +271,7 @@ impl From<FixedDecimalError> for ICU4XError {
 impl From<PluralsError> for ICU4XError {
     fn from(e: PluralsError) -> Self {
         let ret = match e {
-            PluralsError::DataProvider(e) => e.into(),
+            PluralsError::Data(e) => e.into(),
             PluralsError::Parser(..) => ICU4XError::PluralsParserError,
             _ => ICU4XError::UnknownError,
         };
@@ -283,6 +284,17 @@ impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         let ret = match e {
             DecimalError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<LocaleTransformError> for ICU4XError {
+    fn from(e: LocaleTransformError) -> Self {
+        let ret = match e {
+            LocaleTransformError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -321,7 +333,7 @@ impl From<TimeZoneError> for ICU4XError {
         let ret = match e {
             TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
             TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
-            TimeZoneError::DataProvider(err) => err.into(),
+            TimeZoneError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -334,7 +346,7 @@ impl From<NormalizerError> for ICU4XError {
         let ret = match e {
             NormalizerError::FutureExtension => ICU4XError::NormalizerFutureExtensionError,
             NormalizerError::ValidationError => ICU4XError::NormalizerValidationError,
-            NormalizerError::DataProvider(err) => err.into(),
+            NormalizerError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

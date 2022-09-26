@@ -129,3 +129,6 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
+
+#[doc(inline)]
+pub use TimeZoneError as Error;

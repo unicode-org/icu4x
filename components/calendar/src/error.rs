@@ -55,7 +55,7 @@ pub enum CalendarError {
     MissingCalendar,
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
 }
 
 impl From<core::num::ParseIntError> for CalendarError {
@@ -66,7 +66,7 @@ impl From<core::num::ParseIntError> for CalendarError {
 
 impl From<DataError> for CalendarError {
     fn from(e: DataError) -> Self {
-        CalendarError::DataProvider(e)
+        CalendarError::Data(e)
     }
 }
 

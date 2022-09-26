@@ -17,7 +17,7 @@ pub enum PluralsError {
     Parser(ParserError),
     /// An error originating from [`icu_provider`].
     #[displaydoc("Data provider error: {0}")]
-    DataProvider(DataError),
+    Data(DataError),
 }
 
 #[cfg(feature = "std")]
@@ -31,6 +31,6 @@ impl From<ParserError> for PluralsError {
 
 impl From<DataError> for PluralsError {
     fn from(e: DataError) -> Self {
-        PluralsError::DataProvider(e)
+        PluralsError::Data(e)
     }
 }
