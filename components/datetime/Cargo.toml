@@ -39,7 +39,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features
 icu_calendar = { version = "1.0.0-beta1", path = "../calendar" }
 icu_timezone = { version = "1.0.0-beta1", path = "../timezone" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
-litemap = { version = "0.5", path = "../../utils/litemap" }
+litemap = { version = "0.6", path = "../../utils/litemap" }
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

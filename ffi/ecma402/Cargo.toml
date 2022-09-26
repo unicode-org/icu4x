@@ -36,7 +36,7 @@ writeable = { version = "0.4", path = "../../utils/writeable" }
 icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
 icu_list = { version = "1.0.0-beta1", path = "../../components/list"}
 zerovec = { version = "0.9", path = "../../utils/zerovec" }
-litemap = { version = "0.5", path = "../../utils/litemap" }
+litemap = { version = "0.6", path = "../../utils/litemap" }
 
 [build-dependencies]
 icu = { version = "1.0.0-beta1", path = "../../components/icu", features = ["std"] }
