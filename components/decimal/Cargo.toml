@@ -33,7 +33,7 @@ all-features = true
 [dependencies]
 icu_locid = { version = "1.0.0-beta1", path = "../locid" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
-fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
+fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }

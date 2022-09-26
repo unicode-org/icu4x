@@ -48,7 +48,7 @@ smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
-fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
+fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
