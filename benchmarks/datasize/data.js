@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664225760944,
+  "lastUpdate": 1664233833929,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28703,6 +28703,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7929b6e0cd392cbe9026740ee9ad83bcf1f392c5"
         },
         "date": 1664225701732,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "39b0797a56ff36fc82fde6e52093f6219e4c7b5e",
+          "message": "ListStyle -> ListLength and add _with_length (#2628)",
+          "timestamp": "2022-09-26T16:07:23-07:00",
+          "tree_id": "11c6a6b2bd6a507b949f1867e575182590951a91",
+          "url": "https://github.com/unicode-org/icu4x/commit/39b0797a56ff36fc82fde6e52093f6219e4c7b5e"
+        },
+        "date": 1664233744765,
         "tool": "ndjson",
         "benches": [
           {
