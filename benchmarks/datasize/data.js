@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664210783585,
+  "lastUpdate": 1664216664837,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28583,6 +28583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/944c31975137dd2dffea2d2a2fa2ed0abd11bd8a"
         },
         "date": 1664210717127,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7f9ce3cfcd390ce811bb244a217b61661b3bb18",
+          "message": "Update Diplomat to 0.4.0 (#2642)",
+          "timestamp": "2022-09-26T18:22:00Z",
+          "tree_id": "a9e4f8ebbe0bfe2b1dc31d9c8fa31d7927308942",
+          "url": "https://github.com/unicode-org/icu4x/commit/d7f9ce3cfcd390ce811bb244a217b61661b3bb18"
+        },
+        "date": 1664216605854,
         "tool": "ndjson",
         "benches": [
           {
