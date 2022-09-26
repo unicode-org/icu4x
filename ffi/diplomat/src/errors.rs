@@ -307,7 +307,7 @@ impl From<LocaleTransformError> for ICU4XError {
 impl From<SegmenterError> for ICU4XError {
     fn from(e: SegmenterError) -> Self {
         let ret = match e {
-            SegmenterError::Data(e) => e.into(),
+            PluralsError::DataProvider(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

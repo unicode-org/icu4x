@@ -8,6 +8,8 @@ mod helpers;
 use std::convert::TryInto;
 
 use fixed_decimal::FixedDecimal;
+#[cfg(feature = "experimental")]
+use icu_plurals::rules::RawPluralOperands;
 use icu_plurals::PluralOperands;
 
 #[test]
@@ -32,11 +34,15 @@ fn test_parsing_operands() {
         }
     }
 
+    #[cfg(feature = "experimental")]
     for test in test_set.floats {
         let t = test.clone();
         let operands: PluralOperands = t.output.try_into().expect("Failed to parse to operands.");
+        let raw_operands = RawPluralOperands::from(operands);
         let expected: f64 = t.input.abs();
-        let actual = (operands.n() - expected).abs();
+        let fraction = raw_operands.t as f64 / 10_f64.powi(raw_operands.v as i32);
+        let n = raw_operands.i as f64 + fraction;
+        let actual = (n - expected).abs();
         assert!(
             actual < f64::EPSILON,
             "actual: {}, for test: {:?}",
