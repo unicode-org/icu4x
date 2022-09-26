@@ -108,3 +108,6 @@ pub enum TransformResult {
     /// The canonicalization operation did not modify the locale.
     Unmodified,
 }
+
+#[doc(inline)]
+pub use LocaleTransformError as Error;
