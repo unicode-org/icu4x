@@ -320,18 +320,16 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
+    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             today
     ///         );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
-    pub fn try_from_minutes_since_local_unix_epoch(
-        minute: i32,
-    ) -> Result<DateTime<Iso>, DateTimeError> {
+    pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
         let minutes_a_hour = 60;
         let hours_a_day = 24;
         let minutes_a_day = minutes_a_hour * hours_a_day;
@@ -339,14 +337,14 @@ impl DateTime<Iso> {
         if let Ok(unix_epoch) = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0) {
             let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
             let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
-            DateTime::try_new_iso_datetime(
-                date.year().number,
-                date.month().ordinal as u8,
-                date.day_of_month().0 as u8,
-                ((minute / minutes_a_hour) % hours_a_day) as u8,
-                (minute % minutes_a_hour) as u8,
-                0,
-            )
+            let hours = ((minute / minutes_a_hour) % hours_a_day) as u8;
+            let minutes = (minute % minutes_a_hour) as u8;
+            #[allow(clippy::expect_used)] // see text
+            DateTime {
+                date,
+                time: types::Time::try_new(hours, minutes, 0, 0)
+                    .expect("hours, minutes has been %d by 60 and 24"),
+            }
         } else {
             unreachable!("DateTime should be created successfully")
         }
