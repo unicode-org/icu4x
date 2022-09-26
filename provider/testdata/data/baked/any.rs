@@ -429,13 +429,14 @@ impl AnyProvider for BakedDataProvider {
                 #[cfg(feature = "icu_datetime_experimental")]
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(|&data| {
-                        AnyPayload::from_rcwrap_payload::<
+                    .copied()
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(
+                        DataPayload::<
                             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker,
-                        >(icu_provider::RcWrap::from(
-                            DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)),
-                        ))
-                    }),
+                        >::from_owned,
+                    )
+                    .map(DataPayload::wrap_into_any_payload),
                 #[cfg(feature = "icu_datetime")]
                 ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())

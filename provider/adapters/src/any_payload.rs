@@ -55,14 +55,9 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
     pub fn from_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self
     where
-        M::Yokeable: icu_provider::RcWrapBounds,
+        M::Yokeable: icu_provider::MaybeSendSync,
     {
-        AnyPayloadProvider {
-            key: M::KEY,
-            data: AnyPayload::from_rcwrap_payload::<M>(icu_provider::RcWrap::from(
-                DataPayload::from_owned(data),
-            )),
-        }
+        Self::from_payload::<M>(DataPayload::from_owned(data))
     }
 
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
@@ -76,7 +71,7 @@ impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
     pub fn from_payload<M: KeyedDataMarker + 'static>(payload: DataPayload<M>) -> Self
     where
-        M::Yokeable: icu_provider::RcWrapBounds,
+        M::Yokeable: icu_provider::MaybeSendSync,
     {
         AnyPayloadProvider {
             key: M::KEY,
@@ -96,7 +91,7 @@ impl AnyPayloadProvider {
     pub fn new_default<M: KeyedDataMarker + 'static>() -> Self
     where
         M::Yokeable: Default,
-        M::Yokeable: icu_provider::RcWrapBounds,
+        M::Yokeable: icu_provider::MaybeSendSync,
     {
         Self::from_owned::<M>(M::Yokeable::default())
     }
@@ -117,7 +112,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: icu_provider::RcWrapBounds,
+    M::Yokeable: icu_provider::MaybeSendSync,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_downcasting().load(req)

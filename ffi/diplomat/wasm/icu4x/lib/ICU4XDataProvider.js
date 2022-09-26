@@ -40,11 +40,11 @@ export class ICU4XDataProvider {
     return new ICU4XDataProvider(wasm.ICU4XDataProvider_create_test(), true, []);
   }
 
-  static create_from_byte_slice(arg_blob) {
+  static create_from_bytes(arg_blob) {
     const buf_arg_blob = diplomatRuntime.DiplomatBuf.slice(wasm, arg_blob, 1);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDataProvider_create_from_byte_slice(diplomat_receive_buffer, buf_arg_blob.ptr, buf_arg_blob.size);
+      wasm.ICU4XDataProvider_create_from_bytes(diplomat_receive_buffer, buf_arg_blob.ptr, buf_arg_blob.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XDataProvider(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

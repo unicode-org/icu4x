@@ -26,7 +26,7 @@ diplomat_result_box_ICU4XDataProvider_ICU4XError ICU4XDataProvider_create_fs(con
 
 ICU4XDataProvider* ICU4XDataProvider_create_test();
 
-diplomat_result_box_ICU4XDataProvider_ICU4XError ICU4XDataProvider_create_from_byte_slice(const uint8_t* blob_data, size_t blob_len);
+diplomat_result_box_ICU4XDataProvider_ICU4XError ICU4XDataProvider_create_from_bytes(const uint8_t* blob_data, size_t blob_len);
 
 ICU4XDataProvider* ICU4XDataProvider_create_empty();
 

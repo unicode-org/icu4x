@@ -6,7 +6,7 @@
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 #[allow(unused_imports)] // feature-specific
-use icu_provider::RcWrapBounds;
+use icu_provider::MaybeSendSync;
 use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
@@ -127,14 +127,15 @@ pub mod ffi {
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[allow(unused_variables)] // conditional on features
-        pub fn create_from_byte_slice(
-            blob: &[u8],
+        pub fn create_from_bytes(
+            // This will become Uint8Array (garbage-collected) in WASM, and uint8_t* (client's resposibility) in C
+            blob: &'static [u8],
         ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
             #[cfg(not(feature = "buffer_provider"))]
             panic!("Requires feature 'buffer_provider'");
 
             #[cfg(feature = "buffer_provider")]
-            icu_provider_blob::BlobDataProvider::try_new_from_blob(blob)
+            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)
                 .map_err(Into::into)
                 .map(convert_buffer_provider)
                 .into()
@@ -357,7 +358,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
@@ -373,7 +374,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):

@@ -381,8 +381,10 @@ impl DataExporter for BakedDataExporter {
                     #ident => {
                         #data::DATA
                             .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                            .map(|&data| AnyPayload::from_rcwrap_payload::<#marker>(
-                                icu_provider::RcWrap::from(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)))))
+                            .copied()
+                            .map(zerofrom::ZeroFrom::zero_from)
+                            .map(DataPayload::<#marker>::from_owned)
+                            .map(DataPayload::wrap_into_any_payload)
                     }
                 }
             } else {
