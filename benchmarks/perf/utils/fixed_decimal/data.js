@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664223056609,
+  "lastUpdate": 1664226438933,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53909,6 +53909,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 71,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@amazon.com",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7929b6e0cd392cbe9026740ee9ad83bcf1f392c5",
+          "message": "Document inline clippy lints for datetime and plurals (#2572)",
+          "timestamp": "2022-09-26T20:53:40Z",
+          "tree_id": "7d57dda3c3614dd72b910f53dae533cc27401613",
+          "url": "https://github.com/unicode-org/icu4x/commit/7929b6e0cd392cbe9026740ee9ad83bcf1f392c5"
+        },
+        "date": 1664226369837,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117993,
+            "range": "± 10134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24899,
+            "range": "± 1160",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70697,
+            "range": "± 6264",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 220,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 101,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
