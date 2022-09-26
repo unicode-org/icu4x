@@ -899,18 +899,18 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     ///
     /// ```rust
     /// use std::sync::Arc;
-    /// use yoke::erased::ErasedRcCart;
+    /// use yoke::erased::ErasedArcCart;
     /// use yoke::Yoke;
     ///
-    /// let buffer1: Arc<String> = Rc::new("   foo bar baz  ".into());
+    /// let buffer1: Arc<String> = Arc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |arc| arc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
-    /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
+    /// let erased1: Yoke<_, ErasedArcCart> = yoke1.erase_arc_cart();
     /// // Wrap the Box in an Rc to make it compatible
-    /// let erased2: Yoke<_, ErasedRcCart> = yoke2.wrap_cart_in_rc().erase_rc_cart();
+    /// let erased2: Yoke<_, ErasedArcCart> = yoke2.wrap_cart_in_arc().erase_arc_cart();
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
