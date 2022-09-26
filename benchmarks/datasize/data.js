@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664222323963,
+  "lastUpdate": 1664222391329,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28643,6 +28643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dcbefa2377f0459882291cd5cc7ec895d59e7c4b"
         },
         "date": 1664222267843,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0eaff6f63ad74ec7184bad089dd7a67de071ab8c",
+          "message": "Make expect_pattern GIGO (#2650)",
+          "timestamp": "2022-09-26T19:57:29Z",
+          "tree_id": "865e6a8e6b2d6a8c959c23b0b86b7b4addeb0dcd",
+          "url": "https://github.com/unicode-org/icu4x/commit/0eaff6f63ad74ec7184bad089dd7a67de071ab8c"
+        },
+        "date": 1664222333586,
         "tool": "ndjson",
         "benches": [
           {
