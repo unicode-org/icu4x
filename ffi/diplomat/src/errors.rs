@@ -98,7 +98,7 @@ pub mod ffi {
         CalendarUnknownEraError = 0x7_04,
         CalendarUnknownMonthCodeError = 0x7_05,
         CalendarMissingInputError = 0x7_06,
-        CalendarUnknownAnyCalendarKindError = 0x7_07,
+        CalendarUnknownKindError = 0x7_07,
         CalendarMissingError = 0x7_08,
 
         // datetime format errors
@@ -211,17 +211,17 @@ impl From<PropertiesError> for ICU4XError {
 impl From<CalendarError> for ICU4XError {
     fn from(e: CalendarError) -> Self {
         let ret = match e {
-            CalendarError::Parse => ICU4XError::DateTimeParseError,
-            CalendarError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
-            CalendarError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            CalendarError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
-            CalendarError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
-            CalendarError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
-            CalendarError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            CalendarError::Parse => ICU4XError::CalendarParseError,
+            CalendarError::Overflow { field: _, max: _ } => ICU4XError::CalendarOverflowError,
+            CalendarError::Underflow { field: _, min: _ } => ICU4XError::CalendarUnderflowError,
+            CalendarError::OutOfRange => ICU4XError::CalendarOutOfRangeError,
+            CalendarError::UnknownEra(..) => ICU4XError::CalendarUnknownEraError,
+            CalendarError::UnknownMonthCode(..) => ICU4XError::CalendarUnknownMonthCodeError,
+            CalendarError::MissingInput(_) => ICU4XError::CalendarMissingInputError,
             CalendarError::UnknownAnyCalendarKind(_) => {
-                ICU4XError::DateTimeUnknownAnyCalendarKindError
+                ICU4XError::CalendarUnknownKindError
             }
-            CalendarError::MissingCalendar => ICU4XError::MissingCalendarError,
+            CalendarError::MissingCalendar => ICU4XError::CalendarMissingError,
             CalendarError::DataProvider(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
