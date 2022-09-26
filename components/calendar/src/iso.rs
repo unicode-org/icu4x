@@ -286,15 +286,12 @@ impl DateTime<Iso> {
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(
-    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(26382240), today);
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
     pub fn minutes_since_local_unix_epoch(&self) -> i32 {
         let minutes_a_hour = 60;
@@ -319,37 +316,20 @@ impl DateTime<Iso> {
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(
-    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(26382240), today);
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
-    pub fn try_from_minutes_since_local_unix_epoch(
-        minute: i32,
-    ) -> Result<DateTime<Iso>, CalendarError> {
-        let minutes_a_hour = 60;
-        let hours_a_day = 24;
-        let minutes_a_day = minutes_a_hour * hours_a_day;
-        let extra_days = minute / minutes_a_day;
-        if let Ok(unix_epoch) = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0) {
-            let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
-            let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
-            DateTime::try_new_iso_datetime(
-                date.year().number,
-                date.month().ordinal as u8,
-                date.day_of_month().0 as u8,
-                ((minute / minutes_a_hour) % hours_a_day) as u8,
-                (minute % minutes_a_hour) as u8,
-                0,
-            )
-        } else {
-            unreachable!("DateTime should be created successfully")
-        }
+    pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
+        let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
+        #[allow(clippy::unwrap_used)] // constant date
+        let unix_epoch = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+        let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
+        let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
+        DateTime { date, time }
     }
 }
 

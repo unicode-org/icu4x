@@ -27,6 +27,8 @@ pub enum ParserError {
     ExpectedValue,
     #[displaydoc("expected sample type")]
     ExpectedSampleType,
+    #[displaydoc("Value too large")]
+    ValueTooLarge,
 }
 
 #[cfg(feature = "std")]
