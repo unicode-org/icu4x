@@ -209,7 +209,7 @@ use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, DateTimeFormatterOptions, options::length};
 use icu_testdata;
 
-let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
   .expect("Failed to create a datetime.").to_any();
 
 let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
