@@ -26,20 +26,15 @@ pub struct DataResponseMetadata {
 /// A container for data payloads returned from a data provider.
 ///
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
-/// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of
-/// several data stores ("carts"):
+/// operations on data via the use of self-references.
 ///
-/// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
-///
-/// The type of the data stored in [`DataPayload`], and the type of the structured data store
-/// (cart), is determined by the [`DataMarker`] type parameter.
+/// The type of the data stored in [`DataPayload`] is determined by the [`DataMarker`] type parameter.
 ///
 /// ## Accessing the data
 ///
 /// To get a reference to the data inside [`DataPayload`], use [`DataPayload::get()`]. If you need
-/// to store the data for later use, it is recommended to store the [`DataPayload`] itself, not
-/// the ephemeral reference, since the reference results in a short-lived lifetime.
+/// to store the data for later use, you need to store the [`DataPayload`] itself, since `get` only
+/// returns a reference with an ephemeral lifetime.
 ///
 /// ## Mutating the data
 ///
@@ -52,8 +47,8 @@ pub struct DataResponseMetadata {
 ///
 /// # `sync` feature
 ///
-/// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
-/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<[u8]>`] instead.
+/// By default, the payload uses non-concurrent reference counting internally, and hence is neither
+/// [`Sync`] nor [`Send`], if these traits are required, the `sync` feature can be enabled.
 ///
 /// # Examples
 ///
@@ -472,6 +467,7 @@ where
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
+        #[allow(clippy::borrowed_box)] // false positive, we need to be explicit about the box type
         Self {
             yoke: Yoke::attach_to_cart(buffer.into(), |b: &Box<[u8]>| &**b).wrap_cart_in_option(),
         }
