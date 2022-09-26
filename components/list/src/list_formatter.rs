@@ -7,6 +7,7 @@ use crate::ListStyle;
 use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
+use crate::ListError;
 
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
@@ -25,7 +26,7 @@ macro_rules! constructor {
             data_provider: &D,
             locale: &DataLocale,
             style: ListStyle,
-        ) -> Result<Self, DataError> {
+        ) -> Result<Self, ListError> {
             let data = data_provider
                 .load(DataRequest {
                     locale,
@@ -37,7 +38,7 @@ macro_rules! constructor {
         icu_provider::gen_any_buffer_constructors!(
             locale: include,
             style: ListStyle,
-            error: DataError,
+            error: ListError,
             functions: [
                 Self::$name,
                 $name_any,

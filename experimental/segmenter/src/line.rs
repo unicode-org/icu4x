@@ -7,6 +7,7 @@ use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
+use crate::SegmenterError;
 
 use alloc::string::String;
 use alloc::vec;
@@ -190,7 +191,7 @@ pub struct LineBreakSegmenter {
 impl LineBreakSegmenter {
     /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
@@ -199,7 +200,7 @@ impl LineBreakSegmenter {
 
     /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -208,14 +209,14 @@ impl LineBreakSegmenter {
         Self::try_new_with_options_unstable(provider, Default::default())
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
     /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
     pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
@@ -244,7 +245,7 @@ impl LineBreakSegmenter {
     pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -274,7 +275,7 @@ impl LineBreakSegmenter {
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: LineBreakOptions,
-        error: DataError,
+        error: SegmenterError,
         functions: [
             Self::try_new_with_options_unstable,
             try_new_with_options_with_any_provider,

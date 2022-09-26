@@ -13,6 +13,7 @@ use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use crate::SegmenterError;
 use utf8_iter::Utf8CharIndices;
 
 /// Word break iterator for an `str` (a UTF-8 string).
@@ -67,7 +68,7 @@ pub struct WordBreakSegmenter {
 impl WordBreakSegmenter {
     /// Construct a [`WordBreakSegmenter`].
     #[cfg(feature = "lstm")]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -108,7 +109,7 @@ impl WordBreakSegmenter {
 
     /// Construct a [`WordBreakSegmenter`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -147,7 +148,7 @@ impl WordBreakSegmenter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
     fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,

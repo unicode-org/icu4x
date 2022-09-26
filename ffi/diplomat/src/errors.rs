@@ -9,12 +9,14 @@ use icu_calendar::CalendarError;
 use icu_collator::CollatorError;
 use icu_datetime::DateTimeError;
 use icu_decimal::DecimalError;
+use icu_list::ListError;
 use icu_locid::ParserError;
 use icu_locid_transform::LocaleTransformError;
 use icu_normalizer::NormalizerError;
 use icu_plurals::PluralsError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+use icu_segmenter::SegmenterError;
 use icu_timezone::TimeZoneError;
 use tinystr::TinyStrError;
 
@@ -295,6 +297,28 @@ impl From<LocaleTransformError> for ICU4XError {
     fn from(e: LocaleTransformError) -> Self {
         let ret = match e {
             LocaleTransformError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<SegmenterError> for ICU4XError {
+    fn from(e: SegmenterError) -> Self {
+        let ret = match e {
+            SegmenterError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<ListError> for ICU4XError {
+    fn from(e: ListError) -> Self {
+        let ret = match e {
+            ListError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

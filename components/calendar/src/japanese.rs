@@ -122,7 +122,7 @@ impl Japanese {
     /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
-    ) -> Result<Self, DataError> {
+    ) -> Result<Self, CalendarError> {
         let eras = data_provider
             .load(DataRequest {
                 locale: Default::default(),
@@ -132,7 +132,7 @@ impl Japanese {
         Ok(Self { eras })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
 
     fn japanese_date_from_codes(
         &self,
@@ -166,7 +166,7 @@ impl JapaneseExtended {
     /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
-    ) -> Result<Self, DataError> {
+    ) -> Result<Self, CalendarError> {
         let eras = data_provider
             .load(DataRequest {
                 locale: Default::default(),
@@ -176,7 +176,7 @@ impl JapaneseExtended {
         Ok(Self(Japanese { eras: eras.cast() }))
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
 }
 
 impl Calendar for Japanese {

@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 
 use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::provider::*;
+use crate::{provider::*, SegmenterError};
 use crate::rule_segmenter::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -70,7 +70,7 @@ pub struct GraphemeClusterBreakSegmenter {
 
 impl GraphemeClusterBreakSegmenter {
     /// Construct a [`GraphemeClusterBreakSegmenter`].
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
@@ -84,7 +84,7 @@ impl GraphemeClusterBreakSegmenter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(

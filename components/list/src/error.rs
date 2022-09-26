@@ -7,20 +7,20 @@ use icu_provider::prelude::DataError;
 use core::fmt::Debug;
 
 #[cfg(feature = "std")]
-impl std::error::Error for LocaleTransformError {}
+impl std::error::Error for ListError {}
 
 /// A list of error outcomes for various operations in the `icu_timezone` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum LocaleTransformError {
+pub enum ListError {
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),
 }
 
-impl From<DataError> for LocaleTransformError {
+impl From<DataError> for ListError {
     fn from(e: DataError) -> Self {
         Self::Data(e)
     }

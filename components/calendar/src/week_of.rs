@@ -48,7 +48,7 @@ impl WeekCalculator {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
     where
         P: DataProvider<crate::provider::WeekDataV1Marker>,
     {
@@ -59,9 +59,10 @@ impl WeekCalculator {
             })
             .and_then(DataResponse::take_payload)
             .map(|payload| payload.get().into())
+            .map_err(Into::into)
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: include, options: skip, error: CalendarError);
 
     /// Returns the week of month according to a calendar with min_week_days = 1.
     ///
