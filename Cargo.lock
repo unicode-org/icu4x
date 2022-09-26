@@ -1361,7 +1361,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "writeable",
  "zerovec",
 ]
@@ -1394,7 +1394,7 @@ dependencies = [
  "log",
  "serde",
  "simple_logger",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "unicode-bidi",
  "writeable",
 ]
@@ -1529,7 +1529,7 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "syn",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "toml",
  "writeable",
  "zerovec",
@@ -1561,7 +1561,7 @@ dependencies = [
  "serde-tuple-vec-map",
  "serde_json",
  "smallvec",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "writeable",
  "zerovec",
 ]
@@ -1644,7 +1644,7 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "writeable",
  "zerovec",
 ]
@@ -1661,7 +1661,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "zerovec",
 ]
 
@@ -1763,7 +1763,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "serde",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "writeable",
  "yoke",
  "zerovec",
@@ -1873,7 +1873,7 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_logger",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "tokio",
  "writeable",
  "zerovec",
@@ -1892,7 +1892,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "zerovec",
 ]
 
@@ -3445,7 +3445,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.6.2"
+version = "0.7.0"
 dependencies = [
  "bincode",
  "criterion",

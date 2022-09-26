@@ -67,7 +67,7 @@ rayon = "1.5"
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
-tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc", "serde", "zerovec"], default-features = false }
+tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 quote = "1.0.9"

@@ -4,7 +4,7 @@
 
 [package]
 name = "tinystr"
-version = "0.6.2"
+version = "0.7.0"
 description = "A small ASCII-only bounded length string representation."
 authors = ["The ICU4X Project Developers"]
 edition = "2021"

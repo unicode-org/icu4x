@@ -39,7 +39,7 @@ denylist = ["bench"]
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
+tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
 icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

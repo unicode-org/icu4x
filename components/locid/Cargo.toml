@@ -34,7 +34,7 @@ extra_features = ["serde"]
 all-features = true
 
 [dependencies]
-tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc"], default-features = false }
+tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
 serde = { version = "1.0", optional = true, default-features = false, features = ["alloc", "derive"] }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
