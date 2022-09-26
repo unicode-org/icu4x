@@ -25,7 +25,7 @@ macro_rules! constructor {
         pub fn $name<D: DataProvider<$marker> + ?Sized>(
             data_provider: &D,
             locale: &DataLocale,
-            style: ListLength,
+            length: ListLength,
         ) -> Result<Self, ListError> {
             let data = data_provider
                 .load(DataRequest {
