@@ -96,10 +96,10 @@ impl TryFrom<LocaleExtensions> for Extensions {
                 ext.transform.lang = Some(tlang.parse().expect("Failed to parse tlang."));
             }
         }
-        let v: Vec<private::Key> = input
+        let v: Vec<private::Subtag> = input
             .private
             .iter()
-            .map(|v| private::Key::try_from_bytes(v.as_bytes()).expect("Failed to add field."))
+            .map(|v| private::Subtag::try_from_bytes(v.as_bytes()).expect("Failed to add field."))
             .collect();
         ext.private = private::Private::from_vec_unchecked(v);
         Ok(ext)

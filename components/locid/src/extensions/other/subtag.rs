@@ -5,21 +5,21 @@
 impl_tinystr_subtag!(
     /// A single item used in a list of [`Other`](super::Other) extensions.
     ///
-    /// The key has to be an ASCII alphanumerical string no shorter than
+    /// The subtag has to be an ASCII alphanumerical string no shorter than
     /// two characters and no longer than eight.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::Key;
+    /// use icu::locid::extensions::other::Subtag;
     ///
-    /// let key1: Key = "Foo".parse().expect("Failed to parse a Key.");
+    /// let subtag: Subtag = "Foo".parse().expect("Failed to parse a Subtag.");
     ///
-    /// assert_eq!(key1.as_str(), "foo");
+    /// assert_eq!(subtag.as_str(), "foo");
     /// ```
-    Key,
-    extensions::other::Key,
-    extensions_other_key,
+    Subtag,
+    extensions::other::Subtag,
+    extensions_other_subtag,
     2..=8,
     s,
     s.is_ascii_alphanumeric(),
@@ -30,7 +30,7 @@ impl_tinystr_subtag!(
     ["y", "toolooong"],
 );
 
-impl Key {
+impl Subtag {
     pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
     }

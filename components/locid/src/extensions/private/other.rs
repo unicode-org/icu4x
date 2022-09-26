@@ -5,21 +5,21 @@
 impl_tinystr_subtag!(
     /// A single item used in a list of [`Private`](super::Private) extensions.
     ///
-    /// The key has to be an ASCII alphanumerical string no shorter than
+    /// The subtag has to be an ASCII alphanumerical string no shorter than
     /// one character and no longer than eight.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::Key;
+    /// use icu::locid::extensions::private::Subtag;
     ///
-    /// let key1: Key = "Foo".parse().expect("Failed to parse a Key.");
+    /// let subtag1: Subtag = "Foo".parse().expect("Failed to parse a Subtag.");
     ///
-    /// assert_eq!(key1.as_str(), "foo");
+    /// assert_eq!(subtag1.as_str(), "foo");
     /// ```
-    Key,
-    extensions::private::Key,
-    extensions_private_key,
+    Subtag,
+    extensions::private::Subtag,
+    extensions_private_subtag,
     1..=8,
     s,
     s.is_ascii_alphanumeric(),

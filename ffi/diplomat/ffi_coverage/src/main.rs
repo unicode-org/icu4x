@@ -414,8 +414,8 @@ lazy_static::lazy_static! {
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
-        "icu::locid::extensions_other_key",
-        "icu::locid::extensions_private_key",
+        "icu::locid::extensions_other_subtag",
+        "icu::locid::extensions_private_subtag",
         "icu::locid::extensions_transform_key",
         "icu::locid::extensions_unicode_attribute",
         "icu::locid::extensions_unicode_key",
