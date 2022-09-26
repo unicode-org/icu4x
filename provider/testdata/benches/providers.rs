@@ -23,12 +23,12 @@ mod baked {
 
 #[inline(never)]
 fn create_static_data_provider() -> BlobDataProvider {
-    icu_provider_blob::BlobDataProvider::try_new_from_static_blob(POSTCARD_BYTES).unwrap()
+    icu_provider_blob::BlobDataProvider::try_new_from_borrowed_blob(POSTCARD_BYTES).unwrap()
 }
 
 #[inline(never)]
 fn create_blob_data_provider() -> BlobDataProvider {
-    icu_provider_blob::BlobDataProvider::try_new_from_blob(black_box(POSTCARD_BYTES.into()))
+    icu_provider_blob::BlobDataProvider::try_new_from_owned_blob(black_box(POSTCARD_BYTES.into()))
         .unwrap()
 }
 

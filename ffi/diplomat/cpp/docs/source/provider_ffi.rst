@@ -34,12 +34,14 @@
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob)
+    .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_bytes(const diplomat::span<uint8_t> blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for BlobDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more information.
 
+
+        Lifetimes: ``blob`` must live at least as long as the output.
 
     .. cpp:function:: static ICU4XDataProvider create_empty()
 

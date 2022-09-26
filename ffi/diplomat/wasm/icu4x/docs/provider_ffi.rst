@@ -34,7 +34,7 @@
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_byte_slice(blob)
+    .. js:staticfunction:: create_from_bytes(blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
 

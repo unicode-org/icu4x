@@ -43,7 +43,7 @@ use yoke::*;
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
+/// let provider = BlobDataProvider::try_new_from_owned_blob(blob.into_boxed_slice())
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
@@ -73,7 +73,7 @@ use yoke::*;
 /// ));
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = BlobDataProvider::try_new_from_borrowed_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
@@ -92,7 +92,9 @@ pub struct BlobDataProvider {
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
+    pub fn try_new_from_owned_blob(
+        blob: Box<[u8]>,
+    ) -> Result<impl BufferProvider + 'static, DataError> {
         Ok(Self {
             data: Cart::yoke_bytes(blob, |bytes| {
                 BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
@@ -100,9 +102,13 @@ impl BlobDataProvider {
         })
     }
 
-    /// Create a [`BlobDataProvider`] from a static blob. This is a special case of
-    /// [`try_new_from_blob`](BlobDataProvider::try_new_from_blob) and is allocation-free.
-    pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+    /// Create a [`BlobDataProvider`] from a static blob.
+    pub fn try_new_from_borrowed_blob<'a>(
+        blob: &'a [u8],
+    ) -> Result<impl BufferProvider + 'a, DataError> {
+        // Yoke can only borrow from 'static, so we have to extend the lifetime of the blob.
+        // This is safe because our return time has the 'a lifetime.
+        let blob = unsafe { core::mem::transmute::<&'a [u8], &'static [u8]>(blob) };
         Ok(Self {
             data: Yoke::new_owned(BlobSchema::deserialize_v1(
                 &mut postcard::Deserializer::from_bytes(blob),
