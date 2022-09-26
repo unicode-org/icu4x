@@ -10,8 +10,7 @@ use writeable::Writeable;
 #[cfg(feature = "std")]
 impl std::error::Error for CalendarError {}
 
-/// A list of possible error outcomes for working with various inputs to DateTime inputs
-/// and operations.
+/// A list of error outcomes for various operations in the `icu_calendar` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]

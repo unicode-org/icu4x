@@ -7,7 +7,7 @@
 use displaydoc::Display;
 
 /// A list of possible error outcomes for operations in this crate.
-#[derive(Display, Debug, Copy, Clone)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum Error {
     /// An error originating inside of the [data provider](icu_provider).

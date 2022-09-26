@@ -4,11 +4,11 @@
 
 use core::fmt;
 
-use crate::error::DateTimeFormatterError as Error;
+use crate::error::DateTimeError as Error;
 use crate::{
     input::TimeZoneInput,
     time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},
-    DateTimeFormatterError,
+    DateTimeError,
 };
 use writeable::Writeable;
 
@@ -128,19 +128,19 @@ where
         for unit in self.time_zone_format.format_units.iter() {
             match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
                 Ok(r) => return Ok(r),
-                Err(DateTimeFormatterError::UnsupportedOptions) => continue,
+                Err(DateTimeError::UnsupportedOptions) => continue,
                 Err(e) => return Err(e),
             }
         }
-        Err(DateTimeFormatterError::UnsupportedOptions)
+        Err(DateTimeError::UnsupportedOptions)
     }
 
-    fn handle_last_resort_error<W>(&self, e: DateTimeFormatterError, sink: &mut W) -> fmt::Result
+    fn handle_last_resort_error<W>(&self, e: DateTimeError, sink: &mut W) -> fmt::Result
     where
         W: core::fmt::Write + ?Sized,
     {
         match e {
-            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+            DateTimeError::MissingInputField(Some("gmt_offset")) => {
                 debug_assert!(
                     false,
                     "Warning: using last-resort time zone fallback: {:?}.\

@@ -4,7 +4,7 @@
 
 use crate::provider::calendar::*;
 use crate::{calendar, options::length, raw};
-use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
+use crate::{input::DateInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
@@ -76,7 +76,7 @@ impl DateFormatter {
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: AnyProvider,
     {
@@ -131,7 +131,7 @@ impl DateFormatter {
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: BufferProvider,
     {
@@ -182,7 +182,7 @@ impl DateFormatter {
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -232,7 +232,7 @@ impl DateFormatter {
     pub fn format<'l, T>(
         &'l self,
         value: &T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeFormatterError>
+    ) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateInput<Calendar = AnyCalendar>,
     {
@@ -252,7 +252,7 @@ impl DateFormatter {
     pub fn format_to_string(
         &self,
         value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<String, DateTimeFormatterError> {
+    ) -> Result<String, DateTimeError> {
         Ok(self.format(value)?.write_to_string().into_owned())
     }
 
@@ -263,13 +263,13 @@ impl DateFormatter {
     fn convert_if_necessary<'a>(
         &'a self,
         value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
+    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
 
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

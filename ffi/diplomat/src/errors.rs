@@ -7,7 +7,7 @@ use core::fmt;
 use fixed_decimal::Error as DecimalError;
 use icu_calendar::CalendarError;
 use icu_collator::CollatorError;
-use icu_datetime::DateTimeFormatterError;
+use icu_datetime::DateTimeError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_locid::ParserError;
 use icu_normalizer::NormalizerError;
@@ -88,7 +88,7 @@ pub mod ffi {
         FixedDecimalSyntaxError = 0x5_01,
 
         // plural errors
-        PluralParserError = 0x6_00,
+        PluralsParserError = 0x6_00,
 
         // datetime errors
         CalendarParseError = 0x7_00,
@@ -102,15 +102,15 @@ pub mod ffi {
         CalendarMissingError = 0x7_08,
 
         // datetime format errors
-        DateTimeFormatPatternError = 0x8_00,
-        DateTimeFormatMissingInputFieldError = 0x8_01,
-        DateTimeFormatSkeletonError = 0x8_02,
-        DateTimeFormatUnsupportedFieldError = 0x8_03,
-        DateTimeFormatUnsupportedOptionsError = 0x8_04,
-        DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
-        DateTimeFormatMissingMonthSymbolError = 0x8_06,
-        DateTimeFormatFixedDecimalError = 0x8_07,
-        DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
+        DateTimePatternError = 0x8_00,
+        DateTimeMissingInputFieldError = 0x8_01,
+        DateTimeSkeletonError = 0x8_02,
+        DateTimeUnsupportedFieldError = 0x8_03,
+        DateTimeUnsupportedOptionsError = 0x8_04,
+        DateTimeMissingWeekdaySymbolError = 0x8_05,
+        DateTimeMissingMonthSymbolError = 0x8_06,
+        DateTimeFixedDecimalError = 0x8_07,
+        DateTimeMismatchedCalendarError = 0x8_08,
 
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
@@ -230,35 +230,35 @@ impl From<CalendarError> for ICU4XError {
     }
 }
 
-impl From<DateTimeFormatterError> for ICU4XError {
-    fn from(e: DateTimeFormatterError) -> Self {
+impl From<DateTimeError> for ICU4XError {
+    fn from(e: DateTimeError) -> Self {
         let ret = match e {
-            DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
-            DateTimeFormatterError::Format(err) => err.into(),
-            DateTimeFormatterError::DataProvider(err) => err.into(),
-            DateTimeFormatterError::MissingInputField(_) => {
-                ICU4XError::DateTimeFormatMissingInputFieldError
+            DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
+            DateTimeError::Format(err) => err.into(),
+            DateTimeError::DataProvider(err) => err.into(),
+            DateTimeError::MissingInputField(_) => {
+                ICU4XError::DateTimeMissingInputFieldError
             }
             // TODO(#1324): Add back skeleton errors
             // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
-            DateTimeFormatterError::UnsupportedField(_) => {
-                ICU4XError::DateTimeFormatUnsupportedFieldError
+            DateTimeError::UnsupportedField(_) => {
+                ICU4XError::DateTimeUnsupportedFieldError
             }
-            DateTimeFormatterError::UnsupportedOptions => {
-                ICU4XError::DateTimeFormatUnsupportedOptionsError
+            DateTimeError::UnsupportedOptions => {
+                ICU4XError::DateTimeUnsupportedOptionsError
             }
-            DateTimeFormatterError::PluralRules(err) => err.into(),
-            DateTimeFormatterError::DateTimeInput(err) => err.into(),
-            DateTimeFormatterError::MissingWeekdaySymbol(_) => {
-                ICU4XError::DateTimeFormatMissingWeekdaySymbolError
+            DateTimeError::PluralRules(err) => err.into(),
+            DateTimeError::DateTimeInput(err) => err.into(),
+            DateTimeError::MissingWeekdaySymbol(_) => {
+                ICU4XError::DateTimeMissingWeekdaySymbolError
             }
-            DateTimeFormatterError::MissingMonthSymbol(_) => {
-                ICU4XError::DateTimeFormatMissingMonthSymbolError
+            DateTimeError::MissingMonthSymbol(_) => {
+                ICU4XError::DateTimeMissingMonthSymbolError
             }
-            DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
-            DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
-            DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
-                ICU4XError::DateTimeFormatMismatchedAnyCalendarError
+            DateTimeError::FixedDecimal => ICU4XError::DateTimeFixedDecimalError,
+            DateTimeError::FixedDecimalFormatter(err) => err.into(),
+            DateTimeError::MismatchedAnyCalendar(_, _) => {
+                ICU4XError::DateTimeMismatchedCalendarError
             }
             _ => ICU4XError::UnknownError,
         };
@@ -283,7 +283,7 @@ impl From<PluralRulesError> for ICU4XError {
     fn from(e: PluralRulesError) -> Self {
         let ret = match e {
             PluralRulesError::DataProvider(e) => e.into(),
-            PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
+            PluralRulesError::Parser(..) => ICU4XError::PluralsParserError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

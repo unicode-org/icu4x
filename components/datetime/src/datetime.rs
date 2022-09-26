@@ -21,7 +21,7 @@ use writeable::Writeable;
 
 use crate::{
     calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
-    DateTimeFormatterError, FormattedDateTime,
+    DateTimeError, FormattedDateTime,
 };
 
 #[cfg(feature = "experimental")]
@@ -93,7 +93,7 @@ impl TimeFormatter {
         data_provider: &D,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -113,7 +113,7 @@ impl TimeFormatter {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         length: length::Time,
-        error: DateTimeFormatterError,
+        error: DateTimeError,
         functions: [
             Self::try_new_with_length_unstable,
             try_new_with_length_with_any_provider,
@@ -279,7 +279,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
         data_provider: &D,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -303,7 +303,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         length: length::Date,
-        error: DateTimeFormatterError,
+        error: DateTimeError,
         functions: [
             Self::try_new_with_length_unstable,
             try_new_with_length_with_any_provider,
@@ -446,7 +446,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     pub fn try_from_date_and_time(
         date: TypedDateFormatter<C>,
         time: TimeFormatter,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
 where {
         Ok(Self(
             raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
@@ -495,7 +495,7 @@ where {
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -561,7 +561,7 @@ where {
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -592,7 +592,7 @@ where {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: DateTimeFormatterOptions,
-        error: DateTimeFormatterError
+        error: DateTimeError
     );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]

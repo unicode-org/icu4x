@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{self, calendar::*, date_time::PatternSelector};
 use crate::time_zone::TimeZoneFormatterOptions;
-use crate::{DateTimeFormatterError, FormattedZonedDateTime};
+use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
@@ -186,7 +186,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -293,7 +293,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -400,7 +400,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: AnyProvider,
     {
@@ -459,7 +459,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: BufferProvider,
     {
@@ -478,7 +478,7 @@ impl ZonedDateTimeFormatter {
         &'l self,
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
-    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError> {
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeError> {
         if let Some(converted) = self.convert_if_necessary(date)? {
             Ok(self.0.format(&converted, time_zone))
         } else {
@@ -496,7 +496,7 @@ impl ZonedDateTimeFormatter {
         &self,
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
-    ) -> Result<String, DateTimeFormatterError> {
+    ) -> Result<String, DateTimeError> {
         Ok(self.format(date, time_zone)?.write_to_string().into_owned())
     }
 
@@ -507,12 +507,12 @@ impl ZonedDateTimeFormatter {
     fn convert_if_necessary(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeFormatterError> {
+    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

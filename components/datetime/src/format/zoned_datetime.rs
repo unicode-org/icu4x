@@ -4,7 +4,7 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
-use crate::error::DateTimeFormatterError as Error;
+use crate::error::DateTimeError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, ExtractedTimeZoneInput,

@@ -148,7 +148,7 @@ pub mod ffi {
                     c: ops.c,
                 })
                 // XXX should this have its own errors?
-                .map_err(|_| ICU4XError::PluralParserError)
+                .map_err(|_| ICU4XError::PluralsParserError)
                 .into()
         }
     }
