@@ -10,7 +10,7 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-use super::CodePointSetError;
+use super::CodePointInversionListError;
 use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
@@ -116,7 +116,7 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     pub fn try_from_inversion_list(
         inv_list: ZeroVec<'data, u32>,
-    ) -> Result<Self, CodePointSetError> {
+    ) -> Result<Self, CodePointInversionListError> {
         #[allow(clippy::indexing_slicing)] // chunks
         if is_valid_zv(&inv_list) {
             let size = inv_list
@@ -129,7 +129,7 @@ impl<'data> CodePointInversionList<'data> {
                 .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
-            Err(CodePointSetError::InvalidSet(inv_list.to_vec()))
+            Err(CodePointInversionListError::InvalidSet(inv_list.to_vec()))
         }
     }
 
@@ -165,7 +165,7 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     pub fn try_from_inversion_list_slice(
         inv_list: &'data [u32],
-    ) -> Result<Self, CodePointSetError> {
+    ) -> Result<Self, CodePointInversionListError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(inv_list);
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
@@ -207,7 +207,7 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     pub fn try_clone_from_inversion_list_slice(
         inv_list: &[u32],
-    ) -> Result<Self, CodePointSetError> {
+    ) -> Result<Self, CodePointInversionListError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
@@ -559,7 +559,7 @@ impl<'data> CodePointInversionList<'data> {
 
 #[cfg(test)]
 mod tests {
-    use super::{CodePointInversionList, CodePointSetError};
+    use super::{CodePointInversionList, CodePointInversionListError};
     use std::{char, vec::Vec};
     use zerovec::ZeroVec;
 
@@ -576,8 +576,8 @@ mod tests {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
         let inv_list = ZeroVec::from_slice_or_alloc(&check);
         let set = CodePointInversionList::try_from_inversion_list(inv_list);
-        assert!(matches!(set, Err(CodePointSetError::InvalidSet(_))));
-        if let Err(CodePointSetError::InvalidSet(actual)) = set {
+        assert!(matches!(set, Err(CodePointInversionListError::InvalidSet(_))));
+        if let Err(CodePointInversionListError::InvalidSet(actual)) = set {
             assert_eq!(&check, &actual);
         }
     }

@@ -10,7 +10,7 @@ use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
-use icu_decimal::FixedDecimalFormatterError;
+use icu_decimal::DecimalError;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 
@@ -63,7 +63,7 @@ pub enum DateTimeError {
     FixedDecimal,
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
-    FixedDecimalFormatter(FixedDecimalFormatterError),
+    FixedDecimalFormatter(DecimalError),
     /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
     #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),

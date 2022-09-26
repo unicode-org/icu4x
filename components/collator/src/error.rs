@@ -8,7 +8,9 @@ use displaydoc::Display;
 use icu_properties::PropertiesError;
 use icu_provider::prelude::DataError;
 
-/// Error returned by the constructor of `Collator`
+/// A list of error outcomes for various operations in the `icu_collator` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug)]
 #[non_exhaustive]
 pub enum CollatorError {

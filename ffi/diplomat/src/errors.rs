@@ -4,11 +4,11 @@
 
 use self::ffi::ICU4XError;
 use core::fmt;
-use fixed_decimal::Error as DecimalError;
+use fixed_decimal::Error as FixedDecimalError;
 use icu_calendar::CalendarError;
 use icu_collator::CollatorError;
 use icu_datetime::DateTimeError;
-use icu_decimal::FixedDecimalFormatterError;
+use icu_decimal::DecimalError;
 use icu_locid::ParserError;
 use icu_normalizer::NormalizerError;
 use icu_plurals::PluralRulesError;
@@ -267,11 +267,11 @@ impl From<DateTimeError> for ICU4XError {
     }
 }
 
-impl From<DecimalError> for ICU4XError {
-    fn from(e: DecimalError) -> Self {
+impl From<FixedDecimalError> for ICU4XError {
+    fn from(e: FixedDecimalError) -> Self {
         let ret = match e {
-            DecimalError::Limit => ICU4XError::FixedDecimalLimitError,
-            DecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
+            FixedDecimalError::Limit => ICU4XError::FixedDecimalLimitError,
+            FixedDecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -291,10 +291,10 @@ impl From<PluralRulesError> for ICU4XError {
     }
 }
 
-impl From<FixedDecimalFormatterError> for ICU4XError {
-    fn from(e: FixedDecimalFormatterError) -> Self {
+impl From<DecimalError> for ICU4XError {
+    fn from(e: DecimalError) -> Self {
         let ret = match e {
-            FixedDecimalFormatterError::Data(e) => e.into(),
+            DecimalError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
