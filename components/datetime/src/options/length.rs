@@ -112,18 +112,12 @@ impl Bag {
 
     /// Constructs a Bag given a date field (time set to None)
     pub fn from_date_style(date: Option<Date>) -> Self {
-        Self {
-            date,
-            time: None,
-        }
+        Self { date, time: None }
     }
 
     /// Constructs a Bag given a time field (date set to None)
     pub fn from_time_style(time: Option<Time>) -> Self {
-        Self {
-            date: None,
-            time,
-        }
+        Self { date: None, time }
     }
 }
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
