@@ -54,7 +54,7 @@ class ICU4XDataProvider {
    * 
    * See the [Rust documentation for `BlobDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
    */
-  static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_bytes(const diplomat::span<uint8_t> blob);
+  static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
 
   /**
    * Constructs an empty [`ICU4XDataProvider`].
@@ -128,8 +128,8 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
 inline ICU4XDataProvider ICU4XDataProvider::create_test() {
   return ICU4XDataProvider(capi::ICU4XDataProvider_create_test());
 }
-inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_from_bytes(const diplomat::span<uint8_t> blob) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_from_bytes(blob.data(), blob.size());
+inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_from_byte_slice(const diplomat::span<uint8_t> blob) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(), blob.size());
   diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDataProvider>(std::move(ICU4XDataProvider(diplomat_result_raw_out_value.ok)));

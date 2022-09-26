@@ -34,7 +34,7 @@ export class ICU4XDataProvider {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html Rust documentation for `BlobDataProvider`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_from_bytes(blob: Uint8Array): ICU4XDataProvider | never;
+  static create_from_byte_slice(blob: Uint8Array): ICU4XDataProvider | never;
 
   /**
 
