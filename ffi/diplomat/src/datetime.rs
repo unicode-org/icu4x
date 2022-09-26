@@ -63,10 +63,10 @@ pub mod ffi {
             icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
             FnInStruct
         )]
-        pub fn create_from_minutes_since_local_unix_epoch(
-            minutes: i32,
-        ) -> Box<ICU4XIsoDateTime> {
-            Box::new(ICU4XIsoDateTime(DateTime::from_minutes_since_local_unix_epoch(minutes)))
+        pub fn create_from_minutes_since_local_unix_epoch(minutes: i32) -> Box<ICU4XIsoDateTime> {
+            Box::new(ICU4XIsoDateTime(
+                DateTime::from_minutes_since_local_unix_epoch(minutes),
+            ))
         }
 
         /// Gets the date contained in this object
