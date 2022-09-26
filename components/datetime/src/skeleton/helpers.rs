@@ -490,7 +490,7 @@ pub fn get_best_available_format_pattern<'data>(
         }
     }
 
-    let mut closest_format_pattern = if let Some(pattern) =  closest_format_pattern {
+    let mut closest_format_pattern = if let Some(pattern) = closest_format_pattern {
         pattern.clone()
     } else {
         return BestSkeleton::NoMatch;
