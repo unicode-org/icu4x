@@ -6,10 +6,12 @@ use crate::rules::reference::parser::ParserError;
 use displaydoc::Display;
 use icu_provider::prelude::DataError;
 
-/// A list of possible error outcomes for the [`PluralRules`](crate::PluralRules) struct.
+/// A list of error outcomes for various operations in the `icu_plurals` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
-pub enum PluralRulesError {
+pub enum PluralsError {
     /// A parsing error for the plural rules.
     #[displaydoc("Parser error: {0}")]
     Parser(ParserError),
@@ -19,16 +21,16 @@ pub enum PluralRulesError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for PluralRulesError {}
+impl std::error::Error for PluralsError {}
 
-impl From<ParserError> for PluralRulesError {
+impl From<ParserError> for PluralsError {
     fn from(e: ParserError) -> Self {
-        PluralRulesError::Parser(e)
+        PluralsError::Parser(e)
     }
 }
 
-impl From<DataError> for PluralRulesError {
+impl From<DataError> for PluralsError {
     fn from(e: DataError) -> Self {
-        PluralRulesError::DataProvider(e)
+        PluralsError::DataProvider(e)
     }
 }

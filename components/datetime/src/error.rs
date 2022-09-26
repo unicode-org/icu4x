@@ -11,7 +11,7 @@ use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
 use icu_decimal::DecimalError;
-use icu_plurals::PluralRulesError;
+use icu_plurals::PluralsError;
 use icu_provider::prelude::DataError;
 
 #[cfg(feature = "std")]
@@ -48,7 +48,7 @@ pub enum DateTimeError {
     UnsupportedOptions,
     /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
     #[displaydoc("{0}")]
-    PluralRules(PluralRulesError),
+    PluralRules(PluralsError),
     /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(CalendarError),
@@ -103,8 +103,8 @@ impl From<SkeletonError> for DateTimeError {
     }
 }
 
-impl From<PluralRulesError> for DateTimeError {
-    fn from(e: PluralRulesError) -> Self {
+impl From<PluralsError> for DateTimeError {
+    fn from(e: PluralsError) -> Self {
         DateTimeError::PluralRules(e)
     }
 }

@@ -89,13 +89,16 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
-pub use error::PluralRulesError;
+pub use error::PluralsError;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use rules::runtime::test_rule;
+
+#[doc(inline)]
+pub use PluralsError as Error;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -317,7 +320,7 @@ impl PluralRules {
         data_provider: &D,
         locale: &DataLocale,
         rule_type: PluralRuleType,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
     {
@@ -330,7 +333,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         rule_type: PluralRuleType,
-        error: PluralRulesError
+        error: PluralsError
     );
 
     /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
@@ -368,7 +371,7 @@ impl PluralRules {
     pub fn try_new_cardinal_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<CardinalV1Marker> + ?Sized,
     {
@@ -386,7 +389,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: skip,
-        error: PluralRulesError,
+        error: PluralsError,
         functions: [
             Self::try_new_cardinal_unstable,
             try_new_cardinal_with_any_provider,
@@ -432,7 +435,7 @@ impl PluralRules {
     pub fn try_new_ordinal_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
@@ -450,7 +453,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: skip,
-        error: PluralRulesError,
+        error: PluralsError,
         functions: [
             Self::try_new_ordinal_unstable,
             try_new_ordinal_with_any_provider,

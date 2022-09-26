@@ -11,7 +11,7 @@ use icu_datetime::DateTimeError;
 use icu_decimal::DecimalError;
 use icu_locid::ParserError;
 use icu_normalizer::NormalizerError;
-use icu_plurals::PluralRulesError;
+use icu_plurals::PluralsError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
 use icu_timezone::TimeZoneError;
@@ -267,11 +267,11 @@ impl From<FixedDecimalError> for ICU4XError {
     }
 }
 
-impl From<PluralRulesError> for ICU4XError {
-    fn from(e: PluralRulesError) -> Self {
+impl From<PluralsError> for ICU4XError {
+    fn from(e: PluralsError) -> Self {
         let ret = match e {
-            PluralRulesError::DataProvider(e) => e.into(),
-            PluralRulesError::Parser(..) => ICU4XError::PluralsParserError,
+            PluralsError::DataProvider(e) => e.into(),
+            PluralsError::Parser(..) => ICU4XError::PluralsParserError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
