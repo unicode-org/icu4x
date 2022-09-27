@@ -99,7 +99,7 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvlist::CodePointSetError;
+    /// use icu_collections::codepointinvlist::CodePointInversionListError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&valid);
@@ -109,8 +109,8 @@ impl<'data> CodePointInversionList<'data> {
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&invalid);
     /// let result = CodePointInversionList::try_from_inversion_list(inv_list);
-    /// assert!(matches!(result, Err(CodePointSetError::InvalidSet(_))));
-    /// if let Err(CodePointSetError::InvalidSet(actual)) = result {
+    /// assert!(matches!(result, Err(CodePointInversionListError::InvalidSet(_))));
+    /// if let Err(CodePointInversionListError::InvalidSet(actual)) = result {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
@@ -150,7 +150,7 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvlist::CodePointSetError;
+    /// use icu_collections::codepointinvlist::CodePointInversionListError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let result = CodePointInversionList::try_from_inversion_list_slice(&valid);
@@ -158,8 +158,8 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
     /// let result = CodePointInversionList::try_from_inversion_list_slice(&invalid);
-    /// assert!(matches!(result, Err(CodePointSetError::InvalidSet(_))));
-    /// if let Err(CodePointSetError::InvalidSet(actual)) = result {
+    /// assert!(matches!(result, Err(CodePointInversionListError::InvalidSet(_))));
+    /// if let Err(CodePointInversionListError::InvalidSet(actual)) = result {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
@@ -180,7 +180,6 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvlist::CodePointSetError;
     /// use zerovec::ZeroVec;
     ///
     /// use std::vec::Vec;
