@@ -77,7 +77,7 @@ impl CalendarError {
     ///
     /// ```
     /// use icu_calendar::AnyCalendarKind;
-    /// use icu_calendar::DateTimeError;
+    /// use icu_calendar::CalendarError;
     ///
     /// let cal_str = "maori";
     ///
