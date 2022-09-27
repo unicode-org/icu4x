@@ -335,10 +335,11 @@
 //! become available for internationalization, and more features for fine tuning how
 //! the operations are performed will become available.
 //!
-//! [`DateTimeFormatter`]: icu_datetime::DateTimeFormatter
+//! [`DateTimeFormatter`]: icu::datetime::DateTimeFormatter
 //! [`Locale`]: icu::locid::Locale
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`FsDataProvider`]: icu_provider_fs::FsDataProvider
 //! [`BlobDataProvider`]: icu_provider_blob::BlobDataProvider
 //! [`langid!`]: icu::locid::langid
 //! [`locale!`]: icu::locid::locale
+//! [`LanguageIdentifier`]: icu::locid::LanguageIdentifier
