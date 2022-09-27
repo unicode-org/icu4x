@@ -227,7 +227,7 @@
 //!
 //! ### Transformer
 //!
-//! There are 2 major trait that must be implemented.
+//! There are 2 major traits that must be implemented.
 //!
 //! *DataProvider*
 //!
