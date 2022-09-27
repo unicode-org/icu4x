@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664234396693,
+  "lastUpdate": 1664237317587,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -74621,6 +74621,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4770,
             "range": "± 111",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "774971a31cf76fc126f264ff430326ea4d01b9f4",
+          "message": "Make PluralOperands fields private, add static constructor (#2598)",
+          "timestamp": "2022-09-26T23:53:46Z",
+          "tree_id": "5d90895c0732c35ddebe0f987c58f0f850cf00f8",
+          "url": "https://github.com/unicode-org/icu4x/commit/774971a31cf76fc126f264ff430326ea4d01b9f4"
+        },
+        "date": 1664237249365,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 83845,
+            "range": "± 4339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 143451,
+            "range": "± 5149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 79509,
+            "range": "± 2455",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 90681,
+            "range": "± 6097",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 83446,
+            "range": "± 3946",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 97208,
+            "range": "± 6816",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 139233,
+            "range": "± 5969",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 154759,
+            "range": "± 8142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 141759,
+            "range": "± 5881",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 158019,
+            "range": "± 5695",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6164,
+            "range": "± 205",
             "unit": "ns/iter"
           }
         ]
