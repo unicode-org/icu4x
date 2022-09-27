@@ -126,6 +126,13 @@ impl Bag {
         }
     }
 }
+
+impl From<(Option<Date>, Option<Time>)> for Bag {
+    fn from((date, time): (Option<Date>, Option<Time>)) -> Self {
+        Self { date, time }
+    }
+}
+
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
@@ -268,4 +275,39 @@ pub enum Time {
     /// * 8:25 (`ja`)
     #[cfg_attr(feature = "serde", serde(rename = "short"))]
     Short,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bag_from_date_time_impl() {
+        let date = Date::Short;
+        let time = Time::Long;
+
+        assert_eq!(
+            Bag::from((Some(date), Some(time))),
+            Bag {
+                date: Some(date),
+                time: Some(time)
+            }
+        );
+
+        assert_eq!(
+            Bag::from((Some(date), None)),
+            Bag {
+                date: Some(date),
+                time: None
+            }
+        );
+
+        assert_eq!(
+            Bag::from((None, Some(time))),
+            Bag {
+                date: None,
+                time: Some(time)
+            }
+        );
+    }
 }
