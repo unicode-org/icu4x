@@ -25,7 +25,7 @@ include = [
 ]
 
 [dependencies]
-icu_collections = { version = "1.0.0-beta1", path = "..", features = ["serde"] }
+icu_collections = { version = "1.0.0", path = "..", features = ["serde"] }
 lazy_static = { version = "1.4.0" }
 toml = "0.5"
 

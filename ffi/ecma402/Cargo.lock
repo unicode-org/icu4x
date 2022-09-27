@@ -995,7 +995,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_calendar",
  "icu_collator",
@@ -1029,7 +1029,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1054,7 +1054,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1073,7 +1073,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1085,7 +1085,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "cached-path",
  "crlify",
@@ -1129,7 +1129,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1164,7 +1164,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "deduplicating_array",
@@ -1179,7 +1179,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1192,7 +1192,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1205,7 +1205,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1223,7 +1223,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1236,7 +1236,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1248,7 +1248,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bincode",
  "databake",
@@ -1270,7 +1270,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -1283,7 +1283,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_provider",
  "log",
@@ -1296,7 +1296,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bincode",
  "crlify",
@@ -1313,7 +1313,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1322,7 +1322,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
