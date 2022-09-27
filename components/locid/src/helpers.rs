@@ -411,8 +411,8 @@ macro_rules! impl_tinystr_subtag {
         /// ```
         ///
         /// Invalid input is a compile failure:
-        /// ```compile_fail
-        #[doc = concat!("icu_locid::", stringify!($macro_name), "!(", stringify!($bad_example) ,"),")]
+        /// ```compile_fail,E0080
+        #[doc = concat!("icu_locid::", stringify!($macro_name), "!(", stringify!($bad_example) ,");")]
         /// ```
         ///
         #[doc = concat!("[`", stringify!($name), "`]: crate::", stringify!($($full_name)::+))]

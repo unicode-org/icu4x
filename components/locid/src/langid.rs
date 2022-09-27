@@ -213,7 +213,7 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia"];
+    /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia"];
     ///
     /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
     /// assert_eq!(

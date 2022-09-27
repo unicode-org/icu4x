@@ -318,7 +318,7 @@ impl Keywords {
     /// use icu::locid::extensions::unicode::Keywords;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"buddhist"];
+    /// let subtags: &[&[u8]] = &[b"ca", b"buddhist"];
     ///
     /// let kwds = locale!("und-u-ca-buddhist").extensions.unicode.keywords;
     /// assert_eq!(

@@ -37,7 +37,7 @@
 //! let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
 //!     message: Cow::Borrowed("Hi"),
 //! });
-//! let result = exporter
+//! exporter
 //!     .put_payload(
 //!         HelloWorldV1Marker::KEY,
 //!         &Default::default(),

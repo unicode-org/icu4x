@@ -18,7 +18,7 @@ use crate::rules::reference::ast;
 /// let operands = PluralOperands::from(5_usize);
 /// let condition = parse_condition(b"i = 4..6").expect("Failde to parse a rule.");
 ///
-/// assert_eq!(test_condition(&condition, &operands), true);
+/// assert!(test_condition(&condition, &operands));
 /// ```
 ///
 /// [`PluralCategory`]: crate::PluralCategory

@@ -198,12 +198,7 @@ where
     /// assert_eq!(borrowed.get_2d(&1, "two"), None);
     /// assert_eq!(borrowed.get_2d(&2, "one"), Some("bar"));
     /// assert_eq!(borrowed.get_2d(&2, "two"), Some("baz"));
-    /// assert_eq!(borrowed.get_2d(&3, "three"), None);
-    ///
-    /// let borrow = borrowed.get_2d(&1, "one");
-    /// drop(borrowed);
-    /// // still exists after the ZeroMap2dBorrowed has been dropped
-    /// assert_eq!(borrow, Some("foo"));
+    /// assert_eq!(borrowed.get_2d(&3, "three"), None);;
     /// ```
     pub fn get_2d(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
         self.get0(key0)?.get1(key1)
@@ -270,8 +265,8 @@ where
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.contains_key0(&1), true);
-    /// assert_eq!(borrowed.contains_key0(&3), false);
+    /// assert!(borrowed.contains_key0(&1));
+    /// assert!(!borrowed.contains_key0(&3));
     /// ```
     pub fn contains_key0(&self, key0: &K0) -> bool {
         self.keys0.zvl_binary_search(key0).is_ok()

@@ -104,7 +104,7 @@ impl Unicode {
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.unicode.is_empty(), false);
+    /// assert!(!loc.extensions.unicode.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.keywords.is_empty() && self.attributes.is_empty()

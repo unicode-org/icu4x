@@ -105,7 +105,7 @@ impl Transform {
     ///
     /// let mut loc: Locale = "en-US-t-es-AR".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.transform.is_empty(), false);
+    /// assert!(!loc.extensions.transform.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.lang.is_none() && self.fields.is_empty()

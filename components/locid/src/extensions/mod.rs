@@ -155,7 +155,7 @@ impl Extensions {
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.is_empty(), false);
+    /// assert!(!loc.extensions.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.unicode.is_empty()

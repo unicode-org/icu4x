@@ -22,7 +22,7 @@
 //! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -36,7 +36,7 @@
 //! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));

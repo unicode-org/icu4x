@@ -21,7 +21,7 @@
 /// *Note*: The macro cannot produce language identifiers with more than one variants due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::langid!("und-variant1-variant2");
 /// ```
 ///
@@ -75,8 +75,8 @@ macro_rules! langid {
 /// (only single keyword unicode extension is supported) due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
-/// ```compile_fail
-/// icu::locid::locale!("sl-IT-rozaj-biske-1994")
+/// ```compile_fail,E0080
+/// icu::locid::locale!("sl-IT-rozaj-biske-1994");
 /// ```
 /// Use runtime parsing instead:
 /// ```
@@ -84,7 +84,7 @@ macro_rules! langid {
 /// ```
 ///
 /// Locales with multiple keys are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("th-TH-u-ca-buddhist-nu-thai");
 /// ```
 /// Use runtime parsing instead:
@@ -93,7 +93,7 @@ macro_rules! langid {
 /// ```
 ///
 /// Locales with attributes are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("en-US-u-foobar-ca-buddhist");
 /// ```
 /// Use runtime parsing instead:
@@ -102,7 +102,7 @@ macro_rules! langid {
 /// ```
 ///
 /// Locales with single key but multiple types are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("en-US-u-ca-islamic-umalqura");
 /// ```
 /// Use runtime parsing instead:
