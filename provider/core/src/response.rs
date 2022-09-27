@@ -103,14 +103,10 @@ impl Cart {
         C: Deref<Target = D> + crate::MaybeSendSync + 'static,
         D: 'static + ?Sized,
     {
-        // Safe because the cart is only wrapped
-        unsafe {
-            Ok(
-                Yoke::try_attach_to_cart(SelectedRc::new(cart), |b: &C| f(&*b))?
-                    .replace_cart(|rc| Cart(rc))
-                    .wrap_cart_in_option(),
-            )
-        }
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b: &C| f(&*b))
+            // Safe because the cart is only wrapped
+            .map(|yoke| unsafe { yoke.replace_cart(|rc| Cart(rc)) })
+            .wrap_cart_in_option()
     }
 }
 
