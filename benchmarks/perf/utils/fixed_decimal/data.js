@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664240602314,
+  "lastUpdate": 1664243608468,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -54209,6 +54209,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 83,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3391fb8441cd88db2dfaf8fda1c005dc0fcf96e7",
+          "message": "Make error enums more consistent (#2649)",
+          "timestamp": "2022-09-26T20:38:20-05:00",
+          "tree_id": "25108fb038439934f622a80a66a08ed19391ae4b",
+          "url": "https://github.com/unicode-org/icu4x/commit/3391fb8441cd88db2dfaf8fda1c005dc0fcf96e7"
+        },
+        "date": 1664243539385,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 130908,
+            "range": "± 28994",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25820,
+            "range": "± 1624",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69803,
+            "range": "± 4811",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 225,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
