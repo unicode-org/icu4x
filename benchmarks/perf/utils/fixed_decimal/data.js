@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664237297325,
+  "lastUpdate": 1664237355456,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -54089,6 +54089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eeed42d3771b29764ad15b9f8a393896408fa4b9",
+          "message": "Update utils in prep for 1.0 (#2651)\n\n\r\n* reformat doctests for  bumped utils crates\r\n\r\n* Bump fixed_decimal to 0.5.0\r\n\r\n* Bump zerovec to 0.9\r\n\r\n* Bump tinystr to 0.7\r\n\r\n* Bump litemap to 0.6.0",
+          "timestamp": "2022-09-26T23:55:24Z",
+          "tree_id": "2c8098b55aaa88a1f60692eed7c74bcfef8df0cf",
+          "url": "https://github.com/unicode-org/icu4x/commit/eeed42d3771b29764ad15b9f8a393896408fa4b9"
+        },
+        "date": 1664237295887,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100883,
+            "range": "± 676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21357,
+            "range": "± 360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66643,
+            "range": "± 888",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 173,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 68,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
