@@ -82,7 +82,7 @@ impl CalendarError {
     /// let cal_str = "maori";
     ///
     /// AnyCalendarKind::get_for_bcp47_string(cal_str)
-    ///     .ok_or_else(|| DateTimeError::unknown_any_calendar_kind(cal_str))
+    ///     .ok_or_else(|| CalendarError::unknown_any_calendar_kind(cal_str))
     ///     .expect_err("Māori calendar is not yet supported");
     /// ```
     ///
