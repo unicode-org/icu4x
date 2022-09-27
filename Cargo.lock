@@ -1299,7 +1299,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_calendar",
  "icu_casemapping",
@@ -1349,7 +1349,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1368,7 +1368,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.0.0-alpha1"
+version = "1.0.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1401,7 +1401,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_cdylib"
-version = "1.0.0-alpha1"
+version = "1.0.0"
 dependencies = [
  "icu_capi",
  "icu_provider",
@@ -1409,7 +1409,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_staticlib"
-version = "1.0.0-alpha1"
+version = "1.0.0"
 dependencies = [
  "dlmalloc",
  "icu_capi",
@@ -1418,7 +1418,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping"
-version = "0.2.0"
+version = "0.7.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1444,7 +1444,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1467,7 +1467,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1486,7 +1486,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "cached-path",
  "clap",
@@ -1538,7 +1538,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1568,7 +1568,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1602,7 +1602,7 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "0.6.0"
+version = "1.0.0"
 dependencies = [
  "cortex-m",
  "freertos-rust",
@@ -1611,7 +1611,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1632,7 +1632,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1651,7 +1651,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1668,7 +1668,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1699,7 +1699,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1717,7 +1717,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1732,7 +1732,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bincode",
  "databake",
@@ -1756,7 +1756,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -1772,7 +1772,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -1786,7 +1786,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1806,7 +1806,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1817,7 +1817,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "1.0.0-alpha1"
+version = "0.7.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1839,7 +1839,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "bytes",
  "cargo_metadata",
@@ -1884,7 +1884,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "databake",
  "displaydoc",
