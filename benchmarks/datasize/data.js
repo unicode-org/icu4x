@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664236664726,
+  "lastUpdate": 1664240045269,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28793,6 +28793,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/eeed42d3771b29764ad15b9f8a393896408fa4b9"
         },
         "date": 1664236608170,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "38f41b6e170c432e88d684ebd6b546e4ca837ebf",
+          "message": "Remaining utils bumps (writeable, fixed_decimal) (#2652)\n\n* remove version from devdep\r\n\r\n* Bump writeable to 0.5.0",
+          "timestamp": "2022-09-27T00:51:08Z",
+          "tree_id": "1d60f0ecc0f014285cc780f325a63e65fdc5f897",
+          "url": "https://github.com/unicode-org/icu4x/commit/38f41b6e170c432e88d684ebd6b546e4ca837ebf"
+        },
+        "date": 1664239976978,
         "tool": "ndjson",
         "benches": [
           {
