@@ -78,6 +78,7 @@ where
 
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone)]
+#[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
 pub struct Cart(SelectedRc<Box<[u8]>>);
 
 impl Deref for Cart {
@@ -100,7 +101,7 @@ impl Cart {
     {
         Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
             // Safe because the cart is only wrapped
-            .map(|yoke| unsafe { yoke.replace_cart(|rc| Cart(rc)) })
+            .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
     }
 }
