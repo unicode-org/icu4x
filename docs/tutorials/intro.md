@@ -42,7 +42,7 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 
 ```toml
 [dependencies]
-icu = "0.6"
+icu = "1.0"
 ```
 
 After saving the changes, calling `cargo check` should vendor in `ICU4X` dependency.
