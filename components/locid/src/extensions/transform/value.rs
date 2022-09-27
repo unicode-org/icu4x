@@ -23,7 +23,8 @@ use tinystr::TinyAsciiStr;
 /// use icu::locid::extensions::transform::Value;
 ///
 /// let value1: Value = "hybrid".parse().expect("Failed to parse a Value.");
-/// let value2: Value = "hybrid-foobar".parse().expect("Failed to parse a Value.");
+/// let value2: Value =
+///     "hybrid-foobar".parse().expect("Failed to parse a Value.");
 ///
 /// assert_eq!(&value1.to_string(), "hybrid");
 /// assert_eq!(&value2.to_string(), "hybrid-foobar");

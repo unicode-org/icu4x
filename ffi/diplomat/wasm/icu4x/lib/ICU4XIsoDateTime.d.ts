@@ -38,10 +38,9 @@ export class ICU4XIsoDateTime {
 
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_from_minutes_since_local_unix_epoch Rust documentation for `try_from_minutes_since_local_unix_epoch`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.
    */
-  static create_try_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime | never;
+  static create_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime;
 
   /**
 

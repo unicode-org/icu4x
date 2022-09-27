@@ -29,7 +29,7 @@ diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_cardinal
 
 diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, ICU4XPluralOperands op);
+ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
 
 ICU4XPluralCategories ICU4XPluralRules_categories(const ICU4XPluralRules* self);
 void ICU4XPluralRules_destroy(ICU4XPluralRules* self);

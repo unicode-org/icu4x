@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::blob_schema::{BlobSchema, BlobSchemaV1};
+use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
-use icu_provider::RcWrap;
+use icu_provider::Cart;
 use yoke::*;
 
 /// A data provider that reads from serialized blobs of data.
@@ -18,8 +19,9 @@ use yoke::*;
 ///
 /// # `Sync + Send`
 ///
-/// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
-/// `sync` feature on the [`icu_provider`] crate.
+/// This provider uses reference counting internally. When the `sync` feature on the [`icu_provider`]
+/// crate is enabled, it uses [`Arc`](alloc::sync::Arc) instead of [`Rc`](alloc::rc::Rc), making
+/// it `Sync + Send`.
 ///
 /// # Examples
 ///
@@ -41,13 +43,13 @@ use yoke::*;
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_blob(blob)
+/// let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into()
+///     &locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -71,13 +73,13 @@ use yoke::*;
 /// ));
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into()
+///     &locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -85,19 +87,16 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, Option<RcWrap<[u8]>>>,
+    data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
 }
 
 impl BlobDataProvider {
-    /// Create a [`BlobDataProvider`] from a blob of data. The data will be transformed into
-    /// a `Rc<[u8]>`/`Arc<[u8]>` (per the `"sync"` feature), which will allocate unless the
-    /// blob is already of that shape.
-    pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
+    /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
-            data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
+            data: Cart::try_make_yoke(blob, |bytes| {
                 BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
-            })?
-            .wrap_cart_in_option(),
+            })?,
         })
     }
 

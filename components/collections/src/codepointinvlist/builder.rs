@@ -116,7 +116,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_u32(0x41);
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0x41), true);
+    /// assert!(check.contains32(0x41));
     /// ```
     pub fn add_u32(&mut self, c: u32) {
         if c <= char::MAX as u32 {
@@ -150,7 +150,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_range_u32(&(0xd800..=0xdfff));
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0xd900), true);
+    /// assert!(check.contains32(0xd900));
     /// ```
     pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
@@ -164,9 +164,13 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x4C]).unwrap();
+    /// let set =
+    ///     CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x4C])
+    ///         .unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
@@ -307,9 +311,12 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[65, 70]).unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[65, 70])
+    ///     .unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
@@ -372,11 +379,17 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set =
-    ///     CodePointInversionList::try_from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1])
-    ///         .unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    ///     0x0,
+    ///     0x41,
+    ///     0x46,
+    ///     (std::char::MAX as u32) + 1,
+    /// ])
+    /// .unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
@@ -447,9 +460,14 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    ///     0x41, 0x46, 0x4B, 0x5A,
+    /// ])
+    /// .unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
@@ -466,7 +484,9 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());

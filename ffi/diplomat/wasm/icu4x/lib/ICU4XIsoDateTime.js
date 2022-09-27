@@ -43,21 +43,8 @@ export class ICU4XIsoDateTime {
     return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_crate_from_date_and_time(arg_date.underlying, arg_time.underlying), true, []);
   }
 
-  static create_try_from_minutes_since_local_unix_epoch(arg_minutes) {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XIsoDateTime_create_try_from_minutes_since_local_unix_epoch(diplomat_receive_buffer, arg_minutes);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
-      if (is_ok) {
-        const ok_value = new ICU4XIsoDateTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        return ok_value;
-      } else {
-        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
-        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+  static create_from_minutes_since_local_unix_epoch(arg_minutes) {
+    return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(arg_minutes), true, []);
   }
 
   date() {

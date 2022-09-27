@@ -25,7 +25,7 @@ use crate::{
     },
     raw,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    DateTimeFormatterError,
+    DateTimeError,
 };
 
 /// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
@@ -48,7 +48,7 @@ impl ZonedDateTimeFormatter {
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         locale: &DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -64,7 +64,7 @@ impl ZonedDateTimeFormatter {
             + ?Sized,
     {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale,
@@ -100,7 +100,7 @@ impl ZonedDateTimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             patterns,

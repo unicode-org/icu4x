@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::indices::Utf16Indices;
 use crate::provider::*;
+use crate::{indices::Utf16Indices, SegmenterError};
 
 use core::iter::Peekable;
 use core::str::CharIndices;
@@ -139,7 +139,7 @@ pub struct DictionarySegmenter<'l> {
 impl<'l> DictionarySegmenter<'l> {
     pub fn try_new_unstable(
         payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-    ) -> Result<Self, DataError> {
+    ) -> Result<Self, SegmenterError> {
         // TODO: no way to verify trie data
         Ok(Self { payload })
     }

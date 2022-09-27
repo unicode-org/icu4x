@@ -41,18 +41,6 @@
     See the `Rust documentation for PluralOperands <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html>`__ for more information.
 
 
-    .. js:attribute:: i
-
-    .. js:attribute:: v
-
-    .. js:attribute:: w
-
-    .. js:attribute:: f
-
-    .. js:attribute:: t
-
-    .. js:attribute:: c
-
     .. js:staticfunction:: create_from_string(s)
 
         Construct for a given string representing a number

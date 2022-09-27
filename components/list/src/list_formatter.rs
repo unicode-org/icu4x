@@ -3,7 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
-use crate::ListStyle;
+use crate::ListError;
+use crate::ListLength;
 use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
@@ -12,7 +13,7 @@ use writeable::*;
 /// [crate-level documentation](crate) for more details.
 pub struct ListFormatter {
     data: DataPayload<ErasedListV1Marker>,
-    style: ListStyle,
+    length: ListLength,
 }
 
 macro_rules! constructor {
@@ -24,20 +25,20 @@ macro_rules! constructor {
         pub fn $name<D: DataProvider<$marker> + ?Sized>(
             data_provider: &D,
             locale: &DataLocale,
-            style: ListStyle,
-        ) -> Result<Self, DataError> {
+            length: ListLength,
+        ) -> Result<Self, ListError> {
             let data = data_provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?.cast();
-            Ok(Self { data, style })
+            Ok(Self { data, length })
         }
         icu_provider::gen_any_buffer_constructors!(
             locale: include,
-            style: ListStyle,
-            error: DataError,
+            style: ListLength,
+            error: ListError,
             functions: [
                 Self::$name,
                 $name_any,
@@ -49,23 +50,23 @@ macro_rules! constructor {
 
 impl ListFormatter {
     constructor!(
-        try_new_and_unstable,
-        try_new_and_with_any_provider,
-        try_new_and_with_buffer_provider,
+        try_new_and_with_length_unstable,
+        try_new_and_with_length_with_any_provider,
+        try_new_and_with_length_with_buffer_provider,
         AndListV1Marker,
         "and"
     );
     constructor!(
-        try_new_or_unstable,
-        try_new_or_with_any_provider,
-        try_new_or_with_buffer_provider,
+        try_new_or_with_length_unstable,
+        try_new_or_with_length_with_any_provider,
+        try_new_or_with_length_with_buffer_provider,
         OrListV1Marker,
         "or"
     );
     constructor!(
-        try_new_unit_unstable,
-        try_new_unit_with_any_provider,
-        try_new_unit_with_buffer_provider,
+        try_new_unit_with_length_unstable,
+        try_new_unit_with_length_with_any_provider,
+        try_new_unit_with_length_with_buffer_provider,
         UnitListV1Marker,
         "unit"
     );
@@ -146,7 +147,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                         .formatter
                         .data
                         .get()
-                        .start(self.formatter.style)
+                        .start(self.formatter.length)
                         .parts(&second);
 
                     literal!(start_before)?;
@@ -161,7 +162,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                             .formatter
                             .data
                             .get()
-                            .middle(self.formatter.style)
+                            .middle(self.formatter.length)
                             .parts(&next);
                         literal!(between)?;
                         value!(next)?;
@@ -172,7 +173,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                         .formatter
                         .data
                         .get()
-                        .end(self.formatter.style)
+                        .end(self.formatter.length)
                         .parts(&next);
                     literal!(end_between)?;
                     value!(next)?;
@@ -183,7 +184,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                         .formatter
                         .data
                         .get()
-                        .pair(self.formatter.style)
+                        .pair(self.formatter.length)
                         .parts(&second);
                     literal!(before)?;
                     value!(first)?;
@@ -214,7 +215,7 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                 .formatter
                 .data
                 .get()
-                .size_hint(self.formatter.style, count)
+                .size_hint(self.formatter.length, count)
     }
 }
 
@@ -231,16 +232,16 @@ mod tests {
     use super::*;
     use writeable::{assert_writeable_eq, assert_writeable_parts_eq};
 
-    fn formatter(style: ListStyle) -> ListFormatter {
+    fn formatter(length: ListLength) -> ListFormatter {
         ListFormatter {
             data: DataPayload::from_owned(crate::provider::test::test_patterns()),
-            style,
+            length,
         }
     }
 
     #[test]
     fn test_slices() {
-        let formatter = formatter(ListStyle::Wide);
+        let formatter = formatter(ListLength::Wide);
         let values = ["one", "two", "three", "four", "five"];
 
         assert_writeable_eq!(formatter.format(values[0..0].iter()), "");
@@ -273,7 +274,7 @@ mod tests {
 
     #[test]
     fn test_into_iterator() {
-        let formatter = formatter(ListStyle::Wide);
+        let formatter = formatter(ListLength::Wide);
 
         let mut vecdeque = std::collections::vec_deque::VecDeque::<u8>::new();
         vecdeque.push_back(10);
@@ -294,7 +295,7 @@ mod tests {
 
     #[test]
     fn test_iterator() {
-        let formatter = formatter(ListStyle::Wide);
+        let formatter = formatter(ListLength::Wide);
 
         assert_writeable_parts_eq!(
             formatter.format(core::iter::repeat(5).take(2)),
@@ -311,7 +312,7 @@ mod tests {
 
     #[test]
     fn test_conditional() {
-        let formatter = formatter(ListStyle::Narrow);
+        let formatter = formatter(ListLength::Narrow);
 
         assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
     }

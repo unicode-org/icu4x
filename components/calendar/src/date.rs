@@ -4,7 +4,7 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::week::{WeekCalculator, WeekOf};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
+use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 use core::fmt;
@@ -115,7 +115,7 @@ impl<A: AsCalendar> Date<A> {
         month_code: types::MonthCode,
         day: u8,
         calendar: A,
-    ) -> Result<Self, DateTimeError> {
+    ) -> Result<Self, CalendarError> {
         let inner = calendar
             .as_calendar()
             .date_from_codes(era, year, month_code, day)?;
@@ -237,19 +237,16 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
     ///
-    /// assert_eq!(
-    ///     date.week_of_month(first_weekday),
-    ///     WeekOfMonth(2)
-    /// );
+    /// assert_eq!(date.week_of_month(first_weekday), WeekOfMonth(2));
     /// ```
     pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
         let config = WeekCalculator {
@@ -264,11 +261,11 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::types::IsoWeekday;
-    /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::WeekOf;
+    /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///
@@ -283,7 +280,7 @@ impl<A: AsCalendar> Date<A> {
     ///     })
     /// );
     /// ```
-    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, DateTimeError> {
+    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, CalendarError> {
         config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 

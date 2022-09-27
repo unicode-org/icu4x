@@ -37,8 +37,8 @@ use core::ops::Deref;
 ///
 /// // Convert it to bytes and back
 /// let bytes = zv1.as_bytes();
-/// let zv2 = FlexZeroVec::parse_byte_slice(bytes)
-///     .expect("bytes should round-trip");
+/// let zv2 =
+///     FlexZeroVec::parse_byte_slice(bytes).expect("bytes should round-trip");
 /// assert_eq!(zv2.to_vec(), vec![55, 33, 999]);
 ///
 /// // Verify the compact storage

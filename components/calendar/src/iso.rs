@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
@@ -96,9 +96,9 @@ impl Calendar for Iso {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         if era.0 != tinystr!(16, "default") {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
@@ -234,12 +234,12 @@ impl Date<Iso> {
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, DateTimeError> {
+    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
         if !(1..=12).contains(&month) {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
         if day == 0 || day > Iso::days_in_month(year, month) {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
         Ok(Date::from_raw(
             IsoDateInner(ArithmeticDate::new(year, month, day)),
@@ -271,7 +271,7 @@ impl DateTime<Iso> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Iso>, DateTimeError> {
+    ) -> Result<DateTime<Iso>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_iso_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
@@ -287,14 +287,14 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
     pub fn minutes_since_local_unix_epoch(&self) -> i32 {
         let minutes_a_hour = 60;
@@ -320,36 +320,22 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
-    pub fn try_from_minutes_since_local_unix_epoch(
-        minute: i32,
-    ) -> Result<DateTime<Iso>, DateTimeError> {
-        let minutes_a_hour = 60;
-        let hours_a_day = 24;
-        let minutes_a_day = minutes_a_hour * hours_a_day;
-        let extra_days = minute / minutes_a_day;
-        if let Ok(unix_epoch) = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0) {
-            let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
-            let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
-            DateTime::try_new_iso_datetime(
-                date.year().number,
-                date.month().ordinal as u8,
-                date.day_of_month().0 as u8,
-                ((minute / minutes_a_hour) % hours_a_day) as u8,
-                (minute % minutes_a_hour) as u8,
-                0,
-            )
-        } else {
-            unreachable!("DateTime should be created successfully")
-        }
+    pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
+        let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
+        #[allow(clippy::unwrap_used)] // constant date
+        let unix_epoch = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+        let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
+        let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
+        DateTime { date, time }
     }
 }
 

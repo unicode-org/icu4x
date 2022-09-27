@@ -16,7 +16,8 @@ use core::ops::Deref;
 /// ```
 /// use icu::locid::extensions::unicode::{Attribute, Attributes};
 ///
-/// let attribute1: Attribute = "foobar".parse().expect("Failed to parse a variant subtag.");
+/// let attribute1: Attribute =
+///     "foobar".parse().expect("Failed to parse a variant subtag.");
 ///
 /// let attribute2: Attribute = "testing"
 ///     .parse()

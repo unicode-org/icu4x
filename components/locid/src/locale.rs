@@ -29,7 +29,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// ```
 /// use icu::locid::extensions::unicode::{Key, Value};
-/// use icu::locid::{Locale, subtags::*};
+/// use icu::locid::{subtags::*, Locale};
 ///
 /// let loc: Locale = "en-US-u-ca-buddhist".parse().expect("Failed to parse.");
 ///
@@ -61,7 +61,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{Locale, subtags::*};
+/// use icu::locid::{subtags::*, Locale};
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
 ///     .parse()
@@ -70,7 +70,10 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
-/// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
+/// assert_eq!(
+///     loc.id.variants.get(0),
+///     "valencia".parse::<Variant>().ok().as_ref()
+/// );
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)]
@@ -113,7 +116,8 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc = Locale::try_from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
+    /// let loc = Locale::try_from_bytes("en-US-u-hc-h12".as_bytes())
+    ///     .expect("Parsing failed.");
     ///
     /// assert_eq!(loc.to_string(), "en-US-u-hc-h12");
     /// ```
@@ -207,7 +211,8 @@ impl Locale {
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    /// let subtags: &[&[u8]] =
+    ///     &[b"ca", b"ES", b"valencia", b"u", b"ca", b"hebrew"];
     ///
     /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
     /// assert_eq!(
@@ -485,7 +490,10 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
+/// use icu::locid::{
+///     subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

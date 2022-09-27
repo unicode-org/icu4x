@@ -289,7 +289,10 @@ macro_rules! impl_display_with_writeable {
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
-///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+///         &self,
+///         sink: &mut S,
+///     ) -> fmt::Result {
 ///         sink.with_part(WORD, |w| w.write_str("foo"))
 ///     }
 ///     fn writeable_length_hint(&self) -> LengthHint {
@@ -303,7 +306,13 @@ macro_rules! impl_display_with_writeable {
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 ///
 /// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)]);
-/// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)], "Message: {}", "Hello World");
+/// assert_writeable_parts_eq!(
+///     &Demo,
+///     "foo",
+///     [(0, 3, WORD)],
+///     "Message: {}",
+///     "Hello World"
+/// );
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {

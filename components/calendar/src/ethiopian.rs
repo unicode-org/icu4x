@@ -15,7 +15,8 @@
 //! // `DateTime` type
 //! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_ethiopian = DateTime::new_from_iso(datetime_iso, Ethiopian::new());
+//! let datetime_ethiopian =
+//!     DateTime::new_from_iso(datetime_iso, Ethiopian::new());
 //!
 //! // `Date` checks
 //! assert_eq!(date_ethiopian.year().number, 1962);
@@ -36,7 +37,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::coptic::Coptic;
 use crate::iso::Iso;
 use crate::julian::Julian;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -120,21 +121,21 @@ impl Calendar for Ethiopian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "incar") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             year
         } else if era.0 == tinystr!(16, "pre-incar") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             1 - year
         } else if era.0 == tinystr!(16, "mundi") {
             year - AMETE_ALEM_OFFSET
         } else {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(EthiopianDateInner)
@@ -308,12 +309,16 @@ impl Date<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::Date;
     ///
-    /// let date_ethiopian =
-    ///     Date::try_new_ethiopian_date(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
-    ///     .expect("Failed to initialize Ethopic Date instance.");
+    /// let date_ethiopian = Date::try_new_ethiopian_date(
+    ///     EthiopianEraStyle::AmeteMihret,
+    ///     2014,
+    ///     8,
+    ///     25,
+    /// )
+    /// .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopian.year().number, 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);
@@ -324,7 +329,7 @@ impl Date<Ethiopian> {
         mut year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Ethiopian>, DateTimeError> {
+    ) -> Result<Date<Ethiopian>, CalendarError> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= AMETE_ALEM_OFFSET;
         }
@@ -337,7 +342,7 @@ impl Date<Ethiopian> {
 
         let bound = inner.days_in_month();
         if day > bound {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
 
         Ok(Date::from_raw(
@@ -355,11 +360,19 @@ impl DateTime<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::DateTime;
     ///
-    /// let datetime_ethiopian = DateTime::try_new_ethiopian_datetime(EthiopianEraStyle::AmeteMihret, 2014, 8, 25, 13, 1, 0)
-    ///     .expect("Failed to initialize Ethiopian DateTime instance.");
+    /// let datetime_ethiopian = DateTime::try_new_ethiopian_datetime(
+    ///     EthiopianEraStyle::AmeteMihret,
+    ///     2014,
+    ///     8,
+    ///     25,
+    ///     13,
+    ///     1,
+    ///     0,
+    /// )
+    /// .expect("Failed to initialize Ethiopian DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopian.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopian.date.month().ordinal, 8);
@@ -376,7 +389,7 @@ impl DateTime<Ethiopian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Ethiopian>, DateTimeError> {
+    ) -> Result<DateTime<Ethiopian>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_ethiopian_date(era_style, year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,

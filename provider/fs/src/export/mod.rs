@@ -13,12 +13,12 @@
 //!
 //! ```
 //! use icu_provider::datagen::DataExporter;
+//! use icu_provider::dynutil::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
-//! use icu_provider::dynutil::*;
+//! use icu_provider_fs::export::serializers;
 //! use icu_provider_fs::export::ExporterOptions;
 //! use icu_provider_fs::export::FilesystemExporter;
-//! use icu_provider_fs::export::serializers;
 //! use icu_provider_fs::FsDataProvider;
 //! use std::borrow::Cow;
 //! use std::path::PathBuf;
@@ -37,7 +37,7 @@
 //! let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
 //!     message: Cow::Borrowed("Hi"),
 //! });
-//! let result = exporter
+//! exporter
 //!     .put_payload(
 //!         HelloWorldV1Marker::KEY,
 //!         &Default::default(),
@@ -64,7 +64,8 @@
 //! assert_eq!(response.get(), payload.get(),);
 //!
 //! // Clean up from demo
-//! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
+//! std::fs::remove_dir_all(&demo_path)
+//!     .expect("Should clean up test directory");
 //! ```
 
 #![allow(

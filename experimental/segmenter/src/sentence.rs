@@ -8,8 +8,8 @@ use icu_provider::prelude::*;
 
 use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
-use crate::provider::*;
 use crate::rule_segmenter::*;
+use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
@@ -41,9 +41,12 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 ///
 /// ```rust
 /// use icu_segmenter::SentenceBreakSegmenter;
-/// let segmenter = SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
 ///
@@ -51,9 +54,12 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 ///
 /// ```rust
 /// use icu_segmenter::SentenceBreakSegmenter;
-/// let segmenter = SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
 pub struct SentenceBreakSegmenter {
@@ -64,7 +70,7 @@ pub struct SentenceBreakSegmenter {
 
 impl SentenceBreakSegmenter {
     /// Construct a [`SentenceBreakSegmenter`].
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
@@ -78,7 +84,7 @@ impl SentenceBreakSegmenter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {

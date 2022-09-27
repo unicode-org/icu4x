@@ -95,7 +95,9 @@ pub struct DataRequestMetadata;
 /// use icu_locid::Locale;
 /// use icu_provider::DataLocale;
 ///
-/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist".parse::<Locale>().unwrap();
+/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
+///     .parse::<Locale>()
+///     .unwrap();
 /// let data_locale = DataLocale::from(locale);
 ///
 /// assert_eq!(data_locale.to_string(), "hi-u-ca-buddhist");
@@ -192,8 +194,8 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::DataLocale;
     /// use icu_locid::Locale;
+    /// use icu_provider::DataLocale;
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
@@ -214,12 +216,32 @@ impl DataLocale {
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_loc: DataLocale = a.parse::<Locale>().unwrap().into();
     ///     assert_eq!(a, a_loc.to_string());
-    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal, "{} == {}", a, a);
-    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less, "{} < {}", a, b);
+    ///     assert!(
+    ///         a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal,
+    ///         "{} == {}",
+    ///         a,
+    ///         a
+    ///     );
+    ///     assert!(
+    ///         a_loc.strict_cmp(b.as_bytes()) == Ordering::Less,
+    ///         "{} < {}",
+    ///         a,
+    ///         b
+    ///     );
     ///     let b_loc: DataLocale = b.parse::<Locale>().unwrap().into();
     ///     assert_eq!(b, b_loc.to_string());
-    ///     assert!(b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal, "{} == {}", b, b);
-    ///     assert!(b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater, "{} > {}", b, a);
+    ///     assert!(
+    ///         b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal,
+    ///         "{} == {}",
+    ///         b,
+    ///         b
+    ///     );
+    ///     assert!(
+    ///         b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater,
+    ///         "{} > {}",
+    ///         b,
+    ///         a
+    ///     );
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
@@ -305,7 +327,9 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{langid, subtags_language as language, subtags_region as region, Locale};
+    /// use icu_locid::{
+    ///     langid, subtags_language as language, subtags_region as region, Locale,
+    /// };
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
@@ -407,17 +431,17 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+    /// use icu_locid::{
+    ///     extensions_unicode_key as key, extensions_unicode_value as value,
+    ///     Locale,
+    /// };
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let locale: DataLocale = locale.into();
     ///
     /// assert_eq!(locale.get_unicode_ext(&key!("hc")), None);
-    /// assert_eq!(
-    ///     locale.get_unicode_ext(&key!("ca")),
-    ///     Some(value!("coptic"))
-    /// );
+    /// assert_eq!(locale.get_unicode_ext(&key!("ca")), Some(value!("coptic")));
     /// assert!(locale.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
     /// ```
     #[inline]

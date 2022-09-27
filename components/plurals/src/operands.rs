@@ -32,34 +32,38 @@ use fixed_decimal::FixedDecimal;
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     PluralOperands {
+///     PluralOperands::from(RawPluralOperands {
 ///         i: 2,
 ///         v: 0,
 ///         w: 0,
 ///         f: 0,
 ///         t: 0,
 ///         c: 0,
-///     },
+///     }),
 ///     PluralOperands::from(2_usize)
-/// )
+/// );
 /// ```
 ///
 /// From &str
 ///
 /// ```
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     Ok(PluralOperands {
+///     Ok(PluralOperands::from(RawPluralOperands {
 ///         i: 123,
 ///         v: 2,
 ///         w: 2,
 ///         f: 45,
 ///         t: 45,
 ///         c: 0,
-///     }),
+///     })),
 ///     "123.45".parse()
-/// )
+/// );
 /// ```
 ///
 /// From [`FixedDecimal`]
@@ -67,48 +71,35 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
+/// use icu_plurals::rules::RawPluralOperands;
+///
 /// assert_eq!(
-///     PluralOperands {
+///     PluralOperands::from(RawPluralOperands {
 ///         i: 123,
 ///         v: 2,
 ///         w: 2,
 ///         f: 45,
 ///         t: 45,
 ///         c: 0,
-///     },
-///     (&FixedDecimal::from(12345)
-///         .multiplied_pow10(-2))
-///         .into()
-/// )
+///     }),
+///     (&FixedDecimal::from(12345).multiplied_pow10(-2)).into()
+/// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 #[allow(clippy::exhaustive_structs)] // mostly stable, new operands may be added at the cadence of ICU's release cycle
 pub struct PluralOperands {
     /// Integer value of input
-    pub i: u64,
+    pub(crate) i: u64,
     /// Number of visible fraction digits with trailing zeros
-    pub v: usize,
+    pub(crate) v: usize,
     /// Number of visible fraction digits without trailing zeros
-    pub w: usize,
+    pub(crate) w: usize,
     /// Visible fraction digits with trailing zeros
-    pub f: u64,
+    pub(crate) f: u64,
     /// Visible fraction digits without trailing zeros
-    pub t: u64,
+    pub(crate) t: u64,
     /// Exponent of the power of 10 used in compact decimal formatting
-    pub c: usize,
-}
-
-impl PluralOperands {
-    /// Returns the number represented by this [`PluralOperands`] as floating point.
-    /// The precision of the number returned is up to the representation accuracy
-    /// of a double.
-    ///
-    /// This method requires the `"std"` feature be enabled
-    #[cfg(feature = "std")]
-    pub fn n(&self) -> f64 {
-        let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
-        self.i as f64 + fraction
-    }
+    pub(crate) c: usize,
 }
 
 #[derive(Display, Debug, PartialEq, Eq)]

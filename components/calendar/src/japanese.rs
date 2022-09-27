@@ -49,7 +49,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{EraStartDate, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
 use crate::{
-    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
+    types, AsCalendar, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime, Ref,
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
@@ -122,7 +122,7 @@ impl Japanese {
     /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
-    ) -> Result<Self, DataError> {
+    ) -> Result<Self, CalendarError> {
         let eras = data_provider
             .load(DataRequest {
                 locale: Default::default(),
@@ -132,7 +132,7 @@ impl Japanese {
         Ok(Self { eras })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
 
     fn japanese_date_from_codes(
         &self,
@@ -141,16 +141,16 @@ impl Japanese {
         month_code: types::MonthCode,
         day: u8,
         debug_name: &'static str,
-    ) -> Result<JapaneseDateInner, DateTimeError> {
+    ) -> Result<JapaneseDateInner, CalendarError> {
         let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
         let month = if let Some(month) = month {
             month
         } else {
-            return Err(DateTimeError::UnknownMonthCode(month_code.0, debug_name));
+            return Err(CalendarError::UnknownMonthCode(month_code.0, debug_name));
         };
 
         if month > 12 {
-            return Err(DateTimeError::UnknownMonthCode(month_code.0, debug_name));
+            return Err(CalendarError::UnknownMonthCode(month_code.0, debug_name));
         }
 
         self.new_japanese_date_inner(era, year, month, day)
@@ -166,7 +166,7 @@ impl JapaneseExtended {
     /// </div>
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
-    ) -> Result<Self, DataError> {
+    ) -> Result<Self, CalendarError> {
         let eras = data_provider
             .load(DataRequest {
                 locale: Default::default(),
@@ -176,7 +176,7 @@ impl JapaneseExtended {
         Ok(Self(Japanese { eras: eras.cast() }))
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: CalendarError);
 }
 
 impl Calendar for Japanese {
@@ -188,7 +188,7 @@ impl Calendar for Japanese {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         self.japanese_date_from_codes(era, year, month_code, day, self.debug_name())
     }
 
@@ -295,7 +295,7 @@ impl Calendar for JapaneseExtended {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         self.0
             .japanese_date_from_codes(era, year, month_code, day, self.debug_name())
     }
@@ -405,7 +405,8 @@ impl Date<Japanese> {
     ///
     /// // This function will error for eras that are out of bounds:
     /// // (Heisei was 32 years long, Heisei 33 is in Reiwa)
-    /// let oob_date = Date::try_new_japanese_date(era, 33, 1, 2, japanese_calendar);
+    /// let oob_date =
+    ///     Date::try_new_japanese_date(era, 33, 1, 2, japanese_calendar);
     /// assert!(oob_date.is_err());
     ///
     /// // and for unknown eras
@@ -420,7 +421,7 @@ impl Date<Japanese> {
         month: u8,
         day: u8,
         japanese_calendar: A,
-    ) -> Result<Date<A>, DateTimeError> {
+    ) -> Result<Date<A>, CalendarError> {
         let inner = japanese_calendar
             .as_calendar()
             .new_japanese_date_inner(era, year, month, day)?;
@@ -466,7 +467,7 @@ impl Date<JapaneseExtended> {
         month: u8,
         day: u8,
         japanext_calendar: A,
-    ) -> Result<Date<A>, DateTimeError> {
+    ) -> Result<Date<A>, CalendarError> {
         let inner = japanext_calendar
             .as_calendar()
             .0
@@ -530,7 +531,7 @@ impl DateTime<Japanese> {
         minute: u8,
         second: u8,
         japanese_calendar: A,
-    ) -> Result<DateTime<A>, DateTimeError> {
+    ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_japanese_date(era, year, month, day, japanese_calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
@@ -587,7 +588,7 @@ impl DateTime<JapaneseExtended> {
         minute: u8,
         second: u8,
         japanext_calendar: A,
-    ) -> Result<DateTime<A>, DateTimeError> {
+    ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_japanese_extended_date(era, year, month, day, japanext_calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
@@ -684,7 +685,7 @@ impl Japanese {
     fn japanese_era_range_for(
         &self,
         era: TinyStr16,
-    ) -> Result<(EraStartDate, Option<EraStartDate>), DateTimeError> {
+    ) -> Result<(EraStartDate, Option<EraStartDate>), CalendarError> {
         // Avoid linear search by trying well known eras
         if era == tinystr!(16, "reiwa") {
             // Check if we're the last
@@ -728,7 +729,7 @@ impl Japanese {
             return Ok((start, data.get(index + 1).map(|e| e.0)));
         }
 
-        Err(DateTimeError::UnknownEra(era, self.debug_name()))
+        Err(CalendarError::UnknownEra(era, self.debug_name()))
     }
 
     fn new_japanese_date_inner(
@@ -737,18 +738,18 @@ impl Japanese {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<JapaneseDateInner, DateTimeError> {
+    ) -> Result<JapaneseDateInner, CalendarError> {
         let cal = Ref(self);
         if era.0 == tinystr!(16, "bce") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             return Ok(Date::try_new_iso_date(1 - year, month, day)?
                 .to_calendar(cal)
                 .inner);
         } else if era.0 == tinystr!(16, "ce") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             return Ok(Date::try_new_iso_date(year, month, day)?
                 .to_calendar(cal)
@@ -764,10 +765,10 @@ impl Japanese {
         };
 
         if date_in_iso < era_start {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         } else if let Some(next_era_start) = next_era_start {
             if date_in_iso >= next_era_start {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
         }
 
@@ -869,7 +870,7 @@ mod tests {
         year: i32,
         month: u8,
         day: u8,
-        error: DateTimeError,
+        error: CalendarError,
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
@@ -887,7 +888,7 @@ mod tests {
         year: i32,
         month: u8,
         day: u8,
-        error: DateTimeError,
+        error: CalendarError,
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
@@ -913,11 +914,11 @@ mod tests {
         single_test_roundtrip(calendar, "heisei", 12, 3, 1);
         single_test_roundtrip(calendar, "taisho", 3, 3, 1);
         // Heisei did not start until later in the year
-        single_test_error(calendar, "heisei", 1, 1, 1, DateTimeError::OutOfRange);
+        single_test_error(calendar, "heisei", 1, 1, 1, CalendarError::OutOfRange);
 
         single_test_roundtrip_ext(calendar_ext, "heisei", 12, 3, 1);
         single_test_roundtrip_ext(calendar_ext, "taisho", 3, 3, 1);
-        single_test_error_ext(calendar_ext, "heisei", 1, 1, 1, DateTimeError::OutOfRange);
+        single_test_error_ext(calendar_ext, "heisei", 1, 1, 1, CalendarError::OutOfRange);
 
         single_test_roundtrip_ext(calendar_ext, "hakuho-672", 4, 3, 1);
         single_test_error(
@@ -926,7 +927,7 @@ mod tests {
             4,
             3,
             1,
-            DateTimeError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
+            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
         );
 
         // handle bce/ce
@@ -936,8 +937,8 @@ mod tests {
         single_test_roundtrip(calendar, "ce", 100, 3, 1);
         single_test_roundtrip_ext(calendar_ext, "ce", 100, 3, 1);
         single_test_roundtrip(calendar, "ce", 1000, 3, 1);
-        single_test_error(calendar, "ce", 0, 3, 1, DateTimeError::OutOfRange);
-        single_test_error(calendar, "bce", -1, 3, 1, DateTimeError::OutOfRange);
+        single_test_error(calendar, "ce", 0, 3, 1, CalendarError::OutOfRange);
+        single_test_error(calendar, "bce", -1, 3, 1, CalendarError::OutOfRange);
 
         // handle the cases where bce/ce get adjusted to different eras
         // single_test_gregorian_roundtrip(calendar, "ce", 2021, 3, 1, "reiwa", 3);
@@ -956,7 +957,7 @@ mod tests {
             1,
             7,
             5,
-            DateTimeError::OutOfRange,
+            CalendarError::OutOfRange,
         );
         single_test_error_ext(
             calendar_ext,
@@ -964,7 +965,7 @@ mod tests {
             1,
             4,
             13,
-            DateTimeError::OutOfRange,
+            CalendarError::OutOfRange,
         );
     }
 }

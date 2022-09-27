@@ -76,7 +76,9 @@ pub struct ParserOptions {
 ///
 /// let mut result = vec![];
 ///
-/// while let Some(element) = parser.try_next().expect("Failed to advance iterator") {
+/// while let Some(element) =
+///     parser.try_next().expect("Failed to advance iterator")
+/// {
 ///     result.push(element);
 /// }
 ///
@@ -112,7 +114,9 @@ pub struct ParserOptions {
 ///
 /// let mut result = vec![];
 ///
-/// while let Some(element) = parser.try_next().expect("Failed to advance iterator") {
+/// while let Some(element) =
+///     parser.try_next().expect("Failed to advance iterator")
+/// {
 ///     result.push(element);
 /// }
 ///
@@ -178,7 +182,9 @@ pub struct ParserOptions {
 ///
 /// let mut result = vec![];
 ///
-/// while let Some(element) = parser.try_next().expect("Failed to advance iterator") {
+/// while let Some(element) =
+///     parser.try_next().expect("Failed to advance iterator")
+/// {
 ///     result.push(element);
 /// }
 ///

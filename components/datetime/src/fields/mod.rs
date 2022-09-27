@@ -23,7 +23,7 @@ use core::{
 /// Separate error types exist for parts of a field, like the
 /// [`LengthError`](error for the field length) and the
 /// [`SymbolError`](error for the field symbol).
-#[derive(Display, Debug, Copy, Clone)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum Error {
     /// An error originating inside of the [data provider](icu_provider).

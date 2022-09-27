@@ -44,7 +44,9 @@
 //! ## Macros
 //!
 //! ```rust
-//! use icu::locid::{langid, subtags_language as language, subtags_region as region};
+//! use icu::locid::{
+//!     langid, subtags_language as language, subtags_region as region,
+//! };
 //!
 //! let lid = langid!("EN_US");
 //!

@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region: Region = "DE".parse().expect("Failed to parse a region subtag.");
+    /// let region: Region =
+    ///     "DE".parse().expect("Failed to parse a region subtag.");
     /// ```
     ///
     /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id
@@ -52,7 +53,7 @@ impl Region {
     ///
     /// let region = Region::try_from_bytes(b"us").expect("Parsing failed.");
     ///
-    /// assert_eq!(region.is_alphabetic(), true);
+    /// assert!(region.is_alphabetic());
     /// ```
     pub fn is_alphabetic(&self) -> bool {
         self.0.len() == 2

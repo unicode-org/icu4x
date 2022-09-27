@@ -155,7 +155,7 @@ impl Extensions {
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.is_empty(), false);
+    /// assert!(!loc.extensions.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.unicode.is_empty()
@@ -172,7 +172,8 @@ impl Extensions {
     /// use icu::locid::extensions::ExtensionType;
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
+    /// let loc: Locale =
+    ///     "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
     ///
     /// let mut only_unicode = loc.clone();
     /// only_unicode
@@ -181,9 +182,9 @@ impl Extensions {
     /// assert_eq!(only_unicode, "und-u-world".parse().unwrap());
     ///
     /// let mut only_t_z = loc.clone();
-    /// only_t_z
-    ///     .extensions
-    ///     .retain_by_type(|t| t == ExtensionType::Transform || t == ExtensionType::Other(b'z'));
+    /// only_t_z.extensions.retain_by_type(|t| {
+    ///     t == ExtensionType::Transform || t == ExtensionType::Other(b'z')
+    /// });
     /// assert_eq!(only_t_z, "und-t-mul-z-zzz".parse().unwrap());
     /// ```
     pub fn retain_by_type<F>(&mut self, mut predicate: F)

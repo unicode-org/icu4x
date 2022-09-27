@@ -19,10 +19,12 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{
+//!     CodePointInversionList, CodePointInversionListBuilder,
+//! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -33,10 +35,12 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{
+//!     CodePointInversionList, CodePointInversionListBuilder,
+//! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -64,8 +68,10 @@ pub use cpinvlist::CodePointInversionList;
 use displaydoc::Display;
 
 /// Custom Errors for [`CodePointInversionList`].
+///
+/// Re-exported as [`Error`](Error).
 #[derive(Display, Debug)]
-pub enum CodePointSetError {
+pub enum CodePointInversionListError {
     /// A CodePointInversionList was constructed with an invalid inversion list
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
@@ -75,4 +81,7 @@ pub enum CodePointSetError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for CodePointSetError {}
+impl std::error::Error for CodePointInversionListError {}
+
+#[doc(inline)]
+pub use CodePointInversionListError as Error;

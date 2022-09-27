@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_fs"
 description = "ICU4X data provider that reads from structured data files"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -33,11 +33,11 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["serde", "std"] }
+icu_provider = { version = "1.0.0", path = "../core", features = ["serde", "std"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 displaydoc = { version = "0.2.3", default-features = false }
 serde-json-core = { version = "0.4", default-features = false, features = ["std"] }
-writeable = { version = "0.4", path = "../../utils/writeable" }
+writeable = { version = "0.5", path = "../../utils/writeable" }
 
 # Dependencies for the export feature
 log = { version = "0.4", optional = true }
@@ -48,9 +48,9 @@ crlify = { version = "1", path = "../../utils/crlify", optional = true }
 sha2 = { version = "0.10.2", optional = true }
 
 [dev-dependencies]
-icu_locid = { version = "1.0.0-beta1", path = "../../components/locid", features = ["serde"] }
+icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["serde"] }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
+icu_provider = { version = "1.0.0", path = "../core", features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
 criterion = "0.3.3"
 
 [features]

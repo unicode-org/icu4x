@@ -8,8 +8,9 @@ use icu_provider::prelude::DataError;
 #[cfg(feature = "std")]
 impl std::error::Error for TimeZoneError {}
 
-/// A list of possible error outcomes for working with types in this crate
-/// and operations.
+/// A list of error outcomes for various operations in the `icu_timezone` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum TimeZoneError {
@@ -21,11 +22,11 @@ pub enum TimeZoneError {
     InvalidOffset,
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
 }
 
 impl From<DataError> for TimeZoneError {
     fn from(e: DataError) -> Self {
-        TimeZoneError::DataProvider(e)
+        TimeZoneError::Data(e)
     }
 }

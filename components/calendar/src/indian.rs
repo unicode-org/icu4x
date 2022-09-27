@@ -34,7 +34,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -105,9 +105,9 @@ impl Calendar for Indian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         if era.0 != tinystr!(16, "saka") {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
@@ -246,8 +246,8 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian =
-    ///     Date::try_new_indian_date(1891, 10, 12).expect("Failed to initialize Indian Date instance.");
+    /// let date_indian = Date::try_new_indian_date(1891, 10, 12)
+    ///     .expect("Failed to initialize Indian Date instance.");
     ///
     /// assert_eq!(date_indian.year().number, 1891);
     /// assert_eq!(date_indian.month().ordinal, 10);
@@ -257,7 +257,7 @@ impl Date<Indian> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Indian>, DateTimeError> {
+    ) -> Result<Date<Indian>, CalendarError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -267,7 +267,7 @@ impl Date<Indian> {
 
         let bound = inner.days_in_month();
         if day > bound {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
 
         Ok(Date::from_raw(IndianDateInner(inner), Indian))
@@ -280,8 +280,9 @@ impl DateTime<Indian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_indian = DateTime::try_new_indian_datetime(1891, 10, 12, 13, 1, 0)
-    ///     .expect("Failed to initialize Indian DateTime instance.");
+    /// let datetime_indian =
+    ///     DateTime::try_new_indian_datetime(1891, 10, 12, 13, 1, 0)
+    ///         .expect("Failed to initialize Indian DateTime instance.");
     ///
     /// assert_eq!(datetime_indian.date.year().number, 1891);
     /// assert_eq!(datetime_indian.date.month().ordinal, 10);
@@ -297,7 +298,7 @@ impl DateTime<Indian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Indian>, DateTimeError> {
+    ) -> Result<DateTime<Indian>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_indian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,

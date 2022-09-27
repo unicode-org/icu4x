@@ -15,7 +15,7 @@ class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XPluralRules;
 #include "ICU4XError.hpp"
-struct ICU4XPluralOperands;
+class ICU4XPluralOperands;
 #include "ICU4XPluralCategory.hpp"
 struct ICU4XPluralCategories;
 
@@ -55,7 +55,7 @@ class ICU4XPluralRules {
    * 
    * See the [Rust documentation for `category_for`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
    */
-  ICU4XPluralCategory category_for(ICU4XPluralOperands op) const;
+  ICU4XPluralCategory category_for(const ICU4XPluralOperands& op) const;
 
   /**
    * Get all of the categories needed in the current locale
@@ -98,9 +98,8 @@ inline diplomat::result<ICU4XPluralRules, ICU4XError> ICU4XPluralRules::create_o
   }
   return diplomat_result_out_value;
 }
-inline ICU4XPluralCategory ICU4XPluralRules::category_for(ICU4XPluralOperands op) const {
-  ICU4XPluralOperands diplomat_wrapped_struct_op = op;
-  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_category_for(this->inner.get(), capi::ICU4XPluralOperands{ .i = diplomat_wrapped_struct_op.i, .v = diplomat_wrapped_struct_op.v, .w = diplomat_wrapped_struct_op.w, .f = diplomat_wrapped_struct_op.f, .t = diplomat_wrapped_struct_op.t, .c = diplomat_wrapped_struct_op.c }));
+inline ICU4XPluralCategory ICU4XPluralRules::category_for(const ICU4XPluralOperands& op) const {
+  return static_cast<ICU4XPluralCategory>(capi::ICU4XPluralRules_category_for(this->inner.get(), op.AsFFI()));
 }
 inline ICU4XPluralCategories ICU4XPluralRules::categories() const {
   capi::ICU4XPluralCategories diplomat_raw_struct_out_value = capi::ICU4XPluralRules_categories(this->inner.get());

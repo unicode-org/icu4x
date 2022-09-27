@@ -146,6 +146,10 @@ pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
 #[doc(hidden)]
 pub use duration::{DateDuration, DateDurationUnit};
-pub use error::DateTimeError;
+pub use error::CalendarError;
 pub use gregorian::Gregorian;
 pub use iso::Iso;
+
+/// Re-export of [`CalendarError`].
+#[doc(no_inline)]
+pub use CalendarError as Error;

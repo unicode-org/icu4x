@@ -9,6 +9,8 @@ use crate::codepointtrie::CodePointTrie;
 use displaydoc::Display;
 
 /// A custom error type for [`CodePointTrie`].
+///
+/// Re-exported as [Error][super::Error].
 #[derive(Copy, Clone, Display, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Error {

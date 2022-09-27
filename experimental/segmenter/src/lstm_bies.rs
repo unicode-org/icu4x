@@ -253,13 +253,12 @@ mod tests {
     }
 
     fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
-        DataPayload::<LstmDataV1Marker>::try_from_rc_buffer_badly(
+        DataPayload::from_owned_buffer(
             std::fs::read(filename)
                 .expect("File can read to end")
-                .into(),
-            |bytes| serde_json::from_slice(bytes),
+                .into_boxed_slice(),
         )
-        .expect("JSON syntax error")
+        .map_project(|bytes, _| serde_json::from_slice(bytes).expect("JSON syntax error"))
     }
 
     fn load_test_text(filename: &str) -> TestTextData {

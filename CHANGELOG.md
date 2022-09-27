@@ -1,7 +1,212 @@
 # Changelog
 
 
-## Unreleased
+## icu4x 1.0 (Sept 27, 2022)
+
+- General
+  - Update license to Unicode-DFS-2016 (#2303)
+  - Major improvements to documentation, bechmarks, and examples
+  - Various performance and codesize improvements
+  - FFI for all non-experimental components
+- Data model and providers
+  - Polished baked data provider (#2098, #2126, #2147)
+  - Data key extraction from binary (#1950)
+  - Add `LocaleFallbacker` with locale fallback algorithm (#2036, #2115, #2186, #2567)
+  - Making `DataProvider: Sync + Send` (#1853)
+  - Update to Postcard 1.0 (#2037, #2091, #2438)
+  - De-duplication in `BlobDataProvider` (#2062)
+  - Move `map_project` to closures (#2185)
+  - Renaming of many traits and functions in `icu_provider` (#2207, #2222, #2223)
+  - Passing `DataLocale` by reference (#2224)
+  - Fix feature specification in provider/fs (#2527)
+  - Rename `DataKey` methods and return `DataKeyPath` (#2565)
+  - Add some useful data provider impls; refactor `AnyPayloadProvider` (#2564)
+  - Removing `StaticDataProvider` (#2582)
+  - Removing `InvariantDataProvider` (#2159)
+  - Renaming load_payload, load_resource (#2222)
+  - Renaming `DataOptions` to `DataLocale` (#2223)
+  - Use an abstract predicate function in `ForkByKeyProvider` (#2249)
+  - Add `UnvalidatedStr` and use it in `LocaleFallbackParentsV1` (#2502)
+  - Add some useful data provider impls; refactor `AnyPayloadProvider` (#2564)
+- Components:
+  - Cross component:
+    - `Format` to `Formatter` rename (#2184)
+    - Uniform constructor style across all components, see #2573 (#2293, #2305, #2309, #2316, #2318, #2326, #2327, #2329, #2330, #2332, #2333, #2334)
+    - Remove `format_to_write`s (#2528)
+    - Make error enums more consistent (#2649)
+    - More Copy arguments (#2654)
+  - `calendar`
+    - Emit month codes from calendars  (#2053)
+    - Add `Date::new_from_codes()`; fix up per-calendar constructor functions (#2255)
+    - Fix iso-to-fixed conversion (#1898)
+    - Ethiopic calendars (#1831, #1902)
+    - Replace hour/minute/second constructors `new_unchecked()` with getter `number()` (#1922)
+    - Improve and rename `types::Year`/`types::Month` (#2157)
+    - Add `japanext` calendar (#2181)
+    - Replace unbounded arithmetic for calendar numeric types with bounded arithmetic. (#2273)
+    - Make `Japanext` its own calendar type (#2311)
+    - Pick default calendar based off of locale in `AnyCalendar`
+    - Make `offset_date` handle wraparounds for months (#2373)
+    - Hide duration stuff, rename `IncludedInAnyCalendar` (#2426)
+    - `week_of` refactoring (#2462)
+    - Fix arithmetic in Indian calendar (#2479)
+    - Infallible `from_minutes_since_local_unix_epoch()` (#2646)
+  - `collator`
+    - New component (#1706)
+    - Validate the length of last_primaries (#1916)
+    - Use a higher numeric value for `Strength::Identical` (#1942)
+    - Move and unescape collator and normalizer tests (#1943)
+    - Tweak CollationMetadataV1 documentation and dead code (#1914)
+    - GIGO fix-ups for the normalizer and the collator (#1931)
+    - split_first_u16/split_first_u24 -> split_first (#2459)
+    - Create options bag for CollatorOptions (#2475)
+    - Clean up FFFD magic numbers in Collator with REPLACEMENT_CHAR (#2496)
+    - Add traditional spanish and plumbing to make it work (#2497)
+  - `collections`
+    - New component (#2294, #2323, #2328, #2336)
+    - Rename `CodePointSet` to `CodePointInversionList` (#2230)
+    - Allow `CodePointTrie` to determine `error_value` at runtime from data (#2301)
+    - Use GIGO with debug assertion in Char16Trie (#2537)
+  - `datetime`
+    - Formatting for `AnyCalendar`s (#1987, #2146)
+    - Renaming `DateTimeFormatter` (etc) to `TypedDateTimeFormatter` and `AnyDateTimeFormatter` to `DateTimeFormatter` (#2298)
+    - DateFormatter cleanups (#2304)
+    - Remove Calendar type parameter from `TimeFormat` (#2282)
+    - Class Hierarchy for `DateTimeFormat` (split into `DateFormat`, `TimeFormat`, etc) (#2133)
+    - Making `time_granularity` public (#1867)
+    - Add fractional seconds support to components bag (#1873)
+    - Use `FixedDecimalFormat` in `DateTimeFormat` (#1952)
+    - Include module name to disambiguate Pattern (#1889)
+    - Use month codes in formatting (#2071)
+    - Split date and time data keys. (#2093)
+    - Move `Formatted[Zoned]DateTime` over to preextracting the date time input info (#2138, #2205)
+    - Remove `MockZonedDateTime` (#2231)
+    - Add an offset_fallback field in `TimeZoneFormatV1` (#2253)
+    - Remove `HourCycle` from the public Lengths API (#2331)
+    - Move mock datetime parsing code to test modules (#2436)
+    - Stop returning error on mismatched locale and type calendar (#2477)
+    - Change default length to medium (#2596)
+    - Make expect_pattern GIGO (#2650)
+  - `decimal`
+    - Don't panic on invalid grouping sizes (#2042)
+    - Remove signum and sign display options (#2070)
+    - Add numbering system support (#2246)
+  - `list`
+    - ListStyle -> ListLength and add _with_length (#2628)
+  - `locid`
+    - Add `remove()` for vertical fallback (#1992)
+    -  Update `Locale` and `LanguageIdentifier` comparison functions to `strict_cmp()` and `normalizing_eq()` (#2020)
+    -  `normalizing_eq()`, `strict_cmp()` for LSRV subtags (#2048)
+    -  Add `strict_cmp_iter()` (#2111, #2114)
+    -  Removing auto-derived Ord impl for Locale/LangId (#2142)
+    -  Enable `locale` macro to support single unicode key value pair extension (#2382)
+    -  Reducing `locid_id` API surface (#2484)
+    -  `private::Key` and `other::Key` to `::Subtag` (#2632)
+  - `locid_transform`
+    - Rename from `icu::locale_canonicalizer` (#2381)
+    - `LocaleCanonicalizer`/`LocaleExpander` refactor (#2338)
+  - `normalizer`
+    - Promoted from experimental (#2058)
+    - Add ComposingNormalizer for NFC, NFKC, and UTS 46 (#2039)
+    - GIGO fix-ups for the normalizer and the collator (#1931)
+    - Add support for NFKD and the decomposed counterpart of UTS 46 without ignored and disallowed (#1967)
+    - Simplify Hangul composition (#2200)
+    - Make sink-writing normalization methods non-experimental (#2201)
+    - Uses tries instead of inversion lists for normalization data (#2235)
+    - Consolidate the two auxiliary tries to the main NFD trie (#2371)
+    - Use `char` instead of `U24` in normalizer data (#2481)
+    - Make NFKD and UTS 46 data store only the difference form NFD (#1984)
+  - `plurals`
+    - Rename `select()` to `category_for()` for `PluralRules` (#2287)
+    - Use From instead of TryFrom for signed integers (#2593)
+    - `from_tr35_string` -> `get_for_cldr_string` (#2633)
+    - Make PluralOperands fields private, add static constructor (#2598)
+  - `properties`
+    - Better properties return values (#2112, #1990, #2277, #2555)
+    - Move properties data over to an (extensible) enum (#2140)
+    - Renaming unicode property data struct names (#2198)
+  - `timezone`
+    - New component, split from `datetime` (#2265)
+    - Add time period metazone to `TimeZonesProvider` (#1961)
+    - Convert metazone period from string to i32 (#2085)
+    - Improvements to `MetaZoneCalculator` (#2274)
+    - Add `TimeVariant` wrapper (#2289)
+    - TimeVariant -> ZoneVariant with a few more docs (#2427)
+    - Assorted TimeZone fixes (#2478)
+ - Utils:
+  - `crlify`: No updates
+  - `databake`:
+    - Moved over from `crabbake` (#2068)
+    - Some databake improvements (#2150)
+    - Using static `LiteMap`s in databake (#2264)
+  - `deduplicating_array`: No updates
+  - `fixed_decimal`:
+    - Switch FixedDecimal to a trivaluate sign (#2025)
+    - Remove negate (#2060)
+    - Improve integer operations (#1924)
+    - Add `FixedDecimal::concatenate_right()` (#1953)
+    - Implement `ceil()`, `floor()` and `truncate()` functions (#1923)
+    - Define "magnitude" and introduce "position" concept (#1981)
+    - Support for rounding modes (#2000, #2100, #2104, #2261)
+    - Make `multiply_pow10)_` be infallible (#2285)
+  - `litemap`:
+    - Remove `serde_json` dep from zeromap/litemap and align features (#1939)
+    - `LiteMap` of `&'a [(K, V)]` (#2242)
+    - Enable `ShortVec` as a backend for `LiteMap` (#2356)
+  - `pattern`: No updates
+  - `tinystr`:
+    - Make `Option<TinyAsciiStr>` be the same size as `TinyAsciiStr` (#2430)
+  - `tzif`:
+    - New crate (#2019)
+    - Parse POSIX time-zone strings using Combine (#1973)
+    - Parse TZif binary files using Combine (#1999)
+  - `writeable`:
+    - Rename `write_len` (#2529)
+  - `yoke`:
+    - Deprecate yoke's `badly` methods (#1930)
+    - Rename `Yoke::project()` functions to `::map_project()` (#1955)
+    - Remove stable_deref_trait/alloc from yoke's default feature set (#2094)
+    - Move `map_project()` to closures (#2185)
+  - `zerofrom`: No updates
+  - `zerovec`:
+    - Make `VarZeroVec` format configurable (#2306)
+    - Add `FlexZeroVec` (#1790)
+    - Add `NicheBytes` trait and `NichedOptionULE` (#2501)
+    - Turn ZeroVec into a struct for optimization (#2599, #2622)
+    - Improve performance of VarZeroVec::deserialize and add provider benches (#2603)
+    - Add array impl for `ZeroMapKV` (#1875)
+    - Remove lifetime from `ZeroVecLike` (#1901)
+    - `ZeroVecLike` cleanup (#2024)
+    - Remove `serde_json` dep from zeromap/litemap and align features (#1939)
+    - Make various ZeroVec methods `const` (#1976)
+    - Refactor ZeroMap2d and add get_by functions (#1876)
+    - Add more zerovec impls for `usize` and `FlexZeroVec` (#2023)
+    - Change charULE from 4 bytes to 3 bytes (#2015)
+    - More impls in zerovec crate (#2054)
+    - Add binary search and other utilities to `FlexZeroVec` (#2284)
+    - Remove `KeyError` and rename `get()` to `get_2d()` (#2279)
+    -  `EncodeAsVarULE` for `Cow` (#2376)
+    -  Add `ExactSizeIterator` for `FlexZeroVec::iter_*()` (#2580)
+    -  Add permutation to ZVL containers (#2605)
+ - FFI:
+   - All non-experimental components now covered by FFI
+   - Add FFI error strategy (#2045)
+   - Configurable DataProvider FFI (#2526)
+ - Experimental:
+   - `bies`:
+   - `casemapping`:
+   - `segmenter`:
+     - Expose `RuleBreakIterator` as a public interface (#2408)
+     - Merge `segmenter_lstm` with segmenter (#2087)
+     - Use `CodePointTrie` in Segmenter (#1839)
+     - Move language detection to language.rs (#1689)
+     - Simplify function in rule_segmenter (#1880)
+     - Use dictionary segmenter for word. (#1936)
+     - Remove std dependency from segmenter_lstm. (#2064)
+     - Add Lao and Khmer LSTM models (#2120)
+     - Use multiple dictionaries for line/word segmenter. (#2209)
+     - Add a feature option not to use unicode-segmentation (#2212)
+     - Remove two char types in line segmenter and polish utf8 iterator naming (#2269)
 
 ## icu4x 0.6.0 (May 9, 2022)
 

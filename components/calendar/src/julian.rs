@@ -34,7 +34,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -98,19 +98,19 @@ impl Calendar for Julian {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "ad") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             year
         } else if era.0 == tinystr!(16, "bc") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             1 - year
         } else {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(JulianDateInner)
@@ -276,8 +276,8 @@ impl Date<Julian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_julian =
-    ///     Date::try_new_julian_date(1969, 12, 20).expect("Failed to initialize Julian Date instance.");
+    /// let date_julian = Date::try_new_julian_date(1969, 12, 20)
+    ///     .expect("Failed to initialize Julian Date instance.");
     ///
     /// assert_eq!(date_julian.year().number, 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
@@ -287,7 +287,7 @@ impl Date<Julian> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Julian>, DateTimeError> {
+    ) -> Result<Date<Julian>, CalendarError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -298,7 +298,7 @@ impl Date<Julian> {
         if day > 28 {
             let bound = inner.days_in_month();
             if day > bound {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
         }
 
@@ -314,8 +314,9 @@ impl DateTime<Julian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_julian = DateTime::try_new_julian_datetime(1969, 12, 20, 13, 1, 0)
-    ///     .expect("Failed to initialize Julian DateTime instance.");
+    /// let datetime_julian =
+    ///     DateTime::try_new_julian_datetime(1969, 12, 20, 13, 1, 0)
+    ///         .expect("Failed to initialize Julian DateTime instance.");
     ///
     /// assert_eq!(datetime_julian.date.year().number, 1969);
     /// assert_eq!(datetime_julian.date.month().ordinal, 12);
@@ -331,7 +332,7 @@ impl DateTime<Julian> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Julian>, DateTimeError> {
+    ) -> Result<DateTime<Julian>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_julian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,

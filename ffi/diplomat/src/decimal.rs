@@ -27,7 +27,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
     pub struct ICU4XFixedDecimalFormatter(pub FixedDecimalFormatter);
 
-    #[diplomat::rust_link(icu::decimal::GroupingStrategy, Enum)]
+    #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
     pub enum ICU4XFixedDecimalGroupingStrategy {
         Auto,
         Never,

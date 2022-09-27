@@ -34,7 +34,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -69,9 +69,9 @@ impl Calendar for Buddhist {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         if era.0 != tinystr!(16, "be") {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 
@@ -160,8 +160,8 @@ impl Date<Buddhist> {
     /// use icu::calendar::Date;
     /// use std::convert::TryFrom;
     ///
-    /// let date_buddhist =
-    ///     Date::try_new_buddhist_date(1970, 1, 2).expect("Failed to initialize Buddhist Date instance.");
+    /// let date_buddhist = Date::try_new_buddhist_date(1970, 1, 2)
+    ///     .expect("Failed to initialize Buddhist Date instance.");
     ///
     /// assert_eq!(date_buddhist.year().number, 1970);
     /// assert_eq!(date_buddhist.month().ordinal, 1);
@@ -171,7 +171,7 @@ impl Date<Buddhist> {
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Buddhist>, DateTimeError> {
+    ) -> Result<Date<Buddhist>, CalendarError> {
         Date::try_new_iso_date(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
@@ -185,8 +185,9 @@ impl DateTime<Buddhist> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_buddhist = DateTime::try_new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
-    ///     .expect("Failed to initialize Buddhist DateTime instance.");
+    /// let datetime_buddhist =
+    ///     DateTime::try_new_buddhist_datetime(1970, 1, 2, 13, 1, 0)
+    ///         .expect("Failed to initialize Buddhist DateTime instance.");
     ///
     /// assert_eq!(datetime_buddhist.date.year().number, 1970);
     /// assert_eq!(datetime_buddhist.date.month().ordinal, 1);
@@ -202,7 +203,7 @@ impl DateTime<Buddhist> {
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Buddhist>, DateTimeError> {
+    ) -> Result<DateTime<Buddhist>, CalendarError> {
         Ok(DateTime {
             date: Date::try_new_buddhist_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,

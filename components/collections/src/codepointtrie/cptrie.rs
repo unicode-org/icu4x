@@ -402,7 +402,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let cpt1: CodePointTrie<char> = unimplemented!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
+    /// let cpt2: CodePointTrie<u32> =
+    ///     cpt1.try_into_converted().expect("infallible");
     /// ```
     pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
     where

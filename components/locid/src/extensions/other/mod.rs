@@ -35,7 +35,7 @@ pub use subtag::Subtag;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::other::{Subtag, Other};
+/// use icu::locid::extensions::other::{Other, Subtag};
 ///
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -59,7 +59,7 @@ impl Other {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::{Subtag, Other};
+    /// use icu::locid::extensions::other::{Other, Subtag};
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
