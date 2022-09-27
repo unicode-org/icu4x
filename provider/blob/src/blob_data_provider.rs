@@ -94,7 +94,7 @@ impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
-            data: Cart::make_yoke(blob, |bytes| {
+            data: Cart::try_make_yoke(blob, |bytes| {
                 BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
             })?,
         })

@@ -78,13 +78,10 @@ where
 
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone)]
-pub struct Cart(
-    #[cfg(feature = "sync")] yoke::erased::ErasedArcCart,
-    #[cfg(not(feature = "sync"))] yoke::erased::ErasedRcCart,
-);
+pub struct Cart(SelectedRc<Box<[u8]>>);
 
 impl Deref for Cart {
-    type Target = dyn yoke::erased::ErasedDestructor;
+    type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
         &*self.0
     }
@@ -96,14 +93,12 @@ unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
     /// Creates a Yoke<Y, Option<Cart>> from some owned C by applying f.
-    pub fn make_yoke<Y, F, E, C, D>(cart: C, f: F) -> Result<Yoke<Y, Option<Self>>, E>
+    pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,
-        F: FnOnce(&D) -> Result<<Y as Yokeable>::Output, E>,
-        C: Deref<Target = D> + crate::MaybeSendSync + 'static,
-        D: 'static + ?Sized,
+        F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b: &C| f(&*b))
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(|rc| Cart(rc)) })
             .map(Yoke::wrap_cart_in_option)
