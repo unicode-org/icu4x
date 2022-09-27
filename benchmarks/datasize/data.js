@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664306532947,
+  "lastUpdate": 1664308539843,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29093,6 +29093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a17377feda88b4aa6de52906ebd81b20a0b13cba"
         },
         "date": 1664306463785,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed5f96813c6e9a7366bb6cc848846beacff35c94",
+          "message": "Bump all crate versions to 1.0 (#2662)\n\n(except for segmenter and casemapping, they are 0.7)",
+          "timestamp": "2022-09-27T19:53:23Z",
+          "tree_id": "da72437bce12fdecb696d3ca458129e4e01f8158",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed5f96813c6e9a7366bb6cc848846beacff35c94"
+        },
+        "date": 1664308483155,
         "tool": "ndjson",
         "benches": [
           {
