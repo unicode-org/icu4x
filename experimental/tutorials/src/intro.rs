@@ -194,8 +194,8 @@
 //!
 //! ```toml
 //! [dependencies]
-//! icu = "1"
-//! icu_testdata = "1"
+//! icu = "1.0.0"
+//! icu_testdata = "1.0.0"
 //! ```
 //!
 //! and then we can use it in our code:
@@ -214,12 +214,12 @@
 //! use icu_testdata;
 //!
 //! let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
-//! .expect("Failed to create a datetime.").to_any();
+//!     .expect("Failed to create a datetime.").to_any();
 //!
 //! let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
 //! let dtf = DateTimeFormatter::try_new_unstable( & icu_testdata::unstable(), & locale!("ja").into(), options)
-//! .expect("Failed to initialize DateTimeFormat");
+//!     .expect("Failed to initialize DateTimeFormat");
 //!
 //! let formatted_date = dtf.format( & date).expect("Should return formatted date");
 //! println!("📅: {}", formatted_date);
@@ -248,15 +248,15 @@
 //!
 //! ```toml
 //! [dependencies]
-//! icu = "0.6"
-//! icu_provider_fs = { version = "1.0.0-beta1", features = ["deserialize_json"] }
+//! icu = { version = "1.0.0" }
+//! icu_provider_fs = { version = "1.0.0", features = ["deserialize_json"] }
 //! ```
 //!
 //! ```rust
 //! use icu_provider_fs::FsDataProvider;
 //!
 //! let provider = FsDataProvider::try_new("/path/to/data/directory")
-//! .expect_err("Specify a real directory in the line above");
+//!     .expect_err("Specify a real directory in the line above");
 //!
 //! ```
 //!
