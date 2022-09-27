@@ -1912,9 +1912,9 @@ dependencies = [
  "icu_testdata",
  "litemap",
  "serde",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "yoke",
- "zerofrom 0.1.1",
+ "zerofrom",
 ]
 
 [[package]]
