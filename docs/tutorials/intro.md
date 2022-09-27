@@ -36,7 +36,7 @@ cargo init --bin myapp
 
 The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs` which is the main file for our application.
 
-# 3. Vendoring in ICU4X
+# 3. Adding ICU4X as a dependency
 
 `ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
 
@@ -45,7 +45,7 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 icu = "1.0"
 ```
 
-After saving the changes, calling `cargo check` should vendor in `ICU4X` dependency.
+After saving the changes, commands like `cargo check` will download the `icu` Rust package and use it for the build.
 
 # 4. Accessing components
 
