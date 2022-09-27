@@ -81,7 +81,7 @@ icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone" }
 serde = { version = "1.0", default-features = false, optional = true }
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
 unicode-bidi = { version = "0.3.8", default-features = false }
-writeable = { version = "0.4", path = "../../utils/writeable/" }
+writeable = { version = "0.5", path = "../../utils/writeable/" }
 
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`

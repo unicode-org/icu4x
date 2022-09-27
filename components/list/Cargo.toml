@@ -31,7 +31,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 deduplicating_array = { version = "0.1", path = "../../utils/deduplicating_array", optional = true }
 regex-automata = { version = "0.2", default-features = false }
-writeable = { version = "0.4", path = "../../utils/writeable" }
+writeable = { version = "0.5", path = "../../utils/writeable" }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]

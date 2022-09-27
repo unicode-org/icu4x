@@ -75,7 +75,7 @@ databake = { version = "0.1.0", path = "../../utils/databake"}
 proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
-writeable = { version = "0.4", path = "../../utils/writeable" }
+writeable = { version = "0.5", path = "../../utils/writeable" }
 zip = "0.6"
 cached-path = "0.5"
 reqwest = { version = "0.11", features = ["blocking"] }
