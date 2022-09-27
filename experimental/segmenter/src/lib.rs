@@ -87,6 +87,7 @@ extern crate alloc;
 
 mod complex;
 mod dictionary;
+mod error;
 mod indices;
 mod language;
 mod rule_segmenter;
@@ -132,3 +133,8 @@ pub use crate::word::{
 };
 
 pub use crate::rule_segmenter::RuleBreakIterator;
+
+pub use error::SegmenterError;
+
+#[doc(inline)]
+pub use SegmenterError as Error;

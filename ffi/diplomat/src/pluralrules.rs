@@ -128,7 +128,7 @@ pub mod ffi {
                 .map(PluralOperands::from)
                 .map(ICU4XPluralOperands)
                 // XXX should this have its own errors?
-                .map_err(|_| ICU4XError::PluralParserError)
+                .map_err(|_| ICU4XError::PluralsParserError)
                 .map(Box::new)
                 .into()
         }

@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{AndListV1Marker, ErasedListV1Marker, OrListV1Marker, UnitListV1Marker};
+use crate::ListError;
 use crate::ListLength;
 use core::fmt::{self, Write};
 use icu_provider::prelude::*;
@@ -25,7 +26,7 @@ macro_rules! constructor {
             data_provider: &D,
             locale: &DataLocale,
             length: ListLength,
-        ) -> Result<Self, DataError> {
+        ) -> Result<Self, ListError> {
             let data = data_provider
                 .load(DataRequest {
                     locale,
@@ -36,8 +37,8 @@ macro_rules! constructor {
         }
         icu_provider::gen_any_buffer_constructors!(
             locale: include,
-            length: ListLength,
-            error: DataError,
+            style: ListLength,
+            error: ListError,
             functions: [
                 Self::$name,
                 $name_any,

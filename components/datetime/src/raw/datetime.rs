@@ -20,7 +20,7 @@ use crate::{
             TimeSymbolsV1Marker,
         },
     },
-    DateTimeFormatterError, FormattedDateTime,
+    DateTimeError, FormattedDateTime,
 };
 
 use icu_calendar::provider::WeekDataV1Marker;
@@ -48,7 +48,7 @@ impl TimeFormatter {
         locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -63,7 +63,7 @@ impl TimeFormatter {
         )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let symbols_data = if required.time_symbols_data {
             Some(
@@ -86,7 +86,7 @@ impl TimeFormatter {
             locale,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -142,7 +142,7 @@ impl DateFormatter {
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
@@ -155,7 +155,7 @@ impl DateFormatter {
             provider::date_time::generic_pattern_for_date_length(length, patterns_data);
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale,
@@ -191,7 +191,7 @@ impl DateFormatter {
             locale,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             generic_pattern,
@@ -259,12 +259,12 @@ impl DateTimeFormatter {
     pub fn try_from_date_and_time(
         date: DateFormatter,
         time: TimeFormatter,
-    ) -> Result<Self, DateTimeFormatterError> {
+    ) -> Result<Self, DateTimeError> {
         let generic_pattern = &date.generic_pattern;
         let time_patterns = &time.patterns;
         let patterns = date
             .patterns
-            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, DateTimeFormatterError>(
+            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, DateTimeError>(
                 |data, _| {
                     let date_pattern = data.0.expect_pattern("Lengths are single patterns");
                     let time_pattern: crate::pattern::runtime::Pattern = time_patterns
@@ -302,7 +302,7 @@ impl DateTimeFormatter {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         locale: &DataLocale,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -312,7 +312,7 @@ impl DateTimeFormatter {
             + ?Sized,
     {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale,
@@ -354,7 +354,7 @@ impl DateTimeFormatter {
             locale,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             patterns,

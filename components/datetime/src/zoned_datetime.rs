@@ -22,7 +22,7 @@ use crate::{
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
-    CldrCalendar, DateTimeFormatterError,
+    CldrCalendar, DateTimeError,
 };
 
 /// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`].
@@ -129,7 +129,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -210,7 +210,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -250,7 +250,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         locale: include,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-        error: DateTimeFormatterError
+        error: DateTimeError
     );
 
     /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]

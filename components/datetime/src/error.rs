@@ -3,21 +3,26 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::fields::FieldSymbol;
-use crate::input::DateTimeError;
+use crate::input::CalendarError;
 use crate::pattern::PatternError;
 #[cfg(feature = "experimental")]
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
-use icu_decimal::FixedDecimalFormatterError;
-use icu_plurals::PluralRulesError;
+use icu_decimal::DecimalError;
+use icu_plurals::PluralsError;
 use icu_provider::prelude::DataError;
 
-/// A list of possible error outcomes for the [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) struct.
-#[derive(Display, Debug, Copy, Clone)]
+#[cfg(feature = "std")]
+impl std::error::Error for DateTimeError {}
+
+/// A list of error outcomes for various operations in the `icu_datetime` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum DateTimeFormatterError {
+pub enum DateTimeError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
     Pattern(PatternError),
@@ -26,7 +31,7 @@ pub enum DateTimeFormatterError {
     Format(core::fmt::Error),
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
@@ -43,10 +48,10 @@ pub enum DateTimeFormatterError {
     UnsupportedOptions,
     /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
     #[displaydoc("{0}")]
-    PluralRules(PluralRulesError),
+    PluralRules(PluralsError),
     /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
     #[displaydoc("{0}")]
-    DateTimeInput(DateTimeError),
+    DateTimeInput(CalendarError),
     /// An error originating from a missing weekday symbol in the data.
     #[displaydoc("Data file missing weekday symbol for weekday {0}")]
     MissingWeekdaySymbol(usize),
@@ -58,7 +63,7 @@ pub enum DateTimeFormatterError {
     FixedDecimal,
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
-    FixedDecimalFormatter(FixedDecimalFormatterError),
+    FixedDecimalFormatter(DecimalError),
     /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
     #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
@@ -73,42 +78,39 @@ pub enum DateTimeFormatterError {
     MissingOrdinalRules,
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for DateTimeFormatterError {}
-
-impl From<PatternError> for DateTimeFormatterError {
+impl From<PatternError> for DateTimeError {
     fn from(e: PatternError) -> Self {
-        DateTimeFormatterError::Pattern(e)
+        DateTimeError::Pattern(e)
     }
 }
 
-impl From<DataError> for DateTimeFormatterError {
+impl From<DataError> for DateTimeError {
     fn from(e: DataError) -> Self {
-        DateTimeFormatterError::DataProvider(e)
+        DateTimeError::Data(e)
     }
 }
 
-impl From<core::fmt::Error> for DateTimeFormatterError {
+impl From<core::fmt::Error> for DateTimeError {
     fn from(e: core::fmt::Error) -> Self {
-        DateTimeFormatterError::Format(e)
+        DateTimeError::Format(e)
     }
 }
 
 #[cfg(feature = "experimental")]
-impl From<SkeletonError> for DateTimeFormatterError {
+impl From<SkeletonError> for DateTimeError {
     fn from(e: SkeletonError) -> Self {
-        DateTimeFormatterError::Skeleton(e)
+        DateTimeError::Skeleton(e)
     }
 }
 
-impl From<PluralRulesError> for DateTimeFormatterError {
-    fn from(e: PluralRulesError) -> Self {
-        DateTimeFormatterError::PluralRules(e)
+impl From<PluralsError> for DateTimeError {
+    fn from(e: PluralsError) -> Self {
+        DateTimeError::PluralRules(e)
     }
 }
 
-impl From<DateTimeError> for DateTimeFormatterError {
-    fn from(e: DateTimeError) -> Self {
-        DateTimeFormatterError::DateTimeInput(e)
+impl From<CalendarError> for DateTimeError {
+    fn from(e: CalendarError) -> Self {
+        DateTimeError::DateTimeInput(e)
     }
 }

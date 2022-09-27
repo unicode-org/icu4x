@@ -4,7 +4,7 @@
 
 //! This module contains various types used by `icu_calendar` and `icu_datetime`
 
-use crate::error::DateTimeError;
+use crate::error::CalendarError;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
@@ -208,12 +208,12 @@ macro_rules! dt_unit {
         }
 
         impl FromStr for $name {
-            type Err = DateTimeError;
+            type Err = CalendarError;
 
             fn from_str(input: &str) -> Result<Self, Self::Err> {
                 let val: $storage = input.parse()?;
                 if val > $value {
-                    Err(DateTimeError::Overflow {
+                    Err(CalendarError::Overflow {
                         field: "$name",
                         max: $value,
                     })
@@ -224,11 +224,11 @@ macro_rules! dt_unit {
         }
 
         impl TryFrom<$storage> for $name {
-            type Error = DateTimeError;
+            type Error = CalendarError;
 
             fn try_from(input: $storage) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(DateTimeError::Overflow {
+                    Err(CalendarError::Overflow {
                         field: "$name",
                         max: $value,
                     })
@@ -239,11 +239,11 @@ macro_rules! dt_unit {
         }
 
         impl TryFrom<usize> for $name {
-            type Error = DateTimeError;
+            type Error = CalendarError;
 
             fn try_from(input: usize) -> Result<Self, Self::Error> {
                 if input > $value {
-                    Err(DateTimeError::Overflow {
+                    Err(CalendarError::Overflow {
                         field: "$name",
                         max: $value,
                     })
@@ -467,7 +467,7 @@ impl Time {
         minute: u8,
         second: u8,
         nanosecond: u32,
-    ) -> Result<Self, DateTimeError> {
+    ) -> Result<Self, CalendarError> {
         Ok(Self {
             hour: hour.try_into()?,
             minute: minute.try_into()?,

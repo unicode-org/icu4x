@@ -125,7 +125,7 @@ pub fn complex_language_segment_str(
 
         let segmenter = match dictionary.best(str_per_lang.chars().next().unwrap() as u32) {
             Some(v) => DictionarySegmenter::try_new_unstable(v),
-            None => Err(DataError::custom("cannot find payload")),
+            None => Err(DataError::custom("cannot find payload").into()),
         };
         match segmenter {
             Ok(segmenter) => {

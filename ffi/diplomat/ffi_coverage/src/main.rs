@@ -237,6 +237,9 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedZonedDateTime",
         "icu::decimal::FormattedFixedDecimal",
 
+        // The FFI constructor takes a single option instead of a struct
+        "icu::decimal::options::FixedDecimalFormatterOptions",
+
         // Rust-specific power user API for rules ASTS and such
         // could be exposed in the future but it's complicated
         "icu::plurals::rules",
@@ -334,25 +337,35 @@ lazy_static::lazy_static! {
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
+        "icu::collator::provider",
         "icu::datetime::provider",
+        "icu::decimal::provider",
+        "icu::list::provider",
         "icu::locid_transform::provider",
+        "icu::normalizer::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::normalizer::provider",
-        "icu::list::provider",
         "icu::timezone::provider",
-        "icu::collator::provider",
-        "icu::decimal::provider",
         "icu_provider_adapters::fallback::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
-        "icu::datetime::time_zone::TimeZoneFormatter",
         "icu::datetime::options::DateTimeFormatterOptions",
-        "icu::decimal::options::GroupingStrategy",
-        "icu::decimal::options::FixedDecimalFormatterOptions",
+
+        // Re-exports of errors
+        "icu::calendar::Error",
+        "icu::datetime::Error",
+        "icu::decimal::Error",
+        "icu::list::Error",
+        "icu::locid_transform::Error",
+        "icu::normalizer::Error",
+        "icu::plurals::Error",
+        "icu::properties::Error",
+        "icu::segmenter::Error",
+        "icu::timezone::Error",
+        "icu::collator::Error",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -380,7 +393,7 @@ lazy_static::lazy_static! {
 
         // Constructing an error is not useful over FFI because it gets turned into
         // a flat ICU4XError anyway
-        "icu::calendar::DateTimeError::unknown_any_calendar_kind",
+        "icu::calendar::CalendarError::unknown_any_calendar_kind",
 
         // Rusty input trait
         "icu::datetime::input",

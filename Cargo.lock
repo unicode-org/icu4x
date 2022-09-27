@@ -1655,6 +1655,7 @@ version = "1.0.0-beta1"
 dependencies = [
  "criterion",
  "databake",
+ "displaydoc",
  "icu",
  "icu_locid",
  "icu_provider",
@@ -1820,6 +1821,7 @@ version = "1.0.0-alpha1"
 dependencies = [
  "criterion",
  "databake",
+ "displaydoc",
  "icu",
  "icu_collections",
  "icu_locid",
