@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664308539843,
+  "lastUpdate": 1664320856976,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29123,6 +29123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ed5f96813c6e9a7366bb6cc848846beacff35c94"
         },
         "date": 1664308483155,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f91c4bf32fe62c1011a8ba178b6a2afa9051d42",
+          "message": "Don't say index.md (#2665)",
+          "timestamp": "2022-09-27T23:13:48Z",
+          "tree_id": "227339001a320b8d2f3a8ad7b5244e5fa5949659",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f91c4bf32fe62c1011a8ba178b6a2afa9051d42"
+        },
+        "date": 1664320784143,
         "tool": "ndjson",
         "benches": [
           {
