@@ -31,16 +31,19 @@ pub mod ffi {
     /// The error names are stable and can be checked against as strings in the JS API
     #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
     #[diplomat::rust_link(icu::calendar::CalendarError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
+    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
+    #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::locid_transform::LocaleTransformError, Enum, compact)]
+    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::plurals::PluralsError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
-    #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
-    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::segmenter::SegmenterError, Enum, compact)]
     #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
-    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
-    #[diplomat::rust_link(icu::decimal::FixedDecimalFormatterError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.

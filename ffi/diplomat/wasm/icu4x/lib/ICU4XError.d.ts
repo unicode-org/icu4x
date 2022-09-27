@@ -5,7 +5,7 @@
 
  * The error names are stable and can be checked against as strings in the JS API
 
- * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html 1}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.CalendarError.html 2}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html 3}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html 4}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html 5}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html 6}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html 7}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html 8}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html 9}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/enum.TimeZoneError.html 10}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CollatorError.html 11}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.FixedDecimalFormatterError.html 12}
+ * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html 1}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.CalendarError.html 2}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CollatorError.html 3}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeError.html 4}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.DecimalError.html 5}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListError.html 6}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html 7}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/enum.LocaleTransformError.html 8}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html 9}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralsError.html 10}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html 11}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html 12}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html 13}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.SegmenterError.html 14}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/enum.TimeZoneError.html 15}
  */
 export enum ICU4XError {
   /**
@@ -98,7 +98,7 @@ export enum ICU4XError {
   FixedDecimalSyntaxError = 'FixedDecimalSyntaxError',
   /**
    */
-  PluralParserError = 'PluralParserError',
+  PluralsParserError = 'PluralsParserError',
   /**
    */
   CalendarParseError = 'CalendarParseError',
@@ -122,37 +122,37 @@ export enum ICU4XError {
   CalendarMissingInputError = 'CalendarMissingInputError',
   /**
    */
-  CalendarUnknownAnyCalendarKindError = 'CalendarUnknownAnyCalendarKindError',
+  CalendarUnknownKindError = 'CalendarUnknownKindError',
   /**
    */
   CalendarMissingError = 'CalendarMissingError',
   /**
    */
-  DateTimeFormatPatternError = 'DateTimeFormatPatternError',
+  DateTimePatternError = 'DateTimePatternError',
   /**
    */
-  DateTimeFormatMissingInputFieldError = 'DateTimeFormatMissingInputFieldError',
+  DateTimeMissingInputFieldError = 'DateTimeMissingInputFieldError',
   /**
    */
-  DateTimeFormatSkeletonError = 'DateTimeFormatSkeletonError',
+  DateTimeSkeletonError = 'DateTimeSkeletonError',
   /**
    */
-  DateTimeFormatUnsupportedFieldError = 'DateTimeFormatUnsupportedFieldError',
+  DateTimeUnsupportedFieldError = 'DateTimeUnsupportedFieldError',
   /**
    */
-  DateTimeFormatUnsupportedOptionsError = 'DateTimeFormatUnsupportedOptionsError',
+  DateTimeUnsupportedOptionsError = 'DateTimeUnsupportedOptionsError',
   /**
    */
-  DateTimeFormatMissingWeekdaySymbolError = 'DateTimeFormatMissingWeekdaySymbolError',
+  DateTimeMissingWeekdaySymbolError = 'DateTimeMissingWeekdaySymbolError',
   /**
    */
-  DateTimeFormatMissingMonthSymbolError = 'DateTimeFormatMissingMonthSymbolError',
+  DateTimeMissingMonthSymbolError = 'DateTimeMissingMonthSymbolError',
   /**
    */
-  DateTimeFormatFixedDecimalError = 'DateTimeFormatFixedDecimalError',
+  DateTimeFixedDecimalError = 'DateTimeFixedDecimalError',
   /**
    */
-  DateTimeFormatMismatchedAnyCalendarError = 'DateTimeFormatMismatchedAnyCalendarError',
+  DateTimeMismatchedCalendarError = 'DateTimeMismatchedCalendarError',
   /**
    */
   TinyStrTooLargeError = 'TinyStrTooLargeError',
