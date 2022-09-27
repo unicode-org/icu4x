@@ -30,13 +30,13 @@
 //! // Resolve embedding levels within the text.  Pass `None` to detect the
 //! // paragraph level automatically.
 //!
-//! let bidi_info = BidiInfo::new_with_data_source(&adapter, &text, None);
+//! let bidi_info = BidiInfo::new_with_data_source(&adapter, text, None);
 //!
 //! // This paragraph has embedding level 1 because its first strong character is RTL.
 //! assert_eq!(bidi_info.paragraphs.len(), 1);
 //! let para = &bidi_info.paragraphs[0];
 //! assert_eq!(para.level.number(), 1);
-//! assert_eq!(para.level.is_rtl(), true);
+//! assert!(para.level.is_rtl());
 //!
 //! // Re-ordering is done after wrapping each paragraph into a sequence of
 //! // lines. For this example, I'll just use a single line that spans the

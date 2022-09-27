@@ -23,7 +23,8 @@ use tinystr::TinyAsciiStr;
 /// use icu::locid::extensions::unicode::Value;
 ///
 /// let value1: Value = "gregory".parse().expect("Failed to parse a Value.");
-/// let value2: Value = "islamic-civil".parse().expect("Failed to parse a Value.");
+/// let value2: Value =
+///     "islamic-civil".parse().expect("Failed to parse a Value.");
 /// let value3: Value = "true".parse().expect("Failed to parse a Value.");
 ///
 /// assert_eq!(&value1.to_string(), "gregory");
@@ -47,11 +48,11 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::unicode::Value;
     ///
-    /// let value = Value::from_bytes(b"buddhist").expect("Parsing failed.");
+    /// let value = Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     ///
     /// assert_eq!(&value.to_string(), "buddhist");
     /// ```
-    pub fn from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = ShortVec::new();
 
         if !input.is_empty() {
@@ -148,7 +149,7 @@ impl FromStr for Value {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -162,7 +163,9 @@ impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+/// use icu::locid::{
+///     extensions_unicode_key as key, extensions_unicode_value as value,
+/// };
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///

@@ -196,22 +196,22 @@ lazy_static::lazy_static! {
         "icu::calendar::japanese",
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::new_gregorian_date",
-        "icu::calendar::Date::new_buddhist_date",
-        "icu::calendar::Date::new_coptic_date",
-        "icu::calendar::Date::new_ethiopian_date",
-        "icu::calendar::Date::new_indian_date",
-        "icu::calendar::Date::new_japanese_date",
-        "icu::calendar::Date::new_japanese_extended_date",
-        "icu::calendar::Date::new_julian_date",
-        "icu::calendar::DateTime::new_gregorian_datetime",
-        "icu::calendar::DateTime::new_buddhist_datetime",
-        "icu::calendar::DateTime::new_coptic_datetime",
-        "icu::calendar::DateTime::new_ethiopian_datetime",
-        "icu::calendar::DateTime::new_indian_datetime",
-        "icu::calendar::DateTime::new_japanese_datetime",
-        "icu::calendar::DateTime::new_japanese_extended_datetime",
-        "icu::calendar::DateTime::new_julian_datetime",
+        "icu::calendar::Date::try_new_gregorian_date",
+        "icu::calendar::Date::try_new_buddhist_date",
+        "icu::calendar::Date::try_new_coptic_date",
+        "icu::calendar::Date::try_new_ethiopian_date",
+        "icu::calendar::Date::try_new_indian_date",
+        "icu::calendar::Date::try_new_japanese_date",
+        "icu::calendar::Date::try_new_japanese_extended_date",
+        "icu::calendar::Date::try_new_julian_date",
+        "icu::calendar::DateTime::try_new_gregorian_datetime",
+        "icu::calendar::DateTime::try_new_buddhist_datetime",
+        "icu::calendar::DateTime::try_new_coptic_datetime",
+        "icu::calendar::DateTime::try_new_ethiopian_datetime",
+        "icu::calendar::DateTime::try_new_indian_datetime",
+        "icu::calendar::DateTime::try_new_japanese_datetime",
+        "icu::calendar::DateTime::try_new_japanese_extended_datetime",
+        "icu::calendar::DateTime::try_new_julian_datetime",
 
         // Arithmetic APIs are still experimental/hidden for 1.0
         "icu::calendar::DateDuration",
@@ -236,6 +236,9 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedDateTime",
         "icu::datetime::FormattedZonedDateTime",
         "icu::decimal::FormattedFixedDecimal",
+
+        // The FFI constructor takes a single option instead of a struct
+        "icu::decimal::options::FixedDecimalFormatterOptions",
 
         // Rust-specific power user API for rules ASTS and such
         // could be exposed in the future but it's complicated
@@ -334,25 +337,35 @@ lazy_static::lazy_static! {
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
+        "icu::collator::provider",
         "icu::datetime::provider",
+        "icu::decimal::provider",
+        "icu::list::provider",
         "icu::locid_transform::provider",
+        "icu::normalizer::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
-        "icu::normalizer::provider",
-        "icu::list::provider",
         "icu::timezone::provider",
-        "icu::collator::provider",
-        "icu::decimal::provider",
         "icu_provider_adapters::fallback::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
-        "icu::datetime::time_zone::TimeZoneFormatter",
         "icu::datetime::options::DateTimeFormatterOptions",
-        "icu::decimal::options::GroupingStrategy",
-        "icu::decimal::options::FixedDecimalFormatterOptions",
+
+        // Re-exports of errors
+        "icu::calendar::Error",
+        "icu::datetime::Error",
+        "icu::decimal::Error",
+        "icu::list::Error",
+        "icu::locid_transform::Error",
+        "icu::normalizer::Error",
+        "icu::plurals::Error",
+        "icu::properties::Error",
+        "icu::segmenter::Error",
+        "icu::timezone::Error",
+        "icu::collator::Error",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -377,6 +390,10 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
+
+        // Constructing an error is not useful over FFI because it gets turned into
+        // a flat ICU4XError anyway
+        "icu::calendar::CalendarError::unknown_any_calendar_kind",
 
         // Rusty input trait
         "icu::datetime::input",
@@ -410,8 +427,8 @@ lazy_static::lazy_static! {
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
-        "icu::locid::extensions_other_key",
-        "icu::locid::extensions_private_key",
+        "icu::locid::extensions_other_subtag",
+        "icu::locid::extensions_private_subtag",
         "icu::locid::extensions_transform_key",
         "icu::locid::extensions_unicode_attribute",
         "icu::locid::extensions_unicode_key",

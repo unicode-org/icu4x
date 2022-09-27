@@ -101,8 +101,11 @@ mod grouper;
 pub mod options;
 pub mod provider;
 
-pub use error::Error as FixedDecimalFormatterError;
+pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
+
+#[doc(inline)]
+pub use DecimalError as Error;
 
 use alloc::string::String;
 use fixed_decimal::FixedDecimal;
@@ -136,7 +139,7 @@ impl FixedDecimalFormatter {
         data_provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
-    ) -> Result<Self, FixedDecimalFormatterError> {
+    ) -> Result<Self, DecimalError> {
         let symbols = data_provider
             .load(DataRequest {
                 locale,
@@ -149,7 +152,7 @@ impl FixedDecimalFormatter {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: options::FixedDecimalFormatterOptions,
-        error: FixedDecimalFormatterError
+        error: DecimalError
     );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].

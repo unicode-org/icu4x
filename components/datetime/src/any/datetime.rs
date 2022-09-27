@@ -6,7 +6,7 @@
 use crate::options::components;
 use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
-use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
+use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
@@ -52,13 +52,14 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// assert_writeable_eq!(dtf
-///     .format(&any_datetime)
-///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+/// assert_writeable_eq!(
+///     dtf.format(&any_datetime).expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34 PM"
+/// );
 /// ```
 ///
 /// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
@@ -84,13 +85,13 @@ use writeable::Writeable;
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
 /// // construct from era code, year, month code, day, time, and a calendar
 /// // This is March 28, 15 Heisei
-/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+/// let manual_datetime = DateTime::try_new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
 ///                                                manual_time, calendar.clone())
 ///                     .expect("Failed to construct DateTime manually");
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
@@ -130,7 +131,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: AnyProvider,
     {
@@ -161,7 +162,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let mut options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
@@ -171,13 +175,14 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -185,7 +190,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: BufferProvider,
     {
@@ -209,8 +214,8 @@ impl DateTimeFormatter {
     /// use icu::datetime::{options::components, DateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -220,15 +225,18 @@ impl DateTimeFormatter {
     /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
     ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en-u-ca-gregory").into(),
-    ///     options.into()
+    ///     options.into(),
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("Calendars should match"), "September 2020");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "September 2020"
+    /// );
     /// ```
     #[cfg(feature = "experimental")]
     #[inline(never)]
@@ -236,7 +244,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -304,7 +312,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
@@ -314,20 +325,21 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -391,14 +403,14 @@ impl DateTimeFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(
+    /// let df = DateFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
@@ -407,13 +419,14 @@ impl DateTimeFormatter {
     ///
     /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -421,7 +434,7 @@ impl DateTimeFormatter {
     pub fn try_from_date_and_time(
         date: DateFormatter,
         time: TimeFormatter,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
 where {
         Ok(Self(
             raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
@@ -436,10 +449,7 @@ where {
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
     /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
-    pub fn format<'l, T>(
-        &'l self,
-        value: &T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeFormatterError>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
@@ -459,7 +469,7 @@ where {
     pub fn format_to_string(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<String, DateTimeFormatterError> {
+    ) -> Result<String, DateTimeError> {
         Ok(self.format(value)?.write_to_string().into_owned())
     }
 
@@ -507,13 +517,13 @@ where {
     fn convert_if_necessary<'a>(
         &'a self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
+    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
 
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));
@@ -558,7 +568,7 @@ mod tests {
     #[test]
     fn test_fallback() {
         // We can rely on the code's ability to convert ISO datetimes
-        let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
+        let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
         test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");
@@ -593,7 +603,7 @@ mod tests {
             )
             .unwrap()
             .format_to_string(
-                &DateTime::new_iso_datetime(2022, 9, 20, 0, 0, 0)
+                &DateTime::try_new_iso_datetime(2022, 9, 20, 0, 0, 0)
                     .unwrap()
                     .to_any()
             )

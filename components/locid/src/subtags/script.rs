@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Script;
     ///
-    /// let script: Script = "Latn".parse().expect("Failed to parse a script subtag.");
+    /// let script: Script =
+    ///     "Latn".parse().expect("Failed to parse a script subtag.");
     /// ```
     ///
     /// [`unicode_script_id`]: https://unicode.org/reports/tr35/#unicode_script_id

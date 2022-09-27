@@ -97,9 +97,9 @@ impl DataPayload<BufferMarker> {
     /// Requires the `deserialize_json` feature:
     ///
     /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::hello_world::*;
     /// use icu_provider::buf::BufferFormat;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
     ///
     /// let buffer: &[u8] = b"{\"message\":\"Hallo Welt\"}";
     ///

@@ -59,7 +59,8 @@
 //!     }
 //! }
 //!
-//! let pattern: Pattern<usize> = "{0}, {1}".try_into().expect("Failed to parse a pattern.");
+//! let pattern: Pattern<usize> =
+//!     "{0}, {1}".try_into().expect("Failed to parse a pattern.");
 //!
 //! let replacements = vec![
 //!     vec![

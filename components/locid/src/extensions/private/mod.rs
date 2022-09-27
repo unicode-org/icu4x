@@ -8,31 +8,29 @@
 //! Those extensions are treated as a pass-through, and no Unicode related
 //! behavior depends on them.
 //!
-//! The main struct for this extension is [`Private`] which is a list of [`Keys`].
+//! The main struct for this extension is [`Private`] which is a list of [`Subtag`]s.
 //!
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions::private::{Key, Private};
+//! use icu::locid::extensions::private::{Private, Subtag};
 //! use icu::locid::Locale;
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
-//! let key: Key = "foo".parse().expect("Parsing key failed.");
-//! assert_eq!(loc.extensions.private.contains(&key), true);
-//! assert_eq!(loc.extensions.private.iter().next(), Some(&key));
+//! let subtag: Subtag = "foo".parse().expect("Parsing subtag failed.");
+//! assert!(loc.extensions.private.contains(&subtag));
+//! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag));
 //! loc.extensions.private.clear();
 //! assert_eq!(loc.to_string(), "en-US");
 //! ```
-//!
-//! [`Keys`]: Key
 
-mod key;
+mod other;
 
 use alloc::vec::Vec;
 use core::ops::Deref;
 
-pub use key::Key;
+pub use other::Subtag;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
@@ -46,19 +44,19 @@ use crate::parser::SubtagIterator;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::private::{Key, Private};
+/// use icu::locid::extensions::private::{Private, Subtag};
 ///
-/// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-/// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+/// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+/// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
-/// let private = Private::from_vec_unchecked(vec![key1, key2]);
+/// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
 /// assert_eq!(&private.to_string(), "-x-foo-bar");
 /// ```
 ///
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Private(Vec<Key>);
+pub struct Private(Vec<Subtag>);
 
 impl Private {
     /// Returns a new empty list of private-use extensions. Same as [`default()`](Default::default()), but is `const`.
@@ -75,20 +73,20 @@ impl Private {
         Self(Vec::new())
     }
 
-    /// A constructor which takes a pre-sorted list of [`Key`].
+    /// A constructor which takes a pre-sorted list of [`Subtag`].
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Key, Private};
+    /// use icu::locid::extensions::private::{Private, Subtag};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let private = Private::from_vec_unchecked(vec![key1, key2]);
+    /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     /// ```
-    pub fn from_vec_unchecked(input: Vec<Key>) -> Self {
+    pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
         Self(input)
     }
 
@@ -97,11 +95,11 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Key, Private};
+    /// use icu::locid::extensions::private::{Private, Subtag};
     ///
-    /// let key1: Key = "foo".parse().expect("Failed to parse a Key.");
-    /// let key2: Key = "bar".parse().expect("Failed to parse a Key.");
-    /// let mut private = Private::from_vec_unchecked(vec![key1, key2]);
+    /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
+    /// let mut private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     ///
     /// assert_eq!(&private.to_string(), "-x-foo-bar");
     ///
@@ -114,7 +112,9 @@ impl Private {
     }
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
-        let keys = iter.map(Key::from_bytes).collect::<Result<Vec<_>, _>>()?;
+        let keys = iter
+            .map(Subtag::try_from_bytes)
+            .collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self::from_vec_unchecked(keys))
     }
@@ -159,7 +159,7 @@ impl writeable::Writeable for Private {
 }
 
 impl Deref for Private {
-    type Target = [Key];
+    type Target = [Subtag];
 
     fn deref(&self) -> &Self::Target {
         self.0.deref()

@@ -20,7 +20,8 @@ use std::collections::HashMap;
 ///
 /// ```
 /// use icu_pattern::{
-///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern, ReplacementProvider,
+///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
+///     ReplacementProvider,
 /// };
 /// use std::{borrow::Cow, collections::HashMap, convert::TryInto};
 ///

@@ -18,9 +18,11 @@ use core::ops::Deref;
 /// ```
 /// use icu::locid::subtags::{Variant, Variants};
 ///
-/// let variant1: Variant = "posix".parse().expect("Failed to parse a variant subtag.");
+/// let variant1: Variant =
+///     "posix".parse().expect("Failed to parse a variant subtag.");
 ///
-/// let variant2: Variant = "macos".parse().expect("Failed to parse a variant subtag.");
+/// let variant2: Variant =
+///     "macos".parse().expect("Failed to parse a variant subtag.");
 /// let mut v = vec![variant1, variant2];
 /// v.sort();
 /// v.dedup();

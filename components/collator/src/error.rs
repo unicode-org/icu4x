@@ -8,7 +8,9 @@ use displaydoc::Display;
 use icu_properties::PropertiesError;
 use icu_provider::prelude::DataError;
 
-/// Error returned by the constructor of `Collator`
+/// A list of error outcomes for various operations in the `icu_collator` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug)]
 #[non_exhaustive]
 pub enum CollatorError {
@@ -18,7 +20,7 @@ pub enum CollatorError {
     MalformedData,
     /// An error originating inside of the data provider.
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
 }
 
 #[cfg(feature = "std")]
@@ -26,14 +28,14 @@ impl std::error::Error for CollatorError {}
 
 impl From<DataError> for CollatorError {
     fn from(e: DataError) -> Self {
-        CollatorError::DataProvider(e)
+        CollatorError::Data(e)
     }
 }
 
 impl From<PropertiesError> for CollatorError {
     fn from(e: PropertiesError) -> Self {
         match e {
-            PropertiesError::PropDataLoad(d) => CollatorError::DataProvider(d),
+            PropertiesError::PropDataLoad(d) => CollatorError::Data(d),
             _ => unreachable!("Shouldn't have non-Data PropertiesError"),
         }
     }

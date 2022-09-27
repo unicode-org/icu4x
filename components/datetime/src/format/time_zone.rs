@@ -4,11 +4,11 @@
 
 use core::fmt;
 
-use crate::error::DateTimeFormatterError as Error;
+use crate::error::DateTimeError as Error;
 use crate::{
     input::TimeZoneInput,
     time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},
-    DateTimeFormatterError,
+    DateTimeError,
 };
 use writeable::Writeable;
 
@@ -78,10 +78,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::datetime::DateTimeFormatterError;
     /// use icu::datetime::time_zone::TimeZoneFormatter;
+    /// use icu::datetime::DateTimeError;
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
     ///
     /// let mut tzf = TimeZoneFormatter::try_new_unstable(
@@ -98,12 +98,13 @@ where
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    ///     Err(DateTimeError::UnsupportedOptions)
     /// ));
     /// assert!(buf.is_empty());
     ///
     /// // Enable a non-fallback format:
-    /// tzf.load_generic_location_format(&icu_testdata::unstable()).unwrap();
+    /// tzf.load_generic_location_format(&icu_testdata::unstable())
+    ///     .unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Ok(_))
@@ -115,7 +116,7 @@ where
     /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    ///     Err(DateTimeError::UnsupportedOptions)
     /// ));
     ///
     /// // Use the `Writable` trait instead to enable infallible formatting:
@@ -128,19 +129,19 @@ where
         for unit in self.time_zone_format.format_units.iter() {
             match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
                 Ok(r) => return Ok(r),
-                Err(DateTimeFormatterError::UnsupportedOptions) => continue,
+                Err(DateTimeError::UnsupportedOptions) => continue,
                 Err(e) => return Err(e),
             }
         }
-        Err(DateTimeFormatterError::UnsupportedOptions)
+        Err(DateTimeError::UnsupportedOptions)
     }
 
-    fn handle_last_resort_error<W>(&self, e: DateTimeFormatterError, sink: &mut W) -> fmt::Result
+    fn handle_last_resort_error<W>(&self, e: DateTimeError, sink: &mut W) -> fmt::Result
     where
         W: core::fmt::Write + ?Sized,
     {
         match e {
-            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+            DateTimeError::MissingInputField(Some("gmt_offset")) => {
                 debug_assert!(
                     false,
                     "Warning: using last-resort time zone fallback: {:?}.\

@@ -21,7 +21,7 @@ use writeable::Writeable;
 
 use crate::{
     calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
-    DateTimeFormatterError, FormattedDateTime,
+    DateTimeError, FormattedDateTime,
 };
 
 #[cfg(feature = "experimental")]
@@ -45,14 +45,14 @@ use crate::options::components;
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let tf = TimeFormatter::try_new_unstable(
+/// let tf = TimeFormatter::try_new_with_length_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     Time::Short,
 /// )
 /// .expect("Failed to create TimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
@@ -79,7 +79,7 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
     ///
-    /// TimeFormatter::try_new_unstable(
+    /// TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     Time::Short,
@@ -89,11 +89,11 @@ impl TimeFormatter {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new_unstable<D>(
+    pub fn try_new_with_length_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Time,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -113,7 +113,12 @@ impl TimeFormatter {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         length: length::Time,
-        error: DateTimeFormatterError
+        error: DateTimeError,
+        functions: [
+            Self::try_new_with_length_unstable,
+            try_new_with_length_with_any_provider,
+            try_new_with_length_with_buffer_provider
+        ]
     );
 
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -127,14 +132,14 @@ impl TimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
@@ -155,14 +160,14 @@ impl TimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
@@ -193,14 +198,14 @@ impl TimeFormatter {
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+/// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     length::Date::Full,
 /// )
 /// .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_gregorian_date(2020, 9, 1)
+/// let date = Date::try_new_gregorian_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 ///
 /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
@@ -223,21 +228,22 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     length::Date::Full
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
+    ///         &icu_testdata::unstable(),
+    ///         &locale!("en").into(),
+    ///         length::Date::Full,
+    ///     )
+    ///     .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format(&Date::new_gregorian_date(2022, 8, 29).unwrap()),
+    ///     formatter.format(&Date::try_new_gregorian_date(2022, 8, 29).unwrap()),
     ///     "Monday, August 29, 2022",
     /// );
     /// ```
@@ -253,16 +259,16 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedDateFormatter::<Indian>::try_new_unstable(
+    /// let formatter = TypedDateFormatter::<Indian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-japanese").into(),
-    ///     length::Date::Full
+    ///     length::Date::Full,
     /// )
     /// .unwrap();
     ///
     /// // Indian format from type wins over locale keyword
     /// assert_writeable_eq!(
-    ///     formatter.format(&Date::new_indian_date(1944, 6, 7).unwrap()),
+    ///     formatter.format(&Date::try_new_indian_date(1944, 6, 7).unwrap()),
     ///     "Monday, Bhadra 7, 1944 Saka",
     /// );
     /// ```
@@ -270,11 +276,11 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// [data provider]: icu_provider
     /// [`DateFormatter`]: crate::DateFormatter
     #[inline]
-    pub fn try_new_unstable<D>(
+    pub fn try_new_with_length_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -298,7 +304,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         length: length::Date,
-        error: DateTimeFormatterError
+        error: DateTimeError,
+        functions: [
+            Self::try_new_with_length_unstable,
+            try_new_with_length_with_any_provider,
+            try_new_with_length_with_buffer_provider
+        ]
     );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -311,14 +322,14 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Full,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    /// let date = Date::try_new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     ///
     /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
@@ -339,14 +350,14 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Short,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    /// let date = Date::try_new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     ///
     /// assert_eq!(df.format_to_string(&date), "9/1/20");
@@ -390,7 +401,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// assert_writeable_eq!(dtf.format(&datetime), "Sep 1, 2020, 12:34 PM");
@@ -414,13 +425,13 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// };
     /// use icu::locid::locale;
     ///
-    /// let tf = TimeFormatter::try_new_unstable(
+    /// let tf = TimeFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Short,
@@ -436,7 +447,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     pub fn try_from_date_and_time(
         date: TypedDateFormatter<C>,
         time: TimeFormatter,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
 where {
         Ok(Self(
             raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
@@ -456,7 +467,7 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::AsDeserializingBufferProvider;
@@ -466,14 +477,16 @@ where {
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-    ///     &icu_testdata::buffer().as_deserializing(),
-    ///     &locale!("en").into(),
-    ///     options.into(),
-    /// )
-    /// .unwrap();
+    /// let dtf =
+    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
+    ///         &icu_testdata::buffer().as_deserializing(),
+    ///         &locale!("en").into(),
+    ///         options.into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
     /// ```
@@ -485,7 +498,7 @@ where {
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -526,12 +539,15 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Medium,
+    /// );
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -540,7 +556,8 @@ where {
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03 AM");
     /// ```
@@ -551,7 +568,7 @@ where {
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
@@ -582,7 +599,7 @@ where {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: DateTimeFormatterOptions,
-        error: DateTimeFormatterError
+        error: DateTimeError
     );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
@@ -599,7 +616,7 @@ where {
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
@@ -624,7 +641,7 @@ where {
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28 PM");
@@ -686,7 +703,7 @@ mod tests {
                 Default::default(),
             )
             .unwrap()
-            .format_to_string(&DateTime::new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()),
+            .format_to_string(&DateTime::try_new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()),
             "2022 M09 20 00:00:00"
         );
     }

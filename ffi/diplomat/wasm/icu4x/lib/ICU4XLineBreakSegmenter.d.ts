@@ -18,7 +18,7 @@ export class ICU4XLineBreakSegmenter {
 
    * Construct a {@link ICU4XLineBreakSegmenter `ICU4XLineBreakSegmenter`} with default options.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XLineBreakSegmenter | never;
@@ -27,7 +27,7 @@ export class ICU4XLineBreakSegmenter {
 
    * Construct a {@link ICU4XLineBreakSegmenter `ICU4XLineBreakSegmenter`} with custom options.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options Rust documentation for `try_new_with_options`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options_unstable Rust documentation for `try_new_with_options_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineBreakSegmenter | never;

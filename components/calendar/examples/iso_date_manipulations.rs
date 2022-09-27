@@ -9,7 +9,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_calendar::{Calendar, Date, DateTimeError, Iso};
+use icu_calendar::{Calendar, CalendarError, Date, Iso};
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
     (1970, 1, 1),
@@ -41,8 +41,8 @@ fn print<A: Calendar>(_date_input: &Date<A>) {
     }
 }
 
-fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, DateTimeError> {
-    Date::new_iso_date(date.0, date.1, date.2)
+fn tuple_to_iso_date(date: (i32, u8, u8)) -> Result<Date<Iso>, CalendarError> {
+    Date::try_new_iso_date(date.0, date.1, date.2)
 }
 
 #[no_mangle]

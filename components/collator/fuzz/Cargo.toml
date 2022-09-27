@@ -20,8 +20,8 @@ rust_icu_ucol = { path = "../../../../rust_icu/rust_icu_ucol", features = ["use-
 rust_icu_sys = { path = "../../../../rust_icu/rust_icu_sys", features = ["use-bindgen", "icu_config"] }
 rust_icu_ustring = { path = "../../../../rust_icu/rust_icu_ustring", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
-icu_locid = { version = "1.0.0-beta1", path = "../../../components/locid" }
-icu_testdata = { version = "1.0.0-beta1", path = "../../../provider/testdata" }
+icu_locid = { version = "1.0.0", path = "../../../components/locid" }
+icu_testdata = { version = "1.0.0", path = "../../../provider/testdata" }
 icu_collator = { path = ".." }
 
 # Prevent this from interfering with workspaces

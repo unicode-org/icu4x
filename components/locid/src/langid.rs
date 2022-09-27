@@ -19,7 +19,7 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{LanguageIdentifier, subtags::*};
+/// use icu::locid::{subtags::*, LanguageIdentifier};
 ///
 /// let li: LanguageIdentifier = "en-US".parse().expect("Failed to parse.");
 ///
@@ -47,14 +47,18 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{LanguageIdentifier, subtags::*};
+/// use icu::locid::{subtags::*, LanguageIdentifier};
 ///
-/// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
+/// let li: LanguageIdentifier =
+///     "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(li.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(li.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(li.region, "US".parse::<Region>().ok());
-/// assert_eq!(li.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
+/// assert_eq!(
+///     li.variants.get(0),
+///     "valencia".parse::<Variant>().ok().as_ref()
+/// );
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
@@ -80,11 +84,12 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_bytes(b"en-US").expect("Parsing failed.");
+    /// let li =
+    ///     LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
     }
 
@@ -92,7 +97,7 @@ impl LanguageIdentifier {
     #[allow(clippy::type_complexity)]
     // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
-    pub const fn from_bytes_with_single_variant(
+    pub const fn try_from_bytes_with_single_variant(
         v: &[u8],
     ) -> Result<
         (
@@ -114,14 +119,15 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::from_locale_bytes(b"en-US-x-posix").expect("Parsing failed.");
+    /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix")
+    ///     .expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
-    pub fn from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::Locale)
     }
 
@@ -158,7 +164,7 @@ impl LanguageIdentifier {
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let lang_id = Self::from_bytes(input.as_ref())?;
+        let lang_id = Self::try_from_bytes(input.as_ref())?;
         Ok(lang_id.to_string())
     }
 
@@ -213,7 +219,7 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia"];
+    /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia"];
     ///
     /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
     /// assert_eq!(
@@ -282,7 +288,7 @@ impl LanguageIdentifier {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -349,7 +355,7 @@ impl FromStr for LanguageIdentifier {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -447,7 +453,10 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
+/// use icu::locid::{
+///     subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");
@@ -489,7 +498,10 @@ impl
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script, langid};
+/// use icu::locid::{
+///     langid, subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lid = langid!("en-Latn-US");
 /// let (lang, script, region) = (&lid).into();

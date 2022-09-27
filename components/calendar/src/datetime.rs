@@ -4,7 +4,7 @@
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
-use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
+use crate::{AsCalendar, Calendar, CalendarError, Date, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
 
@@ -15,14 +15,14 @@ use alloc::sync::Arc;
 /// [`Date`].
 ///
 /// This can be constructed manually from a [`Date`] and [`Time`], or can be constructed
-/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// from its fields via [`Self::try_new_from_codes()`], or can be constructed with one of the
 /// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::DateTime;
 ///
 /// // Example: Construction of ISO datetime from integers.
-/// let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+/// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 ///     .expect("Failed to initialize ISO DateTime instance.");
 ///
 /// assert_eq!(datetime_iso.date.year().number, 1970);
@@ -50,15 +50,15 @@ impl<A: AsCalendar> DateTime<A> {
     /// Construct a datetime from from era/month codes and fields,
     /// and some calendar representation
     #[inline]
-    pub fn new_from_codes(
+    pub fn try_new_from_codes(
         era: types::Era,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
         time: Time,
         calendar: A,
-    ) -> Result<Self, DateTimeError> {
-        let date = Date::new_from_codes(era, year, month_code, day, calendar)?;
+    ) -> Result<Self, CalendarError> {
+        let date = Date::try_new_from_codes(era, year, month_code, day, calendar)?;
         Ok(DateTime { date, time })
     }
 

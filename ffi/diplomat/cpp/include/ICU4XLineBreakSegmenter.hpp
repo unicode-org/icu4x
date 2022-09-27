@@ -39,14 +39,14 @@ class ICU4XLineBreakSegmenter {
   /**
    * Construct a [`ICU4XLineBreakSegmenter`] with default options.
    * 
-   * See the [Rust documentation for `try_new`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Construct a [`ICU4XLineBreakSegmenter`] with custom options.
    * 
-   * See the [Rust documentation for `try_new_with_options`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
+   * See the [Rust documentation for `try_new_with_options_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options_unstable) for more information.
    */
   static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 

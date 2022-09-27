@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{self, calendar::*, date_time::PatternSelector};
 use crate::time_zone::TimeZoneFormatterOptions;
-use crate::{DateTimeFormatterError, FormattedZonedDateTime};
+use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
@@ -61,17 +61,17 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
 /// let time_zone = CustomTimeZone::utc();
 ///
 /// assert_writeable_eq!(
-///     zdtf
-///       .format(&any_datetime, &time_zone)
-///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT");
+///     zdtf.format(&any_datetime, &time_zone)
+///         .expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM GMT"
+/// );
 /// ```
 ///
 /// Using a non-GMT time zone, specified by id:
@@ -97,7 +97,7 @@ use writeable::Writeable;
 /// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
 /// // Create a DateTime at September 1, 2020 at 12:34:28 PM
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -149,8 +149,8 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -165,9 +165,11 @@ impl ZonedDateTimeFormatter {
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
     ///     Default::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -186,7 +188,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -258,14 +260,17 @@ impl ZonedDateTimeFormatter {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
@@ -273,9 +278,11 @@ impl ZonedDateTimeFormatter {
     ///     &locale.into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -293,7 +300,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -385,7 +392,7 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -400,7 +407,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: AnyProvider,
     {
@@ -432,7 +439,11 @@ impl ZonedDateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// )
+    /// .into();
     /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
@@ -443,7 +454,8 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -459,7 +471,7 @@ impl ZonedDateTimeFormatter {
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: BufferProvider,
     {
@@ -478,7 +490,7 @@ impl ZonedDateTimeFormatter {
         &'l self,
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
-    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError> {
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeError> {
         if let Some(converted) = self.convert_if_necessary(date)? {
             Ok(self.0.format(&converted, time_zone))
         } else {
@@ -496,7 +508,7 @@ impl ZonedDateTimeFormatter {
         &self,
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
-    ) -> Result<String, DateTimeFormatterError> {
+    ) -> Result<String, DateTimeError> {
         Ok(self.format(date, time_zone)?.write_to_string().into_owned())
     }
 
@@ -507,12 +519,12 @@ impl ZonedDateTimeFormatter {
     fn convert_if_necessary(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeFormatterError> {
+    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

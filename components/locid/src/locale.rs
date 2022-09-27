@@ -29,7 +29,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// ```
 /// use icu::locid::extensions::unicode::{Key, Value};
-/// use icu::locid::{Locale, subtags::*};
+/// use icu::locid::{subtags::*, Locale};
 ///
 /// let loc: Locale = "en-US-u-ca-buddhist".parse().expect("Failed to parse.");
 ///
@@ -61,7 +61,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{Locale, subtags::*};
+/// use icu::locid::{subtags::*, Locale};
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
 ///     .parse()
@@ -70,7 +70,10 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
-/// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
+/// assert_eq!(
+///     loc.id.variants.get(0),
+///     "valencia".parse::<Variant>().ok().as_ref()
+/// );
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)]
@@ -113,11 +116,12 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
+    /// let loc = Locale::try_from_bytes("en-US-u-hc-h12".as_bytes())
+    ///     .expect("Parsing failed.");
     ///
     /// assert_eq!(loc.to_string(), "en-US-u-hc-h12");
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_locale(v)
     }
 
@@ -152,7 +156,7 @@ impl Locale {
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let locale = Self::from_bytes(input.as_ref())?;
+        let locale = Self::try_from_bytes(input.as_ref())?;
         Ok(locale.to_string())
     }
 
@@ -207,7 +211,8 @@ impl Locale {
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    /// let subtags: &[&[u8]] =
+    ///     &[b"ca", b"ES", b"valencia", b"u", b"ca", b"hebrew"];
     ///
     /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
     /// assert_eq!(
@@ -276,7 +281,7 @@ impl Locale {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -317,7 +322,7 @@ impl Locale {
 
     #[doc(hidden)]
     #[allow(clippy::type_complexity)]
-    pub const fn from_bytes_with_single_variant_single_keyword_unicode_extension(
+    pub const fn try_from_bytes_with_single_variant_single_keyword_unicode_extension(
         v: &[u8],
     ) -> Result<
         (
@@ -349,7 +354,7 @@ impl FromStr for Locale {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -485,7 +490,10 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
+/// use icu::locid::{
+///     subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");

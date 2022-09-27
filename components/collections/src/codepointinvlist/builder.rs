@@ -28,7 +28,7 @@ impl CodePointInversionListBuilder {
     pub fn build(self) -> CodePointInversionList<'static> {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&self.intervals);
         #[allow(clippy::unwrap_used)] // by invariant
-        CodePointInversionList::from_inversion_list(inv_list).unwrap()
+        CodePointInversionList::try_from_inversion_list(inv_list).unwrap()
     }
 
     /// Abstraction for adding/removing a range from start..end
@@ -116,7 +116,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_u32(0x41);
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0x41), true);
+    /// assert!(check.contains32(0x41));
     /// ```
     pub fn add_u32(&mut self, c: u32) {
         if c <= char::MAX as u32 {
@@ -150,7 +150,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_range_u32(&(0xd800..=0xdfff));
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0xd900), true);
+    /// assert!(check.contains32(0xd900));
     /// ```
     pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
@@ -164,9 +164,13 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::from_inversion_list_slice(&[0x41, 0x4C]).unwrap();
+    /// let set =
+    ///     CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x4C])
+    ///         .unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
@@ -243,7 +247,7 @@ impl CodePointInversionListBuilder {
     /// ```
     /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::from_inversion_list_slice(&[0x41, 0x46]).unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
@@ -307,9 +311,12 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::from_inversion_list_slice(&[65, 70]).unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[65, 70])
+    ///     .unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
@@ -372,11 +379,17 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set =
-    ///     CodePointInversionList::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1])
-    ///         .unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    ///     0x0,
+    ///     0x41,
+    ///     0x46,
+    ///     (std::char::MAX as u32) + 1,
+    /// ])
+    /// .unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
     /// let check = builder.build();
@@ -447,9 +460,14 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// let set = CodePointInversionList::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+    /// let set = CodePointInversionList::try_from_inversion_list_slice(&[
+    ///     0x41, 0x46, 0x4B, 0x5A,
+    /// ])
+    /// .unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
@@ -466,7 +484,9 @@ impl CodePointInversionListBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+    /// use icu_collections::codepointinvlist::{
+    ///     CodePointInversionList, CodePointInversionListBuilder,
+    /// };
     /// let mut builder = CodePointInversionListBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());
@@ -484,7 +504,7 @@ mod tests {
 
     fn generate_tester(ex: Vec<u32>) -> CodePointInversionListBuilder {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&ex);
-        let check = CodePointInversionList::from_inversion_list(inv_list).unwrap();
+        let check = CodePointInversionList::try_from_inversion_list(inv_list).unwrap();
         let mut builder = CodePointInversionListBuilder::new();
         builder.add_set(&check);
         builder
@@ -667,9 +687,10 @@ mod tests {
     #[test]
     fn test_add_codepointinversionlist() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
-        let check =
-            CodePointInversionList::from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33])
-                .unwrap();
+        let check = CodePointInversionList::try_from_inversion_list_slice(&[
+            0x5, 0xA, 0x16, 0x21, 0x2C, 0x33,
+        ])
+        .unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
@@ -804,7 +825,8 @@ mod tests {
     fn test_remove_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
         let remove =
-            CodePointInversionList::from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B]).unwrap();
+            CodePointInversionList::try_from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B])
+                .unwrap();
         builder.remove_set(&remove);
         let expected = vec![0x28, 0x2D, 0x4B, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -836,9 +858,10 @@ mod tests {
     #[test]
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let retain =
-            CodePointInversionList::from_inversion_list_slice(&[0xE, 0x14, 0x19, 0x37, 0x4D, 0x51])
-                .unwrap();
+        let retain = CodePointInversionList::try_from_inversion_list_slice(&[
+            0xE, 0x14, 0x19, 0x37, 0x4D, 0x51,
+        ])
+        .unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -916,8 +939,8 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(vec![0x43, 0x4E]);
-        let set =
-            CodePointInversionList::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+        let set = CodePointInversionList::try_from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A])
+            .unwrap();
         builder.complement_set(&set);
         let expected = vec![0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);

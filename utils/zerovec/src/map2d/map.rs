@@ -35,13 +35,15 @@ use crate::map::{MutableZeroVecLike, ZeroVecLike};
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
 /// let BINCODE_BYTES: &[u8; 51] = &[
-///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
-///     2, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101,
+///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0,
+///     0, 0, 0, 0, 0, 0, 2, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 116,
+///     104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMap2d<u16, u16, str> =
-///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
+///     bincode::deserialize(BINCODE_BYTES)
+///         .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get_2d(&1, &2), Some("three"));
 /// ```
 ///
@@ -324,7 +326,10 @@ where
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
-    /// assert_eq!(map.remove(&1, "one"), Some("foo".to_owned().into_boxed_str()));
+    /// assert_eq!(
+    ///     map.remove(&1, "one"),
+    ///     Some("foo".to_owned().into_boxed_str())
+    /// );
     /// assert_eq!(map.get_2d(&1, "one"), None);
     /// assert_eq!(map.remove(&1, "one"), None);
     /// ```
@@ -529,8 +534,8 @@ where
     /// let mut map = ZeroMap2d::new();
     /// map.insert(&1, "one", "foo");
     /// map.insert(&2, "two", "bar");
-    /// assert_eq!(map.contains_key0(&1), true);
-    /// assert_eq!(map.contains_key0(&3), false);
+    /// assert!(map.contains_key0(&1));
+    /// assert!(!map.contains_key0(&3));
     /// ```
     pub fn contains_key0(&self, key0: &K0) -> bool {
         self.keys0.zvl_binary_search(key0).is_ok()

@@ -4,16 +4,19 @@
 
 use self::ffi::ICU4XError;
 use core::fmt;
-use fixed_decimal::Error as DecimalError;
-use icu_calendar::DateTimeError;
+use fixed_decimal::Error as FixedDecimalError;
+use icu_calendar::CalendarError;
 use icu_collator::CollatorError;
-use icu_datetime::DateTimeFormatterError;
-use icu_decimal::FixedDecimalFormatterError;
+use icu_datetime::DateTimeError;
+use icu_decimal::DecimalError;
+use icu_list::ListError;
 use icu_locid::ParserError;
+use icu_locid_transform::LocaleTransformError;
 use icu_normalizer::NormalizerError;
-use icu_plurals::PluralRulesError;
+use icu_plurals::PluralsError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+use icu_segmenter::SegmenterError;
 use icu_timezone::TimeZoneError;
 use tinystr::TinyStrError;
 
@@ -27,17 +30,20 @@ pub mod ffi {
     ///
     /// The error names are stable and can be checked against as strings in the JS API
     #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
-    #[diplomat::rust_link(icu::calendar::DateTimeError, Enum, compact)]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::CalendarError, Enum, compact)]
+    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::decimal::DecimalError, Enum, compact)]
+    #[diplomat::rust_link(icu::list::ListError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::locid_transform::LocaleTransformError, Enum, compact)]
+    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::plurals::PluralsError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
-    #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
-    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::segmenter::SegmenterError, Enum, compact)]
     #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
-    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
-    #[diplomat::rust_link(icu::decimal::FixedDecimalFormatterError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.
@@ -47,7 +53,6 @@ pub mod ffi {
         /// Typically found when not enough space is allocated
         /// Most APIs that return a string may return this error
         WriteableError = 0x01,
-
         // Some input was out of bounds
         OutOfBoundsError = 0x02,
 
@@ -89,28 +94,29 @@ pub mod ffi {
         FixedDecimalSyntaxError = 0x5_01,
 
         // plural errors
-        PluralParserError = 0x6_00,
+        PluralsParserError = 0x6_00,
 
         // datetime errors
-        DateTimeParseError = 0x7_00,
-        DateTimeOverflowError = 0x7_01,
-        DateTimeUnderflowError = 0x7_02,
-        DateTimeOutOfRangeError = 0x7_03,
-        DateTimeUnknownEraError = 0x7_04,
-        DateTimeUnknownMonthCodeError = 0x7_05,
-        DateTimeMissingInputError = 0x7_06,
-        DateTimeUnknownAnyCalendarKindError = 0x7_07,
+        CalendarParseError = 0x7_00,
+        CalendarOverflowError = 0x7_01,
+        CalendarUnderflowError = 0x7_02,
+        CalendarOutOfRangeError = 0x7_03,
+        CalendarUnknownEraError = 0x7_04,
+        CalendarUnknownMonthCodeError = 0x7_05,
+        CalendarMissingInputError = 0x7_06,
+        CalendarUnknownKindError = 0x7_07,
+        CalendarMissingError = 0x7_08,
 
         // datetime format errors
-        DateTimeFormatPatternError = 0x8_00,
-        DateTimeFormatMissingInputFieldError = 0x8_01,
-        DateTimeFormatSkeletonError = 0x8_02,
-        DateTimeFormatUnsupportedFieldError = 0x8_03,
-        DateTimeFormatUnsupportedOptionsError = 0x8_04,
-        DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
-        DateTimeFormatMissingMonthSymbolError = 0x8_06,
-        DateTimeFormatFixedDecimalError = 0x8_07,
-        DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
+        DateTimePatternError = 0x8_00,
+        DateTimeMissingInputFieldError = 0x8_01,
+        DateTimeSkeletonError = 0x8_02,
+        DateTimeUnsupportedFieldError = 0x8_03,
+        DateTimeUnsupportedOptionsError = 0x8_04,
+        DateTimeMissingWeekdaySymbolError = 0x8_05,
+        DateTimeMissingMonthSymbolError = 0x8_06,
+        DateTimeFixedDecimalError = 0x8_07,
+        DateTimeMismatchedCalendarError = 0x8_08,
 
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
@@ -185,7 +191,7 @@ impl From<CollatorError> for ICU4XError {
         let ret = match e {
             CollatorError::NotFound => ICU4XError::DataMissingPayloadError,
             CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
-            CollatorError::DataProvider(_) => ICU4XError::DataIoError,
+            CollatorError::Data(_) => ICU4XError::DataIoError,
             _ => ICU4XError::DataIoError,
         };
         log_conversion(&e, ret);
@@ -208,18 +214,45 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
+impl From<CalendarError> for ICU4XError {
+    fn from(e: CalendarError) -> Self {
+        let ret = match e {
+            CalendarError::Parse => ICU4XError::CalendarParseError,
+            CalendarError::Overflow { field: _, max: _ } => ICU4XError::CalendarOverflowError,
+            CalendarError::Underflow { field: _, min: _ } => ICU4XError::CalendarUnderflowError,
+            CalendarError::OutOfRange => ICU4XError::CalendarOutOfRangeError,
+            CalendarError::UnknownEra(..) => ICU4XError::CalendarUnknownEraError,
+            CalendarError::UnknownMonthCode(..) => ICU4XError::CalendarUnknownMonthCodeError,
+            CalendarError::MissingInput(_) => ICU4XError::CalendarMissingInputError,
+            CalendarError::UnknownAnyCalendarKind(_) => ICU4XError::CalendarUnknownKindError,
+            CalendarError::MissingCalendar => ICU4XError::CalendarMissingError,
+            CalendarError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
 impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
         let ret = match e {
-            DateTimeError::Parse => ICU4XError::DateTimeParseError,
-            DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
-            DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
-            DateTimeError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
-            DateTimeError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
-            DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
-            DateTimeError::UnknownAnyCalendarKind(_) => {
-                ICU4XError::DateTimeUnknownAnyCalendarKindError
+            DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
+            DateTimeError::Format(err) => err.into(),
+            DateTimeError::Data(err) => err.into(),
+            DateTimeError::MissingInputField(_) => ICU4XError::DateTimeMissingInputFieldError,
+            // TODO(#1324): Add back skeleton errors
+            // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            DateTimeError::UnsupportedField(_) => ICU4XError::DateTimeUnsupportedFieldError,
+            DateTimeError::UnsupportedOptions => ICU4XError::DateTimeUnsupportedOptionsError,
+            DateTimeError::PluralRules(err) => err.into(),
+            DateTimeError::DateTimeInput(err) => err.into(),
+            DateTimeError::MissingWeekdaySymbol(_) => ICU4XError::DateTimeMissingWeekdaySymbolError,
+            DateTimeError::MissingMonthSymbol(_) => ICU4XError::DateTimeMissingMonthSymbolError,
+            DateTimeError::FixedDecimal => ICU4XError::DateTimeFixedDecimalError,
+            DateTimeError::FixedDecimalFormatter(err) => err.into(),
+            DateTimeError::MismatchedAnyCalendar(_, _) => {
+                ICU4XError::DateTimeMismatchedCalendarError
             }
             _ => ICU4XError::UnknownError,
         };
@@ -228,36 +261,22 @@ impl From<DateTimeError> for ICU4XError {
     }
 }
 
-impl From<DateTimeFormatterError> for ICU4XError {
-    fn from(e: DateTimeFormatterError) -> Self {
+impl From<FixedDecimalError> for ICU4XError {
+    fn from(e: FixedDecimalError) -> Self {
         let ret = match e {
-            DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
-            DateTimeFormatterError::Format(err) => err.into(),
-            DateTimeFormatterError::DataProvider(err) => err.into(),
-            DateTimeFormatterError::MissingInputField(_) => {
-                ICU4XError::DateTimeFormatMissingInputFieldError
-            }
-            // TODO(#1324): Add back skeleton errors
-            // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
-            DateTimeFormatterError::UnsupportedField(_) => {
-                ICU4XError::DateTimeFormatUnsupportedFieldError
-            }
-            DateTimeFormatterError::UnsupportedOptions => {
-                ICU4XError::DateTimeFormatUnsupportedOptionsError
-            }
-            DateTimeFormatterError::PluralRules(err) => err.into(),
-            DateTimeFormatterError::DateTimeInput(err) => err.into(),
-            DateTimeFormatterError::MissingWeekdaySymbol(_) => {
-                ICU4XError::DateTimeFormatMissingWeekdaySymbolError
-            }
-            DateTimeFormatterError::MissingMonthSymbol(_) => {
-                ICU4XError::DateTimeFormatMissingMonthSymbolError
-            }
-            DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
-            DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
-            DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
-                ICU4XError::DateTimeFormatMismatchedAnyCalendarError
-            }
+            FixedDecimalError::Limit => ICU4XError::FixedDecimalLimitError,
+            FixedDecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<PluralsError> for ICU4XError {
+    fn from(e: PluralsError) -> Self {
+        let ret = match e {
+            PluralsError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -268,8 +287,7 @@ impl From<DateTimeFormatterError> for ICU4XError {
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         let ret = match e {
-            DecimalError::Limit => ICU4XError::FixedDecimalLimitError,
-            DecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
+            DecimalError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -277,11 +295,10 @@ impl From<DecimalError> for ICU4XError {
     }
 }
 
-impl From<PluralRulesError> for ICU4XError {
-    fn from(e: PluralRulesError) -> Self {
+impl From<LocaleTransformError> for ICU4XError {
+    fn from(e: LocaleTransformError) -> Self {
         let ret = match e {
-            PluralRulesError::DataProvider(e) => e.into(),
-            PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
+            LocaleTransformError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -289,10 +306,21 @@ impl From<PluralRulesError> for ICU4XError {
     }
 }
 
-impl From<FixedDecimalFormatterError> for ICU4XError {
-    fn from(e: FixedDecimalFormatterError) -> Self {
+impl From<SegmenterError> for ICU4XError {
+    fn from(e: SegmenterError) -> Self {
         let ret = match e {
-            FixedDecimalFormatterError::Data(e) => e.into(),
+            SegmenterError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<ListError> for ICU4XError {
+    fn from(e: ListError) -> Self {
+        let ret = match e {
+            ListError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -331,7 +359,7 @@ impl From<TimeZoneError> for ICU4XError {
         let ret = match e {
             TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
             TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
-            TimeZoneError::DataProvider(err) => err.into(),
+            TimeZoneError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
@@ -344,7 +372,7 @@ impl From<NormalizerError> for ICU4XError {
         let ret = match e {
             NormalizerError::FutureExtension => ICU4XError::NormalizerFutureExtensionError,
             NormalizerError::ValidationError => ICU4XError::NormalizerValidationError,
-            NormalizerError::DataProvider(err) => err.into(),
+            NormalizerError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

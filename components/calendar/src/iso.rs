@@ -8,11 +8,11 @@
 //! use icu::calendar::{Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! // `Date` checks
@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
@@ -96,9 +96,9 @@ impl Calendar for Iso {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         if era.0 != tinystr!(16, "default") {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
@@ -227,19 +227,19 @@ impl Date<Iso> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_iso = Date::new_iso_date(1970, 1, 2)
+    /// let date_iso = Date::try_new_iso_date(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
     /// assert_eq!(date_iso.year().number, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
-    pub fn new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, DateTimeError> {
+    pub fn try_new_iso_date(year: i32, month: u8, day: u8) -> Result<Date<Iso>, CalendarError> {
         if !(1..=12).contains(&month) {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
         if day == 0 || day > Iso::days_in_month(year, month) {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
         Ok(Date::from_raw(
             IsoDateInner(ArithmeticDate::new(year, month, day)),
@@ -254,7 +254,7 @@ impl DateTime<Iso> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+    /// let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
     ///     .expect("Failed to initialize ISO DateTime instance.");
     ///
     /// assert_eq!(datetime_iso.date.year().number, 1970);
@@ -264,16 +264,16 @@ impl DateTime<Iso> {
     /// assert_eq!(datetime_iso.time.minute.number(), 1);
     /// assert_eq!(datetime_iso.time.second.number(), 0);
     /// ```
-    pub fn new_iso_datetime(
+    pub fn try_new_iso_datetime(
         year: i32,
         month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Iso>, DateTimeError> {
+    ) -> Result<DateTime<Iso>, CalendarError> {
         Ok(DateTime {
-            date: Date::new_iso_date(year, month, day)?,
+            date: Date::try_new_iso_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -283,24 +283,24 @@ impl DateTime<Iso> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
-    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
     pub fn minutes_since_local_unix_epoch(&self) -> i32 {
         let minutes_a_hour = 60;
         let hours_a_day = 24;
         let minutes_a_day = minutes_a_hour * hours_a_day;
-        if let Ok(unix_epoch) = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0) {
+        if let Ok(unix_epoch) = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0) {
             (Iso::fixed_from_iso(*self.date.inner())
                 - Iso::fixed_from_iso(*unix_epoch.date.inner()))
                 * minutes_a_day
@@ -316,40 +316,26 @@ impl DateTime<Iso> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let today = DateTime::new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
+    /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
-    ///             Ok(today)
-    ///         );
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
-    /// let today = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+    /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
     /// ```
-    pub fn from_minutes_since_local_unix_epoch(
-        minute: i32,
-    ) -> Result<DateTime<Iso>, DateTimeError> {
-        let minutes_a_hour = 60;
-        let hours_a_day = 24;
-        let minutes_a_day = minutes_a_hour * hours_a_day;
-        let extra_days = minute / minutes_a_day;
-        if let Ok(unix_epoch) = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0) {
-            let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
-            let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
-            DateTime::new_iso_datetime(
-                date.year().number,
-                date.month().ordinal as u8,
-                date.day_of_month().0 as u8,
-                ((minute / minutes_a_hour) % hours_a_day) as u8,
-                (minute % minutes_a_hour) as u8,
-                0,
-            )
-        } else {
-            unreachable!("DateTime should be created successfully")
-        }
+    pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
+        let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
+        #[allow(clippy::unwrap_used)] // constant date
+        let unix_epoch = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+        let unix_epoch_days = Iso::fixed_from_iso(*unix_epoch.date.inner());
+        let date = Iso::iso_from_fixed(unix_epoch_days + extra_days);
+        DateTime { date, time }
     }
 }
 
@@ -401,7 +387,7 @@ impl Iso {
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
-        Date::new_iso_date(year, month, day)
+        Date::try_new_iso_date(year, month, day)
             .ok()
             .map(|d| *d.inner())
             .map(Self::fixed_from_iso)
@@ -423,7 +409,7 @@ impl Iso {
         let day = day as u8; // day <= month_days < u8::MAX
 
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
-        Date::new_iso_date(year, month, day).unwrap()
+        Date::try_new_iso_date(year, month, day).unwrap()
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
@@ -472,7 +458,7 @@ impl Iso {
         #[allow(clippy::unwrap_used)] // valid day and month
         let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
-        Date::new_iso_date(year, month, day).unwrap()
+        Date::try_new_iso_date(year, month, day).unwrap()
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
@@ -528,17 +514,17 @@ mod test {
     fn test_day_of_week() {
         // June 23, 2021 is a Wednesday
         assert_eq!(
-            Date::new_iso_date(2021, 6, 23).unwrap().day_of_week(),
+            Date::try_new_iso_date(2021, 6, 23).unwrap().day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date(1983, 2, 2).unwrap().day_of_week(),
+            Date::try_new_iso_date(1983, 2, 2).unwrap().day_of_week(),
             IsoWeekday::Wednesday,
         );
         // Jan 21, 2021 was a Tuesday
         assert_eq!(
-            Date::new_iso_date(2020, 1, 21).unwrap().day_of_week(),
+            Date::try_new_iso_date(2020, 1, 21).unwrap().day_of_week(),
             IsoWeekday::Tuesday,
         );
     }
@@ -547,7 +533,7 @@ mod test {
     fn test_day_of_year() {
         // June 23, 2021 was day 174
         assert_eq!(
-            Date::new_iso_date(2021, 6, 23)
+            Date::try_new_iso_date(2021, 6, 23)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -555,7 +541,7 @@ mod test {
         );
         // June 23, 2020 was day 175
         assert_eq!(
-            Date::new_iso_date(2020, 6, 23)
+            Date::try_new_iso_date(2020, 6, 23)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -563,7 +549,7 @@ mod test {
         );
         // Feb 2, 1983 was a Wednesday
         assert_eq!(
-            Date::new_iso_date(1983, 2, 2)
+            Date::try_new_iso_date(1983, 2, 2)
                 .unwrap()
                 .day_of_year_info()
                 .day_of_year,
@@ -584,15 +570,15 @@ mod test {
 
     #[test]
     fn test_offset() {
-        let today = Date::new_iso_date(2021, 6, 23).unwrap();
-        let today_plus_5000 = Date::new_iso_date(2035, 3, 2).unwrap();
+        let today = Date::try_new_iso_date(2021, 6, 23).unwrap();
+        let today_plus_5000 = Date::try_new_iso_date(2035, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
         let offset = today.added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
-        let today = Date::new_iso_date(2021, 6, 23).unwrap();
-        let today_minus_5000 = Date::new_iso_date(2007, 10, 15).unwrap();
+        let today = Date::try_new_iso_date(2021, 6, 23).unwrap();
+        let today_minus_5000 = Date::try_new_iso_date(2007, 10, 15).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
         let offset = today.added(simple_subtract(&today_minus_5000, &today));
@@ -601,71 +587,71 @@ mod test {
 
     #[test]
     fn test_offset_at_month_boundary() {
-        let today = Date::new_iso_date(2020, 2, 28).unwrap();
-        let today_plus_2 = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today = Date::try_new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_2 = Date::try_new_iso_date(2020, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
-        let today = Date::new_iso_date(2020, 2, 28).unwrap();
-        let today_plus_3 = Date::new_iso_date(2020, 3, 2).unwrap();
+        let today = Date::try_new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_3 = Date::try_new_iso_date(2020, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 3));
         assert_eq!(offset, today_plus_3);
 
-        let today = Date::new_iso_date(2020, 2, 28).unwrap();
-        let today_plus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
+        let today = Date::try_new_iso_date(2020, 2, 28).unwrap();
+        let today_plus_1 = Date::try_new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
-        let today = Date::new_iso_date(2019, 2, 28).unwrap();
-        let today_plus_2 = Date::new_iso_date(2019, 3, 2).unwrap();
+        let today = Date::try_new_iso_date(2019, 2, 28).unwrap();
+        let today_plus_2 = Date::try_new_iso_date(2019, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 2));
         assert_eq!(offset, today_plus_2);
 
-        let today = Date::new_iso_date(2019, 2, 28).unwrap();
-        let today_plus_1 = Date::new_iso_date(2019, 3, 1).unwrap();
+        let today = Date::try_new_iso_date(2019, 2, 28).unwrap();
+        let today_plus_1 = Date::try_new_iso_date(2019, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 1));
         assert_eq!(offset, today_plus_1);
 
-        let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
+        let today = Date::try_new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::try_new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
     }
 
     #[test]
     fn test_offset_handles_negative_month_offset() {
-        let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_2_months = Date::new_iso_date(2020, 1, 1).unwrap();
+        let today = Date::try_new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_2_months = Date::try_new_iso_date(2020, 1, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -2, 0, 0));
         assert_eq!(offset, today_minus_2_months);
 
-        let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_4_months = Date::new_iso_date(2019, 11, 1).unwrap();
+        let today = Date::try_new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_4_months = Date::try_new_iso_date(2019, 11, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -4, 0, 0));
         assert_eq!(offset, today_minus_4_months);
 
-        let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_24_months = Date::new_iso_date(2018, 3, 1).unwrap();
+        let today = Date::try_new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_24_months = Date::try_new_iso_date(2018, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -24, 0, 0));
         assert_eq!(offset, today_minus_24_months);
 
-        let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_27_months = Date::new_iso_date(2017, 12, 1).unwrap();
+        let today = Date::try_new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_27_months = Date::try_new_iso_date(2017, 12, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -27, 0, 0));
         assert_eq!(offset, today_minus_27_months);
     }
 
     #[test]
     fn test_offset_handles_out_of_bound_month_offset() {
-        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        let today = Date::try_new_iso_date(2021, 1, 31).unwrap();
         // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month = Date::new_iso_date(2021, 3, 3).unwrap();
+        let today_plus_1_month = Date::try_new_iso_date(2021, 3, 3).unwrap();
         let offset = today.added(DateDuration::new(0, 1, 0, 0));
         assert_eq!(offset, today_plus_1_month);
 
-        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        let today = Date::try_new_iso_date(2021, 1, 31).unwrap();
         // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
-        let today_plus_1_month_1_day = Date::new_iso_date(2021, 3, 4).unwrap();
+        let today_plus_1_month_1_day = Date::try_new_iso_date(2021, 3, 4).unwrap();
         let offset = today.added(DateDuration::new(0, 1, 0, 1));
         assert_eq!(offset, today_plus_1_month_1_day);
     }

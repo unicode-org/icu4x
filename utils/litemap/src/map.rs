@@ -135,8 +135,8 @@ where
     /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
-    /// assert_eq!(map.contains_key(&1), true);
-    /// assert_eq!(map.contains_key(&3), false);
+    /// assert!(map.contains_key(&1));
+    /// assert!(!map.contains_key(&3));
     /// ```
     pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
     where

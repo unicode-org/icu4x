@@ -2,9 +2,9 @@
 
 These principles are not cast in stone, but are strong guidelines for developers.
 
-## i18n Best Practices
+## Internationalization Best Practices
 
-Above all, ICU4X must provide modern, standards-compliant APIs that encourage best i18n practices and produce correct results for all languages and locales. No language or locale should be at a structural disadvantage.
+Above all, ICU4X must provide modern, standards-compliant APIs that encourage best internationalization practices and produce correct results for all languages and locales. No language or locale should be at a structural disadvantage.
 
 ## Code Style
 

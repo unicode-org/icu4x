@@ -59,7 +59,11 @@ impl CanonicalComposition {
     /// # Examples
     ///
     /// ```
-    /// let comp = icu_normalizer::properties::CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    /// let comp =
+    ///     icu_normalizer::properties::CanonicalComposition::try_new_unstable(
+    ///         &icu_testdata::unstable(),
+    ///     )
+    ///     .unwrap();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));

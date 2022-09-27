@@ -4,7 +4,7 @@
 
 use icu_datetime::time_zone;
 use icu_datetime::time_zone::TimeZoneFormatter;
-use icu_datetime::DateTimeFormatterError;
+use icu_datetime::DateTimeError;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 
@@ -124,10 +124,7 @@ pub enum TimeZoneFormatterConfig {
 }
 
 impl TimeZoneFormatterConfig {
-    pub fn set_on_formatter(
-        self,
-        tzf: &mut TimeZoneFormatter,
-    ) -> Result<(), DateTimeFormatterError> {
+    pub fn set_on_formatter(self, tzf: &mut TimeZoneFormatter) -> Result<(), DateTimeError> {
         match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
                 tzf.load_generic_non_location_long(&icu_testdata::unstable())

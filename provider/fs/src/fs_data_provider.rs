@@ -32,7 +32,7 @@ use writeable::Writeable;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into()
+///     &locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -85,7 +85,7 @@ impl BufferProvider for FsDataProvider {
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(buffer.into())),
+            payload: Some(DataPayload::from_owned_buffer(buffer.into_boxed_slice())),
         })
     }
 }

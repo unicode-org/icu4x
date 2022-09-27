@@ -1,5 +1,5 @@
-#ifndef ICU4XListStyle_H
-#define ICU4XListStyle_H
+#ifndef ICU4XListLength_H
+#define ICU4XListLength_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,11 +10,11 @@
 namespace capi {
 #endif
 
-typedef enum ICU4XListStyle {
-  ICU4XListStyle_Wide = 0,
-  ICU4XListStyle_Short = 1,
-  ICU4XListStyle_Narrow = 2,
-} ICU4XListStyle;
+typedef enum ICU4XListLength {
+  ICU4XListLength_Wide = 0,
+  ICU4XListLength_Short = 1,
+  ICU4XListLength_Narrow = 2,
+} ICU4XListLength;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -23,7 +23,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XListStyle_destroy(ICU4XListStyle* self);
+void ICU4XListLength_destroy(ICU4XListLength* self);
 
 #ifdef __cplusplus
 } // extern "C"

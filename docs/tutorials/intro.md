@@ -156,7 +156,7 @@ use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 
 fn main() {
-    let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
 
     let options = length::Bag {
@@ -192,7 +192,7 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 ```toml
 [dependencies]
 icu = "0.6"
-icu_provider_fs = {version = "1.0.0-beta1" , features = ["deserialize_json"]}
+icu_provider_fs = {version = "1.0.0" , features = ["deserialize_json"]}
 ```
 
 ```rs
