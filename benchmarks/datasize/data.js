@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664298057845,
+  "lastUpdate": 1664298351242,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28943,6 +28943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7a471b7e4584bfc165d9e593295742c880369bf7"
         },
         "date": 1664297997877,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a64c345427decfa5d36f08bdc9b7c81b2539cfee",
+          "message": "Fixing assorted doc test lints (#2656)",
+          "timestamp": "2022-09-27T17:03:26Z",
+          "tree_id": "04d3d21e1e68d98a295e4ca27049eb138a7624eb",
+          "url": "https://github.com/unicode-org/icu4x/commit/a64c345427decfa5d36f08bdc9b7c81b2539cfee"
+        },
+        "date": 1664298291077,
         "tool": "ndjson",
         "benches": [
           {
