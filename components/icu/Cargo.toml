@@ -42,7 +42,7 @@ icu_timezone = { version = "1.0.0", path = "../timezone", default-features = fal
 
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
-icu_displaynames = { version = "1.0.0-beta1", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 
 # For docs links
 icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }

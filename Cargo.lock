@@ -1592,16 +1592,16 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames"
-version = "1.0.0-beta1"
+version = "0.7.0"
 dependencies = [
  "databake",
  "icu_collections",
  "icu_locid",
  "icu_provider",
  "serde",
- "tinystr 0.6.2",
+ "tinystr 0.7.0",
  "yoke",
- "zerovec 0.8.1",
+ "zerovec",
 ]
 
 [[package]]

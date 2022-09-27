@@ -48,7 +48,7 @@ icu_timezone = { version = "1.0.0", path = "../../components/timezone", features
 # (experimental)
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
-icu_displaynames = { version = "1.0.0-beta1", path = "../../experimental/displaynames", features = ["datagen"], optional = true }
+icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "1.0.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
