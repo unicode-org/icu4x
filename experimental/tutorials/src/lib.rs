@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[cfg(doc)]
-pub mod intro;
-#[cfg(doc)]
 pub mod data_provider;
+#[cfg(doc)]
+pub mod intro;
 #[cfg(doc)]
 pub mod writing_a_new_data_struct;
