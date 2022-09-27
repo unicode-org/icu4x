@@ -54,7 +54,7 @@ pub struct DataResponseMetadata {
 /// # `sync` feature
 ///
 /// By default, the payload uses non-concurrent reference counting internally, and hence is neither
-/// [`Sync`] nor [`Send`], if these traits are required, the `sync` feature can be enabled.
+/// [`Sync`] nor [`Send`]; if these traits are required, the `sync` feature can be enabled.
 ///
 /// # Examples
 ///
