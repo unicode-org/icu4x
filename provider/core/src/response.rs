@@ -89,9 +89,9 @@ impl Deref for Cart {
         &*self.0
     }
 }
-// Safe because both Rc and Arc are CloneableCart
+// Safe because both Rc and Arc are StableDeref, and our Deref impl delegates to that Deref impl.
 unsafe impl stable_deref_trait::StableDeref for Cart {}
-// Safe because both Rc and Arc are StableDeref
+// Safe because both Rc and Arc are CloneableCart, and our Deref impl delegates to that Deref impl.
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
