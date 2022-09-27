@@ -5,10 +5,12 @@
 #![cfg(feature = "experimental")]
 
 use crate::transform::cldr::cldr_serde;
+use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use tinystr::TinyStrError;
 use zerovec::ZeroMap;
 
 impl DataProvider<TerritoryDisplayNamesV1Marker> for crate::DatagenProvider {
@@ -26,7 +28,11 @@ impl DataProvider<TerritoryDisplayNamesV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(TerritoryDisplayNamesV1::from(data))),
+            payload: Some(DataPayload::from_owned(
+                TerritoryDisplayNamesV1::try_from(data).map_err(|e| {
+                    DataError::custom("data for TerritoryDisplayNames").with_display_context(&e)
+                })?,
+            )),
         })
     }
 }
@@ -43,23 +49,30 @@ impl IterableDataProvider<TerritoryDisplayNamesV1Marker> for crate::DatagenProvi
     }
 }
 
-/// Suffix used to denote alternative region names data variants for a given territory.
-const ALT_VARIANT_SUFFIX: &str = "-alt-variant";
+/// Substring used to denote alternative region names data variants for a given territory. For example: "BA-alt-short", "TL-alt-variant".
+const ALT_SUBSTRING: &str = "-alt-";
 
-impl From<&cldr_serde::displaynames::Resource> for TerritoryDisplayNamesV1<'static> {
-    fn from(other: &cldr_serde::displaynames::Resource) -> Self {
+impl TryFrom<&cldr_serde::displaynames::Resource> for TerritoryDisplayNamesV1<'static> {
+    type Error = TinyStrError;
+    fn try_from(other: &cldr_serde::displaynames::Resource) -> Result<Self, Self::Error> {
         let mut names = ZeroMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.territories.iter() {
                 let region = entry.0;
-                if !region.ends_with(ALT_VARIANT_SUFFIX) {
-                    if let Ok(key) = <TinyAsciiStr<3>>::from_str(region) {
-                        names.insert(&key, entry.1.as_ref());
+                if !region.contains(ALT_SUBSTRING) {
+                    match <TinyAsciiStr<3>>::from_str(region) {
+                        Ok(key) => {
+                            names.insert(&key, entry.1.as_ref());
+                        }
+                        Err(err) => {
+                            print!("--region: {}", region);
+                            return Err(err);
+                        }
                     }
                 }
             }
         }
-        Self { names }
+        Ok(Self { names })
     }
 }
 
