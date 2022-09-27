@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664266585259,
+  "lastUpdate": 1664295179170,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -75071,6 +75071,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5209,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "936082ff14b8d247dd35eca863f1b32cacda4ccb",
+          "message": "Less cloning in `BlobDataProvider` (#2608)",
+          "timestamp": "2022-09-27T15:56:20Z",
+          "tree_id": "52045fe2275e8e5a88d0564d40a4389fe41b8e16",
+          "url": "https://github.com/unicode-org/icu4x/commit/936082ff14b8d247dd35eca863f1b32cacda4ccb"
+        },
+        "date": 1664295110110,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 74560,
+            "range": "± 1778",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 125508,
+            "range": "± 3472",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 70883,
+            "range": "± 1396",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 80060,
+            "range": "± 1824",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 74986,
+            "range": "± 1698",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 83339,
+            "range": "± 2441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 122126,
+            "range": "± 2339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 135728,
+            "range": "± 2677",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 125374,
+            "range": "± 3366",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 137676,
+            "range": "± 3603",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6042,
+            "range": "± 203",
             "unit": "ns/iter"
           }
         ]
