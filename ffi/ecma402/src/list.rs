@@ -13,7 +13,7 @@ use writeable::Writeable;
 pub struct ListFormat(icu::list::ListFormatter);
 
 impl ecma402_traits::listformat::Format for ListFormat {
-    type Error = icu_provider::DataError;
+    type Error = icu::list::Error;
 
     fn try_new<L>(l: L, opts: Options) -> Result<Self, Self::Error>
     where
@@ -48,7 +48,7 @@ impl ListFormat {
         locale: impl Locale,
         opts: Options,
         provider: &P,
-    ) -> Result<Self, icu_provider::DataError>
+    ) -> Result<Self, icu::list::Error>
     where
         P: icu_provider::DataProvider<icu::list::provider::AndListV1Marker>
             + icu_provider::DataProvider<icu::list::provider::OrListV1Marker>,
@@ -56,17 +56,17 @@ impl ListFormat {
         let locale = crate::DataLocale::from_ecma_locale(locale);
 
         let style = match opts.style {
-            Style::Long => icu::list::ListStyle::Wide,
-            Style::Narrow => icu::list::ListStyle::Narrow,
-            Style::Short => icu::list::ListStyle::Short,
+            Style::Long => icu::list::ListLength::Wide,
+            Style::Narrow => icu::list::ListLength::Narrow,
+            Style::Short => icu::list::ListLength::Short,
         };
 
         Ok(Self(match opts.in_type {
             Type::Conjunction => {
-                icu::list::ListFormatter::try_new_and_unstable(provider, &locale, style)
+                icu::list::ListFormatter::try_new_and_with_length_unstable(provider, &locale, style)
             }
             Type::Disjunction => {
-                icu::list::ListFormatter::try_new_or_unstable(provider, &locale, style)
+                icu::list::ListFormatter::try_new_or_with_length_unstable(provider, &locale, style)
             }
         }?))
     }
