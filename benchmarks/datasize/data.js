@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664302527535,
+  "lastUpdate": 1664303701247,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29033,6 +29033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ee2751298384ddf1ea7da566df541f2962c8f067"
         },
         "date": 1664302457123,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a59141cc099286b155e20ea707a6b5c49a2d7a78",
+          "message": "Expand i18n in docs (#2659)\n\n* Expand i18n in docs\r\n\r\n* One more",
+          "timestamp": "2022-09-27T11:32:43-07:00",
+          "tree_id": "a1556e093fac7b60006b59f0b50d7584706e0483",
+          "url": "https://github.com/unicode-org/icu4x/commit/a59141cc099286b155e20ea707a6b5c49a2d7a78"
+        },
+        "date": 1664303644899,
         "tool": "ndjson",
         "benches": [
           {
