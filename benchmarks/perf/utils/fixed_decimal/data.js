@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664309170019,
+  "lastUpdate": 1664321297415,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -54791,6 +54791,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 70697,
             "range": "± 202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 203,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 75,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f91c4bf32fe62c1011a8ba178b6a2afa9051d42",
+          "message": "Don't say index.md (#2665)",
+          "timestamp": "2022-09-27T23:13:48Z",
+          "tree_id": "227339001a320b8d2f3a8ad7b5244e5fa5949659",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f91c4bf32fe62c1011a8ba178b6a2afa9051d42"
+        },
+        "date": 1664321239857,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121767,
+            "range": "± 363",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25249,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70692,
+            "range": "± 215",
             "unit": "ns/iter"
           },
           {
