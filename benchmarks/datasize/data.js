@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664265853342,
+  "lastUpdate": 1664294324595,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28883,6 +28883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/897c0a36c42ef211769eef570924124793c963fe"
         },
         "date": 1664265797420,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "936082ff14b8d247dd35eca863f1b32cacda4ccb",
+          "message": "Less cloning in `BlobDataProvider` (#2608)",
+          "timestamp": "2022-09-27T15:56:20Z",
+          "tree_id": "52045fe2275e8e5a88d0564d40a4389fe41b8e16",
+          "url": "https://github.com/unicode-org/icu4x/commit/936082ff14b8d247dd35eca863f1b32cacda4ccb"
+        },
+        "date": 1664294267127,
         "tool": "ndjson",
         "benches": [
           {
