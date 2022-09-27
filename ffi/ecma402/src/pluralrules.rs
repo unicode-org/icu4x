@@ -5,7 +5,7 @@
 //! Implements the traits found in [`ecma402_traits::pluralrules`].
 
 use icu::plurals as ipr;
-use icu::plurals::PluralRulesError;
+use icu::plurals::Error;
 
 pub(crate) mod internal {
     use ecma402_traits::pluralrules::options::Type;
@@ -233,7 +233,7 @@ pub struct PluralRules {
 }
 
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
-    type Error = PluralRulesError;
+    type Error = Error;
 
     fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
@@ -259,7 +259,7 @@ impl PluralRules {
         l: L,
         opts: ecma402_traits::pluralrules::Options,
         provider: &P,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, Error>
     where
         L: ecma402_traits::Locale,
         P: icu_provider::DataProvider<ipr::provider::OrdinalV1Marker>
@@ -282,10 +282,10 @@ mod testing {
     use crate::testing::TestLocale;
     use ecma402_traits::pluralrules;
     use ecma402_traits::pluralrules::PluralRules;
-    use icu::plurals::PluralRulesError;
+    use icu::plurals::Error;
 
     #[test]
-    fn plurals_per_locale() -> Result<(), PluralRulesError> {
+    fn plurals_per_locale() -> Result<(), Error> {
         #[derive(Debug, Clone)]
         struct TestCase {
             locale: TestLocale,
