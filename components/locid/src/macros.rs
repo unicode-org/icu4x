@@ -80,7 +80,9 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "sl-IT-rozaj-biske-1994".parse::<icu::locid::Locale>().unwrap();
+/// "sl-IT-rozaj-biske-1994"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with multiple keys are not supported
@@ -89,7 +91,9 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "th-TH-u-ca-buddhist-nu-thai".parse::<icu::locid::Locale>().unwrap();
+/// "th-TH-u-ca-buddhist-nu-thai"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with attributes are not supported
@@ -98,7 +102,9 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-foobar-ca-buddhist".parse::<icu::locid::Locale>().unwrap();
+/// "en-US-u-foobar-ca-buddhist"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with single key but multiple types are not supported
@@ -107,7 +113,9 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-islamic-umalqura".parse::<icu::locid::Locale>().unwrap();
+/// "en-US-u-ca-islamic-umalqura"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20

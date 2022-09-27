@@ -198,7 +198,7 @@ where
     /// assert_eq!(borrowed.get_2d(&1, "two"), None);
     /// assert_eq!(borrowed.get_2d(&2, "one"), Some("bar"));
     /// assert_eq!(borrowed.get_2d(&2, "two"), Some("baz"));
-    /// assert_eq!(borrowed.get_2d(&3, "three"), None);;
+    /// assert_eq!(borrowed.get_2d(&3, "three"), None);
     /// ```
     pub fn get_2d(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
         self.get0(key0)?.get1(key1)

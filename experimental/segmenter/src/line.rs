@@ -149,25 +149,34 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineBreakSegmenter;
 ///
-/// let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
 ///
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
-/// use icu_segmenter::{LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule};
+/// use icu_segmenter::{
+///     LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
+/// };
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.line_break_rule = LineBreakRule::Strict;
 /// options.word_break_rule = WordBreakRule::BreakAll;
 /// options.ja_zh = false;
-/// let segmenter =
-///     LineBreakSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options).expect("Data exists");
+/// let segmenter = LineBreakSegmenter::try_new_with_options_unstable(
+///     &icu_testdata::unstable(),
+///     options,
+/// )
+/// .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
@@ -176,9 +185,12 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineBreakSegmenter;
 ///
-/// let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
 pub struct LineBreakSegmenter {

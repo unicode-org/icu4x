@@ -30,8 +30,9 @@ Segment a string with default options:
 ```rust
 use icu::segmenter::LineBreakSegmenter;
 
-let segmenter = LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
-    .expect("Data exists");
+let segmenter =
+    LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+        .expect("Data exists");
 
 let breakpoints: Vec<usize> =
     segmenter.segment_str("Hello World").collect();
@@ -51,8 +52,9 @@ Segment a string:
 ```rust
 use icu::segmenter::WordBreakSegmenter;
 
-let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
-    .expect("Data exists");
+let segmenter =
+    WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+        .expect("Data exists");
 
 let breakpoints: Vec<usize> =
     segmenter.segment_str("Hello World").collect();

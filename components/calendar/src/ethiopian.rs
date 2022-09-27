@@ -15,7 +15,8 @@
 //! // `DateTime` type
 //! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_ethiopian = DateTime::new_from_iso(datetime_iso, Ethiopian::new());
+//! let datetime_ethiopian =
+//!     DateTime::new_from_iso(datetime_iso, Ethiopian::new());
 //!
 //! // `Date` checks
 //! assert_eq!(date_ethiopian.year().number, 1962);
@@ -308,12 +309,16 @@ impl Date<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::Date;
     ///
-    /// let date_ethiopian =
-    ///     Date::try_new_ethiopian_date(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
-    ///     .expect("Failed to initialize Ethopic Date instance.");
+    /// let date_ethiopian = Date::try_new_ethiopian_date(
+    ///     EthiopianEraStyle::AmeteMihret,
+    ///     2014,
+    ///     8,
+    ///     25,
+    /// )
+    /// .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopian.year().number, 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);
@@ -355,11 +360,19 @@ impl DateTime<Ethiopian> {
     /// and so on.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::ethiopian::EthiopianEraStyle;
+    /// use icu::calendar::DateTime;
     ///
-    /// let datetime_ethiopian = DateTime::try_new_ethiopian_datetime(EthiopianEraStyle::AmeteMihret, 2014, 8, 25, 13, 1, 0)
-    ///     .expect("Failed to initialize Ethiopian DateTime instance.");
+    /// let datetime_ethiopian = DateTime::try_new_ethiopian_datetime(
+    ///     EthiopianEraStyle::AmeteMihret,
+    ///     2014,
+    ///     8,
+    ///     25,
+    ///     13,
+    ///     1,
+    ///     0,
+    /// )
+    /// .expect("Failed to initialize Ethiopian DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopian.date.year().number, 2014);
     /// assert_eq!(datetime_ethiopian.date.month().ordinal, 8);

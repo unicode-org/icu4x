@@ -244,8 +244,8 @@ impl Date<Coptic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_coptic =
-    ///     Date::try_new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
+    /// let date_coptic = Date::try_new_coptic_date(1686, 5, 6)
+    ///     .expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
@@ -280,8 +280,9 @@ impl DateTime<Coptic> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_coptic = DateTime::try_new_coptic_datetime(1686, 5, 6, 13, 1, 0)
-    ///     .expect("Failed to initialize Coptic DateTime instance.");
+    /// let datetime_coptic =
+    ///     DateTime::try_new_coptic_datetime(1686, 5, 6, 13, 1, 0)
+    ///         .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
     /// assert_eq!(datetime_coptic.date.month().ordinal, 5);

@@ -413,23 +413,23 @@ impl TimeZoneFormatter {
     /// Default format is Localized GMT:
     ///
     /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::datetime::time_zone::{
+    ///     TimeZoneFormatter, TimeZoneFormatterOptions,
+    /// };
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("es").into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
     ///
-    /// assert_writeable_eq!(
-    ///     tzf.format(&time_zone),
-    ///     "GMT-07:00"
-    /// );
+    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT-07:00");
     /// ```
     pub fn try_new_unstable<P>(
         provider: &P,
@@ -643,9 +643,11 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::datetime::time_zone::{
+    ///     TimeZoneFormatter, TimeZoneFormatterOptions,
+    /// };
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(

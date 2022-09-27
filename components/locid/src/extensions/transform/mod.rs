@@ -15,9 +15,11 @@
 //! use icu::locid::extensions::transform::{Fields, Key, Transform, Value};
 //! use icu::locid::{LanguageIdentifier, Locale};
 //!
-//! let mut loc: Locale = "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
+//! let mut loc: Locale =
+//!     "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
 //!
-//! let lang: LanguageIdentifier = "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
+//! let lang: LanguageIdentifier =
+//!     "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
 //!
 //! let key: Key = "h0".parse().expect("Parsing key failed.");
 //! let value: Value = "hybrid".parse().expect("Parsing value failed.");
@@ -56,7 +58,8 @@ use litemap::LiteMap;
 /// use icu::locid::extensions::transform::{Key, Value};
 /// use icu::locid::{LanguageIdentifier, Locale};
 ///
-/// let mut loc: Locale = "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
+/// let mut loc: Locale =
+///     "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
 ///
 /// let en_us: LanguageIdentifier = "en-US".parse().expect("Parsing failed.");
 ///

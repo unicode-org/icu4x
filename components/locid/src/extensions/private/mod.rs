@@ -13,7 +13,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions::private::{Subtag, Private};
+//! use icu::locid::extensions::private::{Private, Subtag};
 //! use icu::locid::Locale;
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
@@ -44,7 +44,7 @@ use crate::parser::SubtagIterator;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::private::{Subtag, Private};
+/// use icu::locid::extensions::private::{Private, Subtag};
 ///
 /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -78,7 +78,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Subtag, Private};
+    /// use icu::locid::extensions::private::{Private, Subtag};
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
@@ -95,7 +95,7 @@ impl Private {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::private::{Subtag, Private};
+    /// use icu::locid::extensions::private::{Private, Subtag};
     ///
     /// let subtag1: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");

@@ -45,7 +45,8 @@ use core::ops::RangeInclusive;
 /// use icu::plurals::rules::reference::ast::*;
 /// use icu::plurals::rules::reference::{parse, parse_condition};
 ///
-/// let condition = parse_condition(b"i = 5 or v = 2").expect("Parsing failed.");
+/// let condition =
+///     parse_condition(b"i = 5 or v = 2").expect("Parsing failed.");
 ///
 /// let samples = Samples {
 ///     integer: Some(SampleList {
@@ -71,7 +72,8 @@ use core::ops::RangeInclusive;
 ///
 /// assert_eq!(
 ///     rule,
-///     parse("i = 5 or v = 2 @integer 2, … @decimal 2.5".as_bytes()).expect("Parsing failed")
+///     parse("i = 5 or v = 2 @integer 2, … @decimal 2.5".as_bytes())
+///         .expect("Parsing failed")
 /// )
 /// ```
 ///

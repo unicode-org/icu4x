@@ -82,9 +82,7 @@ use fixed_decimal::FixedDecimal;
 ///         t: 45,
 ///         c: 0,
 ///     }),
-///     (&FixedDecimal::from(12345)
-///         .multiplied_pow10(-2))
-///         .into()
+///     (&FixedDecimal::from(12345).multiplied_pow10(-2)).into()
 /// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]

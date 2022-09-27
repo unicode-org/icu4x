@@ -26,9 +26,9 @@ use databake::*;
 #[derive(Bake)]
 #[databake(path = my_crate)]
 struct MyStruct {
-  number: u32,
-  string: &'static str,
-  slice: &'static [bool],
+    number: u32,
+    string: &'static str,
+    slice: &'static [bool],
 }
 
 #[derive(Bake)]

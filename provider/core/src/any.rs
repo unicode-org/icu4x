@@ -130,7 +130,8 @@ impl AnyPayload {
     ///
     /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
@@ -162,13 +163,15 @@ where
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World"),
-    /// });
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Custom Hello World"),
+    ///     });
     ///
     /// let any_payload = payload.wrap_into_any_payload();
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn wrap_into_any_payload(self) -> AnyPayload {

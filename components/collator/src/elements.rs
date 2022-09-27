@@ -791,7 +791,7 @@ where
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
     /// first `char` in `upcoming` must have its decompostion start with a
     /// starter.
-    upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, // TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
+    upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.
     root: &'data CollationDataV1<'data>,
     /// Tailoring if applicable.

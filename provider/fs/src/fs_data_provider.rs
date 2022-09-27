@@ -32,7 +32,7 @@ use writeable::Writeable;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
 ///     &provider,
-///     &locale!("la").into()
+///     &locale!("la").into(),
 /// )
 /// .expect("locale exists");
 ///

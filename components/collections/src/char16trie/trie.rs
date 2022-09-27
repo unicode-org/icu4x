@@ -181,7 +181,8 @@ impl<'a> Char16TrieIterator<'a> {
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
     /// let trie_data = vec![48, 97, 176, 98, 32868];
-    /// let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    /// let trie =
+    ///     Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     ///
     /// let mut iter = trie.iter();
     /// let res = iter.next('a');
@@ -214,7 +215,8 @@ impl<'a> Char16TrieIterator<'a> {
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
     /// let trie_data = vec![48, 97, 176, 98, 32868];
-    /// let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    /// let trie =
+    ///     Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     ///
     /// let mut iter = trie.iter();
     /// let res = iter.next('a');
@@ -247,7 +249,8 @@ impl<'a> Char16TrieIterator<'a> {
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
     /// let trie_data = vec![48, 97, 176, 98, 32868];
-    /// let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
+    /// let trie =
+    ///     Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     ///
     /// let mut iter = trie.iter();
     /// let res = iter.next16('a' as u16);

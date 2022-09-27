@@ -19,7 +19,7 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{LanguageIdentifier, subtags::*};
+/// use icu::locid::{subtags::*, LanguageIdentifier};
 ///
 /// let li: LanguageIdentifier = "en-US".parse().expect("Failed to parse.");
 ///
@@ -47,14 +47,18 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{LanguageIdentifier, subtags::*};
+/// use icu::locid::{subtags::*, LanguageIdentifier};
 ///
-/// let li: LanguageIdentifier = "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
+/// let li: LanguageIdentifier =
+///     "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
 ///
 /// assert_eq!(li.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(li.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(li.region, "US".parse::<Region>().ok());
-/// assert_eq!(li.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
+/// assert_eq!(
+///     li.variants.get(0),
+///     "valencia".parse::<Variant>().ok().as_ref()
+/// );
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
@@ -80,7 +84,8 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed.");
+    /// let li =
+    ///     LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
@@ -114,7 +119,8 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix").expect("Parsing failed.");
+    /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix")
+    ///     .expect("Parsing failed.");
     ///
     /// assert_eq!(li.to_string(), "en-US");
     /// ```
@@ -447,7 +453,10 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
+/// use icu::locid::{
+///     subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");
@@ -489,7 +498,10 @@ impl
 ///
 /// ```
 /// use icu::locid::LanguageIdentifier;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script, langid};
+/// use icu::locid::{
+///     langid, subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
 /// let lid = langid!("en-Latn-US");
 /// let (lang, script, region) = (&lid).into();
