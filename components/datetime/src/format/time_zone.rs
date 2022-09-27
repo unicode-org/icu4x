@@ -79,7 +79,7 @@ where
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu::datetime::DateTimeFormatterError;
+    /// use icu::datetime::DateTimeError;
     /// use icu::datetime::time_zone::TimeZoneFormatter;
     /// use icu::locid::locale;
     /// use tinystr::tinystr;
@@ -98,7 +98,7 @@ where
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    ///     Err(DateTimeError::UnsupportedOptions)
     /// ));
     /// assert!(buf.is_empty());
     ///
@@ -115,7 +115,7 @@ where
     /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
-    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    ///     Err(DateTimeError::UnsupportedOptions)
     /// ));
     ///
     /// // Use the `Writable` trait instead to enable infallible formatting:

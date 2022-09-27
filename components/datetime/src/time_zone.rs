@@ -75,7 +75,7 @@ where
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
-/// use icu::datetime::{DateTimeFormatterError, time_zone::TimeZoneFormatter};
+/// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
 /// use icu::locid::locale;
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
@@ -137,7 +137,7 @@ where
 ///     "GMT+05:30"
 /// );
 ///
-/// # Ok::<(), DateTimeFormatterError>(())
+/// # Ok::<(), DateTimeError>(())
 /// ```
 ///
 /// [data provider]: icu_provider
