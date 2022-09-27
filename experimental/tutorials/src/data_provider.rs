@@ -4,11 +4,11 @@
 
 //! # Hooking up a data provider
 //!
-//! `DataProvider` is a general mechanism for loading data required for ICU4X
+//! [`DataProvider`] is a general mechanism for loading data required for ICU4X
 //! components to operate from a source.
 //!
-//! At the moment, `DataProvider` is only synchronous, but the model of plugging
-//! it in is intended to extend to asynchronous `DataProvider` later.
+//! At the moment, [`DataProvider`] is only synchronous, but the model of plugging
+//! it in is intended to extend to asynchronous [`DataProvider`] later.
 //!
 //! ## Data
 //!
@@ -19,18 +19,18 @@
 //!
 //! ## Types of providers
 //!
-//! Any component that needs to use `DataProvider` should only depend
-//! on `icu_provider` crate and use the `DataProvider` trait. The specific
+//! Any component that needs to use [`DataProvider`] should only depend
+//! on `icu_provider` crate and use the [`DataProvider`] trait. The specific
 //! implementations such as
-//! `icu_provider_blob::BlobDataProvider` will be provided by the downstream
+//! [`icu_provider_blob::BlobDataProvider`] will be provided by the downstream
 //! consumer of the component.
 //!
 //! ## Hooking up data provider
 //!
-//! Each component should use `DataProvider` only to construct the instance of
+//! Each component should use [`DataProvider`] only to construct the instance of
 //! each main struct that requires data. It means that all heavy data pulling should
 //! happen in the constructor, which, in result, must be fallible. Currently,
-//! since `DataProvider` is synchronous, the constructor may be synchronous as well,
+//! since [`DataProvider`] is synchronous, the constructor may be synchronous as well,
 //! but in the future we expect to have both synchronous and asynchronous data
 //! providers and constructors.
 //!
@@ -79,4 +79,4 @@
 //! }
 //!
 //! ```
-//!
+//! [`DataProvider`]: icu_provider::DataProvider

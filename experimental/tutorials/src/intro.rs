@@ -12,7 +12,7 @@
 //! internationalization capabilities.
 //!
 //! To use `ICU4X` in the Rust ecosystem one can either add dependencies on selected
-//! components, or add a dependency on the meta-crate `icu` which brings a
+//! components, or add a dependency on the meta-crate [`icu`] which brings a
 //! reasonable selection of components in the most user-friendly configuration of
 //! features.
 //!
@@ -76,16 +76,16 @@
 //! `ICU4X` comes with a variety of components allowing to manage various facets of
 //! software internationalization.
 //!
-//! Most of those features depend on the selection of a `LanguageIdentifier` which
+//! Most of those features depend on the selection of a [`LanguageIdentifier`] which
 //! is a particular combination of language, script, region with optional variants.
 //! An examples of such locales are
 //! `en-US` (American English), `sr-Cyrl` (Serbian with Cyrylic script) or `es-AR` (
 //! Argentinian Spanish).
 //!
-//! `LanguageIdentifier` is a low level struct which is commonly used to represent
+//! [`LanguageIdentifier`] is a low level struct which is commonly used to represent
 //! user selection, available localization data and management between them.
 //!
-//! In `ICU4X` `Locale` is a part of the `icu::locid` component, since here we
+//! In `ICU4X` `Locale` is a part of the [`icu::locid`] component, since here we
 //! already added dependency on `icu`, we can refer to it via `icu::locid`.
 //!
 //! Let's update our application to use it.
@@ -147,7 +147,7 @@
 //! handle an error case. Try passing an malformed identifier, like "foo-bar" and
 //! try to call `cargo check`.
 //!
-//! *Notice:* The compile time macros `langid!`, and `locale!` don't support
+//! *Notice:* The compile time macros [`langid!`], and [`locale!`] don't support
 //! variants or extension tags, as storing these requires allocation. If you have
 //! such a tag you need to use runtime parsing.
 //!
@@ -170,7 +170,7 @@
 //!
 //! In result, compared to most internationalization solutions, working with `ICU4X`
 //! and data is a bit more explicit. `ICU4X` provides a trait
-//! called `DataProvider` and a number of concrete APIs that implement that trait
+//! called [`DataProvider`] and a number of concrete APIs that implement that trait
 //! for different scenarios. Users are also free to design their own providers that
 //! best fit into their ecosystem requirements.
 //!
@@ -185,7 +185,7 @@
 //! the steps in
 //! [Generating Data](#generating-data) to generate custom data, but for the
 //! purposes of trying stuff out, it is sufficient to use the data providers
-//! exported by `icu_testdata`.
+//! exported by [`icu_testdata`].
 //!
 //! ## Using test data
 //!
@@ -239,12 +239,12 @@
 //! you want to evaluate performance, memory or size of this example,
 //! use `cargo run --release`. Our example is also using `json` resource format.
 //! Generate the data in `postcard`
-//! (and use `BlobDataProvider`) for better performance.
+//! (and use [`BlobDataProvider`]) for better performance.
 //!
 //! ## Using data from the filesystem
 //!
 //! If you have ICU4X data on the file system in a JSON format, it can be loaded via
-//! `FsDataProvider`:
+//! [`FsDataProvider`]:
 //!
 //! ```toml
 //! [dependencies]
@@ -262,7 +262,7 @@
 //!
 //! The ICU4X repository has test data checked in tree in `provider/testdata/data`,
 //! however it is recommended one generate data on their own as described in the
-//! [next section](#generating data). Under the hood, `icu_testdata` is simply
+//! [next section](#generating data). Under the hood, [`icu_testdata`] is simply
 //! loading this data.
 //!
 //! ## Generating data
@@ -278,7 +278,7 @@
 //! We are also going to use Unicode property data shipped as a zip file in the
 //! ICU4C release.
 //!
-//! The `datagen` component has a binary application which will fetch the CLDR data
+//! The [`icu_datagen`] component has a binary application which will fetch the CLDR data
 //! and generate ICU4X data out of it.
 //!
 //! ```console
@@ -325,7 +325,7 @@
 //!
 //! This concludes this introduction tutorial.
 //!
-//! With the help of `DateTimeFormatter`, `Locale` and `DataProvider` we
+//! With the help of [`DateTimeFormatter`], [`Locale`] and [`DataProvider`] we
 //! formatted a date to Japanese, but that's just a start.
 //!
 //! The scope of internationalization domain is broad and there are many components
@@ -334,4 +334,11 @@
 //! As the feature set of `ICU4X` grows, more and more user interface concepts will
 //! become available for internationalization, and more features for fine tuning how
 //! the operations are performed will become available.
-//!  
+//!
+//! [`DateTimeFormatter`]: icu_datetime::DateTimeFormatter
+//! [`Locale`]: icu::locid::Locale
+//! [`DataProvider`]: icu_provider::DataProvider
+//! [`FsDataProvider`]: icu_provider_fs::FsDataProvider
+//! [`BlobDataProvider`]: icu_provider_blob::BlobDataProvider
+//! [`langid!`]: icu::locid::langid
+//! [`locale!`]: icu::locid::locale
