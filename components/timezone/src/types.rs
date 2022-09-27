@@ -46,27 +46,27 @@ impl GmtOffset {
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn offset_seconds(&self) -> i32 {
+    pub fn offset_seconds(self) -> i32 {
         self.0
     }
 
     /// Returns `true` if the [`GmtOffset`] is positive, otherwise `false`.
-    pub fn is_positive(&self) -> bool {
+    pub fn is_positive(self) -> bool {
         self.0 >= 0
     }
 
     /// Returns `true` if the [`GmtOffset`] is zero, otherwise `false`.
-    pub fn is_zero(&self) -> bool {
+    pub fn is_zero(self) -> bool {
         self.0 == 0
     }
 
     /// Returns `true` if the [`GmtOffset`] has non-zero minutes, otherwise `false`.
-    pub fn has_minutes(&self) -> bool {
+    pub fn has_minutes(self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
     /// Returns `true` if the [`GmtOffset`] has non-zero seconds, otherwise `false`.
-    pub fn has_seconds(&self) -> bool {
+    pub fn has_seconds(self) -> bool {
         self.0 % 3600 % 60 > 0
     }
 }
