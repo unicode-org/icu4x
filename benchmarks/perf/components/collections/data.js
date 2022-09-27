@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664240648720,
+  "lastUpdate": 1664243643195,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -22535,6 +22535,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 42821700,
             "range": "± 191094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3391fb8441cd88db2dfaf8fda1c005dc0fcf96e7",
+          "message": "Make error enums more consistent (#2649)",
+          "timestamp": "2022-09-26T20:38:20-05:00",
+          "tree_id": "25108fb038439934f622a80a66a08ed19391ae4b",
+          "url": "https://github.com/unicode-org/icu4x/commit/3391fb8441cd88db2dfaf8fda1c005dc0fcf96e7"
+        },
+        "date": 1664243578655,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 590,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 419,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 444,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 467,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 786,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 824,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 423,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 443,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 468,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 524,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 837,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 47556546,
+            "range": "± 1821776",
             "unit": "ns/iter"
           },
           {
