@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664294324595,
+  "lastUpdate": 1664298057845,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -28913,6 +28913,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/936082ff14b8d247dd35eca863f1b32cacda4ccb"
         },
         "date": 1664294267127,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7a471b7e4584bfc165d9e593295742c880369bf7",
+          "message": "Update yoke (#2655)",
+          "timestamp": "2022-09-27T16:58:32Z",
+          "tree_id": "d1531ea3c964ecccfa49869ead2201f0c10e6a66",
+          "url": "https://github.com/unicode-org/icu4x/commit/7a471b7e4584bfc165d9e593295742c880369bf7"
+        },
+        "date": 1664297997877,
         "tool": "ndjson",
         "benches": [
           {
