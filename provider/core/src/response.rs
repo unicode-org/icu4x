@@ -106,7 +106,7 @@ impl Cart {
         Yoke::try_attach_to_cart(SelectedRc::new(cart), |b: &C| f(&*b))
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(|rc| Cart(rc)) })
-            .wrap_cart_in_option()
+            .map(Yoke::wrap_cart_in_option)
     }
 }
 
@@ -500,13 +500,10 @@ where
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
-        Self {
-            // Safe because cart is wrapped
-            yoke: unsafe {
-                Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b)
-                    .replace_cart(|b| Some(Cart(b)))
-            },
-        }
+        let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b);
+        // Safe because cart is wrapped
+        let yoke = unsafe { yoke.replace_cart(|b| Some(Cart(b))) };
+        Self { yoke }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
