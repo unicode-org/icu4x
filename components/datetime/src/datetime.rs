@@ -228,18 +228,19 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     length::Date::Full
-    /// )
-    /// .unwrap();
+    /// let formatter =
+    ///     TypedDateFormatter::<Gregorian>::try_new_with_length_unstable(
+    ///         &icu_testdata::unstable(),
+    ///         &locale!("en").into(),
+    ///         length::Date::Full,
+    ///     )
+    ///     .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2022, 8, 29).unwrap()),
@@ -261,7 +262,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// let formatter = TypedDateFormatter::<Indian>::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-japanese").into(),
-    ///     length::Date::Full
+    ///     length::Date::Full,
     /// )
     /// .unwrap();
     ///
@@ -466,7 +467,7 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::AsDeserializingBufferProvider;
@@ -476,14 +477,16 @@ where {
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-    ///     &icu_testdata::buffer().as_deserializing(),
-    ///     &locale!("en").into(),
-    ///     options.into(),
-    /// )
-    /// .unwrap();
+    /// let dtf =
+    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
+    ///         &icu_testdata::buffer().as_deserializing(),
+    ///         &locale!("en").into(),
+    ///         options.into(),
+    ///     )
+    ///     .unwrap();
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
     /// ```
@@ -536,12 +539,15 @@ where {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Medium,
+    /// );
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -550,7 +556,8 @@ where {
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03 AM");
     /// ```

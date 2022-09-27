@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Region;
     ///
-    /// let region: Region = "DE".parse().expect("Failed to parse a region subtag.");
+    /// let region: Region =
+    ///     "DE".parse().expect("Failed to parse a region subtag.");
     /// ```
     ///
     /// [`unicode_region_id`]: https://unicode.org/reports/tr35/#unicode_region_id

@@ -317,10 +317,8 @@ impl DataKey {
     ///
     /// const CONST_KEY: DataKey = data_key!("foo@1");
     ///
-    /// let runtime_key = DataKey::from_path_and_metadata(
-    ///     CONST_KEY.path(),
-    ///     CONST_KEY.metadata(),
-    /// );
+    /// let runtime_key =
+    ///     DataKey::from_path_and_metadata(CONST_KEY.path(), CONST_KEY.metadata());
     ///
     /// assert_eq!(CONST_KEY, runtime_key);
     /// ```

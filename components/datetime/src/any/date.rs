@@ -40,16 +40,21 @@ use writeable::Writeable;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_with_length_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
-///     .expect("Failed to create TypedDateFormatter instance.");
+/// let df = DateFormatter::try_new_with_length_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en-u-ca-gregory").into(),
+///     length,
+/// )
+/// .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::try_new_iso_date(2020, 9, 1)
-///     .expect("Failed to construct Date.");
+/// let date =
+///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
-/// assert_writeable_eq!(df
-///     .format(&any_date)
-///     .expect("Calendars should match"), "Sep 1, 2020");
+/// assert_writeable_eq!(
+///     df.format(&any_date).expect("Calendars should match"),
+///     "Sep 1, 2020"
+/// );
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -117,13 +122,14 @@ impl DateFormatter {
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::try_new_iso_date(2020, 9, 1)
-    ///     .expect("Failed to construct Date.");
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(df
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020");
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -169,13 +175,14 @@ impl DateFormatter {
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::try_new_iso_date(2020, 9, 1)
-    ///     .expect("Failed to construct Date.");
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(df
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020");
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
     /// ```
     #[inline(never)]
     pub fn try_new_with_length_unstable<P>(

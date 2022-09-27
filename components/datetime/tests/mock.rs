@@ -18,7 +18,8 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 /// use icu_calendar::{DateTime, Gregorian};
 ///
 /// let date: DateTime<Gregorian> =
-///     parse_gregorian_from_str("2020-10-14T13:21:00").expect("Failed to parse a datetime.");
+///     parse_gregorian_from_str("2020-10-14T13:21:00")
+///         .expect("Failed to parse a datetime.");
 /// ```
 ///
 /// Optionally, fractional seconds can be specified: `YYYY-MM-DDThh:mm:ss.SSS`.
@@ -28,7 +29,8 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 /// use icu_calendar::{DateTime, Gregorian};
 ///
 /// let date: DateTime<Gregorian> =
-///     parse_gregorian_from_str("2020-10-14T13:21:00.101").expect("Failed to parse a datetime.");
+///     parse_gregorian_from_str("2020-10-14T13:21:00.101")
+///         .expect("Failed to parse a datetime.");
 /// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, CalendarError> {
@@ -82,8 +84,9 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Cale
 /// ```
 /// use icu::datetime::mock;
 ///
-/// let (date, zone) = mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
-///     .expect("Failed to parse a zoned datetime.");
+/// let (date, zone) =
+///     mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
+///         .expect("Failed to parse a zoned datetime.");
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,

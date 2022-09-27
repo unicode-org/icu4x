@@ -405,7 +405,8 @@ impl Date<Japanese> {
     ///
     /// // This function will error for eras that are out of bounds:
     /// // (Heisei was 32 years long, Heisei 33 is in Reiwa)
-    /// let oob_date = Date::try_new_japanese_date(era, 33, 1, 2, japanese_calendar);
+    /// let oob_date =
+    ///     Date::try_new_japanese_date(era, 33, 1, 2, japanese_calendar);
     /// assert!(oob_date.is_err());
     ///
     /// // and for unknown eras

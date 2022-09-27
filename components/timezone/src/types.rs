@@ -88,10 +88,14 @@ impl FromStr for GmtOffset {
     /// ```
     /// use icu_timezone::GmtOffset;
     ///
-    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
-    /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");
-    /// let offset2: GmtOffset = "-0930".parse().expect("Failed to parse a GMT offset.");
-    /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
+    /// let offset0: GmtOffset =
+    ///     "Z".parse().expect("Failed to parse a GMT offset.");
+    /// let offset1: GmtOffset =
+    ///     "-09".parse().expect("Failed to parse a GMT offset.");
+    /// let offset2: GmtOffset =
+    ///     "-0930".parse().expect("Failed to parse a GMT offset.");
+    /// let offset3: GmtOffset =
+    ///     "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut chars = input.chars();

@@ -237,19 +237,16 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
-    /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
     ///
-    /// assert_eq!(
-    ///     date.week_of_month(first_weekday),
-    ///     WeekOfMonth(2)
-    /// );
+    /// assert_eq!(date.week_of_month(first_weekday), WeekOfMonth(2));
     /// ```
     pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
         let config = WeekCalculator {
@@ -264,11 +261,11 @@ impl<A: AsCalendar> Date<A> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::types::IsoWeekday;
-    /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekCalculator;
     /// use icu::calendar::week::WeekOf;
+    /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///

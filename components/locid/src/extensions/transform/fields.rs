@@ -56,8 +56,8 @@ impl Fields {
     ///
     /// ```
     /// use icu::locid::extensions::transform::Fields;
-    /// use icu::locid::Locale;
     /// use icu::locid::locale;
+    /// use icu::locid::Locale;
     ///
     /// let loc1 = Locale::try_from_bytes(b"und-t-h0-hybrid").unwrap();
     /// let loc2 = locale!("und-u-ca-buddhist");
@@ -171,15 +171,21 @@ impl Fields {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
     /// use icu::locid::extensions_transform_key as key;
+    /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-t-h0-hybrid-d0-hex-m0-xml".parse().unwrap();
     ///
-    /// loc.extensions.transform.fields.retain_by_key(|&k| k == key!("h0"));
+    /// loc.extensions
+    ///     .transform
+    ///     .fields
+    ///     .retain_by_key(|&k| k == key!("h0"));
     /// assert_eq!(loc, "und-t-h0-hybrid".parse().unwrap());
     ///
-    /// loc.extensions.transform.fields.retain_by_key(|&k| k == key!("d0"));
+    /// loc.extensions
+    ///     .transform
+    ///     .fields
+    ///     .retain_by_key(|&k| k == key!("d0"));
     /// assert_eq!(loc, Locale::UND);
     /// ```
     pub fn retain_by_key<F>(&mut self, mut predicate: F)

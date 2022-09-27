@@ -23,7 +23,8 @@ use tinystr::TinyAsciiStr;
 /// use icu::locid::extensions::unicode::Value;
 ///
 /// let value1: Value = "gregory".parse().expect("Failed to parse a Value.");
-/// let value2: Value = "islamic-civil".parse().expect("Failed to parse a Value.");
+/// let value2: Value =
+///     "islamic-civil".parse().expect("Failed to parse a Value.");
 /// let value3: Value = "true".parse().expect("Failed to parse a Value.");
 ///
 /// assert_eq!(&value1.to_string(), "gregory");
@@ -162,7 +163,9 @@ impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+/// use icu::locid::{
+///     extensions_unicode_key as key, extensions_unicode_value as value,
+/// };
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///

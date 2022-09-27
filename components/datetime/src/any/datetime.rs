@@ -56,9 +56,10 @@ use writeable::Writeable;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// assert_writeable_eq!(dtf
-///     .format(&any_datetime)
-///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+/// assert_writeable_eq!(
+///     dtf.format(&any_datetime).expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34 PM"
+/// );
 /// ```
 ///
 /// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
@@ -161,7 +162,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let mut options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
@@ -175,9 +179,10 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -209,8 +214,8 @@ impl DateTimeFormatter {
     /// use icu::datetime::{options::components, DateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
-    /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -220,7 +225,7 @@ impl DateTimeFormatter {
     /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
     ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en-u-ca-gregory").into(),
-    ///     options.into()
+    ///     options.into(),
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
@@ -228,7 +233,10 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("Calendars should match"), "September 2020");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "September 2020"
+    /// );
     /// ```
     #[cfg(feature = "experimental")]
     #[inline(never)]
@@ -304,7 +312,10 @@ impl DateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
@@ -318,9 +329,10 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -411,9 +423,10 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(dtf
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(
+    ///     dtf.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020, 12:34 PM"
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider

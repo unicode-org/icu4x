@@ -65,7 +65,9 @@ pub struct DataResponseMetadata {
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 { message: Cow::Borrowed("Demo") });
+/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
+///     message: Cow::Borrowed("Demo"),
+/// });
 ///
 /// assert_eq!("Demo", payload.get().message);
 /// ```
@@ -184,7 +186,8 @@ where
     ///     message: Cow::Owned("example".to_string()),
     /// };
     ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
+    /// let payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
     ///
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
@@ -216,7 +219,8 @@ where
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    /// let mut payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.message.to_mut().push_str(" World"));
     ///
@@ -229,7 +233,8 @@ where
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    /// let mut payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
     /// let suffix = " World".to_string();
     /// payload.with_mut(move |s| s.message.to_mut().push_str(&suffix));
@@ -335,9 +340,10 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -377,9 +383,10 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -426,15 +433,16 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
     /// let string_to_append = "Extra";
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.try_map_project_cloned(|obj, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1
+    ///     .try_map_project_cloned(|obj, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }

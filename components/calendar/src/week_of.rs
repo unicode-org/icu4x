@@ -78,22 +78,19 @@ impl WeekCalculator {
     /// # Examples
     ///
     /// ```
+    /// use icu_calendar::types::{DayOfMonth, IsoWeekday, WeekOfMonth};
     /// use icu_calendar::week::WeekCalculator;
-    /// use icu_calendar::types::{IsoWeekday, DayOfMonth, WeekOfMonth};
     ///
     /// let week_calculator = WeekCalculator::try_new_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &icu_locid::locale!("en-GB").into()
+    ///     &icu_locid::locale!("en-GB").into(),
     /// )
     /// .expect("Data exists");
     ///
     /// // Wednesday the 10th is in week 2:
     /// assert_eq!(
     ///     WeekOfMonth(2),
-    ///     week_calculator.week_of_month(
-    ///         DayOfMonth(10),
-    ///         IsoWeekday::Wednesday
-    ///     )
+    ///     week_calculator.week_of_month(DayOfMonth(10), IsoWeekday::Wednesday)
     /// );
     /// ```
     ///
@@ -107,13 +104,13 @@ impl WeekCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu_calendar::week::{WeekCalculator, WeekOf, RelativeUnit};
-    /// use icu_calendar::types::{IsoWeekday, DayOfMonth};
+    /// use icu_calendar::types::{DayOfMonth, IsoWeekday};
+    /// use icu_calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
     /// use icu_calendar::Date;
     ///
     /// let week_calculator = WeekCalculator::try_new_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &icu_locid::locale!("en-GB").into()
+    ///     &icu_locid::locale!("en-GB").into(),
     /// )
     /// .expect("Data exists");
     ///
@@ -125,10 +122,9 @@ impl WeekCalculator {
     ///         unit: RelativeUnit::Current,
     ///         week: 34
     ///     },
-    ///     week_calculator.week_of_year(
-    ///         iso_date.day_of_year_info(),
-    ///         IsoWeekday::Friday
-    ///     ).unwrap()
+    ///     week_calculator
+    ///         .week_of_year(iso_date.day_of_year_info(), IsoWeekday::Friday)
+    ///         .unwrap()
     /// );
     /// ```
     pub fn week_of_year(

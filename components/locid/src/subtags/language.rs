@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let language: Language = "en".parse().expect("Failed to parse a language subtag.");
+    /// let language: Language =
+    ///     "en".parse().expect("Failed to parse a language subtag.");
     /// ```
     ///
     /// If the [`Language`] has no value assigned, it serializes to a string `"und"`, which

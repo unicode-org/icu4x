@@ -78,10 +78,10 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::datetime::DateTimeError;
     /// use icu::datetime::time_zone::TimeZoneFormatter;
+    /// use icu::datetime::DateTimeError;
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
     ///
     /// let mut tzf = TimeZoneFormatter::try_new_unstable(
@@ -103,7 +103,8 @@ where
     /// assert!(buf.is_empty());
     ///
     /// // Enable a non-fallback format:
-    /// tzf.load_generic_location_format(&icu_testdata::unstable()).unwrap();
+    /// tzf.load_generic_location_format(&icu_testdata::unstable())
+    ///     .unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Ok(_))

@@ -46,9 +46,9 @@ use crate::{
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::time_zone::TimeZoneFormatterOptions;
 /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
 /// use icu::locid::locale;
-/// use icu::datetime::time_zone::TimeZoneFormatterOptions;
 /// use icu::timezone::CustomTimeZone;
 /// use std::str::FromStr;
 /// use writeable::assert_writeable_eq;
@@ -65,7 +65,8 @@ use crate::{
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+/// let datetime =
+///     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
 ///
 /// let formatted_date = zdtf.format(&datetime, &time_zone);
@@ -179,23 +180,28 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
@@ -266,7 +272,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -276,15 +285,13 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
-    /// assert_writeable_eq!(
-    ///     formatted_date,
-    ///     "Sep 12, 2020, 12:34:28 PM GMT-07:00"
-    /// );
+    /// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format<'l>(
@@ -306,7 +313,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// );
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -316,7 +326,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let formatted_string = zdtf.format_to_string(&datetime, &time_zone);

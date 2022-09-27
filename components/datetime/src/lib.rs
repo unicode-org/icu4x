@@ -32,7 +32,8 @@
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::{
-//!     options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
+//!     options::length, DateTimeFormatter, DateTimeFormatterOptions,
+//!     TypedDateTimeFormatter,
 //! };
 //! use icu::locid::{locale, Locale};
 //! use std::str::FromStr;
@@ -61,7 +62,8 @@
 //! )
 //! .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
-//! let typed_date = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+//! let typed_date =
+//!     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 //! // prefer using ISO dates with DateTimeFormatter
 //! let date = typed_date.to_iso().to_any();
 //!

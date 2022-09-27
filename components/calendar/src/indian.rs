@@ -246,8 +246,8 @@ impl Date<Indian> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_indian =
-    ///     Date::try_new_indian_date(1891, 10, 12).expect("Failed to initialize Indian Date instance.");
+    /// let date_indian = Date::try_new_indian_date(1891, 10, 12)
+    ///     .expect("Failed to initialize Indian Date instance.");
     ///
     /// assert_eq!(date_indian.year().number, 1891);
     /// assert_eq!(date_indian.month().ordinal, 10);
@@ -280,8 +280,9 @@ impl DateTime<Indian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_indian = DateTime::try_new_indian_datetime(1891, 10, 12, 13, 1, 0)
-    ///     .expect("Failed to initialize Indian DateTime instance.");
+    /// let datetime_indian =
+    ///     DateTime::try_new_indian_datetime(1891, 10, 12, 13, 1, 0)
+    ///         .expect("Failed to initialize Indian DateTime instance.");
     ///
     /// assert_eq!(datetime_indian.date.year().number, 1891);
     /// assert_eq!(datetime_indian.date.month().ordinal, 10);

@@ -10,8 +10,8 @@ command-line utility.
 ### `build.rs`
 
 ```rust
-use icu_datagen::*;
 use icu::locid::langid;
+use icu_datagen::*;
 use std::fs::File;
 use std::path::PathBuf;
 

@@ -221,7 +221,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// use yoke::Yoke;
     ///
     /// let local_data = "foo".to_string();
-    /// let yoke = Yoke::<&'static str, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
+    /// let yoke = Yoke::<&'static str, Box<String>>::attach_to_zero_copy_cart(
+    ///     Box::new(local_data),
+    /// );
     /// assert_eq!(*yoke.get(), "foo");
     ///
     /// // Get back the cart
@@ -237,7 +239,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// let local_data = "foo".to_string();
     /// let mut yoke =
-    ///     Yoke::<Cow<'static, str>, Box<String>>::attach_to_zero_copy_cart(Box::new(local_data));
+    ///     Yoke::<Cow<'static, str>, Box<String>>::attach_to_zero_copy_cart(
+    ///         Box::new(local_data),
+    ///     );
     /// assert_eq!(yoke.get(), "foo");
     ///
     /// // Override data in the cart
@@ -575,7 +579,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
-    /// fn map_project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+    /// fn map_project_string_1(
+    ///     bar: Yoke<Bar<'static>, Rc<[u8]>>,
+    /// ) -> Yoke<&'static str, Rc<[u8]>> {
     ///     bar.map_project(|bar, _| bar.string_1)
     /// }
     ///
@@ -651,7 +657,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use yoke::Yoke;
     /// # use std::str::{self, Utf8Error};
     /// #
-    /// fn slice(y: Yoke<&'static [u8], Rc<[u8]>>) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
+    /// fn slice(
+    ///     y: Yoke<&'static [u8], Rc<[u8]>>,
+    /// ) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
     ///     y.try_map_project(move |bytes, _| str::from_utf8(bytes))
     /// }
     /// ```
@@ -671,7 +679,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///     string_2: &'a str,
     /// }
     ///
-    /// fn map_project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
+    /// fn map_project_string_1(
+    ///     bar: Yoke<Bar<'static>, Rc<[u8]>>,
+    /// ) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
     ///     bar.try_map_project(|bar, _| str::from_utf8(bar.bytes_1))
     /// }
     ///
@@ -861,12 +871,14 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke1 =
+    ///     Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// let erased1: Yoke<_, ErasedRcCart> = yoke1.erase_rc_cart();
     /// // Wrap the Box in an Rc to make it compatible
-    /// let erased2: Yoke<_, ErasedRcCart> = yoke2.wrap_cart_in_rc().erase_rc_cart();
+    /// let erased2: Yoke<_, ErasedRcCart> =
+    ///     yoke2.wrap_cart_in_rc().erase_rc_cart();
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
@@ -905,12 +917,14 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     /// let buffer1: Arc<String> = Arc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |arc| arc.trim());
+    /// let yoke1 =
+    ///     Yoke::<&'static str, _>::attach_to_cart(buffer1, |arc| arc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// let erased1: Yoke<_, ErasedArcCart> = yoke1.erase_arc_cart();
     /// // Wrap the Box in an Rc to make it compatible
-    /// let erased2: Yoke<_, ErasedArcCart> = yoke2.wrap_cart_in_arc().erase_arc_cart();
+    /// let erased2: Yoke<_, ErasedArcCart> =
+    ///     yoke2.wrap_cart_in_arc().erase_arc_cart();
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
@@ -949,11 +963,13 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// let buffer1: Rc<String> = Rc::new("   foo bar baz  ".into());
     /// let buffer2: Box<String> = Box::new("  baz quux  ".into());
     ///
-    /// let yoke1 = Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
+    /// let yoke1 =
+    ///     Yoke::<&'static str, _>::attach_to_cart(buffer1, |rc| rc.trim());
     /// let yoke2 = Yoke::<&'static str, _>::attach_to_cart(buffer2, |b| b.trim());
     ///
     /// // Wrap the Rc in an Box to make it compatible
-    /// let erased1: Yoke<_, ErasedBoxCart> = yoke1.wrap_cart_in_box().erase_box_cart();
+    /// let erased1: Yoke<_, ErasedBoxCart> =
+    ///     yoke1.wrap_cart_in_box().erase_box_cart();
     /// let erased2: Yoke<_, ErasedBoxCart> = yoke2.erase_box_cart();
     ///
     /// // Now erased1 and erased2 have the same type!

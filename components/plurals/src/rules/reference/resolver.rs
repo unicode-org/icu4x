@@ -16,7 +16,8 @@ use crate::rules::reference::ast;
 /// use icu::plurals::PluralOperands;
 ///
 /// let operands = PluralOperands::from(5_usize);
-/// let condition = parse_condition(b"i = 4..6").expect("Failde to parse a rule.");
+/// let condition =
+///     parse_condition(b"i = 4..6").expect("Failde to parse a rule.");
 ///
 /// assert!(test_condition(&condition, &operands));
 /// ```

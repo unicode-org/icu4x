@@ -286,7 +286,10 @@ impl DateTime<Iso> {
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(26382240), today);
+    /// assert_eq!(
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
@@ -316,7 +319,10 @@ impl DateTime<Iso> {
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(26382240), today);
+    /// assert_eq!(
+    ///     DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///     today
+    /// );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///

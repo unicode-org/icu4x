@@ -31,7 +31,7 @@ use zerofrom::ZeroFrom;
 /// // Check that it works:
 /// let formatter = HelloWorldFormatter::try_new_with_any_provider(
 ///     &provider,
-///     &icu_locid::Locale::UND.into()
+///     &icu_locid::Locale::UND.into(),
 /// )
 /// .expect("key matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
@@ -39,7 +39,10 @@ use zerofrom::ZeroFrom;
 /// // Requests for invalid keys get MissingDataKey
 /// assert!(matches!(
 ///     provider.load_any(icu_provider::data_key!("foo@1"), Default::default()),
-///     Err(DataError { kind: DataErrorKind::MissingDataKey, .. })
+///     Err(DataError {
+///         kind: DataErrorKind::MissingDataKey,
+///         ..
+///     })
 /// ))
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable

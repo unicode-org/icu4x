@@ -68,10 +68,10 @@ use writeable::Writeable;
 /// let time_zone = CustomTimeZone::utc();
 ///
 /// assert_writeable_eq!(
-///     zdtf
-///       .format(&any_datetime, &time_zone)
-///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28 PM GMT");
+///     zdtf.format(&any_datetime, &time_zone)
+///         .expect("Calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM GMT"
+/// );
 /// ```
 ///
 /// Using a non-GMT time zone, specified by id:
@@ -149,8 +149,8 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
-    /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
@@ -165,9 +165,11 @@ impl ZonedDateTimeFormatter {
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
     ///     Default::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -258,14 +260,17 @@ impl ZonedDateTimeFormatter {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
@@ -273,9 +278,11 @@ impl ZonedDateTimeFormatter {
     ///     &locale.into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -432,7 +439,11 @@ impl ZonedDateTimeFormatter {
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// )
+    /// .into();
     /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
@@ -443,7 +454,8 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///

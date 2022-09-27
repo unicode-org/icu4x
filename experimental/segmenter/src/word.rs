@@ -44,9 +44,12 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
@@ -54,9 +57,12 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let segmenter = WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 pub struct WordBreakSegmenter {
