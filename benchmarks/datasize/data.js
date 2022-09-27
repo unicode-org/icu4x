@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664320856976,
+  "lastUpdate": 1664322073109,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29153,6 +29153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5f91c4bf32fe62c1011a8ba178b6a2afa9051d42"
         },
         "date": 1664320784143,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "82ef865e12d81ad6661f2c692dfbd4786e909185",
+          "message": "ICU4X version (#2666)",
+          "timestamp": "2022-09-27T23:38:55Z",
+          "tree_id": "26f8bb3aea568807b4e16a7176a36cb3d5768a96",
+          "url": "https://github.com/unicode-org/icu4x/commit/82ef865e12d81ad6661f2c692dfbd4786e909185"
+        },
+        "date": 1664322015945,
         "tool": "ndjson",
         "benches": [
           {
