@@ -98,7 +98,7 @@ use icu::locid::locale;
 fn main() {
     let loc = locale!("ES-AR");
 
-    if loc.id.language == "es" {
+    if loc.id.language.as_str() == "es" {
         println!("¡Hola amigo!");
     }
 
@@ -136,8 +136,8 @@ First, we need to register our choice of the provider in `~/projects/icu/myapp/C
 
 ```
 [dependencies]
-icu = "1"
-icu_testdata = "1"
+icu = "1.0"
+icu_testdata = "1.0"
 ```
 
 and then we can use it in our code:
@@ -153,22 +153,23 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 ```rust
 use icu::locid::locale;
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
+use icu::datetime::{DateTimeFormatter, options::length};
 
 fn main() {
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
 
-    let options = length::Bag {
-        time: Some(length::Time::Medium),
-        date: Some(length::Date::Long),
-        ..Default::default()
-    }.into();
+    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormat::try_new_unstable(&icu_testdata::unstable(), &locale!("ja").into(), &options)
-        .expect("Failed to initialize DateTimeFormat");
+    // DateTimeFormatter works with data from any calendar, we need to cast to DateTime<AnyCalendar>
+    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with the DateTime<Gregorian>
+    // that we have constructed
+    let date = date.to_any();
 
-    let formatted_date = dtf.format(&date);
+    let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("ja").into(), options.into())
+        .expect("Failed to initialize DateTimeFormatter");
+
+    let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 
     println!("📅: {}", formatted_date);
 }
@@ -191,7 +192,7 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 
 ```toml
 [dependencies]
-icu = "0.6"
+icu = "1.0"
 icu_provider_fs = {version = "1.0.0" , features = ["deserialize_json"]}
 ```
 
@@ -219,10 +220,10 @@ The `datagen` component has a binary application which will fetch the CLDR data 
 ```
 git clone https://github.com/unicode-org/icu4x
 cd icu4x
-git checkout icu@0.6.0
+git checkout icu@1.0.0
 cargo run --bin icu4x-datagen --features bin -- \
-    --cldr-tag 41.0.0 \
-    --icuexport-tag release-71-1 \
+    --cldr-tag latest \
+    --icuexport-tag latest \
     --out ~/projects/icu/icu4x-data \
     --all-keys --all-locales
 ```
