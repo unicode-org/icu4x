@@ -67,7 +67,7 @@ fn main() {
     let loc: Locale = "ES-AR".parse()
         .expect("Failed to parse locale.");
 
-    if loc.id.language == "es" {
+    if loc.id.language.as_str() == "es" {
         println!("¡Hola amigo!");
     }
 
