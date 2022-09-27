@@ -116,7 +116,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_u32(0x41);
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0x41), true);
+    /// assert!(check.contains32(0x41));
     /// ```
     pub fn add_u32(&mut self, c: u32) {
         if c <= char::MAX as u32 {
@@ -150,7 +150,7 @@ impl CodePointInversionListBuilder {
     /// let mut builder = CodePointInversionListBuilder::new();
     /// builder.add_range_u32(&(0xd800..=0xdfff));
     /// let check = builder.build();
-    /// assert_eq!(check.contains32(0xd900), true);
+    /// assert!(check.contains32(0xd900));
     /// ```
     pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);

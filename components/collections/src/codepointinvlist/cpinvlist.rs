@@ -181,28 +181,22 @@ impl<'data> CodePointInversionList<'data> {
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use zerovec::ZeroVec;
-    ///
     /// use std::vec::Vec;
     ///
-    /// fn inv_list_to_owned_codepointinversionlist(inv_list: &[u32]) -> CodePointInversionList {
-    ///     CodePointInversionList::try_clone_from_inversion_list_slice(inv_list).unwrap()
-    /// }
+    /// let bmp_list = &[0x0, 0x10000];
+    /// let smp_list = &[0x10000, 0x20000];
+    /// let sip_list = &[0x20000, 0x30000];
     ///
-    /// let bmp_list: [u32; 2] = [0x0, 0x10000];
-    /// let smp_list: Vec<u32> = vec![0x10000, 0x20000];
-    /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
-    ///
-    /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let codepointinversionlists: Vec<CodePointInversionList> = inv_lists
-    ///     .iter()
-    ///     .map(|il| inv_list_to_owned_codepointinversionlist(il))
+    /// let lists: Vec<CodePointInversionList> = [&bmp_list[..], smp_list, sip_list]
+    ///     .into_iter()
+    ///     .map(|l| CodePointInversionList::try_clone_from_inversion_list_slice(l).unwrap())
     ///     .collect();
     ///
-    /// let bmp = &codepointinversionlists.get(0).unwrap();
+    /// let bmp = &lists[0];
     /// assert!(bmp.contains32(0xFFFF));
     /// assert!(!bmp.contains32(0x10000));
     ///
-    /// assert!(!&codepointinversionlists.iter().any(|set| set.contains32(0x40000)));
+    /// assert!(!lists.iter().any(|set| set.contains32(0x40000)));
     /// ```
     pub fn try_clone_from_inversion_list_slice(
         inv_list: &[u32],

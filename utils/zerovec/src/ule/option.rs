@@ -22,7 +22,7 @@ use core::mem::{self, MaybeUninit};
 ///     Some('ł'),
 /// ]);
 ///
-/// assert_eq!(z.get(2), Some(Some(('ø'))));
+/// assert_eq!(z.get(2), Some(Some('ø')));
 /// assert_eq!(z.get(3), Some(None));
 /// ```
 // Invariants:

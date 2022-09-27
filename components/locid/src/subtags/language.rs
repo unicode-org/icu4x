@@ -87,11 +87,11 @@ impl Language {
     ///
     /// let mut lang: Language = "und".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(lang.is_empty(), true);
+    /// assert!(lang.is_empty());
     ///
     /// lang.clear();
     ///
-    /// assert_eq!(lang.is_empty(), true);
+    /// assert!(lang.is_empty());
     /// ```
     #[inline]
     pub fn is_empty(self) -> bool {

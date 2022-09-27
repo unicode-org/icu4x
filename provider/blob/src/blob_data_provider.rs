@@ -73,7 +73,7 @@ use yoke::*;
 /// ));
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// // Check that it works:

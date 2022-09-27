@@ -95,9 +95,9 @@ impl UnvalidatedStr {
     /// ```
     /// use zerovec::ule::UnvalidatedStr;
     ///
-    /// static a: &UnvalidatedStr = UnvalidatedStr::from_bytes(b"abc");
+    /// static A: &UnvalidatedStr = UnvalidatedStr::from_bytes(b"abc");
     ///
-    /// let b = a.try_as_str().unwrap();
+    /// let b = A.try_as_str().unwrap();
     /// assert_eq!(b, "abc");
     /// ```
     // Note: this is const starting in 1.63

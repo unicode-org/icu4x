@@ -194,8 +194,8 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.contains_key(&1), true);
-    /// assert_eq!(map.contains_key(&3), false);
+    /// assert!(map.contains_key(&1));
+    /// assert!(!map.contains_key(&3));
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
         self.keys.zvl_binary_search(key).is_ok()

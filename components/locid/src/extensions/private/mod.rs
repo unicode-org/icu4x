@@ -19,7 +19,7 @@
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
 //! let subtag: Subtag = "foo".parse().expect("Parsing subtag failed.");
-//! assert_eq!(loc.extensions.private.contains(&subtag), true);
+//! assert!(loc.extensions.private.contains(&subtag));
 //! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag));
 //! loc.extensions.private.clear();
 //! assert_eq!(loc.to_string(), "en-US");

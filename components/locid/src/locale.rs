@@ -207,7 +207,7 @@ impl Locale {
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    /// let subtags: &[&[u8]] = &[b"ca", b"ES", b"valencia", b"u", b"ca", b"hebrew"];
     ///
     /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
     /// assert_eq!(
