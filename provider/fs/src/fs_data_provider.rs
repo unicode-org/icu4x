@@ -85,7 +85,7 @@ impl BufferProvider for FsDataProvider {
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(buffer.into())),
+            payload: Some(DataPayload::from_owned_buffer(buffer.into_boxed_slice())),
         })
     }
 }

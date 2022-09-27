@@ -373,30 +373,36 @@ impl DataExporter for BakedDataExporter {
                 }
             });
 
-        let any_cases = marker_data_feature_ident.iter().map(|(marker, data, feature, ident)| {
-            // TODO(#1678): Remove the special case
-            if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
-                quote! {
-                    #feature
-                    #ident => {
-                        #data::DATA
-                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                            .map(|&data| AnyPayload::from_rcwrap_payload::<#marker>(
-                                icu_provider::RcWrap::from(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)))))
+        let any_cases = marker_data_feature_ident
+            .iter()
+            .map(|(marker, data, feature, ident)| {
+                // TODO(#1678): Remove the special case
+                if marker.to_string()
+                    == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker"
+                {
+                    quote! {
+                        #feature
+                        #ident => {
+                            #data::DATA
+                                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                .copied()
+                                .map(zerofrom::ZeroFrom::zero_from)
+                                .map(DataPayload::<#marker>::from_owned)
+                                .map(DataPayload::wrap_into_any_payload)
+                        }
+                    }
+                } else {
+                    quote! {
+                        #feature
+                        #ident => {
+                            #data::DATA
+                                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                .copied()
+                                .map(AnyPayload::from_static_ref)
+                        }
                     }
                 }
-            } else {
-                quote!{
-                    #feature
-                    #ident => {
-                        #data::DATA
-                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                            .copied()
-                            .map(AnyPayload::from_static_ref)
-                    }
-                }
-            }
-        });
+            });
 
         self.write_to_file(
             PathBuf::from("any"),

@@ -6,7 +6,7 @@
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 #[allow(unused_imports)] // feature-specific
-use icu_provider::RcWrapBounds;
+use icu_provider::MaybeSendSync;
 use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
@@ -136,7 +136,7 @@ pub mod ffi {
             panic!("Requires feature 'buffer_provider'");
 
             #[cfg(feature = "buffer_provider")]
-            icu_provider_blob::BlobDataProvider::try_new_from_blob(blob)
+            icu_provider_blob::BlobDataProvider::try_new_from_blob(Box::from(blob)) // allocates
                 .map_err(Into::into)
                 .map(convert_buffer_provider)
                 .into()
@@ -360,7 +360,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
@@ -376,7 +376,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
