@@ -76,7 +76,7 @@ icu_properties = { version = "1.0.0", path = "../../components/properties/", fea
 icu_provider = { version = "1.0.0", path = "../../provider/core" }
 icu_provider_adapters = { version = "1.0.0", path = "../../provider/adapters" }
 icu_provider_blob = { version = "1.0.0", path = "../../provider/blob" }
-icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter" }
+icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter" }
 icu_timezone = { version = "1.0.0", path = "../../components/timezone" }
 serde = { version = "1.0", default-features = false, optional = true }
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
