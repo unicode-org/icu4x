@@ -31,7 +31,7 @@ To initialize a binary application, navigate to the root directory of our projec
 
 ```
 cd ~/projects/icu
-cargo init --bin myapp
+cargo new --bin myapp
 ```
 
 The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs` which is the main file for our application.
@@ -45,16 +45,16 @@ The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs`
 icu = "1.0"
 ```
 
+You can also run `cargo add icu` for the same effect.
+
 After saving the changes, commands like `cargo check` will download the `icu` Rust package and use it for the build.
 
 # 4. Accessing components
 
 `ICU4X` comes with a variety of components allowing to manage various facets of software internationalization.
-Most of those features depend on the selection of a `Language Identifier` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrylic script) or `es-AR` (Argentinian Spanish).
+Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrylic script) or `es-AR` (Argentinian Spanish).
 
-`LanguageIdentifier` is a low level struct which is commonly used to represent user selection, available localization data and management between them.
-
-In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added dependency on `icu`, we can refer to it via `icu::locid`.
+In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
 
 Let's update our application to use it.
 
@@ -87,7 +87,8 @@ Congratulations! `ICU4X` has been used to semantically operate on a locale and t
 
 ## Convenience macro
 
-The scenario of working with statically declared Locales and their subtags is common.
+The scenario of working with statically declared Locales is common.
+
 It's a bit unergonomic to have to perform the parsing of them at runtime and handle a parser error in such case.
 
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
