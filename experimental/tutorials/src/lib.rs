@@ -644,27 +644,57 @@
 //!
 //! ### Transformer
 //!
-//! There are 2 major traits that must be implemented.
 //!
-//! *DataProvider*
+//! ```rust
+//! use icu_provider::*;
+//! use icu_provider::datagen::IterableDataProvider;
+//! use serde::Serialize;
+//! use yoke::Yokeable;
+//! use databake::Bake;
 //!
-//! Use the data inside self.source and emit it as an ICU4X data struct.
-//! This is the core transform operation. This step could take a lot of
-//! work, such as pre-parsing patterns, re-organizing the data, etc.
-//! This method will be called once per option returned by supported_locales.
+//! #[derive(Serialize, Deserialize, Clone, Default, PartialEq, Yokeable, Bake)]
+//! #[databake(path = bar::module)]
+//! struct FooV1 {
+//!   message: String,
+//! }
 //!
-//! https://github.com/unicode-org/icu4x/blob/dbb02a18b48a63100c748e6ef3f39d5c734810f9/provider/core/src/hello_world.rs#L105-L122
+//! struct FooProvider;
+//! struct FooV1Marker;
 //!
-//! *IterableDataProvider*
+//! impl DataMarker for FooV1Marker {
+//!   type Yokeable = FooV1;
+//! }
 //!
-//! This should list all supported locales.
+//! impl KeyedDataMarker for FooV1Marker {
+//!   const KEY: DataKey = icu_provider::data_key!("foo/bar@1");
+//! }
 //!
-//! https://github.com/unicode-org/icu4x/blob/dbb02a18b48a63100c748e6ef3f39d5c734810f9/provider/core/src/hello_world.rs#L265-L277
+//! impl DataProvider<FooV1Marker> for FooProvider {
+//!     fn load(&self,req: DataRequest) -> Result<DataResponse<FooV1Marker>, DataError> {
+//!         // Use the data inside self.source and emit it as an ICU4X data struct.
+//!         // This is the core transform operation. This step could take a lot of
+//!         // work, such as pre-parsing patterns, re-organizing the data, etc.
+//!         // This method will be called once per option returned by supported_locales.
+//!         Ok(DataResponse {
+//!             metadata: Default::default(),
+//!             payload: Some(DataPayload::from_static_str("test")),
+//!         })
+//!     }
+//! }
 //!
+//! impl IterableDataProvider<FooV1Marker> for FooProvider {
+//!     fn supported_locales(
+//!         &self,
+//!     ) -> Result<Vec<DataLocale>, DataError> {
+//!         Ok(vec![Default::default()])
+//!     }
+//! }
 //!
+//! // Once we have DataProvider and IterableDataProvider, we can apply this macro:
+//! icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
+//! ```
 //!
-//! The above snippets are abridged version of code illustrating the most important
-//! boilerplate for implementing and ICU4X data transform.
+//! The above example is an abridged snippet of code illustrating the most important boilerplate for implementing and ICU4X data transform.
 //!
 //!
 //! [`DateTimeFormatter`]: icu::datetime::DateTimeFormatter
