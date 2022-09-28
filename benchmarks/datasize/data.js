@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664326914504,
+  "lastUpdate": 1664381324747,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29363,6 +29363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4cce0a72f97002782fa9091c4f5c313e91c1539f"
         },
         "date": 1664326835826,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5da1221896486ca462adb048ab1857a211b622a9",
+          "message": "Various tutorial fixes from feedback (#2674)\n\n* Clean up\r\n\r\n* rename path so it's not confusing with icu\r\n\r\n* fixes\r\n\r\n* Fixup data management section\r\n\r\n* more fixes\r\n\r\n* cargo-edit\r\n\r\n* zibi\r\n\r\n* rob\r\n\r\n* fix\r\n\r\n* Update docs/tutorials/intro.md\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-09-28T15:58:56Z",
+          "tree_id": "16605ec0ee8762552022ee019fb4afc188e7ff33",
+          "url": "https://github.com/unicode-org/icu4x/commit/5da1221896486ca462adb048ab1857a211b622a9"
+        },
+        "date": 1664381231923,
         "tool": "ndjson",
         "benches": [
           {
