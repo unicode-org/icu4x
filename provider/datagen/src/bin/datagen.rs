@@ -155,6 +155,14 @@ fn main() -> eyre::Result<()> {
                 ),
         )
         .arg(
+            Arg::with_name("KEYS_FOR_BIN")
+                .long("keys-for-bin")
+                .takes_value(true)
+                .help(
+                    "Analyzes the binary and only includes keys that are used by the binary."
+                ),
+        )
+        .arg(
             Arg::with_name("HELLO_WORLD")
                 .long("hello-world-key")
                 .help("Whether to include the 'hello world' key."),
@@ -170,6 +178,7 @@ fn main() -> eyre::Result<()> {
                 .arg("KEY_FILE")
                 .arg("HELLO_WORLD")
                 .arg("ALL_KEYS")
+                .arg("KEYS_FOR_BIN")
                 .required(true),
         )
         .arg(
@@ -245,6 +254,9 @@ fn main() -> eyre::Result<()> {
     } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
         icu_datagen::keys_from_file(key_file_path)
             .with_context(|| key_file_path.to_string_lossy().into_owned())?
+    } else if let Some(bin_path) = matches.value_of_os("KEYS_FOR_BIN") {
+        icu_datagen::keys_from_bin(bin_path)
+            .with_context(|| bin_path.to_string_lossy().into_owned())?
     } else {
         unreachable!();
     };
