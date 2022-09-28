@@ -115,13 +115,13 @@ Next, let's add some more complex functionality.
 
 # 5. Data Management
 
-While the locale API is purely algorithmic, many internationalization APIs use data to perform operations. The most common data set used in Unicode Internationalization is called `CLDR` - `Common Locale Data Repository`.
+While the locale API is purely algorithmic, many internationalization APIs require more complex data to work. The most common data set used in Unicode Internationalization is called `CLDR` - `Common Locale Data Repository`.
 
 Data management is a complex and non-trivial area which often requires customizations for particular environments and integrations into projects ecosystem.
 
-The way `ICU4X` plugs into that dataset is one of its novelties aiming at making the data management more flexible and enable better integration in asynchronous environments.
+The way `ICU4X` plugs into that dataset is one of its novelties, aiming at making the data management more flexible and enabling better integration in asynchronous environments.
 
-In result, compared to most internationalization solutions, working with `ICU4X` and data is a bit more explicit. `ICU4X` provides a trait called `DataProvider` and a number of concrete APIs that implement that trait for different scenarios.
+In result, compared to most internationalization solutions, working with data in `ICU4X` is a bit more explicit. `ICU4X` provides a trait called `DataProvider` (as well as `BufferProvider` and `AnyProvider`) and a number of concrete APIs that implement these traits for different scenarios.
 Users are also free to design their own providers that best fit into their ecosystem requirements.
 
 In this tutorial we are going to use ICU4X's "test" data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
@@ -188,17 +188,13 @@ Here's an internationalized date!
 
 ## Using data from the filesystem
 
-If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`:
+If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`. This needs the `icu_provider_fs` crate. Furthermore the feature `"serde"` needs to be enabled on `icu` (or the specific `icu_foo` component crate), and `"deserialize_json"` needs to be enabled on `icu_provider`. There are also `"deserialize_postcard_1"` and `"deserialize_bincode_1"` features available.
 
 ```toml
 [dependencies]
-icu = "1.0"
-icu_provider_fs = {version = "1.0.0" }
-
-# By default ICU4X doesn't build with any deserialization, but
-# various formats can be enabled with the deserialize_json,
-# deserialize_postcard_1, and deserialize_bincode_1 features on icu_provider
-icu_provider = {version = "1.0.0" , features = ["deserialize_json"]}
+icu = { version = "1.0", features = ["serde"] }
+icu_provider_fs = { version = "1.0.0" }
+icu_provider = { version = "1.0.0" , features = ["deserialize_json"] }
 ```
 
 ```rs
@@ -211,6 +207,9 @@ fn main() {
 ```
 
 The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
+
+Production users are recommended to use `BlobDataProvider` from `icu_provider_blob`, which allows a binary blob of (usually `postcard` format) data to be loaded from memory. This data provider provides the flexibility of controlling where the data is stored; allowing for data to even be loaded lazily over the network.
+
 
 ## Generating data
 
