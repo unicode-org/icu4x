@@ -70,6 +70,7 @@
 //! ```rust
 //! use icu::locid::Locale;
 //!
+//! # #[allow(clippy::needless_doctest_main)]
 //! fn main() {
 //!     let loc: Locale = "ES-AR".parse()
 //!         .expect("Failed to parse locale.");
@@ -160,6 +161,8 @@
 //! We can then use it in our code:
 //!
 //! ```rust
+//!
+//! # #[allow(clippy::needless_doctest_main)]
 //! fn main() {
 //!     let _provider = icu_testdata::any();
 //! }
@@ -172,6 +175,7 @@
 //! use icu::calendar::DateTime;
 //! use icu::datetime::{DateTimeFormatter, options::length};
 //!
+//! # #[allow(clippy::needless_doctest_main)]
 //! fn main() {
 //!     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 //!
@@ -235,6 +239,7 @@
 //! ```no_run
 //! use icu_provider_fs::FsDataProvider;
 //!
+//! # #[allow(clippy::needless_doctest_main)]
 //! fn main() {
 //!     let _provider = FsDataProvider::try_new("/path/to/data")
 //!         .expect("Failed to initialize Data Provider.");
@@ -257,6 +262,7 @@
 //! use icu::datetime::{DateTimeFormatter, options::length};
 //! use icu_provider_fs::FsDataProvider;
 //!
+//! # #[allow(clippy::needless_doctest_main)]
 //! fn main() {
 //!     let provider = FsDataProvider::try_new("/path/to/data")
 //!         .expect("Failed to initialize Data Provider.");
