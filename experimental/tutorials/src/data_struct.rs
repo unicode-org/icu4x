@@ -56,14 +56,13 @@
 //! convention, the top-level module `provider` should contain the struct
 //! definitions. For example:
 //!
-//! - `icu::decimal::provider::DecimalSymbolsV1`
-//! - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-//! - `icu::uniset::provider::PropertyCodePointSetV1`
+//! - [`icu::decimal::provider::DecimalSymbolsV1`]
+//! - [`icu::locid_transform::LikelySubtagsV1`]
+//! - [`icu::properties::provider::PropertyCodePointSetV1`]
 //!
 //! In general, data structs should be annotated with `#[icu_provider::data_struct]`
 //! , and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`,
-//! and Serde `Serialize` and
-//! `Deserialize`.
+//! and Serde `Serialize` and `Deserialize`.
 //!
 //! As explained in *data_pipeline.md*, the data struct should support zero-copy
 //! deserialization. The `#[icu_provider::data_struct]` annotation will enforce this
@@ -102,11 +101,11 @@
 //!
 //! Source data providers must implement the following traits:
 //!
-//! - `DataProvider<M>`] or `DynamicDataProvider<M>` for one or more data
+//! - [`DataProvider<M>`] or [`DynamicDataProvider<M>`] for one or more data
 //! markers `M`; this impl is the main step where data transformation takes place
-//! - `IterableDataProvider<M>`, required for the data exporter (see below)
-//! - `DynamicDataProvider<SerializeMarker>`
-//! and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with
+//! - [`IterableDataProvider<M>`], required for the data exporter (see below)
+//! - [`DynamicDataProvider<SerializeMarker>`]
+//! and [`IterableDynamicDataProvider<SerializeMarker>`], usually implemented with
 //! the macro
 //! [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dynamic_data_provider.html)
 //! after the above traits have been implemented
@@ -212,15 +211,85 @@
 //!
 //! ### Data Struct
 //!
-//! https://github.com/unicode-org/icu4x/blob/dbb02a18b48a63100c748e6ef3f39d5c734810f9/components/decimal/src/provider.rs#L59-L95
+//! ```rust
 //!
-//! The above snippet is an abridged definition for `DecimalSymbolsV1`. Note how
+//! use icu_provider::{yoke, zerofrom};
+//! use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
+//!
+//! /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
+//! #[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
+//! #[derive(Debug, PartialEq, Clone)]
+//! #[cfg_attr(
+//! feature = "datagen",
+//! derive(serde::Serialize, databake::Bake),
+//! databake(path = icu_decimal::provider),
+//! )]
+//! #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+//! pub struct DecimalSymbolsV1<'data> {
+//!     /// Prefix and suffix to apply when a negative sign is needed.
+//!     #[cfg_attr(feature = "serde", serde(borrow))]
+//!     pub minus_sign_affixes: AffixesV1<'data>,
+//!
+//!     /// Prefix and suffix to apply when a plus sign is needed.
+//!     #[cfg_attr(feature = "serde", serde(borrow))]
+//!     pub plus_sign_affixes: AffixesV1<'data>,
+//!
+//!     /// Character used to separate the integer and fraction parts of the number.
+//!     /// #[cfg_attr(feature = "serde", serde(borrow))]
+//!     /// pub decimal_separator: Cow<'data, str>,
+//!
+//!     /// Character used to separate groups in the integer part of the number.
+//!     /// #[cfg_attr(feature = "serde", serde(borrow))]
+//!     /// pub grouping_separator: Cow<'data, str>,
+//!
+//!     /// Settings used to determine where to place groups in the integer part of the number.
+//!     pub grouping_sizes: GroupingSizesV1,
+//!
+//!     /// Digit characters for the current numbering system. In most systems, these digits are
+//!     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
+//!     pub digits: [char; 10],
+//! }
+//! ```
+//!
+//! The above snippet is an abridged definition for [`DecimalSymbolsV1`]. Note how
 //! the lifetime parameter `'data` is passed down into all fields that may need to
 //! borrow data.
 //!
 //! ### CLDR JSON Deserialize
 //!
-//! https://github.com/unicode-org/icu4x/blob/dbb02a18b48a63100c748e6ef3f39d5c734810f9/provider/datagen/src/transform/cldr/cldr_serde/numbers.rs#L92-L115
+//! ```rust
+//! # use icu::locid::LanguageIdentifier;
+//! # use itertools::Itertools;
+//! # use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
+//! # use serde::Deserialize;
+//! # use std::collections::HashMap;
+//! # use tinystr::TinyStr8;
+//!
+//! #[derive(PartialEq, Debug, Deserialize)]
+//! pub struct Numbers {
+//!     #[serde(rename = "defaultNumberingSystem")]
+//!     pub default_numbering_system: TinyStr8,
+//!     #[serde(rename = "minimumGroupingDigits")]
+//!     #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
+//!     pub minimum_grouping_digits: u8,
+//!     // commenting because of it's private module
+//!     // #[serde(flatten)]
+//!     // pub numsys_data: NumberingSystemData,
+//! }
+//!
+//! #[derive(PartialEq, Debug, Deserialize)]
+//! pub struct LangNumbers {
+//!     pub numbers: Numbers,
+//! }
+//!
+//! #[derive(PartialEq, Debug, Deserialize)]
+//! pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
+//!
+//! #[derive(PartialEq, Debug, Deserialize)]
+//! pub struct Resource {
+//!     pub main: LangData,
+//! }
+//! ```
 //!
 //! The above snippet is an abridged definition of the Serde structure corresponding
 //! to CLDR JSON. Since this Serde definition is not used at runtime, it does not
@@ -289,11 +358,11 @@
 //! [`langid!`]: icu::locid::langid
 //! [`locale!`]: icu::locid::locale
 //! [`LanguageIdentifier`]: icu::locid::LanguageIdentifier
-//!
-//!
+//! [`IterableDataProvider`]: icu_provider::datagen::IterableDataProvider
+
 #![cfg_attr(feature = "doc-images",
 cfg_attr(all(),
-doc = ::embed_doc_image::embed_image!("lifecycle", "../../docs/assets/data_lifecycle.svg"),
+doc =::embed_doc_image::embed_image ! ("lifecycle", "../../docs/assets/data_lifecycle.svg"),
 ))]
 #![cfg_attr(
 not(feature = "doc-images"),

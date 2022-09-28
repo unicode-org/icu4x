@@ -44,5 +44,6 @@ displaydoc = { version = "0.2.3" }
 litemap = { version = "0.6", path = "../../utils/litemap" }
 tinystr = { path = "../../utils/tinystr", version = "0.7", features = ["alloc"], default-features = false }
 databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"] }
-
+serde-aux = "2.1.1"
+itertools = "0.10"
 embed-doc-image = "0.1"
