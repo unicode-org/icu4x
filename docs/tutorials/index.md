@@ -15,6 +15,7 @@ Contributors should also check out [CONTRIBUTING.md].
 
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [intro.md]: ./intro.md
+ [data_management.md]: ./data_management.md
  [cpp.md]: ./cpp.md
  [js.md]: ./js.md
  [icu-crate-docs]: https://docs.rs/icu/latest/icu/
