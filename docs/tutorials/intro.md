@@ -314,7 +314,7 @@ After that step, it should be possible to navigate to `~/projects/icu_tutorial/i
 *Notice:* In particular, in production, the `postcard` format (`--format=blob --syntax=postcard`) will yield better performance results.
 *Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
 *Notice:* `--all-keys --all-locales` is a lot of data, in many cases you probably only want the keys for a particular component, for a set of locales you plan to support in the application. Datagen has alternate flags like `--keys` or `--key-file` for this level of control.
-*Notice:* This command builds in debug mode since it's faster; but if you plan on running `icu4x-datagen` a lot (for example, if you wish to create multiple per-key postcard blobs to selectively load), we highly recommend using `--release`.
+*Notice:* This command builds in debug mode since it builds faster; but if you plan on running `icu4x-datagen` a lot (for example, if you wish to create multiple per-key postcard blobs to selectively load), we highly recommend using `--release`.
 
 # 6. Summary
 
