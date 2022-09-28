@@ -183,7 +183,7 @@ If all went well, running the app with `cargo run` should display:
 
 Here's an internationalized date!
 
-*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `postcard` (and use `BlobDataProvider`) for better performance.
+*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using resources in the `json`  format. It is recommended you generate the data in the `postcard` format (and use it with `BlobDataProvider`) for better performance. Gemeratomg data
 
 ## Using data from the filesystem
 
@@ -231,6 +231,7 @@ The last command is a bit dense, so let's dissect it.
 
 * First, we call `cargo run` which runs a binary in the crate
 * We tell it that the binary is named `icu4x-datagen`
+* We use `--features bin` to be able to build datagen as a binary (it can also be used as a library)
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
 * Then we pass `--icuexport-tag` which informs the program which ICU-exported data version to use
@@ -239,10 +240,11 @@ The last command is a bit dense, so let's dissect it.
 
 After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
-*Notice:* In particular, in production, the `postcard` format will yield better performance results.
-*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
 
+*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
+*Notice:* In particular, in production, the `postcard` format (`--format=blob --syntax=postcard`) will yield better performance results.
+*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
+*Notice:* This command builds in debug mode since it's faster; but if you plan on running `icu4x-datagen` a lot (for example, if you wish to create multiple per-key postcard blobs to selectively load), we highly recommend using `--release`.
 
 # 6. Summary
 
