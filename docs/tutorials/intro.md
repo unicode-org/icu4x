@@ -16,13 +16,13 @@ We also assume that the user is familiar with a terminal and have `git`, `rust` 
 To verify that, open a terminal and check that the results are similar to:
 
 ```
-user@host:~/projects/icu$ git --version
+user@host:~/projects/icu_tutorial$ git --version
 git version 2.31.1
-user@host:~/projects/icu$ cargo --version
+user@host:~/projects/icu_tutorial$ cargo --version
 cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
-In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu/`. The `~` in the path indicates the relative location of the user home directory.
+In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu_tutorial/`. The `~` in the path indicates the relative location of the user home directory.
 Please create the directory structure necessary.
 
 # 2. Creating MyApp
@@ -30,15 +30,15 @@ Please create the directory structure necessary.
 To initialize a binary application, navigate to the root directory of our project and initialize a new binary app called `myapp`:
 
 ```
-cd ~/projects/icu
+cd ~/projects/icu_tutorial
 cargo new --bin myapp
 ```
 
-The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs` which is the main file for our application.
+The result is a new directory `~/projects/icu_tutorial/myapp` with a file `./src/main.rs` which is the main file for our application.
 
 # 3. Adding ICU4X as a dependency
 
-`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
+`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu_tutorial/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
 
 ```toml
 [dependencies]
@@ -58,7 +58,7 @@ In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just t
 
 Let's update our application to use it.
 
-Open `~/projects/icu/myapp/src/main.rs` and edit it to:
+Open `~/projects/icu_tutorial/myapp/src/main.rs` and edit it to:
 
 ```rust
 use icu::locid::Locale;
@@ -76,7 +76,7 @@ fn main() {
 ```
 *Notice:* `ICU4X` canonicalized the locales's syntax which uses lowercase letter for the language portion.
 
-After saving it, call `cargo run` in `~/projects/icu/myapp` and it should display:
+After saving it, call `cargo run` in `~/projects/icu_tutorial/myapp` and it should display:
 
 ```
 ¡Hola amigo!
@@ -133,7 +133,7 @@ ICU4X's repository comes with pre-generated test data that covers all of its key
 
 ## Using test data
 
-First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
+First, we need to register our choice of the provider in `~/projects/icu_tutorial/myapp/Cargo.toml`:
 
 ```
 [dependencies]
@@ -229,7 +229,7 @@ git checkout icu@1.0.0
 cargo run --bin icu4x-datagen --features bin -- \
     --cldr-tag latest \
     --icuexport-tag latest \
-    --out ~/projects/icu/icu4x-data \
+    --out ~/projects/icu_tutorial/icu4x-data \
     --all-keys --all-locales
 ```
 
@@ -244,7 +244,7 @@ The last command is a bit dense, so let's dissect it.
 * Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
 * Finally, we set `--all-keys` which specify that we want to export all keys available
 
-After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
+After that step, it should be possible to navigate to `~/projects/icu_tutorial/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
 
 *Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
