@@ -6,7 +6,7 @@ The library provides a layer of APIs for all software to enable internationaliza
 
 To use `ICU4X` in the Rust ecosystem one can either add dependencies on selected components, or add a dependency on the meta-crate `icu` which brings a reasonable selection of components in the most user-friendly configuration of features.
 
-In this tutorial we are going to build up to writing an app that uses the `icu::datetime` component to format a date and time in a Japanese locale, covering various topics in the process.
+In this tutorial we are going to build up to writing an app that uses the `icu::datetime` component to format a date and time, covering various topics in the process.
 
 # 1. Requirements
 
@@ -20,23 +20,18 @@ $ cargo --version
 cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
-In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu_tutorial/`. 
-
 # 2. Creating MyApp
 
-To initialize a binary application, navigate to the root directory of our project and initialize a new binary app called `myapp`:
+Use `cargo` to initialize a binary application:
 
 ```
-cd ~/projects/icu_tutorial
 cargo new --bin myapp
 cd myapp
 ```
 
-The result is a new directory `~/projects/icu_tutorial/myapp` with a file `./src/main.rs` which is the main file for our application. For most of this tutorial we'll be working from the `myapp` folder.
-
 # 3. Adding ICU4X as a dependency
 
-`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `./Cargo.toml`. The easiest way to do this is to run:
+`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `Cargo.toml`. The easiest way to do this is to run:
 
 ```sh
 $ cargo add icu
@@ -61,7 +56,7 @@ In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just t
 
 Let's update our application to use it.
 
-Open `./src/main.rs` and edit it to:
+Open `src/main.rs` and edit it to:
 
 ```rust
 use icu::locid::Locale;
@@ -77,14 +72,15 @@ fn main() {
     println!("You are using: {}", loc);
 }
 ```
-*Notice:* Here, `ICU4X` canonicalized the locales's syntax which uses lowercase letters for the language portion.
 
-After saving it, call `cargo run` in `~/projects/icu_tutorial/myapp` and it should display:
+After saving it, call `cargo run` and it should display:
 
 ```
 ¡Hola!
 You are using: es-AR
 ```
+
+*Notice:* Here, `ICU4X` canonicalized the locales's syntax which uses lowercase letters for the language portion.
 
 Congratulations! `ICU4X` has been used to semantically operate on a locale!
 
@@ -97,12 +93,12 @@ It's a bit unergonomic to have to parse them at runtime and handle a parser erro
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locid::locale;
+use icu::locid::{Locale, locale};
+
+const LOCALE: Locale = locale!("ES-AR");
 
 fn main() {
-    let loc = locale!("ES-AR");
-
-    if loc.id.language.as_str() == "es" {
+    if LOCALE.id.language.as_str() == "es" {
         println!("¡Hola amigo!");
     }
 
@@ -129,17 +125,13 @@ Users are also free to design their own providers that best fit into their ecosy
 
 `BufferProvider` and `AnyProvider` abstract over different ways the data may be loaded: `BufferProvider` abstracts over data providers that deserialize data, whereas `AnyProvider` abstracts over data providers that can provide concrete Rust objects, like data providers that use [`databake`](https://docs.rs/databake).
 
-In this tutorial we are going to use ICU4X's test data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
-
-## Test data
-
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate custom data, but for the purposes of learning how to use ICU4X, it is sufficient to use the data providers exported by `icu_testdata`. `icu_testdata::any()` will produce an `AnyProvider`, and `icu_testdata::buffer()` will produce a `BufferProvider`. The `any()` provider requires fewer features be enabled so we're using that.
+In this tutorial we are going to use ICU4X's test data provider and then move on to a generate our own data.
 
 # 6. Using an ICU4X component
 
-We're going to write an app that uses the `icu::datetime` component to format a date and time in a Japanese locale.
+We're going to extend our app to use the `icu::datetime` component to format a date and time.
 
-First, we need to register our choice of the provider in `./Cargo.toml`, which can be done by running:
+First, we need to register our choice of the provider, `icu_testdata`, in `Cargo.toml`, which can be done by running:
 
 ```sh
 $ cargo add icu_testdata
@@ -153,30 +145,42 @@ icu = "1.0"
 icu_testdata = "1.0"
 ```
 
+*Notice:* `icu_testdata` contains testing providers that support all ICU4X keys for a small representative set of locales. It contains both a `BufferProvider` (`icu_testdata::buffer()`), and an `AnyProvider` (`icu_testdata::any()`). The latter requires fewer features, so we will be using that.
+
 We can then use it in our code:
 
 ```rust
+use icu::locid::{Locale, locale};
+
+const LOCALE: Locale = locale!("ES-AR");
+
 fn main() {
     let _provider = icu_testdata::any();
+
+    // ...
 }
 ```
 
-While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
+We now have a loaded data provider, and can use it to format a date:
 
 ```rust
-use icu::locid::locale;
+use icu::locid::{Locale, locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 
+const LOCALE: Locale = locale!("ja"); // let's try some other language
+
 fn main() {
+    let provider = icu_testdata::any();
+
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_with_any_provider(&icu_testdata::any(), &locale!("ja").into(), options.into())
+    let dtf = DateTimeFormatter::try_new_with_any_provider(&provider, &locale!("ja").into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
-
 
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
+
     // DateTimeFormatter works with data from any calendar, we need to cast to DateTime<AnyCalendar>
     // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with the DateTime<Gregorian>
     // that we have constructed
@@ -200,19 +204,52 @@ Here's an internationalized date!
 
 # 7. Advanced Data Management
 
-## Using data from the filesystem
+## Generating data
 
-If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`, which needs the `icu_provider_fs` crate.
+Unless you're happy shipping your app with the ~10 locales supported by `icu_testdata, you will need generate your own data that is filtered to suit your needs.
 
-This provider performs deserialization so is a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu` (or the specific `icu_foo` component crate), and `"deserialize_json"` needs to be enabled on `icu_provider`. There are also `"deserialize_postcard_1"` and `"deserialize_bincode_1"` features available.
+We're going to use the `icu_datagen` crate to do this. It pulls in [CLDR data](http://cldr.unicode.org/index/downloads) and Unicode property data from ICU4C releases to generate the data.
+
+The `icu_datagen` crate has a command line interface as well as a Rust API, which can be used in `build.rs` files. Here we will use the CLI.
+
+```
+cargo run -p icu_datagen --features bin -- \
+    --cldr-tag latest \
+    --icuexport-tag latest \
+    --out my-data \
+    --format blob \
+    --all-keys --all-locales
+```
+
+The last command is a bit dense, so let's dissect it.
+
+* First, we call `cargo run` which runs a binary
+* We tell it that the crate is named `icu_datagen`
+* We use `--features bin` to be able to build the binary (otherwise the crate will only contain the library)
+* Then we use `--` to separate arguments to `cargo` from arguments to `icu_datagen`
+* `--cldr-tag` informs the program which CLDR version to use
+* `--icuexport-tag` informs the program which ICU-exported data version to use
+* `--out` is the location where we want the generated ICU4X data to be stored
+* `--format blob` to set the format of the output (we'll discuss formats later)
+* and finally `--all-keys --all-locales` to specify that we want to export all keys available, for all locales.
+
+This should generate a `my-data` file containing your data in serialized form.
+
+*Notice:* `--cldr-tag` and `--icuexport-tag` fetch the specified version from the network. For offline or unconventional use, the user can also pass `--cldr-root`/`--icuexport-root` to use local versions.
+*Notice:* `--all-keys --all-locales` is a lot of data, in many cases you probably only want the keys for a particular component, for a set of locales you plan to support in the application. Datagen has alternate flags like `--keys` or `--key-file` for this level of control.
+*Notice:* This command builds in debug mode since it builds faster; but if you plan on running `icu_datagen` a lot (for example, if you wish to create multiple per-key blobs to selectively load), we highly recommend using `--release`.
+
+## Using the generated data
+
+Once you have generated your data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.
+
+This provider performs deserialization, so it's a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu` (or the specific `icu_foo` component crate).
 
 The whole thing can be done by running:
 
-
 ```sh
 $ cargo add icu --features serde
-$ cargo add icu_provider_fs
-$ cargo add icu_provider --features deserialize_json
+$ cargo add icu_provider_blob
 ```
 
 You may also run `cargo remove icu_testdata` as we don't need it anymore.
@@ -222,28 +259,26 @@ This should generate:
 ```toml
 [dependencies]
 icu = { version = "1.0", features = ["serde"] }
-icu_provider_fs = { version = "1.0.0" }
-icu_provider = { version = "1.0.0" , features = ["deserialize_json"] }
+icu_provider_blob = { version = "1.0.0" }
+icu_provider = { version = "1.0.0" }
 ```
 
 We can then use it like so
 
 ```rs
-use icu_provider_fs::FsDataProvider;
+use icu_provider_blob::BlobDataProvider;
 
 fn main() {
-    let _provider = FsDataProvider::try_new("/path/to/data")
-       .expect("Failed to initialize Data Provider.");
+    let _provider = BlobDataProvider::try_new_from_owned_blob(
+            std::fs::read("my-data")
+                .expect("Failed to read file")
+                .into_boxed_slice()
+    )
+    .expect("Failed to initialize Data Provider.");
 }
 ```
 
 You will also need to use the `with_buffer_provider` constructors, e.g. `DateTimeFormatter::try_new_with_buffer_provider()`.
-
-You will need to update `/path/to/data` to a local copy of generated data.
-
-You can get a copy by checking out the ICU4X repository; which has test data checked in at `provider/testdata/data/` (use the `json` subfolder for this specific tutorial section). However it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
-
-Production users are also recommended to use `BlobDataProvider` from `icu_provider_blob`, which allows a binary blob of (usually `postcard` format) data to be loaded from memory. This data provider provides the flexibility of controlling where the data is stored; allowing for data to even be loaded lazily over the network.
 
 Here is a full example:
 
@@ -251,22 +286,24 @@ Here is a full example:
 use icu::locid::locale;
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
-use icu_provider_fs::FsDataProvider;
+use icu_provider_blob::BlobDataProvider;
 
 fn main() {
-    let provider = FsDataProvider::try_new("/path/to/data")
-       .expect("Failed to initialize Data Provider.");
+    let buffer_provider = BlobDataProvider::try_new_from_owned_blob(
+            std::fs::read("my-data")
+                .expect("Failed to read file")
+                .into_boxed_slice()
+    )
+    .expect("Failed to initialize Data Provider.");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("ja").into(), options.into())
+    let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &locale!("ja").into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
-
 
     let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
     let date = date.to_any();
-
 
     let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 
@@ -274,47 +311,52 @@ fn main() {
 }
 ```
 
+## Other formats
 
-## Generating data
+### `dir` and `FsDataProvider`
 
-For production usage, it is better to generate your own data that is filtered to suit your needs.
+The different `format`s are:
+* `blob`: a serialized binary blob. This format is useful for production use when data loading should happen at runtime (such as when downloading language packs)
+* `mod`: a Rust module containing the data.
+* `dir`: a directory of JSON files. This is mostly useful for debugging.
 
-We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
+The `dir` format will generate a directory tree of data files in JSON (although the `--syntax` option can be used to generate `postcard` or `bincode` files, which doesn't have many practical uses). This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
 
-We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
+This is also a buffer provider, so you will need to use the `with_buffer_provider` constructors.
 
-The `datagen` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
-
-```
-git clone https://github.com/unicode-org/icu4x
-cd icu4x
-git checkout icu@1.0.0
-cargo run --bin icu4x-datagen --features bin -- \
-    --cldr-tag latest \
-    --icuexport-tag latest \
-    --out ~/projects/icu_tutorial/icu4x-data \
-    --all-keys --all-locales
+```sh
+cargo add icu_provider --features deserialize_json
+cargo add icu_provider_fs
 ```
 
-The last command is a bit dense, so let's dissect it.
+```rust
+let _provider = icu_provider_fs::FsDataProvider::try_new("my-data").expect("Failed to initialize Data Provider.");
+```
 
-* First, we call `cargo run` which runs a binary in the crate
-* We tell it that the binary is named `icu4x-datagen`
-* We use `--features bin` to be able to build datagen as a binary (it can also be used as a library)
-* Then we use `--` to separate arguments to `cargo` from arguments to our app
-* Then we pass `--cldr-tag` which informs the program which CLDR version to use
-* Then we pass `--icuexport-tag` which informs the program which ICU-exported data version to use
-* Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
-* Finally, we set `--all-keys --all-locales` which specify that we want to export all keys available, for all locales.
+*Notice:* JSON is human readable, which can come in handy. Take a look at the [testdata in JSON form](https://github.com/unicode-org/icu4x/tree/icu%401.0.0/provider/testdata/data/json)
 
-After that step, it should be possible to navigate to `data`, which will contain a `manifest.json` file and a tree of JSON files.
+### `mod` and `BakedDataProvider`
 
+The `mod` format will generate a Rust module that defines a data provider. This format naturally has no deserialization overhead, but cannot be dynamically loaded at runtime.
 
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
-*Notice:* In particular, in production, the `postcard` format (`--format=blob --syntax=postcard`) will yield better performance results.
-*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
-*Notice:* `--all-keys --all-locales` is a lot of data, in many cases you probably only want the keys for a particular component, for a set of locales you plan to support in the application. Datagen has alternate flags like `--keys` or `--key-file` for this level of control.
-*Notice:* This command builds in debug mode since it builds faster; but if you plan on running `icu4x-datagen` a lot (for example, if you wish to create multiple per-key postcard blobs to selectively load), we highly recommend using `--release`.
+Using this might require some additional dependencies, the `icu_datagen` tool will let you know what to install. You can use it by directly including the source using the `include!` macro.
+
+```rust
+include!("my-data/mod.rs");
+let _provider = BakedDataProvider;
+```
+
+With this provider, you can use the `unstable` constructors. These are only guaranteed to work if the `BakedDataProvider` was generated with the same version of ICU4X that you are building with, but if you build the data as part of your a build pipeline, that shouldn't be a problem.
+
+You can also make the `BakedDataProvider` implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across releases.
+
+```rust
+include!("my-data/mod.rs");
+include!("my-data/any.rs");
+let _any_provider = BakedDataProvider;
+```
+
+*Notice:* If you're curious what these Rust files look like, take a look at the [testdata](https://github.com/unicode-org/icu4x/tree/icu%401.0.0/provider/testdata/data/baked)
 
 # 6. Summary
 
