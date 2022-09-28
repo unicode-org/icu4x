@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664327726855,
+  "lastUpdate": 1664328324600,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -76331,6 +76331,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6072,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6db40e605431b69ea169a27e4d331e78854d2e5a",
+          "message": "Datagen fixes in tutorial (#2671)\n\n* Fix link\r\n\r\n* rm outdated notice\r\n\r\n* datagen fixes",
+          "timestamp": "2022-09-28T00:25:43Z",
+          "tree_id": "34d838fd9e30b50237032b4e7cfdab4bb80f97fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/6db40e605431b69ea169a27e4d331e78854d2e5a"
+        },
+        "date": 1664328232692,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 56311,
+            "range": "± 3105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 94896,
+            "range": "± 860",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 52173,
+            "range": "± 1283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 58700,
+            "range": "± 1770",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 56436,
+            "range": "± 1413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 62880,
+            "range": "± 1391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 90455,
+            "range": "± 519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 99983,
+            "range": "± 616",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 95006,
+            "range": "± 519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 105506,
+            "range": "± 1213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4535,
+            "range": "± 27",
             "unit": "ns/iter"
           }
         ]
