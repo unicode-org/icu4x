@@ -205,7 +205,7 @@ fn main() {
 }
 ```
 
-The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata` is simply loading this data.
+The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
 
 ## Generating data
 
