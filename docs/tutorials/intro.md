@@ -307,7 +307,7 @@ The last command is a bit dense, so let's dissect it.
 * Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
 * Finally, we set `--all-keys --all-locales` which specify that we want to export all keys available, for all locales.
 
-After that step, it should be possible to navigate to `~/projects/icu_tutorial/icu4x-data` and there should be a `manifest.json` file, and directories with data.
+After that step, it should be possible to navigate to `data`, which will contain a `manifest.json` file and a tree of JSON files.
 
 
 *Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
