@@ -57,7 +57,7 @@
 //! definitions. For example:
 //!
 //! - [`icu::decimal::provider::DecimalSymbolsV1`]
-//! - [`icu::locid_transform::LikelySubtagsV1`]
+//! - [`icu_datagen::transform::cldr::locale_canonicalizer::likely_subtags::LikelySubtagsV1`]
 //! - [`icu::properties::provider::PropertyCodePointSetV1`]
 //!
 //! In general, data structs should be annotated with `#[icu_provider::data_struct]`
@@ -101,11 +101,11 @@
 //!
 //! Source data providers must implement the following traits:
 //!
-//! - [`DataProvider<M>`] or [`DynamicDataProvider<M>`] for one or more data
+//! - [`DataProvider`] or [`DynamicDataProvider`] for one or more data
 //! markers `M`; this impl is the main step where data transformation takes place
-//! - [`IterableDataProvider<M>`], required for the data exporter (see below)
-//! - [`DynamicDataProvider<SerializeMarker>`]
-//! and [`IterableDynamicDataProvider<SerializeMarker>`], usually implemented with
+//! - [`IterableDataProvider`], required for the data exporter (see below)
+//! - [`DynamicDataProvider`]
+//! and [`IterableDynamicDataProvider`], usually implemented with
 //! the macro
 //! [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dynamic_data_provider.html)
 //! after the above traits have been implemented
@@ -359,6 +359,9 @@
 //! [`locale!`]: icu::locid::locale
 //! [`LanguageIdentifier`]: icu::locid::LanguageIdentifier
 //! [`IterableDataProvider`]: icu_provider::datagen::IterableDataProvider
+//! [`IterableDynamicDataProvider`]: icu_provider::datagen::IterableDynamicDataProvider
+//! [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
+//! [`DecimalSymbolsV1`]: icu::decimal::provider::DecimalSymbolsV1
 
 #![cfg_attr(feature = "doc-images",
 cfg_attr(all(),
