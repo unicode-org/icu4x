@@ -134,11 +134,11 @@ In this tutorial we are going to use ICU4X's "test" data provider and then move 
 
 ## Test data
 
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate custom data, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`. `icu_testdata::any()` will produce an `AnyProvider`, and `icu_testdata::buffer()` will produce a `BufferProvider`.
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate custom data, but for the purposes of learning how to use ICU4X, it is sufficient to use the data providers exported by `icu_testdata`. `icu_testdata::any()` will produce an `AnyProvider`, and `icu_testdata::buffer()` will produce a `BufferProvider`. The `any()` provider requires fewer features be enabled so we're using that.
 
 # 6. Using an ICU4X component
 
-We're going to try writing an app that uses the `icu::datetime` component to format a date and time in a Japanese locale.
+We're going to write an app that uses the `icu::datetime` component to format a date and time in a Japanese locale.
 
 First, we need to register our choice of the provider in `~/projects/icu_tutorial/myapp/Cargo.toml`, which can be done by running:
 
@@ -170,18 +170,18 @@ use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
 
 fn main() {
-    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
-        .expect("Failed to create a datetime.");
-
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
+    let dtf = DateTimeFormatter::try_new_with_any_provider(&icu_testdata::any(), &locale!("ja").into(), options.into())
+        .expect("Failed to initialize DateTimeFormatter");
+
+
+    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+        .expect("Failed to create a datetime.");
     // DateTimeFormatter works with data from any calendar, we need to cast to DateTime<AnyCalendar>
     // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with the DateTime<Gregorian>
     // that we have constructed
     let date = date.to_any();
-
-    let dtf = DateTimeFormatter::try_new_with_any_provider(&icu_testdata::any(), &locale!("ja").into(), options.into())
-        .expect("Failed to initialize DateTimeFormatter");
 
     let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 
@@ -253,18 +253,19 @@ use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
-        .expect("Failed to create a datetime.");
-
-    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
-
     let provider = FsDataProvider::try_new("/path/to/data")
        .expect("Failed to initialize Data Provider.");
 
-    let date = date.to_any();
+    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("ja").into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
+
+
+    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+        .expect("Failed to create a datetime.");
+    let date = date.to_any();
+
 
     let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 
