@@ -11,18 +11,16 @@ In this tutorial we are going to build up to writing an app that uses the `icu::
 # 1. Requirements
 
 For this tutorial we assume the user has basic Rust knowledge. If acquiring it is necessary, the [Rust Book](https://doc.rust-lang.org/book/) provides an excellent introduction.
-We also assume that the user is familiar with a terminal and have `git`, `rust` and `cargo` installed.
+We also assume that the user is familiar with a terminal and have `rust` and `cargo` installed.
 
 To verify that, open a terminal and check that the results are similar to:
 
 ```
-user@host:~/projects/icu_tutorial$ git --version
-git version 2.31.1
-user@host:~/projects/icu_tutorial$ cargo --version
+$ cargo --version
 cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
-In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu_tutorial/`. The `~` in the path indicates the relative location of the user home directory.
+In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu_tutorial/`. 
 
 # 2. Creating MyApp
 
@@ -31,13 +29,14 @@ To initialize a binary application, navigate to the root directory of our projec
 ```
 cd ~/projects/icu_tutorial
 cargo new --bin myapp
+cd myapp
 ```
 
-The result is a new directory `~/projects/icu_tutorial/myapp` with a file `./src/main.rs` which is the main file for our application.
+The result is a new directory `~/projects/icu_tutorial/myapp` with a file `./src/main.rs` which is the main file for our application. For most of this tutorial we'll be working from the `myapp` folder.
 
 # 3. Adding ICU4X as a dependency
 
-`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu_tutorial/myapp/Cargo.toml`. The easiest way to do this is to run:
+`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `./Cargo.toml`. The easiest way to do this is to run:
 
 ```sh
 $ cargo add icu
@@ -56,13 +55,13 @@ After saving the changes, commands like `cargo check` will download the `icu` Ru
 
 `ICU4X` comes with a variety of components allowing to manage various facets of software internationalization.
 
-Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrillic script) or `es-AR` (Argentinian Spanish).
+Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrillic script) or `ar-EG-u-nu-latn` (Egyptian Arabic with ASCII numerals).
 
 In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
 
 Let's update our application to use it.
 
-Open `~/projects/icu_tutorial/myapp/src/main.rs` and edit it to:
+Open `./src/main.rs` and edit it to:
 
 ```rust
 use icu::locid::Locale;
@@ -72,7 +71,7 @@ fn main() {
         .expect("Failed to parse locale.");
 
     if loc.id.language.as_str() == "es" {
-        println!("¡Hola amigo!");
+        println!("¡Hola!");
     }
 
     println!("You are using: {}", loc);
@@ -83,7 +82,7 @@ fn main() {
 After saving it, call `cargo run` in `~/projects/icu_tutorial/myapp` and it should display:
 
 ```
-¡Hola amigo!
+¡Hola!
 You are using: es-AR
 ```
 
@@ -91,7 +90,7 @@ Congratulations! `ICU4X` has been used to semantically operate on a locale!
 
 ## Convenience macro
 
-The scenario of working with statically declared Locales is common.
+The scenario of working with statically declared `Locale`s is common.
 
 It's a bit unergonomic to have to parse them at runtime and handle a parser error in such case.
 
@@ -111,9 +110,9 @@ fn main() {
 }
 ```
 
-In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and try to call `cargo check`.
+In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and call `cargo check`.
 
-*Notice:* `locale!` does not support variants or extension tags, as storing these requires allocation. If you have such a tag you need to use runtime parsing.
+*Notice:* `locale!` does not support variants or extension tags (e.g. `u-nu-latn`), as storing these requires allocation. If you have such a tag you need to use runtime parsing.
 
 Next, let's add some more complex functionality.
 
@@ -125,12 +124,12 @@ Data management is a complex and non-trivial area which often requires customiza
 
 The way `ICU4X` plugs into that dataset is one of its novelties, aiming at making the data management more flexible and enabling better integration in asynchronous environments.
 
-In result, compared to most internationalization solutions, working with data in `ICU4X` is a bit more explicit. `ICU4X` provides a trait called `DataProvider` (as well as `BufferProvider` and `AnyProvider`) and a number of concrete APIs that implement these traits for different scenarios.
+As a result, compared to most internationalization solutions, working with data in `ICU4X` is a bit more explicit. `ICU4X` provides a trait called `DataProvider` (as well as `BufferProvider` and `AnyProvider`) and a number of concrete APIs that implement these traits for different scenarios.
 Users are also free to design their own providers that best fit into their ecosystem requirements.
 
 `BufferProvider` and `AnyProvider` abstract over different ways the data may be loaded: `BufferProvider` abstracts over data providers that deserialize data, whereas `AnyProvider` abstracts over data providers that can provide concrete Rust objects, like data providers that use [`databake`](https://docs.rs/databake).
 
-In this tutorial we are going to use ICU4X's "test" data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
+In this tutorial we are going to use ICU4X's test data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
 
 ## Test data
 
@@ -140,7 +139,7 @@ ICU4X's repository comes with pre-generated test data that covers all of its key
 
 We're going to write an app that uses the `icu::datetime` component to format a date and time in a Japanese locale.
 
-First, we need to register our choice of the provider in `~/projects/icu_tutorial/myapp/Cargo.toml`, which can be done by running:
+First, we need to register our choice of the provider in `./Cargo.toml`, which can be done by running:
 
 ```sh
 $ cargo add icu_testdata
@@ -197,7 +196,7 @@ If all went well, running the app with `cargo run` should display:
 
 Here's an internationalized date!
 
-*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using resources in the `json`  format. It is recommended you generate the data in the `postcard` format (and use it with `BlobDataProvider`) for better performance.
+*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`.
 
 # 7. Advanced Data Management
 
@@ -227,7 +226,7 @@ icu_provider_fs = { version = "1.0.0" }
 icu_provider = { version = "1.0.0" , features = ["deserialize_json"] }
 ```
 
-We can then use it like so:
+We can then use it like so
 
 ```rs
 use icu_provider_fs::FsDataProvider;
@@ -240,9 +239,11 @@ fn main() {
 
 You will also need to use the `with_buffer_provider` constructors, e.g. `DateTimeFormatter::try_new_with_buffer_provider()`.
 
-The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
+You will need to update `/path/to/data` to a local copy of generated data.
 
-Production users are recommended to use `BlobDataProvider` from `icu_provider_blob`, which allows a binary blob of (usually `postcard` format) data to be loaded from memory. This data provider provides the flexibility of controlling where the data is stored; allowing for data to even be loaded lazily over the network.
+You can get a copy by checking out the ICU4X repository; which has test data checked in at `provider/testdata/data/` (use the `json` subfolder for this specific tutorial section). However it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
+
+Production users are also recommended to use `BlobDataProvider` from `icu_provider_blob`, which allows a binary blob of (usually `postcard` format) data to be loaded from memory. This data provider provides the flexibility of controlling where the data is stored; allowing for data to even be loaded lazily over the network.
 
 Here is a full example:
 
@@ -304,7 +305,7 @@ The last command is a bit dense, so let's dissect it.
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
 * Then we pass `--icuexport-tag` which informs the program which ICU-exported data version to use
 * Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
-* Finally, we set `--all-keys --all-locales` which specify that we want to export all keys available, for locales.
+* Finally, we set `--all-keys --all-locales` which specify that we want to export all keys available, for all locales.
 
 After that step, it should be possible to navigate to `~/projects/icu_tutorial/icu4x-data` and there should be a `manifest.json` file, and directories with data.
 
