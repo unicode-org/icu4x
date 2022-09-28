@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664401011083,
+  "lastUpdate": 1664402305507,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29423,6 +29423,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/498012a76a52412aa4c56aa4d481b95ce4e6bd6c"
         },
         "date": 1664400948170,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f74dc3a64b28c7c45e640bdb752036665a7bfe22",
+          "message": "Doc improvements, with separate data management tutorial (#2678)",
+          "timestamp": "2022-09-28T21:56:01Z",
+          "tree_id": "fb97eea77ca33dc348b42739a5c198412429bb11",
+          "url": "https://github.com/unicode-org/icu4x/commit/f74dc3a64b28c7c45e640bdb752036665a7bfe22"
+        },
+        "date": 1664402247142,
         "tool": "ndjson",
         "benches": [
           {
