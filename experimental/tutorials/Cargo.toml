@@ -26,6 +26,10 @@ include = [
 [package.metadata.docs.rs]
 all-features = true
 
+[features]
+doc-images = []
+
+
 [dependencies]
 icu = { version = "1.0.0", path = "../../components/icu", default-features = false }
 icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
@@ -40,3 +44,5 @@ displaydoc = { version = "0.2.3" }
 litemap = { version = "0.6", path = "../../utils/litemap" }
 tinystr = { path = "../../utils/tinystr", version = "0.7", features = ["alloc"], default-features = false }
 databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"] }
+
+embed-doc-image = "0.1"
