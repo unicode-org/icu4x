@@ -2,7 +2,7 @@
 
 Welcome! We're glad you want to try out ICU4X! This page serves as a landing page for people looking to perform various tasks with ICU4X.
 
-The main ICU4X tutorial can be found in [intro.md]: it walks through the process of using ICU4X as a Rust dependency, and some of the basics common to most ICU4X components.
+If new to ICU4X, we recommend reading through [the introduction tutorial][intro.md]: it walks through the process of using ICU4X as a Rust dependency, and some of the basics common to most ICU4X components.
 
 After going through that, you can take a look at [the ICU4X root docs][icu-crate-docs] and check out the various components, each of which covers some area of internationalization and has usage docs for doing so.
 

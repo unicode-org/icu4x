@@ -16,7 +16,7 @@ The design goals of `ICU4X` are:
 
 ## Documentation
 
-For an introduction to the project, please visit [`Introduction to ICU4X for Rust`](docs/tutorials/intro.md) tutorial.
+For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](docs/tutorials/intro.md) tutorial. Further tutorials can be found in the [tutorial index](docs/tutorials/index.md).
 
 For technical information on how to use ICU4X, visit our [API docs](https://unicode-org.github.io/icu4x-docs/doc/icu/index.html).
 
