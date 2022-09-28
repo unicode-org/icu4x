@@ -174,7 +174,6 @@ fn main() {
     println!("📅: {}", formatted_date);
 }
 ```
-*Notice:* Before proceeding, update your path to the ICU4X data directory.
 
 If all went well, running the app with `cargo run` should display:
 
@@ -205,7 +204,7 @@ fn main() {
 }
 ```
 
-The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata` is simply loading this data.
+The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating-data). Under the hood, `icu_testdata` is simply loading this data.
 
 ## Generating data
 
