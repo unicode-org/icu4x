@@ -33,7 +33,7 @@ cd myapp
 
 `ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `Cargo.toml`. The easiest way to do this is to run:
 
-```sh
+```console
 $ cargo add icu
 ```
 
@@ -133,7 +133,7 @@ We're going to extend our app to use the `icu::datetime` component to format a d
 
 First, we need to register our choice of the provider, `icu_testdata`, in `Cargo.toml`, which can be done by running:
 
-```sh
+```console
 $ cargo add icu_testdata
 ```
 
@@ -245,11 +245,11 @@ This should generate a `my-data` file containing your data in serialized form.
 
 Once you have generated your data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.
 
-This provider performs deserialization, so it's a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu` (or the specific `icu_foo` component crate).
+This provider performs deserialization, so it's a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu`.
 
 The whole thing can be done by running:
 
-```sh
+```console
 $ cargo add icu --features serde
 $ cargo add icu_provider_blob
 ```
@@ -271,12 +271,11 @@ We can then use it like so
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {
-    let _provider = BlobDataProvider::try_new_from_owned_blob(
-            std::fs::read("my-data")
-                .expect("Failed to read file")
-                .into_boxed_slice()
-    )
-    .expect("Failed to initialize Data Provider.");
+    // We read from the file system, but we could also download the blob, or embed it in our app
+    let blob = std::fs::read("my-data").expect("Failed to read file");
+    let _provider = 
+        BlobDataProvider::try_new_from_owned_blob(blob.into_boxed_slice())
+            .expect("Failed to initialize Data Provider.");
 }
 ```
 
@@ -291,12 +290,10 @@ use icu::datetime::{DateTimeFormatter, options::length};
 use icu_provider_blob::BlobDataProvider;
 
 fn main() {
-    let buffer_provider = BlobDataProvider::try_new_from_owned_blob(
-            std::fs::read("my-data")
-                .expect("Failed to read file")
-                .into_boxed_slice()
-    )
-    .expect("Failed to initialize Data Provider.");
+    let blob = std::fs::read("my-data").expect("Failed to read file");
+    let buffer_provider = 
+        BlobDataProvider::try_new_from_owned_blob(blob.into_boxed_slice())
+            .expect("Failed to initialize Data Provider.");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -321,9 +318,9 @@ The `dir` format will generate a directory tree of data files in JSON (although 
 
 This is also a buffer provider, so you will need to use the `with_buffer_provider` constructors.
 
-```sh
-cargo add icu_provider --features deserialize_json
-cargo add icu_provider_fs
+```console
+$ cargo add icu_provider --features deserialize_json
+$ cargo add icu_provider_fs
 ```
 
 ```rust
