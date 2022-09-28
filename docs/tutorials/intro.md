@@ -37,14 +37,18 @@ The result is a new directory `~/projects/icu_tutorial/myapp` with a file `./src
 
 # 3. Adding ICU4X as a dependency
 
-`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu_tutorial/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
+`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu_tutorial/myapp/Cargo.toml`. The easiest way to do this is to run:
+
+```sh
+$ cargo add icu
+```
+
+which should generate:
 
 ```toml
 [dependencies]
 icu = "1.0"
 ```
-
-You can also run `cargo add icu` for the same effect.
 
 After saving the changes, commands like `cargo check` will download the `icu` Rust package and use it for the build.
 
@@ -136,7 +140,13 @@ ICU4X's repository comes with pre-generated test data that covers all of its key
 
 We're going to try writing an app that uses the `icu::datetime` component to format a date and time in a Japanese locale.
 
-First, we need to register our choice of the provider in `~/projects/icu_tutorial/myapp/Cargo.toml`:
+First, we need to register our choice of the provider in `~/projects/icu_tutorial/myapp/Cargo.toml`, which can be done by running:
+
+```sh
+$ cargo add icu_testdata
+```
+
+which should generate:
 
 ```
 [dependencies]
@@ -144,7 +154,7 @@ icu = "1.0"
 icu_testdata = "1.0"
 ```
 
-and then we can use it in our code:
+We can then use it in our code:
 
 ```rust
 fn main() {
@@ -197,12 +207,27 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 
 This provider performs deserialization so is a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu` (or the specific `icu_foo` component crate), and `"deserialize_json"` needs to be enabled on `icu_provider`. There are also `"deserialize_postcard_1"` and `"deserialize_bincode_1"` features available.
 
+The whole thing can be done by running:
+
+
+```sh
+$ cargo add icu --features serde
+$ cargo add icu_provider_fs
+$ cargo add icu_provider --features deserialize_json
+```
+
+You may also run `cargo remove icu_testdata` as we don't need it anymore.
+
+This should generate:
+
 ```toml
 [dependencies]
 icu = { version = "1.0", features = ["serde"] }
 icu_provider_fs = { version = "1.0.0" }
 icu_provider = { version = "1.0.0" , features = ["deserialize_json"] }
 ```
+
+We can then use it like so:
 
 ```rs
 use icu_provider_fs::FsDataProvider;
