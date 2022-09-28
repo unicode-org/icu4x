@@ -206,7 +206,7 @@ Here's an internationalized date!
 
 ## Generating data
 
-Unless you're happy shipping your app with the ~10 locales supported by `icu_testdata, you will need generate your own data that is filtered to suit your needs.
+Unless you're happy shipping your app with the ~10 locales supported by `icu_testdata`, you will need generate your own data that is filtered to suit your needs.
 
 We're going to use the `icu_datagen` crate to do this. It pulls in [CLDR data](http://cldr.unicode.org/index/downloads) and Unicode property data from ICU4C releases to generate the data.
 
@@ -314,11 +314,6 @@ fn main() {
 ## Other formats
 
 ### `dir` and `FsDataProvider`
-
-The different `format`s are:
-* `blob`: a serialized binary blob. This format is useful for production use when data loading should happen at runtime (such as when downloading language packs)
-* `mod`: a Rust module containing the data.
-* `dir`: a directory of JSON files. This is mostly useful for debugging.
 
 The `dir` format will generate a directory tree of data files in JSON (although the `--syntax` option can be used to generate `postcard` or `bincode` files, which doesn't have many practical uses). This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
 
