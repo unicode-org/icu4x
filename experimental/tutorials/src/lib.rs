@@ -7,8 +7,6 @@
 //!   2. [Writing a Data Provider][`data_provider`]
 //!   3. [Writing a Data Struct][`data_struct`]
 
-extern crate alloc;
-
 pub mod intro;
 
 pub mod data_provider;

@@ -212,7 +212,7 @@
 //! ### Data Struct
 //!
 //! ```rust
-//!
+//! use std::borrow::Cow;
 //! use icu_provider::{yoke, zerofrom};
 //! use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 //!
@@ -235,12 +235,12 @@
 //!     pub plus_sign_affixes: AffixesV1<'data>,
 //!
 //!     /// Character used to separate the integer and fraction parts of the number.
-//!     /// #[cfg_attr(feature = "serde", serde(borrow))]
-//!     /// pub decimal_separator: Cow<'data, str>,
+//!     #[cfg_attr(feature = "serde", serde(borrow))]
+//!     pub decimal_separator: Cow<'data, str>,
 //!
 //!     /// Character used to separate groups in the integer part of the number.
-//!     /// #[cfg_attr(feature = "serde", serde(borrow))]
-//!     /// pub grouping_separator: Cow<'data, str>,
+//!     #[cfg_attr(feature = "serde", serde(borrow))]
+//!     pub grouping_separator: Cow<'data, str>,
 //!
 //!     /// Settings used to determine where to place groups in the integer part of the number.
 //!     pub grouping_sizes: GroupingSizesV1,
@@ -272,7 +272,7 @@
 //!     #[serde(rename = "minimumGroupingDigits")]
 //!     #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
 //!     pub minimum_grouping_digits: u8,
-//!     // commenting because of it's private module
+//!     // commenting because of it's not a public module
 //!     // #[serde(flatten)]
 //!     // pub numsys_data: NumberingSystemData,
 //! }
