@@ -7,6 +7,7 @@
 //!   2. [Writing a Data Provider][`data_provider`]
 //!   3. [Writing a Data Struct][`data_struct`]
 
+#[allow(clippy::needless_doctest_main)]
 pub mod intro;
 
 pub mod data_provider;
