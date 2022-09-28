@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664324561222,
+  "lastUpdate": 1664327658881,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55108,6 +55108,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dd77d559ecd8c8d96f9231271140b213efc18c80",
+          "message": "More tutorial fixes (#2670)\n\n* Fix link\r\n\r\n* rm outdated notice",
+          "timestamp": "2022-09-28T00:10:38Z",
+          "tree_id": "776914ad6657cca0c13d301e93cdb8e97a53e937",
+          "url": "https://github.com/unicode-org/icu4x/commit/dd77d559ecd8c8d96f9231271140b213efc18c80"
+        },
+        "date": 1664327598442,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 103090,
+            "range": "± 362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21557,
+            "range": "± 522",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66108,
+            "range": "± 527",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
             "range": "± 0",
             "unit": "ns/iter"
           }
