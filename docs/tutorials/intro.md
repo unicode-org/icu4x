@@ -236,7 +236,9 @@ The last command is a bit dense, so let's dissect it.
 This should generate a `my-data` file containing your data in serialized form.
 
 *Notice:* `--cldr-tag` and `--icuexport-tag` fetch the specified version from the network. For offline or unconventional use, the user can also pass `--cldr-root`/`--icuexport-root` to use local versions.
+
 *Notice:* `--all-keys --all-locales` is a lot of data, in many cases you probably only want the keys for a particular component, for a set of locales you plan to support in the application. Datagen has alternate flags like `--keys` or `--key-file` for this level of control.
+
 *Notice:* This command builds in debug mode since it builds faster; but if you plan on running `icu_datagen` a lot (for example, if you wish to create multiple per-key blobs to selectively load), we highly recommend using `--release`.
 
 ## Using the generated data
