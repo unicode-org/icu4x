@@ -91,7 +91,7 @@ $ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format 
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
-But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 21 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, using `DateTimeFormatter` pulls in data for all calendar types that it supports. 
+But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 21 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
@@ -123,7 +123,7 @@ fn main() {
 }
 ```
 
-This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as static analysis can now determine that we need even fewer keys (the data size improvement could have also been achieved by manually listing the data keys we think we'll need, but we risk a runtime error if we were wrong).
+This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as static analysis can now determine that we need even fewer keys. The data size improvement could have also been achieved by manually listing the data keys we think we'll need (there's a `--keys` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
