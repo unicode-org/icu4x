@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664328589624,
+  "lastUpdate": 1664382341358,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -24695,6 +24695,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52566089,
             "range": "± 726230",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5da1221896486ca462adb048ab1857a211b622a9",
+          "message": "Various tutorial fixes from feedback (#2674)\n\n* Clean up\r\n\r\n* rename path so it's not confusing with icu\r\n\r\n* fixes\r\n\r\n* Fixup data management section\r\n\r\n* more fixes\r\n\r\n* cargo-edit\r\n\r\n* zibi\r\n\r\n* rob\r\n\r\n* fix\r\n\r\n* Update docs/tutorials/intro.md\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-09-28T15:58:56Z",
+          "tree_id": "16605ec0ee8762552022ee019fb4afc188e7ff33",
+          "url": "https://github.com/unicode-org/icu4x/commit/5da1221896486ca462adb048ab1857a211b622a9"
+        },
+        "date": 1664382279224,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 489,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 300,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 320,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 370,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 612,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 645,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 315,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 318,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 370,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 409,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 628,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 52383989,
+            "range": "± 796331",
             "unit": "ns/iter"
           },
           {
