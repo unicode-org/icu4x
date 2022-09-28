@@ -57,7 +57,7 @@
 //! definitions. For example:
 //!
 //! - [`icu::decimal::provider::DecimalSymbolsV1`]
-//! - [`icu_datagen::transform::cldr::locale_canonicalizer::likely_subtags::LikelySubtagsV1`]
+//! - `icu_datagen::transform::cldr::locale_canonicalizer::likely_subtags::LikelySubtagsV1`
 //! - [`icu::properties::provider::PropertyCodePointSetV1`]
 //!
 //! In general, data structs should be annotated with `#[icu_provider::data_struct]`
@@ -119,7 +119,7 @@
 //! data from CLDR JSON), try to share code with existing data providers for that
 //! source.
 //! - If the data source is novel, feel free to add a new module
-//! under [`icu_datagen::transform`].
+//! under `icu_datagen::transform`.
 //!
 //! ### Data Exporters and Runtime Data Providers
 //!
