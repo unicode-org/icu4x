@@ -69,7 +69,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! icu = "0.6"
+//! icu = "1.0"
 //! ```
 //!
 //! After saving the changes, calling `cargo check` should vendor in `ICU4X`
@@ -288,12 +288,12 @@
 //! ```console
 //! git clone https://github.com/unicode-org/icu4x
 //! cd icu4x
-//! git checkout icu@0.6.0
+//! git checkout icu@1.0.0
 //! cargo run --bin icu4x-datagen --features bin -- \
-//! --cldr-tag 41.0.0 \
-//! --icuexport-tag release-71-1 \
-//! --out ~/projects/icu/icu4x-data \
-//! --all-keys --all-locales
+//!   --cldr-tag 41.0.0 \
+//!   --icuexport-tag release-71-1 \
+//!   --out ~/projects/icu/icu4x-data \
+//!   --all-keys --all-locales
 //! ```
 //!
 //! The last command is a bit dense, so let's dissect it.
@@ -624,7 +624,7 @@
 //! ## Example
 //!
 //! The following example shows all the pieces that make up the data pipeline
-//! for `DecimalSymbolsV1`.
+//! for [`DecimalSymbolsV1`].
 //!
 //! ### Data Struct
 //!
@@ -645,10 +645,10 @@
 //! ### Transformer
 //!
 //!
-//! ```rust
-//! use icu_provider::*;
+//! ```compile_only
+//! use icu_provider:: {DataKey, DataLocale, DataError, DataMarker, DataProvider, KeyedDataMarker, DataResponse, DataRequest, DataPayload };
 //! use icu_provider::datagen::IterableDataProvider;
-//! use serde::Serialize;
+//! use serde::{ Serialize, Deserialize };
 //! use yoke::Yokeable;
 //! use databake::Bake;
 //!
@@ -677,7 +677,7 @@
 //!         // This method will be called once per option returned by supported_locales.
 //!         Ok(DataResponse {
 //!             metadata: Default::default(),
-//!             payload: Some(DataPayload::from_static_str("test")),
+//!             payload: Some(DataPayload::from(Default::default())),
 //!         })
 //!     }
 //! }
