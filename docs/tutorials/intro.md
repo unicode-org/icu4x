@@ -52,7 +52,7 @@ After saving the changes, commands like `cargo check` will download the `icu` Ru
 # 4. Accessing components
 
 `ICU4X` comes with a variety of components allowing to manage various facets of software internationalization.
-Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrylic script) or `es-AR` (Argentinian Spanish).
+Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrillic script) or `es-AR` (Argentinian Spanish).
 
 In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
 
@@ -115,7 +115,7 @@ Next, let's add some more complex functionality.
 
 # 5. Data Management
 
-While language identifier API is purely algorithmic, many internationalization APIs use data to perform operations. The most common data set used in Unicode Internationalization is called `CLDR` - `Common Locale Data Repository`.
+While the locale API is purely algorithmic, many internationalization APIs use data to perform operations. The most common data set used in Unicode Internationalization is called `CLDR` - `Common Locale Data Repository`.
 
 Data management is a complex and non-trivial area which often requires customizations for particular environments and integrations into projects ecosystem.
 
@@ -184,7 +184,7 @@ If all went well, running the app with `cargo run` should display:
 
 Here's an internationalized date!
 
-*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using resources in the `json`  format. It is recommended you generate the data in the `postcard` format (and use it with `BlobDataProvider`) for better performance. Gemeratomg data
+*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using resources in the `json`  format. It is recommended you generate the data in the `postcard` format (and use it with `BlobDataProvider`) for better performance.
 
 ## Using data from the filesystem
 
