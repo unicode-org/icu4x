@@ -337,9 +337,6 @@
 //!
 
 #[cfg(doc)]
-pub mod intro;
-
-#[cfg(doc)]
 pub mod data_provider;
 
 #[cfg(doc)]
