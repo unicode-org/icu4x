@@ -89,7 +89,7 @@ You might have noticed that the blob we generated is a hefty 13MB. This is no su
 $ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format blob --keys-for-bin target/debug/myapp --locales ja
 ```
 
-The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB file, and our program still works. Quite the improvement!
+The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 21 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, using `DateTimeFormatter` pulls in data for all calendar types that it supports. 
 
@@ -125,13 +125,9 @@ fn main() {
 
 This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `TypedDateTimeFormatter<Gregorian>`, and it reduces our data size, as static analysis can now determine that we need even fewer keys (the data size improvement could have also been achieved by manually listing the data keys we think we'll need, but we risk a runtime error if we were wrong).
 
-Rerunning
+This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
-```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format blob --keys-for-bin target/debug/myapp --locales ja
-```
-
-awards us with a 3KB data blob, which only contains 7 data keys!
+Rerunning datagen awards us with a 3KB data blob, which only contains 7 data keys!
 
 # 5. Other formats
 
@@ -139,7 +135,7 @@ So far we've used `--format blob` and `BlobDataProvider`. This is useful if we w
 
 ## `mod` and `BakedDataProvider`
 
-The `mod` format will generate a Rust module that defines a data provider. This format naturally has no deserialization overhead, but cannot be dynamically loaded at runtime.
+The `mod` format will generate a Rust module that defines a data provider. This format naturally has no deserialization overhead, and allows for compile-time optimizations (data slicing isn't really necessary, as the compiler will do it for us), but cannot be dynamically loaded at runtime.
 
 Let's give it a try:
 
@@ -158,7 +154,7 @@ $ cargo add zerovec
 We can then use the data by directly including the source with the `include!` macro.
 
 ```rust
-extern crate alloc; // required as BakedDataProvider is #[no_std]
+extern crate alloc; // required as BakedDataProvider is written for #[no_std]
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
