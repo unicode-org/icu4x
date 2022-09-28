@@ -174,7 +174,6 @@ fn main() {
     println!("📅: {}", formatted_date);
 }
 ```
-*Notice:* Before proceeding, update your path to the ICU4X data directory.
 
 If all went well, running the app with `cargo run` should display:
 
