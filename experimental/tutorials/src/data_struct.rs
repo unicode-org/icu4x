@@ -299,28 +299,6 @@
 //!
 //!
 //! ```compile_fail
-//! use icu_provider::{ DataKey, DataLocale, DataError, DataMarker, DataProvider, KeyedDataMarker, DataResponse, DataRequest, DataPayload };
-//! use icu_provider::datagen::IterableDataProvider;
-//! use serde::{ Serialize, Deserialize };
-//! use yoke::Yokeable;
-//! use databake::Bake;
-//!
-//! #[derive(Serialize, Deserialize, Clone, Default, PartialEq, Yokeable, Bake)]
-//! #[databake(path = bar::module)]
-//! struct FooV1 {
-//!   message: String,
-//! }
-//!
-//! struct FooProvider;
-//! struct FooV1Marker;
-//!
-//! impl DataMarker for FooV1Marker {
-//!   type Yokeable = FooV1;
-//! }
-//!
-//! impl KeyedDataMarker for FooV1Marker {
-//!   const KEY: DataKey = icu_provider::data_key!("foo/bar@1");
-//! }
 //!
 //! impl DataProvider<FooV1Marker> for FooProvider {
 //!     fn load(&self,req: DataRequest) -> Result<DataResponse<FooV1Marker>, DataError> {
