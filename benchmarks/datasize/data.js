@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664323961577,
+  "lastUpdate": 1664325265844,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29273,6 +29273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/28bf527db690f991069533f8fe7c7b2467d84fc2"
         },
         "date": 1664323900784,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dd77d559ecd8c8d96f9231271140b213efc18c80",
+          "message": "More tutorial fixes (#2670)\n\n* Fix link\r\n\r\n* rm outdated notice",
+          "timestamp": "2022-09-28T00:10:38Z",
+          "tree_id": "776914ad6657cca0c13d301e93cdb8e97a53e937",
+          "url": "https://github.com/unicode-org/icu4x/commit/dd77d559ecd8c8d96f9231271140b213efc18c80"
+        },
+        "date": 1664325212584,
         "tool": "ndjson",
         "benches": [
           {
