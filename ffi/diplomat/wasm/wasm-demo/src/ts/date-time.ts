@@ -20,13 +20,13 @@ export class DateTimeDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_from_string("en-u-ca-gregory"));
+        this.#locale = Ok(ICU4XLocale.create_from_string("en"));
         this.#calendar = Ok(ICU4XCalendar.create_for_locale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
         this.#dateTimeStr = "";
-        this.#calendarStr = "gregory";
+        this.#calendarStr = "from-locale";
         this.#localeStr = "en";
         this.#updateFormatter();
     }
