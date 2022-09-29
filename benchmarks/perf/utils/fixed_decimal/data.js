@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664405638834,
+  "lastUpdate": 1664491068938,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55529,6 +55529,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 93,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f22b4677338c848fd42e2a9fb7d28cf546e0d95",
+          "message": "Some wasm demo fixes (#2688)\n\n* Change default calendar now that we have fallbacking\r\n\r\n* Handle calendaring when locale is already specified with unicode extensions",
+          "timestamp": "2022-09-29T22:24:37Z",
+          "tree_id": "46d6a8ea9d632588cde6597d62a1bfe8fec0678f",
+          "url": "https://github.com/unicode-org/icu4x/commit/7f22b4677338c848fd42e2a9fb7d28cf546e0d95"
+        },
+        "date": 1664491001845,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112865,
+            "range": "± 7511",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23843,
+            "range": "± 1762",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64768,
+            "range": "± 5763",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 208,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 85,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
