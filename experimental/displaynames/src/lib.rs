@@ -13,9 +13,9 @@
 //! of the icu meta-crate. Use with caution.
 //! </div>
 //!
-//! TODO: expand documentation
-//!
 //! [`ICU4X`]: ../icu/index.html
+
+// TODO: expand documentation
 
 #![warn(missing_docs)]
 

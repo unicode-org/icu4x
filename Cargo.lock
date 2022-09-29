@@ -1600,7 +1600,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr 0.7.0",
- "yoke",
  "zerovec",
 ]
 
