@@ -12,7 +12,6 @@ members = [
     "components/datetime",
     "components/decimal",
     "components/icu",
-    "components/icu4x",
     "components/list",
     "components/locid_transform",
     "components/locid",

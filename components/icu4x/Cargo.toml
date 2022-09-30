@@ -5,7 +5,7 @@
 [package]
 name = "icu4x"
 description = "International Components for Unicode"
-version = "0.1.0"
+version = "1.0.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
