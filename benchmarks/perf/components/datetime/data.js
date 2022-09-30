@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664491130868,
+  "lastUpdate": 1664556135745,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -76961,6 +76961,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6205,
             "range": "± 330",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9d456b6387304cf77b620b3ebd7549b02dc0627",
+          "message": "Transformer code for DisplayNames component. (#2635)",
+          "timestamp": "2022-09-30T18:26:06+02:00",
+          "tree_id": "9ad2942718485d2150b146d8b214682d24db1bc6",
+          "url": "https://github.com/unicode-org/icu4x/commit/f9d456b6387304cf77b620b3ebd7549b02dc0627"
+        },
+        "date": 1664556041670,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 56577,
+            "range": "± 485",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 94729,
+            "range": "± 832",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 52435,
+            "range": "± 1263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 59364,
+            "range": "± 1164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 56614,
+            "range": "± 2273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 63284,
+            "range": "± 486",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 91073,
+            "range": "± 4432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 99864,
+            "range": "± 1186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 94905,
+            "range": "± 706",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 106030,
+            "range": "± 3211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4555,
+            "range": "± 23",
             "unit": "ns/iter"
           }
         ]
