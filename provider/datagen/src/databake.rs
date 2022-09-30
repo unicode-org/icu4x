@@ -32,8 +32,8 @@ pub(crate) struct BakedDataExporter {
     pretty: bool,
     insert_feature_gates: bool,
     use_separate_crates: bool,
-    // Temporary storage for put_payload: key -> (marker path, bake -> [locale])
-    data: Mutex<HashMap<DataKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
+    // Temporary storage for put_payload: key -> (bake -> [locale])
+    data: Mutex<HashMap<DataKey, HashMap<SyncTokenStream, Vec<String>>>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
@@ -135,13 +135,12 @@ impl DataExporter for BakedDataExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.dependencies.insert("litemap");
-        let (payload, marker_type) = payload.tokenize(&self.dependencies);
+        let payload = payload.tokenize(&self.dependencies);
         self.data
             .lock()
             .expect("poison")
             .entry(key)
-            .or_insert_with(|| (marker_type.to_string(), Default::default()))
-            .1
+            .or_insert_with(Default::default)
             .entry(payload.to_string())
             .or_default()
             .push(locale.to_string());
@@ -149,12 +148,12 @@ impl DataExporter for BakedDataExporter {
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        let (marker, raw) = self
+        let raw = self
             .data
             .lock()
             .expect("poison")
             .remove(&key)
-            .ok_or_else(|| DataError::custom("No data").with_key(key))?;
+            .unwrap_or_default();
         let mut statics = Vec::new();
         let mut all_locales = Vec::new();
 
@@ -211,7 +210,9 @@ impl DataExporter for BakedDataExporter {
             DataError::custom("Key component is not a valid Rust identifier").with_key(key)
         })?;
 
-        let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
+        let marker =
+            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
+                .unwrap();
 
         #[allow(unused_mut)]
         let mut feature = if self.insert_feature_gates {
@@ -298,7 +299,7 @@ impl DataExporter for BakedDataExporter {
 
         let mods = mod_files
             .remove(&PathBuf::new())
-            .expect("root exists")
+            .unwrap_or_default()
             .into_iter()
             .dedup()
             .map(|p| p.parse::<TokenStream>().unwrap());

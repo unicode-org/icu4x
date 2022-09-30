@@ -58,6 +58,27 @@ macro_rules! registry {
                 $($marker,)+
             ]
         );
+
+        pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
+            use databake::Bake;
+            // This is a bit naughty, we need the marker's type, but we're actually
+            // baking its value. This works as long as all markers are unit structs.
+            if key.path() == HelloWorldV1Marker::KEY.path() {
+                return HelloWorldV1Marker.bake(env);
+            }
+            $(
+                if key.path() == $marker::KEY.path() {
+                    return $marker.bake(env);
+                }
+            )+
+            $(
+                #[cfg(feature = "experimental")]
+                if key.path() == $exp_marker::KEY.path() {
+                    return $exp_marker.bake(env);
+                }
+            )+
+            unreachable!("unregistered marker")
+        }
     }
 }
 

@@ -129,7 +129,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .find(|a| a.path.is_ident("databake"))
         .map(|a| {
             quote! {
-                #[derive(Default, databake::Bake)]
+                #[derive(databake::Bake)]
                 #a
             }
         })
