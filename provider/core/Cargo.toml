@@ -43,6 +43,9 @@ macros = ["icu_provider_macros"]
 # Enable logging of additional context of data errors
 log_error_context = ["log"]
 
+# Enable BufferProvider and other deserialization infrastructure
+serde = ["dep:serde", "yoke/serde"]
+
 # Features for specific serde formats
 deserialize_json = ["serde", "serde_json"]
 deserialize_bincode_1 = ["serde", "bincode", "std"]
