@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664491068938,
+  "lastUpdate": 1664556048282,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55589,6 +55589,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 85,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f9d456b6387304cf77b620b3ebd7549b02dc0627",
+          "message": "Transformer code for DisplayNames component. (#2635)",
+          "timestamp": "2022-09-30T18:26:06+02:00",
+          "tree_id": "9ad2942718485d2150b146d8b214682d24db1bc6",
+          "url": "https://github.com/unicode-org/icu4x/commit/f9d456b6387304cf77b620b3ebd7549b02dc0627"
+        },
+        "date": 1664555986934,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101442,
+            "range": "± 424",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20557,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65993,
+            "range": "± 153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
