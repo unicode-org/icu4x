@@ -123,7 +123,7 @@ fn test_writeable() {
     use writeable::assert_writeable_eq;
 
     let hybrid = "hybrid".parse().unwrap();
-    let foobar = "barbar".parse().unwrap();
+    let foobar = "foobar".parse().unwrap();
 
     assert_writeable_eq!(Value::default(), "true");
     assert_writeable_eq!(Value::from_vec_unchecked(vec![hybrid]), "hybrid");
