@@ -1320,10 +1320,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu4x"
-version = "1.0.0"
-
-[[package]]
 name = "icu_benchmark_binsize"
 version = "0.1.0"
 dependencies = [
