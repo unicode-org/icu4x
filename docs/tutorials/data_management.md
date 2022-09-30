@@ -50,7 +50,7 @@ $ cargo add icu_provider_blob
 
 We can then use the provider in our code:
 
-```rust
+```no_run
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
@@ -95,7 +95,7 @@ But there is more to optimize. You might have noticed this in the output of the 
 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
-```rust
+```no_run
 use icu::locid::{locale, Locale};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
@@ -153,7 +153,7 @@ $ cargo add zerovec
 
 We can then use the data by directly including the source with the `include!` macro.
 
-```rust
+```compile_fail
 extern crate alloc; // required as BakedDataProvider is written for #[no_std]
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
@@ -184,7 +184,7 @@ With this provider, we can use the `unstable` constructors. These are only guara
 
 You can also make the `BakedDataProvider` implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
 
-```rust
+```compile_fail
 include!("../my-data/mod.rs");
 include!("../my-data/any.rs");
 let _any_provider = BakedDataProvider;
@@ -210,7 +210,7 @@ $ cargo add icu_provider --features deserialize_json
 $ cargo add icu_provider_fs
 ```
 
-```rust
+```no_run
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
