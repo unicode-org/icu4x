@@ -395,7 +395,7 @@ pub use zerovec_derive::make_ule;
 /// Generate a corresponding [`VarULE`] type and the relevant [`EncodeAsVarULE`]/[`zerofrom::ZeroFrom`]
 /// implementations for this type
 ///
-/// This can be attached to structs containing only [`AsULE`] types with the last fields being [`Cow<'a, str>`](alloc::borrow::Cow),
+/// This can be attached to structs containing only [`AsULE`] types with the last fields being
 /// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`]. If there is more than one such field, it will be represented
 /// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated.
 ///
