@@ -12,14 +12,11 @@ It is important to understand the phases of life of ICU4X data as it makes its w
 
 The following steps take place at build time:
 
-1. First, the source data file is obtained from an external source. Examples could include the CLDR JSON release or the Unicode Character Database.
-2. Second, we use a Serde definition to deserialize the source data file. This Serde implementation does not need to be optimized for performance.
-3. Third, we transform from the source data struct to the ICU4X runtime data struct. This step can be expensive, because it is normally run as an offline build step.
-4. Fourth, the ICU4X runtime data struct is serialized to either JSON, if debugging is important, or to a blob store, if being prepared for use in production.
+1. Source data file is obtained from an external source. Examples could include the CLDR JSON release or the Unicode Character Database.
+2. The source data is parsed and transformed into a runtime data struct. This step can be expensive, because it is normally run as an offline build step.
+3. The runtime data struct is stored in a way so that a provider can use it: a postcard blob, JSON directory tree, Rust module, etc.
 
-Step 1 is generally a manual step for clients, but may be automated for ICU4X testdata in tools such as `icu4x-testdata-download`. Steps 2-4 are performed as part of `icu4x-datagen`. Both of these tools are explained in more detail below.
-
-At runtime, only one step is performed: the data struct is deserialized from the JSON or blob emitted in step 4.
+These steps are performed by the `icu_datagen`, but clients can also write their own data generation logic.
 
 When deserializing from the blob store, it is a design principle of ICU4X that no heap allocations will be required. We have many utilities and abstractions to help make this safe and easy.
 

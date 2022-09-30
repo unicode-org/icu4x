@@ -20,13 +20,13 @@ export class DateTimeDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_from_string("en-u-ca-gregory"));
+        this.#locale = Ok(ICU4XLocale.create_from_string("en"));
         this.#calendar = Ok(ICU4XCalendar.create_for_locale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
         this.#dateTimeStr = "";
-        this.#calendarStr = "gregory";
+        this.#calendarStr = "from-locale";
         this.#localeStr = "en";
         this.#updateFormatter();
     }
@@ -44,9 +44,17 @@ export class DateTimeDemo {
     }
 
     #updateLocaleAndCalendar(): void {
-        const locid = (this.#calendarStr == "from-locale") ?
-            this.#localeStr :
-            `${this.#localeStr}-u-ca-${this.#calendarStr}`;
+        let locid = this.#localeStr;
+        if (this.#calendarStr != "from-locale") {
+            if (locid.indexOf("-u-") == -1) {
+                locid = `${locid}-u-ca-${this.#calendarStr}`;
+            } else {
+                // Don't bother trying to patch up the situation where a calendar
+                // is already specified; this is GIGO and the current locale parsing behavior
+                // will just default to the first one (#calendarStr)
+                locid = locid.replace("-u-", `-u-ca-${this.#calendarStr}-`);
+            }
+        }
         this.#locale = result(() => ICU4XLocale.create_from_string(locid));
         this.#calendar = result(() => ICU4XCalendar.create_for_locale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
