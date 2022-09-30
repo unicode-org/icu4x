@@ -28,7 +28,7 @@
 //! assert!(loc.extensions.transform.fields.contains_key(&key));
 //! assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 //!
-//! assert_eq!(&loc.extensions.transform.to_string(), "-t-es-AR-h0-hybrid");
+//! assert_eq!(&loc.extensions.transform.to_string(), "t-es-AR-h0-hybrid");
 //! ```
 mod fields;
 mod key;
@@ -208,7 +208,7 @@ impl writeable::Writeable for Transform {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("-t")?;
+        sink.write_str("t")?;
         if let Some(lang) = &self.lang {
             sink.write_char('-')?;
             writeable::Writeable::write_to(lang, sink)?;
@@ -224,7 +224,7 @@ impl writeable::Writeable for Transform {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
-        let mut result = writeable::LengthHint::exact(2);
+        let mut result = writeable::LengthHint::exact(1);
         if let Some(lang) = &self.lang {
             result += writeable::Writeable::writeable_length_hint(lang) + 1;
         }

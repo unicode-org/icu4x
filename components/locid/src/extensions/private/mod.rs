@@ -50,7 +50,7 @@ use crate::parser::SubtagIterator;
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
 /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
-/// assert_eq!(&private.to_string(), "-x-foo-bar");
+/// assert_eq!(&private.to_string(), "x-foo-bar");
 /// ```
 ///
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
@@ -84,7 +84,7 @@ impl Private {
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
     /// let private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
-    /// assert_eq!(&private.to_string(), "-x-foo-bar");
+    /// assert_eq!(&private.to_string(), "x-foo-bar");
     /// ```
     pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
         Self(input)
@@ -101,7 +101,7 @@ impl Private {
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     /// let mut private = Private::from_vec_unchecked(vec![subtag1, subtag2]);
     ///
-    /// assert_eq!(&private.to_string(), "-x-foo-bar");
+    /// assert_eq!(&private.to_string(), "x-foo-bar");
     ///
     /// private.clear();
     ///
@@ -138,7 +138,7 @@ impl writeable::Writeable for Private {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("-x")?;
+        sink.write_str("x")?;
         for key in self.iter() {
             sink.write_char('-')?;
             writeable::Writeable::write_to(key, sink)?;
@@ -150,7 +150,7 @@ impl writeable::Writeable for Private {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
-        let mut result = writeable::LengthHint::exact(2);
+        let mut result = writeable::LengthHint::exact(1);
         for key in self.iter() {
             result += writeable::Writeable::writeable_length_hint(key) + 1;
         }

@@ -41,7 +41,7 @@ pub use subtag::Subtag;
 /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
 ///
 /// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
-/// assert_eq!(&other.to_string(), "-a-foo-bar");
+/// assert_eq!(&other.to_string(), "a-foo-bar");
 /// ```
 ///
 /// [`Other Use Extensions`]: https://unicode.org/reports/tr35/#other_extensions
@@ -68,7 +68,7 @@ impl Other {
     /// let subtag2: Subtag = "bar".parse().expect("Failed to parse a Subtag.");
     ///
     /// let other = Other::from_vec_unchecked(b'a', vec![subtag1, subtag2]);
-    /// assert_eq!(&other.to_string(), "-a-foo-bar");
+    /// assert_eq!(&other.to_string(), "a-foo-bar");
     /// ```
     pub fn from_vec_unchecked(ext: u8, keys: Vec<Subtag>) -> Self {
         assert!(ext.is_ascii_alphabetic());
@@ -151,7 +151,6 @@ writeable::impl_display_with_writeable!(Other);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        sink.write_char('-')?;
         sink.write_str(self.get_ext_str())?;
         for key in self.keys.iter() {
             sink.write_char('-')?;
@@ -162,10 +161,20 @@ impl writeable::Writeable for Other {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        let mut result = writeable::LengthHint::exact(2);
+        let mut result = writeable::LengthHint::exact(1);
         for key in self.keys.iter() {
             result += writeable::Writeable::writeable_length_hint(key) + 1;
         }
         result
+    }
+
+    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+        if self.keys.is_empty() {
+            return alloc::borrow::Cow::Borrowed(self.get_ext_str());
+        }
+        let mut string =
+            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
+        let _ = self.write_to(&mut string);
+        alloc::borrow::Cow::Owned(string)
     }
 }
