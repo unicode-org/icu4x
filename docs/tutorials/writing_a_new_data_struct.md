@@ -228,7 +228,9 @@ The above example is an abridged definition of the Serde structure corresponding
 
 ### Transformer
 
-[*provider/datagen/src/transform/cldr/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/numbers/mod.rs)
+[*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
+
+[*provider/core/src/datagen/iter.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/datagen/iter.rs)
 
 ```rust,compile_fail
 impl DataProvider<FooV1Marker> for DatagenProvider {
