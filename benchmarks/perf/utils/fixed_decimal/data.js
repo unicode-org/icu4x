@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664566978830,
+  "lastUpdate": 1664567899924,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55769,6 +55769,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "926e2208597f78017fa6fed477640a348d5d81e3",
+          "message": "mention that we support multiple unsized fields in varule (#2695)\n\n* mention that we support multiple unsized fields in varule\r\n\r\n* Update utils/zerovec/src/lib.rs\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-09-30T19:45:16Z",
+          "tree_id": "dfa4e4a71acf2e12e338c94117b155725f40b7b9",
+          "url": "https://github.com/unicode-org/icu4x/commit/926e2208597f78017fa6fed477640a348d5d81e3"
+        },
+        "date": 1664567837772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101284,
+            "range": "± 960",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20479,
+            "range": "± 102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65894,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
