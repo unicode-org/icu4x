@@ -1307,6 +1307,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1504,6 +1505,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1586,6 +1588,19 @@ dependencies = [
  "rand_pcg",
  "serde",
  "writeable",
+]
+
+[[package]]
+name = "icu_displaynames"
+version = "0.7.0"
+dependencies = [
+ "databake",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr 0.7.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1856,6 +1871,7 @@ dependencies = [
  "icu_datagen",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",

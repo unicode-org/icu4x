@@ -158,3 +158,7 @@ pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
 pub use icu_timezone as timezone;
+
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_displaynames as displaynames;
