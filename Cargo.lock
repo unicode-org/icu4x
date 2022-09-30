@@ -1319,6 +1319,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1330,10 +1331,6 @@ dependencies = [
  "icu_testdata",
  "icu_timezone",
 ]
-
-[[package]]
-name = "icu4x"
-version = "0.1.0"
 
 [[package]]
 name = "icu_benchmark_binsize"
@@ -1516,6 +1513,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -1598,6 +1596,19 @@ dependencies = [
  "rand_pcg",
  "serde",
  "writeable",
+]
+
+[[package]]
+name = "icu_displaynames"
+version = "0.7.0"
+dependencies = [
+ "databake",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr 0.7.0",
+ "zerovec",
 ]
 
 [[package]]
@@ -1868,6 +1879,7 @@ dependencies = [
  "icu_datagen",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",

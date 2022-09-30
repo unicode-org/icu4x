@@ -4,6 +4,7 @@ mod collator;
 mod core;
 mod datetime;
 mod decimal;
+mod displaynames;
 mod fallback;
 mod list;
 mod locid_transform;
@@ -485,6 +486,19 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
                 *decimal::symbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_decimal::provider::DecimalSymbolsV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_displaynames")]
+impl DataProvider<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *displaynames::territories_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::TerritoryDisplayNamesV1Marker::KEY, req))?,
             ))),
         })
     }

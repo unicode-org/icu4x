@@ -21,6 +21,8 @@ use icu_timezone::provider::*;
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
+use icu_displaynames::provider::*;
+#[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
@@ -189,6 +191,7 @@ registry!(
     {
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
+        TerritoryDisplayNamesV1Marker,
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
         LstmDataV1Marker,
