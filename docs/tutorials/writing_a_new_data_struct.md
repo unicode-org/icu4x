@@ -91,7 +91,7 @@ The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/
 When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
 [*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
 
-```compile_fail
+```rust,compile_fail
 macro_rules! create_datagen_provider {
     // ...
     FooProvider,
@@ -230,7 +230,7 @@ The above example is an abridged definition of the Serde structure corresponding
 
 [*provider/datagen/src/transform/cldr/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/numbers/mod.rs)
 
-```compile_fail
+```rust,compile_fail
 impl DataProvider<FooV1Marker> for DatagenProvider {
     fn load(
         &self,
