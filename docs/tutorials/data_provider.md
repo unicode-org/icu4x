@@ -6,7 +6,7 @@ At the moment, `DataProvider` is only synchronous, but the model of plugging it 
 
 ## Data
 
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a [`provider`] module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
+The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a `provider` module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
 
 ## Types of providers
 
