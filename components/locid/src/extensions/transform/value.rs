@@ -29,7 +29,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(&value1.to_string(), "hybrid");
 /// assert_eq!(&value2.to_string(), "hybrid-foobar");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
 
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
@@ -116,4 +116,19 @@ impl FromStr for Value {
     }
 }
 
-impl_writeable_for_tinystr_list!(Value, "true", "hybrid", "foobar");
+impl_writeable_for_each_subtag_str_no_test!(Value, selff, selff.0.is_empty() => alloc::borrow::Cow::Borrowed("true"));
+
+#[test]
+fn test_writeable() {
+    use writeable::assert_writeable_eq;
+
+    let hybrid = "hybrid".parse().unwrap();
+    let foo = "foobar".parse().unwrap();
+
+    assert_writeable_eq!(Value::default(), "true");
+    assert_writeable_eq!(Value::from_vec_unchecked(vec![hybrid]), "hybrid");
+    assert_writeable_eq!(
+        Value::from_vec_unchecked(vec![hybrid, foo]),
+        "hybrid-foobar"
+    );
+}

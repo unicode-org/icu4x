@@ -283,7 +283,7 @@ impl_writeable_for_each_subtag_str_no_test!(Extensions);
 fn test_writeable() {
     use crate::Locale;
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Extensions::new(), "",);
+    assert_writeable_eq!(Extensions::new(), "");
     assert_writeable_eq!(
         "my-t-my-d0-zawgyi".parse::<Locale>().unwrap().extensions,
         "t-my-d0-zawgyi",

@@ -240,7 +240,11 @@ pub trait Writeable {
     /// }
     /// ```
     fn write_to_string(&self) -> Cow<str> {
-        let mut output = String::with_capacity(self.writeable_length_hint().capacity());
+        let hint = self.writeable_length_hint();
+        if hint.is_zero() {
+            return Cow::Borrowed("");
+        }
+        let mut output = String::with_capacity(hint.capacity());
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }

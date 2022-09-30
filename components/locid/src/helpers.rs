@@ -387,12 +387,17 @@ macro_rules! impl_tinystr_subtag {
         }
 
         impl writeable::Writeable for $name {
+            #[inline]
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 sink.write_str(self.as_str())
             }
             #[inline]
             fn writeable_length_hint(&self) -> writeable::LengthHint {
                 writeable::LengthHint::exact(self.0.len())
+            }
+            #[inline]
+            fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+                alloc::borrow::Cow::Borrowed(self.0.as_str())
             }
         }
 
@@ -546,7 +551,7 @@ macro_rules! impl_tinystr_subtag {
 }
 
 macro_rules! impl_writeable_for_each_subtag_str_no_test {
-    ($type:tt) => {
+    ($type:tt $(, $self:ident, $borrow_cond:expr => $borrow:expr)?) => {
         impl writeable::Writeable for $type {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
@@ -576,6 +581,20 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
                 .expect("infallible");
                 result
             }
+
+            $(
+                fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+                    #[allow(clippy::unwrap_used)] // impl_writeable_for_subtag_list's $borrow uses unwrap
+                    let $self = self;
+                    if $borrow_cond {
+                        $borrow
+                    } else {
+                        let mut output = alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
+                        let _ = self.write_to(&mut output);
+                        alloc::borrow::Cow::Owned(output)
+                    }
+                }
+            )?
         }
 
         writeable::impl_display_with_writeable!($type);
@@ -584,34 +603,13 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
 
 macro_rules! impl_writeable_for_subtag_list {
     ($type:tt, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type);
+        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => alloc::borrow::Cow::Borrowed(selff.0.as_slice().get(0).unwrap().as_str()));
 
         #[test]
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
                 &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
-                $sample1,
-            );
-            writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(alloc::vec![
-                    $sample1.parse().unwrap(),
-                    $sample2.parse().unwrap()
-                ]),
-                core::concat!($sample1, "-", $sample2),
-            );
-        }
-    };
-}
-
-macro_rules! impl_writeable_for_tinystr_list {
-    ($type:tt, $if_empty:literal, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type);
-
-        #[test]
-        fn test_writeable() {
-            writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()]),
                 $sample1,
             );
             writeable::assert_writeable_eq!(
