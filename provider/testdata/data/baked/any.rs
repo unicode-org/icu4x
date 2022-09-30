@@ -357,80 +357,95 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_timezone")]
         const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
-        Ok(AnyResponse {
-            payload: Some(match key.hashed() {
-                #[cfg(feature = "icu_calendar")]
-                JAPANESEERASV1MARKER => calendar::japanese_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_calendar")]
-                JAPANESEEXTENDEDERASV1MARKER => calendar::japanext_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_calendar")]
-                WEEKDATAV1MARKER => datetime::week_data_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_casemapping")]
-                CASEMAPPINGV1MARKER => props::casemap_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONDATAV1MARKER => collator::data_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONJAMOV1MARKER => collator::jamo_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_collator")]
-                COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                BUDDHISTDATELENGTHSV1MARKER => datetime::buddhist::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                BUDDHISTDATESYMBOLSV1MARKER => datetime::buddhist::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                COPTICDATELENGTHSV1MARKER => datetime::coptic::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                COPTICDATESYMBOLSV1MARKER => datetime::coptic::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime_experimental")]
-                DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::DATA
+        #[allow(clippy::match_single_binding)]
+        match key.hashed() {
+            #[cfg(feature = "icu_calendar")]
+            JAPANESEERASV1MARKER => calendar::japanese_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_calendar")]
+            JAPANESEEXTENDEDERASV1MARKER => calendar::japanext_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_calendar")]
+            WEEKDATAV1MARKER => datetime::week_data_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_casemapping")]
+            CASEMAPPINGV1MARKER => props::casemap_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONDATAV1MARKER => collator::data_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONJAMOV1MARKER => collator::jamo_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_collator")]
+            COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            BUDDHISTDATELENGTHSV1MARKER => datetime::buddhist::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            BUDDHISTDATESYMBOLSV1MARKER => datetime::buddhist::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            COPTICDATELENGTHSV1MARKER => datetime::coptic::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            COPTICDATESYMBOLSV1MARKER => datetime::coptic::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime_experimental")]
+            DATESKELETONPATTERNSV1MARKER => {
+                datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(zerofrom::ZeroFrom::zero_from)
@@ -439,526 +454,634 @@ impl AnyProvider for BakedDataProvider {
                             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker,
                         >::from_owned,
                     )
-                    .map(DataPayload::wrap_into_any_payload),
-                #[cfg(feature = "icu_datetime")]
-                ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                ETHIOPIANDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                GREGORIANDATELENGTHSV1MARKER => datetime::gregory::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                GREGORIANDATESYMBOLSV1MARKER => datetime::gregory::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                INDIANDATELENGTHSV1MARKER => datetime::indian::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                INDIANDATESYMBOLSV1MARKER => datetime::indian::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                JAPANESEDATELENGTHSV1MARKER => datetime::japanese::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                JAPANESEDATESYMBOLSV1MARKER => datetime::japanese::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                JAPANESEEXTENDEDDATELENGTHSV1MARKER => datetime::japanext::datelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                JAPANESEEXTENDEDDATESYMBOLSV1MARKER => datetime::japanext::datesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                TIMELENGTHSV1MARKER => datetime::timelengths_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                TIMESYMBOLSV1MARKER => datetime::timesymbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                EXEMPLARCITIESV1MARKER => time_zone::exemplar_cities_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                METAZONEGENERICNAMESLONGV1MARKER => time_zone::generic_long_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                METAZONEGENERICNAMESSHORTV1MARKER => time_zone::generic_short_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                METAZONESPECIFICNAMESLONGV1MARKER => time_zone::specific_long_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                METAZONESPECIFICNAMESSHORTV1MARKER => time_zone::specific_short_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                TIMEZONEFORMATSV1MARKER => time_zone::formats_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_decimal")]
-                DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_displaynames")]
-                TERRITORYDISPLAYNAMESV1MARKER => displaynames::territories_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_list")]
-                ANDLISTV1MARKER => list::and_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_list")]
-                ORLISTV1MARKER => list::or_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_list")]
-                UNITLISTV1MARKER => list::unit_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_locid_transform")]
-                ALIASESV1MARKER => locid_transform::aliases_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_locid_transform")]
-                LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                CANONICALCOMPOSITIONSV1MARKER => normalizer::comp_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                CANONICALDECOMPOSITIONDATAV1MARKER => normalizer::nfd_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                CANONICALDECOMPOSITIONTABLESV1MARKER => normalizer::nfdex_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::nfkd_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                COMPATIBILITYDECOMPOSITIONTABLESV1MARKER => normalizer::nfkdex_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::decomp_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                UTS46DECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::uts46d_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_plurals")]
-                CARDINALV1MARKER => plurals::cardinal_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_plurals")]
-                ORDINALV1MARKER => plurals::ordinal_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                ALPHABETICV1MARKER => props::alpha_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                ASCIIHEXDIGITV1MARKER => props::ahex_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                BIDICLASSV1MARKER => props::bc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                BIDICONTROLV1MARKER => props::bidi_c_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                BIDIMIRROREDV1MARKER => props::bidi_m_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CANONICALCOMBININGCLASSV1MARKER => props::ccc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CASEIGNORABLEV1MARKER => props::ci_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CASEDV1MARKER => props::cased_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CHANGESWHENCASEFOLDEDV1MARKER => props::cwcf_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CHANGESWHENLOWERCASEDV1MARKER => props::cwl_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CHANGESWHENNFKCCASEFOLDEDV1MARKER => props::cwkcf_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CHANGESWHENTITLECASEDV1MARKER => props::cwt_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                CHANGESWHENUPPERCASEDV1MARKER => props::cwu_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                DASHV1MARKER => props::dash_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                DEFAULTIGNORABLECODEPOINTV1MARKER => props::di_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                DEPRECATEDV1MARKER => props::dep_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                DIACRITICV1MARKER => props::dia_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EASTASIANWIDTHV1MARKER => props::ea_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EMOJICOMPONENTV1MARKER => props::ecomp_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EMOJIMODIFIERBASEV1MARKER => props::ebase_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EMOJIMODIFIERV1MARKER => props::emod_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EMOJIPRESENTATIONV1MARKER => props::epres_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EMOJIV1MARKER => props::emoji_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EXTENDEDPICTOGRAPHICV1MARKER => props::extpict_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                EXTENDERV1MARKER => props::ext_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                GENERALCATEGORYV1MARKER => props::gc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                GRAPHEMEBASEV1MARKER => props::gr_base_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                GRAPHEMECLUSTERBREAKV1MARKER => props::gcb_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                GRAPHEMEEXTENDV1MARKER => props::gr_ext_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                HEXDIGITV1MARKER => props::hex_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                IDCONTINUEV1MARKER => props::idc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                IDSTARTV1MARKER => props::ids_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                IDEOGRAPHICV1MARKER => props::ideo_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                IDSBINARYOPERATORV1MARKER => props::idsb_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                IDSTRINARYOPERATORV1MARKER => props::idst_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                JOINCONTROLV1MARKER => props::join_c_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                LINEBREAKV1MARKER => props::lb_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                LOGICALORDEREXCEPTIONV1MARKER => props::loe_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                LOWERCASEV1MARKER => props::lower_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                MATHV1MARKER => props::math_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                NONCHARACTERCODEPOINTV1MARKER => props::nchar_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                PATTERNSYNTAXV1MARKER => props::pat_syn_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                PATTERNWHITESPACEV1MARKER => props::pat_ws_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                QUOTATIONMARKV1MARKER => props::qmark_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                RADICALV1MARKER => props::radical_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                REGIONALINDICATORV1MARKER => props::ri_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                SCRIPTV1MARKER => props::sc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                SCRIPTWITHEXTENSIONSPROPERTYV1MARKER => props::scx_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                SENTENCEBREAKV1MARKER => props::sb_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                SENTENCETERMINALV1MARKER => props::sterm_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                SOFTDOTTEDV1MARKER => props::sd_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                TERMINALPUNCTUATIONV1MARKER => props::term_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                UNIFIEDIDEOGRAPHV1MARKER => props::uideo_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                UPPERCASEV1MARKER => props::upper_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                VARIATIONSELECTORV1MARKER => props::vs_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                WHITESPACEV1MARKER => props::wspace_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                WORDBREAKV1MARKER => props::wb_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                XIDCONTINUEV1MARKER => props::xidc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_properties")]
-                XIDSTARTV1MARKER => props::xids_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                HELLOWORLDV1MARKER => core::helloworld_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                LOCALEFALLBACKLIKELYSUBTAGSV1MARKER => fallback::likelysubtags_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                LOCALEFALLBACKPARENTSV1MARKER => fallback::parents_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                GRAPHEMECLUSTERBREAKDATAV1MARKER => segmenter::grapheme_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                LINEBREAKDATAV1MARKER => segmenter::line_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                LSTMDATAV1MARKER => segmenter::lstm_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                SENTENCEBREAKDATAV1MARKER => segmenter::sentence_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                UCHARDICTIONARYBREAKDATAV1MARKER => segmenter::dictionary_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_segmenter")]
-                WORDBREAKDATAV1MARKER => segmenter::word_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_timezone")]
-                METAZONEPERIODV1MARKER => time_zone::metazone_period_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
-            })
-            .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?,
+                    .map(DataPayload::wrap_into_any_payload)
+                    .ok_or(DataErrorKind::MissingLocale)
+            }
+            #[cfg(feature = "icu_datetime")]
+            ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            ETHIOPIANDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            GREGORIANDATELENGTHSV1MARKER => datetime::gregory::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            GREGORIANDATESYMBOLSV1MARKER => datetime::gregory::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            INDIANDATELENGTHSV1MARKER => datetime::indian::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            INDIANDATESYMBOLSV1MARKER => datetime::indian::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            JAPANESEDATELENGTHSV1MARKER => datetime::japanese::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            JAPANESEDATESYMBOLSV1MARKER => datetime::japanese::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            JAPANESEEXTENDEDDATELENGTHSV1MARKER => datetime::japanext::datelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            JAPANESEEXTENDEDDATESYMBOLSV1MARKER => datetime::japanext::datesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            TIMELENGTHSV1MARKER => datetime::timelengths_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            TIMESYMBOLSV1MARKER => datetime::timesymbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            EXEMPLARCITIESV1MARKER => time_zone::exemplar_cities_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            METAZONEGENERICNAMESLONGV1MARKER => time_zone::generic_long_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            METAZONEGENERICNAMESSHORTV1MARKER => time_zone::generic_short_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            METAZONESPECIFICNAMESLONGV1MARKER => time_zone::specific_long_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            METAZONESPECIFICNAMESSHORTV1MARKER => time_zone::specific_short_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_datetime")]
+            TIMEZONEFORMATSV1MARKER => time_zone::formats_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_decimal")]
+            DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_displaynames")]
+            TERRITORYDISPLAYNAMESV1MARKER => displaynames::territories_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_list")]
+            ANDLISTV1MARKER => list::and_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_list")]
+            ORLISTV1MARKER => list::or_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_list")]
+            UNITLISTV1MARKER => list::unit_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_locid_transform")]
+            ALIASESV1MARKER => locid_transform::aliases_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_locid_transform")]
+            LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            CANONICALCOMPOSITIONSV1MARKER => normalizer::comp_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            CANONICALDECOMPOSITIONDATAV1MARKER => normalizer::nfd_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            CANONICALDECOMPOSITIONTABLESV1MARKER => normalizer::nfdex_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::nfkd_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            COMPATIBILITYDECOMPOSITIONTABLESV1MARKER => normalizer::nfkdex_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::decomp_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_normalizer")]
+            UTS46DECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::uts46d_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_plurals")]
+            CARDINALV1MARKER => plurals::cardinal_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_plurals")]
+            ORDINALV1MARKER => plurals::ordinal_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            ALPHABETICV1MARKER => props::alpha_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            ASCIIHEXDIGITV1MARKER => props::ahex_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            BIDICLASSV1MARKER => props::bc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            BIDICONTROLV1MARKER => props::bidi_c_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            BIDIMIRROREDV1MARKER => props::bidi_m_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CANONICALCOMBININGCLASSV1MARKER => props::ccc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CASEIGNORABLEV1MARKER => props::ci_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CASEDV1MARKER => props::cased_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CHANGESWHENCASEFOLDEDV1MARKER => props::cwcf_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CHANGESWHENLOWERCASEDV1MARKER => props::cwl_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CHANGESWHENNFKCCASEFOLDEDV1MARKER => props::cwkcf_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CHANGESWHENTITLECASEDV1MARKER => props::cwt_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            CHANGESWHENUPPERCASEDV1MARKER => props::cwu_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            DASHV1MARKER => props::dash_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            DEFAULTIGNORABLECODEPOINTV1MARKER => props::di_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            DEPRECATEDV1MARKER => props::dep_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            DIACRITICV1MARKER => props::dia_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EASTASIANWIDTHV1MARKER => props::ea_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EMOJICOMPONENTV1MARKER => props::ecomp_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EMOJIMODIFIERBASEV1MARKER => props::ebase_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EMOJIMODIFIERV1MARKER => props::emod_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EMOJIPRESENTATIONV1MARKER => props::epres_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EMOJIV1MARKER => props::emoji_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXTENDEDPICTOGRAPHICV1MARKER => props::extpict_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXTENDERV1MARKER => props::ext_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            GENERALCATEGORYV1MARKER => props::gc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            GRAPHEMEBASEV1MARKER => props::gr_base_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            GRAPHEMECLUSTERBREAKV1MARKER => props::gcb_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            GRAPHEMEEXTENDV1MARKER => props::gr_ext_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            HEXDIGITV1MARKER => props::hex_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            IDCONTINUEV1MARKER => props::idc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            IDSTARTV1MARKER => props::ids_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            IDEOGRAPHICV1MARKER => props::ideo_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            IDSBINARYOPERATORV1MARKER => props::idsb_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            IDSTRINARYOPERATORV1MARKER => props::idst_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            JOINCONTROLV1MARKER => props::join_c_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            LINEBREAKV1MARKER => props::lb_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            LOGICALORDEREXCEPTIONV1MARKER => props::loe_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            LOWERCASEV1MARKER => props::lower_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            MATHV1MARKER => props::math_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            NONCHARACTERCODEPOINTV1MARKER => props::nchar_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            PATTERNSYNTAXV1MARKER => props::pat_syn_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            PATTERNWHITESPACEV1MARKER => props::pat_ws_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            QUOTATIONMARKV1MARKER => props::qmark_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            RADICALV1MARKER => props::radical_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            REGIONALINDICATORV1MARKER => props::ri_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            SCRIPTV1MARKER => props::sc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            SCRIPTWITHEXTENSIONSPROPERTYV1MARKER => props::scx_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            SENTENCEBREAKV1MARKER => props::sb_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            SENTENCETERMINALV1MARKER => props::sterm_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            SOFTDOTTEDV1MARKER => props::sd_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            TERMINALPUNCTUATIONV1MARKER => props::term_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            UNIFIEDIDEOGRAPHV1MARKER => props::uideo_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            UPPERCASEV1MARKER => props::upper_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            VARIATIONSELECTORV1MARKER => props::vs_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            WHITESPACEV1MARKER => props::wspace_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            WORDBREAKV1MARKER => props::wb_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            XIDCONTINUEV1MARKER => props::xidc_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            XIDSTARTV1MARKER => props::xids_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            HELLOWORLDV1MARKER => core::helloworld_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            LOCALEFALLBACKLIKELYSUBTAGSV1MARKER => fallback::likelysubtags_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            LOCALEFALLBACKPARENTSV1MARKER => fallback::parents_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            GRAPHEMECLUSTERBREAKDATAV1MARKER => segmenter::grapheme_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            LINEBREAKDATAV1MARKER => segmenter::line_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            LSTMDATAV1MARKER => segmenter::lstm_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            SENTENCEBREAKDATAV1MARKER => segmenter::sentence_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            UCHARDICTIONARYBREAKDATAV1MARKER => segmenter::dictionary_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_segmenter")]
+            WORDBREAKDATAV1MARKER => segmenter::word_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_timezone")]
+            METAZONEPERIODV1MARKER => time_zone::metazone_period_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            _ => Err(DataErrorKind::MissingDataKey),
+        }
+        .map_err(|e| e.with_req(key, req))
+        .map(|payload| AnyResponse {
+            payload: Some(payload),
             metadata: Default::default(),
         })
     }
