@@ -39,7 +39,7 @@ icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["m
 icu_calendar = { version = "1.0.0", path = "../calendar" }
 icu_timezone = { version = "1.0.0", path = "../timezone" }
 writeable = { version = "0.5", path = "../../utils/writeable" }
-litemap = { version = "0.6", path = "../../utils/litemap" , optional = true}
+litemap = { version = "0.6", path = "../../utils/litemap" }
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
@@ -73,7 +73,7 @@ bench = ["serde"]
 # experimental_skeleton_matching is the minimal set of skeleton features required for datagen.
 experimental_skeleton_matching = []
 # experimental is the full set of skeleton and component APIs.
-experimental = ["experimental_skeleton_matching", "litemap"]
+experimental = ["experimental_skeleton_matching"]
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde", "icu_timezone/serde"]
 datagen = ["serde", "experimental_skeleton_matching", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
 
