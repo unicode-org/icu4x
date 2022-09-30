@@ -140,7 +140,7 @@ impl DataExporter for BakedDataExporter {
             .lock()
             .expect("poison")
             .entry(key)
-            .or_insert_with(Default::default)
+            .or_default()
             .entry(payload.to_string())
             .or_default()
             .push(locale.to_string());

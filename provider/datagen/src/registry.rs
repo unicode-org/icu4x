@@ -67,13 +67,13 @@ macro_rules! registry {
                 return HelloWorldV1Marker.bake(env);
             }
             $(
-                if key.path() == $marker::KEY.path() {
+                if key == $marker::KEY {
                     return $marker.bake(env);
                 }
             )+
             $(
                 #[cfg(feature = "experimental")]
-                if key.path() == $exp_marker::KEY.path() {
+                if key == $exp_marker::KEY {
                     return $exp_marker.bake(env);
                 }
             )+
