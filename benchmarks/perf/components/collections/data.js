@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664556089961,
+  "lastUpdate": 1664561596262,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -25415,6 +25415,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52486222,
             "range": "± 649787",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ff25a693f73a876ad2684d57d6dd9f407371852",
+          "message": "Update icu4x placeholder crate (#2681)",
+          "timestamp": "2022-09-30T19:58:33+02:00",
+          "tree_id": "b030e0a0d4c7985dc4967a8866a80c142bc5983d",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ff25a693f73a876ad2684d57d6dd9f407371852"
+        },
+        "date": 1664561523483,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 536,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 435,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 490,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 497,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 823,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 869,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 436,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 507,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 468,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 531,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 855,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 43439912,
+            "range": "± 2633537",
             "unit": "ns/iter"
           },
           {
