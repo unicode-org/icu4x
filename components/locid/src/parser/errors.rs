@@ -7,7 +7,7 @@ use displaydoc::Display;
 /// List of parser errors that can be generated
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
-#[derive(Display, Debug, PartialEq, Copy, Clone)]
+#[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
 #[non_exhaustive]
 pub enum ParserError {
     /// Invalid language subtag.

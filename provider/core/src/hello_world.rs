@@ -19,7 +19,7 @@ use core::fmt::Debug;
 use writeable::Writeable;
 
 /// A struct containing "Hello World" in the requested language.
-#[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
@@ -73,7 +73,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, PartialEq, Eq, Default)]
 pub struct HelloWorldProvider;
 
 impl HelloWorldProvider {

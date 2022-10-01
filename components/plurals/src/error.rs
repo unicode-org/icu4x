@@ -10,7 +10,7 @@ use icu_provider::prelude::DataError;
 /// A list of error outcomes for various operations in the `icu_plurals` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Clone, Copy, PartialEq)]
+#[derive(Display, Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum PluralsError {
     /// A parsing error for the plural rules.

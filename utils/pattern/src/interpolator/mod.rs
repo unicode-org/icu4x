@@ -20,7 +20,7 @@ use writeable::Writeable;
 ///
 /// - `i`: The life time of a kind that is being interpolated.
 /// - `s`: The life time of a string slice literal.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum InterpolatedKind<'i, 's, E> {
     Literal(&'i Cow<'s, str>),
     Element(&'i E),

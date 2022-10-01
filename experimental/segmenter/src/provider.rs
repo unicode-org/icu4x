@@ -26,7 +26,7 @@ use ndarray::{Array, Array1, Array2};
     GraphemeClusterBreakDataV1Marker = "segmenter/grapheme@1",
     SentenceBreakDataV1Marker = "segmenter/sentence@1"
 )]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -61,7 +61,7 @@ pub struct RuleBreakDataV1<'data> {
 }
 
 /// Property table for rule-based breaking.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -73,7 +73,7 @@ pub struct RuleBreakPropertyTable<'data>(
 );
 
 /// Break state table for rule-based breaking.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -86,7 +86,7 @@ pub struct RuleBreakStateTable<'data>(
 
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/dictionary@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -100,7 +100,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 }
 
 /// The struct that stores a LSTM's matrix.
-#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(PartialEq, Eq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),

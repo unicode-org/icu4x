@@ -67,7 +67,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDataV1<'data> {
@@ -177,7 +177,7 @@ impl<'data> CollationDataV1<'data> {
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationDiacriticsV1<'data> {
@@ -191,7 +191,7 @@ pub struct CollationDiacriticsV1<'data> {
 
 /// `CollationElement32`s for the Hangul Jamo Unicode Block
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationJamoV1<'data> {
@@ -209,7 +209,7 @@ pub struct CollationJamoV1<'data> {
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationReorderingV1<'data> {
@@ -293,7 +293,7 @@ impl<'data> CollationReorderingV1<'data> {
     fallback_by = "collation",
     fallback_supplement = "collation"
 ))]
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationMetadataV1 {
@@ -377,7 +377,7 @@ impl CollationMetadataV1 {
 
 /// Special primaries associated with the root collation
 #[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CollationSpecialPrimariesV1<'data> {

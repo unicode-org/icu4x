@@ -11,19 +11,19 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct ParentLocales {
     #[serde(rename = "parentLocale")]
     pub parent_locale: HashMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "parentLocales")]
     pub parent_locales: ParentLocales,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }

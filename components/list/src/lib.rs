@@ -108,7 +108,7 @@ pub use ListError as Error;
 /// Represents the style of a list. See the
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different styles.
-#[derive(Copy, Clone, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 #[non_exhaustive]
 pub enum ListLength {
     /// A typical list

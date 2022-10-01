@@ -35,7 +35,7 @@ pub struct Serializer;
 
 /// Options bag for initializing a [`bincode`] serializer.
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Default)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Options;
 
 impl AbstractSerializer for Serializer {

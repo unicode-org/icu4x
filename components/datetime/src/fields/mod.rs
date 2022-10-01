@@ -23,7 +23,7 @@ use core::{
 /// Separate error types exist for parts of a field, like the
 /// [`LengthError`](error for the field length) and the
 /// [`SymbolError`](error for the field symbol).
-#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
     /// An error originating inside of the [data provider](icu_provider).
@@ -37,7 +37,7 @@ impl std::error::Error for Error {}
 /// A field within a date pattern string, also referred to as a date field. A date field is the
 /// repetition of a specific pattern character one or more times within the pattern string.
 /// The pattern character is known as the field symbol, which indicates the particular meaning for the field.
-#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

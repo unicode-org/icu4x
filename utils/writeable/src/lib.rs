@@ -136,7 +136,7 @@ impl LengthHint {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // stable
 pub struct Part {
     pub category: &'static str,

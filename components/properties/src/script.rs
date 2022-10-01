@@ -198,7 +198,7 @@ impl ScriptExtensionsSet<'_> {
     ///     .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
-        ZeroSlice::binary_search(&*self.values, x).is_ok()
+        ZeroSlice::binary_search(self.values, x).is_ok()
     }
 
     /// Gets an iterator over the elements.
@@ -220,7 +220,7 @@ impl ScriptExtensionsSet<'_> {
     /// );
     /// ```
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
-        ZeroSlice::iter(&*self.values)
+        ZeroSlice::iter(self.values)
     }
 
     /// For accessing this set as an array instead of an iterator

@@ -197,7 +197,7 @@ fn main() {
                 );
                 process::exit(1);
             }
-            (*parts.get(0).unwrap(), *parts.get(1).unwrap())
+            (*parts.first().unwrap(), *parts.get(1).unwrap())
         };
 
         let package = match metadata

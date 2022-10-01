@@ -25,7 +25,7 @@ use std::fmt::Debug;
 /// - `E`: An error of the replacement type which implements [`FromStr`].
 ///
 /// [`FromStr`]: std::str::FromStr
-#[derive(Display, Debug, PartialEq)]
+#[derive(Display, Debug, PartialEq, Eq)]
 pub enum ParserError<E>
 where
     E: Debug,

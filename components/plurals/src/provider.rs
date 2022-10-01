@@ -24,7 +24,7 @@ use crate::PluralCategory;
     CardinalV1Marker = "plurals/cardinal@1",
     OrdinalV1Marker = "plurals/ordinal@1"
 )]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Default, Clone, PartialEq, Eq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

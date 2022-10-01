@@ -80,7 +80,7 @@ const REQUESTED_SYMBOL_MISSING: u32 = 10000;
 /// there will be a guaranteed match for a skeleton. However, with this initial implementation,
 /// there is no attempt to add on missing fields. This enum encodes the variants for the current
 /// search for a best skeleton.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum BestSkeleton<T> {
     AllFieldsMatch(T),
     MissingOrExtraFields(T),

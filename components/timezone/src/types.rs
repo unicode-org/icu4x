@@ -23,7 +23,7 @@ impl GmtOffset {
     /// overflows or underflows.
     pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, TimeZoneError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.
-        if seconds < -(12 * 60 * 60) || seconds > (14 * 60 * 60) {
+        if !(-(12 * 60 * 60)..=(14 * 60 * 60)).contains(&seconds) {
             Err(TimeZoneError::OffsetOutOfBounds)
         } else {
             Ok(Self(seconds))

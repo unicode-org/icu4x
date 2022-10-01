@@ -6,28 +6,28 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 // cldr-core/supplemental/calendarData.json
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "calendarData")]
     pub calendar_data: CalendarDatas,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct CalendarDatas {
     pub japanese: CalendarData,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct CalendarData {
     pub eras: HashMap<String, EraStart>,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct EraStart {
     #[serde(rename = "_start")]
     pub start: String,

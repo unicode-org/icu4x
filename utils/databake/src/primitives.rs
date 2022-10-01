@@ -50,7 +50,7 @@ fn r#ref() {
     );
 }
 
-impl<'a, T> Bake for [T]
+impl<T> Bake for [T]
 where
     T: Bake,
 {
@@ -72,7 +72,7 @@ fn slice() {
     );
 }
 
-impl<'a, T, const N: usize> Bake for [T; N]
+impl<T, const N: usize> Bake for [T; N]
 where
     T: Bake,
 {

@@ -14,7 +14,7 @@ use zerovec::ZeroVec;
 
 /// Main data for NFD
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionDataV1<'data> {
@@ -29,7 +29,7 @@ pub struct DecompositionDataV1<'data> {
     CompatibilityDecompositionSupplementV1Marker = "normalizer/nfkd@1",
     Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
 )]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionSupplementV1<'data> {
@@ -72,7 +72,7 @@ impl DecompositionSupplementV1<'_> {
     CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
     CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
 )]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecompositionTablesV1<'data> {
@@ -87,7 +87,7 @@ pub struct DecompositionTablesV1<'data> {
 
 /// Non-Hangul canonical compositions
 #[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CanonicalCompositionsV1<'data> {
@@ -101,7 +101,7 @@ pub struct CanonicalCompositionsV1<'data> {
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionDataV1`.
 #[icu_provider::data_struct(NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct NonRecursiveDecompositionSupplementV1<'data> {

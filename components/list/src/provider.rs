@@ -133,7 +133,7 @@ pub struct SpecialCasePattern<'data> {
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
-#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, Eq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders

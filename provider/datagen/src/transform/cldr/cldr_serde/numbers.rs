@@ -14,7 +14,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Symbols {
     // This list is not comprehensive; add more fields when needed
     pub decimal: String,
@@ -25,12 +25,12 @@ pub struct Symbols {
     pub plus_sign: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct DecimalFormats {
     pub standard: String,
 }
 
-#[derive(PartialEq, Debug, Default)]
+#[derive(PartialEq, Eq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
     pub symbols: HashMap<TinyStr8, Symbols>,
@@ -90,7 +90,7 @@ impl<'de> Deserialize<'de> for NumberingSystemData {
     }
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Numbers {
     #[serde(rename = "defaultNumberingSystem")]
     pub default_numbering_system: TinyStr8,
@@ -101,15 +101,15 @@ pub struct Numbers {
     pub numsys_data: NumberingSystemData,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct LangNumbers {
     pub numbers: Numbers,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

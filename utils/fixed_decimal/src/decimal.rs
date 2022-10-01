@@ -81,7 +81,7 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 /// dec.multiply_pow10(-2);
 /// assert_eq!("2.50", dec.to_string());
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FixedDecimal {
     /// List of digits; digits\[0\] is the most significant.
     ///

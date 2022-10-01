@@ -9,7 +9,7 @@ use super::{
 use alloc::vec::Vec;
 use core::str::FromStr;
 
-#[derive(Debug, Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Pattern {
     pub items: Vec<PatternItem>,
     pub(crate) time_granularity: TimeGranularity,

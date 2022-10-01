@@ -11,7 +11,7 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct ListPattern {
     pub start: String,
     pub middle: String,
@@ -20,7 +20,7 @@ pub struct ListPattern {
     pub pair: String,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct ListPatterns {
     #[serde(rename = "listPattern-type-standard")]
     pub standard: ListPattern,
@@ -42,16 +42,16 @@ pub struct ListPatterns {
     pub unit_short: ListPattern,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct LangListPatterns {
     #[serde(rename = "listPatterns")]
     pub list_patterns: ListPatterns,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangListPatterns>);
 
-#[derive(PartialEq, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Debug, Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

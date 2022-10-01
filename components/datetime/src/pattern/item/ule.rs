@@ -54,7 +54,7 @@ use zerovec::ule::{AsULE, ZeroVecError, ULE};
 /// field types and symbols to 16 each and limits the number of length variants to 256.
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PatternItemULE([u8; 3]);
 
@@ -189,7 +189,7 @@ impl AsULE for PatternItem {
 /// to a single u8.
 ///
 /// [`Unicode Code Point`]: http://www.unicode.org/versions/latest/
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct GenericPatternItemULE([u8; 3]);
 

@@ -12,7 +12,7 @@ impl std::error::Error for SegmenterError {}
 /// A list of error outcomes for various operations in the `icu_timezone` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum SegmenterError {
     /// An error originating inside of the [data provider](icu_provider).

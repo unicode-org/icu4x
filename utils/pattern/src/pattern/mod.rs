@@ -299,7 +299,7 @@ impl<'p, P> Deref for Pattern<'p, P> {
 /// - `s`: The life time of literals stored in the `E`
 ///
 /// [`ReplacementProvider`]: crate::ReplacementProvider
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct InterpolatedPattern<'i, 's, E>(Vec<InterpolatedKind<'i, 's, E>>);
 
 impl<'i, 's, E> Writeable for InterpolatedPattern<'i, 's, E>

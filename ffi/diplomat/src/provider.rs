@@ -77,6 +77,7 @@ pub mod ffi {
         /// Not supported in WASM.
         #[diplomat::rust_link(icu_provider_fs::FsDataProvider, Struct)]
         #[allow(unused_variables)] // conditional on features
+        #[allow(clippy::panic)]
         pub fn create_fs(path: &str) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
             #[cfg(not(all(
                 feature = "provider_fs",
@@ -105,6 +106,7 @@ pub mod ffi {
         /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
         /// Requires the `provider_test` feature.
         #[diplomat::rust_link(icu_testdata, Mod)]
+        #[allow(clippy::panic)]
         pub fn create_test() -> Box<ICU4XDataProvider> {
             #[cfg(not(feature = "provider_test"))]
             panic!("Requires feature 'provider_test'");
@@ -129,6 +131,7 @@ pub mod ffi {
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[allow(unused_variables)] // conditional on features
+        #[allow(clippy::panic)]
         pub fn create_from_byte_slice(
             blob: &[u8],
         ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {

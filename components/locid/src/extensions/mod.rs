@@ -212,7 +212,7 @@ impl Extensions {
 
         let mut st = iter.next();
         while let Some(subtag) = st {
-            match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
+            match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }

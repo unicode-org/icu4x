@@ -20,7 +20,7 @@ use alloc::rc::Rc as SelectedRc;
 use alloc::sync::Arc as SelectedRc;
 
 /// A response object containing metadata about the returned data.
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 #[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The resolved locale of the returned data, if locale fallbacking was performed.
@@ -101,7 +101,7 @@ impl Cart {
         for<'a> Y: Yokeable<'a>,
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)

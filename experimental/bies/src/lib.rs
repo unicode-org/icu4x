@@ -53,7 +53,7 @@ use std::fmt;
 use strum::EnumIter;
 use writeable::{LengthHint, Writeable};
 
-#[derive(Clone, Debug, PartialEq, Default)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Breakpoints {
     /// An ascending list of breakpoints. All elements must be between 0 and length exclusive.
     pub breakpoints: Vec<usize>,
@@ -61,7 +61,7 @@ pub struct Breakpoints {
     pub length: usize,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct BiesVector<F: fmt::Debug> {
     pub b: F,
     pub i: F,
@@ -73,10 +73,10 @@ pub struct BiesVector<F: fmt::Debug> {
 #[derive(Clone, Debug, PartialEq)]
 pub struct BiesMatrix(pub Vec<BiesVector<f32>>);
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct BiesString<'a>(&'a Breakpoints);
 
-#[derive(Clone, Copy, Debug, PartialEq, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter)]
 pub enum Algorithm {
     /// Algorithm 1a: check probabilities surrounding each valid breakpoint. Switch based on the sum.
     Alg1a,

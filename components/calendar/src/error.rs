@@ -13,7 +13,7 @@ impl std::error::Error for CalendarError {}
 /// A list of error outcomes for various operations in the `icu_calendar` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum CalendarError {
     /// An input could not be parsed.

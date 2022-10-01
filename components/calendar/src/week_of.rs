@@ -164,7 +164,7 @@ fn add_to_weekday(weekday: IsoWeekday, num_days: i32) -> IsoWeekday {
 
 /// Which year or month that a calendar assigns a week to relative to the year/month
 /// the week is in.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[allow(clippy::enum_variant_names)]
 enum RelativeWeek {
     /// A week that is assigned to the last week of the previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
@@ -240,7 +240,7 @@ impl UnitInfo {
 }
 
 /// The year or month that a calendar assigns a week to relative to the year/month that it is in.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum RelativeUnit {
     /// A week that is assigned to previous year/month. e.g. 2021-01-01 is week 54 of 2020 per the ISO calendar.
@@ -252,7 +252,7 @@ pub enum RelativeUnit {
 }
 
 /// The week number assigned to a given week according to a calendar.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct WeekOf {
     /// Week of month/year. 1 based.

@@ -14,7 +14,7 @@ use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 
 /// A collection of strings to affix to a decimal number.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -33,7 +33,7 @@ pub struct AffixesV1<'data> {
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -62,7 +62,7 @@ pub struct GroupingSizesV1 {
     "decimal/symbols@1",
     extension_key = "nu"
 ))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

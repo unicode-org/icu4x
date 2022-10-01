@@ -25,7 +25,7 @@ pub use symbols::*;
     marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
     marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1")
 )]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Eq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -50,7 +50,7 @@ impl DataMarker for ErasedDateLengthsV1Marker {
 
 /// Pattern data for times.
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Eq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -82,7 +82,7 @@ pub mod patterns {
     use icu_provider::{yoke, zerofrom};
 
     /// Data struct for date/time patterns broken down by pattern length.
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[derive(Debug, PartialEq, Eq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
         derive(serde::Serialize, databake::Bake),
@@ -105,7 +105,7 @@ pub mod patterns {
     }
 
     /// Data struct for generic date/time patterns, broken down by pattern length.
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+    #[derive(Debug, PartialEq, Eq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
         derive(serde::Serialize, databake::Bake),
@@ -154,7 +154,7 @@ pub mod patterns {
     /// Expresses the formatting positions of other formatted elements (ex: the order
     /// and formatting of a date and a time within a date-time pattern).
     #[icu_provider::data_struct]
-    #[derive(Debug, PartialEq, Clone, Default)]
+    #[derive(Debug, PartialEq, Eq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericPatternV1<'data>(

@@ -10,7 +10,7 @@ use crate::pattern::PatternError;
 use core::convert::TryFrom;
 pub use generic::GenericPatternItem;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

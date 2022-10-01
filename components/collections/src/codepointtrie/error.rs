@@ -11,7 +11,7 @@ use displaydoc::Display;
 /// A custom error type for [`CodePointTrie`].
 ///
 /// Re-exported as [Error][super::Error].
-#[derive(Copy, Clone, Display, Debug, PartialEq)]
+#[derive(Copy, Clone, Display, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
     /// Could not construct CodePointTrie from deserialized values

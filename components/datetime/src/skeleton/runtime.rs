@@ -8,7 +8,7 @@ use alloc::vec::Vec;
 use core::fmt::{self, Write};
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Skeleton<'data>(pub(crate) ZeroVec<'data, Field>);
 
 impl<'data> Skeleton<'data> {

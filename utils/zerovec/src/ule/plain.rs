@@ -98,7 +98,7 @@ macro_rules! impl_const_constructors {
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
                 /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-                /// ```compile_fail
+                /// ```
                 /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
                 /// ```
                 const _: () = ();

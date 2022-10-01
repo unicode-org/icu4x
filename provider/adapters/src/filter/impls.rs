@@ -8,6 +8,8 @@ use icu_provider::prelude::*;
 
 use icu_locid::LanguageIdentifier;
 
+type RequestFilterDataProviderOutput<'a, D> = RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>;
+
 impl<D, F> RequestFilterDataProvider<D, F>
 where
     F: Fn(DataRequest) -> bool + Sync,
@@ -69,7 +71,7 @@ where
     pub fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + Sync + 'a,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProviderOutput<'a, D>
     where
         F: 'a,
     {
@@ -139,7 +141,7 @@ where
     pub fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProviderOutput<'a, D>
     where
         F: 'a,
     {
@@ -196,7 +198,7 @@ where
     /// ```
     pub fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProviderOutput<'a, D>
     where
         F: 'a,
     {
