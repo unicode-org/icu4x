@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664567269311,
+  "lastUpdate": 1664598247798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29633,6 +29633,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/926e2208597f78017fa6fed477640a348d5d81e3"
         },
         "date": 1664567206025,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5b7cea454a785c205a4d8e66e7c616731406a3bd",
+          "message": "Fixing baked datagen for no keys and keys with no data (#2698)\n\n* fix\n\n* clippy\n\n* fix test\n\n* better code\n\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-09-30T21:21:41-07:00",
+          "tree_id": "4e1dc7b98267574eed6ed615034db4890fcf913d",
+          "url": "https://github.com/unicode-org/icu4x/commit/5b7cea454a785c205a4d8e66e7c616731406a3bd"
+        },
+        "date": 1664598188061,
         "tool": "ndjson",
         "benches": [
           {
