@@ -13,18 +13,18 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-14
-LLD := lld-14
+CLANG := clang-15
+LLD := lld-15
 
 
 ../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
 	cargo build -p icu_capi_staticlib --no-default-features --features buffer_provider
 
 ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-04-05 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny,buffer_provider
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-10-01 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny,buffer_provider
 
 ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a: $(ALL_RUST)
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-04-05 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny,buffer_provider --profile=release-opt-size
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-10-01 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny,buffer_provider --profile=release-opt-size
 
 decimal-bn-en.postcard:
 	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard

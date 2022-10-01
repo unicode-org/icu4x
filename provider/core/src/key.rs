@@ -141,7 +141,7 @@ impl DataKeyPath {
     #[inline]
     pub const fn get(self) -> &'static str {
         /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
+        /// ```
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
         const _: () = ();
