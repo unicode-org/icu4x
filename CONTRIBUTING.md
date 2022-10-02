@@ -68,17 +68,17 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
  - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
-     + Rust toolchain `nightly-2022-10-01`: `rustup install nightly-2022-10-01`
-         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-10-01 rust-src`
-         * Various targets for that toolchain: `rustup target add thumbv7m-none-eabi --toolchain nightly-2022-10-01`, `rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-10-01`, `rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-10-01`
+     + Rust toolchain `nightly-2022-09-20`: `rustup install nightly-2022-09-20`
+         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-09-20 rust-src`
+         * Various targets for that toolchain: `rustup target add thumbv7m-none-eabi --toolchain nightly-2022-09-20`, `rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-09-20`, `rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-09-20`
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
      + `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`)
      + [`Sphinx`](https://www.sphinx-doc.org/en/master/) on Python3: `pip3 install sphinx sphinx-rtd-theme`
  - `cargo make ci-job-wasm`: Runs WASM tests; mostly important if you're changing the FFI interface. This also has a couple additional dependencies:
      + Node.js version 14. This is typically not the one offered by the package manager; get it from the NodeJS website or `nvm`.
-     + Rust toolchain `nightly-2022-10-01`: `rustup install nightly-2022-10-01`
-         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-10-01 rust-src`
-         * Various WASM targets for that toolchain: `rustup target add wasm32-unknown-unknown --toolchain nightly-2022-10-01`, `rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-10-01`
+     + Rust toolchain `nightly-2022-09-20`: `rustup install nightly-2022-09-20`
+         * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-09-20 rust-src`
+         * Various WASM targets for that toolchain: `rustup target add wasm32-unknown-unknown --toolchain nightly-2022-09-20`, `rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-09-20`
      + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
      + [`emsdk`](https://github.com/emscripten-core/emsdk): Make sure to `./emsdk activate latest` it into your shell
  - `cargo make ci-job-features`: This is a pretty slow test that tries to build all ICU4X crates with all feature combinations. It has an additional dependency:

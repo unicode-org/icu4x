@@ -53,7 +53,7 @@ pub struct RelationULE {
     range_list: ZeroSlice<Foo>,
 }
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Relation<'a> {
     andor_polarity_operand: u8,
     modulo: u32,
