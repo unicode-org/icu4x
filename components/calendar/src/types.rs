@@ -482,14 +482,25 @@ impl Time {
         let minutes_a_hour = 60;
         let hours_a_day = 24;
         let minutes_a_day = minutes_a_hour * hours_a_day;
-        let extra_days = minute / minutes_a_day;
+        let extra_days = if minute.is_negative() {
+            // TODO: migrate to div_floor
+            (minute + 1) / minutes_a_day - 1
+        } else {
+            minute / minutes_a_day
+        };
+
+        let minutes = (minutes_a_hour + minute % minutes_a_hour) % minutes_a_hour;
+        let hours = if minute.is_negative() {
+            ((minutes_a_day - minutes - (minute % minutes_a_day).abs()) / minutes_a_hour)
+                % hours_a_day
+        } else {
+            (minute / minutes_a_hour) % hours_a_day
+        };
         #[allow(clippy::unwrap_used)] // values are moduloed to be in range
         (
             Self {
-                hour: (((minute / minutes_a_hour) % hours_a_day) as u8)
-                    .try_into()
-                    .unwrap(),
-                minute: ((minute % minutes_a_hour) as u8).try_into().unwrap(),
+                hour: (hours as u8).try_into().unwrap(),
+                minute: (minutes as u8).try_into().unwrap(),
                 second: IsoSecond::zero(),
                 nanosecond: NanoSecond::zero(),
             },
@@ -580,27 +591,46 @@ fn test_from_minute_with_remainder_days() {
             expected_time: first_minute_in_day,
             expected_remainder: 1,
         },
-        // TODO(#2643): Handle negative numbers correctly
-        // TestCase {
-        //     minute: -1,
-        //     expected_time: last_minute_in_day,
-        //     expected_remainder: -1,
-        // },
-        // TestCase {
-        //     minute: -1439,
-        //     expected_time: first_minute_in_day,
-        //     expected_remainder: -1,
-        // },
-        // TestCase {
-        //     minute: -1440,
-        //     expected_time: zero_time,
-        //     expected_remainder: -1,
-        // },
-        // TestCase {
-        //     minute: -1441,
-        //     expected_time: last_minute_in_day,
-        //     expected_remainder: -2,
-        // },
+        TestCase {
+            minute: i32::MAX,
+            expected_time: Time::new(
+                IsoHour::try_from(2u8).unwrap(),
+                IsoMinute::try_from(7u8).unwrap(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: 1491308,
+        },
+        TestCase {
+            minute: -1,
+            expected_time: last_minute_in_day,
+            expected_remainder: -1,
+        },
+        TestCase {
+            minute: -1439,
+            expected_time: first_minute_in_day,
+            expected_remainder: -1,
+        },
+        TestCase {
+            minute: -1440,
+            expected_time: zero_time,
+            expected_remainder: -1,
+        },
+        TestCase {
+            minute: -1441,
+            expected_time: last_minute_in_day,
+            expected_remainder: -2,
+        },
+        TestCase {
+            minute: i32::MIN,
+            expected_time: Time::new(
+                IsoHour::try_from(21u8).unwrap(),
+                IsoMinute::try_from(52u8).unwrap(),
+                IsoSecond::zero(),
+                NanoSecond::zero(),
+            ),
+            expected_remainder: -1491309,
+        },
     ];
     for cas in cases {
         let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
