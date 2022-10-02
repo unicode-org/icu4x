@@ -215,7 +215,7 @@ impl Default for DataKeyMetadata {
 /// Therefore, users should not generally create DataKey instances; they should instead use
 /// the ones exported by a component.
 ///
-/// `DataKey`s are created with the [`data_key!`] macro:
+/// `DataKey`s are created with the [`data_key!`](crate::data_key) macro:
 ///
 /// ```
 /// # use icu_provider::prelude::DataKey;

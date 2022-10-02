@@ -50,7 +50,7 @@ pub trait DataExporter: Sync {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`] to implement this.
+/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
 pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {}
 impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMarker> + Sync {}
 

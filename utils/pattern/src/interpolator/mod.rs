@@ -299,7 +299,7 @@ mod tests {
         ("{0} 'at' {1}", &[&["Hello"], &["World"]], "Hello at World"),
     ];
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Eq)]
     pub enum Element<'s> {
         Literal(Cow<'s, str>),
     }
