@@ -225,7 +225,7 @@ impl Default for DataKeyMetadata {
 /// The human-readable path string ends with `@` followed by one or more digits (the version
 /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
 ///
-/// Invalid paths are compile-time errors (as [`data_key!`] uses `const`).
+/// Invalid paths are compile-time errors (as [`data_key!`](crate::data_key) uses `const`).
 ///
 /// ```compile_fail,E0080
 /// # use icu_provider::prelude::DataKey;
