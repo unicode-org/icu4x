@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664598247798,
+  "lastUpdate": 1664753488348,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29663,6 +29663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5b7cea454a785c205a4d8e66e7c616731406a3bd"
         },
         "date": 1664598188061,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "616399+pt2121@users.noreply.github.com",
+            "name": "Prat",
+            "username": "pt2121"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a8c31a80ce2a774a1b07f6bb21a79087f92a6c1",
+          "message": "Fix Time::from_minute_with_remainder_days to handle negatives (#2643) (#2702)\n\nCo-authored-by: Prat T <pt2121@users.noreply.github.com>",
+          "timestamp": "2022-10-02T18:28:56-05:00",
+          "tree_id": "3e9eb55dde49b418fd03d44dacfddffdf96847f7",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a8c31a80ce2a774a1b07f6bb21a79087f92a6c1"
+        },
+        "date": 1664753428113,
         "tool": "ndjson",
         "benches": [
           {
