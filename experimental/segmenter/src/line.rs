@@ -4,7 +4,6 @@
 
 use crate::complex::*;
 use crate::indices::*;
-use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
 use crate::SegmenterError;
@@ -564,7 +563,6 @@ fn use_complex_breaking_utf32(property_table: &RuleBreakPropertyTable<'_>, codep
     );
 
     line_break_property == SA
-        && matches!(get_language(codepoint), Language::Thai | Language::Burmese)
 }
 
 /*
