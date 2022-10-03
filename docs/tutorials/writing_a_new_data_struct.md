@@ -92,9 +92,9 @@ When adding new data structs, it is necessary to make `icu4x-datagen` aware of y
 [*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
 
 ```rust,compile_fail
-macro_rules! create_datagen_provider {
+registry!(
     // ...
-    FooProvider,
+    FooV1Marker,
 }
 ```
 
