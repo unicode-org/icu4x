@@ -160,7 +160,7 @@ where
     pub fn as_borrowed(&'a self) -> ZeroMap2dBorrowed<'a, K0, K1, V> {
         ZeroMap2dBorrowed {
             keys0: self.keys0.zvl_as_borrowed(),
-            joiner: &*self.joiner,
+            joiner: &self.joiner,
             keys1: self.keys1.zvl_as_borrowed(),
             values: self.values.zvl_as_borrowed(),
         }

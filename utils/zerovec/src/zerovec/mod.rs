@@ -284,7 +284,7 @@ where
         // Deconstruct the vector into parts
         // This is the only part of the code that goes from Vec
         // to ZeroVec, all other such operations should use this function
-        let slice: &[T::ULE] = &*vec;
+        let slice: &[T::ULE] = &vec;
         let slice = slice as *const [_] as *mut [_];
         let capacity = vec.capacity();
         mem::forget(vec);
