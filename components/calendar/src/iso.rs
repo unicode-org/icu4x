@@ -429,6 +429,7 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
+        let date = date - EPOCH;
         // 400 year cycles have 146097 days
         let (n_400, date) = div_rem_euclid(date, 146097);
 
@@ -467,7 +468,6 @@ impl Iso {
             2
         };
         let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
-        println!("{year}, {month}");
         #[allow(clippy::unwrap_used)] // valid day and month
         let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
