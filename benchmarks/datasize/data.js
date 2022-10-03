@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664753488348,
+  "lastUpdate": 1664784346574,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29693,6 +29693,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5a8c31a80ce2a774a1b07f6bb21a79087f92a6c1"
         },
         "date": 1664753428113,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "774b734dd4993ff4faa77898c584ecc657ab5712",
+          "message": "Remove unnecessary langauge check for East Asian languagne (SA property) (#2705)",
+          "timestamp": "2022-10-03T17:02:52+09:00",
+          "tree_id": "3f252f10560490373b7b0bb5e2cad09cd921ca11",
+          "url": "https://github.com/unicode-org/icu4x/commit/774b734dd4993ff4faa77898c584ecc657ab5712"
+        },
+        "date": 1664784275488,
         "tool": "ndjson",
         "benches": [
           {
