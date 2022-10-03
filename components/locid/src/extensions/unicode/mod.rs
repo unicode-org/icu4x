@@ -25,7 +25,7 @@
 //! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
 //! assert!(loc.extensions.unicode.attributes.contains(&attribute));
 //!
-//! assert_eq!(&loc.extensions.unicode.to_string(), "-u-foobar-hc-h12");
+//! assert_eq!(&loc.extensions.unicode.to_string(), "u-foobar-hc-h12");
 //! ```
 mod attribute;
 mod attributes;
@@ -205,7 +205,7 @@ impl writeable::Writeable for Unicode {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("-u")?;
+        sink.write_str("u")?;
         if !self.attributes.is_empty() {
             sink.write_char('-')?;
             writeable::Writeable::write_to(&self.attributes, sink)?;
@@ -221,7 +221,7 @@ impl writeable::Writeable for Unicode {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
-        let mut result = writeable::LengthHint::exact(2);
+        let mut result = writeable::LengthHint::exact(1);
         if !self.attributes.is_empty() {
             result += writeable::Writeable::writeable_length_hint(&self.attributes) + 1;
         }

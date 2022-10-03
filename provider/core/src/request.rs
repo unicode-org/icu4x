@@ -142,6 +142,16 @@ impl Writeable for DataLocale {
                 LengthHint::exact(0)
             }
     }
+
+    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+        if self.keywords.is_empty() {
+            return self.langid.write_to_string();
+        }
+        let mut string =
+            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
+        let _ = self.write_to(&mut string);
+        alloc::borrow::Cow::Owned(string)
+    }
 }
 
 writeable::impl_display_with_writeable!(DataLocale);

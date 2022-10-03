@@ -33,7 +33,7 @@ use tinystr::TinyAsciiStr;
 /// // The value "true" is special-cased to an empty value
 /// assert_eq!(&value3.to_string(), "");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
@@ -153,7 +153,7 @@ impl FromStr for Value {
     }
 }
 
-impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
+impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 
 /// A macro allowing for compile-time construction of valid Unicode [`Value`] subtag.
 ///
