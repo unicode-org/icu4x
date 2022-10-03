@@ -31,6 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::{div_rem_euclid, quotient};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -313,9 +314,12 @@ impl DateTime<Iso> {
 
     /// Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
     ///
+    /// # Examples
+    ///
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
+    /// // After Unix Epoch
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
@@ -324,10 +328,20 @@ impl DateTime<Iso> {
     ///     today
     /// );
     ///
+    /// // Unix Epoch
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
     /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
+    ///
+    /// // Before Unix Epoch
+    /// let today = DateTime::try_new_iso_datetime(1967, 4, 6, 20, 40, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), -1440200);
+    /// assert_eq!(
+    ///     DateTime::from_minutes_since_local_unix_epoch(-1440200),
+    ///     today
+    /// );
     /// ```
     pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
         let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
@@ -371,9 +385,10 @@ impl Iso {
         // Calculate days per year
         let mut fixed: i32 = EPOCH - 1 + 365 * (date.0.year - 1);
         // Adjust for leap year logic
-        fixed += ((date.0.year - 1) / 4) - ((date.0.year - 1) / 100) + ((date.0.year - 1) / 400);
+        fixed += quotient(date.0.year - 1, 4) - quotient(date.0.year - 1, 100)
+            + quotient(date.0.year - 1, 400);
         // Days of current year
-        fixed += (367 * (date.0.month as i32) - 362) / 12;
+        fixed += quotient(367 * (date.0.month as i32) - 362, 12);
         // Leap year adjustment for the current year
         fixed += if date.0.month <= 2 {
             0
@@ -414,19 +429,17 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
+        let date = date - EPOCH;
         // 400 year cycles have 146097 days
-        let n_400 = date / 146097;
-        let date = date % 146097;
+        let (n_400, date) = div_rem_euclid(date, 146097);
 
         // 100 year cycles have 36524 days
-        let n_100 = date / 36524;
-        let date = date % 36524;
+        let (n_100, date) = div_rem_euclid(date, 36524);
 
         // 4 year cycles have 1461 days
-        let n_4 = date / 1461;
-        let date = date % 1461;
+        let (n_4, date) = div_rem_euclid(date, 1461);
 
-        let n_1 = date / 365;
+        let n_1 = quotient(date, 365);
 
         let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
@@ -454,7 +467,7 @@ impl Iso {
         } else {
             2
         };
-        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
+        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
@@ -654,5 +667,68 @@ mod test {
         let today_plus_1_month_1_day = Date::try_new_iso_date(2021, 3, 4).unwrap();
         let offset = today.added(DateDuration::new(0, 1, 0, 1));
         assert_eq!(offset, today_plus_1_month_1_day);
+    }
+
+    #[test]
+    fn test_iso_to_from_fixed() {
+        // Reminder: ISO year 0 is Gregorian year 1 BCE.
+        // Year 0 is a leap year due to the 400-year rule.
+        fn check(fixed: i32, year: i32, month: u8, day: u8) {
+            assert_eq!(Iso::iso_year_from_fixed(fixed), year, "fixed: {}", fixed);
+            assert_eq!(
+                Iso::iso_from_fixed(fixed),
+                Date::try_new_iso_date(year, month, day).unwrap(),
+                "fixed: {}",
+                fixed
+            );
+            assert_eq!(
+                Iso::fixed_from_iso_integers(year, month, day),
+                Some(fixed),
+                "fixed: {}",
+                fixed
+            );
+        }
+        check(-1828, -5, 12, 30);
+        check(-1827, -5, 12, 31); // leap year
+        check(-1826, -4, 1, 1);
+        check(-1462, -4, 12, 30);
+        check(-1461, -4, 12, 31);
+        check(-1460, -3, 1, 1);
+        check(-1459, -3, 1, 2);
+        check(-732, -2, 12, 30);
+        check(-731, -2, 12, 31);
+        check(-730, -1, 1, 1);
+        check(-367, -1, 12, 30);
+        check(-366, -1, 12, 31);
+        check(-365, 0, 1, 1); // leap year
+        check(-364, 0, 1, 2);
+        check(-1, 0, 12, 30);
+        check(0, 0, 12, 31);
+        check(1, 1, 1, 1);
+        check(2, 1, 1, 2);
+        check(364, 1, 12, 30);
+        check(365, 1, 12, 31);
+        check(366, 2, 1, 1);
+        check(1459, 4, 12, 29);
+        check(1460, 4, 12, 30);
+        check(1461, 4, 12, 31); // leap year
+        check(1462, 5, 1, 1);
+    }
+
+    #[test]
+    fn test_from_minutes_since_local_unix_epoch() {
+        fn check(minutes: i32, year: i32, month: u8, day: u8, hour: u8, minute: u8) {
+            let today = DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+            assert_eq!(today.minutes_since_local_unix_epoch(), minutes);
+            assert_eq!(
+                DateTime::from_minutes_since_local_unix_epoch(minutes),
+                today
+            );
+        }
+
+        check(-1441, 1969, 12, 30, 23, 59);
+        check(-1440, 1969, 12, 31, 0, 0);
+        check(-1439, 1969, 12, 31, 0, 1);
+        check(-2879, 1969, 12, 30, 0, 1);
     }
 }

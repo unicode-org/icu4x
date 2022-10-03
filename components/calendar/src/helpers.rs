@@ -13,6 +13,20 @@ pub fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
     }
 }
 
+/// Calculate `n / d` such that the remainder is always positive.
+/// This is equivalent to quotient() in the Reingold/Dershowitz Lisp code
+pub const fn quotient(n: i32, d: i32) -> i32 {
+    debug_assert!(d > 0);
+    // Code can use int_roundings once stabilized
+    // https://github.com/rust-lang/rust/issues/88581
+    let (a, b) = (n / d, n % d);
+    if n >= 0 || b == 0 {
+        a
+    } else {
+        a - 1
+    }
+}
+
 #[test]
 fn test_div_rem_euclid() {
     assert_eq!(div_rem_euclid(i32::MIN, 1), (-2147483648, 0));

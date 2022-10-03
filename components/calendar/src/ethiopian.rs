@@ -425,4 +425,13 @@ mod test {
             Date::try_new_iso_date(1970, 1, 2).unwrap()
         );
     }
+
+    #[test]
+    fn test_roundtrip_negative() {
+        // https://github.com/unicode-org/icu4x/issues/2254
+        let iso_date = Date::try_new_iso_date(-1000, 3, 3).unwrap();
+        let ethiopian = iso_date.to_calendar(Ethiopian::new());
+        let recovered_iso = ethiopian.to_iso();
+        assert_eq!(iso_date, recovered_iso);
+    }
 }
