@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664831129188,
+  "lastUpdate": 1664832868646,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29873,6 +29873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/06c352982e941ca8cdb64ffa47f500f68c80dab1"
         },
         "date": 1664831069095,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c33971f8d8516eb9bd3cc12a229e815fb76c3af9",
+          "message": "Fix math in calendar (#2714)\n\n* Tests and initial work on ISO with negative years\r\n\r\n* Fix coptic division issue\r\n\r\n* fix test\r\n\r\n* add missing test\r\n\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-10-03T14:32:04-07:00",
+          "tree_id": "04ca4044a126a3d78d03196d712519efb5a08322",
+          "url": "https://github.com/unicode-org/icu4x/commit/c33971f8d8516eb9bd3cc12a229e815fb76c3af9"
+        },
+        "date": 1664832813059,
         "tool": "ndjson",
         "benches": [
           {
