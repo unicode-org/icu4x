@@ -481,7 +481,7 @@ impl Time {
     /// and the day number, which could be positive or negative.
     pub(crate) fn from_minute_with_remainder_days(minute: i32) -> (Time, i32) {
         let (extra_days, minute_in_day) = helpers::div_rem_euclid(minute, 1440);
-        let (hours, minutes) = helpers::div_rem_euclid(minute_in_day, 60);
+        let (hours, minutes) = (minute_in_day / 60, minute_in_day % 60);
         #[allow(clippy::unwrap_used)] // values are moduloed to be in range
         (
             Self {
