@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664831226940,
+  "lastUpdate": 1664831832199,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -77951,6 +77951,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4714,
             "range": "± 36",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "06c352982e941ca8cdb64ffa47f500f68c80dab1",
+          "message": "Clean up dependency specifications so serde isn't pulled in by default (#2696)\n\n* Mark optional deps as optional\r\n\r\n* Make dep optional\r\n\r\n* Rm dep from locid_transform\r\n\r\n* serde feature\r\n\r\n* unconditional litemap",
+          "timestamp": "2022-10-03T21:02:58Z",
+          "tree_id": "9b88e9cbd64d8e895e075ed3ab1b54a64bb65b33",
+          "url": "https://github.com/unicode-org/icu4x/commit/06c352982e941ca8cdb64ffa47f500f68c80dab1"
+        },
+        "date": 1664831754491,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 89794,
+            "range": "± 30261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 145581,
+            "range": "± 10882",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 79559,
+            "range": "± 4441",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 93822,
+            "range": "± 12893",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 85325,
+            "range": "± 4401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 95884,
+            "range": "± 4028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 135915,
+            "range": "± 8016",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 152853,
+            "range": "± 10728",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 143909,
+            "range": "± 9109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 163002,
+            "range": "± 5683",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6388,
+            "range": "± 271",
             "unit": "ns/iter"
           }
         ]
