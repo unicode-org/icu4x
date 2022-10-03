@@ -45,8 +45,8 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// Segment a string:
 ///
 /// ```rust
-/// use icu_segmenter::GraphemeClusterBreakSegmenter;
-/// let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(
+/// use icu_segmenter::GraphemeClusterSegmenter;
+/// let segmenter = GraphemeClusterSegmenter::try_new_unstable(
 ///     &icu_testdata::unstable(),
 /// )
 /// .expect("Data exists");
@@ -59,8 +59,8 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::GraphemeClusterBreakSegmenter;
-/// let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(
+/// use icu_segmenter::GraphemeClusterSegmenter;
+/// let segmenter = GraphemeClusterSegmenter::try_new_unstable(
 ///     &icu_testdata::unstable(),
 /// )
 /// .expect("Data exists");
@@ -69,14 +69,14 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 /// ```
-pub struct GraphemeClusterBreakSegmenter {
+pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
 }
 
-impl GraphemeClusterBreakSegmenter {
-    /// Construct a [`GraphemeClusterBreakSegmenter`].
+impl GraphemeClusterSegmenter {
+    /// Construct a [`GraphemeClusterSegmenter`].
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,

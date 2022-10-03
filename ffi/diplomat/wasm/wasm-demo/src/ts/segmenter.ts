@@ -1,14 +1,14 @@
-import { ICU4XDataProvider, ICU4XWordBreakSegmenter } from "icu4x";
+import { ICU4XDataProvider, ICU4XWordSegmenter } from "icu4x";
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
 
-    #segmenter: ICU4XWordBreakSegmenter;
+    #segmenter: ICU4XWordSegmenter;
     #text: string;
 
     constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
         this.#displayFn = displayFn;
-        this.#segmenter = ICU4XWordBreakSegmenter.create(dataProvider);
+        this.#segmenter = ICU4XWordSegmenter.create(dataProvider);
     }
 
     setText(text: string): void {

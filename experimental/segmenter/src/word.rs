@@ -43,9 +43,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// Segment a string:
 ///
 /// ```rust
-/// use icu_segmenter::WordBreakSegmenter;
+/// use icu_segmenter::WordSegmenter;
 /// let segmenter =
-///     WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
 ///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
@@ -56,23 +56,23 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::WordBreakSegmenter;
+/// use icu_segmenter::WordSegmenter;
 /// let segmenter =
-///     WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
 ///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
-pub struct WordBreakSegmenter {
+pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
 }
 
-impl WordBreakSegmenter {
-    /// Construct a [`WordBreakSegmenter`].
+impl WordSegmenter {
+    /// Construct a [`WordSegmenter`].
     #[cfg(feature = "lstm")]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -113,7 +113,7 @@ impl WordBreakSegmenter {
         })
     }
 
-    /// Construct a [`WordBreakSegmenter`].
+    /// Construct a [`WordSegmenter`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
