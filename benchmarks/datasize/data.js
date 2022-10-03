@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664812870727,
+  "lastUpdate": 1664817612266,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29753,6 +29753,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9c82b8ca39bbb195fb94bf7e77d646440cb17409"
         },
         "date": 1664812793071,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b9d14d32d185fadacd2a3847ff6a965728e3698",
+          "message": "Add div_rem_euclid and use it in icu_calendar (#2704)\n\n* Add div_rem_euclid and use it in icu_calendar\r\n\r\n* Don't need helper function when dividend is positive",
+          "timestamp": "2022-10-03T17:17:34Z",
+          "tree_id": "3bdc15aa1d70dcf7c125b29cbac4860fb3b3749b",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b9d14d32d185fadacd2a3847ff6a965728e3698"
+        },
+        "date": 1664817549266,
         "tool": "ndjson",
         "benches": [
           {
