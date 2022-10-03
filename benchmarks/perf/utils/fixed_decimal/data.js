@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664831744848,
+  "lastUpdate": 1664833520118,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56308,6 +56308,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c33971f8d8516eb9bd3cc12a229e815fb76c3af9",
+          "message": "Fix math in calendar (#2714)\n\n* Tests and initial work on ISO with negative years\r\n\r\n* Fix coptic division issue\r\n\r\n* fix test\r\n\r\n* add missing test\r\n\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-10-03T14:32:04-07:00",
+          "tree_id": "04ca4044a126a3d78d03196d712519efb5a08322",
+          "url": "https://github.com/unicode-org/icu4x/commit/c33971f8d8516eb9bd3cc12a229e815fb76c3af9"
+        },
+        "date": 1664833460039,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121792,
+            "range": "± 2600",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25110,
+            "range": "± 631",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 143409,
+            "range": "± 1741",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 203,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 80,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
             "range": "± 0",
             "unit": "ns/iter"
           }
