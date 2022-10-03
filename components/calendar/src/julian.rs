@@ -36,6 +36,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
+use crate::helpers::quotient;
 use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -216,8 +217,8 @@ impl Julian {
         } else {
             date.year
         };
-        let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + (year - 1) / 4;
-        fixed += (367 * (date.month as i32) - 362) / 12;
+        let mut fixed: i32 = JULIAN_EPOCH - 1 + 365 * (year - 1) + quotient(year - 1, 4);
+        fixed += quotient(367 * (date.month as i32) - 362, 12);
         fixed += if date.month <= 2 {
             0
         } else if Self::is_leap_year_const(date.year) {
@@ -250,7 +251,7 @@ impl Julian {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
     fn julian_from_fixed(date: i32) -> JulianDateInner {
-        let approx = ((4 * date) + 1464) / 1461;
+        let approx = quotient((4 * date) + 1464, 1461);
         let year = if approx <= 0 { approx - 1 } else { approx };
         let prior_days = date - Self::fixed_from_julian_integers(year, 1, 1);
         let correction = if date < Self::fixed_from_julian_integers(year, 3, 1) {
@@ -260,7 +261,7 @@ impl Julian {
         } else {
             2
         };
-        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // this expression is in 1..=12
+        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // this expression is in 1..=12
         let day = (date - Self::fixed_from_julian_integers(year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
@@ -406,5 +407,15 @@ mod test {
         let iso_date = Julian.date_to_iso(julian_date.inner());
         let iso_expected_date = Date::try_new_iso_date(2022, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
+    }
+
+
+    #[test]
+    fn test_roundtrip_negative() {
+        // https://github.com/unicode-org/icu4x/issues/2254
+        let iso_date = Date::try_new_iso_date(-1000, 3, 3).unwrap();
+        let julian = iso_date.to_calendar(Julian::new());
+        let recovered_iso = julian.to_iso();
+        assert_eq!(iso_date, recovered_iso);
     }
 }

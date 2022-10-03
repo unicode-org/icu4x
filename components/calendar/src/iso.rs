@@ -31,6 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::{div_rem_euclid, quotient};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -371,9 +372,10 @@ impl Iso {
         // Calculate days per year
         let mut fixed: i32 = EPOCH - 1 + 365 * (date.0.year - 1);
         // Adjust for leap year logic
-        fixed += ((date.0.year - 1) / 4) - ((date.0.year - 1) / 100) + ((date.0.year - 1) / 400);
+        fixed += quotient(date.0.year - 1, 4) - quotient(date.0.year - 1, 100)
+            + quotient(date.0.year - 1, 400);
         // Days of current year
-        fixed += (367 * (date.0.month as i32) - 362) / 12;
+        fixed += quotient(367 * (date.0.month as i32) - 362, 12);
         // Leap year adjustment for the current year
         fixed += if date.0.month <= 2 {
             0
@@ -415,18 +417,15 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
         // 400 year cycles have 146097 days
-        let n_400 = date / 146097;
-        let date = date % 146097;
+        let (n_400, date) = div_rem_euclid(date, 146097);
 
         // 100 year cycles have 36524 days
-        let n_100 = date / 36524;
-        let date = date % 36524;
+        let (n_100, date) = div_rem_euclid(date, 36524);
 
         // 4 year cycles have 1461 days
-        let n_4 = date / 1461;
-        let date = date % 1461;
+        let (n_4, date) = div_rem_euclid(date, 1461);
 
-        let n_1 = date / 365;
+        let n_1 = quotient(date, 365);
 
         let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
@@ -454,7 +453,8 @@ impl Iso {
         } else {
             2
         };
-        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
+        let month = quotient(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
+        println!("{year}, {month}");
         #[allow(clippy::unwrap_used)] // valid day and month
         let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month

@@ -33,6 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::quotient;
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -203,7 +204,7 @@ impl Coptic {
     fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> i32 {
         COPTIC_EPOCH - 1
             + 365 * (date.year - 1)
-            + (date.year / 4)
+            + quotient(date.year, 4)
             + 30 * (date.month as i32 - 1)
             + date.day as i32
     }
@@ -219,8 +220,8 @@ impl Coptic {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
-        let year = (4 * (date - COPTIC_EPOCH) + 1463) / 1461;
-        let month = ((date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1) as u8; // <= 12 < u8::MAX
+        let year = quotient(4 * (date - COPTIC_EPOCH) + 1463, 1461);
+        let month = (quotient(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
         let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
@@ -319,5 +320,18 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
             number: 1 - year,
             related_iso: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_coptic_regression() {
+        // https://github.com/unicode-org/icu4x/issues/2254
+        let iso_date = Date::try_new_iso_date(-100, 3, 3).unwrap();
+        let coptic = iso_date.to_calendar(Coptic);
+        let recovered_iso = coptic.to_iso();
+        assert_eq!(iso_date, recovered_iso);
     }
 }
