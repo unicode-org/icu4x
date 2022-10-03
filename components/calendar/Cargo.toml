@@ -63,6 +63,10 @@ harness = false
 name = "datetime"
 harness = false
 
+[[bench]]
+name = "iso"
+harness = false
+
 [[example]]
 name = "iso_date_manipulations"
 

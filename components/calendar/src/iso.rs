@@ -31,6 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
@@ -313,9 +314,12 @@ impl DateTime<Iso> {
 
     /// Convert minute count since 00:00:00 on Jan 1st, 1970 to ISO Date.
     ///
+    /// # Examples
+    ///
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
+    /// // After Unix Epoch
     /// let today = DateTime::try_new_iso_datetime(2020, 2, 29, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
@@ -324,10 +328,20 @@ impl DateTime<Iso> {
     ///     today
     /// );
     ///
+    /// // Unix Epoch
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
     /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), today);
+    ///
+    /// // Before Unix Epoch
+    /// let today = DateTime::try_new_iso_datetime(1967, 4, 6, 20, 40, 0).unwrap();
+    ///
+    /// assert_eq!(today.minutes_since_local_unix_epoch(), -1440200);
+    /// assert_eq!(
+    ///     DateTime::from_minutes_since_local_unix_epoch(-1440200),
+    ///     today
+    /// );
     /// ```
     pub fn from_minutes_since_local_unix_epoch(minute: i32) -> DateTime<Iso> {
         let (time, extra_days) = types::Time::from_minute_with_remainder_days(minute);
@@ -415,8 +429,7 @@ impl Iso {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: i32) -> i32 {
         // 400 year cycles have 146097 days
-        let n_400 = date / 146097;
-        let date = date % 146097;
+        let (n_400, date) = helpers::div_rem_euclid(date, 146097);
 
         // 100 year cycles have 36524 days
         let n_100 = date / 36524;
@@ -654,5 +667,61 @@ mod test {
         let today_plus_1_month_1_day = Date::try_new_iso_date(2021, 3, 4).unwrap();
         let offset = today.added(DateDuration::new(0, 1, 0, 1));
         assert_eq!(offset, today_plus_1_month_1_day);
+    }
+
+    #[test]
+    fn test_iso_to_from_fixed() {
+        // Reminder: ISO year 0 is Gregorian year 1 BCE.
+        // Year 0 is a leap year due to the 400-year rule.
+        fn check(fixed: i32, year: i32, month: u8, day: u8) {
+            assert_eq!(Iso::iso_year_from_fixed(fixed), year, "fixed: {}", fixed);
+            assert_eq!(
+                Iso::iso_from_fixed(fixed),
+                Date::try_new_iso_date(year, month, day).unwrap(),
+                "fixed: {}",
+                fixed
+            );
+            assert_eq!(
+                Iso::fixed_from_iso_integers(year, month, day),
+                Some(fixed),
+                "fixed: {}",
+                fixed
+            );
+        }
+        check(-1828, -5, 12, 31);
+        check(-1827, -4, 1, 1); // leap year
+        check(-1826, -4, 1, 2);
+        check(-1462, -4, 12, 31);
+        check(-1461, -3, 1, 1);
+        check(-1460, -3, 1, 2);
+        check(-732, -2, 12, 31);
+        check(-731, -1, 1, 1);
+        check(-367, -1, 12, 31);
+        check(-366, 0, 1, 1); // leap year
+        check(-365, 0, 1, 2);
+        check(-1, 0, 12, 31);
+        check(0, 1, 1, 1);
+        check(1, 1, 1, 2);
+        check(364, 1, 12, 31);
+        check(365, 2, 1, 1);
+        check(1459, 4, 12, 30);
+        check(1460, 4, 12, 31); // leap year
+        check(1461, 5, 1, 1);
+    }
+
+    #[test]
+    fn test_from_minutes_since_local_unix_epoch() {
+        fn check(minutes: i32, year: i32, month: u8, day: u8, hour: u8, minute: u8) {
+            let today = DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+            assert_eq!(today.minutes_since_local_unix_epoch(), minutes);
+            assert_eq!(
+                DateTime::from_minutes_since_local_unix_epoch(minutes),
+                today
+            );
+        }
+
+        check(-1441, 1969, 12, 30, 23, 59);
+        check(-1440, 1969, 12, 31, 0, 0);
+        check(-1439, 1969, 12, 30, 0, 1);
     }
 }
