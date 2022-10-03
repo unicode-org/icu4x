@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664785009644,
+  "lastUpdate": 1664813543710,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -77591,6 +77591,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5660,
             "range": "± 412",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c82b8ca39bbb195fb94bf7e77d646440cb17409",
+          "message": "Rename *BreakSegmenter to *Segmenter (#2707)\n\n* Rename *BreakSegmenter to *Segmenter.\r\n\r\nThis patch is generated via:\r\n\r\n```\r\nrg -l BreakSegmenter experimental/segmenter/ ffi/diplomat/src/ ffi/diplomat/cpp/examples/ ffi/diplomat/wasm/wasm-demo/ | xargs sed -i 's/BreakSegmenter/Segmenter/g'\r\n```\r\n\r\n* Run `cargo fmt`\r\n\r\n* Regenerate readme and diplomat\r\n\r\nThis patch is generated via\r\n\r\n```\r\ncargo make diplomat-gen && cargo make generate-readmes\r\n```",
+          "timestamp": "2022-10-03T08:58:03-07:00",
+          "tree_id": "be89798e09c73390fde07347780547768a6b09fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c82b8ca39bbb195fb94bf7e77d646440cb17409"
+        },
+        "date": 1664813480544,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63488,
+            "range": "± 135",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 109017,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58717,
+            "range": "± 611",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 66328,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 63606,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 70815,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 104648,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 117779,
+            "range": "± 121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109522,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 121414,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4740,
+            "range": "± 37",
             "unit": "ns/iter"
           }
         ]
