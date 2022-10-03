@@ -5,6 +5,7 @@
 //! This module contains various types used by `icu_calendar` and `icu_datetime`
 
 use crate::error::CalendarError;
+use crate::helpers;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
@@ -479,23 +480,8 @@ impl Time {
     /// Takes a number of minutes, which could be positive or negative, and returns the Time
     /// and the day number, which could be positive or negative.
     pub(crate) fn from_minute_with_remainder_days(minute: i32) -> (Time, i32) {
-        let minutes_a_hour = 60;
-        let hours_a_day = 24;
-        let minutes_a_day = minutes_a_hour * hours_a_day;
-        let extra_days = if minute.is_negative() {
-            // TODO: migrate to div_floor
-            (minute + 1) / minutes_a_day - 1
-        } else {
-            minute / minutes_a_day
-        };
-
-        let minutes = (minutes_a_hour + minute % minutes_a_hour) % minutes_a_hour;
-        let hours = if minute.is_negative() {
-            ((minutes_a_day - minutes - (minute % minutes_a_day).abs()) / minutes_a_hour)
-                % hours_a_day
-        } else {
-            (minute / minutes_a_hour) % hours_a_day
-        };
+        let (extra_days, minute_in_day) = helpers::div_rem_euclid(minute, 1440);
+        let (hours, minutes) = (minute_in_day / 60, minute_in_day % 60);
         #[allow(clippy::unwrap_used)] // values are moduloed to be in range
         (
             Self {
