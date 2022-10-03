@@ -38,39 +38,39 @@
     See the `Rust documentation for LineBreakRule <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
 
 
-.. js:class:: ICU4XLineBreakSegmenter
+.. js:class:: ICU4XLineSegmenter
 
     An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 
-    See the `Rust documentation for LineBreakSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html>`__ for more information.
+    See the `Rust documentation for LineSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html>`__ for more information.
 
 
     .. js:staticfunction:: create(provider)
 
-        Construct a :js:class:`ICU4XLineBreakSegmenter` with default options.
+        Construct a :js:class:`ICU4XLineSegmenter` with default options.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_unstable>`__ for more information.
 
 
     .. js:staticfunction:: create_with_options_v1(provider, options)
 
-        Construct a :js:class:`ICU4XLineBreakSegmenter` with custom options.
+        Construct a :js:class:`ICU4XLineSegmenter` with custom options.
 
-        See the `Rust documentation for try_new_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options_unstable>`__ for more information.
+        See the `Rust documentation for try_new_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_with_options_unstable>`__ for more information.
 
 
     .. js:function:: segment_utf8(input)
 
         Segments a (potentially ill-formed) UTF-8 string.
 
-        See the `Rust documentation for segment_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf8>`__ for more information.
+        See the `Rust documentation for segment_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8>`__ for more information.
 
 
     .. js:function:: segment_utf16(input)
 
         Segments a UTF-16 string.
 
-        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf16>`__ for more information.
+        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16>`__ for more information.
 
 
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
@@ -79,7 +79,7 @@
 
         Segments a Latin-1 string.
 
-        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_latin1>`__ for more information.
+        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1>`__ for more information.
 
 
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
