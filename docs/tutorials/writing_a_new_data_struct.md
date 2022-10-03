@@ -97,30 +97,17 @@ macro_rules! create_datagen_provider {
     FooProvider,
 }
 ```
+
 as well as to the list of keys 
 
 ```rust
-pub mod foo {
-    use yoke::Yokeable;
-    use serde::{Deserialize, Serialize};
-    use icu_provider::{DataMarker, KeyedDataMarker, DataKey};
 
-    #[derive(
-    Serialize, Deserialize, Clone, Default, PartialEq, Yokeable,
-    )]
-    struct FooV1 {
-        message: String,
-    }
+use std::borrow::Cow;
 
-    struct FooV1Marker {}
-
-    impl DataMarker for FooV1Marker {
-        type Yokeable = FooV1;
-    }
-
-    impl KeyedDataMarker for FooV1Marker {
-        const KEY: DataKey = icu_provider::data_key!("foo/bar@1");
-    }
+#[derive(Debug, PartialEq, Clone)]
+#[icu_provider::data_struct(marker(FooV1Marker, "foo/bar@1"))]
+pub struct FooV1<'data> {
+  message: Cow<'data, str>,
 }
 
 ```
@@ -140,7 +127,6 @@ The following example shows all the pieces that make up the data pipeline for `D
 ### Data Struct
 
 [*components/decimal/src/provider.rs*](https://github.com/unicode-org/icu4x/blob/main/components/decimal/src/provider.rs)
-
 
 ```rust
 use std::borrow::Cow;
@@ -204,9 +190,6 @@ pub struct Numbers {
     #[serde(rename = "minimumGroupingDigits")]
     #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
     pub minimum_grouping_digits: u8,
-    // commenting because of it's not a public module
-    // #[serde(flatten)]
-    // pub numsys_data: NumberingSystemData,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
