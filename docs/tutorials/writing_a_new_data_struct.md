@@ -95,7 +95,7 @@ When adding new data structs, it is necessary to make `icu4x-datagen` aware of y
 registry!(
     // ...
     FooV1Marker,
-}
+)
 ```
 
 as well as to the list of keys 
