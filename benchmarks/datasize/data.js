@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664817612266,
+  "lastUpdate": 1664824242531,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29783,6 +29783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9b9d14d32d185fadacd2a3847ff6a965728e3698"
         },
         "date": 1664817549266,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dsipasseuth@google.com",
+            "name": "Sipasseuth Daniel",
+            "username": "dsipasseuth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "664daf32563655e23bd0e94bfff84004d1ba29b2",
+          "message": "Update tutorials to documentation testing. (#2645)",
+          "timestamp": "2022-10-03T19:07:51Z",
+          "tree_id": "996c03f9243ea475c5b6dba610ec63003c5d3810",
+          "url": "https://github.com/unicode-org/icu4x/commit/664daf32563655e23bd0e94bfff84004d1ba29b2"
+        },
+        "date": 1664824172136,
         "tool": "ndjson",
         "benches": [
           {
