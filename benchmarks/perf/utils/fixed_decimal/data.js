@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664813548640,
+  "lastUpdate": 1664818218554,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56057,6 +56057,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/to_string/908070605040302010",
             "value": 203,
             "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 75,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b9d14d32d185fadacd2a3847ff6a965728e3698",
+          "message": "Add div_rem_euclid and use it in icu_calendar (#2704)\n\n* Add div_rem_euclid and use it in icu_calendar\r\n\r\n* Don't need helper function when dividend is positive",
+          "timestamp": "2022-10-03T17:17:34Z",
+          "tree_id": "3bdc15aa1d70dcf7c125b29cbac4860fb3b3749b",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b9d14d32d185fadacd2a3847ff6a965728e3698"
+        },
+        "date": 1664818156944,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121622,
+            "range": "± 479",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25262,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70716,
+            "range": "± 150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
             "unit": "ns/iter"
           },
           {
