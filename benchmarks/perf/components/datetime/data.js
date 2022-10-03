@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664754091759,
+  "lastUpdate": 1664785009644,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -77501,6 +77501,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5067,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "774b734dd4993ff4faa77898c584ecc657ab5712",
+          "message": "Remove unnecessary langauge check for East Asian languagne (SA property) (#2705)",
+          "timestamp": "2022-10-03T17:02:52+09:00",
+          "tree_id": "3f252f10560490373b7b0bb5e2cad09cd921ca11",
+          "url": "https://github.com/unicode-org/icu4x/commit/774b734dd4993ff4faa77898c584ecc657ab5712"
+        },
+        "date": 1664784939241,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 76232,
+            "range": "± 5159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 133129,
+            "range": "± 10928",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 71619,
+            "range": "± 3362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 81583,
+            "range": "± 5091",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 82155,
+            "range": "± 6963",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 87171,
+            "range": "± 4345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 126866,
+            "range": "± 14892",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 137162,
+            "range": "± 9654",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 143139,
+            "range": "± 6569",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 144656,
+            "range": "± 10186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5660,
+            "range": "± 412",
             "unit": "ns/iter"
           }
         ]
