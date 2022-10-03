@@ -147,10 +147,10 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with default options:
 ///
 /// ```rust
-/// use icu_segmenter::LineBreakSegmenter;
+/// use icu_segmenter::LineSegmenter;
 ///
 /// let segmenter =
-///     LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
 ///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
@@ -162,14 +162,14 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::{
-///     LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
+///     LineBreakOptions, LineBreakRule, LineSegmenter, WordBreakRule,
 /// };
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.line_break_rule = LineBreakRule::Strict;
 /// options.word_break_rule = WordBreakRule::BreakAll;
 /// options.ja_zh = false;
-/// let segmenter = LineBreakSegmenter::try_new_with_options_unstable(
+/// let segmenter = LineSegmenter::try_new_with_options_unstable(
 ///     &icu_testdata::unstable(),
 ///     options,
 /// )
@@ -183,25 +183,25 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::LineBreakSegmenter;
+/// use icu_segmenter::LineSegmenter;
 ///
 /// let segmenter =
-///     LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
 ///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
-pub struct LineBreakSegmenter {
+pub struct LineSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
 }
 
-impl LineBreakSegmenter {
-    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
+impl LineSegmenter {
+    /// Construct a [`LineSegmenter`] with default [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -210,7 +210,7 @@ impl LineBreakSegmenter {
         Self::try_new_with_options_unstable(provider, Default::default())
     }
 
-    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
+    /// Construct a [`LineSegmenter`] with default [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -223,7 +223,7 @@ impl LineBreakSegmenter {
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
-    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
     pub fn try_new_with_options_unstable<D>(
         provider: &D,
@@ -252,7 +252,7 @@ impl LineBreakSegmenter {
         })
     }
 
-    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new_with_options_unstable<D>(
         provider: &D,
@@ -601,11 +601,11 @@ pub trait LineBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the examples in [`LineBreakSegmenter`] for its usages.
+/// see the examples in [`LineSegmenter`] for its usages.
 ///
 /// Lifetimes:
 ///
-/// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
+/// - `'l` = lifetime of the [`LineSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
 ///
 /// <div class="stab unstable">
@@ -1169,7 +1169,7 @@ mod tests {
     #[test]
     fn linebreak() {
         let segmenter =
-            LineBreakSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+            LineSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
                 .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");

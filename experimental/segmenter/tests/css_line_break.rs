@@ -4,7 +4,7 @@
 
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakRule;
-use icu_segmenter::LineBreakSegmenter;
+use icu_segmenter::LineSegmenter;
 use icu_segmenter::WordBreakRule;
 
 fn check_with_options(
@@ -14,7 +14,7 @@ fn check_with_options(
     options: LineBreakOptions,
 ) {
     let segmenter =
-        LineBreakSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     let iter = segmenter.segment_str(s);

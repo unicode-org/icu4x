@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::GraphemeClusterBreakSegmenter;
-use icu_segmenter::LineBreakSegmenter;
-use icu_segmenter::SentenceBreakSegmenter;
-use icu_segmenter::WordBreakSegmenter;
+use icu_segmenter::GraphemeClusterSegmenter;
+use icu_segmenter::LineSegmenter;
+use icu_segmenter::SentenceSegmenter;
+use icu_segmenter::WordSegmenter;
 use std::char;
 use std::fs::File;
 use std::io::prelude::*;
@@ -107,7 +107,7 @@ impl Iterator for TestContentIterator {
 fn run_line_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
     let segmenter =
-        LineBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        LineSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -139,7 +139,7 @@ fn run_line_break_test() {
 fn run_word_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
     let segmenter =
-        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -170,7 +170,7 @@ fn run_word_break_test() {
 #[test]
 fn run_grapheme_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
-    let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(&icu_testdata::unstable())
+    let segmenter = GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
         .expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -203,7 +203,7 @@ fn run_grapheme_break_test() {
 fn run_sentence_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/SentenceBreakTest.txt");
     let segmenter =
-        SentenceBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        SentenceSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

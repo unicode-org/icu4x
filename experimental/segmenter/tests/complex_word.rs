@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::WordBreakSegmenter;
+use icu_segmenter::WordSegmenter;
 
 // Additional word segmenter tests with complex string.
 
 #[test]
 fn word_break_th() {
     let segmenter =
-        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
     let s = "ภาษาไทยภาษาไทย";
@@ -42,7 +42,7 @@ fn word_break_th() {
 #[test]
 fn word_break_my() {
     let segmenter =
-        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
     let utf16: Vec<u16> = s.encode_utf16().collect();
@@ -57,7 +57,7 @@ fn word_break_my() {
 #[test]
 fn word_break_hiragana() {
     let segmenter =
-        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "うなぎうなじ";
     let iter = segmenter.segment_str(s);
@@ -71,7 +71,7 @@ fn word_break_hiragana() {
 #[test]
 fn word_break_mixed_han() {
     let segmenter =
-        WordBreakSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "Welcome龟山岛龟山岛Welcome";
     let iter = segmenter.segment_str(s);
