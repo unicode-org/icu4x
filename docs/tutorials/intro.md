@@ -64,7 +64,7 @@ fn main() {
 
 After saving it, call `cargo run` and it should display:
 
-```
+```text
 ¡Hola!
 You are using: es-AR
 ```
@@ -155,7 +155,7 @@ fn main() {
 
 If all went well, running the app with `cargo run` should display:
 
-```
+```text
 📅: 2020年10月14日 13:21:28
 ```
 

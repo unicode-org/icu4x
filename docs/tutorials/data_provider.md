@@ -6,7 +6,7 @@ At the moment, `DataProvider` is only synchronous, but the model of plugging it 
 
 ## Data
 
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a [`provider`] module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
+The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a `provider` module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
 
 ## Types of providers
 
@@ -19,12 +19,36 @@ Each component should use `DataProvider` only to construct the instance of each 
 ## Example
 
 ```rust
+use displaydoc::Display;
+use icu_provider::{DataPayload, DataProvider, DataRequest, DataError};
+use icu::locid::Locale;
+use icu::decimal::provider::{DecimalSymbolsV1Marker, DecimalSymbolsV1};
+
+#[derive(Display, Debug, Copy, Clone)]
+pub enum MyError {
+     /// Some custom error
+     SomeError,
+
+     /// An error originating inside of the data provider.
+     #[displaydoc("{0}")]
+     DataProvider(DataError),
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for MyError {}
+
+impl From<DataError> for MyError {
+     fn from(e: DataError) -> Self {
+         MyError::DataProvider(e)
+     }
+}
+
 pub struct AdditiveIdentity(char);
 
 impl AdditiveIdentity {
     pub fn try_new<L: Into<Locale>, P: DataProvider<DecimalSymbolsV1Marker>>(
         locale: L,
-        provider: &D,
+        data_provider: &P,
     ) -> Result<Self, MyError> {
         let response = data_provider.load(DataRequest {
             locale: &locale.into().into(),

@@ -832,6 +832,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "embed-doc-image"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af36f591236d9d822425cb6896595658fa558fcebf5ee8accac1d4b92c47166e"
+dependencies = [
+ "base64",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "embedded-hal"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1908,6 +1920,28 @@ dependencies = [
  "serde",
  "tinystr 0.7.0",
  "zerovec",
+]
+
+[[package]]
+name = "icu_tutorials"
+version = "1.0.0-beta1"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "embed-doc-image",
+ "icu",
+ "icu_datagen",
+ "icu_provider",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "icu_testdata",
+ "itertools",
+ "litemap",
+ "serde",
+ "serde-aux",
+ "tinystr 0.7.0",
+ "yoke",
+ "zerofrom",
 ]
 
 [[package]]

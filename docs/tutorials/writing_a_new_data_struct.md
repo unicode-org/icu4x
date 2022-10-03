@@ -91,19 +91,25 @@ The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/
 When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
 [*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro
 
-```rust
-macro_rules! create_datagen_provider {
+```rust,compile_fail
+registry!(
     // ...
-    FooProvider,
-}
+    FooV1Marker,
+)
 ```
+
 as well as to the list of keys 
 
 ```rust
-pub fn get_all_keys() -> Vec<DataKey> {
-    // ...
-    v.push(FooV1Marker::KEY)
+
+use std::borrow::Cow;
+
+#[derive(Debug, PartialEq, Clone)]
+#[icu_provider::data_struct(marker(FooV1Marker, "foo/bar@1"))]
+pub struct FooV1<'data> {
+  message: Cow<'data, str>,
 }
+
 ```
 
 When finished, run from the top level:
@@ -123,10 +129,19 @@ The following example shows all the pieces that make up the data pipeline for `D
 [*components/decimal/src/provider.rs*](https://github.com/unicode-org/icu4x/blob/main/components/decimal/src/provider.rs)
 
 ```rust
-#[icu_provider::data_struct]
+use std::borrow::Cow;
+use icu_provider::{yoke, zerofrom};
+use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
+
+/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
+#[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
 #[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(Serialize))]
+#[cfg_attr(
+feature = "datagen",
+derive(serde::Serialize, databake::Bake),
+databake(path = icu_decimal::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {
     /// Prefix and suffix to apply when a negative sign is needed.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -140,7 +155,16 @@ pub struct DecimalSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
 
-    // ...
+    /// Character used to separate groups in the integer part of the number.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub grouping_separator: Cow<'data, str>,
+
+    /// Settings used to determine where to place groups in the integer part of the number.
+    pub grouping_sizes: GroupingSizesV1,
+
+    /// Digit characters for the current numbering system. In most systems, these digits are
+    /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
+    pub digits: [char; 10],
 }
 ```
 
@@ -148,52 +172,50 @@ The above example is an abridged definition for `DecimalSymbolsV1`. Note how the
 
 ### CLDR JSON Deserialize
 
-[*provider/datagen/src/transform/cldr/serde/numbers.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/serde/numbers.rs)
+[*provider/datagen/src/transform/cldr/cldr_serde/numbers.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/cldr_serde/numbers.rs)
+
 
 ```rust
-pub mod numbers_json {
-    //! Serde structs representing CLDR JSON numbers.json files.
-    //!
-    //! Sample file:
-    //! https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-numbers-full/main/en/numbers.json
+use icu::locid::LanguageIdentifier;
+use itertools::Itertools;
+use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
+use serde::Deserialize;
+use std::collections::HashMap;
+use tinystr::TinyStr8;
 
-    use super::*;
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Numbers {
+    #[serde(rename = "defaultNumberingSystem")]
+    pub default_numbering_system: TinyStr8,
+    #[serde(rename = "minimumGroupingDigits")]
+    #[serde(deserialize_with = "serde_aux::prelude::deserialize_number_from_string")]
+    pub minimum_grouping_digits: u8,
+}
 
-    // ...
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct LangNumbers {
+    pub numbers: Numbers,
+}
 
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Numbers {
-        #[serde(rename = "defaultNumberingSystem")]
-        pub default_numbering_system: TinyStr8,
-        #[serde(rename = "minimumGroupingDigits")]
-        #[serde(deserialize_with = "deserialize_number_from_string")]
-        pub minimum_grouping_digits: u8,
-        #[serde(flatten)]
-        pub numsys_data: NumberingSystemData,
-    }
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
 
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct LangNumbers {
-        pub numbers: Numbers,
-    }
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct LangData(pub LiteMap<LanguageIdentifier, LangNumbers>);
-
-    #[derive(PartialEq, Debug, Deserialize)]
-    pub struct Resource {
-        pub main: LangData,
-    }
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Resource {
+    pub main: LangData,
 }
 ```
+
 
 The above example is an abridged definition of the Serde structure corresponding to CLDR JSON. Since this Serde definition is not used at runtime, it does not need to be zero-copy.
 
 ### Transformer
 
-[*provider/datagen/src/transform/cldr/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/numbers/mod.rs)
+[*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
 
-```rust
+[*provider/core/src/datagen/iter.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/datagen/iter.rs)
+
+```rust,compile_fail
 impl DataProvider<FooV1Marker> for DatagenProvider {
     fn load(
         &self,
