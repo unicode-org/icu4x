@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664830583560,
+  "lastUpdate": 1664831129188,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29843,6 +29843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/359f09b3d99864163bf1c80dd3a42fd002bfa174"
         },
         "date": 1664830507758,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "06c352982e941ca8cdb64ffa47f500f68c80dab1",
+          "message": "Clean up dependency specifications so serde isn't pulled in by default (#2696)\n\n* Mark optional deps as optional\r\n\r\n* Make dep optional\r\n\r\n* Rm dep from locid_transform\r\n\r\n* serde feature\r\n\r\n* unconditional litemap",
+          "timestamp": "2022-10-03T21:02:58Z",
+          "tree_id": "9b88e9cbd64d8e895e075ed3ab1b54a64bb65b33",
+          "url": "https://github.com/unicode-org/icu4x/commit/06c352982e941ca8cdb64ffa47f500f68c80dab1"
+        },
+        "date": 1664831069095,
         "tool": "ndjson",
         "benches": [
           {
