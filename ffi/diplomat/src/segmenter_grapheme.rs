@@ -67,10 +67,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterSegmenter::segment_utf8,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_utf8, FnInStruct)]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,
@@ -82,10 +79,7 @@ pub mod ffi {
         }
 
         /// Segments a UTF-16 string.
-        #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterSegmenter::segment_utf16,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_utf16, FnInStruct)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a [u16],
@@ -96,10 +90,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterSegmenter::segment_latin1,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_latin1, FnInStruct)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

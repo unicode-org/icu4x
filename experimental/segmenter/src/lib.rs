@@ -117,13 +117,12 @@ mod math_helper;
 
 pub use crate::grapheme::{
     GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
-    GraphemeClusterSegmenter,
+    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
 };
 pub use crate::line::{
     LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
-    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule,
-    LineSegmenter, WordBreakRule,
+    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter,
+    WordBreakRule,
 };
 pub use crate::sentence::{
     SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,

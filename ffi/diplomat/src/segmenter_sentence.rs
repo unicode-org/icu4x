@@ -41,9 +41,7 @@ pub mod ffi {
             Self::try_new_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(
-            provider: &D,
-        ) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError>
+        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError>
         where
             D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
         {
@@ -55,11 +53,7 @@ pub mod ffi {
 
         /// Segments a (potentially ill-formed) UTF-8 string.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceSegmenter::segment_str,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,

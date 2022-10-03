@@ -1168,9 +1168,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+            .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());
