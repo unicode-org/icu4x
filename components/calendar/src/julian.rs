@@ -33,10 +33,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::quotient;
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
-use crate::helpers::quotient;
 use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -408,7 +408,6 @@ mod test {
         let iso_expected_date = Date::try_new_iso_date(2022, 3, 1).unwrap();
         assert_eq!(iso_date, iso_expected_date);
     }
-
 
     #[test]
     fn test_roundtrip_negative() {
