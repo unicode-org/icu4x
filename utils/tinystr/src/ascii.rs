@@ -138,14 +138,14 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub const fn as_bytes(&self) -> &[u8] {
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        const _: () = ();
         // Safe because `self.bytes.as_slice()` pointer-casts to `&[u8]`,
         // and changing the length of that slice to self.len() < N is safe.
-        unsafe { core::mem::transmute((self.bytes.as_slice().as_ptr(), self.len())) }
+        unsafe {
+            core::slice::from_raw_parts(
+                self.all_bytes().as_ptr(),
+                self.len(),
+            )
+        }
     }
 
     #[inline]

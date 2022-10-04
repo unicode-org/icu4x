@@ -140,17 +140,14 @@ impl DataKeyPath {
     /// Gets the path as a static string slice.
     #[inline]
     pub const fn get(self) -> &'static str {
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        const _: () = ();
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::mem::transmute((
-                self.tagged.as_ptr().add(leading_tag!().len()),
-                self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
-            )))
+            core::str::from_utf8_unchecked(
+                core::slice::from_raw_parts(
+                    self.tagged.as_ptr().add(leading_tag!().len()),
+                    self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
+                )
+            )
         }
     }
 }
