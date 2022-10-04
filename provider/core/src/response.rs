@@ -20,7 +20,7 @@ use alloc::rc::Rc as SelectedRc;
 use alloc::sync::Arc as SelectedRc;
 
 /// A response object containing metadata about the returned data.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The resolved locale of the returned data, if locale fallbacking was performed.

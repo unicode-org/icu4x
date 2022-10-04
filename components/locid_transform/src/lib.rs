@@ -86,6 +86,7 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![allow(clippy::derive_partial_eq_without_eq)]
 #![warn(missing_docs)]
 
 extern crate alloc;
@@ -100,7 +101,7 @@ pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this enum is stable
 pub enum TransformResult {
     /// The canonicalization operation modified the locale.

@@ -11,7 +11,7 @@ impl std::error::Error for TimeZoneError {}
 /// A list of error outcomes for various operations in the `icu_timezone` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum TimeZoneError {
     /// An input overflowed its range.

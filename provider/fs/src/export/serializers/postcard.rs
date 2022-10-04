@@ -35,7 +35,7 @@ pub struct Serializer;
 
 /// Options bag for initializing a [`postcard::Serializer`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct Options;
 
 impl AbstractSerializer for Serializer {

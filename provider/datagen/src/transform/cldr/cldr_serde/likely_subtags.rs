@@ -11,13 +11,13 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "likelySubtags")]
     pub likely_subtags: HashMap<LanguageIdentifier, LanguageIdentifier>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }

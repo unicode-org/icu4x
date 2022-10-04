@@ -13,7 +13,7 @@ use writeable::Writeable;
 
 /// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,

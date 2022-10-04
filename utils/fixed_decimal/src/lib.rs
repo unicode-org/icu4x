@@ -50,6 +50,7 @@
         missing_debug_implementations,
     )
 )]
+#![allow(clippy::derive_partial_eq_without_eq)]
 
 mod decimal;
 mod ops;
@@ -63,7 +64,7 @@ pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
 
-#[derive(Display, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest

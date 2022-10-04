@@ -827,7 +827,7 @@ mod tests {
             0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028,
             0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
-        let inv_list_clone = (&inv_list).clone();
+        let inv_list_clone = inv_list.clone();
         let s: CodePointInversionList =
             CodePointInversionList::try_from_inversion_list_slice(&inv_list_clone).unwrap();
         let round_trip_inv_list = s.get_inversion_list_vec();

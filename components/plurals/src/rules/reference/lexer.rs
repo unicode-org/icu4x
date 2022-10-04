@@ -5,7 +5,7 @@
 use super::ast;
 use displaydoc::Display;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum Token {
     Operand(ast::Operand),
     Operator(ast::Operator),

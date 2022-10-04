@@ -7,7 +7,7 @@ use alloc::vec::Vec;
 use core::slice::Iter;
 use core::str::Chars;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq)]
 pub enum Language {
     Burmese,
     ChineseOrJapanese,

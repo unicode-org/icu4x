@@ -11,21 +11,21 @@ use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Territories {
     pub territories: HashMap<String, String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangDisplayNames {
     #[serde(rename = "localeDisplayNames")]
     pub localedisplaynames: Territories,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangDisplayNames>);
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

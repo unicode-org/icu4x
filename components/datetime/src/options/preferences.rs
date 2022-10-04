@@ -57,7 +57,7 @@ use tinystr::TinyAsciiStr;
 ///
 /// let prefs = preferences::Bag::from_hour_cycle(preferences::HourCycle::H23);
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct Bag {
@@ -105,7 +105,7 @@ impl Bag {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum HourCycle {

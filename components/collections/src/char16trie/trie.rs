@@ -110,7 +110,7 @@ pub struct Char16TrieIterator<'a> {
 }
 
 /// An enum representing the return value from a lookup in [`Char16Trie`].
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     /// The input unit(s) did not continue a matching string.
     /// Once next() returns TrieResult::NoMatch, all further calls to next()

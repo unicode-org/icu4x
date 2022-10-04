@@ -11,14 +11,14 @@ use crate::{extensions, subtags};
 use alloc::vec::Vec;
 use tinystr::TinyAsciiStr;
 
-#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {
     LanguageIdentifier,
     Locale,
     Partial,
 }
 
-#[derive(PartialEq, Eq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 enum ParserPosition {
     Script,
     Region,

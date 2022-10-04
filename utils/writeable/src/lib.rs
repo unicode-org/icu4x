@@ -16,6 +16,7 @@
         missing_debug_implementations,
     )
 )]
+#![allow(clippy::derive_partial_eq_without_eq)]
 
 //! `writeable` is a utility crate of the [`ICU4X`] project.
 //!
@@ -136,7 +137,7 @@ impl LengthHint {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // stable
 pub struct Part {
     pub category: &'static str,

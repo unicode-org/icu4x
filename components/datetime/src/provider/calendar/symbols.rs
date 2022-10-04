@@ -122,7 +122,6 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[allow(clippy::derive_partial_eq_without_eq)]
             #[derive(Debug, PartialEq, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
             #[cfg_attr(
                 feature = "datagen",

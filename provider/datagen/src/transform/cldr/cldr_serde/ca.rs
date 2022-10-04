@@ -19,14 +19,14 @@ macro_rules! symbols {
         pub mod $name {
             use super::*;
 
-            #[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+            #[derive(Debug, PartialEq, Clone, Deserialize)]
             $symbols
 
             symbols!();
         }
     };
     () => {
-        #[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+        #[derive(Debug, PartialEq, Clone, Deserialize)]
         pub struct FormatWidths {
             pub abbreviated: Symbols,
             pub narrow: Symbols,
@@ -34,7 +34,7 @@ macro_rules! symbols {
             pub wide: Symbols,
         }
 
-        #[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+        #[derive(Debug, PartialEq, Clone, Deserialize)]
         pub struct StandAloneWidths {
             pub abbreviated: Option<Symbols>,
             pub narrow: Option<Symbols>,
@@ -42,7 +42,7 @@ macro_rules! symbols {
             pub wide: Option<Symbols>,
         }
 
-        #[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+        #[derive(Debug, PartialEq, Clone, Deserialize)]
         pub struct Contexts {
             pub format: FormatWidths,
             #[serde(rename = "stand-alone")]
@@ -78,7 +78,7 @@ symbols!(
     }
 );
 
-#[derive(PartialEq, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 #[serde(untagged)]
 pub enum LengthPattern {
     Plain(String),
@@ -100,7 +100,7 @@ impl LengthPattern {
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
     pub names: HashMap<String, String>,
@@ -110,7 +110,7 @@ pub struct Eras {
     pub narrow: HashMap<String, String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct LengthPatterns {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -118,7 +118,7 @@ pub struct LengthPatterns {
     pub short: LengthPattern,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct DateTimeFormats {
     pub full: LengthPattern,
     pub long: LengthPattern,
@@ -128,7 +128,7 @@ pub struct DateTimeFormats {
     pub available_formats: AvailableFormats,
 }
 
-#[derive(PartialEq, Eq, Clone, Debug, Deserialize)]
+#[derive(PartialEq, Clone, Debug, Deserialize)]
 pub struct AvailableFormats(pub HashMap<String, String>);
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
@@ -136,7 +136,7 @@ pub struct AvailableFormats(pub HashMap<String, String>);
 ///
 /// e.g.
 /// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
-#[derive(PartialEq, Eq, Debug, Deserialize, Clone)]
+#[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
     pub months: months::Contexts,
     pub days: days::Contexts,
@@ -151,20 +151,20 @@ pub struct Dates {
     pub datetime_formats: DateTimeFormats,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct DatesCalendars {
     pub calendars: HashMap<String, Dates>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangDates {
     pub dates: DatesCalendars,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangDates>);
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

@@ -7,7 +7,7 @@ use icu_provider::prelude::*;
 use std::fs;
 use std::path::Path;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Manifest {
     /// Which data serialization file format is used.
     pub buffer_format: BufferFormat,

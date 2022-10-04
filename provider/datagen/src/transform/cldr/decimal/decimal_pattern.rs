@@ -12,7 +12,7 @@ use itertools::Itertools;
 use std::borrow::Cow;
 use std::str::FromStr;
 
-#[derive(Display, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, PartialEq)]
 pub enum Error {
     #[displaydoc("No body in decimal subpattern")]
     NoBodyInSubpattern,
@@ -23,7 +23,7 @@ pub enum Error {
 impl std::error::Error for Error {}
 
 /// Representation of a UTS-35 number subpattern (part of a number pattern between ';'s).
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalSubPattern {
     pub prefix: String,
     pub suffix: String,
@@ -76,7 +76,7 @@ impl FromStr for DecimalSubPattern {
 
 /// Representation of a UTS-35 number pattern, including positive subpattern (required) and negative
 /// subpattern (optional).
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct DecimalPattern {
     pub positive: DecimalSubPattern,
     pub negative: Option<DecimalSubPattern>,

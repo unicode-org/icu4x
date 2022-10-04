@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::derive_partial_eq_without_eq)]
+
 use icu_datetime::time_zone;
 use icu_datetime::time_zone::TimeZoneFormatter;
 use icu_datetime::DateTimeError;

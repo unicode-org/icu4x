@@ -11,7 +11,7 @@ use icu_datetime::provider::time_zones::MetazoneId;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneAliasData {
     #[serde(rename = "_longId")]
     pub long_id: String,
@@ -22,7 +22,7 @@ pub struct MetazoneAliasData {
 #[derive(Debug, Clone, Deserialize)]
 pub struct MetazoneIds(pub HashMap<MetazoneId, MetazoneAliasData>);
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub mzone: String,
@@ -32,36 +32,36 @@ pub struct UsesMetazone {
     pub to: Option<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneForPeriod {
     #[serde(rename = "usesMetazone")]
     pub uses_meta_zone: UsesMetazone,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum MetaLocationOrSubRegion {
     Location(Vec<MetazoneForPeriod>),
     SubRegion(HashMap<String, Vec<MetazoneForPeriod>>),
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum ZonePeriod {
     Region(Vec<MetazoneForPeriod>),
     LocationOrSubRegion(HashMap<String, MetaLocationOrSubRegion>),
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct TimeZonePeriod(pub HashMap<String, ZonePeriod>);
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneInfo {
     #[serde(rename = "timezone")]
     pub time_zone: TimeZonePeriod,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MapZone {
     #[serde(rename = "_other")]
     pub other: String,
@@ -71,13 +71,13 @@ pub struct MapZone {
     pub territory: String,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazoneTerritory {
     #[serde(rename = "mapZone")]
     pub map_zone: MapZone,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct MetazonesTerritory(pub Vec<MetazoneTerritory>);
 
 #[derive(Debug, Clone, Deserialize)]

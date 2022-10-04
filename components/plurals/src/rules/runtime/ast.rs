@@ -14,7 +14,7 @@ use zerovec::{
     {VarZeroVec, ZeroVec},
 };
 
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Eq, Debug)]
+#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "databake",
     derive(databake::Bake),

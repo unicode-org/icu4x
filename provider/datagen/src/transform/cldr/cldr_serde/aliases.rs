@@ -11,13 +11,13 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Replacement<T> {
     #[serde(rename = "_replacement")]
     pub replacement: T,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Alias {
     #[serde(rename = "languageAlias")]
     pub language_aliases: HashMap<String, Replacement<String>>,
@@ -31,17 +31,17 @@ pub struct Alias {
     pub subdivision_aliases: HashMap<TinyAsciiStr<7>, Replacement<String>>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Metadata {
     pub alias: Alias,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
     pub metadata: Metadata,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }

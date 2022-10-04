@@ -13,7 +13,7 @@ use icu_plurals::{PluralCategory, PluralRules};
 use icu_provider::{yoke, zerofrom};
 
 /// A collection of plural variants of a pattern.
-#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -135,7 +135,7 @@ impl<'data> PluralPattern<'data> {
 /// patterns when there are plural variants.
 ///
 /// Currently, the plural forms are only based on the week number.
-#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 #[cfg_attr(

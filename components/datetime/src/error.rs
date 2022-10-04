@@ -20,7 +20,7 @@ impl std::error::Error for DateTimeError {}
 /// A list of error outcomes for various operations in the `icu_datetime` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum DateTimeError {
     /// An error originating from parsing a pattern.

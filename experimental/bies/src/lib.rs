@@ -46,6 +46,8 @@
 //!
 //! **3a:** Exhaustively check the probabilities of all possible BIES for the string. This algorithm has exponential runtime.
 
+#![allow(clippy::derive_partial_eq_without_eq)]
+
 use itertools::Itertools;
 use partial_min_max::max;
 use std::default::Default;
@@ -53,7 +55,7 @@ use std::fmt;
 use strum::EnumIter;
 use writeable::{LengthHint, Writeable};
 
-#[derive(Clone, Debug, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct Breakpoints {
     /// An ascending list of breakpoints. All elements must be between 0 and length exclusive.
     pub breakpoints: Vec<usize>,
@@ -61,7 +63,7 @@ pub struct Breakpoints {
     pub length: usize,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct BiesVector<F: fmt::Debug> {
     pub b: F,
     pub i: F,
@@ -73,10 +75,10 @@ pub struct BiesVector<F: fmt::Debug> {
 #[derive(Clone, Debug, PartialEq)]
 pub struct BiesMatrix(pub Vec<BiesVector<f32>>);
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq)]
 pub struct BiesString<'a>(&'a Breakpoints);
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter)]
+#[derive(Clone, Copy, Debug, PartialEq, EnumIter)]
 pub enum Algorithm {
     /// Algorithm 1a: check probabilities surrounding each valid breakpoint. Switch based on the sum.
     Alg1a,

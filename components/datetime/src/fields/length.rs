@@ -10,7 +10,7 @@ use zerovec::ule::{AsULE, ZeroVecError, ULE};
 use crate::fields::{Hour, Weekday};
 
 /// An error relating to the length of a field within a date pattern.
-#[derive(Display, Debug, PartialEq, Eq, Copy, Clone)]
+#[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum LengthError {
     /// The length of the field string within the pattern is invalid, according to
@@ -27,7 +27,7 @@ impl std::error::Error for LengthError {}
 /// `MMM`, `dd`, `y`.  See the
 /// [LDML documentation in UTS 35](https://unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns)
 /// for more details.
-#[derive(Debug, PartialEq, Eq, Clone, Copy, Ord, PartialOrd)]
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

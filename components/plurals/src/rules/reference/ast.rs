@@ -78,7 +78,7 @@ use core::ops::RangeInclusive;
 /// ```
 ///
 /// [`AndConditions`]: AndCondition
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Rule {
     /// The set of conditions that each must be satisfied for the entire `Rule` to be satisfied
@@ -121,7 +121,7 @@ pub struct Rule {
 /// ```
 ///
 /// [`AndConditions`]: AndCondition
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Condition(pub Vec<AndCondition>);
 
@@ -162,7 +162,7 @@ pub struct Condition(pub Vec<AndCondition>);
 /// ```
 ///
 /// [`Relations`]: Relation
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AndCondition(pub Vec<Relation>);
 
@@ -191,7 +191,7 @@ pub struct AndCondition(pub Vec<Relation>);
 ///     range_list: RangeList(vec![RangeListItem::Value(Value(3))]),
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Relation {
     /// The plural operand variable that optionally includes an applicaiton of modulo arithmetic.
@@ -213,7 +213,7 @@ pub struct Relation {
 /// | --------------| ----------------- |------------------------------------------------|
 /// | `Eq`          | "="               | is contained within the following interval set |
 /// | `NotEq`       | "!="              | complement of `Eq` ("is _not_ contained..."")  |
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operator {
     /// In a plural rule [`Relation`], represents that the plural operand [`Expression`]'s value at
@@ -245,7 +245,7 @@ pub enum Operator {
 ///     modulus: Some(Value(100)),
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Expression {
     /// The plural operand under test in this expression.
@@ -273,7 +273,7 @@ pub struct Expression {
 ///
 /// Operand::I;
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum Operand {
     /// Absolute value of input
@@ -319,7 +319,7 @@ pub enum Operand {
 /// ```
 ///
 /// [`RangeListItems`]: RangeListItem
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct RangeList(pub Vec<RangeListItem>);
 
@@ -343,7 +343,7 @@ pub struct RangeList(pub Vec<RangeListItem>);
 /// let _ = RangeListItem::Value(Value(5));
 /// let _ = RangeListItem::Range(Value(11)..=Value(15));
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum RangeListItem {
     /// An interval of numerical values (inclusive of both interval boundaries).
@@ -370,7 +370,7 @@ pub enum RangeListItem {
 ///
 /// RangeListItem::Value(Value(99));
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Value(pub u64);
 
@@ -401,7 +401,7 @@ pub struct Value(pub u64);
 ///     }),
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Samples {
     /// The list of integer samples provided (denoted
@@ -430,7 +430,7 @@ pub struct Samples {
 ///     ellipsis: true,
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct SampleList {
     /// A collection of intervals in which all of the contained values (inclusive of the
@@ -456,7 +456,7 @@ pub struct SampleList {
 ///     upper_val: Some(DecimalValue("1.5".to_string())),
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct SampleRange {
     /// When `upper_val` is `None`, this field represents a single sample value that satisfies
@@ -480,6 +480,6 @@ pub struct SampleRange {
 /// use icu::plurals::rules::reference::ast::*;
 /// DecimalValue("1.00".to_string());
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DecimalValue(pub String);

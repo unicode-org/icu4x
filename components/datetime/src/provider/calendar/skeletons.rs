@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::{yoke, zerofrom, DataKeyMetadata};
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
@@ -19,7 +19,7 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Eq, Clone, Default)]
+#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateSkeletonPatternsV1<'data>(
@@ -39,7 +39,7 @@ impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
     const KEY: icu_provider::DataKey = icu_provider::data_key!(
         "datetime/skeletons@1",
-        icu_provider::DataKeyMetadata::construct_internal(
+        DataKeyMetadata::construct_internal(
             icu_provider::FallbackPriority::Language,
             Some(icu_locid::extensions_unicode_key!("ca")),
             None

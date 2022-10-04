@@ -14,19 +14,19 @@ use serde::{
 };
 use std::collections::{BTreeMap, HashMap};
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct ZoneFormat(pub HashMap<String, String>);
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Metazone {
     pub long: Option<ZoneFormat>,
     pub short: Option<ZoneFormat>,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Metazones(pub HashMap<String, Metazone>);
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct LocationWithExemplarCity {
     pub long: Option<ZoneFormat>,
     pub short: Option<ZoneFormat>,
@@ -34,7 +34,7 @@ pub struct LocationWithExemplarCity {
     pub exemplar_city: String,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct LocationWithShort {
     pub long: Option<ZoneFormat>,
     pub short: ZoneFormat,
@@ -42,7 +42,7 @@ pub struct LocationWithShort {
     pub exemplar_city: Option<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct LocationWithLong {
     pub long: ZoneFormat,
     pub short: Option<ZoneFormat>,
@@ -50,7 +50,7 @@ pub struct LocationWithLong {
     pub exemplar_city: Option<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum Location {
     City(LocationWithExemplarCity),
@@ -58,20 +58,20 @@ pub enum Location {
     Short(LocationWithShort),
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum LocationOrSubRegion {
     Location(Location),
     SubRegion(HashMap<String, Location>),
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Default, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
 pub struct Region(pub BTreeMap<String, LocationOrSubRegion>);
 
-#[derive(PartialEq, Eq, Debug, Clone, Default, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Default, Deserialize)]
 pub struct Zones(pub HashMap<String, Region>);
 
-#[derive(PartialEq, Eq, Debug, Default, Clone)]
+#[derive(PartialEq, Debug, Default, Clone)]
 pub struct TimeZoneNames {
     pub hour_format: String,
     pub gmt_format: String,
@@ -146,21 +146,21 @@ impl<'de> Deserialize<'de> for TimeZoneNames {
     }
 }
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Dates {
     #[serde(rename = "timeZoneNames")]
     pub time_zone_names: TimeZoneNames,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangTimeZones {
     pub dates: Dates,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, LangTimeZones>);
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub main: LangData,
 }

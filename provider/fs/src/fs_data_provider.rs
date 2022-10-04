@@ -38,7 +38,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(formatter.format(), "Ave, munde");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FsDataProvider {
     root: PathBuf,
     manifest: Manifest,

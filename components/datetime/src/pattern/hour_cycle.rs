@@ -10,7 +10,7 @@ use icu_provider::{yoke, zerofrom};
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.
-#[derive(Debug, PartialEq, Eq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

@@ -25,10 +25,10 @@ pub struct LocalePluralRules {
     pub many: Option<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Rules(pub HashMap<LanguageIdentifier, LocalePluralRules>);
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "plurals-type-cardinal")]
     pub plurals_type_cardinal: Option<Rules>,
@@ -36,7 +36,7 @@ pub struct Supplemental {
     pub plurals_type_ordinal: Option<Rules>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub supplemental: Supplemental,
 }

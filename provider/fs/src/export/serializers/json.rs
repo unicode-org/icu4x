@@ -12,7 +12,7 @@ use std::io;
 
 /// Choices for how to render the JSON files.
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum StyleOption {
     /// Print the smallest possible JSON, to reduce file size.
     Compact,
@@ -45,7 +45,7 @@ pub struct Serializer {
 
 /// Options bag for initializing a [`serde_json::Serializer`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Options {
     /// Format style to use when dumping output.
     pub style: StyleOption,

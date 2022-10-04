@@ -18,7 +18,7 @@ use zerovec::ule::AsULE;
 ///
 /// Different calendars use different era codes, see their documentation
 /// for details.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
@@ -39,7 +39,7 @@ impl FromStr for Era {
 ///
 /// More fields may be added in the future, for things like
 /// the cyclic or extended year
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
     /// The era containing the year.
@@ -122,7 +122,7 @@ impl FromStr for MonthCode {
 }
 
 /// Representation of a formattable month.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct FormattableMonth {
     /// The month number in this given year. For calendars with leap months, all months after
@@ -138,7 +138,7 @@ pub struct FormattableMonth {
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
@@ -155,21 +155,21 @@ pub struct DayOfYearInfo {
 
 /// A day number in a month. Usually 1-based.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct WeekOfMonth(pub u32);
 
 /// A week number in a year. Usually 1-based.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct WeekOfYear(pub u32);
 
 /// A day of week in month. 1-based.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct DayOfWeekInMonth(pub u32);
 
@@ -430,7 +430,7 @@ fn test_iso_nano_second_arithmetic() {
 }
 
 /// A representation of a time in hours, minutes, seconds, and nanoseconds
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Hash)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
     /// 0-based hour.

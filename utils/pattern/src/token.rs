@@ -51,7 +51,7 @@ use std::borrow::Cow;
 ///
 /// [`Parser`]: crate::Parser
 /// [`FromStr`]: std::str::FromStr
-#[derive(PartialEq, Eq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum PatternToken<'s, P> {
     Placeholder(P),
     Literal { content: Cow<'s, str>, quoted: bool },

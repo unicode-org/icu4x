@@ -91,6 +91,7 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![allow(clippy::derive_partial_eq_without_eq)]
 #![warn(missing_docs)]
 
 extern crate alloc;

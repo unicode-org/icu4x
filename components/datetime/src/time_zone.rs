@@ -729,7 +729,7 @@ impl TimeZoneFormatter {
 }
 
 /// Determines which ISO-8601 format should be used to format a [`GmtOffset`](icu_timezone::GmtOffset).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoFormat {
     /// ISO-8601 Basic Format.
@@ -754,7 +754,7 @@ pub enum IsoFormat {
 }
 
 /// Whether the minutes field should be optional or required in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoMinutes {
     /// Minutes are always displayed.
@@ -765,7 +765,7 @@ pub enum IsoMinutes {
 }
 
 /// Whether the seconds field should be optional or excluded in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoSeconds {
     /// Seconds are displayed only if they are non-zero.
@@ -776,7 +776,7 @@ pub enum IsoSeconds {
 }
 
 /// Whether a field should be zero-padded in ISO-8601 format.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub(crate) enum ZeroPadding {
     /// Add zero-padding.
@@ -787,7 +787,7 @@ pub(crate) enum ZeroPadding {
 }
 
 /// An enum for time zone fallback formats.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
 pub enum FallbackFormat {
     /// The ISO 8601 format for time zone format fallback.
@@ -805,7 +805,7 @@ impl Default for FallbackFormat {
 }
 
 /// A bag of options to define how time zone will be formatted.
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
 pub struct TimeZoneFormatterOptions {
     /// The time zone format fallback option.
@@ -821,31 +821,31 @@ impl From<FallbackFormat> for TimeZoneFormatterOptions {
 }
 
 // Pacific Time
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct GenericNonLocationLongFormat {}
 
 // PT
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct GenericNonLocationShortFormat {}
 
 // Pacific Standard Time
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct SpecificNonLocationLongFormat {}
 
 // PDT
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct SpecificNonLocationShortFormat {}
 
 // Los Angeles Time
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct GenericLocationFormat {}
 
 // GMT-07:00
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct LocalizedGmtFormat {}
 
 // -07:00
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct Iso8601Format {
     format: IsoFormat,
     minutes: IsoMinutes,
@@ -853,11 +853,11 @@ pub(super) struct Iso8601Format {
 }
 
 // It is only used for pattern in special case and not public to users.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct ExemplarCityFormat {}
 
 // An enum for time zone format unit.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) enum TimeZoneFormatterUnit {
     GenericNonLocationLong(GenericNonLocationLongFormat),
     GenericNonLocationShort(GenericNonLocationShortFormat),

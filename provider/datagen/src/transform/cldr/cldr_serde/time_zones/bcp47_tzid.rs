@@ -11,7 +11,7 @@ use icu_datetime::provider::time_zones::TimeZoneBcp47Id;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Debug, Clone, Deserialize)]
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Bcp47TzidAliasData {
     #[serde(rename = "_deprecated")]
     pub deprecated: Option<bool>,
@@ -25,7 +25,7 @@ pub struct Bcp47TzidAliasData {
     pub since: Option<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Bcp47TimeZoneIds {
     pub _alias: String,
     pub _description: String,
@@ -33,18 +33,18 @@ pub struct Bcp47TimeZoneIds {
     pub values: HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct U {
     #[serde(rename = "tz")]
     pub time_zones: Bcp47TimeZoneIds,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Keyword {
     pub u: U,
 }
 
-#[derive(PartialEq, Eq, Debug, Deserialize)]
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub keyword: Keyword,
 }

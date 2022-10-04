@@ -9,7 +9,7 @@ use displaydoc::Display;
 /// A list of error outcomes for various operations in the `icu_decimal` crate.
 ///
 /// Re-exported as [`Error`](crate::Error).
-#[derive(Display, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum DecimalError {
     /// An error originating inside of the [data provider](icu_provider).

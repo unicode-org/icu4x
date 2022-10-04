@@ -14,7 +14,7 @@ use icu_collections::codepointtrie::CodePointTrieError;
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
 /// </div>
-#[derive(Clone, Display, Debug, PartialEq, Eq)]
+#[derive(Clone, Display, Debug, PartialEq)]
 pub enum Error {
     /// An error occurred while building and validating the data
     #[displaydoc("Failed to validate: {0}")]

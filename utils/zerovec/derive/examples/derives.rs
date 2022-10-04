@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(clippy::derive_partial_eq_without_eq)]
+
 use zerovec::ule::AsULE;
 use zerovec::ule::EncodeAsVarULE;
 use zerovec::*;
@@ -53,7 +55,7 @@ pub struct RelationULE {
     range_list: ZeroSlice<Foo>,
 }
 
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Relation<'a> {
     andor_polarity_operand: u8,
     modulo: u32,

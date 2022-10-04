@@ -15,7 +15,7 @@ use writeable::Writeable;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it safely (rmdir) and re-create it.
@@ -33,7 +33,7 @@ impl Default for OverwriteOption {
 
 /// Options bag for initializing a [`FilesystemExporter`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ExporterOptions {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,
