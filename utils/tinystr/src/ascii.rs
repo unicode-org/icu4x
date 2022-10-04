@@ -140,12 +140,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     pub const fn as_bytes(&self) -> &[u8] {
         // Safe because `self.bytes.as_slice()` pointer-casts to `&[u8]`,
         // and changing the length of that slice to self.len() < N is safe.
-        unsafe {
-            core::slice::from_raw_parts(
-                self.all_bytes().as_ptr(),
-                self.len(),
-            )
-        }
+        unsafe { core::slice::from_raw_parts(self.all_bytes().as_ptr(), self.len()) }
     }
 
     #[inline]
