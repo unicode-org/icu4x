@@ -4,6 +4,7 @@
 
 // This way we can copy-paste Yokeable impls
 #![allow(clippy::forget_copy)]
+#![allow(clippy::forget_non_drop)]
 
 use crate::flexzerovec::FlexZeroVec;
 use crate::map::ZeroMapBorrowed;
