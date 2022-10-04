@@ -24,7 +24,7 @@ String Properties return a code point or sequence of code points. Numeric proper
 
 ### Notes About Properties
 
-As [it is defined](https://www.unicode.org/reports/tr44/#General_Category_Values), the General_Category property of a code point "provides for the most general classification of that code point. It is usually determined based on the primary characteristic of the assigned character for that code point. For example, is the character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?" In the same section 5.7.1 of UAX #44, a table lists 30 single-category property values, as well as a few special multi-category property values (`LC`, `L`, `M`, `N`, `P`, `S`, `Z`, `C`) representing the union of multiple single-category values. For example, the long name of the value `N` is `Number`, which is the union of `Nd` (`Decimal_Number`), `Nl` (`Letter_Number`), and `No` (`Other_Number`). Each code point belongs to exactly one single-category property value for GeneralCategory, and it may belong to one or more of the multi-category values. The multi-category values are handy for scenarios requiring "is the character a letter or number" style predicates. 
+As [it is defined](https://www.unicode.org/reports/tr44/#General_Category_Values), the General_Category property of a code point "provides for the most general classification of that code point. It is usually determined based on the primary characteristic of the assigned character for that code point. For example, is the character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?" In the same section 5.7.1 of UAX #44, a table lists 30 single-category property values, as well as a few special multi-category property values (`LC`, `L`, `M`, `N`, `P`, `S`, `Z`, `C`) representing the union of multiple single-category values. For example, the long name of the value `N` is `Number`, which is the union of `Nd` (`Decimal_Number`), `Nl` (`Letter_Number`), and `No` (`Other_Number`). Each code point belongs to exactly one single-category property value for GeneralCategory, and it belongs to one or more of the multi-category values. The multi-category values are handy for scenarios requiring "is the character a letter or number" style predicates. 
 
 The [Lead_Canonical_Combining_Class](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a686db169e8d6dc82233ebdfdee777b5a) and [Trail_Canonical_Combining_Class](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a477985deea2b2c42f3af4c7174c60d6c) properties are ICU-specific properties that are useful for the implementation of algorithms. They are likely not generally useful for end-users.
 
@@ -51,9 +51,9 @@ A `CodePointTrie` optimizes over a generic inversion map in different ways. One 
 
 ## Implementing `CodePointTrie` in ICU4X 
 
-ICU4X benefits by reusing the optimized data structures produced by ICU4C.
+ICU4X benefits by reusing the optimized data structures produced by ICU.
 In practice, this means exporting the code point trie binary data per property from ICU4C.
-As a result, for the Rust enums / new types that represent Unicode properties in ICU4X, the discriminant integer values corresponding to each of the enum variants should match the corresponding enum integer values in ICU(4C).
+As a result, for the Rust enums / new types that represent Unicode properties in ICU4X, the discriminant integer values corresponding to each of the enum variants should match the corresponding enum integer values in ICU4C and ICU4J.
 ICU4X code that can read the ICU code point trie binary data is a port of the original ICU code doing the same.
 The code can traverse the binary (byte array) representation of the trie without any extra heap allocations.
 Code in ICU4X ported from ICU includes getting the value for a code point input (`get()`), and getting the longest range of consecutive code points starting at the input code point whose trie values all match the provided input value (`get_range()`).
@@ -82,7 +82,7 @@ Whether a code point trie is a small or fast type only affects the number of arr
 
 Fast type tries will be larger than small type tries. 
 (Note: this is another instance of the classic computing tradeoff between time and speed.) 
-Fast type tries are larger than small type tries because the index array is larger.
+Fast type tries are larger than small type tries because the minimum size of the index array is larger.
 The index array will be larger because the range of code points only needing 2 array lookups will be larger, and a 2 array lookup is possible only when each such code point has a dedicated element in the index array.
 
 ### More Details
