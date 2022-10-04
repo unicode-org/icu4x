@@ -118,7 +118,7 @@ Because the binary format of the `CodePointTrie` can vary depending on the endia
 ## Building a `CodePointTrie`
 
 Building a `CodePointTrie` is expensive because several optimizations are applied during build time in order to reduce the size with little to no effect on the runtime.
-In ICU, when trie data is built for Unicode properties, it is done in a compile-time step and stored statically, which therefore does not effect runtime performance.
+In ICU, when trie data is built for Unicode properties, it is done in a compile-time step and stored statically, which therefore does not affect runtime performance.
 One example of an optimization is called compaction, in which subarrays (of size 2^6 = 64, called "blocks") which have identical contents can be collapsed and treated as being identical without affecting the trie lookup algorithm's result.
 However, the algorithm to detect redundant blocks is inherently a pairwise comparison, and thus O(n^2).
 The code to handle this and other optimziations is non-trivially complex.
