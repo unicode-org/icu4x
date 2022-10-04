@@ -74,8 +74,7 @@ pub fn complex_language_segment_utf16(
             if let Some(model) = lstm.best(str_per_lang[0] as u32) {
                 if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
                     let breaks = segmenter.segment_utf16(&str_per_lang);
-                    let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-                    result.append(&mut r);
+                    result.extend::<Vec<usize>>(breaks.map(|n| offset + n).collect());
                     offset += str_per_lang.len();
                     result.push(offset);
                     continue;
@@ -87,8 +86,7 @@ pub fn complex_language_segment_utf16(
             if let Some(grapheme) = grapheme {
                 if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme) {
                     let breaks = segmenter.segment_utf16(&str_per_lang);
-                    let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-                    result.append(&mut r);
+                    result.extend::<Vec<usize>>(breaks.map(|n| offset + n).collect());
                     offset += str_per_lang.len();
                     continue;
                 }
@@ -119,8 +117,7 @@ pub fn complex_language_segment_str(
                 if let Some(model) = lstm.best(first_ch as u32) {
                     if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
                         let breaks = segmenter.segment_str(&str_per_lang);
-                        let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-                        result.append(&mut r);
+                        result.extend::<Vec<usize>>(breaks.map(|n| offset + n).collect());
                         offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
                         result.push(offset);
                         continue;
@@ -133,8 +130,7 @@ pub fn complex_language_segment_str(
                     if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme)
                     {
                         let breaks = segmenter.segment_str(&str_per_lang);
-                        let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-                        result.append(&mut r);
+                        result.extend::<Vec<usize>>(breaks.map(|n| offset + n).collect());
                         offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
                         continue;
                     }
