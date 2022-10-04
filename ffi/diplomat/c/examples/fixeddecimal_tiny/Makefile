@@ -13,8 +13,8 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-15
-LLD := lld-15
+CLANG := clang-14
+LLD := lld-14
 
 
 ../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
