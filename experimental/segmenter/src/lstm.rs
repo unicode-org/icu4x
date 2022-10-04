@@ -194,7 +194,7 @@ mod tests {
     #[test]
     fn thai_word_break_with_grapheme_model() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        const MODEL: &[u8; 244394] = include_bytes!(
+        const MODEL: &[u8; 150263] = include_bytes!(
             "../tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json"
         );
         let data: LstmDataV1 = serde_json::from_slice(MODEL).expect("JSON syntax error");
