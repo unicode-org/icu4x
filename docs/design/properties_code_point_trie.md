@@ -24,24 +24,44 @@ String Properties return a code point or sequence of code points. Numeric proper
 
 ### Notes About Properties
 
-As [it is defined](https://www.unicode.org/reports/tr44/#General_Category_Values), the General_Category property of a code point "provides for the most general classification of that code point. It is usually determined based on the primary characteristic of the assigned character for that code point. For example, is the character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?" In the same section 5.7.1 of UAX #44, a table lists 30 single-category property values, as well as a few special multi-category property values (`LC`, `L`, `M`, `N`, `P`, `S`, `Z`, `C`) representing the union of multiple single-category values. For example, the long name of the value `N` is `Number`, which is the union of `Nd` (`Decimal_Number`), `Nl` (`Letter_Number`), and `No` (`Other_Number`). Each code point belongs to exactly one single-category property value for GeneralCategory, and it belongs to one or more of the multi-category values. The multi-category values are handy for scenarios requiring "is the character a letter or number" style predicates. 
+As [it is defined](https://www.unicode.org/reports/tr44/#General_Category_Values), the General_Category property of a code point "provides for the most general classification of that code point.
+It is usually determined based on the primary characteristic of the assigned character for that code point.
+For example, is the character a letter, a mark, a number, punctuation, or a symbol, and if so, of what type?" In the same section 5.7.1 of UAX #44, a table lists 30 single-category property values, as well as a few special multi-category property values (`LC`, `L`, `M`, `N`, `P`, `S`, `Z`, `C`) representing the union of multiple single-category values.
+For example, the long name of the value `N` is `Number`, which is the union of `Nd` (`Decimal_Number`), `Nl` (`Letter_Number`), and `No` (`Other_Number`).
+Each code point belongs to exactly one single-category property value for GeneralCategory, and it belongs to one or more of the multi-category values.
+The multi-category values are handy for scenarios requiring "is the character a letter or number" style predicates. 
 
 The [Lead_Canonical_Combining_Class](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a686db169e8d6dc82233ebdfdee777b5a) and [Trail_Canonical_Combining_Class](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uchar_8h.html#ae40d616419e74ecc7c80a9febab03199a477985deea2b2c42f3af4c7174c60d6c) properties are ICU-specific properties that are useful for the implementation of algorithms. They are likely not generally useful for end-users.
 
 
 ### Use Cases
 
-Before considering the design of APIs and efficient data structures, we first have to consider the shape of the data. In enumerated properties, there are three dimensions: the enumerated property, the enumerated property value, and the code point. In the binary properties case, we can reduce the scope to there being only two dimensions being associated—the binary property and the code point—if we maintain an implicit constraint that the property value must be `true`.
+Before considering the design of APIs and efficient data structures, we first have to consider the shape of the data.
+In enumerated properties, there are three dimensions: the enumerated property, the enumerated property value, and the code point.
+In the binary properties case, we can reduce the scope to there being only two dimensions being associated—the binary property and the code point—if we maintain an implicit constraint that the property value must be `true`.
 
-The use cases, or manner of data access, inform the designs of APIs and data structures. For regular expression parsers (regex), we need to support a text description of a _set of code points_ sharing a property. In this case, returning a [`CodePointInversionList`](https://icu4x.unicode.org/doc/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data. For binary properties, the property name is enough for input to determine the output. For enumerated properties, the property name and a specific property value are required to uniquely determine a set of code points. In these cases, all dimensions except the code point dimension are fixed (given as inputs).
+The use cases, or manner of data access, inform the designs of APIs and data structures.
+For regular expression parsers (regex), we need to support a text description of a _set of code points_ sharing a property.
+In this case, returning a [`CodePointInversionList`](https://icu4x.unicode.org/doc/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data.
+For binary properties, the property name is enough for input to determine the output.
+For enumerated properties, the property name and a specific property value are required to uniquely determine a set of code points.
+In these cases, all dimensions except the code point dimension are fixed (given as inputs).
 
-In other cases, such as UAX \#29 segmentation algorithms, iteration through the code points of some input text is a typical implementation strategy. During such iteration, the value of a code point property—usually, an enumerated property—can inform the algorithm in question. In such cases, the code point value and enumerated property name dimensions must be fixed (provided as inputs), and the return value is the remaining dimension—the enumerated property value. To support this use case, the [`CodePointTrie`](https://icu.unicode.org/design/struct/utrie) data structure is an optimal implementation for speed.  Speed is an important consideration for such use cases since the number of code points in a text can vary in size as large as the input text, making the work heavily repeated.
+In other cases, such as UAX \#29 segmentation algorithms, iteration through the code points of some input text is a typical implementation strategy.
+During such iteration, the value of a code point property—usually, an enumerated property—can inform the algorithm in question.
+In such cases, the code point value and enumerated property name dimensions must be fixed (provided as inputs), and the return value is the remaining dimension—the enumerated property value.
+To support this use case, the [`CodePointTrie`](https://icu.unicode.org/design/struct/utrie) data structure is an optimal implementation for speed. 
+Speed is an important consideration for such use cases since the number of code points in a text can vary in size as large as the input text, making the work heavily repeated.
 
 The `CodePointTrie` data structure also serves Unicode data lookups to serve algorithms for Unicode normalization, collation, etc.
 
 ### Notes on Implementation
 
-`CodePointInversionList` represents a set of Unicode code points. The combination of 2 aspects—that the Unicode code point values fill the entire integer range from 0 to 0x10FFFF, and that a set has only 2 values—together allow for an [inversion list](https://en.wikipedia.org/wiki/Inversion_list) implementation that is optimally efficient. An inversion list stores the boundaries of each range (contiguous stretch of code points) that are included in the set. This makes the size of the inversion list range from O(1) to O(n) (and oftentimes O(1)) even when the cardinality of the values logically represented is O(n). Checking for inclusion is just a matter of running binary search on the boundary values and checking if the corresponding inversion list index value is even or odd.
+`CodePointInversionList` represents a set of Unicode code points.
+The combination of 2 aspects—that the Unicode code point values fill the entire integer range from 0 to 0x10FFFF, and that a set has only 2 values—together allow for an [inversion list](https://en.wikipedia.org/wiki/Inversion_list) implementation that is optimally efficient.
+An inversion list stores the boundaries of each range (contiguous stretch of code points) that are included in the set.
+This makes the size of the inversion list range from O(1) to O(n) (and oftentimes O(1)) even when the cardinality of the values logically represented is O(n).
+Checking for inclusion is just a matter of running binary search on the boundary values and checking if the corresponding inversion list index value is even or odd.
 
 A `CodePointTrie` is an optimized implementation of what can be represented as an inversion map. An inversion map is similar to an inversion list, except that each range of code points is associated with a value. (By contrast, a range of code points in an inversion list is associated with an implied value of "true" for whether they are included in the set.) 
 
