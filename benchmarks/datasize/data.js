@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664832868646,
+  "lastUpdate": 1664985456474,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29903,6 +29903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c33971f8d8516eb9bd3cc12a229e815fb76c3af9"
         },
         "date": 1664832813059,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f0592c39779594403fd7704a8911d44f8315c251",
+          "message": "Fix spelling in docs (#2720)",
+          "timestamp": "2022-10-05T15:53:35Z",
+          "tree_id": "9f452a4a00d5ee0e69809d9f4b020ab23b8e262a",
+          "url": "https://github.com/unicode-org/icu4x/commit/f0592c39779594403fd7704a8911d44f8315c251"
+        },
+        "date": 1664985396537,
         "tool": "ndjson",
         "benches": [
           {
