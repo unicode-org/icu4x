@@ -97,11 +97,7 @@ macro_rules! impl_const_constructors {
                 let len = bytes.len();
                 #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
-                    unsafe {
-                        Ok(ZeroSlice::from_bytes_unchecked(
-                            core::slice::from_raw_parts(bytes.as_ptr(), len / $size),
-                        ))
-                    }
+                    unsafe { Ok(Self::from_bytes_unchecked(bytes)) }
                 } else {
                     Err(ZeroVecError::InvalidLength {
                         ty: concat!("<const construct: ", $size, ">"),
