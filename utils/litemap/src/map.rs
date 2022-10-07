@@ -249,6 +249,7 @@ where
     /// assert_eq!(sub_map.get(&2), Some(&"two"));
     /// ```
     pub fn as_sliced(&self) -> LiteMap<K, V, &S::Slice> {
+        #[allow(clippy::unwrap_used)] // range covers whole LiteMap
         let subslice = self.values.lm_get_range(0..self.len()).unwrap();
         LiteMap {
             values: subslice,
