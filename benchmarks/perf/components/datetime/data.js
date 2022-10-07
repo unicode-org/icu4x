@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664986067399,
+  "lastUpdate": 1665179219174,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -78221,6 +78221,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4721,
             "range": "± 74",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f7e7de8058e3497e73cac8c02f2edfcc28b431f",
+          "message": "Create DateTimeParser in experimental branch ixdtf (#2480)\n\n* Create DateTimeParser\r\n\r\n* Use Peekable iterator\r\n\r\n* Update Cargo.toml\r\n\r\n* address comments\r\n\r\n* add module\r\n\r\n* cargo make generate-readmes",
+          "timestamp": "2022-10-07T14:33:05-07:00",
+          "tree_id": "cf222a1840675e0861623f93c5f751e9a5af1d1c",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f7e7de8058e3497e73cac8c02f2edfcc28b431f"
+        },
+        "date": 1665179146851,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 75443,
+            "range": "± 124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 128021,
+            "range": "± 211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 70639,
+            "range": "± 1852",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 79645,
+            "range": "± 278",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75862,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 84331,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 122638,
+            "range": "± 274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 135563,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 128433,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 142827,
+            "range": "± 173",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6202,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
