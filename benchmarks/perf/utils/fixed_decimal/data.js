@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664986117781,
+  "lastUpdate": 1665179168669,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56429,6 +56429,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 100,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f7e7de8058e3497e73cac8c02f2edfcc28b431f",
+          "message": "Create DateTimeParser in experimental branch ixdtf (#2480)\n\n* Create DateTimeParser\r\n\r\n* Use Peekable iterator\r\n\r\n* Update Cargo.toml\r\n\r\n* address comments\r\n\r\n* add module\r\n\r\n* cargo make generate-readmes",
+          "timestamp": "2022-10-07T14:33:05-07:00",
+          "tree_id": "cf222a1840675e0861623f93c5f751e9a5af1d1c",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f7e7de8058e3497e73cac8c02f2edfcc28b431f"
+        },
+        "date": 1665179104893,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101428,
+            "range": "± 407",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20926,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66163,
+            "range": "± 707",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
