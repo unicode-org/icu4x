@@ -2,9 +2,7 @@
 
 This example contains tooling to build a size-optimized binary using FixedDecimal and FixedDecimalFormatter in C over FFI.
 
-Prerequisites: `clang` and `lld`, which must be compatible with the Rust toolchain. `apt-get install clang lld` *might* work, but if you run into errors, refer to the following thread for tips:
-
-https://github.com/rust-lang/rust/issues/60059
+Prerequisites: `gcc`,`clang` and `lld`, which must be compatible with the Rust toolchain. See `build-test.yml` for the currently pinned LLVM version.
 
 You also need to install the correct toolchains:
 
