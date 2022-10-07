@@ -204,7 +204,7 @@ where
     K: Ord,
     S: StoreSlice<K, V>,
 {
-    /// Creates a new [`LiteMap`] from a range of the current [`LiteMap`].
+    /// Creates a new [`LiteMap`] borrowed from a range of the current [`LiteMap`].
     ///
     /// # Examples
     ///
@@ -230,7 +230,7 @@ where
         })
     }
 
-    /// Borrows this [`LiteMap`] as one of its slice type.
+    /// Creates a new [`LiteMap`] that borrows from the current [`LiteMap`].
     ///
     /// This can be useful in situations where you need a `LiteMap` by value but do not want
     /// to clone the owned version.
