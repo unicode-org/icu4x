@@ -262,7 +262,7 @@ fn main() -> eyre::Result<()> {
     };
 
     if selected_keys.is_empty() {
-        eyre::bail!("No keys selected");
+        log::warn!("No keys selected");
     }
 
     let cldr_locales = match matches.value_of("CLDR_LOCALE_SUBSET") {
