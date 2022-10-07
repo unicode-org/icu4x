@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format blob --all-keys --all-locales
+$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-blob --format blob --all-keys --all-locales
 ```
 
 Let's dissect this invocation:
@@ -33,7 +33,7 @@ Let's dissect this invocation:
 * `--format` sets the format of the output (we'll discuss formats later)
 * `--all-keys` `--all-locales` specifies that we want to include all data for all locales
 
-This will generate a `my-data` file containing the serialized data.
+This will generate a `my-data-blob` file containing the serialized data.
 
 # 3. Using the generated data
 
@@ -59,7 +59,7 @@ use icu_provider_blob::BlobDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    let blob = std::fs::read("my-data").expect("Failed to read file");
+    let blob = std::fs::read("my-data-blob").expect("Failed to read file");
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("Failed to initialize Data Provider.");
@@ -86,7 +86,8 @@ fn main() {
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we included `--all-keys` `--all-locales`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format blob --keys-for-bin target/debug/myapp --locales ja
+$ cargo build
+$ icu4x-datagen --overwrite --cldr-tag latest --icuexport-tag latest --out my-data-blob --format blob --keys-for-bin target/debug/myapp --locales ja
 ```
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
@@ -104,7 +105,7 @@ use icu_provider_blob::BlobDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    let blob = std::fs::read("my-data").expect("Failed to read file");
+    let blob = std::fs::read("my-data-blob").expect("Failed to read file");
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("Failed to initialize Data Provider.");
@@ -127,7 +128,7 @@ This has two advantages: it reduces our code size, as `DateTimeFormatter` includ
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
-Rerunning datagen awards us with a 3KB data blob, which only contains 7 data keys!
+Rebuilding the application and rerunning datagen awards us with a 3KB data blob, which only contains 7 data keys!
 
 # 5. Other formats
 
@@ -140,7 +141,7 @@ The `mod` format will generate a Rust module that defines a data provider. This 
 Let's give it a try:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format mod --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-mod --format mod --keys-for-bin target/debug/myapp --locales ja
 ```
 
 The output might tell you additional crates that need to be installed. Don't worry, these are transitive dependencies already anyway, but are required directly now to construct our data:
@@ -161,7 +162,7 @@ use icu::datetime::{TypedDateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja");
 
-include!("../my-data/mod.rs"); // defines BakedDataProvider
+include!("../my-data-mod/mod.rs"); // defines BakedDataProvider
 
 fn main() {
     let unstable_provider = BakedDataProvider;
@@ -185,8 +186,8 @@ With this provider, we can use the `unstable` constructors. These are only guara
 You can also make the `BakedDataProvider` implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
 
 ```rust,compile_fail
-include!("../my-data/mod.rs");
-include!("../my-data/any.rs");
+include!("../my-data-mod/mod.rs");
+include!("../my-data-mod/any.rs");
 let _any_provider = BakedDataProvider;
 ```
 
@@ -195,12 +196,6 @@ let _any_provider = BakedDataProvider;
 The `dir` format will generate a directory tree of data files in JSON (although the `--syntax` option can be used to generate `postcard` or `bincode` files, which doesn't have many practical uses).
 
 Let's give it a try:
-
-```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data --format dir --keys-for-bin target/debug/myapp --locales ja
-```
-
-This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
 
 Same as `BlobDataProvider`, this also a buffer provider, so you will need to activate `icu`'s `serde` feature and use the `with_buffer_provider` constructors.
 
@@ -219,7 +214,8 @@ use icu_provider_fs::FsDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    let buffer_provider = FsDataProvider::try_new("my-data")
+    // we will ask icu4x-datagen to generate everything in "my-data-dir"
+    let buffer_provider = FsDataProvider::try_new("my-data-dir")
            .expect("Failed to initialize Data Provider");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
@@ -235,6 +231,15 @@ fn main() {
     println!("📅: {}", formatted_date);
 }
 ```
+
+Then, run the following command.
+
+```console
+$ cargo build && icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
+```
+
+This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
+
 
 # 6. Summary
 
