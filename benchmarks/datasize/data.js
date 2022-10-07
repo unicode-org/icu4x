@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665178547954,
+  "lastUpdate": 1665187135832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29963,6 +29963,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4f7e7de8058e3497e73cac8c02f2edfcc28b431f"
         },
         "date": 1665178484762,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc907e68ae7fe7933a01195f31a9377326cfe8b5",
+          "message": "Allowing no keys in datagen CLI (#2731)",
+          "timestamp": "2022-10-08T01:55:42+02:00",
+          "tree_id": "8a7f61f9a448f7307900c6a58a91639b807cd538",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc907e68ae7fe7933a01195f31a9377326cfe8b5"
+        },
+        "date": 1665187060069,
         "tool": "ndjson",
         "benches": [
           {
