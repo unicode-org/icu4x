@@ -229,6 +229,33 @@ where
             _value_type: PhantomData,
         })
     }
+
+    /// Borrows this [`LiteMap`] as one of its slice type.
+    ///
+    /// This can be useful in situations where you need a `LiteMap` by value but do not want
+    /// to clone the owned version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    ///
+    /// let borrowed_map = map.as_sliced();
+    /// assert_eq!(sub_map.get(&1), Some(&"one"));
+    /// assert_eq!(sub_map.get(&2), Some(&"two"));
+    /// ```
+    pub fn as_sliced(&self) -> LiteMap<K, V, &S::Slice> {
+        let subslice = self.values.lm_get_range(0..self.len()).unwrap();
+        LiteMap {
+            values: subslice,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
 }
 
 impl<K, V, S> LiteMap<K, V, S>
