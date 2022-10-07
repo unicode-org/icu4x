@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1664985456474,
+  "lastUpdate": 1665178547954,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29933,6 +29933,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f0592c39779594403fd7704a8911d44f8315c251"
         },
         "date": 1664985396537,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f7e7de8058e3497e73cac8c02f2edfcc28b431f",
+          "message": "Create DateTimeParser in experimental branch ixdtf (#2480)\n\n* Create DateTimeParser\r\n\r\n* Use Peekable iterator\r\n\r\n* Update Cargo.toml\r\n\r\n* address comments\r\n\r\n* add module\r\n\r\n* cargo make generate-readmes",
+          "timestamp": "2022-10-07T14:33:05-07:00",
+          "tree_id": "cf222a1840675e0861623f93c5f751e9a5af1d1c",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f7e7de8058e3497e73cac8c02f2edfcc28b431f"
+        },
+        "date": 1665178484762,
         "tool": "ndjson",
         "benches": [
           {
