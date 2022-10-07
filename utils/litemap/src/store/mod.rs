@@ -30,6 +30,7 @@ use core::cmp::Ordering;
 use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
+use core::ops::Range;
 
 /// Trait to enable const construction of empty store.
 pub trait StoreConstEmpty<K: ?Sized, V: ?Sized> {
@@ -69,6 +70,12 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
     fn lm_binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
     where
         F: FnMut(&K) -> Ordering;
+}
+
+pub trait StoreSlice<K: ?Sized, V: ?Sized>: Store<K, V> {
+    type Slice: ?Sized;
+
+    fn lm_get_range(&self, range: Range<usize>) -> Option<&Self::Slice>;
 }
 
 pub trait StoreMut<K, V>: Store<K, V> {

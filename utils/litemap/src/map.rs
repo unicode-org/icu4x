@@ -9,7 +9,7 @@ use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
-use core::ops::{Index, IndexMut};
+use core::ops::{Index, IndexMut, Range};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -196,6 +196,38 @@ where
         Q: Ord,
     {
         self.values.lm_binary_search_by(|k| k.borrow().cmp(key))
+    }
+}
+
+impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
+where
+    K: Ord,
+    S: StoreSlice<K, V>,
+{
+    /// Creates a new [`LiteMap`] from a range of the current [`LiteMap`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// map.insert(3, "three");
+    ///
+    /// let mut sub_map = map.get_indexed_range(1..3).expect("valid range");
+    /// assert_eq!(sub_map.get(&1), None);
+    /// assert_eq!(sub_map.get(&2), Some(&"two"));
+    /// assert_eq!(sub_map.get(&3), Some(&"three"));
+    /// ```
+    pub fn get_indexed_range(&self, range: Range<usize>) -> Option<LiteMap<K, V, &S::Slice>> {
+        let subslice = self.values.lm_get_range(range)?;
+        Some(LiteMap {
+            values: subslice,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        })
     }
 }
 
