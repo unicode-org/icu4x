@@ -116,8 +116,8 @@
 //!
 //! # Notes about index generation
 //!
-//! ICU4X currently does not have code or data for generating collation indexes:
-//! https://www.unicode.org/reports/tr35/tr35-collation.html#Collation_Indexes
+//! ICU4X currently does not have code or data for generating [collation
+//! indexes](https://www.unicode.org/reports/tr35/tr35-collation.html#Collation_Indexes).
 //!
 //! On the data side, ICU4X doesn't have data for `<exemplarCharacters type="index">`
 //! (or when that's missing, plain `<exemplarCharacters>`).
@@ -147,5 +147,5 @@
 //! having the code is better for size than having the list of 238 ideographs
 //! itself as data (476 bytes as UTF-16).
 //!
-//! Note: Investigate https://github.com/unicode-org/icu4x/issues/2723
+//! Note: Investigate [#2723](https://github.com/unicode-org/icu4x/issues/2723)
 //!
