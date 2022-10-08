@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665187135832,
+  "lastUpdate": 1665189592078,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -29993,6 +29993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc907e68ae7fe7933a01195f31a9377326cfe8b5"
         },
         "date": 1665187060069,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6f3cb2a272eed1843feb994d8297de7d313fa43",
+          "message": "Static blob constructor over FFI (#2724)",
+          "timestamp": "2022-10-08T02:37:19+02:00",
+          "tree_id": "5da190fb22974796bb65dad8e72e2c05b993c6d6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6f3cb2a272eed1843feb994d8297de7d313fa43"
+        },
+        "date": 1665189532006,
         "tool": "ndjson",
         "benches": [
           {
