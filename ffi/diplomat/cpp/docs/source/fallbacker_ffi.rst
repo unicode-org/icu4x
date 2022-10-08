@@ -79,8 +79,8 @@
 
         See the `Rust documentation for for_config <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.for_config>`__ for more information.
 
-
         Lifetimes: ``this`` must live at least as long as the output.
+
 
 .. cpp:class:: ICU4XLocaleFallbackerWithConfig
 
@@ -95,5 +95,5 @@
 
         See the `Rust documentation for fallback_for <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackerWithConfig.html#method.fallback_for>`__ for more information.
 
-
         Lifetimes: ``this`` must live at least as long as the output.
+

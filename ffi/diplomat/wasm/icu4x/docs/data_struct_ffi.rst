@@ -16,5 +16,5 @@
 
         See the `Rust documentation for DecimalSymbolsV1 <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html>`__ for more information.
 
-
         - Note: ``digits`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+

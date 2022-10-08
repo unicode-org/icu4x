@@ -41,6 +41,8 @@ class ICU4XScriptWithExtensionsBorrowed {
    * Get the Script property value for a code point
    * 
    * See the [Rust documentation for `get_script_extensions_val`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
   ICU4XScriptExtensionsSet get_script_extensions_val(uint32_t code_point) const;
 
