@@ -7,7 +7,7 @@ use quote::quote;
 
 use crate::utils::{self, FieldInfo};
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error};
+use syn::{Data, DeriveInput, Error, Path};
 
 pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
     if !utils::has_valid_repr(&input.attrs, |r| r == "packed" || r == "transparent") {
@@ -46,6 +46,19 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     let name = &input.ident;
 
+    let attr_path: Path = syn::parse_str("ule").unwrap();
+    let validate_with = match utils::find_validate_with_path(&input.attrs, &attr_path) {
+        Ok(Some(fn_path)) => {
+            quote! {
+                #fn_path(unsafe { &Self::from_byte_slice_unchecked(chunk)[0] })?;
+            }
+        }
+        Ok(None) => {
+            quote! {}
+        }
+        Err(e) => return e.to_compile_error(),
+    };
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes.
     //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
@@ -68,6 +81,7 @@ pub fn derive_impl(input: &DeriveInput) -> TokenStream2 {
                 #[allow(clippy::indexing_slicing)] // We're slicing a chunk of known size
                 for chunk in bytes.chunks_exact(SIZE) {
                     #validators
+                    #validate_with
                     debug_assert_eq!(#remaining_offset, SIZE);
                 }
                 Ok(())

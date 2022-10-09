@@ -4,10 +4,20 @@
 
 use zerovec::ule::AsULE;
 use zerovec::ule::EncodeAsVarULE;
+use zerovec::ule::VarULE;
+use zerovec::ule::ULE;
 use zerovec::*;
 
+fn validate_foo_ule(ule: &FooULE) -> Result<(), ZeroVecError> {
+    if ule.a == 0 {
+        return Err(ZeroVecError::parse::<Foo>());
+    }
+    Ok(())
+}
+
 #[repr(packed)]
-#[derive(ule::ULE, Copy, Clone)]
+#[derive(ule::ULE, Copy, Clone, Debug)]
+#[ule(validate_with = "validate_foo_ule")]
 pub struct FooULE {
     a: u8,
     b: <u32 as AsULE>::ULE,
@@ -40,8 +50,17 @@ impl AsULE for Foo {
     }
 }
 
+fn validate_relation_ule(ule: &RelationULE) -> Result<(), ZeroVecError> {
+    // A synthetic condition to test this code path
+    if ule.andor_polarity_operand == 0 && ule.modulo.as_unsigned_int() == 0 {
+        return Err(ZeroVecError::parse::<Relation>());
+    }
+    Ok(())
+}
+
 #[repr(packed)]
-#[derive(ule::VarULE)]
+#[derive(ule::VarULE, Debug)]
+#[varule(validate_with = "validate_relation_ule")]
 pub struct RelationULE {
     /// This maps to (AndOr, Polarity, Operand),
     /// with the first bit mapping to AndOr (1 == And), the second bit
@@ -110,6 +129,13 @@ const TEST_SLICE2: &[Foo] = &[
         c: '±',
     },
 ];
+
+const BAD_SLICE: &[Foo] = &[Foo {
+    a: 0,
+    b: 0,
+    c: '\0',
+}];
+
 fn test_zerovec() {
     let zerovec: ZeroVec<Foo> = TEST_SLICE.iter().copied().collect();
 
@@ -119,6 +145,10 @@ fn test_zerovec() {
     let reparsed: ZeroVec<Foo> = ZeroVec::parse_byte_slice(bytes).expect("Parsing should succeed");
 
     assert_eq!(reparsed, TEST_SLICE);
+
+    let bad_foo_vec: ZeroVec<Foo> = BAD_SLICE.iter().copied().collect();
+    let bad_bytes = bad_foo_vec.as_bytes();
+    FooULE::parse_byte_slice(bad_bytes).expect_err("Should fail validation");
 }
 
 fn test_varzerovec() {
@@ -149,6 +179,24 @@ fn test_varzerovec() {
     for (ule, stack) in recovered.iter().zip(relations.iter()) {
         assert_eq!(*stack, ule.as_relation());
     }
+
+    let bad_relation = Relation {
+        andor_polarity_operand: 0,
+        modulo: 0,
+        range_list: ZeroVec::default(),
+    };
+    let bad_relationule = zerovec::ule::encode_varule_to_box(&bad_relation);
+    let bad_bytes = bad_relationule.as_byte_slice();
+    RelationULE::parse_byte_slice(bad_bytes).expect_err("Should fail validation");
+
+    let bad_relation = Relation {
+        andor_polarity_operand: 1,
+        modulo: 5004,
+        range_list: BAD_SLICE.iter().copied().collect(),
+    };
+    let bad_relationule = zerovec::ule::encode_varule_to_box(&bad_relation);
+    let bad_bytes = bad_relationule.as_byte_slice();
+    RelationULE::parse_byte_slice(bad_bytes).expect_err("Should fail validation");
 }
 
 fn main() {
