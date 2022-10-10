@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665191062272,
+  "lastUpdate": 1665382851126,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30053,6 +30053,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/728d3891e37be6256e2c2fc604e50f8f0865fb66"
         },
         "date": 1665190989619,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5116379029a0e20aa50843503337cc6199ad889",
+          "message": "Add notes about collation index generation (#2728)",
+          "timestamp": "2022-10-10T09:18:10+03:00",
+          "tree_id": "750d57672f793b167e54926ccc366a1e1669030e",
+          "url": "https://github.com/unicode-org/icu4x/commit/d5116379029a0e20aa50843503337cc6199ad889"
+        },
+        "date": 1665382786224,
         "tool": "ndjson",
         "benches": [
           {
