@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665191800133,
+  "lastUpdate": 1665383657993,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -78581,6 +78581,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6176,
             "range": "± 46",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d5116379029a0e20aa50843503337cc6199ad889",
+          "message": "Add notes about collation index generation (#2728)",
+          "timestamp": "2022-10-10T09:18:10+03:00",
+          "tree_id": "750d57672f793b167e54926ccc366a1e1669030e",
+          "url": "https://github.com/unicode-org/icu4x/commit/d5116379029a0e20aa50843503337cc6199ad889"
+        },
+        "date": 1665383574135,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94062,
+            "range": "± 7577",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 170417,
+            "range": "± 16609",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 91397,
+            "range": "± 6995",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 105157,
+            "range": "± 6584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 97656,
+            "range": "± 5793",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 108859,
+            "range": "± 6710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 162476,
+            "range": "± 10167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 174259,
+            "range": "± 16252",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 171425,
+            "range": "± 11693",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 183286,
+            "range": "± 14464",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 7064,
+            "range": "± 538",
             "unit": "ns/iter"
           }
         ]
