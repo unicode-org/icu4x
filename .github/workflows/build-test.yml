@@ -1133,6 +1133,10 @@ jobs:
           </body>
         </html>
         EOL
+        
+    - name: Create doc CNAME
+      run: |
+        echo "icu4x.unicode.org" > CNAME
 
     # Doc-GH-Pages job > Copy docs (+ bench dashboard HTML) to remote docs repo's GH pages branch step
 
