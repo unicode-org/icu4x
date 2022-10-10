@@ -16,13 +16,11 @@
     ],
     "require": [
       "esm"
-    ],
-    "nodeArguments": [
-      "--experimental-wasm-bigint"
     ]
   },
   "scripts": {
-    "test": "ava"
+    "test": "ava",
+    "prepare": "ls lib 1>/dev/null 2>&1 || mkdir lib && cp ../../include/* lib && rustup +nightly-2022-04-05 component add rust-src && cargo +nightly-2022-04-05 wasm-build-release --package icu_capi_cdylib --features wasm_default && mv ../../../../../target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm lib/icu_capi.wasm"
   },
   "repository": {
     "type": "git",

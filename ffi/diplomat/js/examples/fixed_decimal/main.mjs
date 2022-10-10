@@ -1,4 +1,4 @@
-import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFormatter, ICU4XFixedDecimalGroupingStrategy } from "../lib/index.js"
+import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFormatter, ICU4XFixedDecimalGroupingStrategy } from "../node/lib/index.js"
 
 const decimal = ICU4XFixedDecimal.create_from_i32(1234);
 decimal.multiply_pow10(-2);

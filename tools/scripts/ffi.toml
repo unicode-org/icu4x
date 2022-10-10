@@ -12,6 +12,7 @@ dependencies = [
     "test-c",
     "test-c-tiny",
     "test-cpp",
+    "test-js",
     "build-wearos-ffi",
     "test-nostd",
 ]
@@ -146,6 +147,18 @@ rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 '''
 
+[tasks.test-js]
+description = "Run JS tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+cd ffi/diplomat/js/examples/node
+exec --fail-on-error npm ci
+exec --fail-on-error npm test
+cd ../fixed_decimal
+exec --fail-on-error node main.mjs
+'''
+
 [tasks.test-cppdoc]
 description = "Build the cpp tests"
 category = "ICU4X Development"
@@ -187,6 +200,29 @@ rm -r ./cpp/docs/source
 mkdir ./cpp/docs/source
 writefile ./cpp/docs/source/conf.py ${conf_py}
 exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/ 
+'''
+
+[tasks.diplomat-gen-js]
+description = "Generate JS bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+script_runner = "bash"
+script = '''
+set -e
+cd ffi/diplomat
+
+# Duckscript doesn't support globs in rm, so we delete the dir.
+# Preserve conf.py across the deletion.
+CONF_PY=`cat ./js/docs/source/conf.py`
+rm -r ./js/include
+mkdir ./js/include
+rm -r ./js/docs/source
+mkdir ./js/docs/source
+echo $CONF_PY > ./js/docs/source/conf.py
+
+diplomat-tool js ./js/include/ --docs ./js/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+
+# TODO: Fix diplomat bug
+find ./js/docs/source -type f -exec sed -i '' -e 's/staticfunction/function/g' {} \;
 '''
 
 [tasks.build-wearos-ffi]

@@ -4,24 +4,6 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.wasm-build-dev]
-description = "Build WASM FFI into the target directory (dev mode)"
-category = "ICU4X WASM"
-install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2022-04-05"
-command = "cargo"
-args = ["wasm-build-dev", "--package", "icu_capi_cdylib", "--features", "wasm_default"]
-
-[tasks.wasm-build-release]
-description = "Build WASM FFI into the target directory (release mode)"
-category = "ICU4X WASM"
-install_crate = { rustup_component_name = "rust-src" }
-toolchain = "nightly-2022-04-05"
-# We don't care about panics in release mode because most incorrect inputs are handled by result types.
-env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
-command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "wasm_default"]
-
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"
 category = "ICU4X WASM"
@@ -43,20 +25,6 @@ description = "Make the WASM package directory"
 category = "ICU4X WASM"
 command = "mkdir"
 args = ["-p", "wasmpkg"]
-
-[tasks.wasm-wasm-dev]
-description = "Copy the WASM files from dev into wasmpkg"
-category = "ICU4X WASM"
-command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/debug/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
-dependencies = ["wasm-build-dev", "wasm-dir"]
-
-[tasks.wasm-wasm-release]
-description = "Copy the WASM files from release into wasmpkg"
-category = "ICU4X WASM"
-command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "wasmpkg/icu_capi.wasm"]
-dependencies = ["wasm-build-release", "wasm-dir"]
 
 [tasks.wasm-cpp-emscripten]
 description = "Run the C++-emscripten test (needs emsdk)"
@@ -362,58 +330,12 @@ dependencies = [
     "wasm-twiggy-dominators-examples",
 ]
 
-[tasks.wasm-copy-to-diplomat]
-description = "Copy the WASM files from release into Diplomat"
-category = "ICU4X WASM"
-dependencies = ["wasm-build-release"]
-command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "ffi/diplomat/wasm/icu4x/lib/icu_capi.wasm"]
-
-[tasks.wasm-test-release]
-description = "Run WASM tests in release mode"
-category = "ICU4X WASM"
-dependencies = [
-    "wasm-release",
-    "diplomat-gen-js",
-    "wasm-copy-to-diplomat"
-]
-script_runner = "@duckscript"
-script = '''
-cd ./ffi/diplomat/wasm/icu4x
-exec --fail-on-error npm ci
-exec --fail-on-error npm test
-'''
-
-[tasks.diplomat-gen-js]
-description = "Generate JS bindings for the FFI with Diplomat"
-category = "ICU4X Development"
-script_runner = "bash"
-script = '''
-set -e
-cd ffi/diplomat
-
-# Duckscript doesn't support globs in rm, so we delete the dir.
-# Preserve conf.py across the deletion.
-CONF_PY=`cat ./wasm/icu4x/docs/source/conf.py`
-rm -r ./wasm/icu4x/lib
-mkdir ./wasm/icu4x/lib
-rm -r ./wasm/icu4x/docs/source
-mkdir ./wasm/icu4x/docs/source
-echo $CONF_PY > ./wasm/icu4x/docs/source/conf.py
-
-diplomat-tool js ./wasm/icu4x/lib/ --docs ./wasm/icu4x/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
-
-# TODO: Fix diplomat bug
-find ./wasm/icu4x/docs/source -type f -exec sed -i '' -e 's/staticfunction/function/g' {} \;
-'''
-
 [tasks.diplomat-build-webpack-demo]
 description = "Webpack the demo app using WASM bindings"
 category = "ICU4X Development"
-dependencies = ["wasm-copy-to-diplomat"]
 script_runner = "@duckscript"
 script = '''
-cd ffi/diplomat/wasm/wasm-demo
+cd ffi/diplomat/js/examples/wasm-demo
 mkdir dist
 exec --fail-on-error npm install
 exec --fail-on-error npm run build

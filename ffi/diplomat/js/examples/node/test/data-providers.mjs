@@ -9,7 +9,7 @@ import { promises as fsPromises } from 'fs';
 
 import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/index.js"
 
-const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../../.."));
+const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../../../.."));
 const TESTDATA_POSTCARD_PATH = path.resolve(path.join(TOP_DIR, "provider/testdata/data/testdata.postcard"));
 
 test("use create_from_byte_slice to format a simple decimal", async t => {
