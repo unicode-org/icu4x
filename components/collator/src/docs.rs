@@ -113,3 +113,39 @@
 //!     "searchjl" is even more problematic than "search", since "searchjl" uses
 //!     prefixes matches with jamo, and currently Hangul is assumed not to participate
 //!     in prefix or contraction matching.
+//!
+//! # Notes about index generation
+//!
+//! ICU4X currently does not have code or data for generating [collation
+//! indexes](https://www.unicode.org/reports/tr35/tr35-collation.html#Collation_Indexes).
+//!
+//! On the data side, ICU4X doesn't have data for `<exemplarCharacters type="index">`
+//! (or when that's missing, plain `<exemplarCharacters>`).
+//!
+//! Of the collations, `zh-u-co-pinyin`, `zh-u-co-stroke`, `zh-u-co-zhuyin`, and
+//! `*-u-co-unihan` are special: They bake a contraction of U+FDD0 and an index
+//! character in the collation order. ICU4X collation data already includes this.
+//! For `*-u-co-unihan` this index character data is repeated in all three tailorings
+//! instead of being in the root. If it was in the root, code for extracting the
+//! index characters from the collation data would need to avoid confusing the
+//! `unihan` index contractions (if they were in the root) and the `zh-u-co-pinyin`,
+//! `zh-u-co-stroke`, and `zh-u-co-zhuyin` in the tailoring. This seems feasible,
+//! but isn't how CLDR and ICU4C do it. (If the index characters for
+//! `*-u-co-unihan` were in the root, `ko-u-co-unihan` would become a mere
+//! script reordering.)
+//!
+//! It's unclear how useful it would be size-wise to have code to extract the
+//! index characters from the collations: For `zh-u-co-pinyin`, `zh-u-co-stroke`,
+//! `zh-u-co-zhuyin`, the index characters are contiguous ranges that could be
+//! efficiently stored as start and end. Moreover, the in-data index character
+//! for `stroke` isn't the label to be rendered to the user, so special-casing
+//! is needed anyway.
+//!
+//! This means that there's a tradeoff between having duplicate data (relative to
+//! the collation tailorings) for the `unihan` index character list vs. having
+//! code for extracting the list from the tailorings. It's not at all clear that
+//! having the code is better for size than having the list of 238 ideographs
+//! itself as data (476 bytes as UTF-16).
+//!
+//! Note: Investigate [#2723](https://github.com/unicode-org/icu4x/issues/2723)
+//!
