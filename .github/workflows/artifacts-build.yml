@@ -74,6 +74,45 @@ jobs:
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
         echo "::endgroup::"
 
+  ffi-docs:
+    name: "FFI Preview"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Build CPP docs
+      run: |
+        cd ffi/diplomat/cpp/docs
+        make html
+        cd ../../../..
+    - name: Build JS docs
+      run: |
+        cd ffi/diplomat/js/docs
+        make html
+        cd ../../../..
+    - name: Upload docs to Google Cloud Storage
+      run: |
+        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
+        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "::group::📖 CPP Docs Preview"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
+        echo "::endgroup::"
+
+        echo "::group::📖 JS Docs Preview"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
+        echo "::endgroup::"
+
   webpack:
     name: WASM Demo
     needs: credentials
