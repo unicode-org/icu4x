@@ -212,12 +212,12 @@ cd ffi/diplomat
 
 # Duckscript doesn't support globs in rm, so we delete the dir.
 # Preserve conf.py across the deletion.
-CONF_PY=`cat ./js/docs/source/conf.py`
+conf_py=$(<./js/docs/source/conf.py)
 rm -r ./js/include
 mkdir ./js/include
 rm -r ./js/docs/source
 mkdir ./js/docs/source
-echo $CONF_PY > ./js/docs/source/conf.py
+echo "$conf_py" > ./js/docs/source/conf.py
 
 diplomat-tool js ./js/include/ --docs ./js/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
 
