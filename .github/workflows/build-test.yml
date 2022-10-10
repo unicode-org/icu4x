@@ -1105,7 +1105,7 @@ jobs:
     - name: Switch to benchmark data storage branch.
       run: |
         git fetch
-        git checkout gh-pages
+        git checkout merged-bench-data
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
