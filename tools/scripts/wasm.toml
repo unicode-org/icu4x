@@ -387,17 +387,24 @@ exec --fail-on-error npm test
 [tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
-script_runner = "@duckscript"
+script_runner = "bash"
 script = '''
-exit_on_error true
+set -e
 cd ffi/diplomat
 
+# Duckscript doesn't support globs in rm, so we delete the dir.
+# Preserve conf.py across the deletion.
+CONF_PY=`cat ./wasm/icu4x/docs/source/conf.py`
 rm -r ./wasm/icu4x/lib
-rm -r ./wasm/icu4x/docs
 mkdir ./wasm/icu4x/lib
-mkdir ./wasm/icu4x/docs
+rm -r ./wasm/icu4x/docs/source
+mkdir ./wasm/icu4x/docs/source
+echo $CONF_PY > ./wasm/icu4x/docs/source/conf.py
 
-exec --fail-on-error diplomat-tool js ./wasm/icu4x/lib/ --docs ./wasm/icu4x/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+diplomat-tool js ./wasm/icu4x/lib/ --docs ./wasm/icu4x/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+
+# TODO: Fix diplomat bug
+find ./wasm/icu4x/docs/source -type f -exec sed -i '' -e 's/staticfunction/function/g' {} \;
 '''
 
 [tasks.diplomat-build-webpack-demo]
