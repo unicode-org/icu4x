@@ -733,7 +733,7 @@ jobs:
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
           fail-on-alert: true
-          gh-pages-branch: gh-pages  # Requires one-time-only creation of this branch on remote repo.
+          gh-pages-branch: merged-bench-data  # Requires one-time-only creation of this branch on remote repo.
                                      # We could use another branch besides `gh-pages` to store this historical benchmark info.
           auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -857,7 +857,7 @@ jobs:
           # branch that is being used by the performance benchmark. The information is
           # computed by gregtatum/github-action-benchmark, and is added to a .js file in
           # the branch, e.g. benchmarks/memory/{os}/data.js
-          gh-pages-branch: gh-pages
+          gh-pages-branch: merged-bench-data
           auto-push: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
@@ -999,7 +999,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
-        gh-pages-branch: gh-pages
+        gh-pages-branch: merged-bench-data
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
@@ -1049,7 +1049,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
         fail-on-alert: true
-        gh-pages-branch: gh-pages
+        gh-pages-branch: merged-bench-data
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
