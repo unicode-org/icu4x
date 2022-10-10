@@ -169,13 +169,13 @@ jobs:
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/diplomat/wasm/wasm-demo/index.html ffi/diplomat/wasm/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/wasm/wasm-demo/dist/index.js
+        cp ffi/diplomat/js/examples/wasm-demo/index.html ffi/diplomat/js/examples/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/js/examples/wasm-demo/dist/index.js
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
-        # gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
-        gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+        # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -185,14 +185,14 @@ jobs:
 
     #   TODO(qnnokabayashi): This was my attempt to get it to copy the HTML to
     #     the `gh-pages` branch. As of 8/1/2022, idea is that
-    #     `ffi/diplomat/wasm/wasm-demo/index.html` contains the structure for
+    #     `ffi/diplomat/js/examples/wasm-demo/index.html` contains the structure for
     #     the demo. It needs to call into the Webpacked JavaScript. When testing
-    #     locally, this content is in `ffi/diplomat/wasm/wasm-demo/dist/`, but
+    #     locally, this content is in `ffi/diplomat/js/examples/wasm-demo/dist/`, but
     #     when deployed, it lives in Google Cloud Storage. But we don't want to
     #     be editing this arbitrarily complex HTML file in CI. The solution was
     #     to have it call a very simple `index.js` file which modifies the HTML
     #     and tells it where to get the script from. Locally, this lives next to
-    #     `index.html` at `ffi/diplomat/wasm/wasm-demo/index.js`, and contains
+    #     `index.html` at `ffi/diplomat/js/examples/wasm-demo/index.js`, and contains
     #     the following:
     #       ```js
     #       const gcs = document.createElement('script');
@@ -210,7 +210,7 @@ jobs:
     #     
     # - name: Store index.html
     #   run: |
-    #     cp ffi/diplomat/wasm/wasm-demo/index.html /tmp/wasm-demo-index.html
+    #     cp ffi/diplomat/js/examples/wasm-demo/index.html /tmp/wasm-demo-index.html
     # - name: Checkout gh-pages
     #   uses: actions/checkout@v2
     #   with:
