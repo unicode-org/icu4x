@@ -24,11 +24,6 @@ cargo +nightly-2022-04-05 build \
     --features wasm_default \
     --target-dir target
 
-if ! command -v wasm-opt &> /dev/null
-then
-    npm install -g wasm-opt
-fi
-
 # Optimize the WASM library
 wasm-opt -Os target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm -o lib/icu_capi.wasm
 
