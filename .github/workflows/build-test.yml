@@ -429,21 +429,14 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-      - name: Build
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: make
-          args: wasm-release
       - name: Install Node.js v14.17.0
         uses: actions/setup-node@v1
         with:
           node-version: 14.17.0
-      # This has to be a separate test since the emscripten sdk
-      # will otherwise interfere with other node-using tests
       - name: Run emscripten test
         run: |
           . ~/emsdk/emsdk_env.sh
-          cargo make wasm-cpp-emscripten
+          cargo make ci-job-wasm
 
   # Fmt job - runs cargo fmt
   fmt:
