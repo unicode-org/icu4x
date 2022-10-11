@@ -31,11 +31,11 @@ jobs:
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/docs/icu/index.html"
         
         echo "::group::📖 CPP Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/cpp/index.html"
         echo "::endgroup::"
 
         echo "::group::📖 JS Docs Preview"
-        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
         echo "::endgroup::"
 
         echo "::endgroup::"
