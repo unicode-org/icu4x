@@ -815,9 +815,9 @@ jobs:
           /usr/local/bin/wasm-opt
           /usr/local/bin/wasm2wat
           /usr/local/bin/wasm-decompile
-        key: ${{ runner.os }}-wabt-${{ steps.twiggy-version.outputs.hash }}
+        key: ${{ runner.os }}-wabt
     - name: Install npm packages.
-      if: steps.twiggy-cache.outputs.cache-hit != 'true'
+      if: steps.npm-cache.outputs.cache-hit != 'true'
       run: |
         npm install -g wasm-opt --unsafe-perm
         npm install -g wabt
@@ -829,13 +829,13 @@ jobs:
         path: |
           ~/.cargo/bin/twiggy
           ~/.cargo/bin/twiggy.exe
-        key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
+        key: ${{ runner.os }}-twiggy-0.7
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
-        args: twiggy
+        args: twiggy --version 0.7.0
 
     - name: Setup output data directory
       run: |
