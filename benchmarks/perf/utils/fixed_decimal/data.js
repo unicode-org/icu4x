@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665448482007,
+  "lastUpdate": 1665469775070,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56848,6 +56848,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 99,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44adf7e0154be9987c384a642f595b91cd85c577",
+          "message": "Update design_doc.md",
+          "timestamp": "2022-10-11T01:14:08-05:00",
+          "tree_id": "5db99f4f2d774ca258278d527f5b0fd37dce16d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/44adf7e0154be9987c384a642f595b91cd85c577"
+        },
+        "date": 1665469700179,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 152368,
+            "range": "± 511",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 31387,
+            "range": "± 249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 88546,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 254,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 112,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 103,
             "range": "± 0",
             "unit": "ns/iter"
           }
