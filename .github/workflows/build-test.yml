@@ -812,10 +812,8 @@ jobs:
       id: npm-cache
       with:
         path: |
-          /usr/local/bin/wasm-opt
-          /usr/local/bin/wasm2wat
-          /usr/local/bin/wasm-decompile
-        key: ${{ runner.os }}-wabt
+          ~/.nvm/versions/node/*/lib/node_modules
+        key: ${{ runner.os }}-npm-global
     - name: Install npm packages.
       if: steps.npm-cache.outputs.cache-hit != 'true'
       run: |
