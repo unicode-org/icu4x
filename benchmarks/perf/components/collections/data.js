@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665448486367,
+  "lastUpdate": 1665469765696,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -27815,6 +27815,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39516033,
             "range": "± 51875",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44adf7e0154be9987c384a642f595b91cd85c577",
+          "message": "Update design_doc.md",
+          "timestamp": "2022-10-11T01:14:08-05:00",
+          "tree_id": "5db99f4f2d774ca258278d527f5b0fd37dce16d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/44adf7e0154be9987c384a642f595b91cd85c577"
+        },
+        "date": 1665469700476,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 461,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 319,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 318,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 370,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 605,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 647,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 319,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 318,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 371,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 418,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 663,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 49534800,
+            "range": "± 600355",
             "unit": "ns/iter"
           },
           {
