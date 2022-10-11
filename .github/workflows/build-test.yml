@@ -241,7 +241,7 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 14
     - name: Install Node.js v14.17.0
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 14.17.0
         cache: 'npm'
@@ -427,7 +427,7 @@ jobs:
           ./emsdk install latest
           ./emsdk activate latest
       - name: Install Node.js v14.17.0
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 14.17.0
           cache: 'npm'
@@ -814,7 +814,7 @@ jobs:
         rustup component add --toolchain nightly-2022-04-05 rust-src
 
     - name: Install Node.js v14.17.0
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 14.17.0
         cache: 'npm'
