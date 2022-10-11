@@ -693,10 +693,10 @@ jobs:
       # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
       # If it doesn't already exist, it should be created by someone with push permissions, like so:
       #   # Create a local branch
-      #   $ git checkout --orphan gh-pages
+      #   $ git checkout --orphan <newbranch>
       #   $ git commit --allow-empty -m "root commit"
       #   # Push it to create a remote branch
-      #   $ git push origin gh-pages:gh-pages
+      #   $ git push origin <newbranch>:<newbranch>
 
       # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
@@ -713,7 +713,6 @@ jobs:
           alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
           fail-on-alert: true
           gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
-                                                   # We could use another branch besides `gh-pages` to store this historical benchmark info.
           auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
                             # that the branch in `gh-pages-branch` is different from the branch used for merges to main branch.
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -733,8 +732,7 @@ jobs:
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
           fail-on-alert: true
-          gh-pages-branch: gh-pages  # Requires one-time-only creation of this branch on remote repo.
-                                     # We could use another branch besides `gh-pages` to store this historical benchmark info.
+          gh-pages-branch: merged-bench-data  # Requires one-time-only creation of this branch on remote repo.
           auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
@@ -857,7 +855,7 @@ jobs:
           # branch that is being used by the performance benchmark. The information is
           # computed by gregtatum/github-action-benchmark, and is added to a .js file in
           # the branch, e.g. benchmarks/memory/{os}/data.js
-          gh-pages-branch: gh-pages
+          gh-pages-branch: merged-bench-data
           auto-push: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on-alert: true
@@ -999,7 +997,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
-        gh-pages-branch: gh-pages
+        gh-pages-branch: merged-bench-data
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
@@ -1049,7 +1047,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
         fail-on-alert: true
-        gh-pages-branch: gh-pages
+        gh-pages-branch: merged-bench-data
         auto-push: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
@@ -1105,7 +1103,7 @@ jobs:
     - name: Switch to benchmark data storage branch.
       run: |
         git fetch
-        git checkout gh-pages
+        git checkout merged-bench-data
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
@@ -1116,7 +1114,7 @@ jobs:
         path: doc
         name: doc
 
-    # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu4x` crate
+    # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu` crate
 
     - name: Create doc /index.html
       run: |
