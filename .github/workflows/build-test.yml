@@ -241,11 +241,10 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 14
     - name: Install Node.js v14.17.0
-      - uses: actions/setup-node@v1
-      - uses: actions/checkout@v2
+      uses: actions/setup-node@v1
       with:
         node-version: 14.17.0
-          cache: 'npm'
+        cache: 'npm'
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -814,8 +813,7 @@ jobs:
         rustup component add --toolchain nightly-2022-04-05 rust-src
 
     - name: Install npm packages.
-      - uses: actions/setup-node@v1
-      - uses: actions/checkout@v2
+      uses: actions/setup-node@v1
       with:
         node-version: 14.17.0
         cache: 'npm'
