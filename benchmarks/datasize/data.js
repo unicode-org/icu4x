@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665447815014,
+  "lastUpdate": 1665469011874,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30143,6 +30143,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a92d8bc14f64d92ef27e67709b1e2e8bb9e3f541"
         },
         "date": 1665447750418,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "44adf7e0154be9987c384a642f595b91cd85c577",
+          "message": "Update design_doc.md",
+          "timestamp": "2022-10-11T01:14:08-05:00",
+          "tree_id": "5db99f4f2d774ca258278d527f5b0fd37dce16d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/44adf7e0154be9987c384a642f595b91cd85c577"
+        },
+        "date": 1665468946152,
         "tool": "ndjson",
         "benches": [
           {
