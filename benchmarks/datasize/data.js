@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665469011874,
+  "lastUpdate": 1665505827013,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30173,6 +30173,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/44adf7e0154be9987c384a642f595b91cd85c577"
         },
         "date": 1665468946152,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30c7e8466fa28313c1984085463baf008d319851",
+          "message": "Use better branch setting for benchmarks CI job (#2737)",
+          "timestamp": "2022-10-11T16:27:37Z",
+          "tree_id": "2ffadecac23e6a8025fb3f856609f70193ee0c28",
+          "url": "https://github.com/unicode-org/icu4x/commit/30c7e8466fa28313c1984085463baf008d319851"
+        },
+        "date": 1665505758247,
         "tool": "ndjson",
         "benches": [
           {
