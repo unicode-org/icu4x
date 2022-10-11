@@ -430,6 +430,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.17.0
+          cache: 'npm'
       - name: Run emscripten test
         run: |
           . ~/emsdk/emsdk_env.sh
@@ -812,11 +813,13 @@ jobs:
         rustup toolchain install nightly-2022-04-05
         rustup component add --toolchain nightly-2022-04-05 rust-src
 
-    - name: Install npm packages.
+    - name: Install Node.js v14.17.0
       uses: actions/setup-node@v1
       with:
         node-version: 14.17.0
         cache: 'npm'
+
+    - name: Install npm tools
       run: |
         npm install -g wasm-opt --unsafe-perm
         npm install -g wabt
