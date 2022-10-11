@@ -147,6 +147,16 @@ rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 '''
 
+[tasks.test-cpp-emscripten]
+description = "Run the C++-emscripten test (needs emsdk)"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/diplomat/cpp/examples/fixeddecimal_wasm
+exec make test
+'''
+
 [tasks.test-js]
 description = "Run JS tests"
 category = "ICU4X Development"

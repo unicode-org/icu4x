@@ -114,7 +114,7 @@ dependencies = [
 description = "Run all tests for the CI 'wasm' job"
 category = "CI"
 dependencies = [
-    "wasm-cpp-emscripten",
+    "test-cpp-emscripten",
 ]
 
 [tasks.ci-job-clippy]

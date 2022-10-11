@@ -10,16 +10,6 @@ category = "ICU4X WASM"
 command = "mkdir"
 args = ["-p", "wasmpkg"]
 
-[tasks.wasm-cpp-emscripten]
-description = "Run the C++-emscripten test (needs emsdk)"
-category = "ICU4X WASM"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/diplomat/cpp/examples/fixeddecimal_wasm
-exec make test
-'''
-
 [tasks.wasm-wasm-examples]
 description = "Copy the WASM files from examples into wasmpkg"
 category = "ICU4X WASM"
