@@ -240,6 +240,12 @@ jobs:
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 14
+    - name: Set up Node 14
+      uses: actions/checkout@v3
+      uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -807,15 +813,12 @@ jobs:
         rustup toolchain install nightly-2022-04-05
         rustup component add --toolchain nightly-2022-04-05 rust-src
 
-    - name: Attempt to load cached npm deps
-      uses: actions/cache@v2
-      id: npm-cache
-      with:
-        path: |
-          ~/.nvm/versions/node/*/lib/node_modules
-        key: ${{ runner.os }}-npm-global
     - name: Install npm packages.
-      if: steps.npm-cache.outputs.cache-hit != 'true'
+      uses: actions/checkout@v3
+      uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
       run: |
         npm install -g wasm-opt --unsafe-perm
         npm install -g wabt
