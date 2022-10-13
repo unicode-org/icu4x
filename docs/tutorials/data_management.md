@@ -69,7 +69,7 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(&buffer_provider, &LOCALE.into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
 
-    let date = DateTime::try_new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
     let date = date.to_any();
 
