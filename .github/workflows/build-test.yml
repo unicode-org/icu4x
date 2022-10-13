@@ -245,9 +245,7 @@ jobs:
       with:
         node-version: 14.17.0
         cache: 'npm'
-        cache-dependency-path: |
-          'ffi/diplomat/js/examples/node/package-lock.json'
-          'ffi/diplomat/js/examples/wasm-demo/package-lock.json'
+        cache-dependency-path: '**/package-lock.json'
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -434,9 +432,7 @@ jobs:
         with:
           node-version: 14.17.0
           cache: 'npm'
-          cache-dependency-path: |
-            'ffi/diplomat/js/examples/node/package-lock.json'
-            'ffi/diplomat/js/examples/wasm-demo/package-lock.json'
+        cache-dependency-path: '**/package-lock.json'
       - name: Run emscripten test
         run: |
           . ~/emsdk/emsdk_env.sh
@@ -824,9 +820,7 @@ jobs:
       with:
         node-version: 14.17.0
         cache: 'npm'
-        cache-dependency-path: |
-          'ffi/diplomat/js/examples/node/package-lock.json'
-          'ffi/diplomat/js/examples/wasm-demo/package-lock.json'
+        cache-dependency-path: '**/package-lock.json'
 
     - name: Install npm tools
       run: |
