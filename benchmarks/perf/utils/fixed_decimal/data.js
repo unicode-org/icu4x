@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665506478046,
+  "lastUpdate": 1665683154103,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56957,6 +56957,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/to_string/908070605040302010",
             "value": 166,
             "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e5e30c5a8f3373a7f6ddcc0370239d220cd048f",
+          "message": "Fix sample code to use iso (#2741)",
+          "timestamp": "2022-10-13T12:32:24-05:00",
+          "tree_id": "59acb8c5c5559eaf1553808108aff0396f379a90",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e5e30c5a8f3373a7f6ddcc0370239d220cd048f"
+        },
+        "date": 1665683083011,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101749,
+            "range": "± 2300",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21072,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66548,
+            "range": "± 346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 1",
             "unit": "ns/iter"
           },
           {
