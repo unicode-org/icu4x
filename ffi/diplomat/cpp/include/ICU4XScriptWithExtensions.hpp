@@ -58,6 +58,8 @@ class ICU4XScriptWithExtensions {
    * Borrow this object for a slightly faster variant with more operations
    * 
    * See the [Rust documentation for `as_borrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
   ICU4XScriptWithExtensionsBorrowed as_borrowed() const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }

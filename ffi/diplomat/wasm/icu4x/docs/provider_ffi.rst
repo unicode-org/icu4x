@@ -40,8 +40,10 @@
 
         See the `Rust documentation for BlobDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more information.
 
-
         - Note: ``blob`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+        - Warning: This method leaks memory. The parameter `blob` will not be freed as it is required to live for the duration of the program.
+
 
     .. js:staticfunction:: create_empty()
 

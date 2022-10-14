@@ -72,8 +72,8 @@
 
         See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16>`__ for more information.
 
-
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
 
     .. js:function:: segment_latin1(input)
 
@@ -81,8 +81,8 @@
 
         See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1>`__ for more information.
 
-
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
 
 .. js:class:: ICU4XWordBreakRule
 

@@ -26,12 +26,17 @@ We would like to be able to use collections of arbitrary types in zero-copy cont
 
 It is worth noting that [`rkyv`](https://docs.rs/rkyv) satisfies many of these requirements, and it is a robust library with a lot of thought put into it. The ICU4X team seriously considered leveraging `rkyv`. The limitations in `rkyv` that drove us to develop `zerovec` include:
 
-1. Only one data file format
-    - Cannot switch formats based on the needs of the client (e.g., small data vs fast lookup, or machine readable vs human readable)
+1. Only one zero-copy data file format
+    - Cannot switch formats based on the needs of the client (e.g., small data vs fast lookup)
+    - Serde can be derived in addition to rkyv, but it produces a different runtime type than the zero-copy type
     - The archived structures are not Serde-compatible, so Serde cannot be easily used to add additional formats
-2. Opinionated type system; requires designing the whole data system around it, with no easy path for incremental migration toward zero-copy behavior
-3. Limited support for data overrides (mixing owned runtime data with borrowed static data)
-4. Little-endian and big-endian require different data files, meaning that the flag to toggle between them also needs to percolate through the data system
+2. More flexibility around the data validation lifecycle
+    - Using rkyv without bytecheck is `unsafe` with untrusted data (such as with the dynamically loaded data needed by ICU4X)
+    - ZeroVec requires comparatively little deserialization-time validation, depending on the exact types being deserialized
+3. More difficult to perform incremental, field-by-field, struct-by-struct migration
+4. Limited support for data overrides (mixing owned runtime data with borrowed static data)
+5. Abstrating away endianness and alignment makes it easier to reason about safety
+6. Little-endian and big-endian require different data files, meaning that the flag to toggle between them also needs to percolate through the data system
 
 Relative to `rkyv`, the primary limitation of `zerovec` is its inability to produce data aligned to anything other than 1 byte; i.e., there is no way for it to represent something like `&[u32]`. However, we have [benchmarked](https://github.com/unicode-org/icu4x/pull/1391) that for single-element read operations, the performance impact of an unaligned read is minimal. See [this issue](https://github.com/unicode-org/icu4x/issues/1426#issuecomment-1045043829) for a discussion of options in situations where alignment has a measurable performance benefit (perhaps vectorized operations like matrix multiplication).
 

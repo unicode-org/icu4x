@@ -46,6 +46,8 @@ class ICU4XBidi {
    * Takes in a Level for the default level, if it is an invalid value it will default to LTR
    * 
    * See the [Rust documentation for `new_with_data_source`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+   * 
+   * Lifetimes: `text` must live at least as long as the output.
    */
   ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
 

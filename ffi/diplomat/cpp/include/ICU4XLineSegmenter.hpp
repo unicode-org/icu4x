@@ -54,6 +54,8 @@ class ICU4XLineSegmenter {
    * Segments a (potentially ill-formed) UTF-8 string.
    * 
    * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
+   * 
+   * Lifetimes: `this`, `input` must live at least as long as the output.
    */
   ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
@@ -61,6 +63,8 @@ class ICU4XLineSegmenter {
    * Segments a UTF-16 string.
    * 
    * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
+   * 
+   * Lifetimes: `this`, `input` must live at least as long as the output.
    */
   ICU4XLineBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
 
@@ -68,6 +72,8 @@ class ICU4XLineSegmenter {
    * Segments a Latin-1 string.
    * 
    * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
+   * 
+   * Lifetimes: `this`, `input` must live at least as long as the output.
    */
   ICU4XLineBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
   inline const capi::ICU4XLineSegmenter* AsFFI() const { return this->inner.get(); }

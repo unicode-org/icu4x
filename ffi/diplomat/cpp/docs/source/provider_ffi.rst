@@ -40,6 +40,8 @@
 
         See the `Rust documentation for BlobDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more information.
 
+        Lifetimes: ``blob`` must live for the duration of the program.
+
 
     .. cpp:function:: static ICU4XDataProvider create_empty()
 

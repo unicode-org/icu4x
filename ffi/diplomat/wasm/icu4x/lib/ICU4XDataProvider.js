@@ -56,7 +56,7 @@ export class ICU4XDataProvider {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-    buf_arg_blob.free();
+    buf_arg_blob.leak();
     return diplomat_out;
   }
 
