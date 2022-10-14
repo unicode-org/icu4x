@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-#[cfg(any(feature = "serde_human", feature = "datagen"))]
-use alloc::string::ToString;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
@@ -68,6 +66,8 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 
         #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
+            #[cfg(not(feature = "std"))]
+            use alloc::string::ToString;
             use serde::de::Error;
             return StringMatcher::new(<&str>::deserialize(deserializer)?)
                 .map_err(|e| D::Error::custom(e.to_string()));
@@ -118,11 +118,16 @@ impl<'data> StringMatcher<'data> {
             SyntaxConfig,
         };
 
+        // TODO: `pattern` should be `Cow<'data, str> so that this allocation isn't necessary.
+        // However, that is a breaking change, because `new` is pub even outside datagen
+        // (which is probably an oversight).
+        let pattern: Cow<'data, str> = Cow::Owned(pattern.into());
+
         let mut builder = Builder::new();
         let dfa = builder
             .syntax(SyntaxConfig::new().case_insensitive(true))
             .configure(Config::new().anchored(true).minimize(true))
-            .build(pattern)
+            .build(&pattern)
             .map_err(|_| {
                 icu_provider::DataError::custom("Cannot build DFA").with_display_context(&pattern)
             })?
@@ -134,7 +139,7 @@ impl<'data> StringMatcher<'data> {
 
         Ok(Self {
             dfa_bytes: dfa.to_bytes_little_endian().into(),
-            pattern: Some(pattern.to_string().into()),
+            pattern: Some(pattern),
         })
     }
 

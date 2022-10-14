@@ -624,7 +624,6 @@ fn test_key_to_string() {
             expected: "core/cardinal@65535",
         },
     ] {
-        assert_eq!(cas.expected, cas.key.to_string());
         writeable::assert_writeable_eq!(&cas.key, cas.expected);
     }
 }

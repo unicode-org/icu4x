@@ -35,12 +35,12 @@ use crate::helpers::result_is_err_missing_data_options;
 ///   DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect("successful with vertical fallback");
 ///
 /// assert_eq!(
-///     "ja",
-///     response.metadata.locale.unwrap().to_string()
+///     response.metadata.locale.unwrap(),
+///     locale!("ja").into(),
 /// );
 /// assert_eq!(
+///     response.payload.unwrap().get().message,
 ///     "こんにちは世界",
-///     response.payload.unwrap().get().message
 /// );
 /// ```
 pub struct LocaleFallbackProvider<P> {

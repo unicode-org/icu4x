@@ -814,13 +814,13 @@ mod test {
 
         // Remove some elements
         let result = zm2d.remove(&3, "ccc"); // first element
-        assert_eq!(result, Some(String::from("CCC").into_boxed_str()));
+        assert_eq!(result.as_deref(), Some("CCC"));
         let result = zm2d.remove(&3, "mmm"); // middle element
-        assert_eq!(result, Some(String::from("MM0").into_boxed_str()));
+        assert_eq!(result.as_deref(), Some("MM0"));
         let result = zm2d.remove(&5, "ddd"); // singleton K0
-        assert_eq!(result, Some(String::from("DD1").into_boxed_str()));
+        assert_eq!(result.as_deref(), Some("DD1"));
         let result = zm2d.remove(&9, "yyy"); // last element
-        assert_eq!(result, Some(String::from("YYY").into_boxed_str()));
+        assert_eq!(result.as_deref(), Some("YYY"));
 
         assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
     }

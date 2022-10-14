@@ -266,6 +266,8 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
     }
 }
 
+writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
+
 #[cfg(feature = "datagen")]
 impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {

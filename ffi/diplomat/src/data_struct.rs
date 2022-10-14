@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use alloc::string::String;
+use alloc::borrow::ToOwned;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -81,6 +81,6 @@ fn str_to_cow(s: &str) -> Cow<'static, str> {
     if s.is_empty() {
         Cow::default()
     } else {
-        Cow::from(String::from(s))
+        Cow::from(s.to_owned())
     }
 }

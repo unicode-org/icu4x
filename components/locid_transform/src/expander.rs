@@ -24,35 +24,35 @@ use crate::TransformResult;
 /// # Examples
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
+/// let mut locale = locale!("zh-CN");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
-/// assert_eq!(locale.to_string(), "zh-Hans-CN");
+/// assert_eq!(locale, locale!("zh-Hans-CN"));
 ///
-/// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
+/// let mut locale = locale!("zh-Hant-TW");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
-/// assert_eq!(locale.to_string(), "zh-Hant-TW");
+/// assert_eq!(locale, locale!("zh-Hant-TW"));
 /// ```
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
 /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
+/// let mut locale = locale!("zh-Hans-CN");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
-/// assert_eq!(locale.to_string(), "zh");
+/// assert_eq!(locale, locale!("zh"));
 ///
-/// let mut locale: Locale = "zh".parse().expect("parse failed");
+/// let mut locale = locale!("zh");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
-/// assert_eq!(locale.to_string(), "zh");
+/// assert_eq!(locale, locale!("zh"));
 /// ```
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
@@ -128,19 +128,19 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
+    /// let mut locale = locale!("zh-CN");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
-    /// assert_eq!(locale.to_string(), "zh-Hans-CN");
+    /// assert_eq!(locale, locale!("zh-Hans-CN"));
     ///
-    /// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
+    /// let mut locale = locale!("zh-Hant-TW");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "zh-Hant-TW");
+    /// assert_eq!(locale, locale!("zh-Hant-TW"));
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
         let langid = langid.as_mut();
@@ -221,19 +221,19 @@ impl LocaleExpander {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::Locale;
+    /// use icu_locid::locale;
     /// use icu_locid_transform::{LocaleExpander, TransformResult};
     ///
     /// let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("creation failed");
     ///
-    /// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
+    /// let mut locale = locale!("zh-Hans-CN");
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
-    /// assert_eq!(locale.to_string(), "zh");
+    /// assert_eq!(locale, locale!("zh"));
     ///
-    /// let mut locale: Locale = "zh".parse().expect("parse failed");
+    /// let mut locale = locale!("zh");
     /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "zh");
+    /// assert_eq!(locale, locale!("zh"));
     /// ```
     pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
         let langid = langid.as_mut();

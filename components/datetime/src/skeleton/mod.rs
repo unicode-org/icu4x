@@ -86,8 +86,9 @@ mod test {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
-                        .to_string(),
-                    String::from("H:m:s")
+                        .to_string()
+                        .as_str(),
+                    "H:m:s"
                 )
             }
             BestSkeleton::NoMatch => {
@@ -111,10 +112,11 @@ mod test {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
-                        .to_string(),
+                        .to_string()
+                        .as_str(),
                     // CLDR has ("yw", "MMMMW", "ccc"). The first two result in 1 missing & 1 extra symbol vs just
                     // 1 missing symbol for "ccc".
-                    String::from("ccc")
+                    "ccc"
                 )
             }
             best => panic!("Unexpected {:?}", best),
@@ -148,8 +150,9 @@ mod test {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
-                        .to_string(),
-                    String::from("MMMM d, y vvvv")
+                        .to_string()
+                        .as_str(),
+                    "MMMM d, y vvvv"
                 )
             }
             best => panic!("Unexpected {:?}", best),

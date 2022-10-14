@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::slice::Iter;
 use core::str::Chars;
@@ -69,7 +69,7 @@ impl<'s> Iterator for LanguageIterator<'s> {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut s = "".to_string();
+        let mut s = String::new();
 
         let lang = get_language(self.current_ch? as u32);
         s.push(self.current_ch.unwrap());
@@ -133,8 +133,8 @@ mod tests {
         assert_eq!(iter.next(), Some(utf16), "Thai language only with UTF-16");
         let mut iter = LanguageIterator::new(s);
         assert_eq!(
-            iter.next(),
-            Some(s.to_string()),
+            iter.next().as_deref(),
+            Some(s),
             "Thai language only with UTF-8"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");
@@ -144,8 +144,7 @@ mod tests {
     fn test_combine() {
         const TEST_STR_THAI: &str = "ภาษาไทยภาษาไทย";
         const TEST_STR_BURMESE: &str = "ဗမာနွယ်ဘာသာစကားမျာ";
-        let mut s = String::from(TEST_STR_THAI);
-        s.push_str(TEST_STR_BURMESE);
+        let s = format!("{TEST_STR_THAI}{TEST_STR_BURMESE}");
         let utf16: Vec<u16> = s.encode_utf16().collect();
         let thai_utf16: Vec<u16> = TEST_STR_THAI.encode_utf16().collect();
         let burmese_utf16: Vec<u16> = TEST_STR_BURMESE.encode_utf16().collect();
@@ -165,13 +164,13 @@ mod tests {
 
         let mut iter = LanguageIterator::new(&s);
         assert_eq!(
-            iter.next(),
-            Some(TEST_STR_THAI.to_string()),
+            iter.next().as_deref(),
+            Some(TEST_STR_THAI),
             "Thai language with UTF-8 at first"
         );
         assert_eq!(
-            iter.next(),
-            Some(TEST_STR_BURMESE.to_string()),
+            iter.next().as_deref(),
+            Some(TEST_STR_BURMESE),
             "Burmese language with UTF-8 at second"
         );
         assert_eq!(iter.next(), None, "Iterator for UTF-8 is finished");

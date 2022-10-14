@@ -531,7 +531,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Default::default(),
     )
     .unwrap();
-    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?".to_string());
+    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?");
 }
 
 #[test]

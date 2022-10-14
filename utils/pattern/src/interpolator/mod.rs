@@ -367,7 +367,12 @@ mod tests {
             let replacements: std::collections::HashMap<String, Vec<Element>> = sample
                 .1
                 .iter()
-                .map(|(k, v)| (k.to_string(), v.iter().map(|&t| Element::from(t)).collect()))
+                .map(|(k, v)| {
+                    (
+                        (*k).to_owned(),
+                        v.iter().map(|&t| Element::from(t)).collect(),
+                    )
+                })
                 .collect();
 
             let interpolated_pattern = pattern

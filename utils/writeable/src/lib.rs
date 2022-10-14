@@ -333,6 +333,7 @@ macro_rules! assert_writeable_eq {
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)*);
         }
+        assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
 }
 
@@ -353,6 +354,7 @@ macro_rules! assert_writeable_parts_eq {
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)+);
         }
+        assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
 }
 

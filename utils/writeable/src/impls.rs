@@ -117,6 +117,7 @@ impl_write_num!(u16, i16, test_u16, log10_u16);
 impl_write_num!(u32, i32, test_u32, log10_u32);
 impl_write_num!(u64, i64, test_u64, log10_u64);
 impl_write_num!(u128, i128, test_u128, log10_u128);
+impl_write_num!(usize, isize, test_usize, log10_usize);
 
 #[test]
 fn assert_log10_approximation() {
@@ -194,7 +195,7 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
 
 #[test]
 fn test_string_impls() {
-    fn check_writeable_slice<W: Writeable>(writeables: &[W]) {
+    fn check_writeable_slice<W: Writeable + core::fmt::Display>(writeables: &[W]) {
         assert_writeable_eq!(&writeables[0], "");
         assert_writeable_eq!(&writeables[1], "abc");
     }
@@ -204,10 +205,10 @@ fn test_string_impls() {
     check_writeable_slice(arr);
 
     // test String impl
-    let arr: &[String] = &["".to_string(), "abc".to_string()];
+    let arr: &[String] = &[String::new(), "abc".to_owned()];
     check_writeable_slice(arr);
 
     // test &T impl
-    let arr: &[&String] = &[&"".to_string(), &"abc".to_string()];
+    let arr: &[&String] = &[&String::new(), &"abc".to_owned()];
     check_writeable_slice(arr);
 }
