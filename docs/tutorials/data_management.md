@@ -139,8 +139,6 @@ The `mod` format will generate a Rust module that defines a data provider. This 
 
 Let's give it a try:
 
-For the mod generation to work, you need an actual application that compiles. You can keep the existing app if you have been following this tutorial from the start.
-
 ```rust
 // Initial application that compiles so that icu4x-datagen can run against the binary.
 fn main() {
