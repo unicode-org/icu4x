@@ -74,13 +74,12 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 ///
 /// ```
 /// use fixed_decimal::FixedDecimal;
-/// use writeable::assert_writeable_eq;
 ///
 /// let mut dec = FixedDecimal::from(250);
-/// assert_writeable_eq!(dec, "250");
+/// assert_eq!("250", dec.to_string());
 ///
 /// dec.multiply_pow10(-2);
-/// assert_writeable_eq!(dec, "2.50");
+/// assert_eq!("2.50", dec.to_string());
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FixedDecimal {
@@ -397,13 +396,12 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(42);
-    /// assert_writeable_eq!(dec, "42");
+    /// assert_eq!("42", dec.to_string());
     ///
     /// dec.multiply_pow10(3);
-    /// assert_writeable_eq!(dec, "42000");
+    /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiply_pow10(&mut self, delta: i16) {
         match delta.cmp(&0) {
@@ -457,10 +455,9 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let dec = FixedDecimal::from(42).multiplied_pow10(3);
-    /// assert_writeable_eq!(dec, "42000");
+    /// assert_eq!("42000", dec.to_string());
     /// ```
     pub fn multiplied_pow10(mut self, delta: i16) -> Self {
         self.multiply_pow10(delta);
@@ -495,19 +492,18 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Sign;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(1729);
-    /// assert_writeable_eq!(dec, "1729");
+    /// assert_eq!("1729", dec.to_string());
     ///
     /// dec.set_sign(Sign::Negative);
-    /// assert_writeable_eq!(dec, "-1729");
+    /// assert_eq!("-1729", dec.to_string());
     ///
     /// dec.set_sign(Sign::Positive);
-    /// assert_writeable_eq!(dec, "+1729");
+    /// assert_eq!("+1729", dec.to_string());
     ///
     /// dec.set_sign(Sign::None);
-    /// assert_writeable_eq!(dec, "1729");
+    /// assert_eq!("1729", dec.to_string());
     /// ```
     pub fn set_sign(&mut self, sign: Sign) {
         self.sign = sign;
@@ -520,19 +516,22 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::Sign;
-    /// use writeable::assert_writeable_eq;
     ///
-    /// assert_writeable_eq!(
-    ///     FixedDecimal::from(1729).with_sign(Sign::Positive),
+    /// assert_eq!(
     ///     "+1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign(Sign::Positive)
+    ///         .to_string()
     /// );
-    /// assert_writeable_eq!(
-    ///     FixedDecimal::from(-1729).with_sign(Sign::None),
+    /// assert_eq!(
     ///     "1729",
+    ///     FixedDecimal::from(-1729).with_sign(Sign::None).to_string()
     /// );
-    /// assert_writeable_eq!(
-    ///     FixedDecimal::from(1729).with_sign(Sign::Negative),
+    /// assert_eq!(
     ///     "-1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign(Sign::Negative)
+    ///         .to_string()
     /// );
     /// ```
     pub fn with_sign(mut self, sign: Sign) -> Self {
@@ -546,12 +545,11 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::SignDisplay::*;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(1729);
-    /// assert_writeable_eq!(dec, "1729");
+    /// assert_eq!("1729", dec.to_string());
     /// dec.apply_sign_display(Always);
-    /// assert_writeable_eq!(dec, "+1729");
+    /// assert_eq!("+1729", dec.to_string());
     /// ```
     pub fn apply_sign_display(&mut self, sign_display: SignDisplay) {
         use Sign::*;
@@ -589,11 +587,12 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// use fixed_decimal::SignDisplay::*;
-    /// use writeable::assert_writeable_eq;
     ///
-    /// assert_writeable_eq!(
-    ///     FixedDecimal::from(1729).with_sign_display(ExceptZero),
+    /// assert_eq!(
     ///     "+1729",
+    ///     FixedDecimal::from(1729)
+    ///         .with_sign_display(ExceptZero)
+    ///         .to_string()
     /// );
     /// ```
     pub fn with_sign_display(mut self, sign_display: SignDisplay) -> Self {
@@ -607,14 +606,13 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
-    /// assert_writeable_eq!(dec, "0012.3400");
+    /// assert_eq!("0012.3400", dec.to_string());
     ///
-    /// assert_writeable_eq!(dec.trimmed_start(), "12.3400");
+    /// assert_eq!("12.3400", dec.trimmed_start().to_string());
     /// ```
     pub fn trimmed_start(mut self) -> Self {
         self.trim_start();
@@ -627,27 +625,25 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
-    /// assert_writeable_eq!(dec, "0012.3400");
+    /// assert_eq!("0012.3400", dec.to_string());
     ///
     /// dec.trim_start();
-    /// assert_writeable_eq!(dec, "12.3400");
+    /// assert_eq!("12.3400", dec.to_string());
     /// ```
     ///
     /// There is no effect if the most significant digit has magnitude less than zero:
     ///
     /// ```
     /// # use fixed_decimal::FixedDecimal;
-    /// # use writeable::assert_writeable_eq;
     /// let mut dec = FixedDecimal::from(22).multiplied_pow10(-4);
-    /// assert_writeable_eq!(dec, "0.0022");
+    /// assert_eq!("0.0022", dec.to_string());
     ///
     /// dec.trim_start();
-    /// assert_writeable_eq!(dec, "0.0022");
+    /// assert_eq!("0.0022", dec.to_string());
     /// ```
     pub fn trim_start(&mut self) {
         self.upper_magnitude = cmp::max(self.magnitude, 0);
@@ -661,14 +657,13 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
-    /// assert_writeable_eq!(dec, "0012.3400");
+    /// assert_eq!("0012.3400", dec.to_string());
     ///
-    /// assert_writeable_eq!(dec.trimmed_end(), "0012.34");
+    /// assert_eq!("0012.34", dec.trimmed_end().to_string());
     /// ```
     pub fn trimmed_end(mut self) -> Self {
         self.trim_end();
@@ -681,27 +676,25 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
     ///     .padded_start(4);
-    /// assert_writeable_eq!(dec, "0012.3400");
+    /// assert_eq!("0012.3400", dec.to_string());
     ///
     /// dec.trim_end();
-    /// assert_writeable_eq!(dec, "0012.34");
+    /// assert_eq!("0012.34", dec.to_string());
     /// ```
     ///
     /// There is no effect if the least significant digit has magnitude more than zero:
     ///
     /// ```
     /// # use fixed_decimal::FixedDecimal;
-    /// # use writeable::assert_writeable_eq;
     /// let mut dec = FixedDecimal::from(2200);
-    /// assert_writeable_eq!(dec, "2200");
+    /// assert_eq!("2200", dec.to_string());
     ///
     /// dec.trim_end();
-    /// assert_writeable_eq!(dec, "2200");
+    /// assert_eq!("2200", dec.to_string());
     /// ```
     pub fn trim_end(&mut self) {
         self.lower_magnitude = cmp::min(0, self.nonzero_magnitude_end());
@@ -720,17 +713,16 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(42);
-    /// assert_writeable_eq!(dec, "42");
-    /// assert_writeable_eq!(dec.clone().padded_start(4), "0042");
+    /// assert_eq!("42", dec.to_string());
+    /// assert_eq!("0042", dec.clone().padded_start(4).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_start(3), "042");
+    /// assert_eq!("042", dec.clone().padded_start(3).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_start(2), "42");
+    /// assert_eq!("42", dec.clone().padded_start(2).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_start(1), "42");
+    /// assert_eq!("42", dec.clone().padded_start(1).to_string());
     /// ```
     pub fn padded_start(mut self, position: i16) -> Self {
         self.pad_start(position);
@@ -747,22 +739,21 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(42);
-    /// assert_writeable_eq!(dec, "42");
+    /// assert_eq!("42", dec.to_string());
     ///
     /// dec.pad_start(4);
-    /// assert_writeable_eq!(dec, "0042");
+    /// assert_eq!("0042", dec.to_string());
     ///
     /// dec.pad_start(3);
-    /// assert_writeable_eq!(dec, "042");
+    /// assert_eq!("042", dec.to_string());
     ///
     /// dec.pad_start(2);
-    /// assert_writeable_eq!(dec, "42");
+    /// assert_eq!("42", dec.to_string());
     ///
     /// dec.pad_start(1);
-    /// assert_writeable_eq!(dec, "42");
+    /// assert_eq!("42", dec.to_string());
     /// ```
     pub fn pad_start(&mut self, position: i16) {
         if position <= 0 {
@@ -789,19 +780,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
-    /// assert_writeable_eq!(dec, "123.456");
+    /// assert_eq!("123.456", dec.to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_end(-1), "123.456");
+    /// assert_eq!("123.456", dec.clone().padded_end(-1).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_end(-2), "123.456");
+    /// assert_eq!("123.456", dec.clone().padded_end(-2).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_end(-6), "123.456000");
+    /// assert_eq!("123.456000", dec.clone().padded_end(-6).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().padded_end(-4), "123.4560");
+    /// assert_eq!("123.4560", dec.clone().padded_end(-4).to_string());
     /// ```
     pub fn padded_end(mut self, position: i16) -> Self {
         self.pad_end(position);
@@ -819,23 +809,22 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
-    /// assert_writeable_eq!(dec, "123.456");
+    /// assert_eq!("123.456", dec.to_string());
     ///
     /// dec.pad_end(-1);
-    /// assert_writeable_eq!(dec, "123.456");
+    /// assert_eq!("123.456", dec.to_string());
     ///
     /// dec.pad_end(-2);
-    /// assert_writeable_eq!(dec, "123.456");
+    /// assert_eq!("123.456", dec.to_string());
     ///
     /// dec.pad_end(-6);
-    /// assert_writeable_eq!(dec, "123.456000");
+    /// assert_eq!("123.456000", dec.to_string());
     ///
     /// dec.pad_end(-4);
-    /// assert_writeable_eq!(dec, "123.4560");
+    /// assert_eq!("123.4560", dec.to_string());
     /// ```
     pub fn pad_end(&mut self, position: i16) {
         if position >= 0 {
@@ -861,24 +850,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
-    /// assert_writeable_eq!(dec, "4235.970");
+    /// assert_eq!("4235.970", dec.to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(5), "04235.970");
+    /// assert_eq!("04235.970", dec.clone().with_max_position(5).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(2), "35.970");
+    /// assert_eq!("35.970", dec.clone().with_max_position(2).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(1), "5.970");
+    /// assert_eq!("5.970", dec.clone().with_max_position(1).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(0), "0.970");
+    /// assert_eq!("0.970", dec.clone().with_max_position(0).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(-1), "0.070");
+    /// assert_eq!("0.070", dec.clone().with_max_position(-1).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(-2), "0.000");
+    /// assert_eq!("0.000", dec.clone().with_max_position(-2).to_string());
     ///
-    /// assert_writeable_eq!(dec.clone().with_max_position(-4), "0.0000");
+    /// assert_eq!("0.0000", dec.clone().with_max_position(-4).to_string());
     /// ```
     pub fn with_max_position(mut self, position: i16) -> Self {
         self.set_max_position(position);
@@ -894,31 +882,30 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
-    /// assert_writeable_eq!(dec, "4235.970");
+    /// assert_eq!("4235.970", dec.to_string());
     ///
     /// dec.set_max_position(5);
-    /// assert_writeable_eq!(dec, "04235.970");
+    /// assert_eq!("04235.970", dec.to_string());
     ///
     /// dec.set_max_position(2);
-    /// assert_writeable_eq!(dec, "35.970");
+    /// assert_eq!("35.970", dec.to_string());
     ///
     /// dec.set_max_position(1);
-    /// assert_writeable_eq!(dec, "5.970");
+    /// assert_eq!("5.970", dec.to_string());
     ///
     /// dec.set_max_position(0);
-    /// assert_writeable_eq!(dec, "0.970");
+    /// assert_eq!("0.970", dec.to_string());
     ///
     /// dec.set_max_position(-1);
-    /// assert_writeable_eq!(dec, "0.070");
+    /// assert_eq!("0.070", dec.to_string());
     ///
     /// dec.set_max_position(-2);
-    /// assert_writeable_eq!(dec, "0.000");
+    /// assert_eq!("0.000", dec.to_string());
     ///
     /// dec.set_max_position(-4);
-    /// assert_writeable_eq!(dec, "0.0000");
+    /// assert_eq!("0.0000", dec.to_string());
     /// ```
     pub fn set_max_position(&mut self, position: i16) {
         self.lower_magnitude = cmp::min(self.lower_magnitude, position);
@@ -1010,19 +997,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.trunced(0), "-1");
+    /// assert_eq!("-1", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.trunced(0), "0");
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.trunced(0), "0");
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.trunced(0), "0");
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.trunced(0), "1");
+    /// assert_eq!("1", dec.trunced(0).to_string());
     /// ```
     pub fn trunced(mut self, position: i16) -> Self {
         self.trunc(position);
@@ -1038,24 +1024,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.trunc(0);
-    /// assert_writeable_eq!(dec, "-1");
+    /// assert_eq!("-1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.trunc(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.trunc(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.trunc(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.trunc(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
         self.lower_magnitude = cmp::min(position, 0);
@@ -1088,27 +1073,26 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "-1");
+    /// assert_eq!("-1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("3.954").unwrap();
     /// dec.half_trunc(0);
-    /// assert_writeable_eq!(dec, "4");
+    /// assert_eq!("4", dec.to_string());
     /// ```
     pub fn half_trunc(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
@@ -1136,21 +1120,20 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "-1");
+    /// assert_eq!("-1", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "0");
+    /// assert_eq!("0", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "0");
+    /// assert_eq!("0", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "1");
+    /// assert_eq!("1", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "1");
+    /// assert_eq!("1", dec.half_trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("3.954").unwrap();
-    /// assert_writeable_eq!(dec.half_trunced(0), "4");
+    /// assert_eq!("4", dec.half_trunced(0).to_string());
     /// ```
     pub fn half_trunced(mut self, position: i16) -> Self {
         self.half_trunc(position);
@@ -1163,24 +1146,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.expand(0);
-    /// assert_writeable_eq!(dec, "-2");
+    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.expand(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.expand(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.expand(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.expand(0);
-    /// assert_writeable_eq!(dec, "2");
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
         let before_truncate_is_zero = self.is_zero();
@@ -1220,19 +1202,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.expanded(0), "-2");
+    /// assert_eq!("-2", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.expanded(0), "1");
+    /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.expanded(0), "1");
+    /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.expanded(0), "1");
+    /// assert_eq!("1", dec.expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.expanded(0), "2");
+    /// assert_eq!("2", dec.expanded(0).to_string());
     /// ```
     pub fn expanded(mut self, position: i16) -> Self {
         self.expand(position);
@@ -1245,24 +1226,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_expand(0);
-    /// assert_writeable_eq!(dec, "-2");
+    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.half_expand(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.half_expand(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_expand(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_expand(0);
-    /// assert_writeable_eq!(dec, "2");
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_expand(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
@@ -1280,19 +1260,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_expanded(0), "-2");
+    /// assert_eq!("-2", dec.half_expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.half_expanded(0), "0");
+    /// assert_eq!("0", dec.half_expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.half_expanded(0), "1");
+    /// assert_eq!("1", dec.half_expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.half_expanded(0), "1");
+    /// assert_eq!("1", dec.half_expanded(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_expanded(0), "2");
+    /// assert_eq!("2", dec.half_expanded(0).to_string());
     /// ```
     pub fn half_expanded(mut self, position: i16) -> Self {
         self.half_expand(position);
@@ -1305,24 +1284,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.ceil(0);
-    /// assert_writeable_eq!(dec, "-1");
+    /// assert_eq!("-1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.ceil(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.ceil(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.ceil(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.ceil(0);
-    /// assert_writeable_eq!(dec, "2");
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn ceil(&mut self, position: i16) {
         if self.sign == Sign::Negative {
@@ -1339,19 +1317,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.ceiled(0), "-1");
+    /// assert_eq!("-1", dec.ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.ceiled(0), "1");
+    /// assert_eq!("1", dec.ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.ceiled(0), "1");
+    /// assert_eq!("1", dec.ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.ceiled(0), "1");
+    /// assert_eq!("1", dec.ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.ceiled(0), "2");
+    /// assert_eq!("2", dec.ceiled(0).to_string());
     /// ```
     pub fn ceiled(mut self, position: i16) -> Self {
         self.ceil(position);
@@ -1364,24 +1341,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_ceil(0);
-    /// assert_writeable_eq!(dec, "-1");
+    /// assert_eq!("-1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.half_ceil(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.half_ceil(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_ceil(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_ceil(0);
-    /// assert_writeable_eq!(dec, "2");
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_ceil(&mut self, position: i16) {
         if self.sign == Sign::Negative {
@@ -1398,19 +1374,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_ceiled(0), "-1");
+    /// assert_eq!("-1", dec.half_ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.half_ceiled(0), "0");
+    /// assert_eq!("0", dec.half_ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.half_ceiled(0), "1");
+    /// assert_eq!("1", dec.half_ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.half_ceiled(0), "1");
+    /// assert_eq!("1", dec.half_ceiled(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_ceiled(0), "2");
+    /// assert_eq!("2", dec.half_ceiled(0).to_string());
     /// ```
     pub fn half_ceiled(mut self, position: i16) -> Self {
         self.half_ceil(position);
@@ -1423,24 +1398,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.floor(0);
-    /// assert_writeable_eq!(dec, "-2");
+    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.floor(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.floor(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.floor(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.floor(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn floor(&mut self, position: i16) {
         if self.sign == Sign::Negative {
@@ -1457,19 +1431,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.floored(0), "-2");
+    /// assert_eq!("-2", dec.floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.floored(0), "0");
+    /// assert_eq!("0", dec.floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.floored(0), "0");
+    /// assert_eq!("0", dec.floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.floored(0), "0");
+    /// assert_eq!("0", dec.floored(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.floored(0), "1");
+    /// assert_eq!("1", dec.floored(0).to_string());
     /// ```
     pub fn floored(mut self, position: i16) -> Self {
         self.floor(position);
@@ -1482,24 +1455,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_floor(0);
-    /// assert_writeable_eq!(dec, "-2");
+    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.half_floor(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.half_floor(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_floor(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_floor(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn half_floor(&mut self, position: i16) {
         if self.sign == Sign::Negative {
@@ -1516,19 +1488,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_floored(0), "-2");
+    /// assert_eq!("-2", dec.half_floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.half_floored(0), "0");
+    /// assert_eq!("0", dec.half_floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.half_floored(0), "0");
+    /// assert_eq!("0", dec.half_floored(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.half_floored(0), "1");
+    /// assert_eq!("1", dec.half_floored(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_floored(0), "1");
+    /// assert_eq!("1", dec.half_floored(0).to_string());
     /// ```
     pub fn half_floored(mut self, position: i16) -> Self {
         self.half_floor(position);
@@ -1541,24 +1512,23 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_even(0);
-    /// assert_writeable_eq!(dec, "-2");
+    /// assert_eq!("-2", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.half_even(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.half_even(0);
-    /// assert_writeable_eq!(dec, "0");
+    /// assert_eq!("0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.half_even(0);
-    /// assert_writeable_eq!(dec, "1");
+    /// assert_eq!("1", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.half_even(0);
-    /// assert_writeable_eq!(dec, "2");
+    /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_even(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
@@ -1588,19 +1558,18 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_evened(0), "-2");
+    /// assert_eq!("-2", dec.half_evened(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_writeable_eq!(dec.half_evened(0), "0");
+    /// assert_eq!("0", dec.half_evened(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_writeable_eq!(dec.half_evened(0), "0");
+    /// assert_eq!("0", dec.half_evened(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_writeable_eq!(dec.half_evened(0), "1");
+    /// assert_eq!("1", dec.half_evened(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_writeable_eq!(dec.half_evened(0), "2");
+    /// assert_eq!("2", dec.half_evened(0).to_string());
     /// ```
     pub fn half_evened(mut self, position: i16) -> Self {
         self.half_even(position);
@@ -1619,14 +1588,13 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456).multiplied_pow10(-3);
     ///
     /// let result = integer.concatenated_end(fraction).expect("nonoverlapping");
     ///
-    /// assert_writeable_eq!(result, "123.456");
+    /// assert_eq!("123.456", result.to_string());
     /// ```
     pub fn concatenated_end(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
         match self.concatenate_end(other) {
@@ -1647,14 +1615,13 @@ impl FixedDecimal {
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
-    /// use writeable::assert_writeable_eq;
     ///
     /// let mut integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456).multiplied_pow10(-3);
     ///
     /// integer.concatenate_end(fraction);
     ///
-    /// assert_writeable_eq!(integer, "123.456");
+    /// assert_eq!("123.456", integer.to_string());
     /// ```
     pub fn concatenate_end(&mut self, other: FixedDecimal) -> Result<(), FixedDecimal> {
         let self_right = self.nonzero_magnitude_end();
