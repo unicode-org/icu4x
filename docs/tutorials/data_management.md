@@ -139,15 +139,6 @@ The `mod` format will generate a Rust module that defines a data provider. This 
 
 Let's give it a try:
 
-```rust
-// Initial application that compiles so that icu4x-datagen can run against the binary.
-fn main() {
-    println!("Hello !");
-}
-```
-
-Then we can run:
-
 ```console
 $ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-mod --format mod --keys-for-bin target/debug/myapp --locales ja
 ```
