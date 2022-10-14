@@ -22,7 +22,6 @@ This minimize method returns a new Locale that is the result of running the
 ```rust
 use icu::locid::Locale;
 use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
-use writeable::assert_writeable_eq;
 
 let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
@@ -31,24 +30,23 @@ let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
     .expect("parse failed");
 assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-assert_writeable_eq!(locale, "ja-Latn-alalc97-fonipa");
+assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 ```
 
 ```rust
 use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
-use writeable::assert_writeable_eq;
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
 
 let mut locale = locale!("zh-CN");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
-assert_writeable_eq!(locale, "zh-Hans-CN");
+assert_eq!(locale, locale!("zh-Hans-CN"));
 
 let mut locale = locale!("zh-Hant-TW");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
-assert_writeable_eq!(locale, "zh-Hant-TW");
+assert_eq!(locale, locale!("zh-Hant-TW"));
 ```
 
 ```rust
@@ -61,11 +59,11 @@ let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
 
 let mut locale = locale!("zh-Hans-CN");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
-assert_writeable_eq!(locale, "zh");
+assert_eq!(locale, locale!("zh"));
 
 let mut locale = locale!("zh");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
-assert_writeable_eq!(locale, "zh");
+assert_eq!(locale, locale!("zh"));
 ```
 
 [`ICU4X`]: ../icu/index.html

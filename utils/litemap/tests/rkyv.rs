@@ -42,16 +42,13 @@ type TupleVecOfStrings = Vec<(String, String)>;
 
 fn generate() -> AlignedVec {
     let map = DATA
-    .iter()
-    .map(|&(k, v)| (k.to_owned(), v.to_owned()))
-    .collect::<LiteMapOfStrings>();
+        .iter()
+        .map(|&(k, v)| (k.to_owned(), v.to_owned()))
+        .collect::<LiteMapOfStrings>();
 
     let mut serializer = AllocSerializer::<4096>::default();
     serializer
-        .serialize_value(
-            &map
-                .into_tuple_vec(),
-        )
+        .serialize_value(&map.into_tuple_vec())
         .expect("failed to archive test");
     serializer.into_serializer().into_inner()
 }

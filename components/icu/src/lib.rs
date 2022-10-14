@@ -65,8 +65,9 @@
 //!
 //! let formatted_date = dtf.format(&date).expect("Formatting failed");
 //! assert_writeable_eq!(formatted_date, "12 de septiembre de 2020, 12:35:00");
-//! 
-//! let formatted_date_string = dtf.format_to_string(&date).expect("Formatting failed");
+//!
+//! let formatted_date_string =
+//!     dtf.format_to_string(&date).expect("Formatting failed");
 //! assert_eq!(formatted_date_string, "12 de septiembre de 2020, 12:35:00");
 //! ```
 //!
