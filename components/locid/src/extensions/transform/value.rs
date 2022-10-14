@@ -26,8 +26,8 @@ use tinystr::TinyAsciiStr;
 /// let value2: Value =
 ///     "hybrid-foobar".parse().expect("Failed to parse a Value.");
 ///
-/// assert_eq!(&value1.to_string(), "hybrid");
-/// assert_eq!(&value2.to_string(), "hybrid-foobar");
+/// assert_eq!(value1, "hybrid".parse().unwrap());
+/// assert_eq!(value2, "hybrid-foobar".parse().unwrap());
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
@@ -45,8 +45,6 @@ impl Value {
     /// use icu::locid::extensions::transform::Value;
     ///
     /// let value = Value::try_from_bytes(b"hybrid").expect("Parsing failed.");
-    ///
-    /// assert_eq!(&value.to_string(), "hybrid");
     /// ```
     pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = vec![];

@@ -29,11 +29,14 @@ use crate::ordering::SubtagOrderingResult;
 /// Manually build up a [`Keywords`] object:
 ///
 /// ```
-/// use icu::locid::extensions::unicode::{Key, Keywords, Value};
+/// use icu::locid::{
+///     extensions::unicode::Keywords, extensions_unicode_key as key,
+///     extensions_unicode_value as value, locale,
+/// };
 ///
-/// let key: Key = "hc".parse().expect("Failed to parse a Key.");
-/// let value: Value = "h23".parse().expect("Failed to parse a Value.");
-/// let keywords: Keywords = vec![(key, value)].into_iter().collect();
+/// let keywords = vec![(key!("hc"), value!("h23"))]
+///     .into_iter()
+///     .collect::<Keywords>();
 ///
 /// assert_eq!(&keywords.to_string(), "hc-h23");
 /// ```
@@ -113,15 +116,16 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
-    /// use litemap::LiteMap;
+    /// use icu::locid::{
+    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
+    ///     extensions_unicode_value as value,
+    /// };
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// let value: Value = "gregory".parse().expect("Failed to parse a Value.");
-    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
+    /// let keywords = vec![(key!("ca"), value!("gregory"))]
+    ///     .into_iter()
+    ///     .collect::<Keywords>();
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// assert!(&keywords.contains_key(&key));
+    /// assert!(&keywords.contains_key(&key!("ca")));
     /// ```
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
@@ -137,17 +141,16 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
+    /// use icu::locid::{
+    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
+    ///     extensions_unicode_value as value,
+    /// };
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse().expect("Failed to parse a Value.");
-    /// let keywords: Keywords = vec![(key, value)].into_iter().collect();
+    /// let keywords = vec![(key!("ca"), value!("buddhist"))]
+    ///     .into_iter()
+    ///     .collect::<Keywords>();
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// assert_eq!(
-    ///     keywords.get(&key).map(|v| v.to_string()),
-    ///     Some("buddhist".to_string())
-    /// );
+    /// assert_eq!(keywords.get(&key!("ca")), Some(&value!("buddhist")));
     /// ```
     pub fn get<Q>(&self, key: &Q) -> Option<&Value>
     where
@@ -164,20 +167,19 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Key, Keywords, Value};
+    /// use icu::locid::{
+    ///     extensions::unicode::Keywords, extensions_unicode_key as key,
+    ///     extensions_unicode_value as value,
+    /// };
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// let value: Value = "buddhist".parse().expect("Failed to parse a Value.");
-    /// let mut keywords: Keywords = vec![(key, value)].into_iter().collect();
+    /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
+    ///     .into_iter()
+    ///     .collect::<Keywords>();
     ///
-    /// let key: Key = "ca".parse().expect("Failed to parse a Key.");
-    /// if let Some(value) = keywords.get_mut(&key) {
-    ///     *value = "gregory".parse().expect("Failed to parse a Value.");
+    /// if let Some(value) = keywords.get_mut(&key!("ca")) {
+    ///     *value = value!("gregory");
     /// }
-    /// assert_eq!(
-    ///     keywords.get(&key).map(|v| v.to_string()),
-    ///     Some("gregory".to_string())
-    /// );
+    /// assert_eq!(keywords.get(&key!("ca")), Some(&value!("gregory")));
     /// ```
     pub fn get_mut<Q>(&mut self, key: &Q) -> Option<&mut Value>
     where
@@ -308,7 +310,6 @@ impl Keywords {
     ///         .extensions
     ///         .unicode
     ///         .keywords;
-    ///     assert_eq!(a, a_kwds.to_string());
     ///     assert!(a_kwds.strict_cmp(a.as_bytes()) == Ordering::Equal);
     ///     assert!(a_kwds.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }

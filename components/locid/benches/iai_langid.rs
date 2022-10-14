@@ -5,6 +5,7 @@
 use icu_locid::{
     langid, subtags_language as language, subtags_region as region, LanguageIdentifier,
 };
+use writeable::Writeable;
 
 const LIDS: &[LanguageIdentifier] = &[
     langid!("en"),
@@ -97,6 +98,12 @@ fn bench_langid_serialize() {
     let _: Vec<String> = LIDS.iter().map(|l| l.to_string()).collect();
 }
 
+fn bench_langid_serialize_writeable() {
+    // Tests serialization of LIDs.
+
+    let _: Vec<_> = LIDS.iter().map(|l| l.write_to_string()).collect();
+}
+
 fn bench_langid_canonicalize() {
     // Tests canonicalization of strings.
 
@@ -114,5 +121,6 @@ iai::main!(
     bench_langid_matching,
     bench_langid_matching_str,
     bench_langid_serialize,
+    bench_langid_serialize_writeable,
     bench_langid_canonicalize,
 );

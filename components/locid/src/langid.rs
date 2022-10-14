@@ -12,22 +12,23 @@ use crate::parser::{
 };
 use crate::subtags;
 use alloc::string::String;
-use alloc::string::ToString;
+use writeable::Writeable;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{subtags::*, LanguageIdentifier};
+/// use icu::locid::{
+///     langid, subtags_language as language, subtags_region as region,
+/// };
 ///
-/// let li: LanguageIdentifier = "en-US".parse().expect("Failed to parse.");
+/// let li = langid!("en-US");
 ///
-/// assert_eq!(li.language, "en".parse::<Language>().unwrap());
+/// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, None);
-/// assert_eq!(li.region.unwrap(), "US".parse::<Region>().unwrap());
+/// assert_eq!(li.region, Some(region!("US")));
 /// assert_eq!(li.variants.len(), 0);
-/// assert_eq!(li.to_string(), "en-US");
 /// ```
 ///
 /// # Parsing
@@ -47,18 +48,17 @@ use alloc::string::ToString;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{subtags::*, LanguageIdentifier};
+/// use icu::locid::{
+///     langid, subtags_language as language, subtags_region as region,
+///     subtags_script as script, subtags_variant as variant,
+/// };
 ///
-/// let li: LanguageIdentifier =
-///     "eN_latn_Us-Valencia".parse().expect("Failed to parse.");
+/// let li = langid!("eN_latn_Us-Valencia");
 ///
-/// assert_eq!(li.language, "en".parse::<Language>().unwrap());
-/// assert_eq!(li.script, "Latn".parse::<Script>().ok());
-/// assert_eq!(li.region, "US".parse::<Region>().ok());
-/// assert_eq!(
-///     li.variants.get(0),
-///     "valencia".parse::<Variant>().ok().as_ref()
-/// );
+/// assert_eq!(li.language, language!("en"));
+/// assert_eq!(li.script, Some(script!("Latn")));
+/// assert_eq!(li.region, Some(region!("US")));
+/// assert_eq!(li.variants.get(0), Some(&variant!("valencia")));
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
@@ -84,10 +84,7 @@ impl LanguageIdentifier {
     /// ```
     /// use icu::locid::LanguageIdentifier;
     ///
-    /// let li =
-    ///     LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed.");
-    ///
-    /// assert_eq!(li.to_string(), "en-US");
+    /// LanguageIdentifier::try_from_bytes(b"en-US").expect("Parsing failed");
     /// ```
     pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_language_identifier(v, ParserMode::LanguageIdentifier)
@@ -117,12 +114,12 @@ impl LanguageIdentifier {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::LanguageIdentifier;
+    /// use icu::locid::{langid, LanguageIdentifier};
     ///
     /// let li = LanguageIdentifier::try_from_locale_bytes(b"en-US-x-posix")
     ///     .expect("Parsing failed.");
     ///
-    /// assert_eq!(li.to_string(), "en-US");
+    /// assert_eq!(li, langid!("en-US"));
     /// ```
     ///
     /// This method should be used for input that may be a locale identifier.
@@ -139,7 +136,6 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     ///
     /// assert_eq!(LanguageIdentifier::default(), LanguageIdentifier::UND);
-    /// assert_eq!("und", LanguageIdentifier::UND.to_string());
     /// ```
     pub const UND: Self = Self {
         language: subtags::Language::UND,
@@ -159,13 +155,13 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::canonicalize("pL_latn_pl"),
-    ///     Ok("pl-Latn-PL".to_string())
+    ///     LanguageIdentifier::canonicalize("pL_latn_pl").as_deref(),
+    ///     Ok("pl-Latn-PL")
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
         let lang_id = Self::try_from_bytes(input.as_ref())?;
-        Ok(lang_id.to_string())
+        Ok(lang_id.write_to_string().into_owned())
     }
 
     /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
@@ -197,7 +193,6 @@ impl LanguageIdentifier {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
-    ///     assert_eq!(a, a_langid.to_string());
     ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
     ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
@@ -387,14 +382,11 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_language as language;
-/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{
+///     langid, subtags_language as language, LanguageIdentifier,
+/// };
 ///
-/// let language = language!("en");
-/// let li = LanguageIdentifier::from(language);
-///
-/// assert_eq!(li.language, language);
-/// assert_eq!(li.to_string(), "en");
+/// assert_eq!(LanguageIdentifier::from(language!("en")), langid!("en"));
 /// ```
 impl From<subtags::Language> for LanguageIdentifier {
     fn from(language: subtags::Language) -> Self {
@@ -408,14 +400,12 @@ impl From<subtags::Language> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_script as script;
-/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{langid, subtags_script as script, LanguageIdentifier};
 ///
-/// let script = script!("latn");
-/// let li = LanguageIdentifier::from(Some(script));
-///
-/// assert_eq!(li.script.unwrap(), script);
-/// assert_eq!(li.to_string(), "und-Latn");
+/// assert_eq!(
+///     LanguageIdentifier::from(Some(script!("latn"))),
+///     langid!("und-Latn")
+/// );
 /// ```
 impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
@@ -429,14 +419,12 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_region as region;
-/// use icu::locid::LanguageIdentifier;
+/// use icu::locid::{langid, subtags_region as region, LanguageIdentifier};
 ///
-/// let region = region!("US");
-/// let li = LanguageIdentifier::from(Some(region));
-///
-/// assert_eq!(li.region.unwrap(), region);
-/// assert_eq!(li.to_string(), "und-US");
+/// assert_eq!(
+///     LanguageIdentifier::from(Some(region!("US"))),
+///     langid!("und-US")
+/// );
 /// ```
 impl From<Option<subtags::Region>> for LanguageIdentifier {
     fn from(region: Option<subtags::Region>) -> Self {
@@ -452,22 +440,18 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
 /// use icu::locid::{
-///     subtags_language as language, subtags_region as region,
-///     subtags_script as script,
+///     langid, subtags_language as language, subtags_region as region,
+///     subtags_script as script, LanguageIdentifier,
 /// };
 ///
 /// let lang = language!("en");
 /// let script = script!("Latn");
 /// let region = region!("US");
-/// let li = LanguageIdentifier::from((lang, Some(script), Some(region)));
-///
-/// assert_eq!(li.language, lang);
-/// assert_eq!(li.script.unwrap(), script);
-/// assert_eq!(li.region.unwrap(), region);
-/// assert_eq!(li.variants.len(), 0);
-/// assert_eq!(li.to_string(), "en-Latn-US");
+/// assert_eq!(
+///     LanguageIdentifier::from((lang, Some(script), Some(region))),
+///     langid!("en-Latn-US")
+/// );
 /// ```
 impl
     From<(
@@ -497,7 +481,6 @@ impl
 /// # Examples
 ///
 /// ```
-/// use icu::locid::LanguageIdentifier;
 /// use icu::locid::{
 ///     langid, subtags_language as language, subtags_region as region,
 ///     subtags_script as script,

@@ -11,11 +11,9 @@ impl_tinystr_subtag!(
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::other::Subtag;
+    /// use icu::locid::extensions_other_subtag as subtag;
     ///
-    /// let subtag: Subtag = "Foo".parse().expect("Failed to parse a Subtag.");
-    ///
-    /// assert_eq!(subtag.as_str(), "foo");
+    /// assert_eq!(subtag!("Foo").as_str(), "foo");
     /// ```
     Subtag,
     extensions::other::Subtag,
