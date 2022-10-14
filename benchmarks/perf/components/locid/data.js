@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665764928975,
+  "lastUpdate": 1665782794379,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -115571,6 +115571,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 176,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a",
+          "message": "Bump got and ava in /ffi/diplomat/js/examples/node (#2744)\n\nRemoves [got](https://github.com/sindresorhus/got). It's no longer used after updating ancestor dependency [ava](https://github.com/avajs/ava). These dependencies need to be updated together.\r\n\r\n\r\nRemoves `got`\r\n\r\nUpdates `ava` from 3.15.0 to 4.3.3\r\n- [Release notes](https://github.com/avajs/ava/releases)\r\n- [Commits](https://github.com/avajs/ava/compare/v3.15.0...v4.3.3)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: got\r\n  dependency-type: indirect\r\n- dependency-name: ava\r\n  dependency-type: direct:development\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-10-14T21:08:31Z",
+          "tree_id": "32e69c2ded251a1431b15a406df41d1803f49faa",
+          "url": "https://github.com/unicode-org/icu4x/commit/e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a"
+        },
+        "date": 1665782720130,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3500,
+            "range": "± 416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 904,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1525,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 427,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 136,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1005,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 362,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2854,
+            "range": "± 165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4043,
+            "range": "± 296",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1821,
+            "range": "± 298",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1368,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 853,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 268,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1939,
+            "range": "± 171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 572,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3821,
+            "range": "± 169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 166,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 117,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 146,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 183,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
