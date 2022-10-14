@@ -432,7 +432,7 @@ jobs:
         with:
           node-version: 14.17.0
           cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+          cache-dependency-path: '**/package-lock.json'
       - name: Run emscripten test
         run: |
           . ~/emsdk/emsdk_env.sh
