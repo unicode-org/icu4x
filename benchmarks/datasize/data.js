@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665790460780,
+  "lastUpdate": 1665790578725,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30323,6 +30323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/58a77c95fbbd11e9a2b9f62a0b7e3d04d9c5f6f7"
         },
         "date": 1665790395199,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3aaa9bb82875a81b7599528fcd3581818d2f05c4",
+          "message": "Revert \"Bump got and ava in /ffi/diplomat/js/examples/node (#2744)\" (#2746)\n\nThis reverts commit e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a.",
+          "timestamp": "2022-10-14T23:33:34Z",
+          "tree_id": "6aed7b51d75a52b7c12f2cebd485e429d665295c",
+          "url": "https://github.com/unicode-org/icu4x/commit/3aaa9bb82875a81b7599528fcd3581818d2f05c4"
+        },
+        "date": 1665790516810,
         "tool": "ndjson",
         "benches": [
           {
