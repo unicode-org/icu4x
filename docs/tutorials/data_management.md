@@ -86,7 +86,6 @@ fn main() {
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we included `--all-keys` `--all-locales`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ cargo build
 $ icu4x-datagen --overwrite --cldr-tag latest --icuexport-tag latest --out my-data-blob --format blob --keys-for-bin target/debug/myapp --locales ja
 ```
 
@@ -139,6 +138,17 @@ So far we've used `--format blob` and `BlobDataProvider`. This is useful if we w
 The `mod` format will generate a Rust module that defines a data provider. This format naturally has no deserialization overhead, and allows for compile-time optimizations (data slicing isn't really necessary, as the compiler will do it for us), but cannot be dynamically loaded at runtime.
 
 Let's give it a try:
+
+For the mod generation to work, you need an actual application that compiles. You can keep the existing app if you have been following this tutorial from the start.
+
+```rust
+// Initial application that compiles so that icu4x-datagen can run against the binary.
+fn main() {
+    println!("Hello !");
+}
+```
+
+Then we can run:
 
 ```console
 $ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-mod --format mod --keys-for-bin target/debug/myapp --locales ja
@@ -195,6 +205,8 @@ let _any_provider = BakedDataProvider;
 
 The `dir` format will generate a directory tree of data files in JSON (although the `--syntax` option can be used to generate `postcard` or `bincode` files, which doesn't have many practical uses).
 
+This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
+
 Let's give it a try:
 
 Same as `BlobDataProvider`, this also a buffer provider, so you will need to activate `icu`'s `serde` feature and use the `with_buffer_provider` constructors.
@@ -235,11 +247,8 @@ fn main() {
 Then, run the following command.
 
 ```console
-$ cargo build && icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
 ```
-
-This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
-
 
 # 6. Summary
 
