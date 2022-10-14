@@ -114,12 +114,7 @@ dependencies = [
 description = "Run all tests for the CI 'wasm' job"
 category = "CI"
 dependencies = [
-    # note: CI does not call `cargo make ci-job-wasm` since
-    # we have to set up the environment for the emscripten job separately
-    # Instead, each of these is called individually.
-    "wasm-release",
-    "wasm-test-release",
-    "wasm-cpp-emscripten",
+    "test-cpp-emscripten",
 ]
 
 [tasks.ci-job-clippy]

@@ -240,6 +240,12 @@ jobs:
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 14
+    - name: Install Node.js v14.17.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14.17.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -303,14 +309,6 @@ jobs:
         crate: cargo-make
         version: latest
 
-    - name: Install Python
-      uses: actions/setup-python@v1
-    - name: Install Sphinx
-      uses: BSFishy/pip-action@v1
-      with:
-        packages: |
-          sphinx
-          sphinx-rtd-theme
     - name: Run diplomat-get-rev to ensure it works
       id: diplomat-getrev-check
       run: cargo make --loglevel error diplomat-get-rev
@@ -389,7 +387,7 @@ jobs:
         command: make
         args: ci-job-features
 
-  # WASM Tests - runs Node.js tests for WASM bindings
+  # WASM Tests - runs C++ to WASM example
   wasm:
     runs-on: ubuntu-latest
     needs: [check]
@@ -402,50 +400,6 @@ jobs:
           rustup target add wasm32-unknown-unknown --toolchain nightly-2022-04-05
           rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-04-05
           rustup component add rust-src --toolchain nightly-2022-04-05
-
-      - name: Install npm dependencies from cache
-        uses: actions/cache@v2
-        id: npm-cache
-        with:
-          path: ffi/diplomat/wasm/icu4x/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
-      - name: Install npm packages.
-        # If npm dependencies are not found in cache.
-        if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: |
-          # This step requires wasm-opt and wabt. To install these two packages
-          # ready-to-use locally, you also can execute
-          # 'sudo npm install -g wasm-opt --unsafe-perm' and
-          # 'sudo npm install -g wabt'.
-          cd ffi/diplomat/wasm/icu4x
-          npm ci
-      - name: Set path to wasm-opt and wabt binaries
-        run: |
-          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
-
-      - name: Get twiggy version
-        id: twiggy-version
-        run: |
-          # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
-          # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
-          echo "::set-output name=hash::92d59f439821cd6514a88e807dd6576bfece6244"
-        shell: bash
-      - name: Attempt to load cached twiggy
-        uses: actions/cache@v2
-        id: twiggy-cache
-        with:
-          path: |
-            ~/.cargo/bin/twiggy
-            ~/.cargo/bin/twiggy.exe
-          key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
-      - name: Install twiggy
-        if: steps.twiggy-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: install
-          args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
-
 
       - name: Get cargo-make version
         id: cargo-make-version
@@ -473,57 +427,16 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-      - name: Run diplomat-get-rev to ensure it works
-        id: diplomat-getrev-check
-        run: cargo make --loglevel error diplomat-get-rev
-      - name: Get Diplomat version
-        id: diplomat-version
-        run: |
-          echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
-        shell: bash
-      - name: Attempt to load cached Diplomat
-        uses: actions/cache@v2
-        id: diplomat-cache
-        with:
-          path: |
-            ~/.cargo/bin/diplomat-tool
-            ~/.cargo/bin/diplomat-tool.exe
-          key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
-
-      - name: Install Diplomat (git hash)
-        if: steps.diplomat-cache.outputs.cache-hit != 'true' && !contains(steps.diplomat-version.outputs.rev, '.')
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: install
-          args: --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
-      - name: Install Diplomat (versioned)
-        if: steps.diplomat-cache.outputs.cache-hit != 'true' && contains(steps.diplomat-version.outputs.rev, '.')
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: install
-          args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
-      - name: Build
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: make
-          args: wasm-release
       - name: Install Node.js v14.17.0
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 14.17.0
-      - name: Build
-        uses: actions-rs/cargo@v1.0.1
-        with:
-          command: make
-          args: wasm-test-release
-      # This has to be a separate test since the emscripten sdk
-      # will otherwise interfere with other node-using tests
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: Run emscripten test
         run: |
           . ~/emsdk/emsdk_env.sh
-          cargo make wasm-cpp-emscripten
+          cargo make ci-job-wasm
 
   # Fmt job - runs cargo fmt
   fmt:
@@ -894,13 +807,24 @@ jobs:
         crate: cargo-make
         version: latest
 
-    - name: Get twiggy version
-      id: twiggy-version
+    - name: Install prerequisites for wasm build
       run: |
-        # We install a specific version since we need https://github.com/rustwasm/twiggy/pull/576 and
-        # twiggy has not been updated yet. Switch this back to a regular cargo install when twiggy is updated.
-        echo "::set-output name=hash::92d59f439821cd6514a88e807dd6576bfece6244"
-      shell: bash
+        rustup toolchain list
+        rustup toolchain install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
+
+    - name: Install Node.js v14.17.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14.17.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install npm tools
+      run: |
+        npm install -g wabt
+        npm install -g wasm-opt
+    
     - name: Attempt to load cached twiggy
       uses: actions/cache@v2
       id: twiggy-cache
@@ -908,50 +832,13 @@ jobs:
         path: |
           ~/.cargo/bin/twiggy
           ~/.cargo/bin/twiggy.exe
-        key: ${{ runner.os }}-twiggy-${{ steps.twiggy-version.outputs.hash }}
+        key: ${{ runner.os }}-twiggy-0.7
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
       with:
         command: install
-        args: --git https://github.com/rustwasm/twiggy.git --rev ${{ steps.twiggy-version.outputs.hash }} twiggy
-
-    - name: Install npm dependencies from cache
-      uses: actions/cache@v2
-      id: npm-cache
-      with:
-        path: ffi/diplomat/wasm/icu4x/node_modules
-        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
-
-    - name: Install npm packages.
-      # If npm dependencies are not found in cache.
-      if: steps.npm-cache.outputs.cache-hit != 'true'
-      # Note: if package.json and package-lock.json are out of sync then
-      # 'npm ci' will fail. Locally execute 'npm install' in directory
-      # 'ffi/diplomat/wasm/icu4x' to generate a new package-lock.json file and
-      # merge it into the repository.
-      run: |
-        cd ffi/diplomat/wasm/icu4x
-        npm ci
-        if [ $? -ne 0 ]
-        then
-          echo Execution of npm ci failed. This may be due to package.json
-          echo and package-lock.json being out of sync. Locally execute
-          echo npm install in directory  ffi/diplomat/wasm/icu4x to generate a
-          echo new package-lock.json file and and merge it into the repository.
-          exit 1
-        fi
-
-    - name: Set path to wasm-opt and wabt binaries
-      run: |
-        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
-
-    - name: Install prerequisites for wasm build
-      run: |
-        rustup toolchain list
-        rustup toolchain install nightly-2022-04-05
-        rustup component add --toolchain nightly-2022-04-05 rust-src
+        args: twiggy --version 0.7.0
 
     - name: Setup output data directory
       run: |

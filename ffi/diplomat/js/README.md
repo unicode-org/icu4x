@@ -1,10 +1,10 @@
-# C FFI for ICU4X
+# JavaScript/TypeScript FFI for ICU4X
 
-This folder contains the C FFI for ICU4X. To re-generate the bindings run:
+This folder contains the JavaScript/TypeScript FFI for ICU4X. To re-generate the bindings run:
 
 ```sh
 cargo make diplomat-install
-cargo make diplomat-gen-c
+cargo make diplomat-gen-js
 ```
 
 Or re-generate all of the bindings:

@@ -1,0 +1,32 @@
+{
+  "name": "icu4x",
+  "version": "0.0.1",
+  "description": "ICU4X JavaScript bindings via WebAssembly",
+  "main": "lib/index.js",
+  "type": "module",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "ava": {
+    "files": [
+      "test/*.mjs"
+    ],
+    "nodeArguments": [
+      "--experimental-wasm-bigint"
+    ]
+  },
+  "scripts": {
+    "test": "ava",
+    "prepare": "sh ./build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unicode-org/icu4x.git"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "ava": "^3.15.0",
+    "wasm-opt": "^1.2.1"
+  }
+}
