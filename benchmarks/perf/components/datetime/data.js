@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665764882759,
+  "lastUpdate": 1665782661333,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -79211,6 +79211,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6204,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a",
+          "message": "Bump got and ava in /ffi/diplomat/js/examples/node (#2744)\n\nRemoves [got](https://github.com/sindresorhus/got). It's no longer used after updating ancestor dependency [ava](https://github.com/avajs/ava). These dependencies need to be updated together.\r\n\r\n\r\nRemoves `got`\r\n\r\nUpdates `ava` from 3.15.0 to 4.3.3\r\n- [Release notes](https://github.com/avajs/ava/releases)\r\n- [Commits](https://github.com/avajs/ava/compare/v3.15.0...v4.3.3)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: got\r\n  dependency-type: indirect\r\n- dependency-name: ava\r\n  dependency-type: direct:development\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-10-14T21:08:31Z",
+          "tree_id": "32e69c2ded251a1431b15a406df41d1803f49faa",
+          "url": "https://github.com/unicode-org/icu4x/commit/e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a"
+        },
+        "date": 1665782586964,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 85593,
+            "range": "± 3858",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 142199,
+            "range": "± 5984",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 76415,
+            "range": "± 3334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 88778,
+            "range": "± 5725",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 81534,
+            "range": "± 4194",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 91598,
+            "range": "± 6391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 151130,
+            "range": "± 6623",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 164447,
+            "range": "± 6159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 154197,
+            "range": "± 5480",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 154682,
+            "range": "± 7419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6269,
+            "range": "± 708",
             "unit": "ns/iter"
           }
         ]
