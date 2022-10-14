@@ -219,7 +219,6 @@ use icu_provider_fs::FsDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    // we will ask icu4x-datagen to generate everything in "my-data-dir"
     let buffer_provider = FsDataProvider::try_new("my-data-dir")
            .expect("Failed to initialize Data Provider");
 
