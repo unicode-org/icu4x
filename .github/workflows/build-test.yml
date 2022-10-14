@@ -825,6 +825,7 @@ jobs:
     - name: Install npm tools
       run: |
         npm install -g wabt
+        npm install -g wasm-opt
     
     - name: Attempt to load cached twiggy
       uses: actions/cache@v2
