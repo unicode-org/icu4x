@@ -777,6 +777,16 @@ See also: the [Panics](#Panics--required) section of this document.
 
 The `lock`, `read`, and `write` methods on `Mutex` and `RwLock` return `Result`s in case the lock got poisoned. This happens when the process holding the lock panics, so it is fine to panic when encountering a poison. For consistency we require poisons to be handled with `.expect("poison")`.
 
+### Avoid `to_string` :: suggested
+
+`to_string` delegates to the `Display` trait which is bad for code size as it pulls in a lot of formatting code.
+
+There are three types on which the standard library has *specialized implementations* for `to_string` that do not go through formatting logic: `&str`, `String`, and `char`. It would generally be acceptable to use `to_string` on these types, however types might not always be obvious to a reader, and implicit types might change with surrounding code (such as from `&str` to `&&str`, which is *not specialized*), so use `str::to_owned`, `String::clone`, and `String::from(char)` for clarity.
+
+Any other invocation of `to_string` should be carefully evaluated. It is usually better to work with values that implement `Display` and/or `Writeable` than to eagerly format and allocate strings.
+
+When comparing items in unit tests or docs, prefer semantic equality over stringified equality.
+
 ### Don't Handle Errors :: suggested
 
 Functions which can error for any reason must return a `Result`, and APIs should be designed such that you should not generally need to recover from an [Err](https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err) internally (which should normally be immediately propagated up to the user by using the [`?` operator](https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html)). I.e. don't generally write library code which recovers from its own "errors", since if it can be recovered from, then it wasn't an "error".
