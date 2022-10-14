@@ -26,5 +26,10 @@ cargo +nightly-2022-04-05 build \
 
 # Optimize the WASM library
 wasm-opt -Os target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm -o lib/icu_capi.wasm
-
 rm -r target
+
+if ! command -v icu4x-datagen &> /dev/null; then
+    cargo install icu_datagen --features bin
+fi
+
+icu4x-datagen --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out lib/full.postcard

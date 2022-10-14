@@ -3,12 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import test from 'ava';
+import * as fs from 'fs';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/index.js"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter, fullData } from "../index.js"
 
 const locale = ICU4XLocale.create_from_string("bn");
-const dataProvider = ICU4XDataProvider.create_test();
-const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(dataProvider, locale, "Auto");
+const provider = ICU4XDataProvider.create_from_byte_slice(await fullData());
+const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
 
 test("format a simple decimal", t => {
   const decimal = ICU4XFixedDecimal.create_from_i32(1234);
