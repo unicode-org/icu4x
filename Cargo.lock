@@ -1697,6 +1697,7 @@ dependencies = [
  "arraystring",
  "arrayvec",
  "atoi",
+ "criterion",
  "databake",
  "displaydoc",
  "icu_collections",
