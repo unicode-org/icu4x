@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665683154103,
+  "lastUpdate": 1665764805701,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57028,6 +57028,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e8fbc08b311d541aa7f0cd70f63d58023fdfff1",
+          "message": "Cleaning up ffi/wasm and generating ffi docs previews (#2736)",
+          "timestamp": "2022-10-14T18:12:40+02:00",
+          "tree_id": "2617db2874aaaab657738706ad44e773ab3c1ac4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e8fbc08b311d541aa7f0cd70f63d58023fdfff1"
+        },
+        "date": 1665764744791,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121273,
+            "range": "± 377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25090,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71114,
+            "range": "± 1296",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 203,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 79,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
             "range": "± 0",
             "unit": "ns/iter"
           }
