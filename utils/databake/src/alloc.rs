@@ -46,17 +46,16 @@ fn vec() {
 }
 
 impl Bake for String {
-    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
-        ctx.insert("alloc");
+    fn bake(&self, _: &CrateEnv) -> TokenStream {
         quote! {
-            alloc::string::String::from(#self)
+            #self.to_owned()
         }
     }
 }
 
 #[test]
 fn string() {
-    test_bake!(String, alloc::string::String::from("hello"), alloc);
+    test_bake!(String, "hello".to_owned());
 }
 
 macro_rules! smart_pointer {

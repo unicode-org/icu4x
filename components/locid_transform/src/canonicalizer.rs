@@ -35,11 +35,9 @@ use tinystr::TinyAsciiStr;
 /// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
-///     .parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-/// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+/// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
 /// ```
 ///
 /// [`ICU4X`]: ../icu/index.html
@@ -250,11 +248,9 @@ impl LocaleCanonicalizer {
     /// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
-    ///     .parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-    /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+    /// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
     /// ```
     pub fn canonicalize(&self, locale: &mut Locale) -> TransformResult {
         let mut result = TransformResult::Unmodified;

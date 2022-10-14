@@ -45,7 +45,7 @@ fn locale_to_file_name(
     locale: &DataLocale,
 ) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
-        String::from("root")
+        "root".to_owned()
     } else {
         locale
             .get_langid()

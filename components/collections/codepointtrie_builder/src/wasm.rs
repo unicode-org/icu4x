@@ -29,7 +29,7 @@ where
             TrieType::Fast => "fast",
             TrieType::Small => "small",
         }
-        .to_string(),
+        .to_owned(),
         format!("{}", std::mem::size_of::<T::ULE>() * 8),
     ];
     let mut wasi_env = WasiState::new("list_to_ucptrie")

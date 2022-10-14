@@ -478,7 +478,7 @@ lazy_static::lazy_static! {
         // No macros in FFI
         "icu_provider_adapters::make_forking_provider",
 
-    ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
+    ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }
 
 fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
@@ -512,7 +512,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 .with_extension("json");
             eprintln!("Attempting to load {:?}", path);
             CRATES.insert(
-                krate.to_string(),
+                krate.to_owned(),
                 serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
             );
         }
@@ -573,7 +573,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         match &item.inner {
             ItemEnum::Import(import) => {
                 if !import.glob {
-                    path.push(import.name.to_string());
+                    path.push(import.name.clone());
                 }
 
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
@@ -617,7 +617,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             _ => {
                 let item_name = item.name.as_ref().unwrap();
                 if !path_already_extended {
-                    path.push(item_name.to_string());
+                    path.push(item_name.clone());
                 }
                 match &item.inner {
                     ItemEnum::Module(module) => {

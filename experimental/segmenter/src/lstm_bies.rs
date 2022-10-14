@@ -5,7 +5,7 @@
 use crate::lstm_error::Error;
 use crate::math_helper;
 use crate::provider::LstmDataV1Marker;
-use alloc::string::{String, ToString};
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
@@ -139,12 +139,11 @@ impl<'l> Lstm<'l> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
-        // TODO: Avoid allocating a string for each code point
         let input_seq: Vec<i16> = if self.data.get().model.contains("_codepoints_") {
-            input
-                .chars()
-                .map(|c| self.return_id(&c.to_string()))
-                .collect()
+            let starts = input.char_indices().map(|(start, _char)| start);
+            let ends = starts.clone().skip(1).chain(core::iter::once(input.len()));
+            let char_slices = starts.zip(ends).map(|(start, end)| &input[start..end]);
+            char_slices.map(|c| self.return_id(c)).collect()
         } else {
             #[cfg(feature = "lstm-grapheme")]
             {
@@ -205,7 +204,7 @@ impl<'l> Lstm<'l> {
         // Combining forward and backward LSTMs using the dense time-distributed layer
         let timew = self.mat8.view();
         let timeb = self.mat9.view();
-        let mut bies = String::from("");
+        let mut bies = String::new();
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
@@ -276,7 +275,7 @@ mod tests {
         let lstm = Lstm::try_new(&lstm_data).unwrap();
         assert_eq!(
             lstm.get_model_name(),
-            String::from("Thai_graphclust_exclusive_model4_heavy")
+            "Thai_graphclust_exclusive_model4_heavy"
         );
     }
 

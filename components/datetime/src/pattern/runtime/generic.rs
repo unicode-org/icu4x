@@ -8,7 +8,7 @@ use super::{
     Pattern,
 };
 use alloc::vec::Vec;
-use core::{fmt, str::FromStr};
+use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
@@ -99,8 +99,9 @@ impl From<&GenericPattern<'_>> for reference::GenericPattern {
     }
 }
 
-impl fmt::Display for GenericPattern<'_> {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+#[cfg(feature = "datagen")]
+impl core::fmt::Display for GenericPattern<'_> {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         let reference = reference::GenericPattern::from(self);
         reference.fmt(formatter)
     }
@@ -116,6 +117,7 @@ impl FromStr for GenericPattern<'_> {
 }
 
 #[cfg(test)]
+#[cfg(feature = "datagen")]
 mod test {
     use super::*;
 

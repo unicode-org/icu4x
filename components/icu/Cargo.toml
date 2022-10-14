@@ -49,6 +49,7 @@ icu_provider = { version = "1.0.0", path = "../../provider/core", default-featur
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
+writeable = { path = "../../utils/writeable" }
 
 [features]
 default = []

@@ -207,6 +207,7 @@ mod tests {
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
+    use writeable::Writeable;
 
     struct TestCase {
         input: &'static str,
@@ -396,10 +397,10 @@ mod tests {
                 };
                 let locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
                 let mut it = key_fallbacker.fallback_for(locale);
-                for expected in expected_chain {
+                for &expected in expected_chain {
                     assert_eq!(
                         expected,
-                        &it.get().to_string(),
+                        &*it.get().write_to_string(),
                         "{:?} ({:?})",
                         cas.input,
                         priority
@@ -408,7 +409,7 @@ mod tests {
                 }
                 assert_eq!(
                     "und",
-                    it.get().to_string(),
+                    &*it.get().write_to_string(),
                     "{:?} ({:?})",
                     cas.input,
                     priority

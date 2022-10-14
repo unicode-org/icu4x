@@ -265,7 +265,7 @@ fn iai_named_interpolate() {
         let replacements: std::collections::HashMap<String, Element> = sample
             .1
             .iter()
-            .map(|(k, v)| (k.to_string(), Element::from(*v)))
+            .map(|&(k, v)| (k.to_owned(), Element::from(v)))
             .collect();
 
         let _ = pattern.interpolate_to_string(&replacements).unwrap();

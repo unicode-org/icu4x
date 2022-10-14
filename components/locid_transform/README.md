@@ -30,39 +30,40 @@ let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
     .expect("parse failed");
 assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 ```
 
 ```rust
-use icu::locid::Locale;
+use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
 
-let mut locale: Locale = "zh-CN".parse().expect("parse failed");
+let mut locale = locale!("zh-CN");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
-assert_eq!(locale.to_string(), "zh-Hans-CN");
+assert_eq!(locale, locale!("zh-Hans-CN"));
 
-let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
+let mut locale = locale!("zh-Hant-TW");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
-assert_eq!(locale.to_string(), "zh-Hant-TW");
+assert_eq!(locale, locale!("zh-Hant-TW"));
 ```
 
 ```rust
-use icu::locid::Locale;
+use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
+use writeable::assert_writeable_eq;
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
 
-let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
+let mut locale = locale!("zh-Hans-CN");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
-assert_eq!(locale.to_string(), "zh");
+assert_eq!(locale, locale!("zh"));
 
-let mut locale: Locale = "zh".parse().expect("parse failed");
+let mut locale = locale!("zh");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
-assert_eq!(locale.to_string(), "zh");
+assert_eq!(locale, locale!("zh"));
 ```
 
 [`ICU4X`]: ../icu/index.html

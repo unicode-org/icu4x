@@ -6,7 +6,6 @@ use crate::lstm_bies::Lstm;
 use crate::provider::LstmDataV1Marker;
 
 use alloc::string::String;
-use alloc::string::ToString;
 use core::char::decode_utf16;
 use icu_provider::DataError;
 use icu_provider::DataPayload;
@@ -39,7 +38,7 @@ impl LstmSegmenterIterator {
     pub fn new(lstm: &Lstm, input: &str) -> Self {
         let lstm_output = lstm.word_segmenter(input);
         Self {
-            input: input.to_string(),
+            input: input.to_owned(),
             bies_str: lstm_output,
             pos: 0,
             pos_utf8: 0,

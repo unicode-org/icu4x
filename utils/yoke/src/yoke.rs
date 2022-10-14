@@ -220,7 +220,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     /// use yoke::Yoke;
     ///
-    /// let local_data = "foo".to_string();
+    /// let local_data = "foo".to_owned();
     /// let yoke = Yoke::<&'static str, Box<String>>::attach_to_zero_copy_cart(
     ///     Box::new(local_data),
     /// );
@@ -237,7 +237,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// use std::borrow::Cow;
     /// use yoke::Yoke;
     ///
-    /// let local_data = "foo".to_string();
+    /// let local_data = "foo".to_owned();
     /// let mut yoke =
     ///     Yoke::<Cow<'static, str>, Box<String>>::attach_to_zero_copy_cart(
     ///         Box::new(local_data),
@@ -515,7 +515,7 @@ unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for
 
 #[test]
 fn test_clone() {
-    let local_data = "foo".to_string();
+    let local_data = "foo".to_owned();
     let y1 = Yoke::<alloc::borrow::Cow<'static, str>, Rc<String>>::attach_to_zero_copy_cart(
         Rc::new(local_data),
     );

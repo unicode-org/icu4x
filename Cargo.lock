@@ -1346,6 +1346,7 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
+ "writeable",
 ]
 
 [[package]]
@@ -1702,6 +1703,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tinystr 0.7.0",
+ "writeable",
  "zerovec",
 ]
 

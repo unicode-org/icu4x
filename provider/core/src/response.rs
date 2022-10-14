@@ -183,7 +183,7 @@ where
     /// use std::borrow::Cow;
     ///
     /// let local_struct = HelloWorldV1 {
-    ///     message: Cow::Owned("example".to_string()),
+    ///     message: Cow::Owned("example".to_owned()),
     /// };
     ///
     /// let payload =
@@ -236,8 +236,8 @@ where
     /// let mut payload =
     ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
-    /// let suffix = " World".to_string();
-    /// payload.with_mut(move |s| s.message.to_mut().push_str(&suffix));
+    /// let suffix = " World";
+    /// payload.with_mut(move |s| s.message.to_mut().push_str(suffix));
     ///
     /// assert_eq!("Hello World", payload.get().message);
     /// ```

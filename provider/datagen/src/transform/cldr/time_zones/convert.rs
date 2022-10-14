@@ -37,8 +37,8 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
 fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
     let index = hour_format.rfind(';').unwrap();
-    let positive = String::from(&hour_format[0..index]);
-    let negative = String::from(&hour_format[index + 1..]);
+    let positive = hour_format[0..index].to_owned();
+    let negative = hour_format[index + 1..].to_owned();
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 

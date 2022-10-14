@@ -187,25 +187,10 @@ impl<'s, P> Pattern<'s, P> {
     /// ```
     /// use icu_pattern::Pattern;
     /// use std::convert::TryFrom;
-    /// use writeable::Writeable;
-    ///
-    /// #[derive(Debug, PartialEq)]
-    /// struct Element(usize);
-    ///
-    /// impl Writeable for Element {
-    ///     fn write_to<W>(&self, sink: &mut W) -> Result<(), std::fmt::Error>
-    ///     where
-    ///         W: std::fmt::Write + ?Sized,
-    ///     {
-    ///         sink.write_str(&self.0.to_string())
-    ///     }
-    /// }
-    ///
-    /// writeable::impl_display_with_writeable!(Element);
     ///
     /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
-    /// let replacements = vec![Element(5)];
+    /// let replacements = vec![5];
     ///
     /// let mut result = String::new();
     /// pattern
