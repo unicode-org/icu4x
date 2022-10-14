@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665682515577,
+  "lastUpdate": 1665764160389,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30233,6 +30233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e5e30c5a8f3373a7f6ddcc0370239d220cd048f"
         },
         "date": 1665682446944,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e8fbc08b311d541aa7f0cd70f63d58023fdfff1",
+          "message": "Cleaning up ffi/wasm and generating ffi docs previews (#2736)",
+          "timestamp": "2022-10-14T18:12:40+02:00",
+          "tree_id": "2617db2874aaaab657738706ad44e773ab3c1ac4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e8fbc08b311d541aa7f0cd70f63d58023fdfff1"
+        },
+        "date": 1665764085197,
         "tool": "ndjson",
         "benches": [
           {
