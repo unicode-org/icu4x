@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665764805701,
+  "lastUpdate": 1665782583695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57089,6 +57089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 82,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a",
+          "message": "Bump got and ava in /ffi/diplomat/js/examples/node (#2744)\n\nRemoves [got](https://github.com/sindresorhus/got). It's no longer used after updating ancestor dependency [ava](https://github.com/avajs/ava). These dependencies need to be updated together.\r\n\r\n\r\nRemoves `got`\r\n\r\nUpdates `ava` from 3.15.0 to 4.3.3\r\n- [Release notes](https://github.com/avajs/ava/releases)\r\n- [Commits](https://github.com/avajs/ava/compare/v3.15.0...v4.3.3)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: got\r\n  dependency-type: indirect\r\n- dependency-name: ava\r\n  dependency-type: direct:development\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-10-14T21:08:31Z",
+          "tree_id": "32e69c2ded251a1431b15a406df41d1803f49faa",
+          "url": "https://github.com/unicode-org/icu4x/commit/e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a"
+        },
+        "date": 1665782520600,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112776,
+            "range": "± 4009",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23408,
+            "range": "± 1198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68942,
+            "range": "± 4600",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 190,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 74,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
