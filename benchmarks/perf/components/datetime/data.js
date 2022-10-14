@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665683141995,
+  "lastUpdate": 1665764882759,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -79121,6 +79121,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4620,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e8fbc08b311d541aa7f0cd70f63d58023fdfff1",
+          "message": "Cleaning up ffi/wasm and generating ffi docs previews (#2736)",
+          "timestamp": "2022-10-14T18:12:40+02:00",
+          "tree_id": "2617db2874aaaab657738706ad44e773ab3c1ac4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e8fbc08b311d541aa7f0cd70f63d58023fdfff1"
+        },
+        "date": 1665764808510,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 78364,
+            "range": "± 222",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 130474,
+            "range": "± 372",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 71383,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 82221,
+            "range": "± 192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 78940,
+            "range": "± 272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 88192,
+            "range": "± 2919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 123434,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 140390,
+            "range": "± 831",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 130351,
+            "range": "± 317",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 145689,
+            "range": "± 307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6204,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
