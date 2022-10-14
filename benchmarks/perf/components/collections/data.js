@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665683189663,
+  "lastUpdate": 1665764932834,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -28175,6 +28175,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 49405317,
             "range": "± 675188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e8fbc08b311d541aa7f0cd70f63d58023fdfff1",
+          "message": "Cleaning up ffi/wasm and generating ffi docs previews (#2736)",
+          "timestamp": "2022-10-14T18:12:40+02:00",
+          "tree_id": "2617db2874aaaab657738706ad44e773ab3c1ac4",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e8fbc08b311d541aa7f0cd70f63d58023fdfff1"
+        },
+        "date": 1665764860185,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 541,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 421,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 479,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 496,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 804,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 907,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 437,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 454,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 471,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 478,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 765,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 37793798,
+            "range": "± 2260438",
             "unit": "ns/iter"
           },
           {
