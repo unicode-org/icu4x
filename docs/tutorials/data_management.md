@@ -194,9 +194,13 @@ let _any_provider = BakedDataProvider;
 
 The `dir` format will generate a directory tree of data files in JSON (although the `--syntax` option can be used to generate `postcard` or `bincode` files, which doesn't have many practical uses).
 
-This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
-
 Let's give it a try:
+
+```console
+$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
+```
+
+This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
 
 Same as `BlobDataProvider`, this also a buffer provider, so you will need to activate `icu`'s `serde` feature and use the `with_buffer_provider` constructors.
 
@@ -231,12 +235,6 @@ fn main() {
 
     println!("📅: {}", formatted_date);
 }
-```
-
-Then, run the following command.
-
-```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
 ```
 
 # 6. Summary
