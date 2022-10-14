@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665791075744,
+  "lastUpdate": 1665791263668,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57191,6 +57191,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 70900,
             "range": "± 462",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 203,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 79,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3aaa9bb82875a81b7599528fcd3581818d2f05c4",
+          "message": "Revert \"Bump got and ava in /ffi/diplomat/js/examples/node (#2744)\" (#2746)\n\nThis reverts commit e2b6ec966d783b2d4fc78d13c8a2baaaca3fc31a.",
+          "timestamp": "2022-10-14T23:33:34Z",
+          "tree_id": "6aed7b51d75a52b7c12f2cebd485e429d665295c",
+          "url": "https://github.com/unicode-org/icu4x/commit/3aaa9bb82875a81b7599528fcd3581818d2f05c4"
+        },
+        "date": 1665791202188,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 124993,
+            "range": "± 459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25173,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70804,
+            "range": "± 243",
             "unit": "ns/iter"
           },
           {
