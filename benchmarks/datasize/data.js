@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665807029766,
+  "lastUpdate": 1665807057182,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30473,6 +30473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/15e8ca42eab240971291cc785ffd16007a982c6c"
         },
         "date": 1665806953672,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "48457f5ce2a775094cda3b6431667da14c430ee2",
+          "message": "More borrow in list JSON deserialization (#2751)",
+          "timestamp": "2022-10-14T21:08:14-07:00",
+          "tree_id": "30e85b03d7e8947c6489fba030a4a47880a3fa1d",
+          "url": "https://github.com/unicode-org/icu4x/commit/48457f5ce2a775094cda3b6431667da14c430ee2"
+        },
+        "date": 1665806994731,
         "tool": "ndjson",
         "benches": [
           {
