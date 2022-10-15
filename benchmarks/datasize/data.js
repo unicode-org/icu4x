@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665790578725,
+  "lastUpdate": 1665800104472,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30353,6 +30353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3aaa9bb82875a81b7599528fcd3581818d2f05c4"
         },
         "date": 1665790516810,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dsipasseuth@google.com",
+            "name": "Sipasseuth Daniel",
+            "username": "dsipasseuth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "177a72889915dbf42b96297666a00991388b5d22",
+          "message": "Fixes in execution/paths to smooth the tutorial experience (#2729)",
+          "timestamp": "2022-10-15T04:11:54+02:00",
+          "tree_id": "102a8950069dbe4c9d44f896a013894134ea85cc",
+          "url": "https://github.com/unicode-org/icu4x/commit/177a72889915dbf42b96297666a00991388b5d22"
+        },
+        "date": 1665800030422,
         "tool": "ndjson",
         "benches": [
           {
