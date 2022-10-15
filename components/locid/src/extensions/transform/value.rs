@@ -15,6 +15,15 @@ use tinystr::TinyAsciiStr;
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
+/// ```
+/// use icu::locid::extensions::transform::Value;
+///
+/// "hybrid".parse::<Value>().expect("Valid Value.");
+///
+/// "hybrid-foobar".parse::<Value>().expect("Valid Value.");
+///
+/// "no".parse::<Value>().expect_err("Invalid Value.");
+/// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(Vec<TinyAsciiStr<{ *TYPE_LENGTH.end() }>>);
 
