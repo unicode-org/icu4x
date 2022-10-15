@@ -165,8 +165,6 @@ script = '''
 cd ffi/diplomat/js/examples/node
 exec --fail-on-error npm ci
 exec --fail-on-error npm test
-cd ../fixed_decimal
-exec --fail-on-error node main.mjs
 '''
 
 [tasks.test-cppdoc]
