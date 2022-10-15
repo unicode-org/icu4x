@@ -14,16 +14,17 @@
 //!
 //! ```
 //! use icu::locid::extensions_private_subtag as subtag;
-//! use icu::locid::Locale;
+//! use icu::locid::{Locale, locale};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
 //! assert!(loc.extensions.private.contains(&subtag!("foo")));
 //! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag!("foo")));
+//!
 //! loc.extensions.private.clear();
 //!
 //! assert!(loc.extensions.private.is_empty());
-//! assert_eq!(loc, "en-US".parse::<Locale>().unwrap());
+//! assert_eq!(loc, locale!("en-US"));
 //! ```
 
 mod other;
