@@ -15,6 +15,9 @@ use tinystr::TinyAsciiStr;
 /// separated by `-`.
 /// Each part of the sequence has to be no shorter than three characters and no
 /// longer than 8.
+///
+/// # Examples
+///
 /// ```
 /// use icu::locid::extensions::transform::Value;
 ///
