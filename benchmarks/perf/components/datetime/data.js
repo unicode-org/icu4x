@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665800802842,
+  "lastUpdate": 1665803908607,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -79607,6 +79607,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5743,
             "range": "± 347",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e37275fe168440cae5e5ba310ac79c60e3deef9e",
+          "message": "Run artifacts-build all the time (#2750)",
+          "timestamp": "2022-10-14T22:04:56-05:00",
+          "tree_id": "b898d503cdad66432f791e1e49b1c902f97c7b28",
+          "url": "https://github.com/unicode-org/icu4x/commit/e37275fe168440cae5e5ba310ac79c60e3deef9e"
+        },
+        "date": 1665803843118,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63638,
+            "range": "± 699",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 108516,
+            "range": "± 128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58636,
+            "range": "± 661",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 67551,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64328,
+            "range": "± 570",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71516,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 67351,
+            "range": "± 130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 105733,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 117437,
+            "range": "± 173",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109216,
+            "range": "± 81",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 121871,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 117396,
+            "range": "± 242",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4655,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
