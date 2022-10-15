@@ -9,6 +9,7 @@ import 'bootstrap/js/dist/collapse';
 
 (async function init() {
     const dataProvider = ICU4XDataProvider.create_from_byte_slice(await fullData());
+    dataProvider.enable_locale_fallback();
 
     fdf.setup(dataProvider);
     dtf.setup(dataProvider);
