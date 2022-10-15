@@ -111,7 +111,7 @@ export class DateTimeDemo {
                 this.#displayFn("");
             }
         } catch (e) {
-            this.#displayFn(`Error: ${e.error_value}`);
+            this.#displayFn(`Error: ${e}`);
         }
     }
 }

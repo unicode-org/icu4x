@@ -1,6 +1,6 @@
 {
-  "name": "icu4x",
-  "version": "0.0.1",
+  "name": "ICU4X",
+  "version": "1.0.0",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "index.js",
   "type": "module",
@@ -24,6 +24,14 @@
     "type": "git",
     "url": "git+https://github.com/unicode-org/icu4x.git"
   },
+  "keywords": [
+    "i18n"
+  ],
+  "bugs": {
+    "url": "https://github.com/unicode-org/icu4x/issues"
+  },
+  "homepage": "https://github.com/unicode-org/icu4x#readme",
+  "author": "The ICU4X Project Developers",
   "license": "Apache-2.0",
   "devDependencies": {
     "ava": "^3.15.0",

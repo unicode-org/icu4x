@@ -59,9 +59,11 @@ export default {
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
       "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
     }
-
   },
   experiments: {
     topLevelAwait: true,
-  }
+  },
+  optimization: {
+    minimize: false
+  },
 };

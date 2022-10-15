@@ -48,7 +48,7 @@ simple_logger = ["icu_capi/simple_logger"]
 
 # meta feature for things we enable by default in wasm
 # do not sync with other crates
-wasm_default = ["provider_test", "buffer_provider", "logging"]
+wasm_default = ["buffer_provider", "logging"]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
