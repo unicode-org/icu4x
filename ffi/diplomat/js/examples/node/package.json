@@ -1,6 +1,6 @@
 {
-  "name": "ICU4X",
-  "version": "1.0.0",
+  "name": "icu4x",
+  "version": "0.0.1",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "index.js",
   "type": "module",
