@@ -20,18 +20,19 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::unicode::Value;
+/// use icu::locid::{
+///     extensions::unicode::Value, extensions_unicode_value as value,
+/// };
+/// use writeable::assert_writeable_eq;
 ///
-/// let value1: Value = "gregory".parse().expect("Failed to parse a Value.");
-/// let value2: Value =
-///     "islamic-civil".parse().expect("Failed to parse a Value.");
-/// let value3: Value = "true".parse().expect("Failed to parse a Value.");
+/// assert_writeable_eq!(value!("gregory"), "gregory");
+/// assert_writeable_eq!(
+///     "islamic-civil".parse::<Value>().unwrap(),
+///     "islamic-civil"
+/// );
 ///
-/// assert_eq!(&value1.to_string(), "gregory");
-/// assert_eq!(&value2.to_string(), "islamic-civil");
-///
-/// // The value "true" is special-cased to an empty value
-/// assert_eq!(&value3.to_string(), "");
+/// // The value "true" has the special, empty string representation
+/// assert_eq!(value!("true").to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
@@ -48,9 +49,7 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::unicode::Value;
     ///
-    /// let value = Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
-    ///
-    /// assert_eq!(&value.to_string(), "buddhist");
+    /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
     pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = ShortVec::new();

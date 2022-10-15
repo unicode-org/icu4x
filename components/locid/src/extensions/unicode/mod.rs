@@ -11,21 +11,24 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions::unicode::{Attribute, Key, Unicode, Value};
-//! use icu::locid::{LanguageIdentifier, Locale};
+//! use icu::locid::Locale;
+//! use icu::locid::{
+//!     extensions::unicode::Unicode,
+//!     extensions_unicode_attribute as attribute,
+//!     extensions_unicode_key as key, extensions_unicode_value as value,
+//! };
 //!
-//! let mut loc: Locale =
-//!     "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
+//! let loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
-//! let key: Key = "hc".parse().expect("Parsing key failed.");
-//! let value: Value = "h12".parse().expect("Parsing value failed.");
-//! let attribute: Attribute =
-//!     "foobar".parse().expect("Parsing attribute failed.");
-//!
-//! assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
-//! assert!(loc.extensions.unicode.attributes.contains(&attribute));
-//!
-//! assert_eq!(&loc.extensions.unicode.to_string(), "u-foobar-hc-h12");
+//! assert_eq!(
+//!     loc.extensions.unicode.keywords.get(&key!("hc")),
+//!     Some(&value!("h12"))
+//! );
+//! assert!(loc
+//!     .extensions
+//!     .unicode
+//!     .attributes
+//!     .contains(&attribute!("foobar")));
 //! ```
 mod attribute;
 mod attributes;
@@ -60,15 +63,18 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::unicode::{Key, Value};
 /// use icu::locid::Locale;
+/// use icu::locid::{
+///     extensions_unicode_key as key, extensions_unicode_value as value,
+/// };
 ///
-/// let mut loc: Locale =
+/// let loc: Locale =
 ///     "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");
 ///
-/// let key: Key = "ca".parse().expect("Parsing key failed.");
-/// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&key!("ca")),
+///     Some(&value!("buddhist"))
+/// );
 /// ```
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // spec-backed stable datastructure

@@ -13,16 +13,18 @@
 //! # Examples
 //!
 //! ```
-//! use icu::locid::extensions::private::{Private, Subtag};
-//! use icu::locid::Locale;
+//! use icu::locid::extensions_private_subtag as subtag;
+//! use icu::locid::{Locale, locale};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!
-//! let subtag: Subtag = "foo".parse().expect("Parsing subtag failed.");
-//! assert!(loc.extensions.private.contains(&subtag));
-//! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag));
+//! assert!(loc.extensions.private.contains(&subtag!("foo")));
+//! assert_eq!(loc.extensions.private.iter().next(), Some(&subtag!("foo")));
+//!
 //! loc.extensions.private.clear();
-//! assert_eq!(loc.to_string(), "en-US");
+//!
+//! assert!(loc.extensions.private.is_empty());
+//! assert_eq!(loc, locale!("en-US"));
 //! ```
 
 mod other;
@@ -105,7 +107,7 @@ impl Private {
     ///
     /// private.clear();
     ///
-    /// assert_eq!(&private.to_string(), "");
+    /// assert_eq!(private, Private::new());
     /// ```
     pub fn clear(&mut self) {
         self.0.clear();
