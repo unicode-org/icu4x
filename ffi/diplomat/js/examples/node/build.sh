@@ -22,11 +22,8 @@ cargo +nightly-2022-04-05 build \
     --profile=release-opt-size \
     --package icu_capi_cdylib \
     --features wasm_default \
-    --target-dir target
 
-# Optimize the WASM library
-wasm-opt -Os target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm -o lib/icu_capi.wasm
-rm -r target
+cp ../../../../../target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm lib/icu_capi.wasm
 
 if ! command -v icu4x-datagen &> /dev/null; then
     cargo install icu_datagen --features bin

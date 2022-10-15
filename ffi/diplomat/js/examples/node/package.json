@@ -34,7 +34,6 @@
   "author": "The ICU4X Project Developers",
   "license": "Apache-2.0",
   "devDependencies": {
-    "ava": "^3.15.0",
-    "wasm-opt": "^1.2.1"
+    "ava": "^3.15.0"
   }
 }
