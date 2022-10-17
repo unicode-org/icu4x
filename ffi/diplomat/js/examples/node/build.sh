@@ -25,4 +25,12 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s" cargo +nightly-2022-04-05 build \
 
 cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib/icu_capi.wasm
 
-cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out lib/full.postcard
+# Cache postcard data so as not to regen whenever blowing away `lib/`
+if test -f "full-data-cached.postcard"; then
+    cp full-data-cached.postcard lib/full.postcard
+    exit 0
+else
+    # Regen all data
+    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out lib/full.postcard
+    cp lib/full.postcard full-data-cached.postcard
+fi
