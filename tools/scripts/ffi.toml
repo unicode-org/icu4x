@@ -34,7 +34,7 @@ dependencies = [
 [tasks.cargo-make-min-version]
 description = "Verify that the minimum version of cargo-make exists"
 category = "ICU4X Development"
-install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
 
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
