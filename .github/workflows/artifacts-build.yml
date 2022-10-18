@@ -149,7 +149,7 @@ jobs:
         cd ffi/diplomat/js/examples/wasm-demo
         npm i
         npm ci
-    - name: Build nativ edeps
+    - name: Build native deps
       run: |
         cd ffi/diplomat/js/examples/node
         bash build.sh
