@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665807769256,
+  "lastUpdate": 1666122051428,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57568,6 +57568,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8470cdae04636cc7a8e485dce91712ca8dd269c5",
+          "message": "Some wasm fixes (#2757)\n\n* Cache full-data in wasm build\r\n\r\n* fix diplomat-wasm import\r\n\r\n* Bump stack size\r\n\r\n* Fix ci\r\n\r\n* More stack size :(\r\n\r\n* Bump diplomat\r\n\r\n* fixup sed script",
+          "timestamp": "2022-10-18T19:26:16Z",
+          "tree_id": "6344351620af9d2231dda18f4935c453c755c546",
+          "url": "https://github.com/unicode-org/icu4x/commit/8470cdae04636cc7a8e485dce91712ca8dd269c5"
+        },
+        "date": 1666121985309,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101279,
+            "range": "± 323",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20952,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66500,
+            "range": "± 619",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
             "range": "± 0",
             "unit": "ns/iter"
           }
