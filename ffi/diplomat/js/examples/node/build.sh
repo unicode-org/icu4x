@@ -2,6 +2,7 @@
 
 set -e
 
+# Set toolchain variable to a default if not defined
 ICU4X_NIGHTLY_TOOLCHAIN="${ICU4X_NIGHTLY_TOOLCHAIN:-nightly-2022-04-05}"
 
 if test -d "lib"; then
