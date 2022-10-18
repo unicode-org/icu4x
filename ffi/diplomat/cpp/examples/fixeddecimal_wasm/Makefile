@@ -7,7 +7,7 @@
 
 ALL_HEADERS := $(wildcard ../../include/*.hpp) $(wildcard ../../../c/include/*.h)
 ALL_RUST := $(wildcard ../../../src/*.rs)
-MAKEFILE_NIGHTLY ?= "nightly-2022-04-05"
+ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-05"
 
 CXX?=g++
 EMCC?=emcc
@@ -24,7 +24,7 @@ a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) t
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
 
 ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	RUSTFLAGS="-Cpanic=abort" cargo +${MAKEFILE_NIGHTLY} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+	RUSTFLAGS="-Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 	mv ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a
 
 web-version.html: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp

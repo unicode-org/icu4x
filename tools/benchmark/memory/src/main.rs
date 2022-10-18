@@ -45,7 +45,7 @@ fn process_cli_args() -> ProcessedArgs {
                     .help("The toolchain for cargo to use. Defaults to nightly.")
             ).get_matches();
 
-    let default_toolchain = env::var("MAKEFILE_NIGHTLY").unwrap_or("nightly-2022-04-05".into());
+    let default_toolchain = env::var("ICU4X_NIGHTLY_TOOLCHAIN").unwrap_or("nightly-2022-04-05".into());
 
     ProcessedArgs {
         // Validate the OS, and copy into an owned String.
