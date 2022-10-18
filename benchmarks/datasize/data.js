@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666121342470,
+  "lastUpdate": 1666126030644,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30533,6 +30533,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8470cdae04636cc7a8e485dce91712ca8dd269c5"
         },
         "date": 1666121283221,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c151750827a2a396f020d7823781ae33399e9cee",
+          "message": "Post-review wasm fixes (#2759)\n\n* Post-review fixes\r\n\r\n* add more flags",
+          "timestamp": "2022-10-18T13:44:19-07:00",
+          "tree_id": "841327473e73b91a81f0453870f9410754cd2b1b",
+          "url": "https://github.com/unicode-org/icu4x/commit/c151750827a2a396f020d7823781ae33399e9cee"
+        },
+        "date": 1666125967453,
         "tool": "ndjson",
         "benches": [
           {
