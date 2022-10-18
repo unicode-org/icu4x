@@ -1,4 +1,5 @@
 import cfg from '../diplomat.config.js';
+import {readString} from './diplomat-runtime.js'
 
 let wasm;
 
