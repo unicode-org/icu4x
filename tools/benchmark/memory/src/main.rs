@@ -46,7 +46,7 @@ fn process_cli_args() -> ProcessedArgs {
             ).get_matches();
 
     let default_toolchain =
-        env::var("ICU4X_NIGHTLY_TOOLCHAIN").unwrap_or_else(|| "nightly-2022-04-05".into());
+        env::var("ICU4X_NIGHTLY_TOOLCHAIN").unwrap_or_else(|_| "nightly-2022-04-05".into());
 
     ProcessedArgs {
         // Validate the OS, and copy into an owned String.
