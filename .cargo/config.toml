@@ -18,6 +18,8 @@ wasm-build-release = "panic-abort-build --target wasm32-unknown-unknown --profil
 
 [target.wasm32-unknown-unknown]
 rustflags = [
-  # 20 KiB heap size, to fit in 2 pages.
-  "-C", "link-args=-z stack-size=20480"
+  # 60 KiB, working around a bug in older rustc
+  # https://github.com/unicode-org/icu4x/issues/2753
+  # keep in sync with wasm's build.sh
+  "-C", "link-args=-z stack-size=60000"
 ]
