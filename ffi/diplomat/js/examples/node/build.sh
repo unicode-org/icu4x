@@ -33,7 +33,7 @@ cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib
 # Cache postcard data so as not to regen whenever blowing away `lib/`
 if ! test -f "full-data-cached.postcard"; then
     # Regen all data
-    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out ./full-data-cached.postcard
+    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag 41.0.0 --icuexport-tag latest --format blob --out ./full-data-cached.postcard
 fi
 
 cp full-data-cached.postcard lib/full.postcard
