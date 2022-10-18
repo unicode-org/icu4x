@@ -30,7 +30,7 @@ pub struct DictionaryBreakIterator<
     trie: Char16Trie<'l>,
     iter: Y::IterAttr,
     len: usize,
-    grapheme: X,
+    grapheme_iter: X,
     // TODO transform value for byte trie
 }
 
@@ -64,7 +64,7 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized, X: Iterator<Item = usize> + ?Si
                     // Dictionary has to match with grapheme cluster segment.
                     // If not, we ignore it.
                     while last_grapheme_offset < next.0 + Y::char_len(next.1) {
-                        if let Some(offset) = self.grapheme.next() {
+                        if let Some(offset) = self.grapheme_iter.next() {
                             last_grapheme_offset = offset;
                             continue;
                         }
@@ -156,12 +156,12 @@ impl<'l> DictionarySegmenter<'l> {
         &'s self,
         input: &'s str,
     ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
-        let grapheme = self.grapheme.segment_str(input);
+        let grapheme_iter = self.grapheme.segment_str(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: input.char_indices(),
             len: input.len(),
-            grapheme,
+            grapheme_iter,
         }
     }
 
@@ -170,12 +170,12 @@ impl<'l> DictionarySegmenter<'l> {
         &'s self,
         input: &'s [u16],
     ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
-        let grapheme = self.grapheme.segment_utf16(input);
+        let grapheme_iter = self.grapheme.segment_utf16(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: Utf16Indices::new(input),
             len: input.len(),
-            grapheme,
+            grapheme_iter,
         }
     }
 }
