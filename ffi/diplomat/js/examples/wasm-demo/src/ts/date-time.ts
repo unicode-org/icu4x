@@ -111,7 +111,11 @@ export class DateTimeDemo {
                 this.#displayFn("");
             }
         } catch (e) {
-            this.#displayFn(`Error: ${e}`);
+            if (e.error_value) {
+                this.#displayFn(`ICU4X Error: ${e.error_value}`);
+            } else {
+                this.#displayFn(`Unexpected Error: ${e}`);
+            }
         }
     }
 }
