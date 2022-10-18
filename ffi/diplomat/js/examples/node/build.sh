@@ -38,6 +38,6 @@ if test -f "full-data-cached.postcard"; then
     exit 0
 else
     # Regen all data
-    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out lib/full.postcard
+    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag release-72-1 --format blob --out lib/full.postcard
     cp lib/full.postcard full-data-cached.postcard
 fi
