@@ -18,7 +18,7 @@ rustup +nightly-2022-04-05 component add rust-src
 # 60 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
 # keep in sync with .cargo/config.toml
-WASM_STACK_SIZE=60000
+WASM_STACK_SIZE=100000
 
 # Build the WASM library
 RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE}" cargo +nightly-2022-04-05 build \
