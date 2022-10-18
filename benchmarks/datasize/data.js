@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1665807057182,
+  "lastUpdate": 1666121342470,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30503,6 +30503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/48457f5ce2a775094cda3b6431667da14c430ee2"
         },
         "date": 1665806994731,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8470cdae04636cc7a8e485dce91712ca8dd269c5",
+          "message": "Some wasm fixes (#2757)\n\n* Cache full-data in wasm build\r\n\r\n* fix diplomat-wasm import\r\n\r\n* Bump stack size\r\n\r\n* Fix ci\r\n\r\n* More stack size :(\r\n\r\n* Bump diplomat\r\n\r\n* fixup sed script",
+          "timestamp": "2022-10-18T19:26:16Z",
+          "tree_id": "6344351620af9d2231dda18f4935c453c755c546",
+          "url": "https://github.com/unicode-org/icu4x/commit/8470cdae04636cc7a8e485dce91712ca8dd269c5"
+        },
+        "date": 1666121283221,
         "tool": "ndjson",
         "benches": [
           {
