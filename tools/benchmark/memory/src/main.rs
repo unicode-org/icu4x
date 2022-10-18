@@ -74,6 +74,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
+            .or_else(|| env::var("MAKEFILE_NIGHTLY"))
             .unwrap_or("nightly-2022-04-05")
             .to_string(),
     }
