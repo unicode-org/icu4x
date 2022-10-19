@@ -126,6 +126,21 @@ fn main() -> eyre::Result<()> {
                 .help("Which collation han database to use.")
         )
         .arg(
+            Arg::with_name("INCLUDE_EXTENDED_COLLATIONS")
+                .long("include-extended-collations")
+                .multiple(true)
+                .takes_value(true)
+                .possible_values(&["gb2312", "big5han", "search", "searchjl"])
+                .help("Which less-common collation tables to include.")
+        )
+        .arg(
+            Arg::with_name("EXCLUDE_COLLATIONS")
+                .long("exclude-collations")
+                .multiple(true)
+                .takes_value(true)
+                .help("Which less-common collation tables to include.")
+        )
+        .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
                 .takes_value(true)
