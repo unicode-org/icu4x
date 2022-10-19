@@ -161,9 +161,10 @@ exec make test
 description = "Run JS tests"
 category = "ICU4X Development"
 script_runner = "@duckscript"
+# Note: --foreground-scripts makes npm forward the output of build.sh
 script = '''
 cd ffi/diplomat/js/examples/node
-exec --fail-on-error npm ci
+exec --fail-on-error npm ci --foreground-scripts
 exec --fail-on-error npm test
 '''
 

@@ -137,18 +137,18 @@ jobs:
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Install Node.js v14.17.0
+    - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
-        node-version: 14.17.0
+        node-version: 16.18.0
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
     - name: Init
+      # Note: --foreground-scripts makes npm forward the output of build.sh
       run: |
         cd ffi/diplomat/js/examples/wasm-demo
-        npm i
-        npm ci
+        npm ci --foreground-scripts
 
     - name: Run Webpack
       run: |

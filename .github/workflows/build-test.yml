@@ -240,10 +240,10 @@ jobs:
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 14
-    - name: Install Node.js v14.17.0
+    - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
-        node-version: 14.17.0
+        node-version: 16.18.0
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Get cargo-make version
@@ -427,10 +427,10 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-      - name: Install Node.js v14.17.0
+      - name: Install Node.js v16.18.0
         uses: actions/setup-node@v3
         with:
-          node-version: 14.17.0
+          node-version: 16.18.0
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
       - name: Run emscripten test
@@ -813,10 +813,10 @@ jobs:
         rustup toolchain install nightly-2022-04-05
         rustup component add --toolchain nightly-2022-04-05 rust-src
 
-    - name: Install Node.js v14.17.0
+    - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
-        node-version: 14.17.0
+        node-version: 16.18.0
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
