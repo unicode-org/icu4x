@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666143980050,
+  "lastUpdate": 1666155939230,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57803,6 +57803,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/write_to/908070605040302010",
             "value": 99,
             "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
+            "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aa8a5ae0671c99a4a3925c220990723963147d85",
+          "message": "WASM review feedback (#2767)",
+          "timestamp": "2022-10-18T21:51:37-07:00",
+          "tree_id": "49e2e52a4920dea9811fa267c9496366679ad8e7",
+          "url": "https://github.com/unicode-org/icu4x/commit/aa8a5ae0671c99a4a3925c220990723963147d85"
+        },
+        "date": 1666155864520,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 140629,
+            "range": "± 1910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29006,
+            "range": "± 526",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 84359,
+            "range": "± 1419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 244,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
             "unit": "ns/iter"
           },
           {
