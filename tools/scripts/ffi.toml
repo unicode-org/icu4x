@@ -323,7 +323,7 @@ exit_on_error true
 gnaw = which gnaw
 assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gnaw' ***"
 pwd = pwd
-exec --fail-on-error ${gnaw} --manifest-path "${pwd}/ffi/gn/Cargo.toml" --project-root ${pwd} --output ${pwd}/ffi/gn/BUILD.gn
+exec --fail-on-error ${gnaw} --manifest-path "${pwd}/ffi/gn/Cargo.toml" --project-root ${pwd} --output ${pwd}/ffi/gn/icu4x/BUILD.gn
 '''
 
 [tasks.gn-build]
@@ -336,7 +336,7 @@ gn = which gn
 assert ${gn} "Could not find 'gn' in path.\n*** Please install gn. ***"
 ninja = which ninja
 assert ${ninja} "Could not find 'ninja' in path.\n*** Please install ninja. ***"
-cd ffi/gn/gn_root
+cd ffi/gn
 exec --fail-on-error gn gen out
 exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
 exec --fail-on-error ./out/obj/hello_world/src/hello_world
