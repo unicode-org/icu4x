@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666142643475,
+  "lastUpdate": 1666143304155,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30593,6 +30593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5faf121440aa6c0701487c2de925a52763745246"
         },
         "date": 1666142577043,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee28e44378b7c5b6f356d3c1e375b2027c7d4c5b",
+          "message": "Update Node.js to 16.18.0 and other WASM-related fixes (#2763)",
+          "timestamp": "2022-10-18T18:32:03-07:00",
+          "tree_id": "5b3fcbae267dae6a6f1e46adb2fd8004bcb146ae",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee28e44378b7c5b6f356d3c1e375b2027c7d4c5b"
+        },
+        "date": 1666143238358,
         "tool": "ndjson",
         "benches": [
           {
