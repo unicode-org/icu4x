@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666126030644,
+  "lastUpdate": 1666142643475,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30563,6 +30563,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c151750827a2a396f020d7823781ae33399e9cee"
         },
         "date": 1666125967453,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5faf121440aa6c0701487c2de925a52763745246",
+          "message": "Improve collation datagen test assertions (#2766)",
+          "timestamp": "2022-10-18T18:21:07-07:00",
+          "tree_id": "fb4982e9cdf0e955580d65250b5c7a10fd4d9a95",
+          "url": "https://github.com/unicode-org/icu4x/commit/5faf121440aa6c0701487c2de925a52763745246"
+        },
+        "date": 1666142577043,
         "tool": "ndjson",
         "benches": [
           {
