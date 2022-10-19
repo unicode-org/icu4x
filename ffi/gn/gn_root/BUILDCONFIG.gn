@@ -1,0 +1,23 @@
+if (target_os == "") {
+  target_os = host_os
+}
+if (target_cpu == "") {
+  target_cpu = host_cpu
+}
+if (current_cpu == "") {
+  current_cpu = target_cpu
+}
+if (current_os == "") {
+  current_os = target_os
+}
+
+_configs = [ "//build:rust_defaults" ]
+
+set_defaults("executable") {
+  configs = _configs
+}
+set_defaults("rust_library") {
+  configs = _configs
+}
+
+set_default_toolchain("//build:rust")
