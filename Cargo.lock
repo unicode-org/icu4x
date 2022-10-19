@@ -953,7 +953,6 @@ dependencies = [
  "rand_pcg",
  "ryu",
  "smallvec",
- "static_assertions",
  "writeable",
 ]
 

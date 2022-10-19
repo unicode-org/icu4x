@@ -12,14 +12,13 @@ use core::ops::RangeInclusive;
 
 use core::str::FromStr;
 
-use static_assertions::const_assert;
-
 use crate::uint_iterator::IntIterator;
 
 use crate::Error;
 
 // FixedDecimal assumes usize (digits.len()) is at least as big as a u16
-const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
+#[cfg(not(any(target_pointer_width = "16", target_pointer_width = "32", target_pointer_width = "64")))]
+compile_error!("The fixed_decimal crate only works if usizes are at least the size of a u16");
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
