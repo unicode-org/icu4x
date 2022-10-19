@@ -32,7 +32,7 @@ crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "0.6", path = "../diplomat", default-features = false }
+icu_capi = { version = "1.0", path = "../diplomat", default-features = false }
 
 # [gn.package.atomic-polyfill."0.1.5"]
 # rustflags = []
@@ -55,8 +55,9 @@ icu_capi = { version = "0.6", path = "../diplomat", default-features = false }
 [gn.package.log."0.4.14"]
 rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
 
-# [gn.package.memchr."2.4.1"]
-# rustflags = []
+# TODO: Determine the correct rustflags for memchr
+[gn.package.memchr."2.5.0"]
+rustflags = []
 
 [gn.package.proc-macro2."1.0.32"]
 rustflags = ["--cfg=lexerror_display", "--cfg=hygiene", "--cfg=literal_from_str", "--cfg=is_available", "--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
