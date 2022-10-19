@@ -205,3 +205,17 @@ fn test_nb_nn_no() {
         Some(&locale!("no").into())
     );
 }
+
+#[test]
+fn test_zh() {
+    let provider = crate::DatagenProvider::for_test();
+    let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
+    let provider = ResolvedLocaleAdapter::new(provider);
+
+    let input_locale = locale!("zh-u-co-gb2312").into();
+    Collator::try_new_unstable(&provider, &input_locale, CollatorOptions::new()).unwrap();
+    assert_eq!(
+        provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
+        Some(&locale!("zh-u-co-gb2312").into())
+    );
+}
