@@ -145,6 +145,7 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
 
     - name: Init
+      # Note: --foreground-scripts makes npm forward the output of build.sh
       run: |
         cd ffi/diplomat/js/examples/wasm-demo
         npm ci --foreground-scripts
