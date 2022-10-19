@@ -11,9 +11,6 @@
   "ava": {
     "files": [
       "test/*.mjs"
-    ],
-    "nodeArguments": [
-      "--experimental-wasm-bigint"
     ]
   },
   "scripts": {

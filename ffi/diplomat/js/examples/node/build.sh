@@ -2,15 +2,6 @@
 
 set -e
 
-if test -d "lib"; then
-    exit 0
-fi
-
-mkdir lib
-
-# Copy JS "header" files
-cp ../../include/* lib
-
 # Install Rust toolchains
 rustup toolchain install nightly-2022-04-05
 rustup +nightly-2022-04-05 component add rust-src
@@ -26,14 +17,23 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SI
     --target wasm32-unknown-unknown \
     --release \
     --package icu_capi_cdylib \
-    --features wasm_default \
-
-cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib/icu_capi.wasm
+    --features wasm_default
 
 # Cache postcard data so as not to regen whenever blowing away `lib/`
 if ! test -f "full-data-cached.postcard"; then
     # Regen all data
-    cargo run -p icu_datagen --features=bin,experimental -- --all-locales --all-keys --cldr-tag latest --icuexport-tag latest --format blob --out ./full-data-cached.postcard
+    cargo run -p icu_datagen --features=bin,experimental -- \
+        --all-locales \
+        --all-keys \
+        --cldr-tag 41.0.0 \
+        --icuexport-tag icu4x/2022-08-17/71.x \
+        --format blob \
+        --out ./full-data-cached.postcard
 fi
 
+# Refresh the lib folder
+rm -rf lib
+mkdir -p lib
+cp ../../include/* lib
+cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib/icu_capi.wasm
 cp full-data-cached.postcard lib/full.postcard

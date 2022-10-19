@@ -163,7 +163,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 cd ffi/diplomat/js/examples/node
-exec --fail-on-error npm ci
+exec --fail-on-error npm ci --foreground-scripts
 exec --fail-on-error npm test
 '''
 
