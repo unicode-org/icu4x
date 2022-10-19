@@ -61,6 +61,8 @@ mod databake;
 mod error;
 mod registry;
 mod source;
+#[cfg(test)]
+mod testutil;
 mod transform;
 
 pub use error::*;

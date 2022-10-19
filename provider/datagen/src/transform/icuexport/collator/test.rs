@@ -4,8 +4,9 @@
 
 use std::cmp::Ordering;
 
+use crate::testutil::ResolvedLocaleAdapter;
 use crate::*;
-use icu_collator::{Collator, CollatorOptions, Strength};
+use icu_collator::{provider::CollationDataV1Marker, Collator, CollatorOptions, Strength};
 use icu_locid::{langid, locale};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
@@ -166,28 +167,41 @@ fn test_nb_nn_no() {
 
     // Enable locale fallback on the provider now
     let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
+    let provider = ResolvedLocaleAdapter::new(provider);
 
     // Test "no" macro language WITH fallback (should equal expected)
+    let input_locale = locale!("no").into();
     let collator =
-        Collator::try_new_unstable(&provider, &locale!("no").into(), CollatorOptions::new())
-            .unwrap();
+        Collator::try_new_unstable(&provider, &input_locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
+    assert_eq!(
+        provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
+        Some(&locale!("no").into())
+    );
 
     // Now "nb" should work
+    let input_locale = locale!("nb").into();
     let collator =
-        Collator::try_new_unstable(&provider, &locale!("nb").into(), CollatorOptions::new())
-            .unwrap();
+        Collator::try_new_unstable(&provider, &input_locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
+    assert_eq!(
+        provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
+        Some(&locale!("no").into())
+    );
 
     // And "nn" should work, too
+    let input_locale = locale!("nn").into();
     let collator =
-        Collator::try_new_unstable(&provider, &locale!("nn").into(), CollatorOptions::new())
-            .unwrap();
+        Collator::try_new_unstable(&provider, &input_locale, CollatorOptions::new()).unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
+    assert_eq!(
+        provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
+        Some(&locale!("no").into())
+    );
 }
