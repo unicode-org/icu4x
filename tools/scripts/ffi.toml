@@ -322,8 +322,10 @@ script = '''
 exit_on_error true
 gnaw = which gnaw
 assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gnaw' ***"
+cd ffi/gn
+exec ln -s ../.. icu4x_root
 pwd = pwd
-exec --fail-on-error ${gnaw} --manifest-path "${pwd}/ffi/gn/Cargo.toml" --project-root ${pwd} --output ${pwd}/ffi/gn/icu4x/BUILD.gn
+exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn
 '''
 
 [tasks.gn-build]
