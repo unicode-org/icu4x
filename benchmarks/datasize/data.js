@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666224185053,
+  "lastUpdate": 1666226421517,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30683,6 +30683,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cd3ba6e8b511a2470cadf9504d6a2de8ffae38f3"
         },
         "date": 1666224118124,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c99640979e6f943f72162b876587a6bb05bcb54",
+          "message": "Remove static_assertions dep from fixed-decimal, bump version (#2773)\n\n* Remove static_assertions dep from fixed_decimal\r\n\r\n* Bump fixed-decimal to 0.5.1\r\n\r\n* remove devdep too\r\n\r\n* fmt",
+          "timestamp": "2022-10-20T00:36:48Z",
+          "tree_id": "360e1fdfe4a50ae29c709d4aa1a167ed221219a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c99640979e6f943f72162b876587a6bb05bcb54"
+        },
+        "date": 1666226340026,
         "tool": "ndjson",
         "benches": [
           {
