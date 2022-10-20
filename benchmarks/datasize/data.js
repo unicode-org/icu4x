@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666226421517,
+  "lastUpdate": 1666242080548,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30713,6 +30713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9c99640979e6f943f72162b876587a6bb05bcb54"
         },
         "date": 1666226340026,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cad97@cad97.com",
+            "name": "Christopher Durham",
+            "username": "CAD97"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0acdb50f0726616c5d689890b0321bceb0a519bc",
+          "message": "Allow clippy::forget_copy in derive(Yokeable) impl (#2775)\n\nThe attribute was already emitted when proving covariance manually,\r\nbut not in the normal case.",
+          "timestamp": "2022-10-19T21:58:31-07:00",
+          "tree_id": "2f88440b84462c0ccb4b09cbfd474702a9005890",
+          "url": "https://github.com/unicode-org/icu4x/commit/0acdb50f0726616c5d689890b0321bceb0a519bc"
+        },
+        "date": 1666242017152,
         "tool": "ndjson",
         "benches": [
           {
