@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666155939230,
+  "lastUpdate": 1666224840400,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57868,6 +57868,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 99,
+            "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd3ba6e8b511a2470cadf9504d6a2de8ffae38f3",
+          "message": "Add SVG loading spiral to WASM demo (#2772)",
+          "timestamp": "2022-10-19T17:00:09-07:00",
+          "tree_id": "eb592178ea40128762b6e0175c5426bab7aedb55",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd3ba6e8b511a2470cadf9504d6a2de8ffae38f3"
+        },
+        "date": 1666224766246,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 144881,
+            "range": "± 1864",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29738,
+            "range": "± 442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 83674,
+            "range": "± 942",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 240,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 98,
             "range": "± 1",
             "unit": "ns/iter"
           }
