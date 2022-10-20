@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666155926779,
+  "lastUpdate": 1666224821119,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -80525,6 +80525,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5180,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd3ba6e8b511a2470cadf9504d6a2de8ffae38f3",
+          "message": "Add SVG loading spiral to WASM demo (#2772)",
+          "timestamp": "2022-10-19T17:00:09-07:00",
+          "tree_id": "eb592178ea40128762b6e0175c5426bab7aedb55",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd3ba6e8b511a2470cadf9504d6a2de8ffae38f3"
+        },
+        "date": 1666224754726,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63750,
+            "range": "± 284",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 108933,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58869,
+            "range": "± 913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 67463,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64150,
+            "range": "± 136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71698,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 67481,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 105653,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 118592,
+            "range": "± 216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109678,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 123143,
+            "range": "± 482",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 118868,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4656,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
