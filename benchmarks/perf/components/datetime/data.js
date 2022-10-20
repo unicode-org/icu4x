@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666227031265,
+  "lastUpdate": 1666242817729,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -80729,6 +80729,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4806,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cad97@cad97.com",
+            "name": "Christopher Durham",
+            "username": "CAD97"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0acdb50f0726616c5d689890b0321bceb0a519bc",
+          "message": "Allow clippy::forget_copy in derive(Yokeable) impl (#2775)\n\nThe attribute was already emitted when proving covariance manually,\r\nbut not in the normal case.",
+          "timestamp": "2022-10-19T21:58:31-07:00",
+          "tree_id": "2f88440b84462c0ccb4b09cbfd474702a9005890",
+          "url": "https://github.com/unicode-org/icu4x/commit/0acdb50f0726616c5d689890b0321bceb0a519bc"
+        },
+        "date": 1666242742288,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77601,
+            "range": "± 2921",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 128269,
+            "range": "± 508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 73593,
+            "range": "± 4401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 80457,
+            "range": "± 499",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77928,
+            "range": "± 256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 85631,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 79988,
+            "range": "± 612",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 123021,
+            "range": "± 876",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 138043,
+            "range": "± 8089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 128458,
+            "range": "± 598",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 142733,
+            "range": "± 871",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 138077,
+            "range": "± 604",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6254,
+            "range": "± 91",
             "unit": "ns/iter"
           }
         ]
