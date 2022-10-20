@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666224840400,
+  "lastUpdate": 1666227101684,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57929,6 +57929,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 98,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c99640979e6f943f72162b876587a6bb05bcb54",
+          "message": "Remove static_assertions dep from fixed-decimal, bump version (#2773)\n\n* Remove static_assertions dep from fixed_decimal\r\n\r\n* Bump fixed-decimal to 0.5.1\r\n\r\n* remove devdep too\r\n\r\n* fmt",
+          "timestamp": "2022-10-20T00:36:48Z",
+          "tree_id": "360e1fdfe4a50ae29c709d4aa1a167ed221219a5",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c99640979e6f943f72162b876587a6bb05bcb54"
+        },
+        "date": 1666227012530,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 126577,
+            "range": "± 6685",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27199,
+            "range": "± 4542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 75956,
+            "range": "± 3498",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 246,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 104,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
