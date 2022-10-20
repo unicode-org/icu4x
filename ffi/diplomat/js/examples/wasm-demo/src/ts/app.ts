@@ -13,5 +13,6 @@ import 'bootstrap/js/dist/collapse';
 
     fdf.setup(dataProvider);
     dtf.setup(dataProvider);
-    seg.setup(dataProvider);   
+    seg.setup(dataProvider);
+    (document.querySelector("#bigspinner") as HTMLElement).style.display = "none";
 })()
