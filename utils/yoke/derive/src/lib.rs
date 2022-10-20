@@ -206,6 +206,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     // are the same
                     debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
                     let ptr: *const Self = (&this as *const Self::Output).cast();
+                    #[allow(clippy::forget_copy)] // This is a noop if the struct is copy, which Clippy doesn't like
                     mem::forget(this);
                     ptr::read(ptr)
                 }
