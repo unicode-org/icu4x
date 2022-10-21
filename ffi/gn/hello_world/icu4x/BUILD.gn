@@ -1,11 +1,7 @@
 executable("print_hello") {
   sources = [ "print_hello.rs" ]
   deps = [
-    "//icu4x/gn_target:icu_provider-v1_0_1",
-    "//icu4x/gn_target:icu_locid-v1_0_0",
+    "//icu4x:icu_provider-v1_0_1",
+    "//icu4x:icu_locid-v1_0_0",
   ]
-  aliased_deps = {
-    # icu_provider = "//icu4x/gn_target:icu_provider-v1_0_1"
-    # icu_locid = "//icu4x/gn_target:icu_locid-v1_0_0"
-  }
 }
