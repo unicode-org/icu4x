@@ -34,7 +34,7 @@ dependencies = [
 [tasks.cargo-make-min-version]
 description = "Verify that the minimum version of cargo-make exists"
 category = "ICU4X Development"
-install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
 
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
@@ -237,7 +237,7 @@ find ./js/docs/source -type f -exec sed -i  {} -e 's/staticfunction/function/g' 
 [tasks.build-wearos-ffi]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-04-05"
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
@@ -250,7 +250,7 @@ args = ["build", "--package", "icu_freertos",
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-04-05"
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]

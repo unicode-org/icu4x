@@ -2,9 +2,12 @@
 
 set -e
 
+# Set toolchain variable to a default if not defined
+ICU4X_NIGHTLY_TOOLCHAIN="${ICU4X_NIGHTLY_TOOLCHAIN:-nightly-2022-04-05}"
+
 # Install Rust toolchains
-rustup toolchain install nightly-2022-04-05
-rustup +nightly-2022-04-05 component add rust-src
+rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
+rustup +${ICU4X_NIGHTLY_TOOLCHAIN} component add rust-src
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
@@ -12,7 +15,7 @@ rustup +nightly-2022-04-05 component add rust-src
 WASM_STACK_SIZE=100000
 
 # Build the WASM library
-RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE}" cargo +nightly-2022-04-05 build \
+RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE}" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
     -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
     --target wasm32-unknown-unknown \
     --release \
