@@ -354,5 +354,5 @@ exit_on_error true
 cd ffi/gn
 exec --fail-on-error gn gen out
 exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
-exec --fail-on-error wasmer run ./out/obj/hello_world/icu4x/print_hello
+exec --fail-on-error wasmer run ./out/obj/hello_world/print_hello
 '''
