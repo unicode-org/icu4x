@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/js/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
+glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/js/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*" "ffi/gn/vendor/**/*"
 
 blank_line = set ""
 
@@ -108,6 +108,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml"
+skip_path_prefixes = set_new "ffi/gn/vendor/"
 
 template = canonicalize README.tpl
 
@@ -118,7 +119,13 @@ end
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
-    if not set_contains ${skip_paths} ${path}
+    skip_this = set_contains ${skip_paths} ${path}
+    for skip_path_prefix in skip_path_prefixes
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = true
+        end
+    end
+    if not skip_this
         root_dir = dirname ${path}
         if not is_empty ${root_dir}
             echo "Automatically generating ${root_dir}/README.md"
