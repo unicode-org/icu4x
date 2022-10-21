@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666242729735,
+  "lastUpdate": 1666385393300,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58049,6 +58049,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6b8ea6eab550d1c9cc0251083fa480c6b352c41",
+          "message": "Allow nightly to be overridden by an environment variable (#2760)\n\n* Centralize nightly used by CI jobs, allow env vars to override it\r\n\r\n* Bump makefile min version",
+          "timestamp": "2022-10-21T20:35:28Z",
+          "tree_id": "6286f0c75f0c5f1a69749b903f81566677783a69",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6b8ea6eab550d1c9cc0251083fa480c6b352c41"
+        },
+        "date": 1666385321827,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104147,
+            "range": "± 7879",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22845,
+            "range": "± 1834",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63004,
+            "range": "± 3900",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 182,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 85,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
