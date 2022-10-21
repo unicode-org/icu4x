@@ -1,3 +1,7 @@
 group("default") {
-  deps = [ "//hello_world/src:hello_world", "//icu4x/gn_target:icu_capi_gn" ]
+  deps = [
+    "//hello_world/src:hello_world",
+    "//hello_world/icu4x:print_hello",
+    "//icu4x/gn_target:icu_capi_gn"
+  ]
 }

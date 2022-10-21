@@ -342,4 +342,5 @@ cd ffi/gn
 exec --fail-on-error gn gen out
 exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
 exec --fail-on-error ./out/obj/hello_world/src/hello_world
+exec --fail-on-error ./out/obj/hello_world/icu4x/print_hello
 '''

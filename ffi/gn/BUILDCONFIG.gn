@@ -20,4 +20,15 @@ set_defaults("rust_library") {
   configs = _configs
 }
 
-set_default_toolchain("//build:rust")
+# ==============================================================================
+# TOOLCHAIN SETUP
+# ==============================================================================
+#
+# Here we set the default toolchain, as well as the variable host_toolchain
+# which will identify the toolchain corresponding to the local system when
+# doing cross-compiles. When not cross-compiling, this will be the same as the
+# default toolchain.
+
+host_toolchain = "//build:rust_host"
+
+set_default_toolchain("//build:rust_host")
