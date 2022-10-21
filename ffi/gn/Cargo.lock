@@ -75,6 +75,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu"
+version = "1.0.0"
+dependencies = [
+ "icu_calendar",
+ "icu_collator",
+ "icu_collections",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_timezone",
+]
+
+[[package]]
 name = "icu_calendar"
 version = "1.0.0"
 dependencies = [
@@ -119,7 +138,9 @@ dependencies = [
 name = "icu_capi_gn"
 version = "0.1.0"
 dependencies = [
+ "icu",
  "icu_capi",
+ "icu_provider",
 ]
 
 [[package]]

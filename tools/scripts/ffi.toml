@@ -325,7 +325,7 @@ assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gn
 cd ffi/gn
 exec ln -s ../.. icu4x_root
 pwd = pwd
-exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn
+exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
 '''
 
 [tasks.gn-build]
