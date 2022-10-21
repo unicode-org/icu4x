@@ -31,4 +31,17 @@ set_defaults("rust_library") {
 
 host_toolchain = "//build:rust_host"
 
-set_default_toolchain("//build:rust_host")
+# Works:
+# set_default_toolchain(host_toolchain)
+
+# Doesn't work:
+# ERROR at //build/BUILD.gn:1:1: Duplicate definition.
+# toolchain("rust_host") {
+# ^-----------------------
+# The item
+#   //build:rust_host
+# was already defined.
+# See //build/BUILD.gn:1:1: Previous definition:
+# toolchain("rust_host") {
+# ^-----------------------
+set_default_toolchain("//build:rust_wasm")
