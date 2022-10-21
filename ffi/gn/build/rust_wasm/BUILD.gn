@@ -39,7 +39,7 @@ toolchain("rust_wasm") {
     depfile = "{{output}}.d"
 
     # TODO(fxbug.dev/47565): Replacement for rustenv
-    command = "{{rustenv}} RUST_BACKTRACE=1 rustup run nightly-2022-08-25 rustc --color=always --crate-name {{crate_name}} {{source}} "
+    command = "{{rustenv}} RUST_BACKTRACE=1 rustc --color=always --crate-name {{crate_name}} {{source}} "
     command += " --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Zdep-info-omit-d-target {{rustflags}}"
     command += " -o {{output}} --extern proc_macro {{rustdeps}} {{externs}}"
     command += " --target=wasm32-wasi"

@@ -150,21 +150,20 @@ rust_library("either-v1_8_0") {
 
 }
 
-rust_library("fixed_decimal-v0_5_0") {
+rust_library("fixed_decimal-v0_5_1") {
   crate_name = "fixed_decimal"
   crate_root = "//icu4x_root/utils/fixed_decimal/src/lib.rs"
-  output_name = "fixed_decimal-15668974b1545a92"
+  output_name = "fixed_decimal-8e1f0ae43b980cdc"
   
   deps = []
   deps += [":displaydoc-v0_2_3($host_toolchain)"]
   deps += [":ryu-v1_0_5"]
   deps += [":smallvec-v1_10_0"]
-  deps += [":static_assertions-v1_1_0"]
   deps += [":writeable-v0_5_0"]
 
   rustenv = []
 
-  rustflags = ["--cap-lints=allow","--edition=2018","-Cmetadata=15668974b1545a92","-Cextra-filename=-15668974b1545a92","--cfg=feature=\"default\"","--cfg=feature=\"ryu\""]
+  rustflags = ["--cap-lints=allow","--edition=2018","-Cmetadata=8e1f0ae43b980cdc","-Cextra-filename=-8e1f0ae43b980cdc","--cfg=feature=\"default\"","--cfg=feature=\"ryu\""]
 
   
   visibility = [":*"]
@@ -230,7 +229,7 @@ rust_library("icu_capi-v1_0_0") {
   deps = []
   deps += [":diplomat-v0_4_0($host_toolchain)"]
   deps += [":diplomat-runtime-v0_4_0"]
-  deps += [":fixed_decimal-v0_5_0"]
+  deps += [":fixed_decimal-v0_5_1"]
   deps += [":icu_calendar-v1_0_0"]
   deps += [":icu_collator-v1_0_0"]
   deps += [":icu_collections-v1_0_0"]
@@ -318,7 +317,7 @@ rust_library("icu_datetime-v1_0_0") {
   deps = []
   deps += [":displaydoc-v0_2_3($host_toolchain)"]
   deps += [":either-v1_8_0"]
-  deps += [":fixed_decimal-v0_5_0"]
+  deps += [":fixed_decimal-v0_5_1"]
   deps += [":icu_calendar-v1_0_0"]
   deps += [":icu_decimal-v1_0_0"]
   deps += [":icu_locid-v1_0_0"]
@@ -347,7 +346,7 @@ rust_library("icu_decimal-v1_0_0") {
   
   deps = []
   deps += [":displaydoc-v0_2_3($host_toolchain)"]
-  deps += [":fixed_decimal-v0_5_0"]
+  deps += [":fixed_decimal-v0_5_1"]
   deps += [":icu_locid-v1_0_0"]
   deps += [":icu_provider-v1_0_1"]
   deps += [":writeable-v0_5_0"]
@@ -458,7 +457,7 @@ rust_library("icu_plurals-v1_0_0") {
   
   deps = []
   deps += [":displaydoc-v0_2_3($host_toolchain)"]
-  deps += [":fixed_decimal-v0_5_0"]
+  deps += [":fixed_decimal-v0_5_1"]
   deps += [":icu_locid-v1_0_0"]
   deps += [":icu_provider-v1_0_1"]
   deps += [":zerovec-v0_9_0"]
@@ -906,22 +905,6 @@ rust_library("stable_deref_trait-v1_2_0") {
   rustenv = []
 
   rustflags = ["--cap-lints=allow","--edition=2015","-Cmetadata=219cca329c976d6a","-Cextra-filename=-219cca329c976d6a","--cfg=feature=\"alloc\""]
-
-  
-  visibility = [":*"]
-
-}
-
-rust_library("static_assertions-v1_1_0") {
-  crate_name = "static_assertions"
-  crate_root = "//vendor/static_assertions/src/lib.rs"
-  output_name = "static_assertions-5fff9c36214c34b7"
-  
-  deps = []
-
-  rustenv = []
-
-  rustflags = ["--cap-lints=allow","--edition=2015","-Cmetadata=5fff9c36214c34b7","-Cextra-filename=-5fff9c36214c34b7"]
 
   
   visibility = [":*"]

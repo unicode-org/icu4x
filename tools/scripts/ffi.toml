@@ -325,6 +325,13 @@ assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gn
 cd ffi/gn
 exec ln -s ../.. icu4x_root
 pwd = pwd
+rm -rf vendor
+output = exec --fail-on-error cargo vendor
+writefile .cargo/config "# This file is part of ICU4X. For terms of use, please see the file\n"
+appendfile .cargo/config "# called LICENSE at the top level of the ICU4X source tree\n"
+appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n\n"
+appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
+appendfile .cargo/config ${output.stdout}
 exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
 '''
 
@@ -340,7 +347,7 @@ ninja = which ninja
 assert ${ninja} "Could not find 'ninja' in path.\n*** Please install ninja. ***"
 cd ffi/gn
 exec --fail-on-error gn gen out
-exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ninja -C out
 '''
 
 [tasks.gn-run]
@@ -352,7 +359,5 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/gn
-exec --fail-on-error gn gen out
-exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
 exec --fail-on-error wasmer run ./out/obj/hello_world/print_hello
 '''
