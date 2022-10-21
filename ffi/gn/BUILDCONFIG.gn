@@ -29,19 +29,7 @@ set_defaults("rust_library") {
 # doing cross-compiles. When not cross-compiling, this will be the same as the
 # default toolchain.
 
-host_toolchain = "//build:rust_host"
+host_toolchain = "//build/rust_host"
 
-# Works:
-# set_default_toolchain(host_toolchain)
-
-# Doesn't work:
-# ERROR at //build/BUILD.gn:1:1: Duplicate definition.
-# toolchain("rust_host") {
-# ^-----------------------
-# The item
-#   //build:rust_host
-# was already defined.
-# See //build/BUILD.gn:1:1: Previous definition:
-# toolchain("rust_host") {
-# ^-----------------------
-set_default_toolchain("//build:rust_wasm")
+current_cpu = "wasm32"
+set_default_toolchain("//build/rust_wasm")

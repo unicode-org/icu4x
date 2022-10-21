@@ -341,6 +341,18 @@ assert ${ninja} "Could not find 'ninja' in path.\n*** Please install ninja. ***"
 cd ffi/gn
 exec --fail-on-error gn gen out
 exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
-exec --fail-on-error ./out/obj/hello_world/src/hello_world
-exec --fail-on-error ./out/obj/hello_world/icu4x/print_hello
+'''
+
+[tasks.gn-run]
+description = "Run the GN version of ICU4X"
+category = "ICU4X Development"
+install_crate = { crate_name = "wasmer", binary = "wasmer", test_arg = ["--help"] }
+dependencies = [ "gn-build" ]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/gn
+exec --fail-on-error gn gen out
+exec --fail-on-error rustup run nightly-2022-08-25 ninja -C out
+exec --fail-on-error wasmer run ./out/obj/hello_world/icu4x/print_hello
 '''

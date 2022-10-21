@@ -16,6 +16,9 @@ impl Foo {
     pub fn new(s: &'static str) -> Foo {
         Foo{s: s, i: "bar"}
     }
+    pub fn total_length(&self) -> usize {
+        self.s.len() + self.i.len()
+    }
 }
 
 pub fn answer() -> i32 {
