@@ -340,6 +340,13 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
+    - name: Install GN Tools
+      # TODO: Cache these, too
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: gn-install
+
     - name: Run `cargo make ci-job-verify-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
