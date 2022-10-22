@@ -10,3 +10,4 @@
 #![doc = include_str!("../../../docs/tutorials/data_management.md")]
 #![doc = include_str!("../../../docs/tutorials/js.md")]
 #![doc = include_str!("../../../docs/tutorials/markdown_tips.md")]
+#![doc = include_str!("../../../docs/design/data_safety.md")]

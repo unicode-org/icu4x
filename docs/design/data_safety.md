@@ -30,7 +30,7 @@ Additional points:
 Consider the struct
 
 ```rust
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 pub struct WeekdayNamesBad {
     // Invariant 1: the first element in the vector is the default value
     // Invariant 2: there are 7 elements in the vector
@@ -54,12 +54,14 @@ This struct has 2 invariants, and each of the functions could panic if those inv
 
 Below are 3 approaches to resolve this issue that are consistent with the ICU4X style.
 
+*Editor's note: the examples in this document are tested along with the tutorials.*
+
 ### Solution 1: Garbage In, Garbage Out
 
 Change the functions to return default fallback values if the data is not in the expected form.
 
 ```rust
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 pub struct WeekdayNamesGIGO {
     // WEAK Invariant 1: the first element in the vector is the default value
     // WEAK Invariant 2: there are 7 elements in the vector
@@ -77,7 +79,7 @@ impl WeekdayNamesGIGO {
         }
     }
     pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
-        self.weekday_names.get(idx).as_ref()
+        self.weekday_names.get(idx).map(String::as_str)
     }
 }
 ```
@@ -87,7 +89,7 @@ impl WeekdayNamesGIGO {
 Change the struct so that it doesn't have internal invariants.
 
 ```rust
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 pub struct WeekdayNamesNoInvariants {
     pub first_weekday_name: String,
     pub remaining_weekdays: Vec<String>,
@@ -101,7 +103,7 @@ impl WeekdayNamesNoInvariants {
         if idx == 0 {
             Some(&self.first_weekday_name)
         } else {
-            self.remaining_weekdays.get(idx - 1).as_ref()
+            self.remaining_weekdays.get(idx - 1).map(String::as_str)
         }
     }
 }
@@ -114,21 +116,24 @@ This struct has no internal invariants. The deserialization step automatically e
 With this solution, check that there are the expected number of items at deserialization time. Leverage Serde's [try_from](https://serde.rs/container-attrs.html#try_from) attribute to perform the validation.
 
 ```rust
-#[derive(Deserialize)]
+use icu_provider::DataError;
+
+#[derive(serde::Deserialize)]
 struct WeekdayNamesInner {
     pub weekday_names: Vec<String>,
 }
 
-#[serde(try_from = WeekdayNamesInner)]
-pub struct WeekdayNamesWrap {
+#[derive(serde::Deserialize)]
+#[serde(try_from = "WeekdayNamesInner")]
+pub struct WeekdayNamesCheckedInvariants {
     // Invariant: the vector is non-empty.
     weekday_names: Vec<String>,
 }
 
-impl TryFrom<WeekdayNamesInner> for WeekdayNamesWrap {
+impl TryFrom<WeekdayNamesInner> for WeekdayNamesCheckedInvariants {
     type Error = DataError;
-    pub fn try_from(other: WeekdayNamesInner) -> Result<Self, Self::Error> {
-        if other.is_empty() {
+    fn try_from(other: WeekdayNamesInner) -> Result<Self, Self::Error> {
+        if other.weekday_names.is_empty() {
             Err(DataError::custom("weekday_names must not be empty"))
         } else {
             Ok(Self { weekday_names: other.weekday_names })
@@ -136,13 +141,13 @@ impl TryFrom<WeekdayNamesInner> for WeekdayNamesWrap {
     }
 }
 
-impl WeekdayNamesWrap {
+impl WeekdayNamesCheckedInvariants {
     pub fn get_first_weekday_name(&self) -> &str {
         #[allow(clippy::indexing_slicing)] // validated invariant
         &self.weekday_names[0]
     }
     pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
-        self.weekday_names.get(idx).as_ref()
+        self.weekday_names.get(idx).map(String::as_str)
     }
 }
 ```
