@@ -325,10 +325,6 @@ exit_on_error true
 mkdir ffi/gn/third_party_tools
 cd ffi/gn/third_party_tools
 
-# Create an empty .cargo/config file so that the parent one is not used
-mkdir .cargo
-touch .cargo/config
-
 # depot_tools contains the following things we need:
 # 1. A cross-platform ninja wrapper script
 # 2. cipd, a tool to download a prebuilt GN binary
@@ -347,11 +343,17 @@ if is_path_exists fuchsia
     echo "NOTE: fuchsia already exists"
 else
     exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia
+    exec ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
 end
 
-# Install it locally in the bin directory (alongside GN)
-exec ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
+# Install GNaw locally in the bin directory (alongside GN)
+# Since the parent directory is vendored, we have no choice but to vendor here, too
+mkdir .cargo
+writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources', vendored-sources.directory = 'vendor' }"
+exec cargo vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
 exec cargo install --path fuchsia/tools/cargo-gnaw --root .
+
+echo "*** GN Tools Successfully Installed! Ignore all previous messages. ***"
 '''
 
 [tasks.gn-gen]
