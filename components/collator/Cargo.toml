@@ -51,6 +51,7 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 atoi = "1.0.0"
 arraystring = "0.3.0"
 icu = { path = "../icu" }
+criterion = "0.3"
 
 [lib]
 path = "src/lib.rs"
@@ -65,3 +66,7 @@ datagen = ["serde", "databake", "zerovec/databake", "icu_properties/databake", "
 [[test]]
 name = "tests"
 path = "tests/tests.rs"
+
+[[bench]]
+name = "bench"
+harness = false

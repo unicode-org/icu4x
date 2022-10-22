@@ -1457,6 +1457,7 @@ version = "1.0.0"
 dependencies = [
  "arraystring",
  "atoi",
+ "criterion",
  "databake",
  "displaydoc",
  "icu",
