@@ -379,7 +379,7 @@ appendfile .cargo/config "# called LICENSE at the top level of the ICU4X source 
 appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n\n"
 appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
 appendfile .cargo/config ${output.stdout}
-exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
+exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root --gn-bin ${pwd}/third_party_tools/bin/gn
 
 exec rm -f icu4x_root
 echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
