@@ -314,6 +314,16 @@ else
 end
 '''
 
+[tasks.gn-remove-symlink]
+description = "Remove the temporary symbolic link used by GN"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/gn
+exec rm -f icu4x_root
+'''
+
 [tasks.gn-gen]
 description = "Generate GN build rules for ICU4X"
 category = "ICU4X Development"
@@ -322,8 +332,12 @@ script = '''
 exit_on_error true
 gnaw = which gnaw
 assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gnaw' ***"
+
 cd ffi/gn
+exec rm -f icu4x_root
 exec ln -s ../.. icu4x_root
+echo "NOTE: Created a temporary symbolic link at /ffi/gn/icu4x_root"
+
 pwd = pwd
 rm -rf vendor
 output = exec --fail-on-error cargo vendor
@@ -333,6 +347,9 @@ appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blo
 appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
 appendfile .cargo/config ${output.stdout}
 exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
+
+exec rm -f icu4x_root
+echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
 '''
 
 [tasks.gn-build]
@@ -345,9 +362,17 @@ gn = which gn
 assert ${gn} "Could not find 'gn' in path.\n*** Please install gn. ***"
 ninja = which ninja
 assert ${ninja} "Could not find 'ninja' in path.\n*** Please install ninja. ***"
+
 cd ffi/gn
+exec rm -f icu4x_root
+exec ln -s ../.. icu4x_root
+echo "NOTE: Created temporary symbolic link at /ffi/gn/icu4x_root"
+
 exec --fail-on-error gn gen out
 exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ninja -C out
+
+exec rm -f icu4x_root
+echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
 '''
 
 [tasks.gn-run]

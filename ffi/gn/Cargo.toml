@@ -27,10 +27,6 @@ include = [
 [package.metadata.docs.rs]
 all-features = true
 
-[lib]
-crate-type = ["staticlib", "rlib"]
-path = "src/lib.rs"
-
 [dependencies]
 icu_capi = { version = "1.0", path = "icu4x_root/ffi/diplomat", default-features = false }
 icu = { version = "1.0", path = "icu4x_root/components/icu" }
