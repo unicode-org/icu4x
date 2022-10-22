@@ -36,6 +36,8 @@ In general, data structs should be annotated with `#[icu_provider::data_struct]`
 
 As explained in *data_pipeline.md*, the data struct should support zero-copy deserialization. The `#[icu_provider::data_struct]` annotation will enforce this for you. **See more information in [style_guide.md](https://github.com/unicode-org/icu4x/blob/main/docs/process/style_guide.md#zero-copy-in-dataprovider-structs--required),** as well as the example below in this tutorial.
 
+Additionally, data structs should keep internal invariants to a minimum. For more information, see [data_safety.md](../design/data_safety.md).
+
 ### Data Download
 
 The first step to introduce data into the ICU4X pipeline is to download it from an external source. This corresponds to step 1 above.
