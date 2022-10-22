@@ -24,6 +24,7 @@ dependencies = [
     "cargo-make-min-version",
     "verify-diplomat-gen",
     "verify-diplomat-coverage",
+    "verify-gn-gen",
 ]
 
 # Some tasks need a minimum version of cargo-make. Configs within cargo-make
@@ -314,14 +315,43 @@ else
 end
 '''
 
-[tasks.gn-remove-symlink]
-description = "Remove the temporary symbolic link used by GN"
+[tasks.gn-install]
+description = "Install tools required for GN locally in the icu4x project"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/gn
-exec rm -f icu4x_root
+
+mkdir ffi/gn/third_party_tools
+cd ffi/gn/third_party_tools
+
+# Create an empty .cargo/config file so that the parent one is not used
+mkdir .cargo
+touch .cargo/config
+
+# depot_tools contains the following things we need:
+# 1. A cross-platform ninja wrapper script
+# 2. cipd, a tool to download a prebuilt GN binary
+if is_path_exists depot_tools
+    echo "NOTE: depot_tools already exists"
+else
+    exec --fail-on-error git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+end
+
+# Write an "ensure file", which is used as input to cipd
+writefile ensure_file "${ICU4X_GN_PACKAGE} latest"
+exec --fail-on-error depot_tools/cipd ensure -root bin -ensure-file ensure_file
+
+# To get GNaw, we need to download Fuchsia sources
+if is_path_exists fuchsia
+    echo "NOTE: fuchsia already exists"
+else
+    exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia
+end
+
+# Install it locally in the bin directory (alongside GN)
+exec ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
+exec cargo install --path fuchsia/tools/cargo-gnaw --root .
 '''
 
 [tasks.gn-gen]
@@ -330,8 +360,9 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-gnaw = which gnaw
-assert ${gnaw} "Could not find 'gnaw' in path.\n*** Please run 'cargo install gnaw' ***"
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
 cd ffi/gn
 exec rm -f icu4x_root
@@ -346,7 +377,7 @@ appendfile .cargo/config "# called LICENSE at the top level of the ICU4X source 
 appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n\n"
 appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
 appendfile .cargo/config ${output.stdout}
-exec --fail-on-error ${gnaw} --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
+exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${pwd}/Cargo.toml" --project-root ${pwd} --output ${pwd}/icu4x/BUILD.gn --skip-root
 
 exec rm -f icu4x_root
 echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
@@ -358,18 +389,17 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-gn = which gn
-assert ${gn} "Could not find 'gn' in path.\n*** Please install gn. ***"
-ninja = which ninja
-assert ${ninja} "Could not find 'ninja' in path.\n*** Please install ninja. ***"
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
 cd ffi/gn
 exec rm -f icu4x_root
 exec ln -s ../.. icu4x_root
 echo "NOTE: Created temporary symbolic link at /ffi/gn/icu4x_root"
 
-exec --fail-on-error gn gen out
-exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ninja -C out
+exec --fail-on-error ./third_party_tools/bin/gn gen out
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out
 
 exec rm -f icu4x_root
 echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
@@ -385,4 +415,14 @@ script = '''
 exit_on_error true
 cd ffi/gn
 exec --fail-on-error wasmer run ./out/obj/hello_world/print_hello
+'''
+
+[tasks.gn-remove-symlink]
+description = "Remove the temporary symbolic link used by GN"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/gn
+exec rm -f icu4x_root
 '''
