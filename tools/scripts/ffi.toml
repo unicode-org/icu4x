@@ -383,6 +383,21 @@ exec rm -f icu4x_root
 echo "NOTE: Removed the temporary symbolic link /ffi/gn/icu4x_root"
 '''
 
+[tasks.verify-gn-gen]
+description = "Verify that checked-in GN rules are up to date"
+category = "ICU4X Development"
+dependencies = [
+    "gn-gen",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+code = exec --get-exit-code git diff --exit-code -- ffi/gn
+if ${code}
+    trigger_error "GN rules need to be regenerated. Please run `cargo make gn-install`, then `cargo make gn-gen`, and commit."
+end
+'''
+
 [tasks.gn-build]
 description = "Build the GN version of ICU4X"
 category = "ICU4X Development"
