@@ -340,8 +340,15 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
-    - name: Install GN Tools
-      # TODO: Cache these, too
+    - name: Attempt to load cached GN Third-Party Tools
+      uses: actions/cache@v3
+      id: gn-third-party-tools-cache
+      with:
+        path: |
+          ffi/gn/third_party_tools
+        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/ffi.toml') }}
+    - name: Install GN Third-Party Tools
+      if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make

@@ -353,6 +353,10 @@ writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources',
 exec cargo vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
 exec cargo install --path fuchsia/tools/cargo-gnaw --root .
 
+# Ensure everything works
+exec --fail-on-error ./bin/gn --version
+exec --fail-on-error ./bin/gnaw --help
+
 echo "*** GN Tools Successfully Installed! Ignore all previous messages. ***"
 '''
 
