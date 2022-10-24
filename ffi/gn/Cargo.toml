@@ -5,6 +5,7 @@
 [package]
 name = "icu_capi_gn"
 description = "GN interface to ICU4X"
+publish = false
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
@@ -31,24 +32,6 @@ all-features = true
 icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false }
 icu = { version = "1.0", path = "../../components/icu" }
 icu_provider = { version = "1.0", path = "../../provider/core" }
-
-# [gn.package.atomic-polyfill."0.1.5"]
-# rustflags = []
-
-# [gn.package.backtrace."0.3.63"]
-# rustflags = []
-
-# [gn.package.bare-metal."0.2.5"]
-# rustflags = []
-
-# [gn.package.camino."1.0.5"]
-# rustflags = ["--cfg=path_buf_capacity"]
-
-# [gn.package.erased-serde."0.3.16"]
-# rustflags = []
-
-# [gn.package.libc."0.2.125"]
-# rustflags = ["--cfg=freebsd11", "--cfg=libc_priv_mod_use", "--cfg=libc_union", "--cfg=libc_const_size_of", "--cfg=libc_align", "--cfg=libc_int128", "--cfg=libc_core_cvoid", "--cfg=libc_packedN", "--cfg=libc_cfg_target_vendor", "--cfg=libc_non_exhaustive", "--cfg=libc_ptr_addr_of", "--cfg=libc_underscore_const_names"]
 
 [gn.package.log."0.4.14"]
 rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
