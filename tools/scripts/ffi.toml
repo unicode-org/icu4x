@@ -343,15 +343,15 @@ if is_path_exists fuchsia
     echo "NOTE: fuchsia already exists"
 else
     exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia
-    exec ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
+    exec --fail-on-error ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
 end
 
 # Install GNaw locally in the bin directory (alongside GN)
 # Since the parent directory is vendored, we have no choice but to vendor here, too
 mkdir .cargo
 writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources', vendored-sources.directory = 'vendor' }"
-exec cargo vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
-exec cargo install --path fuchsia/tools/cargo-gnaw --root .
+exec --fail-on-error cargo vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
+exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root .
 
 # Ensure everything works
 exec --fail-on-error ./bin/gn --version
