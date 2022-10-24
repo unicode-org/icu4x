@@ -18,7 +18,7 @@ group("icu_provider") {
 
 rust_library("cfg-if-v1_0_0") {
   crate_name = "cfg_if"
-  crate_root = "//vendor/cfg-if/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/cfg-if/src/lib.rs"
   output_name = "cfg_if-5f200286e6ae9b7a"
 
   deps = []
@@ -37,7 +37,7 @@ rust_library("cfg-if-v1_0_0") {
 
 rust_library("cobs-v0_2_3") {
   crate_name = "cobs"
-  crate_root = "//vendor/cobs/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/cobs/src/lib.rs"
   output_name = "cobs-cef948be0bacfc79"
 
   deps = []
@@ -56,7 +56,7 @@ rust_library("cobs-v0_2_3") {
 
 rust_proc_macro("diplomat-v0_4_0") {
   crate_name = "diplomat"
-  crate_root = "//vendor/diplomat/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
   output_name = "diplomat-9f45cdc13e589c37"
 
   deps = []
@@ -79,7 +79,7 @@ rust_proc_macro("diplomat-v0_4_0") {
 
 rust_library("diplomat-runtime-v0_4_0") {
   crate_name = "diplomat_runtime"
-  crate_root = "//vendor/diplomat-runtime/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/diplomat-runtime/src/lib.rs"
   output_name = "diplomat_runtime-d8570b581842b307"
 
   deps = []
@@ -98,7 +98,7 @@ rust_library("diplomat-runtime-v0_4_0") {
 
 rust_library("diplomat_core-v0_4_0") {
   crate_name = "diplomat_core"
-  crate_root = "//vendor/diplomat_core/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/diplomat_core/src/lib.rs"
   output_name = "diplomat_core-e9a1f86367a0e26e"
 
   deps = []
@@ -126,7 +126,7 @@ rust_library("diplomat_core-v0_4_0") {
 
 rust_proc_macro("displaydoc-v0_2_3") {
   crate_name = "displaydoc"
-  crate_root = "//vendor/displaydoc/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/displaydoc/src/lib.rs"
   output_name = "displaydoc-4f6582ea1cadf70c"
 
   deps = []
@@ -148,7 +148,7 @@ rust_proc_macro("displaydoc-v0_2_3") {
 
 rust_library("either-v1_8_0") {
   crate_name = "either"
-  crate_root = "//vendor/either/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/either/src/lib.rs"
   output_name = "either-f4134ec734cf166b"
 
   deps = []
@@ -167,7 +167,7 @@ rust_library("either-v1_8_0") {
 
 rust_library("fixed_decimal-v0_5_1") {
   crate_name = "fixed_decimal"
-  crate_root = "//icu4x_root/utils/fixed_decimal/src/lib.rs"
+  crate_root = "//utils/fixed_decimal/src/lib.rs"
   output_name = "fixed_decimal-8e1f0ae43b980cdc"
 
   deps = []
@@ -192,7 +192,7 @@ rust_library("fixed_decimal-v0_5_1") {
 
 rust_library("icu-v1_0_0") {
   crate_name = "icu"
-  crate_root = "//icu4x_root/components/icu/src/lib.rs"
+  crate_root = "//components/icu/src/lib.rs"
   output_name = "icu-2254fd8593ac7ad"
 
   deps = []
@@ -225,7 +225,7 @@ rust_library("icu-v1_0_0") {
 
 rust_library("icu_calendar-v1_0_0") {
   crate_name = "icu_calendar"
-  crate_root = "//icu4x_root/components/calendar/src/lib.rs"
+  crate_root = "//components/calendar/src/lib.rs"
   output_name = "icu_calendar-cbcf648ad3bd8153"
 
   deps = []
@@ -250,7 +250,7 @@ rust_library("icu_calendar-v1_0_0") {
 
 rust_library("icu_capi-v1_0_0") {
   crate_name = "icu_capi"
-  crate_root = "//icu4x_root/ffi/diplomat/src/lib.rs"
+  crate_root = "//ffi/diplomat/src/lib.rs"
   output_name = "icu_capi-e3e3519444f45361"
 
   deps = []
@@ -294,7 +294,7 @@ rust_library("icu_capi-v1_0_0") {
 
 rust_library("icu_collator-v1_0_0") {
   crate_name = "icu_collator"
-  crate_root = "//icu4x_root/components/collator/src/lib.rs"
+  crate_root = "//components/collator/src/lib.rs"
   output_name = "icu_collator-d8d67f388016dc78"
 
   deps = []
@@ -325,7 +325,7 @@ rust_library("icu_collator-v1_0_0") {
 
 rust_library("icu_collections-v1_0_0") {
   crate_name = "icu_collections"
-  crate_root = "//icu4x_root/components/collections/src/lib.rs"
+  crate_root = "//components/collections/src/lib.rs"
   output_name = "icu_collections-164caf90f9f352fa"
 
   deps = []
@@ -349,7 +349,7 @@ rust_library("icu_collections-v1_0_0") {
 
 rust_library("icu_datetime-v1_0_0") {
   crate_name = "icu_datetime"
-  crate_root = "//icu4x_root/components/datetime/src/lib.rs"
+  crate_root = "//components/datetime/src/lib.rs"
   output_name = "icu_datetime-de7f4fb86ece008"
 
   deps = []
@@ -383,7 +383,7 @@ rust_library("icu_datetime-v1_0_0") {
 
 rust_library("icu_decimal-v1_0_0") {
   crate_name = "icu_decimal"
-  crate_root = "//icu4x_root/components/decimal/src/lib.rs"
+  crate_root = "//components/decimal/src/lib.rs"
   output_name = "icu_decimal-a5a8f88f182ba519"
 
   deps = []
@@ -408,7 +408,7 @@ rust_library("icu_decimal-v1_0_0") {
 
 rust_library("icu_list-v1_0_0") {
   crate_name = "icu_list"
-  crate_root = "//icu4x_root/components/list/src/lib.rs"
+  crate_root = "//components/list/src/lib.rs"
   output_name = "icu_list-73b92d3724219a4e"
 
   deps = []
@@ -433,7 +433,7 @@ rust_library("icu_list-v1_0_0") {
 
 rust_library("icu_locid-v1_0_0") {
   crate_name = "icu_locid"
-  crate_root = "//icu4x_root/components/locid/src/lib.rs"
+  crate_root = "//components/locid/src/lib.rs"
   output_name = "icu_locid-c4734995c00ee87a"
 
   deps = []
@@ -459,7 +459,7 @@ rust_library("icu_locid-v1_0_0") {
 
 rust_library("icu_locid_transform-v1_0_0") {
   crate_name = "icu_locid_transform"
-  crate_root = "//icu4x_root/components/locid_transform/src/lib.rs"
+  crate_root = "//components/locid_transform/src/lib.rs"
   output_name = "icu_locid_transform-5fe517c0a6f259df"
 
   deps = []
@@ -484,7 +484,7 @@ rust_library("icu_locid_transform-v1_0_0") {
 
 rust_library("icu_normalizer-v1_0_0") {
   crate_name = "icu_normalizer"
-  crate_root = "//icu4x_root/components/normalizer/src/lib.rs"
+  crate_root = "//components/normalizer/src/lib.rs"
   output_name = "icu_normalizer-f3224b66518ad7a2"
 
   deps = []
@@ -514,7 +514,7 @@ rust_library("icu_normalizer-v1_0_0") {
 
 rust_library("icu_plurals-v1_0_0") {
   crate_name = "icu_plurals"
-  crate_root = "//icu4x_root/components/plurals/src/lib.rs"
+  crate_root = "//components/plurals/src/lib.rs"
   output_name = "icu_plurals-a800ef29c59579ab"
 
   deps = []
@@ -539,7 +539,7 @@ rust_library("icu_plurals-v1_0_0") {
 
 rust_library("icu_properties-v1_0_0") {
   crate_name = "icu_properties"
-  crate_root = "//icu4x_root/components/properties/src/lib.rs"
+  crate_root = "//components/properties/src/lib.rs"
   output_name = "icu_properties-f10822a90176cae0"
 
   deps = []
@@ -565,7 +565,7 @@ rust_library("icu_properties-v1_0_0") {
 
 rust_library("icu_provider-v1_0_1") {
   crate_name = "icu_provider"
-  crate_root = "//icu4x_root/provider/core/src/lib.rs"
+  crate_root = "//provider/core/src/lib.rs"
   output_name = "icu_provider-233818899f786646"
 
   deps = []
@@ -600,7 +600,7 @@ rust_library("icu_provider-v1_0_1") {
 
 rust_library("icu_provider_adapters-v1_0_0") {
   crate_name = "icu_provider_adapters"
-  crate_root = "//icu4x_root/provider/adapters/src/lib.rs"
+  crate_root = "//provider/adapters/src/lib.rs"
   output_name = "icu_provider_adapters-def3906e3e0d0887"
 
   deps = []
@@ -624,7 +624,7 @@ rust_library("icu_provider_adapters-v1_0_0") {
 
 rust_library("icu_provider_blob-v1_0_0") {
   crate_name = "icu_provider_blob"
-  crate_root = "//icu4x_root/provider/blob/src/lib.rs"
+  crate_root = "//provider/blob/src/lib.rs"
   output_name = "icu_provider_blob-95fed9f40a420c35"
 
   deps = []
@@ -650,7 +650,7 @@ rust_library("icu_provider_blob-v1_0_0") {
 
 rust_proc_macro("icu_provider_macros-v1_0_0") {
   crate_name = "icu_provider_macros"
-  crate_root = "//icu4x_root/provider/macros/src/lib.rs"
+  crate_root = "//provider/macros/src/lib.rs"
   output_name = "icu_provider_macros-e7ebfc5044205a22"
 
   deps = []
@@ -672,7 +672,7 @@ rust_proc_macro("icu_provider_macros-v1_0_0") {
 
 rust_library("icu_segmenter-v0_7_0") {
   crate_name = "icu_segmenter"
-  crate_root = "//icu4x_root/experimental/segmenter/src/lib.rs"
+  crate_root = "//experimental/segmenter/src/lib.rs"
   output_name = "icu_segmenter-1277f37dd84917bc"
 
   deps = []
@@ -699,7 +699,7 @@ rust_library("icu_segmenter-v0_7_0") {
 
 rust_library("icu_timezone-v1_0_0") {
   crate_name = "icu_timezone"
-  crate_root = "//icu4x_root/components/timezone/src/lib.rs"
+  crate_root = "//components/timezone/src/lib.rs"
   output_name = "icu_timezone-314451d4936520e9"
 
   deps = []
@@ -724,7 +724,7 @@ rust_library("icu_timezone-v1_0_0") {
 
 rust_library("impls-v1_0_3") {
   crate_name = "impls"
-  crate_root = "//vendor/impls/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/impls/src/lib.rs"
   output_name = "impls-4a11699b08f2f277"
 
   deps = []
@@ -743,7 +743,7 @@ rust_library("impls-v1_0_3") {
 
 rust_library("itoa-v0_4_8") {
   crate_name = "itoa"
-  crate_root = "//vendor/itoa/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/itoa/src/lib.rs"
   output_name = "itoa-9e27afdde10ba0b5"
 
   deps = []
@@ -762,7 +762,7 @@ rust_library("itoa-v0_4_8") {
 
 rust_library("lazy_static-v1_4_0") {
   crate_name = "lazy_static"
-  crate_root = "//vendor/lazy_static/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/lazy_static/src/lib.rs"
   output_name = "lazy_static-cdf593bd3fb3d68f"
 
   deps = []
@@ -781,7 +781,7 @@ rust_library("lazy_static-v1_4_0") {
 
 rust_library("litemap-v0_6_0") {
   crate_name = "litemap"
-  crate_root = "//icu4x_root/utils/litemap/src/lib.rs"
+  crate_root = "//utils/litemap/src/lib.rs"
   output_name = "litemap-8fc98a67d3293708"
 
   deps = []
@@ -802,7 +802,7 @@ rust_library("litemap-v0_6_0") {
 
 rust_library("log-v0_4_14") {
   crate_name = "log"
-  crate_root = "//vendor/log/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/log/src/lib.rs"
   output_name = "log-2c3f717398639d38"
 
   deps = []
@@ -824,7 +824,7 @@ rust_library("log-v0_4_14") {
 
 rust_library("memchr-v2_5_0") {
   crate_name = "memchr"
-  crate_root = "//vendor/memchr/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/memchr/src/lib.rs"
   output_name = "memchr-7487f9414aaf0c2b"
 
   deps = []
@@ -843,7 +843,7 @@ rust_library("memchr-v2_5_0") {
 
 rust_library("postcard-v1_0_2") {
   crate_name = "postcard"
-  crate_root = "//vendor/postcard/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/postcard/src/lib.rs"
   output_name = "postcard-6f05bc6c849a087e"
 
   deps = []
@@ -865,7 +865,7 @@ rust_library("postcard-v1_0_2") {
 
 rust_library("proc-macro2-v1_0_32") {
   crate_name = "proc_macro2"
-  crate_root = "//vendor/proc-macro2/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/proc-macro2/src/lib.rs"
   output_name = "proc_macro2-500c6656c67ae30b"
 
   deps = []
@@ -894,7 +894,7 @@ rust_library("proc-macro2-v1_0_32") {
 
 rust_library("quote-v1_0_10") {
   crate_name = "quote"
-  crate_root = "//vendor/quote/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/quote/src/lib.rs"
   output_name = "quote-fc9ea680aa36fd59"
 
   deps = []
@@ -916,7 +916,7 @@ rust_library("quote-v1_0_10") {
 
 rust_library("regex-automata-v0_2_0") {
   crate_name = "regex_automata"
-  crate_root = "//vendor/regex-automata/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/regex-automata/src/lib.rs"
   output_name = "regex_automata-cee29454c33d28cf"
 
   deps = []
@@ -936,7 +936,7 @@ rust_library("regex-automata-v0_2_0") {
 
 rust_library("rustdoc-types-v0_11_0") {
   crate_name = "rustdoc_types"
-  crate_root = "//vendor/rustdoc-types/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/rustdoc-types/src/lib.rs"
   output_name = "rustdoc_types-4f9cd9c828c1aa4a"
 
   deps = []
@@ -956,7 +956,7 @@ rust_library("rustdoc-types-v0_11_0") {
 
 rust_library("ryu-v1_0_5") {
   crate_name = "ryu"
-  crate_root = "//vendor/ryu/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/ryu/src/lib.rs"
   output_name = "ryu-73de9b1b09d89f8b"
 
   deps = []
@@ -978,7 +978,7 @@ rust_library("ryu-v1_0_5") {
 
 rust_library("serde-v1_0_130") {
   crate_name = "serde"
-  crate_root = "//vendor/serde/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/serde/src/lib.rs"
   output_name = "serde-32110ae57a570352"
 
   deps = []
@@ -1019,7 +1019,7 @@ rust_library("serde-v1_0_130") {
 
 rust_proc_macro("serde_derive-v1_0_130") {
   crate_name = "serde_derive"
-  crate_root = "//vendor/serde_derive/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/serde_derive/src/lib.rs"
   output_name = "serde_derive-5bc22b12b0b152da"
 
   deps = []
@@ -1044,7 +1044,7 @@ rust_proc_macro("serde_derive-v1_0_130") {
 
 rust_library("serde_json-v1_0_69") {
   crate_name = "serde_json"
-  crate_root = "//vendor/serde_json/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/serde_json/src/lib.rs"
   output_name = "serde_json-3a9f5b638834f68f"
 
   deps = []
@@ -1067,7 +1067,7 @@ rust_library("serde_json-v1_0_69") {
 
 rust_library("smallvec-v1_10_0") {
   crate_name = "smallvec"
-  crate_root = "//vendor/smallvec/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/smallvec/src/lib.rs"
   output_name = "smallvec-5efa3f5d2ce11d88"
 
   deps = []
@@ -1089,7 +1089,7 @@ rust_library("smallvec-v1_10_0") {
 
 rust_library("stable_deref_trait-v1_2_0") {
   crate_name = "stable_deref_trait"
-  crate_root = "//vendor/stable_deref_trait/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/stable_deref_trait/src/lib.rs"
   output_name = "stable_deref_trait-219cca329c976d6a"
 
   deps = []
@@ -1109,7 +1109,7 @@ rust_library("stable_deref_trait-v1_2_0") {
 
 rust_library("strck-v0_1_1") {
   crate_name = "strck"
-  crate_root = "//vendor/strck/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/strck/src/lib.rs"
   output_name = "strck-8b30582054b8e73e"
 
   deps = []
@@ -1128,7 +1128,7 @@ rust_library("strck-v0_1_1") {
 
 rust_library("strck_ident-v0_1_1") {
   crate_name = "strck_ident"
-  crate_root = "//vendor/strck_ident/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/strck_ident/src/lib.rs"
   output_name = "strck_ident-d0dc839d28655948"
 
   deps = []
@@ -1150,7 +1150,7 @@ rust_library("strck_ident-v0_1_1") {
 
 rust_library("syn-v1_0_81") {
   crate_name = "syn"
-  crate_root = "//vendor/syn/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/syn/src/lib.rs"
   output_name = "syn-2ed584d7bd61108"
 
   deps = []
@@ -1183,7 +1183,7 @@ rust_library("syn-v1_0_81") {
 
 rust_library("synstructure-v0_12_6") {
   crate_name = "synstructure"
-  crate_root = "//vendor/synstructure/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/synstructure/src/lib.rs"
   output_name = "synstructure-b30be16cba2970c4"
 
   deps = []
@@ -1208,7 +1208,7 @@ rust_library("synstructure-v0_12_6") {
 
 rust_library("tinystr-v0_7_0") {
   crate_name = "tinystr"
-  crate_root = "//icu4x_root/utils/tinystr/src/lib.rs"
+  crate_root = "//utils/tinystr/src/lib.rs"
   output_name = "tinystr-8380d7482bdb16f1"
 
   deps = []
@@ -1232,7 +1232,7 @@ rust_library("tinystr-v0_7_0") {
 
 rust_library("unicode-bidi-v0_3_8") {
   crate_name = "unicode_bidi"
-  crate_root = "//vendor/unicode-bidi/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/unicode-bidi/src/lib.rs"
   output_name = "unicode_bidi-d7c128c711aa3d34"
 
   deps = []
@@ -1251,7 +1251,7 @@ rust_library("unicode-bidi-v0_3_8") {
 
 rust_library("unicode-ident-v1_0_5") {
   crate_name = "unicode_ident"
-  crate_root = "//vendor/unicode-ident/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/unicode-ident/src/lib.rs"
   output_name = "unicode_ident-e9e15678604fd497"
 
   deps = []
@@ -1270,7 +1270,7 @@ rust_library("unicode-ident-v1_0_5") {
 
 rust_library("unicode-xid-v0_2_2") {
   crate_name = "unicode_xid"
-  crate_root = "//vendor/unicode-xid/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/unicode-xid/src/lib.rs"
   output_name = "unicode_xid-fa54215a5411e7e5"
 
   deps = []
@@ -1290,7 +1290,7 @@ rust_library("unicode-xid-v0_2_2") {
 
 rust_library("utf16_iter-v1_0_4") {
   crate_name = "utf16_iter"
-  crate_root = "//vendor/utf16_iter/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/utf16_iter/src/lib.rs"
   output_name = "utf16_iter-2e20de39d48d5c53"
 
   deps = []
@@ -1309,7 +1309,7 @@ rust_library("utf16_iter-v1_0_4") {
 
 rust_library("utf8_iter-v1_0_3") {
   crate_name = "utf8_iter"
-  crate_root = "//vendor/utf8_iter/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/utf8_iter/src/lib.rs"
   output_name = "utf8_iter-5bc89f4a9436dc17"
 
   deps = []
@@ -1328,7 +1328,7 @@ rust_library("utf8_iter-v1_0_3") {
 
 rust_library("write16-v1_0_0") {
   crate_name = "write16"
-  crate_root = "//vendor/write16/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/write16/src/lib.rs"
   output_name = "write16-730f416f98f309b8"
 
   deps = []
@@ -1348,7 +1348,7 @@ rust_library("write16-v1_0_0") {
 
 rust_library("writeable-v0_5_0") {
   crate_name = "writeable"
-  crate_root = "//icu4x_root/utils/writeable/src/lib.rs"
+  crate_root = "//utils/writeable/src/lib.rs"
   output_name = "writeable-bdf02940b559b826"
 
   deps = []
@@ -1368,7 +1368,7 @@ rust_library("writeable-v0_5_0") {
 
 rust_library("yoke-v0_6_2") {
   crate_name = "yoke"
-  crate_root = "//icu4x_root/utils/yoke/src/lib.rs"
+  crate_root = "//utils/yoke/src/lib.rs"
   output_name = "yoke-32de6de2da9cea0c"
 
   deps = []
@@ -1397,7 +1397,7 @@ rust_library("yoke-v0_6_2") {
 
 rust_proc_macro("yoke-derive-v0_6_1") {
   crate_name = "yoke_derive"
-  crate_root = "//icu4x_root/utils/yoke/derive/src/lib.rs"
+  crate_root = "//utils/yoke/derive/src/lib.rs"
   output_name = "yoke_derive-d8527e974e5c2b1b"
 
   deps = []
@@ -1420,7 +1420,7 @@ rust_proc_macro("yoke-derive-v0_6_1") {
 
 rust_library("zerofrom-v0_1_1") {
   crate_name = "zerofrom"
-  crate_root = "//icu4x_root/utils/zerofrom/src/lib.rs"
+  crate_root = "//utils/zerofrom/src/lib.rs"
   output_name = "zerofrom-56fba0d18203917b"
 
   deps = []
@@ -1444,7 +1444,7 @@ rust_library("zerofrom-v0_1_1") {
 
 rust_proc_macro("zerofrom-derive-v0_1_1") {
   crate_name = "zerofrom_derive"
-  crate_root = "//icu4x_root/utils/zerofrom/derive/src/lib.rs"
+  crate_root = "//utils/zerofrom/derive/src/lib.rs"
   output_name = "zerofrom_derive-7fcf3b875300006b"
 
   deps = []
@@ -1467,7 +1467,7 @@ rust_proc_macro("zerofrom-derive-v0_1_1") {
 
 rust_library("zerovec-v0_9_0") {
   crate_name = "zerovec"
-  crate_root = "//icu4x_root/utils/zerovec/src/lib.rs"
+  crate_root = "//utils/zerovec/src/lib.rs"
   output_name = "zerovec-936a33a577867cad"
 
   deps = []
@@ -1494,7 +1494,7 @@ rust_library("zerovec-v0_9_0") {
 
 rust_proc_macro("zerovec-derive-v0_9_0") {
   crate_name = "zerovec_derive"
-  crate_root = "//icu4x_root/utils/zerovec/derive/src/lib.rs"
+  crate_root = "//utils/zerovec/derive/src/lib.rs"
   output_name = "zerovec_derive-ba8f3810e57b8cf0"
 
   deps = []

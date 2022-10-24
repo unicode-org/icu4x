@@ -1,0 +1,2 @@
+buildconfig = "//ffi/gn/BUILDCONFIG.gn"
+root = "//ffi/gn:default"

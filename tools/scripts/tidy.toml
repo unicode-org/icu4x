@@ -20,7 +20,6 @@ args = ["fmt", "--", "--check"]
 [tasks.license-header-check]
 description = "Ensure all the source files have license headers"
 category = "ICU4X Development"
-dependencies = ["gn-remove-symlink"] # https://github.com/sagiegurari/duckscript/issues/281
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -103,7 +102,6 @@ echo "License header check complete"
 [tasks.generate-readmes]
 description = "Automatically generate README.md for each component."
 category = "ICU4X Development"
-dependencies = ["gn-remove-symlink"] # https://github.com/sagiegurari/duckscript/issues/281
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -169,7 +167,6 @@ end
 [tasks.copy-license]
 description = "Copy the license file to each component for packaging."
 category = "ICU4X Development"
-dependencies = ["gn-remove-symlink"] # https://github.com/sagiegurari/duckscript/issues/281
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -197,7 +194,6 @@ end
 [tasks.license-file-check]
 description = "Check that each component has a LICENSE file."
 category = "ICU4X Development"
-dependencies = ["gn-remove-symlink"] # https://github.com/sagiegurari/duckscript/issues/281
 script_runner = "@duckscript"
 script = '''
 exit_on_error true

@@ -28,9 +28,9 @@ include = [
 all-features = true
 
 [dependencies]
-icu_capi = { version = "1.0", path = "icu4x_root/ffi/diplomat", default-features = false }
-icu = { version = "1.0", path = "icu4x_root/components/icu" }
-icu_provider = { version = "1.0", path = "icu4x_root/provider/core" }
+icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false }
+icu = { version = "1.0", path = "../../components/icu" }
+icu_provider = { version = "1.0", path = "../../provider/core" }
 
 # [gn.package.atomic-polyfill."0.1.5"]
 # rustflags = []
