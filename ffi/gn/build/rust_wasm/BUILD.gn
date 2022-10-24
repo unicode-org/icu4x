@@ -2,66 +2,8 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-toolchain("rust_wasm") {
-  tool("rust_bin") {
-    depfile = "{{target_out_dir}}/{{crate_name}}.d"
-    outfile = "{{target_out_dir}}/{{crate_name}}"
-    command = "rustc --crate-name {{crate_name}} {{source}} --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Z dep-info-omit-d-target {{rustflags}} -o $outfile {{rustdeps}} {{externs}}"
-    command += " --target=wasm32-wasi"
-    description = "RUST $outfile"
-    outputs = [ outfile ]
-  }
+import("//ffi/gn/build/rust_toolchain.gni")
 
-  tool("rust_staticlib") {
-    depfile = "{{target_out_dir}}/{{crate_name}}.d"
-    outfile = "{{target_out_dir}}/{{crate_name}}.a"
-    command = "rustc --crate-name {{crate_name}} {{source}} --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Z dep-info-omit-d-target {{rustflags}} -o $outfile {{rustdeps}} {{externs}}"
-    command += " --target=wasm32-wasi"
-    description = "RUST $outfile"
-    outputs = [ outfile ]
-  }
-
-  tool("rust_rlib") {
-    depfile = "{{target_out_dir}}/{{crate_name}}.d"
-    outfile = "{{target_out_dir}}/lib{{crate_name}}.rlib"
-    command = "rustc --crate-name {{crate_name}} {{source}} --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Z dep-info-omit-d-target {{rustflags}} -o $outfile {{rustdeps}} {{externs}}"
-    command += " --target=wasm32-wasi"
-    description = "RUST $outfile"
-    outputs = [ outfile ]
-  }
-
-  tool("rust_cdylib") {
-    depfile = "{{target_out_dir}}/{{crate_name}}.d"
-    outfile = "{{target_out_dir}}/lib{{crate_name}}.so"
-    command = "rustc --crate-name {{crate_name}} {{source}} --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Z dep-info-omit-d-target {{rustflags}} -o $outfile {{rustdeps}} {{externs}}"
-    command += " --target=wasm32-wasi"
-    description = "RUST $outfile"
-    outputs = [ outfile ]
-  }
-
-  tool("rust_macro") {
-    depfile = "{{output}}.d"
-
-    # TODO(fxbug.dev/47565): Replacement for rustenv
-    command = "{{rustenv}} RUST_BACKTRACE=1 rustc --color=always --crate-name {{crate_name}} {{source}} "
-    command += " --crate-type {{crate_type}} --emit=dep-info=$depfile,link -Zdep-info-omit-d-target {{rustflags}}"
-    command += " -o {{output}} --extern proc_macro {{rustdeps}} {{externs}}"
-    command += " --target=wasm32-wasi"
-
-    description = "RUST {{output}}"
-    outputs = [ "{{output_dir}}/{{target_output_name}}{{output_extension}}" ]
-    default_output_dir = "{{root_out_dir}}"
-    default_output_extension = ".so" # FIXME
-    output_prefix = "lib"
-  }
-
-  tool("stamp") {
-    command = "touch {{output}}"
-    description = "STAMP {{output}}"
-  }
-
-  tool("copy") {
-    command = "cp -af {{source}} {{output}}"
-    description = "COPY {{source}} {{output}}"
-  }
+rust_toolchain("rust_wasm") {
+  rust_target = "x86_64-unknown-linux-gnu"
 }
