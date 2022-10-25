@@ -603,7 +603,7 @@ mod test {
             parsed,
             ParsedDateTime {
                 year: Some(2022),
-                month: Some(06),
+                month: Some(6),
                 day: Some(5),
                 hour: None,
                 minute: None,
@@ -618,9 +618,9 @@ mod test {
             parsed,
             ParsedDateTime {
                 year: Some(2022),
-                month: Some(06),
+                month: Some(6),
                 day: Some(5),
-                hour: Some(04),
+                hour: Some(4),
                 minute: None,
                 second: None,
                 nano_second: None
@@ -633,9 +633,9 @@ mod test {
             parsed,
             ParsedDateTime {
                 year: Some(2022),
-                month: Some(06),
+                month: Some(6),
                 day: Some(5),
-                hour: Some(04),
+                hour: Some(4),
                 minute: Some(34),
                 second: None,
                 nano_second: None
@@ -648,9 +648,9 @@ mod test {
             parsed,
             ParsedDateTime {
                 year: Some(2022),
-                month: Some(06),
+                month: Some(6),
                 day: Some(5),
-                hour: Some(03),
+                hour: Some(3),
                 minute: Some(42),
                 second: None,
                 nano_second: None
@@ -663,7 +663,7 @@ mod test {
             parsed,
             ParsedDateTime {
                 year: Some(2022),
-                month: Some(06),
+                month: Some(6),
                 day: Some(5),
                 hour: None,
                 minute: None,
