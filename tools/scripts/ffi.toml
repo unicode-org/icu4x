@@ -400,7 +400,7 @@ end
 '''
 
 [tasks.gn-build]
-description = "Build the GN version of ICU4X"
+description = "Build the GN version of ICU4X for the host platform"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
@@ -411,18 +411,38 @@ assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Pl
 
 cd ffi/gn
 
-exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out
-exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out/host
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/host
+'''
+
+[tasks.gn-build-wasi]
+description = "Build the GN version of ICU4X for wasm32-wasi"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
+
+cd ffi/gn
+
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_os="wasi" out/wasi
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/wasi
 '''
 
 [tasks.gn-run]
 description = "Run the GN version of ICU4X"
 category = "ICU4X Development"
 install_crate = { crate_name = "wasmer", binary = "wasmer", test_arg = ["--help"] }
-dependencies = [ "gn-build" ]
+dependencies = [
+    "gn-build",
+    "gn-build-wasi",
+]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/gn
-exec --fail-on-error wasmer run ./out/obj/hello_world/print_hello
+exec --fail-on-error ./out/host/obj/ffi/gn/hello_world/print_hello
+exec --fail-on-error wasmer run ./out/wasi/obj/ffi/gn/hello_world/print_hello
 '''

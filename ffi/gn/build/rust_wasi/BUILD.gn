@@ -4,6 +4,6 @@
 
 import("//ffi/gn/build/rust_toolchain.gni")
 
-rust_toolchain("rust_wasm") {
-  rust_target = "x86_64-unknown-linux-gnu"
+rust_toolchain("rust_wasi") {
+  rust_target = "wasm32-wasi"
 }
