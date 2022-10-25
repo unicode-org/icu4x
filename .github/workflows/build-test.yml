@@ -229,7 +229,7 @@ jobs:
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
-    - name: Load cortex target for no_std build, and wasi for gn.
+    - name: Load cortex target for no_std build.
       run: |
         rustup install nightly-2022-04-05
         rustup component add --toolchain nightly-2022-04-05 rust-src
@@ -270,20 +270,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-
-    - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@v3
-      id: gn-third-party-tools-cache
-      with:
-        path: |
-          ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/gn.toml') }}
-    - name: Install GN Third-Party Tools
-      if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: gn-install
 
     - name: Run `cargo make ci-job-ffi`
       uses: actions-rs/cargo@v1.0.1
@@ -360,6 +346,51 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
+    - name: Run `cargo make ci-job-verify-ffi`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-verify-ffi
+
+  # GN job: verifies and runs the GN build of ICU4X
+  gn:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    - name: Load wasi for gn.
+      run: |
+        rustup install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
+        rustup target add wasm32-wasi --toolchain nightly-2022-04-05
+
     - name: Attempt to load cached GN Third-Party Tools
       uses: actions/cache@v3
       id: gn-third-party-tools-cache
@@ -374,12 +405,17 @@ jobs:
         command: make
         args: gn-install
 
-    - name: Run `cargo make ci-job-verify-ffi`
+    - name: Run `cargo make ci-job-verify-gn`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-verify-ffi
+        args: ci-job-verify-gn
 
+    - name: Run `cargo make ci-job-gn`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-gn
 
   # Feature coverage job - builds all permutations of features
   features:

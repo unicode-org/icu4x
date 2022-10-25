@@ -13,7 +13,6 @@ dependencies = [
     "test-c-tiny",
     "test-cpp",
     "test-js",
-    "gn-run",
     "build-wearos-ffi",
     "test-nostd",
 ]
@@ -25,7 +24,6 @@ dependencies = [
     "cargo-make-min-version",
     "verify-diplomat-gen",
     "verify-diplomat-coverage",
-    "verify-gn-gen",
 ]
 
 # Some tasks need a minimum version of cargo-make. Configs within cargo-make

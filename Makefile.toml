@@ -98,6 +98,20 @@ dependencies = [
     "verify-ffi",
 ]
 
+[tasks.ci-job-gn]
+description = "Run all tests for the CI 'gn' job"
+category = "CI"
+dependencies = [
+    "gn-run",
+]
+
+[tasks.ci-job-verify-gn]
+description = "Run all tests for the CI 'verify-gn' job"
+category = "CI"
+dependencies = [
+    "verify-gn-gen",
+]
+
 
 [tasks.ci-job-features]
 description = "Run all tests for the CI 'features' job"
