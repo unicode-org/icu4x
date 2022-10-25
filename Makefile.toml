@@ -2,9 +2,15 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extend = [{ path = "./tools/scripts/data.toml"}, { path = "./tools/scripts/valgrind.toml"},
-          { path = "./tools/scripts/tidy.toml"}, { path = "./tools/scripts/wasm.toml"},
-          { path = "./tools/scripts/tests.toml"}, { path = "./tools/scripts/ffi.toml"}]
+extend = [
+    { path = "./tools/scripts/data.toml"}, #
+    { path = "./tools/scripts/valgrind.toml"}, #
+    { path = "./tools/scripts/tidy.toml"}, #
+    { path = "./tools/scripts/wasm.toml"}, #
+    { path = "./tools/scripts/tests.toml"}, #
+    { path = "./tools/scripts/ffi.toml"}, #
+    { path = "./tools/scripts/gn.toml"}, #
+]
 
 [config]
 default_to_workspace = false
