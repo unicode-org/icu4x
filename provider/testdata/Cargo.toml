@@ -266,7 +266,7 @@ icuexportdata_glob = [
     "uprops/small/XIDS.toml",
 ]
 
-icuexportdata_gitref = "icu4x/2022-08-17/71.x"
+icuexportdata_gitref = "release-72-1"
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

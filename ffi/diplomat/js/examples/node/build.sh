@@ -29,7 +29,7 @@ if ! test -f "full-data-cached.postcard"; then
         --all-locales \
         --all-keys \
         --cldr-tag 41.0.0 \
-        --icuexport-tag icu4x/2022-08-17/71.x \
+        --icuexport-tag release-72-1 \
         --format blob \
         --out ./full-data-cached.postcard
 fi
