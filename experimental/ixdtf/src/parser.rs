@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::HashMap;
+
 #[derive(Clone, Copy)]
 enum  DateTimeSeparator {
     CapitalT,
@@ -34,8 +36,23 @@ impl DecimalSeparator {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-struct ParsedDateTime {
+#[derive(Clone, Copy)]
+enum TemporalSign {
+    Plus,
+    Minus,
+}
+
+impl TemporalSign {
+    fn value(&self) -> u8 {
+        match *self {
+            TemporalSign::Plus => b'+',
+            TemporalSign::Minus => b'-',
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+struct ParsedDateTime<'a> {
     pub year: Option<i32>,
     pub month: Option<u8>,
     pub day: Option<u8>,
@@ -43,6 +60,12 @@ struct ParsedDateTime {
     pub minute: Option<u8>,
     pub second: Option<u8>,
     pub nano_second: Option<i32>,
+    pub offset_sign: Option<u8>,
+    pub offset_hour: Option<u8>,
+    pub offset_minute: Option<u8>,
+    pub offset_second: Option<u8>,
+    pub offset_nano_second: Option<i32>,
+    pub tags: HashMap<&'a [u8], &'a [u8]>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -318,6 +341,55 @@ impl DateTimeParser {
         return Some(fraction);
     }
 
+    fn parse_temporal_sign<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
+        where
+            I: Iterator<Item = &'a u8>,
+    {
+        if iter.peek() == Some(&&TemporalSign::Plus.value()) {
+            iter.next();
+            return Some(b'+');
+        } else if iter.peek() == Some(&&TemporalSign::Minus.value()) {
+            iter.next();
+            return Some(b'-');
+        }
+        return None;
+    }
+
+    fn parse_tag<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<(&[u8], &[u8])>
+        where
+            I: Iterator<Item = &'a u8>,
+    {
+        if iter.peek() == Some(&&b'[') {
+            iter.next();
+            let mut key = Vec::new();
+            while let Some(t) = iter.peek() {
+                if t != &&b']' && t != &&b'=' {
+                    key.push(**t);
+                    iter.next();
+                } else {
+                    break;
+                }
+
+            }
+            if iter.peek() == Some(&&b'=') {
+                iter.next();
+            }
+            let mut value = Vec::new();
+            while let Some(t) = iter.peek() {
+                if t != &&b']' {
+                    key.push(**t);
+                    iter.next();
+                } else {
+                    iter.next();
+                    break;
+                }
+
+            }
+            return Some((&key[..], &value[..]));
+        }
+        return None;
+    }
+
     pub fn parse(s: &[u8]) -> ParsedDateTime {
         let mut iter = s.iter().peekable();
         let mut result = ParsedDateTime {
@@ -327,7 +399,13 @@ impl DateTimeParser {
             hour : None,
             minute : None,
             second : None,
-            nano_second : None
+            nano_second : None,
+            offset_sign: None,
+            offset_hour: None,
+            offset_minute: None,
+            offset_second: None,
+            offset_nano_second: None,
+            tags: HashMap::new()
         };
         if iter.peek().is_none() {
             return result;
@@ -390,6 +468,47 @@ impl DateTimeParser {
         } else {
             return result;
         }
+        if let Some(sign) = Self::parse_temporal_sign(&mut iter) {
+            result.offset_sign = Some(sign);
+        } else {
+            return result;
+        }
+        if let Some(hour) = Self::parse_time_hour(&mut iter) {
+            result.offset_hour = Some(hour);
+        } else {
+            return result;
+        }
+        // Whether input string had time separator previously.
+        let had_time_separator = iter.peek() == Some(&&b':');
+        if !Self::parse_time_separator(&mut iter, &had_time_separator) {
+            return result;
+        }
+        if let Some(minute) = Self::parse_time_minute(&mut iter) {
+            result.offset_minute = Some(minute);
+        } else {
+            return result;
+        }
+        if !Self::parse_time_separator(&mut iter, &had_time_separator) {
+            return result;
+        }
+        if let Some(second) = Self::parse_time_second(&mut iter) {
+            result.offset_second = Some(second);
+        } else {
+            return result;
+        }
+        if !Self::parse_decimal_separator(&mut iter) {
+            return result;
+        }
+        if let Some(nano_second) = Self::parse_fraction_part(&mut iter) {
+            result.offset_nano_second = Some(nano_second);
+        } else {
+            return result;
+        }
+        while iter.peek().is_some() {
+            if let Some(tag) = Self::parse_tag(&mut iter) {
+                result.tags.insert(tag.0, tag.1);
+            }
+        }
         return result;
     }
 }
@@ -411,7 +530,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -426,7 +551,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -441,7 +572,13 @@ mod test {
                 hour : Some(4),
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -456,7 +593,13 @@ mod test {
                 hour : Some(4),
                 minute : Some(34),
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -471,7 +614,13 @@ mod test {
                 hour : Some(4),
                 minute : Some(34),
                 second : Some(22),
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -486,7 +635,13 @@ mod test {
                 hour : Some(4),
                 minute : Some(34),
                 second : Some(22),
-                nano_second : Some(0)
+                nano_second : Some(0),
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -501,9 +656,40 @@ mod test {
                 hour : Some(4),
                 minute : Some(34),
                 second : Some(22),
-                nano_second : Some(0)
+                nano_second : Some(0),
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
+    }
+
+    #[test]
+    fn test_correct_timezone() {
+        let dt = "2022-06-05 04:34:22.000-07:10:50.000".as_bytes();
+        let parsed = DateTimeParser::parse(dt);
+        assert_eq!(
+            parsed,
+            ParsedDateTime {
+                year : Some(2022),
+                month : Some(6),
+                day : Some(5),
+                hour : Some(4),
+                minute : Some(34),
+                second : Some(22),
+                nano_second : Some(0),
+                offset_sign: Some(b'-'),
+                offset_hour: Some(7),
+                offset_minute: Some(10),
+                offset_second: Some(50),
+                offset_nano_second: Some(0),
+                tags: HashMap::new()
+            },
+        );
+
     }
 
     #[test]
@@ -519,7 +705,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -534,7 +726,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -549,7 +747,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -564,7 +768,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -579,7 +789,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
     }
@@ -596,7 +812,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -611,7 +833,13 @@ mod test {
                 hour : Some(04),
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -626,7 +854,13 @@ mod test {
                 hour : Some(04),
                 minute : Some(34),
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -641,7 +875,13 @@ mod test {
                 hour : Some(03),
                 minute : Some(42),
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
 
@@ -656,7 +896,13 @@ mod test {
                 hour : None,
                 minute : None,
                 second : None,
-                nano_second : None
+                nano_second : None,
+                offset_sign: None,
+                offset_hour: None,
+                offset_minute: None,
+                offset_second: None,
+                offset_nano_second: None,
+                tags: HashMap::new()
             },
         );
     }
