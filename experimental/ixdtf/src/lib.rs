@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![no_std]
-
 // Experimental.
 #![allow(dead_code)]
 
