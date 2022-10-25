@@ -55,6 +55,8 @@ impl DateTimeParser {
             I: Iterator<Item = &'a u8>,
     {
         let mut year: i32 = 0;
+        // TODO: value assigned to `sign` is never read
+        #[allow(unused_assignments)]
         let mut sign = 1;
         if iter.peek() == Some(&&b'+') {
             sign = 1;

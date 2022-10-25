@@ -4,4 +4,7 @@
 
 #![no_std]
 
+// Experimental.
+#![allow(dead_code)]
+
 mod parser;
