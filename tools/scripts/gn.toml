@@ -136,7 +136,8 @@ assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Pl
 
 cd ffi/gn
 
-exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_os="wasi" out/wasi
+args = set "target_os=\\\"wasi\\\" target_cpu=\\\"wasm32\\\""
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=\"${args}\" out/wasi
 exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/wasi
 '''
 
