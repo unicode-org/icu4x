@@ -1,0 +1,16 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# AUTO-GENERATED in ffi.toml
+
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source."https://github.com/rust-diplomat/diplomat"]
+git = "https://github.com/rust-diplomat/diplomat"
+rev = "046be4036b0defb0cffdeb8548f57789a3a31285"
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
