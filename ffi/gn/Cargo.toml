@@ -29,6 +29,7 @@ include = [
 all-features = true
 
 [dependencies]
+# Note: Only dependencies that are explicitly listed here are given public GN build targets.
 icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false }
 icu = { version = "1.0", path = "../../components/icu" }
 icu_provider = { version = "1.0", path = "../../provider/core" }
