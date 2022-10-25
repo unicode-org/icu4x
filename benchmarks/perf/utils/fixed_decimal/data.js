@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666385393300,
+  "lastUpdate": 1666726685663,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58109,6 +58109,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "668d100f2dc4c3e355c043df7c23877ca2b6f8ad",
+          "message": "Add GN build rules (#1972)",
+          "timestamp": "2022-10-25T12:22:50-07:00",
+          "tree_id": "184c12d8a760e3971b91760b5a8a1c20da40f984",
+          "url": "https://github.com/unicode-org/icu4x/commit/668d100f2dc4c3e355c043df7c23877ca2b6f8ad"
+        },
+        "date": 1666726620886,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117705,
+            "range": "± 382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24548,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63643,
+            "range": "± 690",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
