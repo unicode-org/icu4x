@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666384729710,
+  "lastUpdate": 1666725993314,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30773,6 +30773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c6b8ea6eab550d1c9cc0251083fa480c6b352c41"
         },
         "date": 1666384655819,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "668d100f2dc4c3e355c043df7c23877ca2b6f8ad",
+          "message": "Add GN build rules (#1972)",
+          "timestamp": "2022-10-25T12:22:50-07:00",
+          "tree_id": "184c12d8a760e3971b91760b5a8a1c20da40f984",
+          "url": "https://github.com/unicode-org/icu4x/commit/668d100f2dc4c3e355c043df7c23877ca2b6f8ad"
+        },
+        "date": 1666725894957,
         "tool": "ndjson",
         "benches": [
           {
