@@ -141,7 +141,7 @@ impl DateTimeParser {
         while cnt < 2 {
             if let Some(m) = iter.peek() {
                 if **m >= b'0' && **m <= b'9' {
-                    month = month * 10 + **m - b'0' as u8;
+                    month = month * 10 + **m - b'0';
                 } else {
                     return None;
                 }
@@ -151,7 +151,7 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if month < 1 || month > 12 {
+        if !(1..=12).contains(&month) {
             return None;
         }
         return Some(month);
@@ -166,7 +166,7 @@ impl DateTimeParser {
         while cnt < 2 {
             if let Some(d) = iter.peek() {
                 if **d >= b'0' && **d <= b'9' {
-                    day = day * 10 + **d - b'0' as u8;
+                    day = day * 10 + **d - b'0';
                 } else {
                     return None;
                 }
@@ -176,7 +176,7 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if day < 1 || day > 31 {
+        if !(1..=31).contains(&day) {
             return None;
         }
         return Some(day);
@@ -206,7 +206,7 @@ impl DateTimeParser {
         while cnt < 2 {
             if let Some(h) = iter.peek() {
                 if **h >= b'0' && **h <= b'9' {
-                    hour = hour * 10 + **h - b'0' as u8;
+                    hour = hour * 10 + **h - b'0';
                 } else {
                     return None;
                 }
@@ -216,7 +216,7 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if hour < 1 || hour > 23 {
+        if !(1..=23).contains(&hour) {
             return None;
         }
         return Some(hour);
@@ -249,7 +249,7 @@ impl DateTimeParser {
         while cnt < 2 {
             if let Some(m) = iter.peek() {
                 if **m >= b'0' && **m <= b'9' {
-                    minute = minute * 10 + **m - b'0' as u8;
+                    minute = minute * 10 + **m - b'0';
                 } else {
                     return None;
                 }
@@ -259,7 +259,7 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if minute < 1 || minute > 59 {
+        if !(1..=59).contains(&minute) {
             return None;
         }
         return Some(minute);
@@ -274,7 +274,7 @@ impl DateTimeParser {
         while cnt < 2 {
             if let Some(s) = iter.peek() {
                 if **s >= b'0' && **s <= b'9' {
-                    second = second * 10 + **s - b'0' as u8;
+                    second = second * 10 + **s - b'0';
                 } else {
                     return None;
                 }
@@ -284,7 +284,7 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if second < 1 || second > 60 {
+        if !(1..=60).contains(&second) {
             return None;
         }
         return Some(second);
