@@ -228,6 +228,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
+
     - name: Load cortex target for no_std build.
       run: |
         rustup install nightly-2022-04-05
@@ -235,17 +236,20 @@ jobs:
         rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05
         rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05
         rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05
+
     - name: Set up Clang-14
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 14
+
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
         node-version: 16.18.0
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
+
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -265,6 +269,21 @@ jobs:
       with:
         crate: cargo-make
         version: latest
+
+    - name: Attempt to load cached GN Third-Party Tools
+      uses: actions/cache@v3
+      id: gn-third-party-tools-cache
+      with:
+        path: |
+          ffi/gn/third_party_tools
+        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/ffi.toml') }}
+    - name: Install GN Third-Party Tools
+      if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: gn-install
+
     - name: Run `cargo make ci-job-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:

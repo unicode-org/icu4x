@@ -13,6 +13,7 @@ dependencies = [
     "test-c-tiny",
     "test-cpp",
     "test-js",
+    "gn-run",
     "build-wearos-ffi",
     "test-nostd",
 ]
