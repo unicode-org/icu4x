@@ -166,9 +166,11 @@ impl SourceData {
         }
     }
 
-    /// Set the list of collations to include beyond the default set.
+    /// Set the list of BCP-47 collation IDs to include beyond the default set.
     ///
     /// If a list was already set, this function overwrites the previous list.
+    ///
+    /// The special string `"search*"` causes all search collation tables to be included.
     pub fn with_collations(self, collations: Vec<String>) -> Self {
         Self { collations, ..self }
     }
