@@ -194,9 +194,13 @@ macro_rules! collation_provider {
                             // `unwrap` OK due to the `?` earlier
                             .icuexport().unwrap(), self.source.collation_han_database(), &s))
                         .filter(|locale| {
-                            self.should_include_collation(
-                                locale.extensions.unicode.keywords.get(&key!("co")).unwrap()
-                            )
+                            locale
+                                .extensions
+                                .unicode
+                                .keywords
+                                .get(&key!("co"))
+                                .map(|l| self.should_include_collation(l))
+                                .unwrap_or(true)
                         })
                         .map(DataLocale::from)
                         .collect()

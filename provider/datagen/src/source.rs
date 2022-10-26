@@ -51,6 +51,18 @@ impl Default for SourceData {
 }
 
 impl SourceData {
+    #[cfg(test)]
+    pub fn for_test() -> Self {
+        Self::default()
+            .with_cldr(
+                icu_testdata::paths::cldr_json_root(),
+                CldrLocaleSubset::Full,
+            )
+            .expect("testdata is valid")
+            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+            .expect("testdata is valid")
+    }
+
     /// Adds CLDR data to this `DataSource`. The root should point to a local
     /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
