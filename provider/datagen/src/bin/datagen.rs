@@ -130,8 +130,8 @@ fn main() -> eyre::Result<()> {
                 .long("include-collations")
                 .multiple(true)
                 .takes_value(true)
-                .possible_values(&["gb2312", "big5han", "search*", "search", "searchjl"])
-                .help("Which less-common collation tables to include.")
+                .possible_values(&["gb2312", "big5han", "search", "searchjl", "search*"])
+                .help("Which less-common collation tables to include. 'search*' includes all search tables.")
         )
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
