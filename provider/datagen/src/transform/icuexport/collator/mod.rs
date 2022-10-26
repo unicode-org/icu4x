@@ -119,6 +119,8 @@ fn file_name_to_locale(
 }
 
 impl crate::DatagenProvider {
+    /// Whether to include the given collation value based on
+    /// the default excludes and explicit includes.
     fn should_include_collation(&self, collation: &Value) -> bool {
         let collation_str = collation.write_to_string();
         if self
