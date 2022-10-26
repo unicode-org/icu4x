@@ -29,6 +29,7 @@ pub struct SourceData {
     segmenter_lstm_paths: Arc<SerdeCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
+    collations: Vec<String>,
 }
 
 impl Default for SourceData {
@@ -44,6 +45,7 @@ impl Default for SourceData {
             ),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
+            collations: vec![],
         }
     }
 }
@@ -152,6 +154,13 @@ impl SourceData {
         }
     }
 
+    /// Set the list of collations to include beyond the default set.
+    ///
+    /// If a list was already set, this function overwrites the previous list.
+    pub fn with_collations(self, collations: Vec<String>) -> Self {
+        Self { collations, ..self }
+    }
+
     /// Paths to CLDR source data.
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
@@ -181,6 +190,10 @@ impl SourceData {
 
     pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
         self.collation_han_database
+    }
+
+    pub(crate) fn collations(&self) -> &[String] {
+        &self.collations
     }
 }
 

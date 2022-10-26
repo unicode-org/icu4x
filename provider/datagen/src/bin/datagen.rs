@@ -126,18 +126,11 @@ fn main() -> eyre::Result<()> {
                 .help("Which collation han database to use.")
         )
         .arg(
-            Arg::with_name("INCLUDE_EXTENDED_COLLATIONS")
-                .long("include-extended-collations")
+            Arg::with_name("INCLUDE_COLLATIONS")
+                .long("include-collations")
                 .multiple(true)
                 .takes_value(true)
-                .possible_values(&["gb2312", "big5han", "search", "searchjl"])
-                .help("Which less-common collation tables to include.")
-        )
-        .arg(
-            Arg::with_name("EXCLUDE_COLLATIONS")
-                .long("exclude-collations")
-                .multiple(true)
-                .takes_value(true)
+                .possible_values(&["gb2312", "big5han", "search*", "search", "searchjl"])
                 .help("Which less-common collation tables to include.")
         )
         .arg(
@@ -311,6 +304,11 @@ fn main() -> eyre::Result<()> {
             Some("unihan") => CollationHanDatabase::Unihan,
             _ => CollationHanDatabase::Implicit,
         });
+
+    if let Some(collations) = matches.values_of("INCLUDE_COLLATIONS") {
+        source_data =
+            source_data.with_collations(collations.into_iter().map(String::from).collect());
+    }
 
     let out = match matches
         .value_of("FORMAT")
