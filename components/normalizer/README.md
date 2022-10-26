@@ -22,7 +22,7 @@ which is the most common case, and for a starter decomposing to a starter and a 
 on the Basic Multilingual Plane. Notably, in this case, the collator makes use of the
 knowledge that the second character of such a decomposition is a non-starter. Therefore,
 decomposition into two starters is handled by generic fallback path that looks the
-decomposion from an array by offset and length instead of baking a BMP starter pair directly
+decomposition from an array by offset and length instead of baking a BMP starter pair directly
 into a trie value.
 
 The decompositions into non-starters are hard-coded. At present in Unicode, these appear
