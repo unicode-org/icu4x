@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666725993314,
+  "lastUpdate": 1666742582039,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30803,6 +30803,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/668d100f2dc4c3e355c043df7c23877ca2b6f8ad"
         },
         "date": 1666725894957,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6e748569e3c408cd5b59938d4629af9bfff32cae",
+          "message": "Add ixdtf to CI (#2786)",
+          "timestamp": "2022-10-25T17:00:41-07:00",
+          "tree_id": "1f5a94110c9ff68f999575e0b4b191cf0042657a",
+          "url": "https://github.com/unicode-org/icu4x/commit/6e748569e3c408cd5b59938d4629af9bfff32cae"
+        },
+        "date": 1666742532239,
         "tool": "ndjson",
         "benches": [
           {
