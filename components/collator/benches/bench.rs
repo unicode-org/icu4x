@@ -87,6 +87,11 @@ pub fn collator_with_locale_old_spanish(criterion: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, collator_simple, collator_with_handling, collator_with_locale_old_spanish);
+criterion_group!(
+    benches,
+    collator_simple,
+    collator_with_handling,
+    collator_with_locale_old_spanish
+);
 
 criterion_main!(benches);
