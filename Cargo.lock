@@ -2033,6 +2033,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "112c678d4050afce233f4f2852bb2eb519230b3cf12f33585275537d7e41578d"
 
 [[package]]
+name = "ixdtf"
+version = "1.0.0-alpha1"
+dependencies = [
+ "criterion",
+ "icu_testdata",
+ "serde-json-core",
+]
+
+[[package]]
 name = "jobserver"
 version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
