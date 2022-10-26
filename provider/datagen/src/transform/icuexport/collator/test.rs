@@ -7,7 +7,7 @@ use std::cmp::Ordering;
 use crate::testutil::ResolvedLocaleAdapter;
 use crate::*;
 use icu_collator::{provider::CollationDataV1Marker, Collator, CollatorOptions, Strength};
-use icu_locid::{langid, locale, subtags_language as language};
+use icu_locid::{langid, locale, subtags::Language, subtags_language as language};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use writeable::Writeable;
 
@@ -222,19 +222,22 @@ fn test_zh() {
 }
 
 #[test]
-fn test_zh_filtering() {
+fn test_collation_filtering() {
     #[derive(Debug)]
     struct TestCase<'a> {
         include_collations: &'a [&'a str],
+        language: Language,
         expected: &'a [&'a str],
     }
     let cases = [
         TestCase {
             include_collations: &[],
+            language: language!("zh"),
             expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
         },
         TestCase {
             include_collations: &["big5han"],
+            language: language!("zh"),
             expected: &[
                 "zh",
                 "zh-u-co-big5han",
@@ -242,6 +245,42 @@ fn test_zh_filtering() {
                 "zh-u-co-unihan",
                 "zh-u-co-zhuyin",
             ],
+        },
+        TestCase {
+            include_collations: &["gb2312", "search*"],
+            language: language!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &[],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["searchjl"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search", "searchjl"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search*", "big5han"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
         },
     ];
     for cas in cases {
@@ -258,7 +297,7 @@ fn test_zh_filtering() {
             IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
                 .unwrap()
                 .into_iter()
-                .filter(|l| l.language() == language!("zh"))
+                .filter(|l| l.language() == cas.language)
                 .map(|l| l.write_to_string().into_owned())
                 .collect();
         resolved_locales.sort();
