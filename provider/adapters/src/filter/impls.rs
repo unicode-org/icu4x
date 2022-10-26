@@ -86,26 +86,6 @@ where
         }
     }
 
-    pub fn filter_by_data_locale<'a>(
-        self,
-        predicate: impl Fn(&DataLocale) -> bool + Sync + 'a
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
-    where
-        F: 'a
-    {
-        let old_predicate = self.predicate;
-        RequestFilterDataProvider {
-            inner: self.inner,
-            predicate: Box::new(move |request| -> bool {
-                if !(old_predicate)(request) {
-                    return false;
-                }
-                predicate(&request.locale)
-            }),
-            filter_name: self.filter_name,
-        }
-    }
-
     /// Filter out data request except those having a language identifier that exactly matches
     /// one in the allowlist.
     ///
