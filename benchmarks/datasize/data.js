@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666742582039,
+  "lastUpdate": 1666742647912,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30833,6 +30833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6e748569e3c408cd5b59938d4629af9bfff32cae"
         },
         "date": 1666742532239,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ecffce3fc5d3a2fea9fad22000dd6053c0f9e828",
+          "message": "Add documentation on CodePointTrie details and perf considerations (#2717)",
+          "timestamp": "2022-10-26T00:01:03Z",
+          "tree_id": "d1822b1e57b19ae6aaffe915105ebd304518c894",
+          "url": "https://github.com/unicode-org/icu4x/commit/ecffce3fc5d3a2fea9fad22000dd6053c0f9e828"
+        },
+        "date": 1666742578356,
         "tool": "ndjson",
         "benches": [
           {
