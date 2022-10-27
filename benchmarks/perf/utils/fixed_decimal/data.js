@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666839454631,
+  "lastUpdate": 1666894826675,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58349,6 +58349,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 71,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2db2c5f3b1ee2a44ff8d9356fd4044844bd91564",
+          "message": "Update Script property value enums (#2787)",
+          "timestamp": "2022-10-27T18:05:15Z",
+          "tree_id": "81bd768d4610026bd3610ecf2c7fcebaaf044d55",
+          "url": "https://github.com/unicode-org/icu4x/commit/2db2c5f3b1ee2a44ff8d9356fd4044844bd91564"
+        },
+        "date": 1666894749678,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 120225,
+            "range": "± 7757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25486,
+            "range": "± 839",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71845,
+            "range": "± 3044",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 213,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 98,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
