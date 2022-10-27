@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666838803785,
+  "lastUpdate": 1666894098662,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30893,6 +30893,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c1d58ea7bae7246dd4c290a93bfa9cf1412bb6b5"
         },
         "date": 1666838739357,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2db2c5f3b1ee2a44ff8d9356fd4044844bd91564",
+          "message": "Update Script property value enums (#2787)",
+          "timestamp": "2022-10-27T18:05:15Z",
+          "tree_id": "81bd768d4610026bd3610ecf2c7fcebaaf044d55",
+          "url": "https://github.com/unicode-org/icu4x/commit/2db2c5f3b1ee2a44ff8d9356fd4044844bd91564"
+        },
+        "date": 1666894034375,
         "tool": "ndjson",
         "benches": [
           {
