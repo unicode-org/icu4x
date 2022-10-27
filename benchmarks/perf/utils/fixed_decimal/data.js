@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666743344376,
+  "lastUpdate": 1666839454631,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58276,6 +58276,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 167,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jfaucher.fr@gmail.com",
+            "name": "jlfaucher",
+            "username": "jlfaucher"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c1d58ea7bae7246dd4c290a93bfa9cf1412bb6b5",
+          "message": "Invalid usage of string_view in FFI C++ example (#2792)",
+          "timestamp": "2022-10-27T02:43:44Z",
+          "tree_id": "e0c01eca8c3b09b8af0a864a188f96bc7b7d91ee",
+          "url": "https://github.com/unicode-org/icu4x/commit/c1d58ea7bae7246dd4c290a93bfa9cf1412bb6b5"
+        },
+        "date": 1666839387333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101025,
+            "range": "± 372",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21857,
+            "range": "± 352",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65941,
+            "range": "± 327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
             "range": "± 1",
             "unit": "ns/iter"
           },
