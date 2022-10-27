@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666742647912,
+  "lastUpdate": 1666838803785,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30863,6 +30863,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ecffce3fc5d3a2fea9fad22000dd6053c0f9e828"
         },
         "date": 1666742578356,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jfaucher.fr@gmail.com",
+            "name": "jlfaucher",
+            "username": "jlfaucher"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c1d58ea7bae7246dd4c290a93bfa9cf1412bb6b5",
+          "message": "Invalid usage of string_view in FFI C++ example (#2792)",
+          "timestamp": "2022-10-27T02:43:44Z",
+          "tree_id": "e0c01eca8c3b09b8af0a864a188f96bc7b7d91ee",
+          "url": "https://github.com/unicode-org/icu4x/commit/c1d58ea7bae7246dd4c290a93bfa9cf1412bb6b5"
+        },
+        "date": 1666838739357,
         "tool": "ndjson",
         "benches": [
           {
