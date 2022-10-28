@@ -14,6 +14,7 @@ use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
@@ -58,6 +59,12 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+#[derive(yoke::Yokeable)]
+#[non_exhaustive]
+pub enum PropertyUnicodeSetV1<'data> {
+    CPInversionListStrList(CodePointInversionListStringList<'data>),
 }
 
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.

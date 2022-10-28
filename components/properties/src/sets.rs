@@ -22,6 +22,11 @@ use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 
+//
+// CodePointSet* structs, impls, & macros
+// (a set with only code points)
+//
+
 /// A wrapper around code point set data. It is returned by APIs that return Unicode
 /// property data in a set-like form, ex: a set of code points sharing the same
 /// value for a Unicode property. Access its data via the borrowed version,
@@ -177,6 +182,22 @@ impl<'a> CodePointSetDataBorrowed<'a> {
         self.set.iter_ranges()
     }
 }
+
+//
+// UnicodeSet* structs, impls, & macros
+// (a set with code points + strings)
+//
+
+pub struct UnicodeSetData {
+    data: DataPayload<ErasedUnicodeSetlikeMarker>,
+}
+
+pub(crate) struct ErasedUnicodeSetlikeMarker;
+impl DataMarker for ErasedUnicodeSetlikeMarker {
+    type Yokeable = PropertyUnicodeSetV1<'static>;
+}
+
+impl UnicodeSetData {}
 
 //
 // Binary property getter fns
