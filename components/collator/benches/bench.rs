@@ -64,9 +64,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 }
 
 criterion_group!(
-    name = benches;
-    config = Criterion::default().sample_size(20);
-    targets = collator_with_locale
+    benches,
+    collator_with_locale
 );
 
 criterion_main!(benches);
