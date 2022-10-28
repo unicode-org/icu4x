@@ -27,7 +27,7 @@ serde = { version = "1.0", default-features = false, features = ["alloc", "deriv
 
 [dev-dependencies]
 serde_json = "1.0"
-postcard = { version = "1.0.0", features = ["use-std"] }
+postcard = { version = "1.0.0", features = ["alloc"], default_features = false }
 
 [features]
 bench = []
