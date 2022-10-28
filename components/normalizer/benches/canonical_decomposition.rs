@@ -13,22 +13,7 @@ fn function_under_bench(canonical_decomposer: &CanonicalDecomposition, character
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_decomposition";
     let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-    let params = black_box([
-        'ä',
-        'Ä',
-        'ệ',
-        'Ệ',
-        '\u{1D15E}',
-        'ো',
-        '𑄮',
-        '가',
-        '각',
-        '\u{212B}',
-        '\u{2126}',
-        '\u{1F71}',
-        '\u{1F72}',
-        'ά',
-    ]);
+    let params = black_box([ 'a', 'ä', 'Ä' ]);
 
     let mut group = criterion.benchmark_group(group_name);
     for single_char in params {

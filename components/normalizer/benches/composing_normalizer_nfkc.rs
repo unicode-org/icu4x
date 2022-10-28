@@ -14,20 +14,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "composing_normalizer_nfkc";
     let normalizer: ComposingNormalizer =
         ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
-    let params = black_box([
-        "a\u{0308}",
-        "A\u{0308}",
-        "e\u{0323}\u{0302}",
-        "E\u{0323}\u{0302}",
-        "𝅗𝅥",
-        "\u{2126}",
-        "ﾍﾞ",
-        "ﾍﾟ",
-        "ﬁ",
-        "\u{FDFA}",
-        "㈎",
-        "\u{0345}",
-    ]);
+    let params = black_box([ "a\u{0308}", "A\u{0308}", "e\u{0323}\u{0302}", ]);
 
     let mut group = criterion.benchmark_group(group_name);
     for text in params {
