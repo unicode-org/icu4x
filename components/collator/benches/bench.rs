@@ -10,10 +10,12 @@ use icu::locid::Locale;
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load all file content in the executable.
     let content_latin: (&str, Vec<&str>) = ("TestNames_Latin", include_str!("data/TestNames_Latin.txt").split("\n").collect());
+    let content_japanese: (&str, Vec<&str>) = ("TestNames_Japanese", include_str!("data/TestNames_Japanese.txt").split("\n").collect());
     let content_japanese_h: (&str, Vec<&str>) = ("TestNames_Japanese_h", include_str!("data/TestNames_Japanese_h.txt").split("\n").collect());
     let content_japanese_k: (&str, Vec<&str>) = ("TestNames_Japanese_k", include_str!("data/TestNames_Japanese_k.txt").split("\n").collect());
     let content_asian: (&str, Vec<&str>) = ("TestNames_Asian", include_str!("data/TestNames_Asian.txt").split("\n").collect());
     let content_chinese: (&str, Vec<&str>) = ("TestNames_Chinese", include_str!("data/TestNames_Chinese.txt").split("\n").collect());
+    let content_simplified_chinese: (&str, Vec<&str>) = ("TestNames_Simplified_Chinese", include_str!("data/TestNames_Simplified_Chinese.txt").split("\n").collect());
     let content_russian: (&str, Vec<&str>) = ("TestNames_Russian", include_str!("data/TestNames_Russian.txt").split("\n").collect());
     let content_thai: (&str, Vec<&str>) = ("TestNames_Thai", include_str!("data/TestNames_Thai.txt").split("\n").collect());
     let content_korean: (&str, Vec<&str>) = ("TestNames_Korean", include_str!("data/TestNames_Korean.txt").split("\n").collect());
@@ -24,8 +26,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         ("de_DE", vec![&content_latin]),
         // ("de__PHONEBOOK", vec![&content_latin]),
         ("fr_FR", vec![&content_latin]),
-        ("ja_JP", vec![&content_latin, &content_japanese_h, &content_japanese_k, &content_asian]),
-        ("zh_CN", vec![&content_latin, &content_chinese]),
+        ("ja_JP", vec![&content_latin, &content_japanese, &content_japanese_h, &content_japanese_k, &content_asian]),
+        ("zh_CN", vec![&content_latin, &content_chinese, &content_simplified_chinese]),
         ("zh_TW", vec![&content_latin, &content_chinese]),
         ("zh__PINYIN", vec![&content_latin, &content_chinese]),
         ("ru_RU", vec![&content_latin, &content_russian]),
