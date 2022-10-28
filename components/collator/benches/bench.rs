@@ -34,7 +34,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     ];
 
     for perf_group in performance_parameters {
-        let (locale_under_test, content_under_test) = perf_group;
+        let (locale_under_test, files_under_test) = perf_group;
         let current_locale: Locale = locale_under_test.parse()
             .expect("Failed to parse locale.");
 
@@ -45,8 +45,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         let mut group = criterion.benchmark_group(locale_under_test);
 
-        for lines_under_test in content_under_test {
-            let (file_name, elements) = lines_under_test;
+        for content_under_test in files_under_test {
+            let (file_name, elements) = content_under_test;
             group.throughput(Throughput::Elements(elements.len() as u64));
             group.bench_function(
                 BenchmarkId::from_parameter(file_name),
