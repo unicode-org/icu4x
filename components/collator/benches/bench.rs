@@ -2,75 +2,76 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use std::time::Duration;
+
+use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
 
 use icu::collator::*;
 use icu::locid::Locale;
 
-pub fn collator_with_locale(criterion: &mut Criterion) {
-    // Load all file content in the executable.
-    let content_latin: (&str, Vec<&str>) = (
-        "TestNames_Latin",
-        include_str!("data/TestNames_Latin.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_japanese: (&str, Vec<&str>) = (
-        "TestNames_Japanese",
-        include_str!("data/TestNames_Japanese.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_japanese_h: (&str, Vec<&str>) = (
-        "TestNames_Japanese_h",
-        include_str!("data/TestNames_Japanese_h.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_japanese_k: (&str, Vec<&str>) = (
-        "TestNames_Japanese_k",
-        include_str!("data/TestNames_Japanese_k.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_asian: (&str, Vec<&str>) = (
-        "TestNames_Asian",
-        include_str!("data/TestNames_Asian.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_chinese: (&str, Vec<&str>) = (
-        "TestNames_Chinese",
-        include_str!("data/TestNames_Chinese.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_simplified_chinese: (&str, Vec<&str>) = (
-        "TestNames_Simplified_Chinese",
-        include_str!("data/TestNames_Simplified_Chinese.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_russian: (&str, Vec<&str>) = (
-        "TestNames_Russian",
-        include_str!("data/TestNames_Russian.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_thai: (&str, Vec<&str>) = (
-        "TestNames_Thai",
-        include_str!("data/TestNames_Thai.txt")
-            .split("\n")
-            .collect(),
-    );
-    let content_korean: (&str, Vec<&str>) = (
-        "TestNames_Korean",
-        include_str!("data/TestNames_Korean.txt")
-            .split("\n")
-            .collect(),
-    );
+// Load all file content in the executable.
+const content_latin: (&str, Vec<&str>) = (
+    "TestNames_Latin",
+    include_str!("data/TestNames_Latin.txt")
+        .split("\n")
+        .collect(),
+);
+const content_japanese: (&str, Vec<&str>) = (
+    "TestNames_Japanese",
+    include_str!("data/TestNames_Japanese.txt")
+        .split("\n")
+        .collect(),
+);
+const content_japanese_h: (&str, Vec<&str>) = (
+    "TestNames_Japanese_h",
+    include_str!("data/TestNames_Japanese_h.txt")
+        .split("\n")
+        .collect(),
+);
+const content_japanese_k: (&str, Vec<&str>) = (
+    "TestNames_Japanese_k",
+    include_str!("data/TestNames_Japanese_k.txt")
+        .split("\n")
+        .collect(),
+);
+const content_asian: (&str, Vec<&str>) = (
+    "TestNames_Asian",
+    include_str!("data/TestNames_Asian.txt")
+        .split("\n")
+        .collect(),
+);
+const content_chinese: (&str, Vec<&str>) = (
+    "TestNames_Chinese",
+    include_str!("data/TestNames_Chinese.txt")
+        .split("\n")
+        .collect(),
+);
+const content_simplified_chinese: (&str, Vec<&str>) = (
+    "TestNames_Simplified_Chinese",
+    include_str!("data/TestNames_Simplified_Chinese.txt")
+        .split("\n")
+        .collect(),
+);
+const content_russian: (&str, Vec<&str>) = (
+    "TestNames_Russian",
+    include_str!("data/TestNames_Russian.txt")
+        .split("\n")
+        .collect(),
+);
+const content_thai: (&str, Vec<&str>) = (
+    "TestNames_Thai",
+    include_str!("data/TestNames_Thai.txt")
+        .split("\n")
+        .collect(),
+);
+const content_korean: (&str, Vec<&str>) = (
+    "TestNames_Korean",
+    include_str!("data/TestNames_Korean.txt")
+        .split("\n")
+        .collect(),
+);
 
+pub fn collator_with_locale(criterion: &mut Criterion) {
     let performance_parameters = [
         ("en_US", vec![&content_latin]),
         ("da_DK", vec![&content_latin]),
@@ -117,9 +118,9 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         for content_under_test in files_under_test {
             let (file_name, elements) = content_under_test;
             group.bench_function(BenchmarkId::from_parameter(file_name), |bencher| {
-                bencher.iter_batched_ref(
-                    || -> Vec<&str> { elements.clone() },
-                    |lines| lines.sort_by(|left, right| collator.compare(left, right)),
+                bencher.iter_batched(
+                    || { elements.clone() },
+                    |mut lines| lines.sort_by(|left, right| collator.compare(left, right)),
                     BatchSize::SmallInput,
                 )
             });
@@ -131,9 +132,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 criterion_group!(
     name = benches;
     config = Criterion::default()
-        .warm_up_time(Duration::new(1, 0))
-        .measurement_time(Duration::new(30, 0))
-        .sample_size(1000);
+        .measurement_time(Duration::new(60, 0))
+        .sample_size(100);
     targets = collator_with_locale
 );
 
