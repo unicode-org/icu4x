@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::time::Duration;
 use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main, Throughput};
 
 use icu::collator::*;
@@ -49,7 +50,6 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_test in files_under_test {
             let (file_name, elements) = content_under_test;
-            group.throughput(Throughput::Elements(elements.len() as u64));
             group.bench_function(
                 BenchmarkId::from_parameter(file_name),
                 |bencher| bencher.iter_batched_ref(
@@ -64,8 +64,12 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 }
 
 criterion_group!(
-    benches,
-    collator_with_locale
+    name = benches;
+    config = Criterion::default()
+        .warm_up_time(Duration::new(1, 0))
+        .measurement_time(Duration::new(30, 0))
+        .sample_size(1000);
+    targets = collator_with_locale
 );
 
 criterion_main!(benches);
