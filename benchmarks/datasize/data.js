@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1666894098662,
+  "lastUpdate": 1666972226331,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -30923,6 +30923,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2db2c5f3b1ee2a44ff8d9356fd4044844bd91564"
         },
         "date": 1666894034375,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6bf69ba0a5bb6504a18a95829d3ffdbbca414a51",
+          "message": "Don't use std postcard in tests (#2795)\n\n* Don't use std postcard in tests\n\n* Bump deduplicating_array\n\n* lock",
+          "timestamp": "2022-10-28T08:44:56-07:00",
+          "tree_id": "0130b5737a2edbf40da254c1dcdac37223dbc618",
+          "url": "https://github.com/unicode-org/icu4x/commit/6bf69ba0a5bb6504a18a95829d3ffdbbca414a51"
+        },
+        "date": 1666972149765,
         "tool": "ndjson",
         "benches": [
           {
