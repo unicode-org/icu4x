@@ -20,6 +20,7 @@ use crate::*;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
 use icu_provider::prelude::*;
 
 //
@@ -192,12 +193,36 @@ pub struct UnicodeSetData {
     data: DataPayload<ErasedUnicodeSetlikeMarker>,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedUnicodeSetlikeMarker;
 impl DataMarker for ErasedUnicodeSetlikeMarker {
     type Yokeable = PropertyUnicodeSetV1<'static>;
 }
 
-impl UnicodeSetData {}
+impl UnicodeSetData {
+
+    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
+    {
+        Self {
+            data: data.map_project(|m, _| m),
+        }
+    }
+
+    pub fn from_code_point_inversion_list_string_list(set: CodePointInversionListStringList<'static>) -> Self {
+        let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
+        UnicodeSetData::from_data(DataPayload::<ErasedUnicodeSetlikeMarker>::from_owned(set))
+    }
+
+    pub fn as_code_point_inversion_list_string_list(&self) -> Option<&CodePointInversionListStringList<'_>> {
+        self.data.get().as_code_point_inversion_list_string_list()
+    }
+
+    pub fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
+        self.data.get().to_code_point_inversion_list_string_list()
+    }
+}
 
 //
 // Binary property getter fns
