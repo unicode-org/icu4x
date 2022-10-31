@@ -5,8 +5,11 @@
 use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListError};
 use alloc::string::{String, ToString};
 use displaydoc::Display;
+use yoke::Yokeable;
+use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
 
+#[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 pub struct CodePointInversionListStringList<'data> {
     cp_inv_list: CodePointInversionList<'data>,
     str_list: VarZeroVec<'data, str>,

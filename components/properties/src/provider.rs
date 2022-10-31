@@ -61,10 +61,32 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-#[derive(yoke::Yokeable)]
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[non_exhaustive]
 pub enum PropertyUnicodeSetV1<'data> {
     CPInversionListStrList(CodePointInversionListStringList<'data>),
+}
+
+impl<'data> PropertyUnicodeSetV1<'data> {
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list_string_list(l: CodePointInversionListStringList<'static>) -> Self {
+        Self::CPInversionListStrList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list_string_list(&'_ self) -> Option<&'_ CodePointInversionListStringList<'data>> {
+        match *self {
+            Self::CPInversionListStrList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
+        match *self {
+            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t)
+        }
+    }
 }
 
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.
