@@ -36,6 +36,16 @@ impl<'data> CodePointInversionListStringList<'data> {
         })
     }
 
+    pub fn from_sorted_lists_unchecked(
+        cp_inv_list: CodePointInversionList<'data>,
+        str_list: VarZeroVec<'data, str>,
+    ) -> Self {
+        CodePointInversionListStringList {
+            cp_inv_list,
+            str_list,
+        }
+    }
+
     pub fn size(&self) -> usize {
         self.cp_inv_list.size() + self.str_list.len()
     }
