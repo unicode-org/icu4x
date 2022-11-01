@@ -68,7 +68,7 @@ impl<'data> CodePointInversionListStringList<'data> {
                         x.to_string(),
                     ));
                 }
-                while let Some(y) = it.next() {
+                for y in it {
                     if x.len() == 1 {
                         return Err(CodePointInversionListStringListError::InvalidStringLength(
                             x.to_string(),
@@ -147,6 +147,8 @@ impl<'data> CodePointInversionListStringList<'data> {
                 false
             }
         } else {
+            #[allow(clippy::filter_next)]
+            // VarZeroVec's iterator supports .filter() but not .find()
             self.str_list.iter().filter(|&x| x == s).next().is_some()
         }
     }
