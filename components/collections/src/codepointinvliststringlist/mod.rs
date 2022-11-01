@@ -7,7 +7,7 @@ use alloc::string::{String, ToString};
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
-use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
+use zerovec::VarZeroVec;
 
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
