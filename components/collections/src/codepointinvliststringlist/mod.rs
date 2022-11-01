@@ -16,7 +16,7 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroVec;
 
-/// A data structure providing a concrete implementation of a [`UnicodeSet`](icu_properties::sets::UnicodeSetData)
+/// A data structure providing a concrete implementation of a `UnicodeSet`
 /// (which represents a set of code points and strings) using an inversion list for the code points and a simple
 /// list-like structure to store and iterate over the strings.
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
@@ -215,6 +215,9 @@ pub enum CodePointInversionListStringListError {
     #[displaydoc("Strings in string list not in sorted order: ({0}, {1})")]
     StringListNotSorted(String, String),
 }
+
+#[doc(inline)]
+pub use CodePointInversionListStringListError as Error;
 
 #[cfg(test)]
 mod tests {
