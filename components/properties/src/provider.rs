@@ -69,6 +69,27 @@ pub enum PropertyUnicodeSetV1<'data> {
 
 impl<'data> PropertyUnicodeSetV1<'data> {
     #[inline]
+    pub(crate) fn contains(&self, s: &str) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains(s),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_u32(&self, cp: u32) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_u32(cp),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_char(&self, ch: char) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
+        }
+    }
+
+    #[inline]
     pub(crate) fn from_code_point_inversion_list_string_list(l: CodePointInversionListStringList<'static>) -> Self {
         Self::CPInversionListStrList(l)
     }

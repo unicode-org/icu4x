@@ -201,6 +201,13 @@ impl DataMarker for ErasedUnicodeSetlikeMarker {
 
 impl UnicodeSetData {
 
+    #[inline]
+    pub fn as_borrowed(&self) -> UnicodeSetDataBorrowed<'_> {
+        UnicodeSetDataBorrowed {
+            set: self.data.get(),
+        }
+    }
+
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
@@ -221,6 +228,27 @@ impl UnicodeSetData {
 
     pub fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
         self.data.get().to_code_point_inversion_list_string_list()
+    }
+}
+
+pub struct UnicodeSetDataBorrowed<'a> {
+    set: &'a PropertyUnicodeSetV1<'a>,
+}
+
+impl<'a> UnicodeSetDataBorrowed<'a> {
+    #[inline]
+    pub fn contains(self, s: &str) -> bool {
+        self.set.contains(s)
+    }
+
+    #[inline]
+    pub fn contains_u32(&self, cp: u32) -> bool {
+        self.set.contains_u32(cp)
+    }
+
+    #[inline]
+    pub fn contains_char(&self, ch: char) -> bool {
+        self.set.contains_char(ch)
     }
 }
 
