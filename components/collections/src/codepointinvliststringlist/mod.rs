@@ -23,7 +23,6 @@ pub struct CodePointInversionListStringList<'data> {
     str_list: VarZeroVec<'data, str>,
 }
 
-
 #[cfg(feature = "databake")]
 impl databake::Bake for CodePointInversionListStringList<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
@@ -110,13 +109,13 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
     /// use zerovec::VarZeroVec;
-    /// 
+    ///
     /// let cp_slice = &[0, 0x0080, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
     ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
-    /// 
+    ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
     ///
     /// assert!(cpilsl.contains("ascii_max"));
@@ -142,15 +141,15 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
     /// use zerovec::VarZeroVec;
-    /// 
+    ///
     /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
     ///     CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
-    /// 
+    ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
-    /// 
+    ///
     /// assert!(cpilsl.contains_u32(0));
     /// assert!(cpilsl.contains_u32(0x0042));
     /// assert!(!cpilsl.contains_u32(0x0080));
@@ -165,15 +164,15 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
     /// use zerovec::VarZeroVec;
-    /// 
+    ///
     /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
     ///     CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
-    /// 
+    ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
-    /// 
+    ///
     /// assert!(cpilsl.contains_char('A'));
     /// assert!(!cpilsl.contains_char(0x0080 as char));
     /// assert!(!cpilsl.contains_char('¡'));

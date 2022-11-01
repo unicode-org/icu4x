@@ -70,7 +70,9 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyUnicodeSetV1<'data> {
-    CPInversionListStrList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListStringList<'data>),
+    CPInversionListStrList(
+        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListStringList<'data>,
+    ),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
@@ -99,12 +101,16 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn from_code_point_inversion_list_string_list(l: CodePointInversionListStringList<'static>) -> Self {
+    pub(crate) fn from_code_point_inversion_list_string_list(
+        l: CodePointInversionListStringList<'static>,
+    ) -> Self {
         Self::CPInversionListStrList(l)
     }
 
     #[inline]
-    pub(crate) fn as_code_point_inversion_list_string_list(&'_ self) -> Option<&'_ CodePointInversionListStringList<'data>> {
+    pub(crate) fn as_code_point_inversion_list_string_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionListStringList<'data>> {
         match *self {
             Self::CPInversionListStrList(ref l) => Some(l),
             // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
@@ -112,9 +118,11 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
+    pub(crate) fn to_code_point_inversion_list_string_list(
+        &self,
+    ) -> CodePointInversionListStringList<'_> {
         match *self {
-            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t)
+            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
         }
     }
 }

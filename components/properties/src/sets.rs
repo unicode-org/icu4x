@@ -200,7 +200,6 @@ impl DataMarker for ErasedUnicodeSetlikeMarker {
 }
 
 impl UnicodeSetData {
-
     #[inline]
     pub fn as_borrowed(&self) -> UnicodeSetDataBorrowed<'_> {
         UnicodeSetDataBorrowed {
@@ -217,12 +216,16 @@ impl UnicodeSetData {
         }
     }
 
-    pub fn from_code_point_inversion_list_string_list(set: CodePointInversionListStringList<'static>) -> Self {
+    pub fn from_code_point_inversion_list_string_list(
+        set: CodePointInversionListStringList<'static>,
+    ) -> Self {
         let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
         UnicodeSetData::from_data(DataPayload::<ErasedUnicodeSetlikeMarker>::from_owned(set))
     }
 
-    pub fn as_code_point_inversion_list_string_list(&self) -> Option<&CodePointInversionListStringList<'_>> {
+    pub fn as_code_point_inversion_list_string_list(
+        &self,
+    ) -> Option<&CodePointInversionListStringList<'_>> {
         self.data.get().as_code_point_inversion_list_string_list()
     }
 
