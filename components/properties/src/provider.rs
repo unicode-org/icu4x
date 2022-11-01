@@ -62,9 +62,18 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyUnicodeSetV1<'data> {
-    CPInversionListStrList(CodePointInversionListStringList<'data>),
+    CPInversionListStrList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListStringList<'data>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
 impl<'data> PropertyUnicodeSetV1<'data> {

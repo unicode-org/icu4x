@@ -10,9 +10,32 @@ use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
 
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
+// Valid to auto-derive Deserialize because the invariants are weakly held
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct CodePointInversionListStringList<'data> {
+    // Invariants (weakly held):
+    //   - no input string is length 1 (a length 1 string should be a code point)
+    //   - the list is sorted
+    //   - the elements in the list are unique
+    #[cfg_attr(feature = "serde", serde(borrow))]
     cp_inv_list: CodePointInversionList<'data>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     str_list: VarZeroVec<'data, str>,
+}
+
+
+#[cfg(feature = "databake")]
+impl databake::Bake for CodePointInversionListStringList<'_> {
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        env.insert("icu_collections");
+        let cp_inv_list = self.cp_inv_list.bake(env);
+        let str_list = self.str_list.bake(env);
+        // Safe because our parts are safe.
+        databake::quote! { unsafe {
+            #[allow(unused_unsafe)]
+            ::icu_collections::codepointinvliststringlist::CodePointInversionListStringList::from_parts_unchecked(#cp_inv_list, #str_list)
+        }}
+    }
 }
 
 impl<'data> CodePointInversionListStringList<'data> {
@@ -20,11 +43,6 @@ impl<'data> CodePointInversionListStringList<'data> {
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
     ) -> Result<Self, CodePointInversionListStringListError> {
-        // Invariants:
-        //   - no input string is length 1 (a length 1 string should be a code point)
-        //   - the list is sorted
-        //   - the elements in the list are unique
-
         // Verify invariants:
         // Do so by using the equivalent of str_list.iter().windows(2) to get
         // overlapping windows of size 2. The above putative code is not possible
@@ -67,7 +85,8 @@ impl<'data> CodePointInversionListStringList<'data> {
         })
     }
 
-    pub fn from_sorted_lists_unchecked(
+    #[doc(hidden)]
+    pub const fn from_parts_unchecked(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
     ) -> Self {
