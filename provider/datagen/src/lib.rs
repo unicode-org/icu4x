@@ -93,14 +93,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::default()
-                    .with_cldr(
-                        icu_testdata::paths::cldr_json_root(),
-                        CldrLocaleSubset::Full,
-                    )
-                    .expect("testdata is valid")
-                    .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-                    .expect("testdata is valid"),
+                source: SourceData::for_test(),
             };
         }
         TEST_PROVIDER.clone()
