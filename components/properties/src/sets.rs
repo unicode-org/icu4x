@@ -67,6 +67,7 @@ impl CodePointSetData {
             set: self.data.get(),
         }
     }
+
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
@@ -79,7 +80,7 @@ impl CodePointSetData {
         }
     }
 
-    /// Construct a new one an owned [`CodePointInversionList`]
+    /// Construct a new owned [`CodePointInversionList`]
     pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
         let set = PropertyCodePointSetV1::from_code_point_inversion_list(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
@@ -189,6 +190,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 // (a set with code points + strings)
 //
 
+/// A wrapper around `UnicodeSet` data (characters and strings)
 pub struct UnicodeSetData {
     data: DataPayload<ErasedUnicodeSetlikeMarker>,
 }
@@ -200,6 +202,10 @@ impl DataMarker for ErasedUnicodeSetlikeMarker {
 }
 
 impl UnicodeSetData {
+    /// Construct a borrowed version of this type that can be queried.
+    ///
+    /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
+    /// up front.
     #[inline]
     pub fn as_borrowed(&self) -> UnicodeSetDataBorrowed<'_> {
         UnicodeSetDataBorrowed {
@@ -207,6 +213,9 @@ impl UnicodeSetData {
         }
     }
 
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use getters instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
@@ -216,6 +225,7 @@ impl UnicodeSetData {
         }
     }
 
+    /// Construct a new owned [`CodePointInversionListStringList`]
     pub fn from_code_point_inversion_list_string_list(
         set: CodePointInversionListStringList<'static>,
     ) -> Self {
@@ -223,32 +233,58 @@ impl UnicodeSetData {
         UnicodeSetData::from_data(DataPayload::<ErasedUnicodeSetlikeMarker>::from_owned(set))
     }
 
+    /// Convert this type to a [`CodePointInversionListStringList`] as a borrowed value.
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointInversionListStringList`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// This method returns an `Option` in order to return `None` when the backing data provider
+    /// cannot return a [`CodePointInversionListStringList`], or cannot do so within the expected constant time
+    /// constraint.
     pub fn as_code_point_inversion_list_string_list(
         &self,
     ) -> Option<&CodePointInversionListStringList<'_>> {
         self.data.get().as_code_point_inversion_list_string_list()
     }
 
+    /// Convert this type to a [`CodePointInversionListStringList`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointInversionListStringList`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointInversionListStringList`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// The performance of the conversion to this specific return type will vary
+    /// depending on the data structure that is backing `self`.
     pub fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
         self.data.get().to_code_point_inversion_list_string_list()
     }
 }
 
+/// A borrowed wrapper around code point set data, returned by
+/// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
 pub struct UnicodeSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }
 
 impl<'a> UnicodeSetDataBorrowed<'a> {
+    /// Check if the set contains the string. Strings consisting of one character
+    /// are treated as a character/code point.
+    ///
+    /// This matches ICU behavior for ICU's `UnicodeSet`.
     #[inline]
     pub fn contains(self, s: &str) -> bool {
         self.set.contains(s)
     }
 
+    /// Check if the set contains a character as a UTF32 code unit
     #[inline]
     pub fn contains_u32(&self, cp: u32) -> bool {
         self.set.contains_u32(cp)
     }
 
+    /// Check if the set contains the code point corresponding to the Rust character.
     #[inline]
     pub fn contains_char(&self, ch: char) -> bool {
         self.set.contains_char(ch)

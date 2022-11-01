@@ -2,6 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module provides functionality for querying of sets of Unicode code points and strings.
+//!
+//! It depends on [`CodePointInversionList`] to efficiently represent Unicode code points, while
+//! it also maintains a list of strings in the set.
+//!
+//! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
+
 use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListError};
 use alloc::string::{String, ToString};
 use displaydoc::Display;
@@ -9,12 +16,15 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroVec;
 
+/// A data structure providing a concrete implementation of a [`UnicodeSet`](icu_properties::sets::UnicodeSetData)
+/// (which represents a set of code points and strings) using an inversion list for the code points and a simple
+/// list-like structure to store and iterate over the strings.
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct CodePointInversionListStringList<'data> {
     // Invariants (weakly held):
-    //   - no input string is length 1 (a length 1 string should be a code point)
+    //   - no input string is length 1 (a length 1 string should be a single code point)
     //   - the list is sorted
     //   - the elements in the list are unique
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -38,6 +48,8 @@ impl databake::Bake for CodePointInversionListStringList<'_> {
 }
 
 impl<'data> CodePointInversionListStringList<'data> {
+    /// Returns a new [`CodePointInversionListStringList`] from both a [`CodePointInversionList`] for the
+    /// code points and a [`VarZeroVec`]`<`[`str`]`>` of strings.
     pub fn try_from(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
@@ -95,10 +107,14 @@ impl<'data> CodePointInversionListStringList<'data> {
         }
     }
 
+    /// Returns the number of elements in this set (its cardinality).
+    /// Note than the elements of a set may include both individual
+    /// codepoints and strings.
     pub fn size(&self) -> usize {
         self.cp_inv_list.size() + self.str_list.len()
     }
 
+    /// Return true if this set contains multi-code point strings or the empty string.
     pub fn has_strings(&self) -> bool {
         !self.str_list.is_empty()
     }

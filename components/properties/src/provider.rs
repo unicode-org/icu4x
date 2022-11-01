@@ -21,7 +21,7 @@ use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
-/// A set of characters with a particular property.
+/// A set of characters which share a particular property value.
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
@@ -61,6 +61,7 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
+/// A set of characters and strings which share a particular property value.
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -70,6 +71,7 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum PropertyUnicodeSetV1<'data> {
+    /// A set representing characters in an inversion list, and the strings in a list.
     CPInversionListStrList(
         #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListStringList<'data>,
     ),
