@@ -24,7 +24,26 @@ mod collator_serde;
 #[cfg(test)]
 mod test;
 
-fn locale_to_file_name(locale: &DataLocale) -> String {
+/// Forward compatibility with https://unicode-org.atlassian.net/browse/CLDR-15603
+/// See https://github.com/unicode-org/cldr/commit/aca740fb9c59efa1f1717bee682d98bded5d0428
+/// and https://github.com/unicode-org/cldr/commit/5b1423acc49c6b539e0cfbc69ae38c9cf044b1ca
+fn reformed_swedish_exists(
+    icuexport: &crate::SerdeCache,
+    collation_han_database: crate::CollationHanDatabase,
+) -> bool {
+    icuexport
+        .read_and_parse_toml::<collator_serde::CollationMetadata>(&format!(
+            "collation/{}/sv_reformed_meta.toml",
+            collation_han_database
+        ))
+        .is_ok()
+}
+
+fn locale_to_file_name(
+    icuexport: &crate::SerdeCache,
+    collation_han_database: crate::CollationHanDatabase,
+    locale: &DataLocale,
+) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         "root".to_owned()
     } else {
@@ -44,18 +63,30 @@ fn locale_to_file_name(locale: &DataLocale) -> String {
             extension => extension,
         });
     } else {
-        // "standard" is the default for zh.
+        // "standard" is the default for all but two languages: sv and zh.
         // Since there are only two special cases, hard-coding them
         // here for now instead of making the defaulting fancy and data driven.
+        // The Swedish naming seems ad hoc from
+        // https://unicode-org.atlassian.net/browse/CLDR-679 .
 
         if locale.get_langid().language == language!("zh") {
             s.push_str("_pinyin");
+        } else if locale.get_langid().language == language!("sv")
+            && reformed_swedish_exists(icuexport, collation_han_database)
+        {
+            s.push_str("_reformed");
+        } else {
+            s.push_str("_standard");
         }
     }
     s
 }
 
-fn file_name_to_locale(file_name: &str) -> Option<Locale> {
+fn file_name_to_locale(
+    icuexport: &crate::SerdeCache,
+    collation_han_database: crate::CollationHanDatabase,
+    file_name: &str,
+) -> Option<Locale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
     let langid = if language == "root" {
         LanguageIdentifier::UND
@@ -63,8 +94,12 @@ fn file_name_to_locale(file_name: &str) -> Option<Locale> {
         language.parse().ok()?
     };
     let mut locale = Locale::from(langid);
-    // See above for the two special case(s).
-    if !((language == "zh" && variant == "pinyin") || (language != "zh" && variant == "standard")) {
+    // See above for the two special cases.
+    let reformed_exists = reformed_swedish_exists(icuexport, collation_han_database);
+    if !((language == "zh" && variant == "pinyin")
+        || (language == "sv" && reformed_exists && variant == "reformed")
+        || ((language != "zh" && !(language == "sv" && reformed_exists)) && variant == "standard"))
+    {
         let shortened = match variant {
             "traditional" => "trad",
             "phonebook" => "phonebk",
@@ -92,7 +127,10 @@ macro_rules! collation_provider {
                             &format!(
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
-                                locale_to_file_name(&req.locale), $suffix)
+                                locale_to_file_name(self
+                                    .source
+                                    // `unwrap` OK due to the `?` earlier
+                                    .icuexport().unwrap(), self.source.collation_han_database(), &req.locale), $suffix)
                         )
                         .map_err(|e| match e.kind {
                             DataErrorKind::Io(
@@ -129,7 +167,10 @@ macro_rules! collation_provider {
                                 .strip_suffix($suffix)
                                 .map(ToString::to_string)
                         )
-                        .filter_map(|s|file_name_to_locale(&s))
+                        .filter_map(|s|file_name_to_locale(self
+                            .source
+                            // `unwrap` OK due to the `?` earlier
+                            .icuexport().unwrap(), self.source.collation_han_database(), &s))
                         .map(DataLocale::from)
                         .collect()
                     )
