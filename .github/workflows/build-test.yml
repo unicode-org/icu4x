@@ -184,7 +184,8 @@ jobs:
       id: source-data-cache
       with:
         path: data/source
-        key: source-data/41/icu4x-2022-08-17-71.x
+        # cache key includes CLDR data version + ICU (icuexportdata) data version
+        key: source-data/cldr-41/icuexport_release-72-1
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
