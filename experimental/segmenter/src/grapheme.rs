@@ -170,7 +170,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
+        iter.get_current_codepoint().len_utf8()
     }
 
     fn handle_complex_language(
@@ -188,7 +188,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyIllFor
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
+        iter.get_current_codepoint().len_utf8()
     }
 
     fn handle_complex_language(
@@ -224,7 +224,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf16 {
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        let ch = iter.current_pos_data.unwrap().1;
+        let ch = iter.get_current_codepoint();
         if ch >= 0x10000 {
             2
         } else {

@@ -58,34 +58,34 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             loop {
                 if i == *self.result_cache.first().unwrap() {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
-                    return Some(self.current_pos_data.unwrap().0);
+                    return Some(self.get_current_position());
                 }
                 i += Y::get_current_position_character_len(self);
-                self.current_pos_data = self.iter.next();
-                if self.current_pos_data.is_none() {
-                    // Reach EOF
+                self.advance_iter();
+                if self.is_eof() {
                     self.result_cache.clear();
                     return Some(self.len);
                 }
             }
         }
 
-        if self.current_pos_data.is_none() {
-            let current_pos_data = self.iter.next()?;
-            self.current_pos_data = Some(current_pos_data);
+        if self.is_eof() {
+            self.advance_iter();
+            if self.is_eof() {
+                return None;
+            }
             // SOT x anything
             let right_prop = self.get_current_break_property();
             if self.is_break_from_table(self.data.sot_property, right_prop) {
-                return Some(current_pos_data.0);
+                return Some(self.get_current_position());
             }
         }
 
         loop {
             let left_codepoint = self.get_current_codepoint();
             let left_prop = self.get_break_property(left_codepoint);
-            self.current_pos_data = self.iter.next();
-
-            if self.current_pos_data.is_none() {
+            self.advance_iter();
+            if self.is_eof() {
                 return Some(self.len);
             }
             let right_prop = self.get_current_break_property();
@@ -95,7 +95,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             if right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
                     // break before SA
-                    return Some(self.current_pos_data.unwrap().0);
+                    return Some(self.get_current_position());
                 }
                 let break_offset = Y::handle_complex_language(self, left_codepoint);
                 if break_offset.is_some() {
@@ -112,8 +112,8 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                 let mut previous_pos_data = self.current_pos_data;
 
                 loop {
-                    self.current_pos_data = self.iter.next();
-                    if self.current_pos_data.is_none() {
+                    self.advance_iter();
+                    if self.is_eof() {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         if self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property)
@@ -121,7 +121,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                         {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
-                            return Some(previous_pos_data.unwrap().0);
+                            return Some(self.get_current_position());
                         }
                         // EOF
                         return Some(self.len);
@@ -152,24 +152,42 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                 if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
-                    return Some(previous_pos_data.unwrap().0);
+                    return Some(self.get_current_position());
                 }
-                return Some(self.current_pos_data.unwrap().0);
+                return Some(self.get_current_position());
             }
 
             if self.is_break_from_table(left_prop, right_prop) {
-                return Some(self.current_pos_data.unwrap().0);
+                return Some(self.get_current_position());
             }
         }
     }
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
+    pub(crate) fn advance_iter(&mut self) {
+        self.current_pos_data = self.iter.next();
+    }
+
+    pub(crate) fn is_eof(&self) -> bool {
+        self.current_pos_data.is_none()
+    }
+
     pub(crate) fn get_current_break_property(&self) -> u8 {
         self.get_break_property(self.get_current_codepoint())
     }
 
-    fn get_current_codepoint(&self) -> Y::CharType {
+    pub(crate) fn get_current_position(&self) -> usize {
+        debug_assert!(!self.is_eof());
+        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
+        self.current_pos_data
+            .expect("Not at the end of the string!")
+            .0
+    }
+
+    pub(crate) fn get_current_codepoint(&self) -> Y::CharType {
+        debug_assert!(!self.is_eof());
+        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
         self.current_pos_data
             .expect("Not at the end of the string!")
             .1
