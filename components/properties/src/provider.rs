@@ -89,9 +89,9 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn contains_u32(&self, cp: u32) -> bool {
+    pub(crate) fn contains32(&self, cp: u32) -> bool {
         match *self {
-            Self::CPInversionListStrList(ref l) => l.contains_u32(cp),
+            Self::CPInversionListStrList(ref l) => l.contains32(cp),
         }
     }
 

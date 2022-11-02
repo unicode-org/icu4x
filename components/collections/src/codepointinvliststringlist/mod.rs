@@ -164,11 +164,11 @@ impl<'data> CodePointInversionListStringList<'data> {
     ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains_u32(0));
-    /// assert!(cpilsl.contains_u32(0x0042));
-    /// assert!(!cpilsl.contains_u32(0x0080));
+    /// assert!(cpilsl.contains32(0));
+    /// assert!(cpilsl.contains32(0x0042));
+    /// assert!(!cpilsl.contains32(0x0080));
     /// ```
-    pub fn contains_u32(&self, cp: u32) -> bool {
+    pub fn contains32(&self, cp: u32) -> bool {
         self.cp_inv_list.contains32(cp)
     }
 
@@ -192,7 +192,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// assert!(!cpilsl.contains_char('\u{1_0000}'));
     /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
     pub fn contains_char(&self, ch: char) -> bool {
-        self.contains_u32(ch as u32)
+        self.contains32(ch as u32)
     }
 }
 

@@ -280,8 +280,8 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
 
     /// Check if the set contains a character as a UTF32 code unit
     #[inline]
-    pub fn contains_u32(&self, cp: u32) -> bool {
-        self.set.contains_u32(cp)
+    pub fn contains32(&self, cp: u32) -> bool {
+        self.set.contains32(cp)
     }
 
     /// Check if the set contains the code point corresponding to the Rust character.
