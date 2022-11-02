@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667345852212,
+  "lastUpdate": 1667377691163,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58529,6 +58529,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 82,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b49d6193d165ad3cdc013e62e8c5dff0d043d2c",
+          "message": "Use GraphemeClusterSegmenter in DictionarySegmenter and LstmSegmenter (#2716)\n\n* Use GraphemeClusterSegmenter in DictionarySegmenter and LstmSegmenter\r\n\r\n* Fix windows build error.\r\n\r\n* Use extend instead of append\r\n\r\n* Clean up calucatating complex segment per Zibi's review.\r\n\r\n* Rename to grapheme_iter.\r\n\r\n* Add python tool to convert to ICU4X's JSON.\r\n\r\n* Add shebang.",
+          "timestamp": "2022-11-02T17:14:53+09:00",
+          "tree_id": "1a0ea1a856c5223e1e0358de41510604d3552bb8",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b49d6193d165ad3cdc013e62e8c5dff0d043d2c"
+        },
+        "date": 1667377626051,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117419,
+            "range": "± 6730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24383,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64425,
+            "range": "± 1066",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
