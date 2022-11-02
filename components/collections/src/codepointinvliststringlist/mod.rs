@@ -125,31 +125,30 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
     /// use zerovec::VarZeroVec;
     ///
-    /// let cp_slice = &[0, 0x0080, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
+    /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
     ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
-    /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
+    /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
     ///
-    /// assert!(cpilsl.contains("ascii_max"));
+    /// assert!(cpilsl.contains("bmp_max"));
     /// assert!(cpilsl.contains(""));
     /// assert!(cpilsl.contains("A"));
+    /// assert!(cpilsl.contains("ቔ"));  // U+1254 ETHIOPIC SYLLABLE QHEE
     /// assert!(!cpilsl.contains("bazinga!"));
     /// ```
     pub fn contains(&self, s: &str) -> bool {
-        if s.len() == 1 {
-            if let Some(ch) = s.chars().next() {
-                self.contains_char(ch)
-            } else {
-                false
+        let mut chars = s.chars();
+        if let Some(first_char) = chars.next() {
+            if chars.next().is_none() {
+                return self.contains_char(first_char);
             }
-        } else {
-            #[allow(clippy::filter_next)]
-            // VarZeroVec's iterator supports .filter() but not .find()
-            self.str_list.iter().filter(|&x| x == s).next().is_some()
         }
+        #[allow(clippy::filter_next)]
+        // VarZeroVec's iterator supports .filter() but not .find()
+        self.str_list.iter().filter(|&x| x == s).next().is_some()
     }
 
     ///
@@ -182,17 +181,18 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
     /// use zerovec::VarZeroVec;
     ///
-    /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
+    /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
     /// let cp_list =
-    ///     CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
-    /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
+    ///    CodePointInversionList::try_clone_from_inversion_list_slice(cp_slice).unwrap();
+    /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
     /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
     ///
     /// assert!(cpilsl.contains_char('A'));
-    /// assert!(!cpilsl.contains_char(0x0080 as char));
-    /// assert!(!cpilsl.contains_char('¡'));
+    /// assert!(cpilsl.contains_char('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
+    /// assert!(!cpilsl.contains_char('\u{1_0000}'));
+    /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
     pub fn contains_char(&self, ch: char) -> bool {
         self.contains_u32(ch as u32)
     }
