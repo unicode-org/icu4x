@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667377112313,
+  "lastUpdate": 1667430217066,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31013,6 +31013,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6b49d6193d165ad3cdc013e62e8c5dff0d043d2c"
         },
         "date": 1667377032560,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6a7c0c8c1773fd19059df0ccf14949e5119e67d",
+          "message": "Add UnicodeSet that supports strings (#2796)",
+          "timestamp": "2022-11-02T23:00:27Z",
+          "tree_id": "ec3473233c3419ae6b0bdc08891e294b42ff1ec2",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6a7c0c8c1773fd19059df0ccf14949e5119e67d"
+        },
+        "date": 1667430152485,
         "tool": "ndjson",
         "benches": [
           {
