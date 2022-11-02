@@ -106,6 +106,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
 
@@ -124,6 +125,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -139,6 +141,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
 
@@ -155,6 +158,7 @@ impl GraphemeClusterSegmenter {
             data: self.payload.get(),
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: None,
         }
     }
 }

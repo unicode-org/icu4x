@@ -1855,7 +1855,6 @@ dependencies = [
  "serde",
  "serde-json-core",
  "serde_json",
- "unicode-segmentation",
  "utf8_iter",
  "zerovec",
 ]
