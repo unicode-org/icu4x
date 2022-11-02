@@ -146,9 +146,7 @@ impl<'data> CodePointInversionListStringList<'data> {
                 return self.contains_char(first_char);
             }
         }
-        #[allow(clippy::filter_next)]
-        // VarZeroVec's iterator supports .filter() but not .find()
-        self.str_list.iter().filter(|&x| x == s).next().is_some()
+        self.str_list.binary_search(s).is_ok()
     }
 
     ///
