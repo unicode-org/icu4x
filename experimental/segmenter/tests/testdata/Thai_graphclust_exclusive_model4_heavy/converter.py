@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # A Converter of weights.json to use ICU4X's data since the keys have to be sorted.
 
 import json
