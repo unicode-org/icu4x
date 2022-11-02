@@ -14,7 +14,7 @@ use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
@@ -73,7 +73,7 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 pub enum PropertyUnicodeSetV1<'data> {
     /// A set representing characters in an inversion list, and the strings in a list.
     CPInversionListStrList(
-        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListStringList<'data>,
+        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
     ),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
@@ -104,7 +104,7 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 
     #[inline]
     pub(crate) fn from_code_point_inversion_list_string_list(
-        l: CodePointInversionListStringList<'static>,
+        l: CodePointInversionListAndStringList<'static>,
     ) -> Self {
         Self::CPInversionListStrList(l)
     }
@@ -112,7 +112,7 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     #[inline]
     pub(crate) fn as_code_point_inversion_list_string_list(
         &'_ self,
-    ) -> Option<&'_ CodePointInversionListStringList<'data>> {
+    ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {
         match *self {
             Self::CPInversionListStrList(ref l) => Some(l),
             // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
@@ -122,7 +122,7 @@ impl<'data> PropertyUnicodeSetV1<'data> {
     #[inline]
     pub(crate) fn to_code_point_inversion_list_string_list(
         &self,
-    ) -> CodePointInversionListStringList<'_> {
+    ) -> CodePointInversionListAndStringList<'_> {
         match *self {
             Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
         }

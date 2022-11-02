@@ -22,7 +22,7 @@ use zerovec::VarZeroVec;
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-pub struct CodePointInversionListStringList<'data> {
+pub struct CodePointInversionListAndStringList<'data> {
     // Invariants (weakly held):
     //   - no input string is length 1 (a length 1 string should be a single code point)
     //   - the list is sorted
@@ -34,25 +34,25 @@ pub struct CodePointInversionListStringList<'data> {
 }
 
 #[cfg(feature = "databake")]
-impl databake::Bake for CodePointInversionListStringList<'_> {
+impl databake::Bake for CodePointInversionListAndStringList<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_collections");
         let cp_inv_list = self.cp_inv_list.bake(env);
         let str_list = self.str_list.bake(env);
         // Safe because our parts are safe.
         databake::quote! {
-            ::icu_collections::codepointinvliststringlist::CodePointInversionListStringList::from_parts_unchecked(#cp_inv_list, #str_list)
+            ::icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(#cp_inv_list, #str_list)
         }
     }
 }
 
-impl<'data> CodePointInversionListStringList<'data> {
-    /// Returns a new [`CodePointInversionListStringList`] from both a [`CodePointInversionList`] for the
+impl<'data> CodePointInversionListAndStringList<'data> {
+    /// Returns a new [`CodePointInversionListAndStringList`] from both a [`CodePointInversionList`] for the
     /// code points and a [`VarZeroVec`]`<`[`str`]`>` of strings.
     pub fn try_from(
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
-    ) -> Result<Self, CodePointInversionListStringListError> {
+    ) -> Result<Self, CodePointInversionListAndStringListError> {
         // Verify invariants:
         // Do so by using the equivalent of str_list.iter().windows(2) to get
         // overlapping windows of size 2. The above putative code is not possible
@@ -63,24 +63,32 @@ impl<'data> CodePointInversionListStringList<'data> {
             let mut it = str_list.iter();
             if let Some(mut x) = it.next() {
                 if x.len() == 1 {
-                    return Err(CodePointInversionListStringListError::InvalidStringLength(
-                        x.to_string(),
-                    ));
+                    return Err(
+                        CodePointInversionListAndStringListError::InvalidStringLength(
+                            x.to_string(),
+                        ),
+                    );
                 }
                 for y in it {
                     if x.len() == 1 {
-                        return Err(CodePointInversionListStringListError::InvalidStringLength(
-                            x.to_string(),
-                        ));
+                        return Err(
+                            CodePointInversionListAndStringListError::InvalidStringLength(
+                                x.to_string(),
+                            ),
+                        );
                     } else if x == y {
-                        return Err(CodePointInversionListStringListError::StringListNotUnique(
-                            x.to_string(),
-                        ));
+                        return Err(
+                            CodePointInversionListAndStringListError::StringListNotUnique(
+                                x.to_string(),
+                            ),
+                        );
                     } else if x > y {
-                        return Err(CodePointInversionListStringListError::StringListNotSorted(
-                            x.to_string(),
-                            y.to_string(),
-                        ));
+                        return Err(
+                            CodePointInversionListAndStringListError::StringListNotSorted(
+                                x.to_string(),
+                                y.to_string(),
+                            ),
+                        );
                     }
 
                     // Next window begins. Update `x` here, `y` will be updated in next loop iteration.
@@ -89,7 +97,7 @@ impl<'data> CodePointInversionListStringList<'data> {
             }
         }
 
-        Ok(CodePointInversionListStringList {
+        Ok(CodePointInversionListAndStringList {
             cp_inv_list,
             str_list,
         })
@@ -100,7 +108,7 @@ impl<'data> CodePointInversionListStringList<'data> {
         cp_inv_list: CodePointInversionList<'data>,
         str_list: VarZeroVec<'data, str>,
     ) -> Self {
-        CodePointInversionListStringList {
+        CodePointInversionListAndStringList {
             cp_inv_list,
             str_list,
         }
@@ -122,7 +130,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// # Examples
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
+    /// use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
     /// use zerovec::VarZeroVec;
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
@@ -131,7 +139,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
-    /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
+    /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
     /// assert!(cpilsl.contains("bmp_max"));
     /// assert!(cpilsl.contains(""));
@@ -153,7 +161,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// # Examples
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
+    /// use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
     /// use zerovec::VarZeroVec;
     ///
     /// let cp_slice = &[0, 0x80, 0xFFFF, 0x1_0000, 0x10_FFFF, 0x11_0000];
@@ -162,7 +170,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
-    /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
+    /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
     /// assert!(cpilsl.contains32(0));
     /// assert!(cpilsl.contains32(0x0042));
@@ -176,7 +184,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// # Examples
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionList;
-    /// use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
+    /// use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
     /// use zerovec::VarZeroVec;
     ///
     /// let cp_slice = &[0, 0x1_0000, 0x10_FFFF, 0x11_0000];
@@ -185,7 +193,7 @@ impl<'data> CodePointInversionListStringList<'data> {
     /// let str_slice = &["", "bmp_max", "unicode_max", "zero"];
     /// let str_list = VarZeroVec::<str>::from(str_slice);
     ///
-    /// let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
+    /// let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
     ///
     /// assert!(cpilsl.contains_char('A'));
     /// assert!(cpilsl.contains_char('ቔ'));  // U+1254 ETHIOPIC SYLLABLE QHEE
@@ -196,11 +204,11 @@ impl<'data> CodePointInversionListStringList<'data> {
     }
 }
 
-/// Custom Errors for [`CodePointInversionListStringList`].
+/// Custom Errors for [`CodePointInversionListAndStringList`].
 ///
 /// Re-exported as [`Error`](Error).
 #[derive(Display, Debug)]
-pub enum CodePointInversionListStringListError {
+pub enum CodePointInversionListAndStringListError {
     /// An invalid CodePointInversionList was constructed
     #[displaydoc("Invalid code point inversion list: {0:?}")]
     InvalidCodePointInversionList(CodePointInversionListError),
@@ -216,7 +224,7 @@ pub enum CodePointInversionListStringListError {
 }
 
 #[doc(inline)]
-pub use CodePointInversionListStringListError as Error;
+pub use CodePointInversionListAndStringListError as Error;
 
 #[cfg(test)]
 mod tests {
@@ -230,7 +238,7 @@ mod tests {
         let str_slice = &["ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
-        let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
+        let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
 
         assert!(cpilsl.has_strings());
         assert_eq!(8, cpilsl.size());
@@ -244,7 +252,7 @@ mod tests {
         let str_slice = &["", "ascii_max", "bmp_max", "unicode_max", "zero"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
-        let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list).unwrap();
+        let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list).unwrap();
 
         assert!(cpilsl.has_strings());
         assert_eq!(9, cpilsl.size());
@@ -258,13 +266,11 @@ mod tests {
         let str_slice = &["a"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
-        let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list);
+        let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list);
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListStringListError::InvalidStringLength(
-                _
-            ))
+            Err(CodePointInversionListAndStringListError::InvalidStringLength(_))
         ));
     }
 
@@ -276,13 +282,11 @@ mod tests {
         let str_slice = &["abc", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
-        let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list);
+        let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list);
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListStringListError::StringListNotUnique(
-                _
-            ))
+            Err(CodePointInversionListAndStringListError::StringListNotUnique(_))
         ));
     }
 
@@ -294,14 +298,11 @@ mod tests {
         let str_slice = &["xyz", "abc"];
         let str_list = VarZeroVec::<str>::from(str_slice);
 
-        let cpilsl = CodePointInversionListStringList::try_from(cp_list, str_list);
+        let cpilsl = CodePointInversionListAndStringList::try_from(cp_list, str_list);
 
         assert!(matches!(
             cpilsl,
-            Err(CodePointInversionListStringListError::StringListNotSorted(
-                _,
-                _
-            ))
+            Err(CodePointInversionListAndStringListError::StringListNotSorted(_, _))
         ));
     }
 }

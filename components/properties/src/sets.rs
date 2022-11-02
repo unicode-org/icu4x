@@ -20,7 +20,7 @@ use crate::*;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_collections::codepointinvliststringlist::CodePointInversionListStringList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_provider::prelude::*;
 
 //
@@ -225,39 +225,41 @@ impl UnicodeSetData {
         }
     }
 
-    /// Construct a new owned [`CodePointInversionListStringList`]
+    /// Construct a new owned [`CodePointInversionListAndStringList`]
     pub fn from_code_point_inversion_list_string_list(
-        set: CodePointInversionListStringList<'static>,
+        set: CodePointInversionListAndStringList<'static>,
     ) -> Self {
         let set = PropertyUnicodeSetV1::from_code_point_inversion_list_string_list(set);
         UnicodeSetData::from_data(DataPayload::<ErasedUnicodeSetlikeMarker>::from_owned(set))
     }
 
-    /// Convert this type to a [`CodePointInversionListStringList`] as a borrowed value.
+    /// Convert this type to a [`CodePointInversionListAndStringList`] as a borrowed value.
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`CodePointInversionListStringList`]; however in the future more backends may be
+    /// Currently it is always [`CodePointInversionListAndStringList`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
     /// This method returns an `Option` in order to return `None` when the backing data provider
-    /// cannot return a [`CodePointInversionListStringList`], or cannot do so within the expected constant time
+    /// cannot return a [`CodePointInversionListAndStringList`], or cannot do so within the expected constant time
     /// constraint.
     pub fn as_code_point_inversion_list_string_list(
         &self,
-    ) -> Option<&CodePointInversionListStringList<'_>> {
+    ) -> Option<&CodePointInversionListAndStringList<'_>> {
         self.data.get().as_code_point_inversion_list_string_list()
     }
 
-    /// Convert this type to a [`CodePointInversionListStringList`], borrowing if possible,
-    /// otherwise allocating a new [`CodePointInversionListStringList`].
+    /// Convert this type to a [`CodePointInversionListAndStringList`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointInversionListAndStringList`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`CodePointInversionListStringList`]; however in the future more backends may be
+    /// Currently it is always [`CodePointInversionListAndStringList`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
     /// The performance of the conversion to this specific return type will vary
     /// depending on the data structure that is backing `self`.
-    pub fn to_code_point_inversion_list_string_list(&self) -> CodePointInversionListStringList<'_> {
+    pub fn to_code_point_inversion_list_string_list(
+        &self,
+    ) -> CodePointInversionListAndStringList<'_> {
         self.data.get().to_code_point_inversion_list_string_list()
     }
 }
