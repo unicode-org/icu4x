@@ -23,12 +23,12 @@ use zerovec::VarZeroVec;
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct CodePointInversionListAndStringList<'data> {
-    // Invariants (weakly held):
-    //   - no input string is length 1 (a length 1 string should be a single code point)
-    //   - the list is sorted
-    //   - the elements in the list are unique
     #[cfg_attr(feature = "serde", serde(borrow))]
     cp_inv_list: CodePointInversionList<'data>,
+    // Invariants (weakly held):
+    //   - no input string is length 1 (a length 1 string should be a single code point)
+    //   - the string list is sorted
+    //   - the elements in the string list are unique
     #[cfg_attr(feature = "serde", serde(borrow))]
     str_list: VarZeroVec<'data, str>,
 }
