@@ -14,13 +14,14 @@ use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
-/// A set of characters with a particular property.
+/// A set of characters which share a particular property value.
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
@@ -58,6 +59,74 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+/// A set of characters and strings which share a particular property value.
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum PropertyUnicodeSetV1<'data> {
+    /// A set representing characters in an inversion list, and the strings in a list.
+    CPInversionListStrList(
+        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
+    ),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+impl<'data> PropertyUnicodeSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains(&self, s: &str) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains(s),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains32(&self, cp: u32) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains32(cp),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_char(&self, ch: char) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list_string_list(
+        l: CodePointInversionListAndStringList<'static>,
+    ) -> Self {
+        Self::CPInversionListStrList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list_string_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {
+        match *self {
+            Self::CPInversionListStrList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list_string_list(
+        &self,
+    ) -> CodePointInversionListAndStringList<'_> {
+        match *self {
+            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
 }
 
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.
