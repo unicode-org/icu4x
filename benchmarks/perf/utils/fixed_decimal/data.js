@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667377691163,
+  "lastUpdate": 1667430885214,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58588,6 +58588,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6a7c0c8c1773fd19059df0ccf14949e5119e67d",
+          "message": "Add UnicodeSet that supports strings (#2796)",
+          "timestamp": "2022-11-02T23:00:27Z",
+          "tree_id": "ec3473233c3419ae6b0bdc08891e294b42ff1ec2",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6a7c0c8c1773fd19059df0ccf14949e5119e67d"
+        },
+        "date": 1667430817008,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101119,
+            "range": "± 4023",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21896,
+            "range": "± 346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65702,
+            "range": "± 428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 168,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
             "range": "± 0",
             "unit": "ns/iter"
           }
