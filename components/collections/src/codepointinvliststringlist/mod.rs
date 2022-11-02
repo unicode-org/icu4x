@@ -40,10 +40,9 @@ impl databake::Bake for CodePointInversionListStringList<'_> {
         let cp_inv_list = self.cp_inv_list.bake(env);
         let str_list = self.str_list.bake(env);
         // Safe because our parts are safe.
-        databake::quote! { unsafe {
-            #[allow(unused_unsafe)]
+        databake::quote! {
             ::icu_collections::codepointinvliststringlist::CodePointInversionListStringList::from_parts_unchecked(#cp_inv_list, #str_list)
-        }}
+        }
     }
 }
 
