@@ -28,7 +28,7 @@
 //! ### Testing
 //!
 //! `cargo test --features serde`
-//! 
+//!
 //! Note: some tests depend on collation test data files.
 //! These files are copied from the ICU and CLDR codebases,
 //! and they are stored in `tests/data/`.
