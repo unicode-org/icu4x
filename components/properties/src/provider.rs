@@ -322,7 +322,7 @@ macro_rules! expand {
                 pub struct $bin_unicode_set_marker;
 
                 impl DataMarker for $bin_unicode_set_marker {
-                    type Yokeable = PropertyCodePointSetV1<'static>;
+                    type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
                 impl KeyedDataMarker for $bin_unicode_set_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
