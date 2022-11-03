@@ -337,14 +337,14 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
     type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        panic!("not reachable")
+        unreachable!()
     }
 
     fn handle_complex_language(
         _: &mut RuleBreakIterator<'l, 's, Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 

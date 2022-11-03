@@ -966,14 +966,14 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     }
 
     fn get_current_position_character_len(_: &LineBreakIterator<Self>) -> usize {
-        panic!("not reachable");
+        unreachable!()
     }
 
     fn handle_complex_language(
         _: &mut LineBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable");
+        unreachable!()
     }
 }
 

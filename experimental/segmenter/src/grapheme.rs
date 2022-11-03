@@ -177,7 +177,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 
@@ -195,7 +195,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyIllFor
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 
@@ -206,14 +206,14 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeLatin1 {
     type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        panic!("not reachable")
+        unreachable!()
     }
 
     fn handle_complex_language(
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 
@@ -236,6 +236,6 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf16 {
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }

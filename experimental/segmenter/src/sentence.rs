@@ -163,7 +163,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 pub struct SentenceBreakTypePotentiallyIllFormedUtf8;
@@ -180,7 +180,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyIllFormedUtf8
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 
@@ -191,14 +191,14 @@ impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeLatin1 {
     type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        panic!("not reachable")
+        unreachable!()
     }
 
     fn handle_complex_language(
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
 
@@ -221,6 +221,6 @@ impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf16 {
         _: &mut RuleBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable")
+        unreachable!()
     }
 }
