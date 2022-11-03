@@ -179,12 +179,13 @@ jobs:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
-    - name: Attempt to load cached source data
+    - name: Attempt to load cached CLDR source data
       uses: actions/cache@v2
       id: source-data-cache
       with:
         path: data/source
-        key: source-data/41/icu4x-2022-08-17-71.x
+        # cache key includes CLDR data version + ICU (icuexportdata) data version
+        key: source-data/cldr-41/icuexport_release-72-1
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
@@ -198,8 +199,8 @@ jobs:
       uses: robinraju/release-downloader@v1.3
       with: 
         repository: "unicode-org/icu"
-        tag: "icu4x/2022-08-17/71.x"
-        fileName: "icuexportdata_icu4x-2022-08-17-71.x.zip"
+        tag: "release-72-1"
+        fileName: "icuexportdata_release-72-1.zip"
         out-file-path: "data/source/"
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
@@ -208,7 +209,7 @@ jobs:
         command: run
         args: > 
           -p icu_datagen --features bin --release --
-          --icuexport-root data/source/icuexportdata_icu4x-2022-08-17-71.x.zip
+          --icuexport-root data/source/icuexportdata_release-72-1.zip
           --cldr-root data/source/cldr-41.0.0-json-full.zip
           --all-locales
           --all-keys
