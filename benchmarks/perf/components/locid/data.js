@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667431094625,
+  "lastUpdate": 1667438060491,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -119315,6 +119315,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 214,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba676cb7ffb9975fffa698f02f458ee5ca0bc75f",
+          "message": "Enable experimental feature in icu in segmenter's Cargo.toml (#2803)\n\nThis patch fixed the following doc test error when running\r\n`cargo test --all-features` under `experimental/segmenter`.\r\n\r\n```\r\n---- src/lib.rs - (line 54) stdout ----\r\nerror[E0432]: unresolved import `icu::segmenter`\r\n --> src/lib.rs:55:10\r\n  |\r\n3 | use icu::segmenter::WordSegmenter;\r\n  |          ^^^^^^^^^ could not find `segmenter` in `icu`\r\n```",
+          "timestamp": "2022-11-02T17:56:06-07:00",
+          "tree_id": "53bebdfa6955d4854ac374a40247f39b7a614f7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba676cb7ffb9975fffa698f02f458ee5ca0bc75f"
+        },
+        "date": 1667437982292,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3952,
+            "range": "± 253",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 930,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 998,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 579,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 148,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1106,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 441,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2461,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4538,
+            "range": "± 246",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1962,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1542,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1026,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 286,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2199,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 658,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3611,
+            "range": "± 232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 187,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 125,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 152,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 194,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
