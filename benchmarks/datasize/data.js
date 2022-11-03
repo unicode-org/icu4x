@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667430217066,
+  "lastUpdate": 1667437147378,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31043,6 +31043,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a6a7c0c8c1773fd19059df0ccf14949e5119e67d"
         },
         "date": 1667430152485,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba676cb7ffb9975fffa698f02f458ee5ca0bc75f",
+          "message": "Enable experimental feature in icu in segmenter's Cargo.toml (#2803)\n\nThis patch fixed the following doc test error when running\r\n`cargo test --all-features` under `experimental/segmenter`.\r\n\r\n```\r\n---- src/lib.rs - (line 54) stdout ----\r\nerror[E0432]: unresolved import `icu::segmenter`\r\n --> src/lib.rs:55:10\r\n  |\r\n3 | use icu::segmenter::WordSegmenter;\r\n  |          ^^^^^^^^^ could not find `segmenter` in `icu`\r\n```",
+          "timestamp": "2022-11-02T17:56:06-07:00",
+          "tree_id": "53bebdfa6955d4854ac374a40247f39b7a614f7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba676cb7ffb9975fffa698f02f458ee5ca0bc75f"
+        },
+        "date": 1667437082983,
         "tool": "ndjson",
         "benches": [
           {
