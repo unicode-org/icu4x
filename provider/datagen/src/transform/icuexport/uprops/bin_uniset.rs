@@ -74,5 +74,25 @@ expand!((BasicEmojiV1Marker, "Basic_Emoji"));
 
 #[test]
 fn test_basic() {
-    assert!(false);
+    use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+    use icu_properties::provider::BasicEmojiV1Marker;
+    use icu_properties::provider::PropertyUnicodeSetV1;
+
+    let provider = crate::DatagenProvider::for_test();
+
+    let payload: DataPayload<BasicEmojiV1Marker> = provider
+        .load(Default::default())
+        .and_then(DataResponse::take_payload)
+        .expect("Loading was successful");
+
+    let basic_emoji: &CodePointInversionListAndStringList = match payload.get() {
+        PropertyUnicodeSetV1::CPInversionListStrList(ref l) => l,
+        _ => unreachable!("Should have serialized to an inversion list + strings list"),
+    };
+
+    assert!(!basic_emoji.contains32(0x0020));
+    assert!(!basic_emoji.contains_char('\n'));
+    assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
+    assert!(basic_emoji.contains("\u{1F983}"));
+    assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
 }
