@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667437147378,
+  "lastUpdate": 1667509558559,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31078,6 +31078,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4022148,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "86db546f2f6ad2a222b832fc8495b3ad511e8151",
+          "message": "Add API and testdata for Basic_Emoji property (#2802)",
+          "timestamp": "2022-11-03T21:02:24Z",
+          "tree_id": "831db04dd77825083d9f231f33d16682ba700025",
+          "url": "https://github.com/unicode-org/icu4x/commit/86db546f2f6ad2a222b832fc8495b3ad511e8151"
+        },
+        "date": 1667509480752,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4024569,
             "unit": "bytes",
             "biggerIsBetter": false
           }
