@@ -11,6 +11,7 @@ pub mod binary {
         #[serde(skip)]
         pub short_name: String,
         pub ranges: Vec<(u32, u32)>,
+        pub strings: Option<Vec<String>>,
     }
 
     #[derive(serde::Deserialize)]

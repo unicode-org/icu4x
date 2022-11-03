@@ -21,6 +21,9 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
+// Collations removed by default from ICU4X data, plus all starting with "search".
+static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
+
 #[cfg(test)]
 mod test;
 
@@ -115,6 +118,27 @@ fn file_name_to_locale(
     Some(locale)
 }
 
+impl crate::DatagenProvider {
+    /// Whether to include the given collation value based on
+    /// the default excludes and explicit includes.
+    fn should_include_collation(&self, collation: &Value) -> bool {
+        let collation_str = collation.write_to_string();
+        if self
+            .source
+            .collations()
+            .iter()
+            .any(|s| s == &*collation_str)
+        {
+            true
+        } else if collation_str.starts_with("search") {
+            // Note: literal "search" and "searchjl" are handled above
+            self.source.collations().iter().any(|s| s == "search*")
+        } else {
+            !DEFAULT_REMOVED_COLLATIONS.contains(&&*collation_str)
+        }
+    }
+}
+
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
@@ -171,6 +195,15 @@ macro_rules! collation_provider {
                             .source
                             // `unwrap` OK due to the `?` earlier
                             .icuexport().unwrap(), self.source.collation_han_database(), &s))
+                        .filter(|locale| {
+                            locale
+                                .extensions
+                                .unicode
+                                .keywords
+                                .get(&key!("co"))
+                                .map(|l| self.should_include_collation(l))
+                                .unwrap_or(true)
+                        })
                         .map(DataLocale::from)
                         .collect()
                     )

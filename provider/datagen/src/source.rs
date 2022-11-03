@@ -29,6 +29,7 @@ pub struct SourceData {
     segmenter_lstm_paths: Arc<SerdeCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
+    collations: Vec<String>,
 }
 
 impl Default for SourceData {
@@ -44,11 +45,24 @@ impl Default for SourceData {
             ),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
+            collations: vec![],
         }
     }
 }
 
 impl SourceData {
+    #[cfg(test)]
+    pub fn for_test() -> Self {
+        Self::default()
+            .with_cldr(
+                icu_testdata::paths::cldr_json_root(),
+                CldrLocaleSubset::Full,
+            )
+            .expect("testdata is valid")
+            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+            .expect("testdata is valid")
+    }
+
     /// Adds CLDR data to this `DataSource`. The root should point to a local
     /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
@@ -152,6 +166,15 @@ impl SourceData {
         }
     }
 
+    /// Set the list of BCP-47 collation IDs to include beyond the default set.
+    ///
+    /// If a list was already set, this function overwrites the previous list.
+    ///
+    /// The special string `"search*"` causes all search collation tables to be included.
+    pub fn with_collations(self, collations: Vec<String>) -> Self {
+        Self { collations, ..self }
+    }
+
     /// Paths to CLDR source data.
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
@@ -181,6 +204,10 @@ impl SourceData {
 
     pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
         self.collation_han_database
+    }
+
+    pub(crate) fn collations(&self) -> &[String] {
+        &self.collations
     }
 }
 

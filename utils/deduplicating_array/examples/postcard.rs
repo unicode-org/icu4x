@@ -27,12 +27,12 @@ const COORDINATES: [(f64, f64); 5] = [
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    let bytes = postcard::to_stdvec(&DataStruct {
+    let bytes = postcard::to_allocvec(&DataStruct {
         coordinates: COORDINATES,
     })
     .expect("Serialization should be successful");
 
-    let duplicating_bytes = postcard::to_stdvec(&DuplicatingDataStruct {
+    let duplicating_bytes = postcard::to_allocvec(&DuplicatingDataStruct {
         coordinates: COORDINATES,
     })
     .expect("Serialization should be successful");
