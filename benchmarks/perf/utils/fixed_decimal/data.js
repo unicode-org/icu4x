@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667430885214,
+  "lastUpdate": 1667437819328,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58636,6 +58636,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 168,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ba676cb7ffb9975fffa698f02f458ee5ca0bc75f",
+          "message": "Enable experimental feature in icu in segmenter's Cargo.toml (#2803)\n\nThis patch fixed the following doc test error when running\r\n`cargo test --all-features` under `experimental/segmenter`.\r\n\r\n```\r\n---- src/lib.rs - (line 54) stdout ----\r\nerror[E0432]: unresolved import `icu::segmenter`\r\n --> src/lib.rs:55:10\r\n  |\r\n3 | use icu::segmenter::WordSegmenter;\r\n  |          ^^^^^^^^^ could not find `segmenter` in `icu`\r\n```",
+          "timestamp": "2022-11-02T17:56:06-07:00",
+          "tree_id": "53bebdfa6955d4854ac374a40247f39b7a614f7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/ba676cb7ffb9975fffa698f02f458ee5ca0bc75f"
+        },
+        "date": 1667437751475,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101837,
+            "range": "± 710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22147,
+            "range": "± 219",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65736,
+            "range": "± 283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
             "range": "± 1",
             "unit": "ns/iter"
           },
