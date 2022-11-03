@@ -1,6 +1,7 @@
 // @generated
 pub mod ahex_v1;
 pub mod alpha_v1;
+pub mod basic_emoji_v1;
 pub mod bc_v1;
 pub mod bidi_c_v1;
 pub mod bidi_m_v1;

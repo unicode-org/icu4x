@@ -266,6 +266,7 @@ impl UnicodeSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
 pub struct UnicodeSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }
@@ -295,9 +296,10 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
 
 //
 // Binary property getter fns
+// (data as code point sets)
 //
 
-macro_rules! make_set_property {
+macro_rules! make_code_point_set_property {
     (
         // currently unused
         property: $property:expr;
@@ -317,7 +319,7 @@ macro_rules! make_set_property {
     }
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "ASCII_Hex_Digit";
     marker: AsciiHexDigitProperty;
     keyed_data_marker: AsciiHexDigitV1Marker;
@@ -342,7 +344,7 @@ make_set_property! {
     pub fn load_ascii_hex_digit();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Alnum";
     marker: AlnumProperty;
     keyed_data_marker: AlnumV1Marker;
@@ -353,7 +355,7 @@ make_set_property! {
     pub fn load_alnum();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Alphabetic";
     marker: AlphabeticProperty;
     keyed_data_marker: AlphabeticV1Marker;
@@ -379,7 +381,7 @@ make_set_property! {
     pub fn load_alphabetic();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Bidi_Control";
     marker: BidiControlProperty;
     keyed_data_marker: BidiControlV1Marker;
@@ -404,7 +406,7 @@ make_set_property! {
     pub fn load_bidi_control();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Bidi_Mirrored";
     marker: BidiMirroredProperty;
     keyed_data_marker: BidiMirroredV1Marker;
@@ -430,7 +432,7 @@ make_set_property! {
     pub fn load_bidi_mirrored();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Blank";
     marker: BlankProperty;
     keyed_data_marker: BlankV1Marker;
@@ -440,7 +442,7 @@ make_set_property! {
     pub fn load_blank();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Cased";
     marker: CasedProperty;
     keyed_data_marker: CasedV1Marker;
@@ -464,7 +466,7 @@ make_set_property! {
     pub fn load_cased();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Case_Ignorable";
     marker: CaseIgnorableProperty;
     keyed_data_marker: CaseIgnorableV1Marker;
@@ -488,7 +490,7 @@ make_set_property! {
     pub fn load_case_ignorable();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Full_Composition_Exclusion";
     marker: FullCompositionExclusionProperty;
     keyed_data_marker: FullCompositionExclusionV1Marker;
@@ -499,7 +501,7 @@ make_set_property! {
     pub fn load_full_composition_exclusion();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_Casefolded";
     marker: ChangesWhenCasefoldedProperty;
     keyed_data_marker: ChangesWhenCasefoldedV1Marker;
@@ -523,7 +525,7 @@ make_set_property! {
     pub fn load_changes_when_casefolded();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_Casemapped";
     marker: ChangesWhenCasemappedProperty;
     keyed_data_marker: ChangesWhenCasemappedV1Marker;
@@ -533,7 +535,7 @@ make_set_property! {
     pub fn load_changes_when_casemapped();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_NFKC_Casefolded";
     marker: ChangesWhenNfkcCasefoldedProperty;
     keyed_data_marker: ChangesWhenNfkcCasefoldedV1Marker;
@@ -557,7 +559,7 @@ make_set_property! {
     pub fn load_changes_when_nfkc_casefolded();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_Lowercased";
     marker: ChangesWhenLowercasedProperty;
     keyed_data_marker: ChangesWhenLowercasedV1Marker;
@@ -581,7 +583,7 @@ make_set_property! {
     pub fn load_changes_when_lowercased();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_Titlecased";
     marker: ChangesWhenTitlecasedProperty;
     keyed_data_marker: ChangesWhenTitlecasedV1Marker;
@@ -605,7 +607,7 @@ make_set_property! {
     pub fn load_changes_when_titlecased();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Changes_When_Uppercased";
     marker: ChangesWhenUppercasedProperty;
     keyed_data_marker: ChangesWhenUppercasedV1Marker;
@@ -629,7 +631,7 @@ make_set_property! {
     pub fn load_changes_when_uppercased();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Dash";
     marker: DashProperty;
     keyed_data_marker: DashV1Marker;
@@ -655,7 +657,7 @@ make_set_property! {
     pub fn load_dash();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Deprecated";
     marker: DeprecatedProperty;
     keyed_data_marker: DeprecatedV1Marker;
@@ -680,7 +682,7 @@ make_set_property! {
     pub fn load_deprecated();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Default_Ignorable_Code_Point";
     marker: DefaultIgnorableCodePointProperty;
     keyed_data_marker: DefaultIgnorableCodePointV1Marker;
@@ -707,7 +709,7 @@ make_set_property! {
     pub fn load_default_ignorable_code_point();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Diacritic";
     marker: DiacriticProperty;
     keyed_data_marker: DiacriticV1Marker;
@@ -731,7 +733,7 @@ make_set_property! {
     pub fn load_diacritic();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Emoji_Modifier_Base";
     marker: EmojiModifierBaseProperty;
     keyed_data_marker: EmojiModifierBaseV1Marker;
@@ -755,7 +757,7 @@ make_set_property! {
     pub fn load_emoji_modifier_base();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Emoji_Component";
     marker: EmojiComponentProperty;
     keyed_data_marker: EmojiComponentV1Marker;
@@ -782,7 +784,7 @@ make_set_property! {
     pub fn load_emoji_component();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Emoji_Modifier";
     marker: EmojiModifierProperty;
     keyed_data_marker: EmojiModifierV1Marker;
@@ -806,7 +808,7 @@ make_set_property! {
     pub fn load_emoji_modifier();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Emoji";
     marker: EmojiProperty;
     keyed_data_marker: EmojiV1Marker;
@@ -830,7 +832,7 @@ make_set_property! {
     pub fn load_emoji();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Emoji_Presentation";
     marker: EmojiPresentationProperty;
     keyed_data_marker: EmojiPresentationV1Marker;
@@ -854,7 +856,7 @@ make_set_property! {
     pub fn load_emoji_presentation();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Extender";
     marker: ExtenderProperty;
     keyed_data_marker: ExtenderV1Marker;
@@ -880,7 +882,7 @@ make_set_property! {
     pub fn load_extender();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Extended_Pictographic";
     marker: ExtendedPictographicProperty;
     keyed_data_marker: ExtendedPictographicV1Marker;
@@ -905,7 +907,7 @@ make_set_property! {
     pub fn load_extended_pictographic();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Graph";
     marker: GraphProperty;
     keyed_data_marker: GraphV1Marker;
@@ -916,7 +918,7 @@ make_set_property! {
     pub fn load_graph();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Grapheme_Base";
     marker: GraphemeBaseProperty;
     keyed_data_marker: GraphemeBaseV1Marker;
@@ -942,7 +944,7 @@ make_set_property! {
     pub fn load_grapheme_base();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Grapheme_Extend";
     marker: GraphemeExtendProperty;
     keyed_data_marker: GraphemeExtendV1Marker;
@@ -968,7 +970,7 @@ make_set_property! {
     pub fn load_grapheme_extend();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Grapheme_Link";
     marker: GraphemeLinkProperty;
     keyed_data_marker: GraphemeLinkV1Marker;
@@ -979,7 +981,7 @@ make_set_property! {
     pub fn load_grapheme_link();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Hex_Digit";
     marker: HexDigitProperty;
     keyed_data_marker: HexDigitV1Marker;
@@ -1008,7 +1010,7 @@ make_set_property! {
     pub fn load_hex_digit();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Hyphen";
     marker: HyphenProperty;
     keyed_data_marker: HyphenV1Marker;
@@ -1019,7 +1021,7 @@ make_set_property! {
     pub fn load_hyphen();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Id_Continue";
     marker: IdContinueProperty;
     keyed_data_marker: IdContinueV1Marker;
@@ -1050,7 +1052,7 @@ make_set_property! {
     pub fn load_id_continue();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Ideographic";
     marker: IdeographicProperty;
     keyed_data_marker: IdeographicV1Marker;
@@ -1075,7 +1077,7 @@ make_set_property! {
     pub fn load_ideographic();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Id_Start";
     marker: IdStartProperty;
     keyed_data_marker: IdStartV1Marker;
@@ -1105,7 +1107,7 @@ make_set_property! {
     pub fn load_id_start();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Ids_Binary_Operator";
     marker: IdsBinaryOperatorProperty;
     keyed_data_marker: IdsBinaryOperatorV1Marker;
@@ -1129,7 +1131,7 @@ make_set_property! {
     pub fn load_ids_binary_operator();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Ids_Trinary_Operator";
     marker: IdsTrinaryOperatorProperty;
     keyed_data_marker: IdsTrinaryOperatorV1Marker;
@@ -1156,7 +1158,7 @@ make_set_property! {
     pub fn load_ids_trinary_operator();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Join_Control";
     marker: JoinControlProperty;
     keyed_data_marker: JoinControlV1Marker;
@@ -1182,7 +1184,7 @@ make_set_property! {
     pub fn load_join_control();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Logical_Order_Exception";
     marker: LogicalOrderExceptionProperty;
     keyed_data_marker: LogicalOrderExceptionV1Marker;
@@ -1206,7 +1208,7 @@ make_set_property! {
     pub fn load_logical_order_exception();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Lowercase";
     marker: LowercaseProperty;
     keyed_data_marker: LowercaseV1Marker;
@@ -1230,7 +1232,7 @@ make_set_property! {
     pub fn load_lowercase();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Math";
     marker: MathProperty;
     keyed_data_marker: MathV1Marker;
@@ -1258,7 +1260,7 @@ make_set_property! {
     pub fn load_math();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Noncharacter_Code_Point";
     marker: NoncharacterCodePointProperty;
     keyed_data_marker: NoncharacterCodePointV1Marker;
@@ -1283,7 +1285,7 @@ make_set_property! {
     pub fn load_noncharacter_code_point();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "NFC_Inert";
     marker: NfcInertProperty;
     keyed_data_marker: NfcInertV1Marker;
@@ -1293,7 +1295,7 @@ make_set_property! {
     pub fn load_nfc_inert();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "NFD_Inert";
     marker: NfdInertProperty;
     keyed_data_marker: NfdInertV1Marker;
@@ -1303,7 +1305,7 @@ make_set_property! {
     pub fn load_nfd_inert();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "NFKC_Inert";
     marker: NfkcInertProperty;
     keyed_data_marker: NfkcInertV1Marker;
@@ -1313,7 +1315,7 @@ make_set_property! {
     pub fn load_nfkc_inert();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "NFKD_Inert";
     marker: NfkdInertProperty;
     keyed_data_marker: NfkdInertV1Marker;
@@ -1323,7 +1325,7 @@ make_set_property! {
     pub fn load_nfkd_inert();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Pattern_Syntax";
     marker: PatternSyntaxProperty;
     keyed_data_marker: PatternSyntaxV1Marker;
@@ -1350,7 +1352,7 @@ make_set_property! {
     pub fn load_pattern_syntax();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Pattern_White_Space";
     marker: PatternWhiteSpaceProperty;
     keyed_data_marker: PatternWhiteSpaceV1Marker;
@@ -1378,7 +1380,7 @@ make_set_property! {
     pub fn load_pattern_white_space();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Prepended_Concatenation_Mark";
     marker: PrependedConcatenationMarkProperty;
     keyed_data_marker: PrependedConcatenationMarkV1Marker;
@@ -1389,7 +1391,7 @@ make_set_property! {
     pub fn load_prepended_concatenation_mark();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Print";
     marker: PrintProperty;
     keyed_data_marker: PrintV1Marker;
@@ -1400,7 +1402,7 @@ make_set_property! {
     pub fn load_print();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Quotation_Mark";
     marker: QuotationMarkProperty;
     keyed_data_marker: QuotationMarkV1Marker;
@@ -1425,7 +1427,7 @@ make_set_property! {
     pub fn load_quotation_mark();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Radical";
     marker: RadicalProperty;
     keyed_data_marker: RadicalV1Marker;
@@ -1449,7 +1451,7 @@ make_set_property! {
     pub fn load_radical();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Regional_Indicator";
     marker: RegionalIndicatorProperty;
     keyed_data_marker: RegionalIndicatorV1Marker;
@@ -1474,7 +1476,7 @@ make_set_property! {
     pub fn load_regional_indicator();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Soft_Dotted";
     marker: SoftDottedProperty;
     keyed_data_marker: SoftDottedV1Marker;
@@ -1499,7 +1501,7 @@ make_set_property! {
     pub fn load_soft_dotted();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Segment_Starter";
     marker: SegmentStarterProperty;
     keyed_data_marker: SegmentStarterV1Marker;
@@ -1510,7 +1512,7 @@ make_set_property! {
     pub fn load_segment_starter();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Case_Sensitive";
     marker: CaseSensitiveProperty;
     keyed_data_marker: CaseSensitiveV1Marker;
@@ -1521,7 +1523,7 @@ make_set_property! {
     pub fn load_case_sensitive();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Sentence_Terminal";
     marker: SentenceTerminalProperty;
     keyed_data_marker: SentenceTerminalV1Marker;
@@ -1548,7 +1550,7 @@ make_set_property! {
     pub fn load_sentence_terminal();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Terminal_Punctuation";
     marker: TerminalPunctuationProperty;
     keyed_data_marker: TerminalPunctuationV1Marker;
@@ -1575,7 +1577,7 @@ make_set_property! {
     pub fn load_terminal_punctuation();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Unified_Ideograph";
     marker: UnifiedIdeographProperty;
     keyed_data_marker: UnifiedIdeographV1Marker;
@@ -1600,7 +1602,7 @@ make_set_property! {
     pub fn load_unified_ideograph();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Uppercase";
     marker: UppercaseProperty;
     keyed_data_marker: UppercaseV1Marker;
@@ -1624,7 +1626,7 @@ make_set_property! {
     pub fn load_uppercase();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Variation_Selector";
     marker: VariationSelectorProperty;
     keyed_data_marker: VariationSelectorV1Marker;
@@ -1651,7 +1653,7 @@ make_set_property! {
     pub fn load_variation_selector();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "White_Space";
     marker: WhiteSpaceProperty;
     keyed_data_marker: WhiteSpaceV1Marker;
@@ -1678,7 +1680,7 @@ make_set_property! {
     pub fn load_white_space();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "Xdigit";
     marker: XdigitProperty;
     keyed_data_marker: XdigitV1Marker;
@@ -1689,7 +1691,7 @@ make_set_property! {
     pub fn load_xdigit();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "XID_Continue";
     marker: XidContinueProperty;
     keyed_data_marker: XidContinueV1Marker;
@@ -1718,7 +1720,7 @@ make_set_property! {
     pub fn load_xid_continue();
 }
 
-make_set_property! {
+make_code_point_set_property! {
     property: "XID_Start";
     marker: XidStartProperty;
     keyed_data_marker: XidStartV1Marker;
@@ -1746,6 +1748,61 @@ make_set_property! {
     /// ```
 
     pub fn load_xid_start();
+}
+
+//
+// Binary property getter fns
+// (data as sets of strings + code points)
+//
+
+macro_rules! make_unicode_set_property {
+    (
+        // currently unused
+        property: $property:expr;
+        // currently unused
+        marker: $marker_name:ident;
+        keyed_data_marker: $keyed_data_marker:ty;
+        func:
+        $(#[$attr:meta])*
+        $vis:vis fn $funcname:ident();
+    ) => {
+        $(#[$attr])*
+        $vis fn $funcname(
+            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
+        ) -> Result<UnicodeSetData, PropertiesError> {
+            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
+        }
+    }
+}
+
+make_unicode_set_property! {
+    property: "Basic_Emoji";
+    marker: BasicEmojiProperty;
+    keyed_data_marker: BasicEmojiV1Marker;
+    func:
+    /// Characters and character sequences intended for general-purpose, independent, direct input.
+    /// See [`Unicode Technical Standard #51`](https://unicode.org/reports/tr51/) for more
+    /// details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::sets;
+    ///
+    /// let data =
+    ///     sets::load_basic_emoji(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
+    /// let basic_emoji = data.as_borrowed();
+    ///
+    /// assert!(!basic_emoji.contains32(0x0020));
+    /// assert!(!basic_emoji.contains_char('\n'));
+    /// assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
+    /// assert!(basic_emoji.contains("\u{1F983}"));
+    /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
+    /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
+    /// ```
+
+    pub fn load_basic_emoji();
 }
 
 //

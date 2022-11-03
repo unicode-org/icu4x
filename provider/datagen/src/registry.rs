@@ -88,6 +88,7 @@ registry!(
     AlphabeticV1Marker,
     AndListV1Marker,
     AsciiHexDigitV1Marker,
+    BasicEmojiV1Marker,
     BidiClassV1Marker,
     BidiControlV1Marker,
     BidiMirroredV1Marker,

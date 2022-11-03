@@ -283,37 +283,68 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 
 macro_rules! expand {
     (
-        ($(($bin_marker:ident, $bin_s:literal),)+),
+        ($(($bin_code_point_set_marker:ident, $bin_cp_s:literal),)+),
+        ($(($bin_unicode_set_marker:ident, $bin_us_s:literal),)+),
         ($(($enum_marker:ident, $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
+            // binary properties of code points only (represented as CodePointSetData)
             $(
-                #[doc = core::concat!("Data marker for the '", $bin_s, "' Unicode property")]
-                pub struct $bin_marker;
+                #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
+                pub struct $bin_code_point_set_marker;
 
-                impl DataMarker for $bin_marker {
+                impl DataMarker for $bin_code_point_set_marker {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl KeyedDataMarker for $bin_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
+                impl KeyedDataMarker for $bin_code_point_set_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $bin_marker {
+                impl Default for $bin_code_point_set_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $bin_marker {
+                impl databake::Bake for $bin_code_point_set_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$bin_marker }
+                        databake::quote!{ ::icu_properties::provider::$bin_code_point_set_marker }
                     }
                 }
             )+
 
+            // binary properties of strings + code points (represented as UnicodeSetData)
+            $(
+                #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
+                pub struct $bin_unicode_set_marker;
+
+                impl DataMarker for $bin_unicode_set_marker {
+                    type Yokeable = PropertyUnicodeSetV1<'static>;
+                }
+                impl KeyedDataMarker for $bin_unicode_set_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
+                }
+
+                #[cfg(feature = "datagen")]
+                impl Default for $bin_unicode_set_marker {
+                    fn default() -> Self {
+                        Self
+                    }
+                }
+
+                #[cfg(feature = "datagen")]
+                impl databake::Bake for $bin_unicode_set_marker {
+                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                        env.insert("icu_properties");
+                        databake::quote!{ ::icu_properties::provider::$bin_unicode_set_marker }
+                    }
+                }
+            )+
+
+            // enumerated properties
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
                 pub struct $enum_marker;
@@ -346,7 +377,7 @@ macro_rules! expand {
 
 expand!(
     (
-        // Binary properties
+        // Binary properties as code point sets
         (AsciiHexDigitV1Marker, "AHex"),
         (AlnumV1Marker, "alnum"),
         (AlphabeticV1Marker, "Alpha"),
@@ -414,7 +445,11 @@ expand!(
         (XidStartV1Marker, "XIDS"),
     ),
     (
-        // Enum properties
+        // Binary properties as UnicodeSets (code points + strings)
+        (BasicEmojiV1Marker, "Basic_Emoji"),
+    ),
+    (
+        // Enumerated properties
         (
             CanonicalCombiningClassV1Marker,
             "ccc",

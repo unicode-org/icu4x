@@ -19,3 +19,4 @@ icu::properties::sets::UnicodeSetDataBorrowed#Struct
 icu::properties::sets::UnicodeSetDataBorrowed::contains#FnInStruct
 icu::properties::sets::UnicodeSetDataBorrowed::contains32#FnInStruct
 icu::properties::sets::UnicodeSetDataBorrowed::contains_char#FnInStruct
+icu::properties::sets::load_basic_emoji#Fn
