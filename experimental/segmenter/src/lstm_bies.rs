@@ -218,7 +218,8 @@ impl<'l> Lstm<'l> {
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
             let curr_est = concat_lstm.dot(&timew) + timeb;
             let probs = math_helper::softmax(curr_est);
-            bies.push(self.compute_bies(probs).unwrap());
+            // We use `unwrap_or` to fall back and prevent panics.
+            bies.push(self.compute_bies(probs).unwrap_or('s'));
         }
         bies
     }

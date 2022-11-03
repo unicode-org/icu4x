@@ -53,10 +53,10 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
 
     fn next(&mut self) -> Option<Self::Item> {
         // If we have break point cache by previous run, return this result
-        if !self.result_cache.is_empty() {
+        if let Some(&first_result) = self.result_cache.first() {
             let mut i = 0;
             loop {
-                if i == *self.result_cache.first().unwrap() {
+                if i == first_result {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return Some(self.get_current_position());
                 }

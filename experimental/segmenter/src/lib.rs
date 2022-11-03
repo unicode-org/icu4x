@@ -75,7 +75,7 @@
     not(test),
     deny(
         // TODO(#2325): clippy::indexing_slicing,
-        // TODO: clippy::unwrap_used,
+        clippy::unwrap_used,
         clippy::expect_used,
         // TODO: clippy::panic,
         clippy::exhaustive_structs,

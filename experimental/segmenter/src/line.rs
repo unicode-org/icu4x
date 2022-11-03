@@ -650,10 +650,10 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         // If we have break point cache by previous run, return this result
-        if !self.result_cache.is_empty() {
+        if let Some(&first_pos) = self.result_cache.first() {
             let mut i = 0;
             loop {
-                if i == *self.result_cache.first().unwrap() {
+                if i == first_pos {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return Some(self.get_current_position());
                 }
@@ -934,8 +934,9 @@ where
     let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint().len_utf8();
+    let first_pos = *iter.result_cache.first()?;
     loop {
-        if i == *iter.result_cache.first().unwrap() {
+        if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return Some(iter.get_current_position());
@@ -1036,8 +1037,9 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
+        let first_pos = *iterator.result_cache.first()?;
         loop {
-            if i == *iterator.result_cache.first().unwrap() {
+            if i == first_pos {
                 // Re-calculate breaking offset
                 iterator.result_cache = iterator
                     .result_cache
