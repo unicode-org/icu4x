@@ -10,7 +10,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
-fn get_binary_as_unicodeset<'a>(
+fn get_binary_prop_for_unicodeset<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
@@ -34,7 +34,7 @@ macro_rules! expand {
                     &self,
                     _: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = get_binary_as_unicodeset(&self.source, $prop_name)?;
+                    let data = get_binary_prop_for_unicodeset(&self.source, $prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
@@ -61,7 +61,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_binary_as_unicodeset(&self.source, $prop_name)?;
+                    get_binary_prop_for_unicodeset(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }

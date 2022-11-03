@@ -8,7 +8,8 @@ use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
-fn get_binary_as_code_point_set<'a>(
+// get the source data for a Unicode binary property that only defines values for code points
+fn get_binary_prop_for_code_point_set<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
@@ -32,7 +33,7 @@ macro_rules! expand {
                     &self,
                     _: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = get_binary_as_code_point_set(&self.source, $prop_name)?;
+                    let data = get_binary_prop_for_code_point_set(&self.source, $prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
@@ -53,7 +54,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_binary_as_code_point_set(&self.source, $prop_name)?;
+                    get_binary_prop_for_code_point_set(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }
