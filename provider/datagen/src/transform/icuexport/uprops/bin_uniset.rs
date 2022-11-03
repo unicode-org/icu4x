@@ -4,11 +4,13 @@
 
 use crate::SourceData;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use zerovec::VarZeroVec;
 
-fn get_binary<'a>(
+fn get_binary_as_unicodeset<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
@@ -32,7 +34,7 @@ macro_rules! expand {
                     &self,
                     _: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = get_binary(&self.source, $prop_name)?;
+                    let data = get_binary_as_unicodeset(&self.source, $prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
@@ -40,10 +42,16 @@ macro_rules! expand {
                     }
                     let inv_list = builder.build();
 
+                    let strings = data.strings.as_ref().ok_or(DataError::custom("Error in deserializing strings from BinaryProperty source data"))?;
+                    let string_list = VarZeroVec::<str>::from(strings);
+
+                    let uniset = CodePointInversionListAndStringList::try_from(inv_list, string_list)
+                        .map_err(|_| DataError::custom("Error in constructing CodePointInversionListAndStringList from deserialized BinaryProperty data"))?;
+
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(
-                            PropertyCodePointSetV1::InversionList(inv_list),
+                            PropertyUnicodeSetV1::CPInversionListStrList(uniset),
                         )),
                     })
                 }
@@ -53,7 +61,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_binary(&self.source, $prop_name)?;
+                    get_binary_as_unicodeset(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])
                 }
@@ -63,94 +71,10 @@ macro_rules! expand {
 }
 
 expand!(
-    (AsciiHexDigitV1Marker, "AHex"),
-    (AlnumV1Marker, "alnum"),
-    (AlphabeticV1Marker, "Alpha"),
-    (BidiControlV1Marker, "Bidi_C"),
-    (BidiMirroredV1Marker, "Bidi_M"),
-    (BlankV1Marker, "blank"),
-    (CasedV1Marker, "Cased"),
-    (CaseIgnorableV1Marker, "CI"),
-    (FullCompositionExclusionV1Marker, "Comp_Ex"),
-    (ChangesWhenCasefoldedV1Marker, "CWCF"),
-    (ChangesWhenCasemappedV1Marker, "CWCM"),
-    (ChangesWhenNfkcCasefoldedV1Marker, "CWKCF"),
-    (ChangesWhenLowercasedV1Marker, "CWL"),
-    (ChangesWhenTitlecasedV1Marker, "CWT"),
-    (ChangesWhenUppercasedV1Marker, "CWU"),
-    (DashV1Marker, "Dash"),
-    (DeprecatedV1Marker, "Dep"),
-    (DefaultIgnorableCodePointV1Marker, "DI"),
-    (DiacriticV1Marker, "Dia"),
-    (EmojiModifierBaseV1Marker, "EBase"),
-    (EmojiComponentV1Marker, "EComp"),
-    (EmojiModifierV1Marker, "EMod"),
-    (EmojiV1Marker, "Emoji"),
-    (EmojiPresentationV1Marker, "EPres"),
-    (ExtenderV1Marker, "Ext"),
-    (ExtendedPictographicV1Marker, "ExtPict"),
-    (GraphV1Marker, "graph"),
-    (GraphemeBaseV1Marker, "Gr_Base"),
-    (GraphemeExtendV1Marker, "Gr_Ext"),
-    (GraphemeLinkV1Marker, "Gr_Link"),
-    (HexDigitV1Marker, "Hex"),
-    (HyphenV1Marker, "Hyphen"),
-    (IdContinueV1Marker, "IDC"),
-    (IdeographicV1Marker, "Ideo"),
-    (IdStartV1Marker, "IDS"),
-    (IdsBinaryOperatorV1Marker, "IDSB"),
-    (IdsTrinaryOperatorV1Marker, "IDST"),
-    (JoinControlV1Marker, "Join_C"),
-    (LogicalOrderExceptionV1Marker, "LOE"),
-    (LowercaseV1Marker, "Lower"),
-    (MathV1Marker, "Math"),
-    (NoncharacterCodePointV1Marker, "NChar"),
-    (NfcInertV1Marker, "nfcinert"),
-    (NfdInertV1Marker, "nfdinert"),
-    (NfkcInertV1Marker, "nfkcinert"),
-    (NfkdInertV1Marker, "nfkdinert"),
-    (PatternSyntaxV1Marker, "Pat_Syn"),
-    (PatternWhiteSpaceV1Marker, "Pat_WS"),
-    (PrependedConcatenationMarkV1Marker, "PCM"),
-    (PrintV1Marker, "print"),
-    (QuotationMarkV1Marker, "QMark"),
-    (RadicalV1Marker, "Radical"),
-    (RegionalIndicatorV1Marker, "RI"),
-    (SoftDottedV1Marker, "SD"),
-    (SegmentStarterV1Marker, "segstart"),
-    (CaseSensitiveV1Marker, "Sensitive"),
-    (SentenceTerminalV1Marker, "STerm"),
-    (TerminalPunctuationV1Marker, "Term"),
-    (UnifiedIdeographV1Marker, "UIdeo"),
-    (UppercaseV1Marker, "Upper"),
-    (VariationSelectorV1Marker, "VS"),
-    (WhiteSpaceV1Marker, "WSpace"),
-    (XdigitV1Marker, "xdigit"),
-    (XidContinueV1Marker, "XIDC"),
-    (XidStartV1Marker, "XIDS")
+    (BasicEmojiV1Marker, "Basic_Emoji")
 );
 
 #[test]
 fn test_basic() {
-    use icu_collections::codepointinvlist::CodePointInversionList;
-    use icu_properties::provider::PropertyCodePointSetV1;
-    use icu_properties::provider::WhiteSpaceV1Marker;
-
-    let provider = crate::DatagenProvider::for_test();
-
-    let payload: DataPayload<WhiteSpaceV1Marker> = provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .expect("Loading was successful");
-
-    let whitespace: &CodePointInversionList = match payload.get() {
-        PropertyCodePointSetV1::InversionList(ref l) => l,
-        _ => unreachable!("Should have serialized to an inversion list"),
-    };
-
-    assert!(whitespace.contains(' '));
-    assert!(whitespace.contains('\n'));
-    assert!(whitespace.contains('\u{3000}')); // U+3000 IDEOGRAPHIC SPACE
-
-    assert!(!whitespace.contains('A'));
+    assert!(false);
 }
