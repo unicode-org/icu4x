@@ -266,6 +266,7 @@ impl UnicodeSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
 pub struct UnicodeSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }
