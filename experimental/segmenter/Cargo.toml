@@ -44,7 +44,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 criterion = "0.3"
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter"] }
 serde-json-core = { version = "0.4", features = ["std"] }
-icu = { path = "../../components/icu" }
+icu = { path = "../../components/icu", features = ["experimental"]}
 
 [lib]
 path = "src/lib.rs"
