@@ -70,9 +70,7 @@ macro_rules! expand {
     };
 }
 
-expand!(
-    (BasicEmojiV1Marker, "Basic_Emoji")
-);
+expand!((BasicEmojiV1Marker, "Basic_Emoji"));
 
 #[test]
 fn test_basic() {
