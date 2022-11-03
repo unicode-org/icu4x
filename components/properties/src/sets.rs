@@ -1791,14 +1791,14 @@ make_unicode_set_property! {
     /// let data =
     ///     sets::load_basic_emoji(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let basic_emoji = data.as_borrowed();;
+    /// let basic_emoji = data.as_borrowed();
     ///
-    /// assert!(basic_emoji.contains('x'));
-    /// assert!(!basic_emoji.contains('1'));
-    /// assert!(!basic_emoji.contains('_'));
-    /// assert!(basic_emoji.contains('ߝ'));  // U+07DD NKO LETTER FA
-    /// assert!(!basic_emoji.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(!basic_emoji.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(!basic_emoji.contains32(0x0020));
+    /// assert!(!basic_emoji.contains_char('\n'));
+    /// assert!(basic_emoji.contains_char('🦃')); // U+1F983 TURKEY
+    /// assert!(basic_emoji.contains("\u{1F983}"));
+    /// assert!(basic_emoji.contains("\u{1F6E4}\u{FE0F}")); // railway track
+    /// assert!(!basic_emoji.contains("\u{0033}\u{FE0F}\u{20E3}"));  // Emoji_Keycap_Sequence, keycap 3
     /// ```
 
     pub fn load_basic_emoji();
