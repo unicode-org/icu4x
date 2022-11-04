@@ -4,103 +4,43 @@
 
 use std::time::Duration;
 
-use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
 use icu::collator::*;
 use icu::locid::Locale;
 
-// Load all file content in the executable.
-const content_latin: (&str, Vec<&str>) = (
-    "TestNames_Latin",
-    include_str!("data/TestNames_Latin.txt")
-        .split("\n")
-        .collect(),
-);
-const content_japanese: (&str, Vec<&str>) = (
-    "TestNames_Japanese",
-    include_str!("data/TestNames_Japanese.txt")
-        .split("\n")
-        .collect(),
-);
-const content_japanese_h: (&str, Vec<&str>) = (
-    "TestNames_Japanese_h",
-    include_str!("data/TestNames_Japanese_h.txt")
-        .split("\n")
-        .collect(),
-);
-const content_japanese_k: (&str, Vec<&str>) = (
-    "TestNames_Japanese_k",
-    include_str!("data/TestNames_Japanese_k.txt")
-        .split("\n")
-        .collect(),
-);
-const content_asian: (&str, Vec<&str>) = (
-    "TestNames_Asian",
-    include_str!("data/TestNames_Asian.txt")
-        .split("\n")
-        .collect(),
-);
-const content_chinese: (&str, Vec<&str>) = (
-    "TestNames_Chinese",
-    include_str!("data/TestNames_Chinese.txt")
-        .split("\n")
-        .collect(),
-);
-const content_simplified_chinese: (&str, Vec<&str>) = (
-    "TestNames_Simplified_Chinese",
-    include_str!("data/TestNames_Simplified_Chinese.txt")
-        .split("\n")
-        .collect(),
-);
-const content_russian: (&str, Vec<&str>) = (
-    "TestNames_Russian",
-    include_str!("data/TestNames_Russian.txt")
-        .split("\n")
-        .collect(),
-);
-const content_thai: (&str, Vec<&str>) = (
-    "TestNames_Thai",
-    include_str!("data/TestNames_Thai.txt")
-        .split("\n")
-        .collect(),
-);
-const content_korean: (&str, Vec<&str>) = (
-    "TestNames_Korean",
-    include_str!("data/TestNames_Korean.txt")
-        .split("\n")
-        .collect(),
-);
 
 pub fn collator_with_locale(criterion: &mut Criterion) {
+
+    // Load file content in reverse order vector.
+    let content_latin: (&str, Vec<&str>) = (
+        "TestNames_Latin",
+        include_str!("data/TestNames_Latin.txt")
+            .split('\n')
+            .rev()
+            .collect::<Vec<&str>>(),
+    );
+    let content_asian: (&str, Vec<&str>) = (
+        "TestNames_Asian",
+        include_str!("data/TestNames_Asian.txt")
+            .split('\n')
+            .rev()
+            .collect(),
+    );
+    let content_russian: (&str, Vec<&str>) = (
+        "TestNames_Russian",
+        include_str!("data/TestNames_Russian.txt")
+            .split('\n')
+            .rev()
+            .collect(),
+    );
+
     let performance_parameters = [
         ("en_US", vec![&content_latin]),
-        ("da_DK", vec![&content_latin]),
-        ("de_DE", vec![&content_latin]),
-        // ("de__PHONEBOOK", vec![&content_latin]),
         ("fr_FR", vec![&content_latin]),
-        (
-            "ja_JP",
-            vec![
-                &content_latin,
-                &content_japanese,
-                &content_japanese_h,
-                &content_japanese_k,
-                &content_asian,
-            ],
-        ),
-        (
-            "zh_CN",
-            vec![
-                &content_latin,
-                &content_chinese,
-                &content_simplified_chinese,
-            ],
-        ),
-        ("zh_TW", vec![&content_latin, &content_chinese]),
-        ("zh__PINYIN", vec![&content_latin, &content_chinese]),
+        ("ja_JP", vec![&content_latin, &content_asian]),
+        ("zh_CN", vec![&content_latin]),
         ("ru_RU", vec![&content_latin, &content_russian]),
-        ("th", vec![&content_latin, &content_thai]),
-        ("ko_KR", vec![&content_latin, &content_korean]),
     ];
 
     for perf_group in performance_parameters {
@@ -117,9 +57,20 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_test in files_under_test {
             let (file_name, elements) = content_under_test;
-            group.bench_function(BenchmarkId::from_parameter(file_name), |bencher| {
+
+            // baseline performance, normal sort done by rust libraries.
+            group.bench_function(BenchmarkId::new("rust_sort", file_name), |bencher| {
                 bencher.iter_batched(
-                    || { elements.clone() },
+                    || elements.clone(),
+                    |mut lines| lines.sort(),
+                    BatchSize::SmallInput,
+                )
+            });
+
+            // ICU collator performance
+            group.bench_function(BenchmarkId::new("icu_sort",file_name), |bencher| {
+                bencher.iter_batched(
+                    || elements.clone(),
                     |mut lines| lines.sort_by(|left, right| collator.compare(left, right)),
                     BatchSize::SmallInput,
                 )
