@@ -60,7 +60,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             group.bench_function(BenchmarkId::new("rust_sort", file_name), |bencher| {
                 bencher.iter_batched(
                     || elements.clone(),
-                    |mut lines| lines.sort(),
+                    |mut lines| lines.sort_unstable(),
                     BatchSize::SmallInput,
                 )
             });
@@ -69,7 +69,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             group.bench_function(BenchmarkId::new("icu_sort", file_name), |bencher| {
                 bencher.iter_batched(
                     || elements.clone(),
-                    |mut lines| lines.sort_by(|left, right| collator.compare(left, right)),
+                    |mut lines| lines.sort_unstable_by(|left, right| collator.compare(left, right)),
                     BatchSize::SmallInput,
                 )
             });
