@@ -10,7 +10,7 @@ Other options for embedded systems: C, C++, MicroPython, JavaScript running on [
 
 ## Good for WASM
 
-WebAssembly does not support garbage-collected languages; the WASM GC proposal aims to address this, but there is still time before it sees broad availability.
+WebAssembly does not support garbage-collected languages; the WASM GC proposal aims to address this, but there is still time before it sees broad availability. Rust has also has WASM maturity because the Rust community adopted it early.
 
 Other options for WASM: C, C++, AssemblyScript.
 
