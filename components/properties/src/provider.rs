@@ -452,6 +452,7 @@ expand!(
     (
         // UnicodeSets (code points + strings)
         (BasicEmojiV1Marker, "Basic_Emoji"),
+        (ExemplarsMainV1Marker, "exemplarsmain"),
     ),
     (
         // code point maps

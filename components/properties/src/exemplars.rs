@@ -11,9 +11,10 @@
 //! [Exemplars section in Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-general.html#Exemplars)
 //! of the LDML specification.
 
-use icu_provider::prelude::*;
+use crate::provider::*;
 use crate::sets::UnicodeSetData;
 use crate::PropertiesError;
+use icu_provider::prelude::*;
 
 /// Get the "main" category of exemplar characters.
 pub fn get_exemplars_main(
