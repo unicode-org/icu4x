@@ -89,7 +89,7 @@ pub mod maps;
 // name of that struct without coordination.
 mod props;
 
-pub mod exemplars;
+pub mod exemplar_chars;
 pub mod provider;
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;

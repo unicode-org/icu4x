@@ -18,7 +18,7 @@ use icu_provider::prelude::*;
 
 /// Get the "main" category of exemplar characters.
 pub fn get_exemplars_main(
-    provider: &(impl DataProvider<ExemplarsMainV1Marker> + ?Sized),
+    provider: &(impl DataProvider<ExemplarCharactersMainV1Marker> + ?Sized),
 ) -> Result<UnicodeSetData, PropertiesError> {
     Err(PropertiesError::PropDataLoad(DataError::custom(
         "Unimplemented API!",
