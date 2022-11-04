@@ -9,9 +9,7 @@ use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criteri
 use icu::collator::*;
 use icu::locid::Locale;
 
-
 pub fn collator_with_locale(criterion: &mut Criterion) {
-
     // Load file content in reverse order vector.
     let content_latin: (&str, Vec<&str>) = (
         "TestNames_Latin",
@@ -68,7 +66,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             });
 
             // ICU collator performance
-            group.bench_function(BenchmarkId::new("icu_sort",file_name), |bencher| {
+            group.bench_function(BenchmarkId::new("icu_sort", file_name), |bencher| {
                 bencher.iter_batched(
                     || elements.clone(),
                     |mut lines| lines.sort_by(|left, right| collator.compare(left, right)),
