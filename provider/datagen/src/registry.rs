@@ -134,6 +134,7 @@ registry!(
     EthiopianDateLengthsV1Marker,
     EthiopianDateSymbolsV1Marker,
     ExemplarCitiesV1Marker,
+    ExemplarCharactersMainV1Marker,
     ExtendedPictographicV1Marker,
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
