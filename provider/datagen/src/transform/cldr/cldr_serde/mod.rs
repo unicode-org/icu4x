@@ -10,6 +10,7 @@
 pub mod aliases;
 pub mod ca;
 pub mod displaynames;
+pub mod exemplar_chars;
 pub mod japanese;
 pub mod likely_subtags;
 pub mod list_patterns;

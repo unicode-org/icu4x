@@ -9,8 +9,9 @@
 //!
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
-use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListError};
+use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError};
 use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
@@ -201,6 +202,31 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     /// assert!(!cpilsl.contains_char('🨫'));  // U+1FA2B NEUTRAL CHESS TURNED QUEEN
     pub fn contains_char(&self, ch: char) -> bool {
         self.contains32(ch as u32)
+    }
+}
+
+impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
+    fn from_iter<I>(it: I) -> Self where I: IntoIterator<Item = &'a str> {
+        let mut builder = CodePointInversionListBuilder::new();
+        let mut strings = Vec::<&str>::new();
+        for s in it {
+            let mut chars = s.chars();
+            if let Some(first_char) = chars.next() {
+                if chars.next().is_none() {
+                    builder.add_char(first_char);
+                    continue;
+                }
+            }
+            strings.push(s);
+        }
+
+        let cp_inv_list = builder.build();
+        let str_list = VarZeroVec::<str>::from(&strings); 
+
+        CodePointInversionListAndStringList {
+            cp_inv_list,
+            str_list,
+        }
     }
 }
 
