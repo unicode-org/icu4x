@@ -22,7 +22,7 @@ Other options for FFI: C, C++, D, Objective-C/Swift.
 
 ## Good for memory safety
 
-Many of ICU4X's early clients, including Fuchsia and Mozilla, require memory-safe languages for all new code.
+Many of ICU4X's early clients, including Fuchsia and Mozilla, require memory-safe languages for all new code. Memory safety also makes code reviews easier because we rely on the compiler rather than a human reviewer to catch memory issues.
 
 Other options for memory safety: Java, JavaScript, Python, Clojure.
 
