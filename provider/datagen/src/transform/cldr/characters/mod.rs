@@ -46,14 +46,15 @@ impl IterableDataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProv
 }
 
 fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
-    debug_assert!(s.chars().next().unwrap() == '[');
-    debug_assert!(s.chars().last().unwrap() == ']');
+    debug_assert!(s.starts_with('['));
+    debug_assert!(s.starts_with(']'));
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
 
     without_brackets
         .split(' ')
         .map(|ch| {
-            if ch == "" {
+            if ch.is_empty() {
+                // a space (U+0020) belongs in the exemplar character set
                 " "
             } else if ch.starts_with('\\') {
                 ch.split_at(1).1
@@ -61,7 +62,7 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
                 ch
             }
         })
-        .dedup() // in case of space (0x0020) literal being included in exemplar char set
+        .dedup() // in case of space (U+0020) literal being included in exemplar char set
         .collect()
 }
 
