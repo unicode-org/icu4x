@@ -20,7 +20,8 @@ use icu_provider::prelude::*;
 pub fn get_exemplars_main(
     provider: &(impl DataProvider<ExemplarCharactersMainV1Marker> + ?Sized),
 ) -> Result<UnicodeSetData, PropertiesError> {
-    Err(PropertiesError::PropDataLoad(DataError::custom(
-        "Unimplemented API!",
-    )))
+    Ok(provider
+        .load(Default::default())
+        .and_then(DataResponse::take_payload)
+        .map(UnicodeSetData::from_data)?)
 }
