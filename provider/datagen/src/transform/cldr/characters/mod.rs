@@ -33,7 +33,6 @@ impl DataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProvider {
     }
 }
 
-
 impl IterableDataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
@@ -51,7 +50,8 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
     debug_assert!(s.chars().last().unwrap() == ']');
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
 
-    without_brackets.split(' ')
+    without_brackets
+        .split(' ')
         .map(|ch| {
             if ch == "" {
                 " "
@@ -61,16 +61,14 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
                 ch
             }
         })
-        .dedup()  // in case of space (0x0020) literal being included in exemplar char set
+        .dedup() // in case of space (0x0020) literal being included in exemplar char set
         .collect()
 }
 
 fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
-    PropertyUnicodeSetV1::CPInversionListStrList(
-        CodePointInversionListAndStringList::from_iter(
-            parse_exemplar_char_string(s).iter().copied()
-        )
-    )
+    PropertyUnicodeSetV1::CPInversionListStrList(CodePointInversionListAndStringList::from_iter(
+        parse_exemplar_char_string(s).iter().copied(),
+    ))
 }
 
 impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
@@ -84,11 +82,12 @@ impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'st
 mod tests {
     use super::parse_exemplar_char_string;
 
-
     #[test]
     fn test_parse_exemplar_char_string() {
         let af_numbers = "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]";
-        let expected = vec![" ", "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        let expected = vec![
+            " ", "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        ];
         let actual = parse_exemplar_char_string(af_numbers);
 
         assert_eq!(actual, expected);

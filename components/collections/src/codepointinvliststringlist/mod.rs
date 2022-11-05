@@ -9,7 +9,9 @@
 //!
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
-use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError};
+use crate::codepointinvlist::{
+    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
+};
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use displaydoc::Display;
@@ -206,7 +208,10 @@ impl<'data> CodePointInversionListAndStringList<'data> {
 }
 
 impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
-    fn from_iter<I>(it: I) -> Self where I: IntoIterator<Item = &'a str> {
+    fn from_iter<I>(it: I) -> Self
+    where
+        I: IntoIterator<Item = &'a str>,
+    {
         let mut builder = CodePointInversionListBuilder::new();
         let mut strings = Vec::<&str>::new();
         for s in it {
@@ -221,7 +226,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
         }
 
         let cp_inv_list = builder.build();
-        let str_list = VarZeroVec::<str>::from(&strings); 
+        let str_list = VarZeroVec::<str>::from(&strings);
 
         CodePointInversionListAndStringList {
             cp_inv_list,
