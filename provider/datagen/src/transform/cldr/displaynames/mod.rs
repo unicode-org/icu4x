@@ -65,7 +65,6 @@ impl TryFrom<&cldr_serde::displaynames::Resource> for TerritoryDisplayNamesV1<'s
                             names.insert(&key, entry.1.as_ref());
                         }
                         Err(err) => {
-                            print!("--region: {}", region);
                             return Err(err);
                         }
                     }

@@ -20,3 +20,5 @@
 #![warn(missing_docs)]
 
 pub mod provider;
+pub mod displaynames;
+pub mod options;
