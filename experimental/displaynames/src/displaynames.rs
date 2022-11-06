@@ -4,10 +4,10 @@
 
 //! This module contains types and implementations for the Displaynames component.
 
+use crate::options::DisplayNamesOptions;
 use crate::provider::TerritoryDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
-use crate::options::DisplayNamesOptions;
 use tinystr::TinyAsciiStr;
 use tinystr::TinyStrError;
 
@@ -63,7 +63,7 @@ impl DisplayNames {
     pub fn of(&self, region_code: &str) -> Result<&str, TinyStrError> {
         match <TinyAsciiStr<3>>::from_str(region_code) {
             Ok(key) => {
-               return Ok(self.data.get().names.get(&key).unwrap());
+                return Ok(self.data.get().names.get(&key).unwrap());
             }
             Err(err) => {
                 return Err(err);

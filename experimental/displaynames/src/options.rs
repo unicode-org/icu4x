@@ -6,7 +6,7 @@
 
 /// A bag of options defining how region codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
-/// 
+///
 /// # Example
 ///
 /// ```
@@ -33,7 +33,7 @@ pub struct DisplayNamesOptions {
     /// defaults to "long".
     pub style: Style,
     /// The fallback return when the system does not have the
-    /// requested display name, defaults to "code". 
+    /// requested display name, defaults to "code".
     pub fallback: Fallback,
     /// The language display kind, defaults to "dialect".
     pub language_display: LanguageDisplay,
