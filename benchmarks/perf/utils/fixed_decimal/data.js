@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667671888468,
+  "lastUpdate": 1667755068792,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -58949,6 +58949,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 75,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54e45952efebb56cc9ba353da117a9353a449ebc",
+          "message": "Fix testdata for Basic_Emoji, `ko` collation data (#2813)\n\n* Fix merge race condition file clobbering by restoring Basic_Emoji.toml in download glob\r\n\r\n* Fix merge race condition file clobbering by regenerating ko locale collation data files",
+          "timestamp": "2022-11-06T09:01:31-08:00",
+          "tree_id": "49690010b1d50f137aa43eefe97fd6f026fb224f",
+          "url": "https://github.com/unicode-org/icu4x/commit/54e45952efebb56cc9ba353da117a9353a449ebc"
+        },
+        "date": 1667754989350,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119173,
+            "range": "± 9984",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25343,
+            "range": "± 783",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69901,
+            "range": "± 3274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 211,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 98,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
