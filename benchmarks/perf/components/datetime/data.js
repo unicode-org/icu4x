@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667671998844,
+  "lastUpdate": 1667755130718,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -82361,6 +82361,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6250,
             "range": "± 467",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54e45952efebb56cc9ba353da117a9353a449ebc",
+          "message": "Fix testdata for Basic_Emoji, `ko` collation data (#2813)\n\n* Fix merge race condition file clobbering by restoring Basic_Emoji.toml in download glob\r\n\r\n* Fix merge race condition file clobbering by regenerating ko locale collation data files",
+          "timestamp": "2022-11-06T09:01:31-08:00",
+          "tree_id": "49690010b1d50f137aa43eefe97fd6f026fb224f",
+          "url": "https://github.com/unicode-org/icu4x/commit/54e45952efebb56cc9ba353da117a9353a449ebc"
+        },
+        "date": 1667755049821,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91249,
+            "range": "± 5358",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 152959,
+            "range": "± 10486",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 84724,
+            "range": "± 9734",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 92002,
+            "range": "± 4740",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 88875,
+            "range": "± 8385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101297,
+            "range": "± 4981",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 96760,
+            "range": "± 6301",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 145144,
+            "range": "± 8219",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 163460,
+            "range": "± 14889",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 151516,
+            "range": "± 10512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 172345,
+            "range": "± 9345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 165265,
+            "range": "± 7870",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6323,
+            "range": "± 345",
             "unit": "ns/iter"
           }
         ]
