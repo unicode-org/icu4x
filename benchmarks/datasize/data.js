@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667671298873,
+  "lastUpdate": 1667754284005,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31193,6 +31193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/88e8edb91585bd441bad0be4b79f871ea7fa391a"
         },
         "date": 1667671209258,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54e45952efebb56cc9ba353da117a9353a449ebc",
+          "message": "Fix testdata for Basic_Emoji, `ko` collation data (#2813)\n\n* Fix merge race condition file clobbering by restoring Basic_Emoji.toml in download glob\r\n\r\n* Fix merge race condition file clobbering by regenerating ko locale collation data files",
+          "timestamp": "2022-11-06T09:01:31-08:00",
+          "tree_id": "49690010b1d50f137aa43eefe97fd6f026fb224f",
+          "url": "https://github.com/unicode-org/icu4x/commit/54e45952efebb56cc9ba353da117a9353a449ebc"
+        },
+        "date": 1667754215005,
         "tool": "ndjson",
         "benches": [
           {
