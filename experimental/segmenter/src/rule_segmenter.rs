@@ -4,8 +4,11 @@
 
 use crate::complex::{Dictionary, LstmPayloads};
 use crate::grapheme::GraphemeClusterSegmenter;
+use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
+use core::str::CharIndices;
+use utf8_iter::Utf8CharIndices;
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -214,5 +217,81 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
             return false;
         }
         true
+    }
+}
+
+pub struct RuleBreakTypeUtf8;
+
+impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
+    type IterAttr = CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.get_current_codepoint().len_utf8()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        unreachable!()
+    }
+}
+pub struct RuleBreakTypePotentiallyIllFormedUtf8;
+
+impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr = Utf8CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.get_current_codepoint().len_utf8()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        unreachable!()
+    }
+}
+
+pub struct RuleBreakTypeLatin1;
+
+impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
+    type IterAttr = Latin1Indices<'s>;
+    type CharType = u8;
+
+    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
+        unreachable!()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        unreachable!()
+    }
+}
+
+pub struct RuleBreakTypeUtf16;
+
+impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf16 {
+    type IterAttr = Utf16Indices<'s>;
+    type CharType = u32;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        let ch = iter.get_current_codepoint();
+        if ch >= 0x10000 {
+            2
+        } else {
+            1
+        }
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        unreachable!()
     }
 }

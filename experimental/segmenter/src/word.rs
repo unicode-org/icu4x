@@ -22,8 +22,9 @@ pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakType
 /// Word break iterator for a potentially invalid UTF-8 string
 pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
+
 /// Word break iterator for a Latin-1 (8-bit) string.
-pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
+pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Word break iterator for a UTF-16 string.
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
@@ -284,6 +285,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+
 /// handle_complex_language impl for UTF8 iterators
 fn handle_complex_language_utf8<'l, 's, T>(
     iter: &mut RuleBreakIterator<'l, 's, T>,
@@ -327,24 +329,6 @@ where
             return Some(iter.len);
         }
         i += T::get_current_position_character_len(iter);
-    }
-}
-
-pub struct WordBreakTypeLatin1;
-
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
-    type CharType = u8;
-
-    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        unreachable!()
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<'l, 's, Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        unreachable!()
     }
 }
 
