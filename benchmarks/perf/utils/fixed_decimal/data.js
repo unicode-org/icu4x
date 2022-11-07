@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667755068792,
+  "lastUpdate": 1667806074872,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59009,6 +59009,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d4a5983e0303ff9e8ea87efae0f33ea8da4eeba",
+          "message": "Enable more clippy lints in segmenter (#2804)\n\n* Enable clippy::expect_used lint\r\n\r\nThis patch introduces helper methods in rule segementer and line segmenter to\r\neliminates a lot of `unwrap()` usage. This commit shouldn't change behavior.\r\n\r\n* Enable clippy::unwrap_used lint\r\n\r\n* Enable clippy::panic lint",
+          "timestamp": "2022-11-06T23:13:40-08:00",
+          "tree_id": "315721c95d4b5c6079ac6d0caca861e98d403a40",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d4a5983e0303ff9e8ea87efae0f33ea8da4eeba"
+        },
+        "date": 1667806009164,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116795,
+            "range": "± 429",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24197,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63701,
+            "range": "± 457",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
