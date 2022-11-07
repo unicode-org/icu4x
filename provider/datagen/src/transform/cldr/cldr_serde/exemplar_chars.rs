@@ -14,18 +14,17 @@ use std::collections::HashMap;
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LocaleExemplarCharacters {
     #[serde(rename = "exemplarCharacters")]
-    pub main: String,
-    pub auxiliary: String,
-    pub index: String,
-    pub numbers: String,
-    pub punctuation: String,
+    pub main: Option<String>,
+    pub auxiliary: Option<String>,
+    pub index: Option<String>,
+    pub numbers: Option<String>,
+    pub punctuation: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Characters {
     pub characters: LocaleExemplarCharacters,
 }
-
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LangData(pub HashMap<LanguageIdentifier, Characters>);

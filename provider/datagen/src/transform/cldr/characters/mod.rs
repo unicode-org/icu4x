@@ -50,16 +50,38 @@ macro_rules! exemplar_chars_impls {
         impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
             type Error = DataError;
             fn try_from(other: &cldr_serde::exemplar_chars::Resource) -> Result<Self, Self::Error> {
-                Ok(string_to_prop_unicodeset(other.main.0.iter().next().unwrap().1.characters.$cldr_serde_field_name.as_str()))
+                let source_data_chars: Option<&String> = other
+                    .main
+                    .0
+                    .iter()
+                    .next()
+                    .unwrap()
+                    .1
+                    .characters
+                    .$cldr_serde_field_name
+                    .as_ref();
+
+                match source_data_chars {
+                    Some(chars_str) => Ok(string_to_prop_unicodeset(chars_str)),
+                    None => {
+                        log::warn!(concat!(
+                            "Data missing for ",
+                            stringify!($cldr_serde_field_name),
+                            " set exemplar characters"
+                        ));
+                        Ok(PropertyUnicodeSetV1::CPInversionListStrList(
+                            CodePointInversionListAndStringList::from_iter(
+                                Vec::<&str>::new().iter().cloned(),
+                            ),
+                        ))
+                    }
+                }
             }
         }
     };
 }
 
-exemplar_chars_impls!(
-    ExemplarCharactersMainV1Marker,
-    main
-);
+exemplar_chars_impls!(ExemplarCharactersMainV1Marker, main);
 
 // helper function for parsing CLDR data string
 fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
