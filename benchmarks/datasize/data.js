@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667857058075,
+  "lastUpdate": 1667859741465,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31283,6 +31283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9844a387f4f0b5eb57a22964d208cc5fe5c52f52"
         },
         "date": 1667856988834,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3762f06ab850c54b629c0d9a7e2f29bda7b4614d",
+          "message": "Add tests for zh fallback (#2818)",
+          "timestamp": "2022-11-07T14:19:49-08:00",
+          "tree_id": "10bf3f93da629dcc333b2050b9c41c5ef29e6d7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/3762f06ab850c54b629c0d9a7e2f29bda7b4614d"
+        },
+        "date": 1667859688216,
         "tool": "ndjson",
         "benches": [
           {
