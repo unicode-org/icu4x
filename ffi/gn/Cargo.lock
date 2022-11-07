@@ -16,8 +16,8 @@ checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 
 [[package]]
 name = "diplomat"
-version = "0.4.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=046be4036b0defb0cffdeb8548f57789a3a31285#046be4036b0defb0cffdeb8548f57789a3a31285"
+version = "0.4.2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -27,19 +27,17 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.4.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=046be4036b0defb0cffdeb8548f57789a3a31285#046be4036b0defb0cffdeb8548f57789a3a31285"
+version = "0.4.2"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
 
 [[package]]
 name = "diplomat_core"
-version = "0.4.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=046be4036b0defb0cffdeb8548f57789a3a31285#046be4036b0defb0cffdeb8548f57789a3a31285"
+version = "0.4.4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
 dependencies = [
- "impls",
  "lazy_static",
  "proc-macro2",
  "quote",
- "rustdoc-types",
  "serde",
  "smallvec",
  "strck_ident",
@@ -346,12 +344,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "impls"
-version = "1.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a46645bbd70538861a90d0f26c31537cdf1e44aae99a794fb75a664b70951bc"
-
-[[package]]
 name = "itoa"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -417,15 +409,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "rustdoc-types"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa792ee5551052d6e577cedadec6f7eae744b26db967e8e9fb4c1b604a608c7f"
-dependencies = [
- "serde",
 ]
 
 [[package]]
