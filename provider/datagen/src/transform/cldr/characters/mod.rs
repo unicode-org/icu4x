@@ -75,13 +75,15 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
 impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
     type Error = DataError;
     fn try_from(other: &cldr_serde::exemplar_chars::Resource) -> Result<Self, Self::Error> {
-        Ok(string_to_prop_unicodeset(other.characters.main.as_str()))
+        Ok(string_to_prop_unicodeset(other.main.0.iter().next().unwrap().1.characters.main.as_str()))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::parse_exemplar_char_string;
+    use super::*;
+    use icu_locid::locale;
+    use icu_properties::sets::UnicodeSetData;
 
     #[test]
     fn test_parse_exemplar_char_string() {
@@ -92,5 +94,32 @@ mod tests {
         let actual = parse_exemplar_char_string(af_numbers);
 
         assert_eq!(actual, expected);
+    }
+
+
+    #[test]
+    fn test_basic() {
+        let provider = crate::DatagenProvider::for_test();
+
+        let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale!("en-001")),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+
+
+        let exp_chars = vec!["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+        let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars.iter().cloned());
+
+        let actual = UnicodeSetData::from_data(data);
+        let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();
+
+        assert_eq!(
+            exp_chars_cpilsl,
+            act_chars_cpilsl,
+        );
     }
 }
