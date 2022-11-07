@@ -12,6 +12,45 @@
 //! For more information, see the documentation in the
 //! [Exemplars section in Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-general.html#Exemplars)
 //! of the LDML specification.
+//! 
+//! # Examples
+//! 
+//! ```
+//! use icu::locid::locale;
+//! use icu::properties::exemplar_chars;
+//!
+//! let locale = locale!("en-001").into();
+//! let data =
+//!     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
+//!         .expect("The data should be valid");
+//! let exemplars_main = data.as_borrowed();
+//!
+//! assert!(exemplars_main.contains_char('a'));
+//! assert!(exemplars_main.contains_char('z'));
+//! assert!(exemplars_main.contains("a"));
+//! assert!(!exemplars_main.contains("ä"));
+//! assert!(!exemplars_main.contains("ng"));
+//! ```
+//! 
+//! Note that some combinations of locales and set types of exemplar characters, source data
+//! may be missing. In such cases, the empty set will be returned.
+//! 
+//! ```
+//! use icu::locid::locale;
+//! use icu::properties::exemplar_chars;
+//!
+//! let locale = locale!("en-001").into();
+//! let data =
+//!     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
+//!         .expect("The data should be valid");
+//! let exemplars_main = data.as_borrowed();
+//!
+//! assert!(exemplars_main.contains_char('a'));
+//! assert!(exemplars_main.contains_char('z'));
+//! assert!(exemplars_main.contains("a"));
+//! assert!(!exemplars_main.contains("ä"));
+//! assert!(!exemplars_main.contains("ng"));
+//! ```
 
 use crate::provider::*;
 use crate::sets::UnicodeSetData;
@@ -50,7 +89,8 @@ make_exemplar_chars_unicode_set_property!(
     func:
     /// Get the "main" set of exemplar characters.
     ///
-    /// # Example
+    /// # Examples
+    /// 
     /// ```
     /// use icu::locid::locale;
     /// use icu::properties::exemplar_chars;
@@ -61,11 +101,11 @@ make_exemplar_chars_unicode_set_property!(
     ///         .expect("The data should be valid");
     /// let exemplars_main = data.as_borrowed();
     ///
-    /// exemplars_main.contains_char('a');
-    /// exemplars_main.contains_char('z');
-    /// exemplars_main.contains("a");
-    /// !exemplars_main.contains("ä");
-    /// !exemplars_main.contains("ng");
+    /// assert!(exemplars_main.contains_char('a'));
+    /// assert!(exemplars_main.contains_char('z'));
+    /// assert!(exemplars_main.contains("a"));
+    /// assert!(!exemplars_main.contains("ä"));
+    /// assert!(!exemplars_main.contains("ng"));
     /// ```
 
     pub fn load_exemplars_main();
