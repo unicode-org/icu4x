@@ -9,42 +9,59 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
-impl DataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<ExemplarCharactersMainV1Marker>, DataError> {
-        let langid = req.locale.get_langid();
+macro_rules! exemplar_chars_impls {
+    ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
+        impl DataProvider<$data_marker_name> for crate::DatagenProvider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<$data_marker_name>, DataError> {
+                let langid = req.locale.get_langid();
+        
+                let data: &cldr_serde::exemplar_chars::Resource = self
+                    .source
+                    .cldr()?
+                    .misc()
+                    .read_and_parse(&langid, "characters.json")?;
+        
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: Some(DataPayload::from_owned(
+                        PropertyUnicodeSetV1::try_from(data).map_err(|e| {
+                            DataError::custom("data for exemplar characters").with_display_context(&e)
+                        })?,
+                    )),
+                })
+            }
+        }
 
-        let data: &cldr_serde::exemplar_chars::Resource = self
-            .source
-            .cldr()?
-            .misc()
-            .read_and_parse(&langid, "characters.json")?;
+        impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                Ok(self
+                    .source
+                    .cldr()?
+                    .misc()
+                    .list_langs()?
+                    .map(DataLocale::from)
+                    .collect())
+            }
+        }
 
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(
-                PropertyUnicodeSetV1::try_from(data).map_err(|e| {
-                    DataError::custom("data for exemplar characters").with_display_context(&e)
-                })?,
-            )),
-        })
-    }
+        impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
+            type Error = DataError;
+            fn try_from(other: &cldr_serde::exemplar_chars::Resource) -> Result<Self, Self::Error> {
+                Ok(string_to_prop_unicodeset(other.main.0.iter().next().unwrap().1.characters.$cldr_serde_field_name.as_str()))
+            }
+        }
+    };
 }
 
-impl IterableDataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .misc()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
-    }
-}
+exemplar_chars_impls!(
+    ExemplarCharactersMainV1Marker,
+    main
+);
 
+// helper function for parsing CLDR data string
 fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
     debug_assert!(s.starts_with('['));
     debug_assert!(s.ends_with(']'));
@@ -70,13 +87,6 @@ fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
     PropertyUnicodeSetV1::CPInversionListStrList(CodePointInversionListAndStringList::from_iter(
         parse_exemplar_char_string(s).iter().copied(),
     ))
-}
-
-impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
-    type Error = DataError;
-    fn try_from(other: &cldr_serde::exemplar_chars::Resource) -> Result<Self, Self::Error> {
-        Ok(string_to_prop_unicodeset(other.main.0.iter().next().unwrap().1.characters.main.as_str()))
-    }
 }
 
 #[cfg(test)]
