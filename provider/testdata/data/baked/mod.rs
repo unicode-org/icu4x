@@ -1008,6 +1008,19 @@ impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvid
     }
 }
 #[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::ExemplarCharactersMainV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersMainV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::exemplarcharsmain_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExtendedPictographicV1Marker>, DataError> {
         Ok(DataResponse {

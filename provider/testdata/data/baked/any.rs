@@ -221,6 +221,9 @@ impl AnyProvider for BakedDataProvider {
         const EMOJIV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::EmojiV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSMAINV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
         const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -804,6 +807,12 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_properties")]
             EMOJIV1MARKER => props::emoji_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSMAINV1MARKER => props::exemplarcharsmain_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)
