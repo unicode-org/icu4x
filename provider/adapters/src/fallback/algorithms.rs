@@ -360,6 +360,9 @@ mod tests {
             requires_data: true,
             extension_key: None,
             fallback_supplement: None,
+            // Note: "zh-Hans" is not reachable because it is the default script for "zh".
+            // The fallback algorithm does not visit the language-script bundle when the
+            // script is the default for the language
             expected_language_chain: &["zh-CN", "zh"],
             expected_region_chain: &["zh-CN", "und-CN"],
         },
