@@ -61,7 +61,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             loop {
                 if i == first_result {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
                 i += Y::get_current_position_character_len(self);
                 self.advance_iter();
@@ -74,31 +74,33 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
 
         if self.is_eof() {
             self.advance_iter();
-            if self.is_eof() {
-                return None;
-            }
             // SOT x anything
-            let right_prop = self.get_current_break_property();
+            let right_prop = self.get_current_break_property()?;
             if self.is_break_from_table(self.data.sot_property, right_prop) {
-                return Some(self.get_current_position());
+                return self.get_current_position();
             }
         }
 
         loop {
-            let left_codepoint = self.get_current_codepoint();
+            debug_assert!(!self.is_eof());
+            let left_codepoint = self.get_current_codepoint()?;
             let left_prop = self.get_break_property(left_codepoint);
             self.advance_iter();
-            if self.is_eof() {
+
+            // Initializing right_prop can be simplified with a let-else statement in Rust 1.65.
+            // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+            let right_prop = if let Some(right_prop) = self.get_current_break_property() {
+                right_prop
+            } else {
                 return Some(self.len);
-            }
-            let right_prop = self.get_current_break_property();
+            };
 
             // Some segmenter rules doesn't have language-specific rules, we have to use LSTM (or dictionary) segmenter.
             // If property is marked as SA, use it
             if right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
                     // break before SA
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
                 let break_offset = Y::handle_complex_language(self, left_codepoint);
                 if break_offset.is_some() {
@@ -116,7 +118,12 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
 
                 loop {
                     self.advance_iter();
-                    if self.is_eof() {
+
+                    // Initializing prop can be simplified with a let-else statement in Rust 1.65.
+                    // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+                    let prop = if let Some(prop) = self.get_current_break_property() {
+                        prop
+                    } else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         if self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property)
@@ -124,14 +131,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                         {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
-                            return Some(self.get_current_position());
+                            return self.get_current_position();
                         }
                         // EOF
                         return Some(self.len);
-                    }
+                    };
 
                     let previous_break_state = break_state;
-                    let prop = self.get_current_break_property();
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state < 0 {
                         break;
@@ -155,13 +161,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                 if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
-                return Some(self.get_current_position());
+                return self.get_current_position();
             }
 
             if self.is_break_from_table(left_prop, right_prop) {
-                return Some(self.get_current_position());
+                return self.get_current_position();
             }
         }
     }
@@ -176,24 +182,17 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
         self.current_pos_data.is_none()
     }
 
-    pub(crate) fn get_current_break_property(&self) -> u8 {
-        self.get_break_property(self.get_current_codepoint())
+    pub(crate) fn get_current_break_property(&self) -> Option<u8> {
+        self.get_current_codepoint()
+            .map(|c| self.get_break_property(c))
     }
 
-    pub(crate) fn get_current_position(&self) -> usize {
-        debug_assert!(!self.is_eof());
-        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
-        self.current_pos_data
-            .expect("Not at the end of the string!")
-            .0
+    pub(crate) fn get_current_position(&self) -> Option<usize> {
+        self.current_pos_data.map(|(pos, _)| pos)
     }
 
-    pub(crate) fn get_current_codepoint(&self) -> Y::CharType {
-        debug_assert!(!self.is_eof());
-        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
-        self.current_pos_data
-            .expect("Not at the end of the string!")
-            .1
+    pub(crate) fn get_current_codepoint(&self) -> Option<Y::CharType> {
+        self.current_pos_data.map(|(_, codepoint)| codepoint)
     }
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
@@ -227,7 +226,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().len_utf8()
+        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -244,7 +243,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().len_utf8()
+        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -280,11 +279,10 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf16 {
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        let ch = iter.get_current_codepoint();
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
+        match iter.get_current_codepoint() {
+            None => 0,
+            Some(ch) if ch >= 0x10000 => 2,
+            _ => 1,
         }
     }
 
