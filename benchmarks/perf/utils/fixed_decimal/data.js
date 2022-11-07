@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667857765991,
+  "lastUpdate": 1667860554346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59129,6 +59129,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 99,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3762f06ab850c54b629c0d9a7e2f29bda7b4614d",
+          "message": "Add tests for zh fallback (#2818)",
+          "timestamp": "2022-11-07T14:19:49-08:00",
+          "tree_id": "10bf3f93da629dcc333b2050b9c41c5ef29e6d7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/3762f06ab850c54b629c0d9a7e2f29bda7b4614d"
+        },
+        "date": 1667860475126,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 126516,
+            "range": "± 6117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27350,
+            "range": "± 1360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76538,
+            "range": "± 5947",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 235,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 98,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
