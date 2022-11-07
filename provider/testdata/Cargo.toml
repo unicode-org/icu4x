@@ -215,6 +215,7 @@ icuexportdata_glob = [
     "ucase/small/ucase.toml",
     "uprops/small/AHex.toml",
     "uprops/small/Alpha.toml",
+    "uprops/small/Basic_Emoji.toml",
     "uprops/small/bc.toml",
     "uprops/small/Bidi_C.toml",
     "uprops/small/Bidi_M.toml",
