@@ -356,6 +356,22 @@ mod tests {
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
         TestCase {
+            input: "zh-CN",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["zh-CN", "zh"],
+            expected_region_chain: &["zh-CN", "und-CN"],
+        },
+        TestCase {
+            input: "zh-TW",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
+            expected_region_chain: &["zh-TW", "und-TW"],
+        },
+        TestCase {
             input: "yue-HK",
             requires_data: true,
             extension_key: None,
