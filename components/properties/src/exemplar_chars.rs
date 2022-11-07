@@ -16,12 +16,29 @@ use crate::sets::UnicodeSetData;
 use crate::PropertiesError;
 use icu_provider::prelude::*;
 
-/// Get the "main" category of exemplar characters.
-pub fn get_exemplars_main(
-    provider: &(impl DataProvider<ExemplarCharactersMainV1Marker> + ?Sized),
-) -> Result<UnicodeSetData, PropertiesError> {
-    Ok(provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)
-        .map(UnicodeSetData::from_data)?)
+macro_rules! make_exemplar_chars_unicode_set_property {
+    (
+        // currently unused
+        marker: $marker_name:ident;
+        keyed_data_marker: $keyed_data_marker:ty;
+        func:
+        $(#[$attr:meta])*
+        $vis:vis fn $funcname:ident();
+    ) => {
+        $(#[$attr])*
+        $vis fn $funcname(
+            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
+        ) -> Result<UnicodeSetData, PropertiesError> {
+            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(UnicodeSetData::from_data)?)
+        }
+    }
 }
+
+make_exemplar_chars_unicode_set_property!(
+    marker: ExemplarCharactersMain;
+    keyed_data_marker: ExemplarCharactersMainV1Marker;
+    func:
+    /// Get the "main" category of exemplar characters.
+
+    pub fn get_exemplars_main();
+);
