@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667755130718,
+  "lastUpdate": 1667806103514,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -82463,6 +82463,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6323,
             "range": "± 345",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7d4a5983e0303ff9e8ea87efae0f33ea8da4eeba",
+          "message": "Enable more clippy lints in segmenter (#2804)\n\n* Enable clippy::expect_used lint\r\n\r\nThis patch introduces helper methods in rule segementer and line segmenter to\r\neliminates a lot of `unwrap()` usage. This commit shouldn't change behavior.\r\n\r\n* Enable clippy::unwrap_used lint\r\n\r\n* Enable clippy::panic lint",
+          "timestamp": "2022-11-06T23:13:40-08:00",
+          "tree_id": "315721c95d4b5c6079ac6d0caca861e98d403a40",
+          "url": "https://github.com/unicode-org/icu4x/commit/7d4a5983e0303ff9e8ea87efae0f33ea8da4eeba"
+        },
+        "date": 1667806038019,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64812,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107125,
+            "range": "± 229",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 59093,
+            "range": "± 727",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 67432,
+            "range": "± 210",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 65085,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71499,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 67565,
+            "range": "± 758",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 102139,
+            "range": "± 594",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 113965,
+            "range": "± 169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 106952,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 118571,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 114904,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5208,
+            "range": "± 88",
             "unit": "ns/iter"
           }
         ]
