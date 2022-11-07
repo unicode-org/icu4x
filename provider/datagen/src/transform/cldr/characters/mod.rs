@@ -12,23 +12,21 @@ use itertools::Itertools;
 macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
         impl DataProvider<$data_marker_name> for crate::DatagenProvider {
-            fn load(
-                &self,
-                req: DataRequest,
-            ) -> Result<DataResponse<$data_marker_name>, DataError> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
                 let langid = req.locale.get_langid();
-        
+
                 let data: &cldr_serde::exemplar_chars::Resource = self
                     .source
                     .cldr()?
                     .misc()
                     .read_and_parse(&langid, "characters.json")?;
-        
+
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(
                         PropertyUnicodeSetV1::try_from(data).map_err(|e| {
-                            DataError::custom("data for exemplar characters").with_display_context(&e)
+                            DataError::custom("data for exemplar characters")
+                                .with_display_context(&e)
                         })?,
                     )),
                 })
@@ -128,7 +126,6 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
-
     #[test]
     fn test_basic() {
         let provider = crate::DatagenProvider::for_test();
@@ -142,16 +139,16 @@ mod tests {
             .take_payload()
             .unwrap();
 
-
-        let exp_chars = vec!["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-        let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars.iter().cloned());
+        let exp_chars = vec![
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
+            "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        ];
+        let exp_chars_cpilsl =
+            CodePointInversionListAndStringList::from_iter(exp_chars.iter().cloned());
 
         let actual = UnicodeSetData::from_data(data);
         let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();
 
-        assert_eq!(
-            exp_chars_cpilsl,
-            act_chars_cpilsl,
-        );
+        assert_eq!(exp_chars_cpilsl, act_chars_cpilsl,);
     }
 }
