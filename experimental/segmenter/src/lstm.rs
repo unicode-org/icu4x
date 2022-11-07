@@ -6,7 +6,7 @@ use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_bies::Lstm;
 use crate::provider::LstmDataV1Marker;
 use alloc::string::String;
-use core::char::decode_utf16;
+use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use icu_provider::{DataError, DataErrorKind, DataPayload};
 
 // A word break iterator using LSTM model. Input string have to be same language.
@@ -24,7 +24,7 @@ impl Iterator for LstmSegmenterIterator {
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let ch = self.bies_str.chars().nth(self.pos)?;
-            self.pos_utf8 += self.input.chars().nth(self.pos).unwrap().len_utf8();
+            self.pos_utf8 += self.input.chars().nth(self.pos)?.len_utf8();
             self.pos += 1;
             if ch == 'e' && self.bies_str.len() > self.pos {
                 return Some(self.pos_utf8);
@@ -68,7 +68,7 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 impl LstmSegmenterIteratorUtf16 {
     pub fn new(lstm: &Lstm, input: &[u16]) -> Self {
         let input: String = decode_utf16(input.iter().cloned())
-            .map(|r| r.unwrap())
+            .map(|r| r.unwrap_or(REPLACEMENT_CHARACTER))
             .collect();
         let lstm_output = lstm.word_segmenter(&input);
         Self {
