@@ -87,8 +87,8 @@ writeable = { version = "0.5", path = "../../utils/writeable/" }
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 # ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "046be4036b0defb0cffdeb8548f57789a3a31285" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "046be4036b0defb0cffdeb8548f57789a3a31285" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
 icu_testdata = { version = "1.0.0", path = "../../provider/testdata", optional = true, features = ["icu_segmenter"] }
 
 
