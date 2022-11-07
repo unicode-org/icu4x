@@ -47,7 +47,7 @@ impl IterableDataProvider<ExemplarCharactersMainV1Marker> for crate::DatagenProv
 
 fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
     debug_assert!(s.starts_with('['));
-    debug_assert!(s.starts_with(']'));
+    debug_assert!(s.ends_with(']'));
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
 
     without_brackets
