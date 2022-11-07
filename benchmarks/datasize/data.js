@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667805412404,
+  "lastUpdate": 1667857058075,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31253,6 +31253,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7d4a5983e0303ff9e8ea87efae0f33ea8da4eeba"
         },
         "date": 1667805349402,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9844a387f4f0b5eb57a22964d208cc5fe5c52f52",
+          "message": "Update diplomat (#2819)\n\n* Update diplomat",
+          "timestamp": "2022-11-07T21:34:20Z",
+          "tree_id": "efad288efe31383366eec62bb3252ebf71451c75",
+          "url": "https://github.com/unicode-org/icu4x/commit/9844a387f4f0b5eb57a22964d208cc5fe5c52f52"
+        },
+        "date": 1667856988834,
         "tool": "ndjson",
         "benches": [
           {
