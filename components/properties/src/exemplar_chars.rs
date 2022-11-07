@@ -6,7 +6,7 @@
 //!
 //! Exemplars are characters used by a language, separated into different sets.
 //! The sets are: main, auxiliary, punctuation, numbers, and index.
-//! 
+//!
 //! The sets define, according to typical usage in the langauge,
 //! which characters occur in which contexts with which frequency.
 //! For more information, see the documentation in the
@@ -49,17 +49,23 @@ make_exemplar_chars_unicode_set_property!(
     keyed_data_marker: ExemplarCharactersMainV1Marker;
     func:
     /// Get the "main" set of exemplar characters.
-    /// 
+    ///
     /// # Example
     /// ```
     /// use icu::locid::locale;
-    /// use icu::properties::exemplar_chars;    
-    /// 
-    /// let locale = locale!("th-u-nu-thai").into();
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let locale = locale!("en-001").into();
     /// let data =
     ///     exemplar_chars::load_exemplars_main(&icu_testdata::unstable(), &locale)
     ///         .expect("The data should be valid");
     /// let exemplars_main = data.as_borrowed();
+    ///
+    /// exemplars_main.contains_char('a');
+    /// exemplars_main.contains_char('z');
+    /// exemplars_main.contains("a");
+    /// !exemplars_main.contains("ä");
+    /// !exemplars_main.contains("ng");
     /// ```
 
     pub fn load_exemplars_main();
