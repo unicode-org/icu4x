@@ -59,21 +59,18 @@ macro_rules! exemplar_chars_impls {
                     .$cldr_serde_field_name
                     .as_ref();
 
-                match source_data_chars {
-                    Some(chars_str) => Ok(string_to_prop_unicodeset(chars_str)),
+                let chars_str = match source_data_chars {
+                    Some(chars_str) => chars_str,
                     None => {
                         log::warn!(concat!(
                             "Data missing for ",
                             stringify!($cldr_serde_field_name),
                             " set exemplar characters"
                         ));
-                        Ok(PropertyUnicodeSetV1::CPInversionListStrList(
-                            CodePointInversionListAndStringList::from_iter(
-                                Vec::<&str>::new().iter().cloned(),
-                            ),
-                        ))
+                        "[]"
                     }
-                }
+                };
+                Ok(string_to_prop_unicodeset(chars_str))
             }
         }
     };
@@ -86,6 +83,10 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
     debug_assert!(s.starts_with('['));
     debug_assert!(s.ends_with(']'));
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
+
+    if without_brackets == "" {
+        return Vec::new();
+    }
 
     without_brackets
         .split(' ')
