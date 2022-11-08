@@ -104,7 +104,7 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
     debug_assert!(s.ends_with(']'));
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
 
-    if without_brackets == "" {
+    if without_brackets.is_empty() {
         return Vec::new();
     }
 
