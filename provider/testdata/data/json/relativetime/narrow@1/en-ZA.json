@@ -1,0 +1,60 @@
+[
+  {
+    "display_name": "sec",
+    "relatives": {
+      "0": "now"
+    }
+  },
+  {
+    "display_name": "min",
+    "relatives": {
+      "0": "this minute"
+    }
+  },
+  {
+    "display_name": "hr",
+    "relatives": {
+      "0": "this hour"
+    }
+  },
+  {
+    "display_name": "day",
+    "relatives": {
+      "-1": "yesterday",
+      "0": "today",
+      "1": "tomorrow"
+    }
+  },
+  {
+    "display_name": "wk",
+    "relatives": {
+      "-1": "last wk",
+      "0": "this wk",
+      "1": "next wk"
+    }
+  },
+  {
+    "display_name": "mo",
+    "relatives": {
+      "-1": "last mo",
+      "0": "this mo",
+      "1": "next mo"
+    }
+  },
+  {
+    "display_name": "qtr",
+    "relatives": {
+      "-1": "last qtr.",
+      "0": "this qtr.",
+      "1": "next qtr."
+    }
+  },
+  {
+    "display_name": "yr",
+    "relatives": {
+      "-1": "last yr",
+      "0": "this yr",
+      "1": "next yr"
+    }
+  }
+]

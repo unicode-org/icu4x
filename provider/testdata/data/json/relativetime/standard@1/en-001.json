@@ -1,0 +1,60 @@
+[
+  {
+    "display_name": "second",
+    "relatives": {
+      "0": "now"
+    }
+  },
+  {
+    "display_name": "minute",
+    "relatives": {
+      "0": "this minute"
+    }
+  },
+  {
+    "display_name": "hour",
+    "relatives": {
+      "0": "this hour"
+    }
+  },
+  {
+    "display_name": "day",
+    "relatives": {
+      "-1": "yesterday",
+      "0": "today",
+      "1": "tomorrow"
+    }
+  },
+  {
+    "display_name": "week",
+    "relatives": {
+      "-1": "last week",
+      "0": "this week",
+      "1": "next week"
+    }
+  },
+  {
+    "display_name": "month",
+    "relatives": {
+      "-1": "last month",
+      "0": "this month",
+      "1": "next month"
+    }
+  },
+  {
+    "display_name": "quarter",
+    "relatives": {
+      "-1": "last quarter",
+      "0": "this quarter",
+      "1": "next quarter"
+    }
+  },
+  {
+    "display_name": "year",
+    "relatives": {
+      "-1": "last year",
+      "0": "this year",
+      "1": "next year"
+    }
+  }
+]

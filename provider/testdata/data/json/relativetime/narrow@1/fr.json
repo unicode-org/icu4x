@@ -1,0 +1,62 @@
+[
+  {
+    "display_name": "s",
+    "relatives": {
+      "0": "maintenant"
+    }
+  },
+  {
+    "display_name": "min",
+    "relatives": {
+      "0": "cette minute-ci"
+    }
+  },
+  {
+    "display_name": "h",
+    "relatives": {
+      "0": "cette heure-ci"
+    }
+  },
+  {
+    "display_name": "j",
+    "relatives": {
+      "-2": "avant-hier",
+      "-1": "hier",
+      "0": "aujourd’hui",
+      "1": "demain",
+      "2": "après-demain"
+    }
+  },
+  {
+    "display_name": "sem.",
+    "relatives": {
+      "-1": "la semaine dernière",
+      "0": "cette semaine",
+      "1": "la semaine prochaine"
+    }
+  },
+  {
+    "display_name": "m.",
+    "relatives": {
+      "-1": "le mois dernier",
+      "0": "ce mois-ci",
+      "1": "le mois prochain"
+    }
+  },
+  {
+    "display_name": "trim.",
+    "relatives": {
+      "-1": "le trimestre dernier",
+      "0": "ce trimestre",
+      "1": "le trimestre prochain"
+    }
+  },
+  {
+    "display_name": "a",
+    "relatives": {
+      "-1": "l’année dernière",
+      "0": "cette année",
+      "1": "l’année prochaine"
+    }
+  }
+]

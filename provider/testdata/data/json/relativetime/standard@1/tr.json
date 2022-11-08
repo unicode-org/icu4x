@@ -1,0 +1,62 @@
+[
+  {
+    "display_name": "saniye",
+    "relatives": {
+      "0": "şimdi"
+    }
+  },
+  {
+    "display_name": "dakika",
+    "relatives": {
+      "0": "bu dakika"
+    }
+  },
+  {
+    "display_name": "saat",
+    "relatives": {
+      "0": "bu saat"
+    }
+  },
+  {
+    "display_name": "gün",
+    "relatives": {
+      "-2": "evvelsi gün",
+      "-1": "dün",
+      "0": "bugün",
+      "1": "yarın",
+      "2": "öbür gün"
+    }
+  },
+  {
+    "display_name": "hafta",
+    "relatives": {
+      "-1": "geçen hafta",
+      "0": "bu hafta",
+      "1": "gelecek hafta"
+    }
+  },
+  {
+    "display_name": "ay",
+    "relatives": {
+      "-1": "geçen ay",
+      "0": "bu ay",
+      "1": "gelecek ay"
+    }
+  },
+  {
+    "display_name": "çeyrek",
+    "relatives": {
+      "-1": "geçen çeyrek",
+      "0": "bu çeyrek",
+      "1": "gelecek çeyrek"
+    }
+  },
+  {
+    "display_name": "yıl",
+    "relatives": {
+      "-1": "geçen yıl",
+      "0": "bu yıl",
+      "1": "gelecek yıl"
+    }
+  }
+]

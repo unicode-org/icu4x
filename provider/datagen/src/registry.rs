@@ -23,6 +23,8 @@ use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
+use icu_relativetime::provider::*;
+#[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
@@ -220,6 +222,9 @@ registry!(
         SentenceBreakDataV1Marker,
         UCharDictionaryBreakDataV1Marker,
         WordBreakDataV1Marker,
+        StandardRelativeTimeV1Marker,
+        ShortRelativeTimeV1Marker,
+        NarrowRelativeTimeV1Marker,
     }
 );
 

@@ -339,6 +339,15 @@ impl AnyProvider for BakedDataProvider {
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY
                 .hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWRELATIVETIMEV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowRelativeTimeV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTRELATIVETIMEV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortRelativeTimeV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const STANDARDRELATIVETIMEV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::StandardRelativeTimeV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
@@ -1040,6 +1049,24 @@ impl AnyProvider for BakedDataProvider {
                 .map(AnyPayload::from_static_ref)
                 .ok_or(DataErrorKind::MissingLocale),
             LOCALEFALLBACKPARENTSV1MARKER => fallback::parents_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWRELATIVETIMEV1MARKER => relativetime::narrow_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTRELATIVETIMEV1MARKER => relativetime::short_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            STANDARDRELATIVETIMEV1MARKER => relativetime::standard_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

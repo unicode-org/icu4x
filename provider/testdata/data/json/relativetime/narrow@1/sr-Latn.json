@@ -1,0 +1,62 @@
+[
+  {
+    "display_name": "s",
+    "relatives": {
+      "0": "sada"
+    }
+  },
+  {
+    "display_name": "min.",
+    "relatives": {
+      "0": "ovog minuta"
+    }
+  },
+  {
+    "display_name": "č.",
+    "relatives": {
+      "0": "ovog sata"
+    }
+  },
+  {
+    "display_name": "d.",
+    "relatives": {
+      "-2": "prekjuče",
+      "-1": "juče",
+      "0": "danas",
+      "1": "sutra",
+      "2": "prekosutra"
+    }
+  },
+  {
+    "display_name": "ned.",
+    "relatives": {
+      "-1": "prošle n.",
+      "0": "ove n.",
+      "1": "sledeće n."
+    }
+  },
+  {
+    "display_name": "mes.",
+    "relatives": {
+      "-1": "prošlog mes.",
+      "0": "ovog mes.",
+      "1": "sledećeg mes."
+    }
+  },
+  {
+    "display_name": "kv.",
+    "relatives": {
+      "-1": "prošlog kvartala",
+      "0": "ovog kvartala",
+      "1": "sledećeg kvartala"
+    }
+  },
+  {
+    "display_name": "g.",
+    "relatives": {
+      "-1": "prošle g.",
+      "0": "ove g.",
+      "1": "sledeće g."
+    }
+  }
+]
