@@ -44,7 +44,7 @@ When clients use ICU4X, this is generally a manual step, although we may provide
 
 To download test data into the ICU4X source tree, run: 
 
-```
+```console
 $ cargo make testdata-download-sources
 ```
 
