@@ -111,7 +111,126 @@ make_exemplar_chars_unicode_set_property!(
     /// assert!(exemplars_main.contains("a"));
     /// assert!(!exemplars_main.contains("ä"));
     /// assert!(!exemplars_main.contains("ng"));
+    /// assert!(!exemplars_main.contains("A"));
     /// ```
 
     pub fn load_exemplars_main();
+);
+
+make_exemplar_chars_unicode_set_property!(
+    marker: ExemplarCharactersAuxiliary;
+    keyed_data_marker: ExemplarCharactersAuxiliaryV1Marker;
+    func:
+    /// Get the "auxiliary" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let locale = locale!("en-001").into();
+    /// let data =
+    ///     exemplar_chars::load_exemplars_auxiliary(&icu_testdata::unstable(), &locale)
+    ///         .expect("The data should be valid");
+    /// let exemplars_auxiliary = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_auxiliary.contains_char('a'));
+    /// assert!(!exemplars_auxiliary.contains_char('z'));
+    /// assert!(!exemplars_auxiliary.contains("a"));
+    /// assert!(exemplars_auxiliary.contains("ä"));
+    /// assert!(!exemplars_auxiliary.contains("ng"));
+    /// assert!(!exemplars_auxiliary.contains("A"));
+    /// ```
+
+    pub fn load_exemplars_auxiliary();
+);
+
+make_exemplar_chars_unicode_set_property!(
+    marker: ExemplarCharactersPunctuation;
+    keyed_data_marker: ExemplarCharactersPunctuationV1Marker;
+    func:
+    /// Get the "punctuation" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let locale = locale!("en-001").into();
+    /// let data =
+    ///     exemplar_chars::load_exemplars_punctuation(&icu_testdata::unstable(), &locale)
+    ///         .expect("The data should be valid");
+    /// let exemplars_punctuation = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_punctuation.contains_char('0'));
+    /// assert!(!exemplars_punctuation.contains_char('9'));
+    /// assert!(!exemplars_punctuation.contains_char('%'));
+    /// assert!(exemplars_punctuation.contains_char(','));
+    /// assert!(exemplars_punctuation.contains_char('.'));
+    /// assert!(exemplars_punctuation.contains_char('!'));
+    /// assert!(exemplars_punctuation.contains_char('?'));
+    /// ```
+
+    pub fn load_exemplars_punctuation();
+);
+
+make_exemplar_chars_unicode_set_property!(
+    marker: ExemplarCharactersNumbers;
+    keyed_data_marker: ExemplarCharactersNumbersV1Marker;
+    func:
+    /// Get the "numbers" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let locale = locale!("en-001").into();
+    /// let data =
+    ///     exemplar_chars::load_exemplars_numbers(&icu_testdata::unstable(), &locale)
+    ///         .expect("The data should be valid");
+    /// let exemplars_numbers = data.as_borrowed();
+    ///
+    /// assert!(exemplars_numbers.contains_char('0'));
+    /// assert!(exemplars_numbers.contains_char('9'));
+    /// assert!(exemplars_numbers.contains_char('%'));
+    /// assert!(exemplars_numbers.contains_char(','));
+    /// assert!(exemplars_numbers.contains_char('.'));
+    /// assert!(!exemplars_numbers.contains_char('!'));
+    /// assert!(!exemplars_numbers.contains_char('?'));
+    /// ```
+
+    pub fn load_exemplars_numbers();
+);
+
+make_exemplar_chars_unicode_set_property!(
+    marker: ExemplarCharactersIndex;
+    keyed_data_marker: ExemplarCharactersIndexV1Marker;
+    func:
+    /// Get the "index" set of exemplar characters.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::properties::exemplar_chars;
+    ///
+    /// let locale = locale!("en-001").into();
+    /// let data =
+    ///     exemplar_chars::load_exemplars_index(&icu_testdata::unstable(), &locale)
+    ///         .expect("The data should be valid");
+    /// let exemplars_index = data.as_borrowed();
+    ///
+    /// assert!(!exemplars_index.contains_char('a'));
+    /// assert!(!exemplars_index.contains_char('z'));
+    /// assert!(!exemplars_index.contains("a"));
+    /// assert!(!exemplars_index.contains("ä"));
+    /// assert!(!exemplars_index.contains("ng"));
+    /// assert!(exemplars_index.contains("A"));
+    /// ```
+
+    pub fn load_exemplars_index();
 );
