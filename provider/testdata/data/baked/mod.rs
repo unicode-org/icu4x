@@ -1008,14 +1008,70 @@ impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvid
     }
 }
 #[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::exemplarchars::auxiliary_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::ExemplarCharactersIndexV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersIndexV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::exemplarchars::index_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ExemplarCharactersMainV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersMainV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *props::exemplarcharsmain_v1::DATA
+                *props::exemplarchars::main_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::ExemplarCharactersNumbersV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersNumbersV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::exemplarchars::numbers_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::ExemplarCharactersPunctuationV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExemplarCharactersPunctuationV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::exemplarchars::punctuation_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY, req)
+                    })?,
             ))),
         })
     }

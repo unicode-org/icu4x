@@ -2,12 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::marker::PhantomData;
+
 use crate::transform::cldr::cldr_serde;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_properties::provider::{ExemplarCharactersMainV1Marker, PropertyUnicodeSetV1};
+use icu_properties::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
+
+struct AnnotatedResource<'a, M: DataMarker>(&'a cldr_serde::exemplar_chars::Resource, PhantomData<M>);
 
 macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
@@ -24,7 +28,7 @@ macro_rules! exemplar_chars_impls {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(
-                        PropertyUnicodeSetV1::try_from(data).map_err(|e| {
+                        PropertyUnicodeSetV1::try_from(AnnotatedResource::<$data_marker_name>(&data, PhantomData)).map_err(|e| {
                             DataError::custom("data for exemplar characters")
                                 .with_display_context(&e)
                         })?,
@@ -45,10 +49,11 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl TryFrom<&cldr_serde::exemplar_chars::Resource> for PropertyUnicodeSetV1<'static> {
+        impl<'a> TryFrom<AnnotatedResource<'a, $data_marker_name>> for PropertyUnicodeSetV1<'static> {
             type Error = DataError;
-            fn try_from(other: &cldr_serde::exemplar_chars::Resource) -> Result<Self, Self::Error> {
-                let source_data_chars: Option<&String> = other
+            fn try_from(annotated_resource: AnnotatedResource<$data_marker_name>) -> Result<Self, Self::Error> {
+                let source_data_chars: Option<&String> = annotated_resource
+                    .0
                     .main
                     .0
                     .iter()
@@ -77,6 +82,10 @@ macro_rules! exemplar_chars_impls {
 }
 
 exemplar_chars_impls!(ExemplarCharactersMainV1Marker, main);
+exemplar_chars_impls!(ExemplarCharactersAuxiliaryV1Marker, auxiliary);
+exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
+exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
+exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
 
 // helper function for parsing CLDR data string
 fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
