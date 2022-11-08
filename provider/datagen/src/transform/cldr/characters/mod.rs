@@ -115,6 +115,8 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
                 // a space (U+0020) belongs in the exemplar character set
                 " "
             } else if ch.starts_with('\\') {
+                // TODO: we still have occurrences of "\\-" strings in string_list for some test data
+
                 ch.split_at(1).1
             } else {
                 ch
