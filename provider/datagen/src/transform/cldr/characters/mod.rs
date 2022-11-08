@@ -11,7 +11,10 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
-struct AnnotatedResource<'a, M: DataMarker>(&'a cldr_serde::exemplar_chars::Resource, PhantomData<M>);
+struct AnnotatedResource<'a, M: DataMarker>(
+    &'a cldr_serde::exemplar_chars::Resource,
+    PhantomData<M>,
+);
 
 macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
@@ -28,7 +31,11 @@ macro_rules! exemplar_chars_impls {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(
-                        PropertyUnicodeSetV1::try_from(AnnotatedResource::<$data_marker_name>(&data, PhantomData)).map_err(|e| {
+                        PropertyUnicodeSetV1::try_from(AnnotatedResource::<$data_marker_name>(
+                            &data,
+                            PhantomData,
+                        ))
+                        .map_err(|e| {
                             DataError::custom("data for exemplar characters")
                                 .with_display_context(&e)
                         })?,
@@ -49,9 +56,13 @@ macro_rules! exemplar_chars_impls {
             }
         }
 
-        impl<'a> TryFrom<AnnotatedResource<'a, $data_marker_name>> for PropertyUnicodeSetV1<'static> {
+        impl<'a> TryFrom<AnnotatedResource<'a, $data_marker_name>>
+            for PropertyUnicodeSetV1<'static>
+        {
             type Error = DataError;
-            fn try_from(annotated_resource: AnnotatedResource<$data_marker_name>) -> Result<Self, Self::Error> {
+            fn try_from(
+                annotated_resource: AnnotatedResource<$data_marker_name>,
+            ) -> Result<Self, Self::Error> {
                 let source_data_chars: Option<&String> = annotated_resource
                     .0
                     .main

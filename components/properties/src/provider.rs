@@ -453,8 +453,14 @@ expand!(
         // UnicodeSets (code points + strings)
         (BasicEmojiV1Marker, "Basic_Emoji"),
         (ExemplarCharactersMainV1Marker, "exemplarchars/main"),
-        (ExemplarCharactersAuxiliaryV1Marker, "exemplarchars/auxiliary"),
-        (ExemplarCharactersPunctuationV1Marker, "exemplarchars/punctuation"),
+        (
+            ExemplarCharactersAuxiliaryV1Marker,
+            "exemplarchars/auxiliary"
+        ),
+        (
+            ExemplarCharactersPunctuationV1Marker,
+            "exemplarchars/punctuation"
+        ),
         (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers"),
         (ExemplarCharactersIndexV1Marker, "exemplarchars/index"),
     ),
