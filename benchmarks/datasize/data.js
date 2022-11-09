@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667859741465,
+  "lastUpdate": 1668014754034,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31313,6 +31313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3762f06ab850c54b629c0d9a7e2f29bda7b4614d"
         },
         "date": 1667859688216,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6ec7663d15696b567fa5dd3d525f1aaf3541d24",
+          "message": "Remove allow(clippy::expect_used) annotations in segmenter (#2817)\n\n* Refactor common pattern to implement iterators\r\n\r\nWe can share code between some of the word, grapheme clusters, and sentence\r\niterators since their differences are only the payload.\r\n\r\n* Remove allow(clippy::expect_used) annotations\r\n\r\nMake segmenter's helper methods return `Option` to eliminate `expect`, and adapt\r\ncallers.",
+          "timestamp": "2022-11-09T09:22:40-08:00",
+          "tree_id": "f522cd59289b80aa0fafe590c7222ac8390eae6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6ec7663d15696b567fa5dd3d525f1aaf3541d24"
+        },
+        "date": 1668014688124,
         "tool": "ndjson",
         "benches": [
           {
