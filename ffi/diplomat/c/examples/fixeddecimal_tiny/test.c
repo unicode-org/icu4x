@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#include "../../include/ICU4XFixedDecimal.h"
 #include "../../include/ICU4XFixedDecimalFormatter.h"
+#include "../../include/ICU4XLogger.h"
+#include "../../include/ICU4XDataProvider.h"
+#include "../../include/ICU4XLocale.h"
 #include "decimal_bn_en.h"
 #include <string.h>
 #include <stdio.h>

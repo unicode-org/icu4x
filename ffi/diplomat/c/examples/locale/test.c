@@ -5,6 +5,8 @@
 #include "../../include/ICU4XLocaleCanonicalizer.h"
 #include "../../include/ICU4XLocaleExpander.h"
 #include "../../include/ICU4XLogger.h"
+#include "../../include/ICU4XLocale.h"
+#include "../../include/ICU4XDataProvider.h"
 #include <string.h>
 #include <stdio.h>
 

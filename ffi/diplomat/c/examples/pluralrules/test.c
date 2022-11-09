@@ -4,6 +4,9 @@
 
 #include "../../include/ICU4XPluralRules.h"
 #include "../../include/ICU4XLogger.h"
+#include "../../include/ICU4XLocale.h"
+#include "../../include/ICU4XDataProvider.h"
+#include "../../include/ICU4XPluralOperands.h"
 #include <string.h>
 #include <stdio.h>
 
