@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667860696528,
+  "lastUpdate": 1668015761065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -120611,6 +120611,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 202,
             "range": "± 15",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6ec7663d15696b567fa5dd3d525f1aaf3541d24",
+          "message": "Remove allow(clippy::expect_used) annotations in segmenter (#2817)\n\n* Refactor common pattern to implement iterators\r\n\r\nWe can share code between some of the word, grapheme clusters, and sentence\r\niterators since their differences are only the payload.\r\n\r\n* Remove allow(clippy::expect_used) annotations\r\n\r\nMake segmenter's helper methods return `Option` to eliminate `expect`, and adapt\r\ncallers.",
+          "timestamp": "2022-11-09T09:22:40-08:00",
+          "tree_id": "f522cd59289b80aa0fafe590c7222ac8390eae6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6ec7663d15696b567fa5dd3d525f1aaf3541d24"
+        },
+        "date": 1668015681025,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3931,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 995,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1001,
+            "range": "± 71",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 603,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 138,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1113,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 423,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2356,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4435,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1987,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1517,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 991,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 308,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2060,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 637,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3400,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 195,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 131,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 171,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 220,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
