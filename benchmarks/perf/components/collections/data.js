@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667860531943,
+  "lastUpdate": 1668015686036,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -32495,6 +32495,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52568644,
             "range": "± 808870",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6ec7663d15696b567fa5dd3d525f1aaf3541d24",
+          "message": "Remove allow(clippy::expect_used) annotations in segmenter (#2817)\n\n* Refactor common pattern to implement iterators\r\n\r\nWe can share code between some of the word, grapheme clusters, and sentence\r\niterators since their differences are only the payload.\r\n\r\n* Remove allow(clippy::expect_used) annotations\r\n\r\nMake segmenter's helper methods return `Option` to eliminate `expect`, and adapt\r\ncallers.",
+          "timestamp": "2022-11-09T09:22:40-08:00",
+          "tree_id": "f522cd59289b80aa0fafe590c7222ac8390eae6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6ec7663d15696b567fa5dd3d525f1aaf3541d24"
+        },
+        "date": 1668015604726,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 621,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 489,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 527,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 515,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 893,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 951,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 486,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 528,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 512,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 580,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 912,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 44914857,
+            "range": "± 1232968",
             "unit": "ns/iter"
           },
           {
