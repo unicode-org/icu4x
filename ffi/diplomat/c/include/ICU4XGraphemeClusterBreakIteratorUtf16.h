@@ -5,15 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XGraphemeClusterBreakIteratorUtf16 ICU4XGraphemeClusterBreakIteratorUtf16;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XGraphemeClusterBreakIteratorUtf16_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -25,5 +17,5 @@ void ICU4XGraphemeClusterBreakIteratorUtf16_destroy(ICU4XGraphemeClusterBreakIte
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XGraphemeClusterBreakIteratorUtf16_H

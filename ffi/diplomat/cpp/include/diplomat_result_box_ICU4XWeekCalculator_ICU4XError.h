@@ -7,7 +7,7 @@
 #include "diplomat_runtime.h"
 
 typedef struct ICU4XWeekCalculator ICU4XWeekCalculator;
-#include "ICU4XError.h"
+#include "ICU4XError_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

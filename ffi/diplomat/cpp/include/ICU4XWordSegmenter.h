@@ -5,20 +5,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XWordSegmenter ICU4XWordSegmenter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XWordSegmenter_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XWordSegmenter_ICU4XError.h"
-#include "ICU4XWordBreakIteratorUtf8.h"
-#include "ICU4XWordBreakIteratorUtf16.h"
-#include "ICU4XWordBreakIteratorLatin1.h"
+#include "ICU4XWordBreakIteratorUtf8_type.h"
+#include "ICU4XWordBreakIteratorUtf16_type.h"
+#include "ICU4XWordBreakIteratorLatin1_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -36,5 +28,5 @@ void ICU4XWordSegmenter_destroy(ICU4XWordSegmenter* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XWordSegmenter_H

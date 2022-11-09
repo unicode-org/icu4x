@@ -5,16 +5,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XComposingNormalizer_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XComposingNormalizer_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
@@ -34,5 +26,5 @@ void ICU4XComposingNormalizer_destroy(ICU4XComposingNormalizer* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XComposingNormalizer_H

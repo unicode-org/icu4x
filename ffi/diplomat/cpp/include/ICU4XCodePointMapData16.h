@@ -5,17 +5,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCodePointMapData16 ICU4XCodePointMapData16;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XCodePointSetData.h"
-#include "ICU4XDataProvider.h"
+#include "ICU4XCodePointMapData16_type.h"
+#include "ICU4XCodePointSetData_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XCodePointMapData16_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -34,5 +26,5 @@ void ICU4XCodePointMapData16_destroy(ICU4XCodePointMapData16* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCodePointMapData16_H

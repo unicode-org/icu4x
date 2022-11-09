@@ -5,21 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XCustomTimeZone_type.h"
 #include "diplomat_result_box_ICU4XCustomTimeZone_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
 #include "diplomat_result_int32_t_ICU4XError.h"
 #include "diplomat_result_bool_ICU4XError.h"
-#include "ICU4XMetazoneCalculator.h"
-#include "ICU4XIsoDateTime.h"
+#include "ICU4XMetazoneCalculator_type.h"
+#include "ICU4XIsoDateTime_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -77,5 +69,5 @@ void ICU4XCustomTimeZone_destroy(ICU4XCustomTimeZone* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCustomTimeZone_H

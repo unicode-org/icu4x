@@ -5,19 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef enum ICU4XWordBreakRule {
-  ICU4XWordBreakRule_Normal = 0,
-  ICU4XWordBreakRule_BreakAll = 1,
-  ICU4XWordBreakRule_KeepAll = 2,
-} ICU4XWordBreakRule;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XWordBreakRule_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -28,5 +16,5 @@ void ICU4XWordBreakRule_destroy(ICU4XWordBreakRule* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XWordBreakRule_H

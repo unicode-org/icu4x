@@ -5,19 +5,11 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XLocaleCanonicalizer ICU4XLocaleCanonicalizer;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XLocaleCanonicalizer_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError.h"
-#include "ICU4XLocale.h"
-#include "ICU4XTransformResult.h"
+#include "ICU4XLocale_type.h"
+#include "ICU4XTransformResult_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -31,5 +23,5 @@ void ICU4XLocaleCanonicalizer_destroy(ICU4XLocaleCanonicalizer* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XLocaleCanonicalizer_H

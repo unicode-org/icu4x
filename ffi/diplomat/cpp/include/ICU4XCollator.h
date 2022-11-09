@@ -5,20 +5,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCollator ICU4XCollator;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XCollatorOptionsV1.h"
+#include "ICU4XCollator_type.h"
+#include "ICU4XDataProvider_type.h"
+#include "ICU4XLocale_type.h"
+#include "ICU4XCollatorOptionsV1_type.h"
 #include "diplomat_result_box_ICU4XCollator_ICU4XError.h"
-#include "ICU4XOrdering.h"
+#include "ICU4XOrdering_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -36,5 +28,5 @@ void ICU4XCollator_destroy(ICU4XCollator* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCollator_H

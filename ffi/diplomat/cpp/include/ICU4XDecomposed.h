@@ -5,18 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XDecomposed {
-    char32_t first;
-    char32_t second;
-} ICU4XDecomposed;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XDecomposed_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -27,5 +16,5 @@ void ICU4XDecomposed_destroy(ICU4XDecomposed* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XDecomposed_H

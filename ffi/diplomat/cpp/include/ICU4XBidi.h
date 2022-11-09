@@ -5,18 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XBidi ICU4XBidi;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XBidi_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XBidi_ICU4XError.h"
-#include "ICU4XBidiInfo.h"
+#include "ICU4XBidiInfo_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -38,5 +30,5 @@ void ICU4XBidi_destroy(ICU4XBidi* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XBidi_H

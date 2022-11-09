@@ -5,21 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XFixedDecimalFormatter ICU4XFixedDecimalFormatter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XFixedDecimalGroupingStrategy.h"
+#include "ICU4XFixedDecimalFormatter_type.h"
+#include "ICU4XDataProvider_type.h"
+#include "ICU4XLocale_type.h"
+#include "ICU4XFixedDecimalGroupingStrategy_type.h"
 #include "diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError.h"
-#include "ICU4XDataStruct.h"
-#include "ICU4XFixedDecimal.h"
+#include "ICU4XDataStruct_type.h"
+#include "ICU4XFixedDecimal_type.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -36,5 +28,5 @@ void ICU4XFixedDecimalFormatter_destroy(ICU4XFixedDecimalFormatter* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XFixedDecimalFormatter_H

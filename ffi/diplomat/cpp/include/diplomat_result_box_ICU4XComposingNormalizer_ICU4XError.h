@@ -7,7 +7,7 @@
 #include "diplomat_runtime.h"
 
 typedef struct ICU4XComposingNormalizer ICU4XComposingNormalizer;
-#include "ICU4XError.h"
+#include "ICU4XError_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

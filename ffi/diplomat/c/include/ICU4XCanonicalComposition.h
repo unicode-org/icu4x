@@ -5,16 +5,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCanonicalComposition ICU4XCanonicalComposition;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XCanonicalComposition_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XCanonicalComposition_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -29,5 +21,5 @@ void ICU4XCanonicalComposition_destroy(ICU4XCanonicalComposition* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCanonicalComposition_H

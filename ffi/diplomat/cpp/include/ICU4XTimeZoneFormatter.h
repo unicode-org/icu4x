@@ -5,21 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XTimeZoneFormatter ICU4XTimeZoneFormatter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
+#include "ICU4XTimeZoneFormatter_type.h"
+#include "ICU4XDataProvider_type.h"
+#include "ICU4XLocale_type.h"
 #include "diplomat_result_box_ICU4XTimeZoneFormatter_ICU4XError.h"
-#include "ICU4XIsoTimeZoneOptions.h"
+#include "ICU4XIsoTimeZoneOptions_type.h"
 #include "diplomat_result_void_ICU4XError.h"
-#include "ICU4XCustomTimeZone.h"
+#include "ICU4XCustomTimeZone_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -49,5 +41,5 @@ void ICU4XTimeZoneFormatter_destroy(ICU4XTimeZoneFormatter* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XTimeZoneFormatter_H

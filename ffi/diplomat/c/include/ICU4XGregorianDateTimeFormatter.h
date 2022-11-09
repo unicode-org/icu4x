@@ -5,21 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XGregorianDateTimeFormatter ICU4XGregorianDateTimeFormatter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
-#include "ICU4XDateLength.h"
-#include "ICU4XTimeLength.h"
+#include "ICU4XGregorianDateTimeFormatter_type.h"
+#include "ICU4XDataProvider_type.h"
+#include "ICU4XLocale_type.h"
+#include "ICU4XDateLength_type.h"
+#include "ICU4XTimeLength_type.h"
 #include "diplomat_result_box_ICU4XGregorianDateTimeFormatter_ICU4XError.h"
-#include "ICU4XIsoDateTime.h"
+#include "ICU4XIsoDateTime_type.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -34,5 +26,5 @@ void ICU4XGregorianDateTimeFormatter_destroy(ICU4XGregorianDateTimeFormatter* se
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XGregorianDateTimeFormatter_H

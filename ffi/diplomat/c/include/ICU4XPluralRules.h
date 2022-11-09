@@ -5,21 +5,13 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XPluralRules ICU4XPluralRules;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
-#include "ICU4XLocale.h"
+#include "ICU4XPluralRules_type.h"
+#include "ICU4XDataProvider_type.h"
+#include "ICU4XLocale_type.h"
 #include "diplomat_result_box_ICU4XPluralRules_ICU4XError.h"
-#include "ICU4XPluralOperands.h"
-#include "ICU4XPluralCategory.h"
-#include "ICU4XPluralCategories.h"
+#include "ICU4XPluralOperands_type.h"
+#include "ICU4XPluralCategory_type.h"
+#include "ICU4XPluralCategories_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -37,5 +29,5 @@ void ICU4XPluralRules_destroy(ICU4XPluralRules* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XPluralRules_H

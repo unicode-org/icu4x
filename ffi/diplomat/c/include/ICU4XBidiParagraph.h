@@ -5,17 +5,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XBidiParagraph_type.h"
 #include "diplomat_result_void_ICU4XError.h"
-#include "ICU4XBidiDirection.h"
+#include "ICU4XBidiDirection_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -39,5 +31,5 @@ void ICU4XBidiParagraph_destroy(ICU4XBidiParagraph* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XBidiParagraph_H

@@ -5,18 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XLocaleFallbacker ICU4XLocaleFallbacker;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XLocaleFallbacker_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XLocaleFallbacker_ICU4XError.h"
-#include "ICU4XLocaleFallbackConfig.h"
+#include "ICU4XLocaleFallbackConfig_type.h"
 #include "diplomat_result_box_ICU4XLocaleFallbackerWithConfig_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -33,5 +25,5 @@ void ICU4XLocaleFallbacker_destroy(ICU4XLocaleFallbacker* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XLocaleFallbacker_H

@@ -5,26 +5,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef enum ICU4XAnyCalendarKind {
-  ICU4XAnyCalendarKind_Iso = 0,
-  ICU4XAnyCalendarKind_Gregorian = 1,
-  ICU4XAnyCalendarKind_Buddhist = 2,
-  ICU4XAnyCalendarKind_Japanese = 3,
-  ICU4XAnyCalendarKind_JapaneseExtended = 4,
-  ICU4XAnyCalendarKind_Ethiopian = 5,
-  ICU4XAnyCalendarKind_EthiopianAmeteAlem = 6,
-  ICU4XAnyCalendarKind_Indian = 7,
-  ICU4XAnyCalendarKind_Coptic = 8,
-} ICU4XAnyCalendarKind;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XLocale.h"
+#include "ICU4XAnyCalendarKind_type.h"
+#include "ICU4XLocale_type.h"
 #include "diplomat_result_ICU4XAnyCalendarKind_void.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
@@ -42,5 +24,5 @@ void ICU4XAnyCalendarKind_destroy(ICU4XAnyCalendarKind* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XAnyCalendarKind_H

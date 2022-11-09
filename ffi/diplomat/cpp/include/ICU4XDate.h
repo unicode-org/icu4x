@@ -5,20 +5,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XDate ICU4XDate;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XCalendar.h"
+#include "ICU4XDate_type.h"
+#include "ICU4XCalendar_type.h"
 #include "diplomat_result_box_ICU4XDate_ICU4XError.h"
-#include "ICU4XIsoDate.h"
-#include "ICU4XIsoWeekday.h"
-#include "ICU4XWeekCalculator.h"
+#include "ICU4XIsoDate_type.h"
+#include "ICU4XIsoWeekday_type.h"
+#include "ICU4XWeekCalculator_type.h"
 #include "diplomat_result_ICU4XWeekOf_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
@@ -62,5 +54,5 @@ void ICU4XDate_destroy(ICU4XDate* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XDate_H

@@ -5,15 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XTime ICU4XTime;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XTime_type.h"
 #include "diplomat_result_box_ICU4XTime_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -34,5 +26,5 @@ void ICU4XTime_destroy(ICU4XTime* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XTime_H

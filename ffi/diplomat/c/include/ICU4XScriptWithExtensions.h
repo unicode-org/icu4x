@@ -5,18 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XScriptWithExtensions ICU4XScriptWithExtensions;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XScriptWithExtensions_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XScriptWithExtensions_ICU4XError.h"
-#include "ICU4XScriptWithExtensionsBorrowed.h"
+#include "ICU4XScriptWithExtensionsBorrowed_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -34,5 +26,5 @@ void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XScriptWithExtensions_H

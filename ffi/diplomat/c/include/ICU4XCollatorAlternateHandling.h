@@ -5,19 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef enum ICU4XCollatorAlternateHandling {
-  ICU4XCollatorAlternateHandling_Auto = 0,
-  ICU4XCollatorAlternateHandling_NonIgnorable = 1,
-  ICU4XCollatorAlternateHandling_Shifted = 2,
-} ICU4XCollatorAlternateHandling;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XCollatorAlternateHandling_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -28,5 +16,5 @@ void ICU4XCollatorAlternateHandling_destroy(ICU4XCollatorAlternateHandling* self
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCollatorAlternateHandling_H

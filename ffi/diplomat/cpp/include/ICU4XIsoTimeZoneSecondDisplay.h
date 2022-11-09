@@ -5,18 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef enum ICU4XIsoTimeZoneSecondDisplay {
-  ICU4XIsoTimeZoneSecondDisplay_Optional = 0,
-  ICU4XIsoTimeZoneSecondDisplay_Never = 1,
-} ICU4XIsoTimeZoneSecondDisplay;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XIsoTimeZoneSecondDisplay_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -27,5 +16,5 @@ void ICU4XIsoTimeZoneSecondDisplay_destroy(ICU4XIsoTimeZoneSecondDisplay* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XIsoTimeZoneSecondDisplay_H

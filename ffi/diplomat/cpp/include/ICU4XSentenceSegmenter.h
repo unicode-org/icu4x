@@ -5,20 +5,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XSentenceSegmenter ICU4XSentenceSegmenter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XSentenceSegmenter_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XSentenceSegmenter_ICU4XError.h"
-#include "ICU4XSentenceBreakIteratorUtf8.h"
-#include "ICU4XSentenceBreakIteratorUtf16.h"
-#include "ICU4XSentenceBreakIteratorLatin1.h"
+#include "ICU4XSentenceBreakIteratorUtf8_type.h"
+#include "ICU4XSentenceBreakIteratorUtf16_type.h"
+#include "ICU4XSentenceBreakIteratorLatin1_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -36,5 +28,5 @@ void ICU4XSentenceSegmenter_destroy(ICU4XSentenceSegmenter* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XSentenceSegmenter_H

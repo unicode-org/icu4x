@@ -5,15 +5,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XLineBreakIteratorUtf8 ICU4XLineBreakIteratorUtf8;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XLineBreakIteratorUtf8_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -25,5 +17,5 @@ void ICU4XLineBreakIteratorUtf8_destroy(ICU4XLineBreakIteratorUtf8* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XLineBreakIteratorUtf8_H

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "ICU4XPluralCategory.h"
+#include "ICU4XPluralCategory_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "ICU4XAnyCalendarKind.h"
+#include "ICU4XAnyCalendarKind_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

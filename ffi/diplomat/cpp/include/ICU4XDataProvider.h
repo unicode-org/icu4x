@@ -5,18 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XDataProvider ICU4XDataProvider;
-#ifdef __cplusplus
-} // namespace capi
-#endif
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XDataProvider_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
-#include "ICU4XLocaleFallbacker.h"
+#include "ICU4XLocaleFallbacker_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -42,5 +34,5 @@ void ICU4XDataProvider_destroy(ICU4XDataProvider* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XDataProvider_H

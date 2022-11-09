@@ -5,20 +5,12 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XGraphemeClusterSegmenter ICU4XGraphemeClusterSegmenter;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XGraphemeClusterSegmenter_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XGraphemeClusterSegmenter_ICU4XError.h"
-#include "ICU4XGraphemeClusterBreakIteratorUtf8.h"
-#include "ICU4XGraphemeClusterBreakIteratorUtf16.h"
-#include "ICU4XGraphemeClusterBreakIteratorLatin1.h"
+#include "ICU4XGraphemeClusterBreakIteratorUtf8_type.h"
+#include "ICU4XGraphemeClusterBreakIteratorUtf16_type.h"
+#include "ICU4XGraphemeClusterBreakIteratorLatin1_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -36,5 +28,5 @@ void ICU4XGraphemeClusterSegmenter_destroy(ICU4XGraphemeClusterSegmenter* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XGraphemeClusterSegmenter_H

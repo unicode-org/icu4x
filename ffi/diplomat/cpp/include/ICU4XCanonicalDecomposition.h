@@ -5,18 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "diplomat_runtime.h"
-
-#ifdef __cplusplus
-namespace capi {
-#endif
-
-typedef struct ICU4XCanonicalDecomposition ICU4XCanonicalDecomposition;
-#ifdef __cplusplus
-} // namespace capi
-#endif
-#include "ICU4XDataProvider.h"
+#include "ICU4XCanonicalDecomposition_type.h"
+#include "ICU4XDataProvider_type.h"
 #include "diplomat_result_box_ICU4XCanonicalDecomposition_ICU4XError.h"
-#include "ICU4XDecomposed.h"
+#include "ICU4XDecomposed_type.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -30,5 +22,5 @@ void ICU4XCanonicalDecomposition_destroy(ICU4XCanonicalDecomposition* self);
 #ifdef __cplusplus
 } // extern "C"
 } // namespace capi
-#endif
-#endif
+#endif // __cplusplus
+#endif // ICU4XCanonicalDecomposition_H
