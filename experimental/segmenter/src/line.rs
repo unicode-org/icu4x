@@ -655,7 +655,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             loop {
                 if i == first_pos {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
                 i += Y::get_current_position_character_len(self);
                 self.advance_iter();
@@ -667,13 +667,19 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         loop {
-            let mut left_prop = self.get_linebreak_property();
-            let left_codepoint = self.get_current_codepoint();
+            debug_assert!(!self.is_eof());
+            let left_codepoint = self.get_current_codepoint()?;
+            let mut left_prop = self.get_linebreak_property(left_codepoint);
             self.advance_iter();
-            if self.is_eof() {
+
+            // Initializing right_codepoint can be simplified with a let-else statement in Rust 1.65.
+            // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+            let right_codepoint = if let Some(right_codepoint) = self.get_current_codepoint() {
+                right_codepoint
+            } else {
                 return Some(self.len);
-            }
-            let right_prop = self.get_linebreak_property();
+            };
+            let right_prop = self.get_linebreak_property(right_codepoint);
 
             // CSS word-break property handling
             match self.options.word_break_rule {
@@ -696,25 +702,25 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // CSS line-break property handling
             match self.options.line_break_rule {
                 LineBreakRule::Normal => {
-                    if self.is_break_by_normal() {
-                        return Some(self.get_current_position());
+                    if self.is_break_by_normal(right_codepoint) {
+                        return self.get_current_position();
                     }
                 }
                 LineBreakRule::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(
-                        self.get_current_codepoint().into(),
+                        right_codepoint.into(),
                         left_prop,
                         right_prop,
                         self.options.ja_zh,
                     ) {
                         if breakable {
-                            return Some(self.get_current_position());
+                            return self.get_current_position();
                         }
                         continue;
                     }
                 }
                 LineBreakRule::Anywhere => {
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
                 _ => (),
             };
@@ -722,7 +728,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // UAX14 doesn't have Thai etc, so use another way.
             if self.options.word_break_rule != WordBreakRule::BreakAll
                 && Y::use_complex_breaking(self, left_codepoint)
-                && Y::use_complex_breaking(self, self.get_current_codepoint())
+                && Y::use_complex_breaking(self, right_codepoint)
             {
                 let result = Y::handle_complex_language(self, left_codepoint);
                 if result.is_some() {
@@ -739,20 +745,24 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
                 loop {
                     self.advance_iter();
-                    if self.is_eof() {
+
+                    // Initializing prop can be simplified with a let-else statement in Rust 1.65.
+                    // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+                    let prop = if let Some(prop) = self.get_current_linebreak_property() {
+                        prop
+                    } else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         let break_state = self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property);
                         if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
-                            return Some(self.get_current_position());
+                            return self.get_current_position();
                         }
                         // EOF
                         return Some(self.len);
-                    }
+                    };
 
-                    let prop = self.get_linebreak_property();
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state < 0 {
                         break;
@@ -767,13 +777,13 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
-                    return Some(self.get_current_position());
+                    return self.get_current_position();
                 }
-                return Some(self.get_current_position());
+                return self.get_current_position();
             }
 
             if self.is_break_from_table(left_prop, right_prop) {
-                return Some(self.get_current_position());
+                return self.get_current_position();
             }
         }
     }
@@ -799,28 +809,25 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
         false
     }
 
-    fn get_current_position(&self) -> usize {
-        debug_assert!(!self.is_eof());
-        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
-        self.current_pos_data
-            .expect("Not at the end of the string!")
-            .0
+    fn get_current_position(&self) -> Option<usize> {
+        self.current_pos_data.map(|(pos, _)| pos)
     }
 
-    fn get_current_codepoint(&self) -> Y::CharType {
-        debug_assert!(!self.is_eof());
-        #[allow(clippy::expect_used)] // Caller should check is_eof() before calling this
-        self.current_pos_data
-            .expect("Not at the end of the string!")
-            .1
+    fn get_current_codepoint(&self) -> Option<Y::CharType> {
+        self.current_pos_data.map(|(_, codepoint)| codepoint)
     }
 
-    fn get_linebreak_property(&self) -> u8 {
-        Y::get_linebreak_property_with_rule(self, self.get_current_codepoint())
+    fn get_linebreak_property(&self, codepoint: Y::CharType) -> u8 {
+        Y::get_linebreak_property_with_rule(self, codepoint)
     }
 
-    fn is_break_by_normal(&self) -> bool {
-        is_break_utf32_by_normal(self.get_current_codepoint().into(), self.options.ja_zh)
+    fn get_current_linebreak_property(&self) -> Option<u8> {
+        self.get_current_codepoint()
+            .map(|c| self.get_linebreak_property(c))
+    }
+
+    fn is_break_by_normal(&self, codepoint: Y::CharType) -> bool {
+        is_break_utf32_by_normal(codepoint.into(), self.options.ja_zh)
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
@@ -863,7 +870,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.get_current_codepoint().len_utf8()
+        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -894,7 +901,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.get_current_codepoint().len_utf8()
+        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -918,12 +925,15 @@ where
     let mut s = String::new();
     s.push(left_codepoint);
     loop {
-        s.push(iter.get_current_codepoint());
+        debug_assert!(!iter.is_eof());
+        s.push(iter.get_current_codepoint()?);
         iter.advance_iter();
-        if iter.is_eof() {
-            break;
-        }
-        if !T::use_complex_breaking(iter, iter.get_current_codepoint()) {
+        if let Some(current_codepoint) = iter.get_current_codepoint() {
+            if !T::use_complex_breaking(iter, current_codepoint) {
+                break;
+            }
+        } else {
+            // EOF
             break;
         }
     }
@@ -933,13 +943,13 @@ where
     iter.current_pos_data = start_point;
     let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
     iter.result_cache = breaks;
-    let mut i = iter.get_current_codepoint().len_utf8();
+    let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return Some(iter.get_current_position());
+            return iter.get_current_position();
         }
         iter.advance_iter();
         if iter.is_eof() {
@@ -998,11 +1008,10 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        let ch = iterator.get_current_codepoint();
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
+        match iterator.get_current_codepoint() {
+            None => 0,
+            Some(ch) if ch >= 0x10000 => 2,
+            _ => 1,
         }
     }
 
@@ -1015,12 +1024,15 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         let start_point = iterator.current_pos_data;
         let mut s = vec![left_codepoint as u16];
         loop {
-            s.push(iterator.get_current_codepoint() as u16);
+            debug_assert!(!iterator.is_eof());
+            s.push(iterator.get_current_codepoint()? as u16);
             iterator.advance_iter();
-            if iterator.is_eof() {
-                break;
-            }
-            if !Self::use_complex_breaking(iterator, iterator.get_current_codepoint()) {
+            if let Some(current_codepoint) = iterator.get_current_codepoint() {
+                if !Self::use_complex_breaking(iterator, current_codepoint) {
+                    break;
+                }
+            } else {
+                // EOF
                 break;
             }
         }
@@ -1047,7 +1059,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
                     .skip(1)
                     .map(|r| r - i)
                     .collect();
-                return Some(iterator.get_current_position());
+                return iterator.get_current_position();
             }
             iterator.advance_iter();
             if iterator.is_eof() {
