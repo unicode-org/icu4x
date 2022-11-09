@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1667860554346,
+  "lastUpdate": 1668015529056,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59189,6 +59189,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6ec7663d15696b567fa5dd3d525f1aaf3541d24",
+          "message": "Remove allow(clippy::expect_used) annotations in segmenter (#2817)\n\n* Refactor common pattern to implement iterators\r\n\r\nWe can share code between some of the word, grapheme clusters, and sentence\r\niterators since their differences are only the payload.\r\n\r\n* Remove allow(clippy::expect_used) annotations\r\n\r\nMake segmenter's helper methods return `Option` to eliminate `expect`, and adapt\r\ncallers.",
+          "timestamp": "2022-11-09T09:22:40-08:00",
+          "tree_id": "f522cd59289b80aa0fafe590c7222ac8390eae6c",
+          "url": "https://github.com/unicode-org/icu4x/commit/b6ec7663d15696b567fa5dd3d525f1aaf3541d24"
+        },
+        "date": 1668015463293,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117122,
+            "range": "± 401",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24339,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63607,
+            "range": "± 438",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
