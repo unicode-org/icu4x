@@ -1,0 +1,33 @@
+{
+  "display_name": "година",
+  "relatives": {
+    "-1": "прошле године",
+    "0": "ове године",
+    "1": "следеће године"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре {0} године",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре {0} године",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре {0} година",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "display_name": "кв.",
+  "relatives": {
+    "-1": "последний кв.",
+    "0": "текущий кв.",
+    "1": "следующий кв."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} кв. назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": "{0} кв. назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": "{0} кв. назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": "{0} кв. назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

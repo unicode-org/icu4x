@@ -1,0 +1,40 @@
+{
+  "display_name": "الثواني",
+  "relatives": {
+    "0": "الآن"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل {0} ثانية",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل ثانية واحدة",
+      "index": null
+    },
+    "two": {
+      "pattern": "قبل ثانيتين",
+      "index": null
+    },
+    "few": {
+      "pattern": "قبل {0} ثوانٍ",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل {0} ثانية",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل {0} ثانية",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

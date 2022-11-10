@@ -1,0 +1,28 @@
+{
+  "display_name": "ঘণ্টা",
+  "relatives": {
+    "0": "এই ঘণ্টায়"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} ঘন্টা আগে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} ঘন্টা আগে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

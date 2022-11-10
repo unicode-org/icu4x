@@ -1,0 +1,34 @@
+{
+  "display_name": "сек.",
+  "relatives": {
+    "0": "сейчас"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} сек. назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": "{0} сек. назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": "{0} сек. назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": "{0} сек. назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

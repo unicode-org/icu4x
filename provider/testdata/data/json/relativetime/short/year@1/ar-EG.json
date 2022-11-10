@@ -1,0 +1,42 @@
+{
+  "display_name": "السنة",
+  "relatives": {
+    "-1": "السنة الماضية",
+    "0": "السنة الحالية",
+    "1": "السنة القادمة"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل {0} سنة",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل سنة واحدة",
+      "index": null
+    },
+    "two": {
+      "pattern": "قبل سنتين",
+      "index": null
+    },
+    "few": {
+      "pattern": "قبل {0} سنوات",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل {0} سنة",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل {0} سنة",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

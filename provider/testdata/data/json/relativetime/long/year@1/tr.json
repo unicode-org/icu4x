@@ -1,0 +1,30 @@
+{
+  "display_name": "yıl",
+  "relatives": {
+    "-1": "geçen yıl",
+    "0": "bu yıl",
+    "1": "gelecek yıl"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} yıl önce",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} yıl önce",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "display_name": "h",
+  "relatives": {
+    "0": "cette heure-ci"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "il y a {0} h",
+      "index": 7
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "il y a {0} h",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

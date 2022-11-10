@@ -1,0 +1,33 @@
+{
+  "display_name": "mes.",
+  "relatives": {
+    "-1": "prošlog mes.",
+    "0": "ovog mes.",
+    "1": "sledećeg mes."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre {0} m.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre {0} m.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre {0} m.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

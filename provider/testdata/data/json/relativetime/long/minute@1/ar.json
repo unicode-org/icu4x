@@ -1,0 +1,40 @@
+{
+  "display_name": "الدقائق",
+  "relatives": {
+    "0": "هذه الدقيقة"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل {0} دقيقة",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل دقيقة واحدة",
+      "index": null
+    },
+    "two": {
+      "pattern": "قبل دقيقتين",
+      "index": null
+    },
+    "few": {
+      "pattern": "قبل {0} دقائق",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل {0} دقيقة",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل {0} دقيقة",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

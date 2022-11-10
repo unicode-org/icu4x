@@ -1,0 +1,30 @@
+{
+  "display_name": "মাস",
+  "relatives": {
+    "-1": "গত মাস",
+    "0": "এই মাস",
+    "1": "পরের মাস"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} মাস আগে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} মাস আগে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

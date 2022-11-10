@@ -1,0 +1,33 @@
+{
+  "display_name": "god.",
+  "relatives": {
+    "-1": "prošle god.",
+    "0": "ove god.",
+    "1": "sledeće god."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre {0} god.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre {0} god.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre {0} god.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

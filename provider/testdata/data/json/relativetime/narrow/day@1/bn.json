@@ -1,0 +1,32 @@
+{
+  "display_name": "দিন",
+  "relatives": {
+    "-2": "গত পরশু",
+    "-1": "গতকাল",
+    "0": "আজ",
+    "1": "আগামীকাল",
+    "2": "আগামী পরশু"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} দিন আগে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} দিন আগে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

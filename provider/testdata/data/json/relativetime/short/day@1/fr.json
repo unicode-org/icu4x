@@ -1,0 +1,32 @@
+{
+  "display_name": "j",
+  "relatives": {
+    "-2": "avant-hier",
+    "-1": "hier",
+    "0": "aujourd’hui",
+    "1": "demain",
+    "2": "après-demain"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "il y a {0} j",
+      "index": 7
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "il y a {0} j",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "display_name": "日",
+  "relatives": {
+    "-2": "一昨日",
+    "-1": "昨日",
+    "0": "今日",
+    "1": "明日",
+    "2": "明後日"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0}日前",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

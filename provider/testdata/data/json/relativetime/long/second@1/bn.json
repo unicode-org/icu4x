@@ -1,0 +1,28 @@
+{
+  "display_name": "সেকেন্ড",
+  "relatives": {
+    "0": "এখন"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} সেকেন্ড পূর্বে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} সেকেন্ড পূর্বে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

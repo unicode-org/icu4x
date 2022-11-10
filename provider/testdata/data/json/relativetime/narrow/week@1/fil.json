@@ -1,0 +1,30 @@
+{
+  "display_name": "linggo",
+  "relatives": {
+    "-1": "nakaraang linggo",
+    "0": "ngayong linggo",
+    "1": "susunod na linggo"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} linggo ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} (na) linggo ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

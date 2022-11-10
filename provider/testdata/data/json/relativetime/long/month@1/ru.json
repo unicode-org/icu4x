@@ -1,0 +1,36 @@
+{
+  "display_name": "месяц",
+  "relatives": {
+    "-1": "в прошлом месяце",
+    "0": "в этом месяце",
+    "1": "в следующем месяце"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} месяц назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": "{0} месяца назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": "{0} месяцев назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": "{0} месяца назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

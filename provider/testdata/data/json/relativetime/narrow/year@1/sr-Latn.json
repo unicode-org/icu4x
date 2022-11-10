@@ -1,0 +1,33 @@
+{
+  "display_name": "g.",
+  "relatives": {
+    "-1": "prošle g.",
+    "0": "ove g.",
+    "1": "sledeće g."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre {0} g.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre {0} g.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre {0} g.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

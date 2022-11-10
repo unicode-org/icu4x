@@ -1,0 +1,27 @@
+{
+  "display_name": "週",
+  "relatives": {
+    "-1": "先週",
+    "0": "今週",
+    "1": "来週"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} 週間前",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

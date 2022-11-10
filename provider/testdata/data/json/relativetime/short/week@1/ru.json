@@ -1,0 +1,36 @@
+{
+  "display_name": "нед.",
+  "relatives": {
+    "-1": "на прошлой нед.",
+    "0": "на этой нед.",
+    "1": "на следующей нед."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} нед. назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": "{0} нед. назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": "{0} нед. назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": "{0} нед. назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

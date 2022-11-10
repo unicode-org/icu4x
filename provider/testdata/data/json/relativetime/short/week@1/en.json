@@ -1,0 +1,30 @@
+{
+  "display_name": "wk.",
+  "relatives": {
+    "-1": "last wk.",
+    "0": "this wk.",
+    "1": "next wk."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} wk. ago",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} wk. ago",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -4,112 +4,195 @@
 
 #![cfg(feature = "experimental")]
 
-use std::borrow::Cow;
+use std::borrow::{Borrow, Cow};
 
 use crate::transform::cldr::cldr_serde;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
+use lazy_static::lazy_static;
+use std::collections::HashMap;
 use zerovec::ZeroMap;
 
-macro_rules! expand_key(
-    ($key: literal, $datakey: expr) => {
-        {
-            if $datakey == NarrowRelativeTimeV1Marker::KEY {
-                concat!($key, "-narrow")
-            }
-            else if $datakey == ShortRelativeTimeV1Marker::KEY {
-                concat!($key, "-short")
-            }
-            else {
-                $key
-            }
-        }
-    }
-);
-
-macro_rules! get_entries(
-    ($hm: expr, $datakey: expr, $($key: literal),+ $(,)?) => {
+lazy_static! {
+    static ref DATAKEY_FILTERS: HashMap<DataKey, &'static str> = {
         [
-            $(
-                $hm.0.get(expand_key!($key, $datakey))
-                    .ok_or(DataError::custom(concat!("key not found in relative time data ", $key)))
-                    .map(From::from)?,
-            )+
+            (LongSecondRelativeTimeFormatDataV1Marker::KEY, "second"),
+            (
+                ShortSecondRelativeTimeFormatDataV1Marker::KEY,
+                "second-short",
+            ),
+            (
+                NarrowSecondRelativeTimeFormatDataV1Marker::KEY,
+                "second-narrow",
+            ),
+            (LongMinuteRelativeTimeFormatDataV1Marker::KEY, "minute"),
+            (
+                ShortMinuteRelativeTimeFormatDataV1Marker::KEY,
+                "minute-short",
+            ),
+            (
+                NarrowMinuteRelativeTimeFormatDataV1Marker::KEY,
+                "minute-narrow",
+            ),
+            (LongHourRelativeTimeFormatDataV1Marker::KEY, "hour"),
+            (ShortHourRelativeTimeFormatDataV1Marker::KEY, "hour-short"),
+            (NarrowHourRelativeTimeFormatDataV1Marker::KEY, "hour-narrow"),
+            (LongDayRelativeTimeFormatDataV1Marker::KEY, "day"),
+            (ShortDayRelativeTimeFormatDataV1Marker::KEY, "day-short"),
+            (NarrowDayRelativeTimeFormatDataV1Marker::KEY, "day-narrow"),
+            (LongWeekRelativeTimeFormatDataV1Marker::KEY, "week"),
+            (ShortWeekRelativeTimeFormatDataV1Marker::KEY, "week-short"),
+            (NarrowWeekRelativeTimeFormatDataV1Marker::KEY, "week-narrow"),
+            (LongMonthRelativeTimeFormatDataV1Marker::KEY, "month"),
+            (ShortMonthRelativeTimeFormatDataV1Marker::KEY, "month-short"),
+            (
+                NarrowMonthRelativeTimeFormatDataV1Marker::KEY,
+                "month-narrow",
+            ),
+            (LongQuarterRelativeTimeFormatDataV1Marker::KEY, "quarter"),
+            (
+                ShortQuarterRelativeTimeFormatDataV1Marker::KEY,
+                "quarter-short",
+            ),
+            (
+                NarrowQuarterRelativeTimeFormatDataV1Marker::KEY,
+                "quarter-narrow",
+            ),
+            (LongYearRelativeTimeFormatDataV1Marker::KEY, "year"),
+            (ShortYearRelativeTimeFormatDataV1Marker::KEY, "year-short"),
+            (NarrowYearRelativeTimeFormatDataV1Marker::KEY, "year-narrow"),
         ]
-    }
-);
+        .into_iter()
+        .collect()
+    };
+}
 
 macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
-        impl DataProvider<$marker> for crate::DatagenProvider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                let langid = req.locale.get_langid();
-                let resource: &cldr_serde::relativetime::Resource = self
-                    .source
-                    .cldr()?
-                    .relativetime()
-                    .read_and_parse(&langid, "dateFields.json")?;
-                let fields = &resource
-                    .main
-                    .0
-                    .get(&langid)
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?
-                    .dates
-                    .fields;
+            impl DataProvider<$marker> for crate::DatagenProvider {
+                fn load(
+                    &self,
+                    req: DataRequest,
+                ) -> Result<DataResponse<$marker>, DataError> {
+                    let langid = req.locale.get_langid();
+                    let resource: &cldr_serde::date_fields::Resource = self
+                        .source
+                        .cldr()?
+                        .date_fields()
+                        .read_and_parse(&langid, "dateFields.json")?;
+                    let fields = &resource
+                        .main
+                        .0
+                        .get(&langid)
+                        .ok_or(DataErrorKind::MissingLocale.into_error())?
+                        .dates
+                        .fields;
 
-                let data = get_entries!(
-                    fields,
-                    $marker::KEY,
-                    "second",
-                    "minute",
-                    "hour",
-                    "day",
-                    "week",
-                    "month",
-                    "quarter",
-                    "year"
-                );
+                    let field = DATAKEY_FILTERS
+                        .get(&$marker::KEY)
+                        .ok_or(DataErrorKind::MissingDataKey.into_error())?;
 
-                Ok(DataResponse {
-                    metadata: Default::default(),
-                    payload: Some(DataPayload::from_owned(RelativeTimePatternsV1::new(data))),
-                })
+                    let data = fields.0.get(*field).ok_or(DataError::custom(
+                        "Field not found in relative time format data.",
+                    ))?;
+
+                    Ok(DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(DataPayload::from_owned(data.try_into()?)),
+                    })
+                }
             }
-        }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .relativetime()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                    Ok(self
+                        .source
+                        .cldr()?
+                        .date_fields()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect())
+                }
             }
-        }
+
         )+
     };
 }
 
-impl From<&cldr_serde::relativetime::Field> for RelativeTimePattern<'_> {
-    fn from(field: &cldr_serde::relativetime::Field) -> Self {
+impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> {
+    type Error = DataError;
+    fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
         let mut relatives = ZeroMap::new();
         for relative in &field.relatives {
             relatives.insert(&relative.count, relative.pattern.as_ref());
         }
-        Self {
-            display_name: field.display_name.as_ref().map(|s| Cow::Owned(s.clone())),
+        Ok(Self {
+            display_name: Cow::Owned(field.display_name.clone()),
             relatives,
-        }
+            past: PluralRulesCategoryMapping::try_from(&field.past)?,
+            ..Default::default()
+        })
     }
 }
 
-make_data_provider!(StandardRelativeTimeV1Marker);
-make_data_provider!(NarrowRelativeTimeV1Marker);
-make_data_provider!(ShortRelativeTimeV1Marker);
+/// Try to convert an Option<String> to SingularSubPattern.
+/// If pattern is None, we return None
+/// If pattern is Some(pattern), we try to parse the pattern as SingularSubPattern failing
+/// if an error is encountered
+fn optional_convert<'a, B: Borrow<Option<String>>>(
+    pattern: B,
+) -> Result<Option<SingularSubPattern<'a>>, DataError> {
+    pattern
+        .borrow()
+        .as_ref()
+        .map(|s| SingularSubPattern::try_from_str(s))
+        .transpose()
+}
+
+impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCategoryMapping<'_> {
+    type Error = DataError;
+    fn try_from(
+        pattern: &cldr_serde::date_fields::PluralRulesPattern,
+    ) -> Result<Self, Self::Error> {
+        Ok(Self {
+            zero: optional_convert(&pattern.zero)?,
+            one: optional_convert(&pattern.one)?,
+            two: optional_convert(&pattern.two)?,
+            few: optional_convert(&pattern.few)?,
+            many: optional_convert(&pattern.many)?,
+            other: optional_convert(&pattern.other)?,
+        })
+    }
+}
+
+make_data_provider!(
+    LongSecondRelativeTimeFormatDataV1Marker,
+    ShortSecondRelativeTimeFormatDataV1Marker,
+    NarrowSecondRelativeTimeFormatDataV1Marker,
+    LongMinuteRelativeTimeFormatDataV1Marker,
+    ShortMinuteRelativeTimeFormatDataV1Marker,
+    NarrowMinuteRelativeTimeFormatDataV1Marker,
+    LongHourRelativeTimeFormatDataV1Marker,
+    ShortHourRelativeTimeFormatDataV1Marker,
+    NarrowHourRelativeTimeFormatDataV1Marker,
+    LongDayRelativeTimeFormatDataV1Marker,
+    ShortDayRelativeTimeFormatDataV1Marker,
+    NarrowDayRelativeTimeFormatDataV1Marker,
+    LongWeekRelativeTimeFormatDataV1Marker,
+    ShortWeekRelativeTimeFormatDataV1Marker,
+    NarrowWeekRelativeTimeFormatDataV1Marker,
+    LongMonthRelativeTimeFormatDataV1Marker,
+    ShortMonthRelativeTimeFormatDataV1Marker,
+    NarrowMonthRelativeTimeFormatDataV1Marker,
+    LongQuarterRelativeTimeFormatDataV1Marker,
+    ShortQuarterRelativeTimeFormatDataV1Marker,
+    NarrowQuarterRelativeTimeFormatDataV1Marker,
+    LongYearRelativeTimeFormatDataV1Marker,
+    ShortYearRelativeTimeFormatDataV1Marker,
+    NarrowYearRelativeTimeFormatDataV1Marker,
+);
 
 #[cfg(test)]
 mod tests {
@@ -119,7 +202,7 @@ mod tests {
     #[test]
     fn test_relativetime() {
         let provider = crate::DatagenProvider::for_test();
-        let data: DataPayload<NarrowRelativeTimeV1Marker> = provider
+        let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en").into(),
                 metadata: Default::default(),
@@ -127,6 +210,10 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        assert_eq!(data.get().0[0].relatives.get(&0).unwrap(), "now");
+        assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
+        assert_eq!(
+            data.get().past.one.as_ref().unwrap().pattern,
+            "{0} qtr. ago"
+        );
     }
 }

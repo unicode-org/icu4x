@@ -1,0 +1,25 @@
+{
+  "display_name": "ชม.",
+  "relatives": {
+    "0": "ชั่วโมงนี้"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} ชม. ที่แล้ว",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

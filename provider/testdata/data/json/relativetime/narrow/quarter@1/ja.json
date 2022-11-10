@@ -1,0 +1,27 @@
+{
+  "display_name": "四半期",
+  "relatives": {
+    "-1": "前四半期",
+    "0": "今四半期",
+    "1": "翌四半期"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0}四半期前",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

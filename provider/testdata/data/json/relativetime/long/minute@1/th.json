@@ -1,0 +1,25 @@
+{
+  "display_name": "นาที",
+  "relatives": {
+    "0": "นาทีนี้"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} นาทีที่ผ่านมา",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

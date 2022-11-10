@@ -1,0 +1,33 @@
+{
+  "display_name": "nedelja",
+  "relatives": {
+    "-1": "prošle nedelje",
+    "0": "ove nedelje",
+    "1": "sledeće nedelje"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre {0} nedelje",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre {0} nedelje",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre {0} nedelja",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

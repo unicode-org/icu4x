@@ -1,0 +1,28 @@
+{
+  "display_name": "𑄊𑄮𑄚𑄴𑄓",
+  "relatives": {
+    "0": "𑄃𑄳𑄆𑄬 𑄊𑄮𑄚𑄴𑄓𑄠𑄴"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "{0} 𑄊𑄮𑄚𑄴𑄓 𑄃𑄉𑄬",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

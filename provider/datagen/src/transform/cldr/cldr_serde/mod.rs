@@ -9,6 +9,7 @@
 
 pub mod aliases;
 pub mod ca;
+pub mod date_fields;
 pub mod displaynames;
 pub mod japanese;
 pub mod likely_subtags;
@@ -17,6 +18,5 @@ pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
-pub mod relativetime;
 pub mod time_zones;
 pub mod week_data;

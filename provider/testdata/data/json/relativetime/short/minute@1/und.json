@@ -1,0 +1,25 @@
+{
+  "display_name": "Minute",
+  "relatives": {
+    "0": "this minute"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "-{0} min",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "display_name": "год",
+  "relatives": {
+    "-1": "в прошлом году",
+    "0": "в этом году",
+    "1": "в следующем году"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "{0} год назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": "{0} года назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": "{0} лет назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": "{0} года назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

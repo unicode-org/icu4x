@@ -1,0 +1,35 @@
+{
+  "display_name": "dan",
+  "relatives": {
+    "-2": "prekjuče",
+    "-1": "juče",
+    "0": "danas",
+    "1": "sutra",
+    "2": "prekosutra"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre {0} dana",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre {0} dana",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre {0} dana",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

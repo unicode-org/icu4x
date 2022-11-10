@@ -90,7 +90,7 @@ impl CldrCache {
     }
 
     #[cfg(feature = "experimental")]
-    pub fn relativetime(&self) -> CldrDirLang<'_> {
+    pub fn date_fields(&self) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.cache,
             format!("cldr-dates-{}/main", self.locale_subset),

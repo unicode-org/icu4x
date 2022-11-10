@@ -1,0 +1,31 @@
+{
+  "display_name": "ч.",
+  "relatives": {
+    "0": "овог сата"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре {0} ч.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре {0} ч.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре {0} ч.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

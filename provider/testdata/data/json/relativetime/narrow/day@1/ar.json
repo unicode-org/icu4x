@@ -1,0 +1,44 @@
+{
+  "display_name": "يوم",
+  "relatives": {
+    "-2": "أول أمس",
+    "-1": "أمس",
+    "0": "اليوم",
+    "1": "غدًا",
+    "2": "بعد الغد"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل {0} يوم",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل يوم واحد",
+      "index": null
+    },
+    "two": {
+      "pattern": "قبل يومين",
+      "index": null
+    },
+    "few": {
+      "pattern": "قبل {0} أيام",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل {0} يومًا",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل {0} يوم",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}
