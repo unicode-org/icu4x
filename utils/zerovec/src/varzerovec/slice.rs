@@ -88,16 +88,11 @@ use core::ops::Range;
 /// let vzv = VarZeroVec::<str>::from(&["a", "b", "c", "d"]);
 /// # let mut pairs: Vec<(&str, &str)> = Vec::new();
 ///
-/// let mut it = vzv.iter();
-/// if let Some(mut x) = it.next() {
-///     while let Some(y) = it.next() {
-///         // Evaluate (x, y) here.
-/// #       pairs.push((x, y));
-///         // Prepare for the next iteration:
-///         x = y;
-///     }
+/// let mut it = vzv.iter().peekable();
+/// while let (Some(x), Some(y)) = (it.next(), it.peek()) {
+///     // Evaluate (x, y) here.
+/// #   pairs.push((x, y));
 /// }
-///
 /// # assert_eq!(pairs, &[("a", "b"), ("b", "c"), ("c", "d")]);
 /// ```
 //
