@@ -9,8 +9,8 @@ pub mod ffi {
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
-        common::ffi::ICU4XOrdering
+        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
     };
 
     #[diplomat::opaque]
