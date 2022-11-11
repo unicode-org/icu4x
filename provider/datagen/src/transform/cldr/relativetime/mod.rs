@@ -80,7 +80,7 @@ macro_rules! make_data_provider {
                     let resource: &cldr_serde::date_fields::Resource = self
                         .source
                         .cldr()?
-                        .date_fields()
+                        .dates("gregorian")
                         .read_and_parse(&langid, "dateFields.json")?;
                     let fields = &resource
                         .main
@@ -110,7 +110,7 @@ macro_rules! make_data_provider {
                     Ok(self
                         .source
                         .cldr()?
-                        .date_fields()
+                        .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
                         .collect())

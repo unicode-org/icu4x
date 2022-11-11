@@ -88,14 +88,6 @@ impl CldrCache {
             },
         )
     }
-
-    #[cfg(feature = "experimental")]
-    pub fn date_fields(&self) -> CldrDirLang<'_> {
-        CldrDirLang(
-            &self.cache,
-            format!("cldr-dates-{}/main", self.locale_subset),
-        )
-    }
 }
 
 pub(crate) struct CldrDirNoLang<'a>(&'a SerdeCache, String);
