@@ -125,6 +125,7 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
     type Error = DataError;
     fn try_from(field: &cldr_serde::date_fields::Field) -> Result<Self, Self::Error> {
         let mut relatives = ZeroMap::new();
+        // TODO(#2826) Make this more efficient as it is worst case linear per element insertion
         for relative in &field.relatives {
             relatives.insert(&relative.count, relative.pattern.as_ref());
         }
