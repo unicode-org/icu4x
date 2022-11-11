@@ -133,7 +133,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         for content_under_bench in files_under_bench {
             let (file_name, elements) = content_under_bench;
             // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
-            group.bench_function(BenchmarkId::new("0_rust_sort", file_name), |bencher| {
+            group.bench_function(BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"), |bencher| {
                 bencher.iter_batched(
                     || elements.clone(),
                     |mut lines| lines.sort_unstable(),
@@ -154,8 +154,8 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
                     BenchmarkId::new(
-                        "1_icu4x_sort",
-                        format!("{}_{:?}/{}", index, strength, file_name),
+                        format!("{}/1_icu4x_sort", file_name),
+                        format!("{}_{:?}", index, strength),
                     ),
                     |bencher| {
                         bencher.iter_batched(
