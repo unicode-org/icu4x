@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
+use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
 
 use icu::collator::*;
 use icu::locid::Locale;
@@ -11,7 +11,7 @@ use icu_provider::DataLocale;
 fn to_data_locale(locale_str: &str) -> DataLocale {
     locale_str
         .parse::<Locale>()
-        .expect(&format!("Failed to parse locale [{}]", locale_str))
+        .expect("Failed to parse locale")
         .into()
 }
 
@@ -145,7 +145,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             );
 
             // index to keep order of strength in the html report
-            for (index, strength) in benched_strength.into_iter().enumerate() {
+            for (index, strength) in benched_strength.iter().enumerate() {
                 let mut options = CollatorOptions::new();
                 options.strength = Some(*strength);
                 let collator = Collator::try_new_unstable(
@@ -153,7 +153,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                     &locale_under_bench,
                     options,
                 )
-                .unwrap();
+                    .unwrap();
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
                     BenchmarkId::new(
