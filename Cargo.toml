@@ -62,6 +62,8 @@ exclude = [
     "ffi/ecma402",
     # GNaw needs to be run from outside the workspace for features to work
     "ffi/gn",
+    # Special linker flags shouldn't overwrite the top-level target directory
+    "ffi/tinywasm",
 ]
 
 # LTO is needed for WASM and other size-optimized builds,
