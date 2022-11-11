@@ -22,6 +22,7 @@ BASEDIR=$(dirname "$(realpath "$0")")
 # Build the WASM library
 # TODO: This likely doesn't work if $BASEDIR has spaces
 RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+    -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
     --target wasm32-unknown-unknown \
     --release \
     --package icu_capi_tinywasm
