@@ -18,35 +18,35 @@ fn to_data_locale(locale_str: &str) -> DataLocale {
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
     let content_latin: (&str, Vec<&str>) = (
-        "Latin",
+        "TestNames_Latin",
         include_str!("data/TestNames_Latin.txt")
             .split('\n')
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_asian: (&str, Vec<&str>) = (
-        "Asian",
+        "TestNames_Asian",
         include_str!("data/TestNames_Asian.txt")
             .split('\n')
             .rev()
             .collect(),
     );
     let content_russian: (&str, Vec<&str>) = (
-        "Russian",
+        "TestNames_Russian",
         include_str!("data/TestNames_Russian.txt")
             .split('\n')
             .rev()
             .collect(),
     );
     let content_chinese: (&str, Vec<&str>) = (
-        "Chinese",
+        "TestNames_Chinese",
         include_str!("data/TestNames_Chinese.txt")
             .split('\n')
             .rev()
             .collect(),
     );
     let content_jp_h: (&str, Vec<&str>) = (
-        "Japanese_h",
+        "TestNames_Japanese_h",
         include_str!("data/TestNames_Japanese_h.txt")
             .split('\n')
             .rev()
@@ -60,14 +60,14 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             .collect::<Vec<&str>>(),
     );
     let content_korean: (&str, Vec<&str>) = (
-        "Korean",
+        "TestNames_Korean",
         include_str!("data/TestNames_Korean.txt")
             .split('\n')
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_thai: (&str, Vec<&str>) = (
-        "Thai",
+        "TestNames_Thai",
         include_str!("data/TestNames_Thai.txt")
             .split('\n')
             .rev()
