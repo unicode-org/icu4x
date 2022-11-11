@@ -50,20 +50,23 @@ use zerovec::ZeroMap;
 #[yoke(prove_covariance_manually)]
 pub struct RelativeTimePatternDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The display name of the pattern
+    /// The display name of the relative time format pattern.
+    /// Empty if display name is not present in CLDR data.
     pub display_name: Cow<'data, str>,
-    /// Mapping for relative time fields.
+    /// Mapping for relative times with unique names.
+    /// Example.
+    /// In English, "-1" corresponds to "yesterday", "1" corresponds to "tomorrow".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub relatives: ZeroMap<'data, i8, str>,
-    /// Plural rules mapping for past.
+    /// How to display times in the past.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub past: PluralRulesCategoryMapping<'data>,
-    /// Plural rules mapping for future.
+    /// How to display times in the future.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub future: PluralRulesCategoryMapping<'data>,
 }
 
-/// Plural rules category mapping.
+/// Display specification for relative times, split over potential plural patterns.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
