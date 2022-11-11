@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
 use icu::collator::*;
 use icu::locid::Locale;
@@ -99,8 +99,16 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             vec![&content_latin, &content_jp_h, &content_jp_k, &content_asian],
             &all_strength,
         ),
-        (to_data_locale("zh-u-co-pinyin"), vec![&content_latin, &content_chinese], &all_strength), // zh_CN
-        (to_data_locale("zh-u-co-stroke"), vec![&content_latin, &content_chinese], &all_strength), // zh_TW
+        (
+            to_data_locale("zh-u-co-pinyin"),
+            vec![&content_latin, &content_chinese],
+            &all_strength,
+        ), // zh_CN
+        (
+            to_data_locale("zh-u-co-stroke"),
+            vec![&content_latin, &content_chinese],
+            &all_strength,
+        ), // zh_TW
         (
             to_data_locale("ru_RU"),
             vec![&content_latin, &content_russian],
@@ -142,10 +150,13 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                     &locale_under_bench,
                     options,
                 )
-                    .unwrap();
+                .unwrap();
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
-                    BenchmarkId::new("1_icu4x_sort", format!("{}_{:?}/{}", index, strength, file_name)),
+                    BenchmarkId::new(
+                        "1_icu4x_sort",
+                        format!("{}_{:?}/{}", index, strength, file_name),
+                    ),
                     |bencher| {
                         bencher.iter_batched(
                             || elements.clone(),
