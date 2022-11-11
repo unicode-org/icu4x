@@ -118,6 +118,9 @@ fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
                 // TODO: we still have occurrences of "\\-" strings in string_list for some test data
 
                 ch.split_at(1).1
+            } else if ch.starts_with('{') {
+                debug_assert!(ch.ends_with('}'));
+                ch.split_at(1).1.split_at(ch.len() - 2).0
             } else {
                 ch
             }
@@ -139,7 +142,7 @@ mod tests {
     use icu_properties::sets::UnicodeSetData;
 
     #[test]
-    fn test_parse_exemplar_char_string() {
+    fn test_parse_exemplar_chars() {
         let af_numbers = "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]";
         let expected = vec![
             " ", "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -147,6 +150,23 @@ mod tests {
         let actual = parse_exemplar_char_string(af_numbers);
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_exemplar_char_sequences() {
+        let sr_main = "[a b c č ć d {dž} đ e f g h i j k l {lj} m n {nj} o p r s š t u v z ž]";
+        let expected = vec![
+            "a", "b", "c", "č", "ć", "d", "dž", "đ", "e", "f", "g", "h", "i", "j", "k", "l", "lj",
+            "m", "n", "nj", "o", "p", "r", "s", "š", "t", "u", "v", "z", "ž",
+        ];
+        let actual = parse_exemplar_char_string(sr_main);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_exemplar_char_ranges() {
+        todo!("Use example for locale `ja`, the `main` set of exmplar chars");
     }
 
     #[test]
