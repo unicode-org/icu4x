@@ -1469,6 +1469,7 @@ dependencies = [
  "icu_testdata",
  "serde",
  "smallvec",
+ "strum",
  "utf16_iter",
  "utf8_iter",
  "zerofrom",

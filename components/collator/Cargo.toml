@@ -52,6 +52,7 @@ atoi = "1.0.0"
 arraystring = "0.3.0"
 icu = { path = "../icu" }
 criterion = "0.3"
+strum = "0.20"
 
 [lib]
 path = "src/lib.rs"
