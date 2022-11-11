@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668049481641,
+  "lastUpdate": 1668194899352,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31373,6 +31373,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7217ef7a23687232e04af4da1798f4d744853e1a"
         },
         "date": 1668049416685,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "46aad80e015dd1df5eb0828c9842fb9276c93cbd",
+          "message": "Add tinywasm example (#2824)",
+          "timestamp": "2022-11-11T11:25:09-08:00",
+          "tree_id": "5c7263f93c2a2ddb576c176faaff3cd4799b252e",
+          "url": "https://github.com/unicode-org/icu4x/commit/46aad80e015dd1df5eb0828c9842fb9276c93cbd"
+        },
+        "date": 1668194833194,
         "tool": "ndjson",
         "benches": [
           {
