@@ -9,11 +9,11 @@ description = "Run FFI tests"
 category = "ICU4X Development"
 dependencies = [
     "cargo-make-min-version",
-    "test-tinywasm",
     "test-c",
     "test-c-tiny",
     "test-cpp",
     "test-js",
+    "test-tinywasm",
     "build-wearos-ffi",
     "test-nostd",
 ]
