@@ -133,13 +133,16 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         for content_under_bench in files_under_bench {
             let (file_name, elements) = content_under_bench;
             // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
-            group.bench_function(BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"), |bencher| {
-                bencher.iter_batched(
-                    || elements.clone(),
-                    |mut lines| lines.sort_unstable(),
-                    BatchSize::SmallInput,
-                )
-            });
+            group.bench_function(
+                BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
+                |bencher| {
+                    bencher.iter_batched(
+                        || elements.clone(),
+                        |mut lines| lines.sort_unstable(),
+                        BatchSize::SmallInput,
+                    )
+                },
+            );
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.into_iter().enumerate() {
