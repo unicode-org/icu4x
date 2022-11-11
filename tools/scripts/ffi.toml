@@ -13,6 +13,7 @@ dependencies = [
     "test-c-tiny",
     "test-cpp",
     "test-js",
+    "test-tinywasm",
     "build-wearos-ffi",
     "test-nostd",
 ]
@@ -254,6 +255,19 @@ toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
+
+[tasks.test-tinywasm]
+description = "Test the Tiny WASM example"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/tinywasm
+
+exec --fail-on-error ./build.sh
+exec --fail-on-error ls -l
+exec --fail-on-error node tiny.mjs
+'''
 
 [tasks.diplomat-get-rev]
 description = "Get current Diplomat revision"
