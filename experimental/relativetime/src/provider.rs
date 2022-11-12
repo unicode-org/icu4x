@@ -113,15 +113,20 @@ pub struct SingularSubPattern<'data> {
 impl<'data> SingularSubPattern<'data> {
     /// Construct a singular sub pattern from a pattern
     pub fn try_from_str(value: &str) -> Result<Self, DataError> {
-        let index = value.find("{0}").unwrap_or(255);
-        let pattern = if index == 255 {
-            value.to_string()
+        let (pattern, index) = if let Some(index) = value.find("{0}") {
+            if index >= 255 {
+                return Err(DataError::custom("Placeholder index too large to store."));
+            }
+            (
+                format!("{}{}", &value[..index], &value[index + 3..]),
+                index as u8,
+            )
         } else {
-            format!("{}{}", &value[..index], &value[index + 3..])
+            (value.to_string(), 255u8)
         };
         Ok(Self {
             pattern: Cow::Owned(pattern),
-            index: index as u8,
+            index,
         })
     }
 }

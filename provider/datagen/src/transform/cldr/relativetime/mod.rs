@@ -200,7 +200,7 @@ mod tests {
     use icu_locid::locale;
 
     #[test]
-    fn test_relativetime() {
+    fn test_basic() {
         let provider = crate::DatagenProvider::for_test();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
@@ -211,9 +211,7 @@ mod tests {
             .take_payload()
             .unwrap();
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
-        assert_eq!(
-            data.get().past.one.as_ref().unwrap().pattern,
-            "{0} qtr. ago"
-        );
+        assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
+        assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
     }
 }
