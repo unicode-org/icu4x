@@ -51,16 +51,16 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_decomposition";
     let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    let mut group = criterion.benchmark_group(format!("{}", group_name));
     for (file_name, content) in [content_latin, content_korean, content_jp_k, content_jp_h, content_viet] {
+        let mut group = criterion.benchmark_group(format!("{}/{}", group_name, file_name));
         for (chunk, &data) in chunkify(&content).iter().enumerate() {
             group.throughput(Throughput::Elements(data.chars().count() as u64));
             group.bench_with_input(
-                BenchmarkId::from_parameter(format!("{}/chunk_{}", file_name, chunk)),
+                BenchmarkId::from_parameter(format!("chunk_{}", chunk)),
                 data,
                 |bencher, characters| bencher.iter(|| function_under_bench(&decomposer, characters)),
             );
         }
+        group.finish();
     }
-    group.finish();
 }
