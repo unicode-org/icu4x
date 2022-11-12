@@ -114,8 +114,9 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
 
     without_brackets.split(' ').for_each(|ch| {
         if ch.is_empty() {
-            // a space (U+0020) belongs in the exemplar character set
-            dedup_chars.insert(Cow::Borrowed(" "));
+            // no-op: We assume that a space (U+0020) does not belong in the exemplar character set, and that
+            // any such occurrence is due to misleading formatting in the CLDR JSON files. See:
+            // https://unicode-org.atlassian.net/browse/CLDR-16128
         } else if ch.starts_with('\\') {
             // TODO: we still have occurrences of "\\-" strings in string_list for some test data
             dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1));
@@ -157,7 +158,7 @@ mod tests {
     fn test_parse_exemplar_chars() {
         let af_numbers = "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]";
         let expected: HashSet<Cow<str>> = [
-            " ", "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
         ]
         .iter()
         .copied()
