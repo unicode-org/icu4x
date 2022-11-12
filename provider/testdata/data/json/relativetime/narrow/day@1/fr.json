@@ -1,5 +1,4 @@
 {
-  "display_name": "j",
   "relatives": {
     "-2": "avant-hier",
     "-1": "hier",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} j",
+      "pattern": "- j",
       "index": 1
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} j",
+      "pattern": "- j",
       "index": 1
     }
   },

@@ -1,5 +1,4 @@
 {
-  "display_name": "дан",
   "relatives": {
     "-2": "прекјуче",
     "-1": "јуче",
@@ -10,17 +9,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} дана",
+      "pattern": "пре  дана",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} дана",
+      "pattern": "пре  дана",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} дана",
+      "pattern": "пре  дана",
       "index": 7
     }
   },

@@ -1,5 +1,4 @@
 {
-  "display_name": "m.",
   "relatives": {
     "-1": "le mois dernier",
     "0": "ce mois-ci",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} m.",
+      "pattern": "- m.",
       "index": 1
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} m.",
+      "pattern": "- m.",
       "index": 1
     }
   },

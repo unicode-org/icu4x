@@ -1,19 +1,18 @@
 {
-  "display_name": "min",
   "relatives": {
     "0": "cette minute-ci"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} min",
+      "pattern": "- min",
       "index": 1
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} min",
+      "pattern": "- min",
       "index": 1
     }
   },

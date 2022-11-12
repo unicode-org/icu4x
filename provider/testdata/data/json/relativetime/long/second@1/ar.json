@@ -1,31 +1,30 @@
 {
-  "display_name": "الثواني",
   "relatives": {
     "0": "الآن"
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} ثانية",
+      "pattern": "قبل  ثانية",
       "index": 7
     },
     "one": {
       "pattern": "قبل ثانية واحدة",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل ثانيتين",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "قبل {0} ثوانِ",
+      "pattern": "قبل  ثوانِ",
       "index": 7
     },
     "many": {
-      "pattern": "قبل {0} ثانية",
+      "pattern": "قبل  ثانية",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} ثانية",
+      "pattern": "قبل  ثانية",
       "index": 7
     }
   },

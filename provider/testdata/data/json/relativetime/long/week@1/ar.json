@@ -1,5 +1,4 @@
 {
-  "display_name": "الأسبوع",
   "relatives": {
     "-1": "الأسبوع الماضي",
     "0": "هذا الأسبوع",
@@ -7,27 +6,27 @@
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} أسبوع",
+      "pattern": "قبل  أسبوع",
       "index": 7
     },
     "one": {
       "pattern": "قبل أسبوع واحد",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل أسبوعين",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "قبل {0} أسابيع",
+      "pattern": "قبل  أسابيع",
       "index": 7
     },
     "many": {
-      "pattern": "قبل {0} أسبوعًا",
+      "pattern": "قبل  أسبوعًا",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} أسبوع",
+      "pattern": "قبل  أسبوع",
       "index": 7
     }
   },

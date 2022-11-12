@@ -1,19 +1,18 @@
 {
-  "display_name": "min.",
   "relatives": {
     "0": "sa minutong ito"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} min. ang nakalipas",
+      "pattern": " min. ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) min. ang nakalipas",
+      "pattern": " (na) min. ang nakalipas",
       "index": 0
     }
   },

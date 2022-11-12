@@ -67,13 +67,11 @@ impl<'de> Visitor<'de> for FieldVisitor {
             relatives.reserve(size_hint);
         }
         while let Some(key) = map.next_key::<String>()? {
-            // Keys must be either "displayName", "relative-type-{type}", "relativeTime-type-{type}"
+            // Keys must be either "displayName",  "relativePeriod", "relativeTime-type-past", "relativeTime-Type-future", "relative-type-{type}"
             if key == "displayName" {
                 display_name = map.next_value::<String>()?;
-                continue;
             } else if key == "relativePeriod" {
                 relative_period = Some(map.next_value::<String>()?);
-                continue;
             } else if key == "relativeTime-type-past" {
                 if past.is_some() {
                     return Err(A::Error::duplicate_field(
@@ -82,7 +80,6 @@ impl<'de> Visitor<'de> for FieldVisitor {
                 }
                 let pattern: PluralRulesPattern = map.next_value()?;
                 past = Some(pattern);
-                continue;
             } else if key == "relativeTime-type-future" {
                 if future.is_some() {
                     return Err(A::Error::duplicate_field(
@@ -91,13 +88,12 @@ impl<'de> Visitor<'de> for FieldVisitor {
                 }
                 let pattern: PluralRulesPattern = map.next_value()?;
                 future = Some(pattern);
-                continue;
-            }
-            if let Some(count) = key.strip_prefix("relative-type-") {
+            } else if let Some(count) = key.strip_prefix("relative-type-") {
+                let count = count
+                    .parse::<i8>()
+                    .map_err(|_| A::Error::unknown_field(&key, &["not able to parse as u32"]))?;
                 relatives.push(Relative {
-                    count: count.parse::<i8>().map_err(|_| {
-                        A::Error::unknown_field(&key, &["not able to parse as u32"])
-                    })?,
+                    count,
                     pattern: map.next_value::<String>()?,
                 });
             } else {

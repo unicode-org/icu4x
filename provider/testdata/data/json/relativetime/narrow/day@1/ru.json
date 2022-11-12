@@ -1,5 +1,4 @@
 {
-  "display_name": "дн.",
   "relatives": {
     "-2": "позавчера",
     "-1": "вчера",
@@ -10,20 +9,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} дн.",
+      "pattern": "- дн.",
       "index": 1
     },
     "two": null,
     "few": {
-      "pattern": "-{0} дн.",
+      "pattern": "- дн.",
       "index": 1
     },
     "many": {
-      "pattern": "-{0} дн.",
+      "pattern": "- дн.",
       "index": 1
     },
     "other": {
-      "pattern": "-{0} дн.",
+      "pattern": "- дн.",
       "index": 1
     }
   },

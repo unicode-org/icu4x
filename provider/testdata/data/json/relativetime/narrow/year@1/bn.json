@@ -1,5 +1,4 @@
 {
-  "display_name": "বছর",
   "relatives": {
     "-1": "গত বছর",
     "0": "এই বছর",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} বছর পূর্বে",
+      "pattern": " বছর পূর্বে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} বছর পূর্বে",
+      "pattern": " বছর পূর্বে",
       "index": 0
     }
   },

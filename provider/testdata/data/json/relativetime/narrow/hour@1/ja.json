@@ -1,5 +1,4 @@
 {
-  "display_name": "時",
   "relatives": {
     "0": "1 時間以内"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0}時間前",
+      "pattern": "時間前",
       "index": 0
     }
   },

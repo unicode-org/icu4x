@@ -1,19 +1,18 @@
 {
-  "display_name": "sec",
   "relatives": {
     "0": "now"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} sec ago",
+      "pattern": " sec ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} sec ago",
+      "pattern": " sec ago",
       "index": 0
     }
   },

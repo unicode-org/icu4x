@@ -1,25 +1,24 @@
 {
-  "display_name": "час",
   "relatives": {
     "0": "в этот час"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} час назад",
+      "pattern": " час назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} часа назад",
+      "pattern": " часа назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} часов назад",
+      "pattern": " часов назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} часа назад",
+      "pattern": " часа назад",
       "index": 0
     }
   },

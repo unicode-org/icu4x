@@ -1,5 +1,4 @@
 {
-  "display_name": "ربع السنة",
   "relatives": {
     "-1": "الربع الأخير",
     "0": "هذا الربع",
@@ -7,27 +6,27 @@
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} ربع سنة",
+      "pattern": "قبل  ربع سنة",
       "index": 7
     },
     "one": {
       "pattern": "قبل ربع سنة واحد",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل ربعي سنة",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "قبل {0} أرباع سنة",
+      "pattern": "قبل  أرباع سنة",
       "index": 7
     },
     "many": {
-      "pattern": "قبل {0} ربع سنة",
+      "pattern": "قبل  ربع سنة",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} ربع سنة",
+      "pattern": "قبل  ربع سنة",
       "index": 7
     }
   },

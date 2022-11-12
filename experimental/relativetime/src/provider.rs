@@ -13,7 +13,8 @@ use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom, DataError};
 use zerovec::ZeroMap;
 
-/// Relative time pattern V1 data struct.
+/// Relative time format V1 data struct.
+
 #[icu_provider::data_struct(
     LongSecondRelativeTimeFormatDataV1Marker = "relativetime/long/second@1",
     ShortSecondRelativeTimeFormatDataV1Marker = "relativetime/short/second@1",
@@ -49,10 +50,6 @@ use zerovec::ZeroMap;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct RelativeTimePatternDataV1<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The display name of the relative time format pattern.
-    /// Empty if display name is not present in CLDR data.
-    pub display_name: Cow<'data, str>,
     /// Mapping for relative times with unique names.
     /// Example.
     /// In English, "-1" corresponds to "yesterday", "1" corresponds to "tomorrow".
@@ -96,7 +93,7 @@ pub struct PluralRulesCategoryMapping<'data> {
     pub other: Option<SingularSubPattern<'data>>,
 }
 
-/// Singular substitution pattern string.
+/// Singular substitution for pattern that optionally uses "{0}" as a placeholder.
 #[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -106,19 +103,25 @@ pub struct PluralRulesCategoryMapping<'data> {
 )]
 pub struct SingularSubPattern<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    /// The underlying pattern
+    /// The underlying pattern with the placeholder "{0}" removed.
     pub pattern: Cow<'data, str>,
-    /// Optional index which is absent if the pattern does not have substitution
-    pub index: Option<u8>,
+    /// Denotes the substitution position in the pattern.
+    /// Equals 255 if the pattern does not have a placeholder.
+    pub index: u8,
 }
 
 impl<'data> SingularSubPattern<'data> {
     /// Construct a singular sub pattern from a pattern
     pub fn try_from_str(value: &str) -> Result<Self, DataError> {
-        let index = value.find("{0}").map(|index| index as u8);
+        let index = value.find("{0}").unwrap_or(255);
+        let pattern = if index == 255 {
+            value.to_string()
+        } else {
+            format!("{}{}", &value[..index], &value[index + 3..])
+        };
         Ok(Self {
-            pattern: Cow::Owned(value.to_string()),
-            index,
+            pattern: Cow::Owned(pattern),
+            index: index as u8,
         })
     }
 }

@@ -1,5 +1,4 @@
 {
-  "display_name": "週",
   "relatives": {
     "-1": "先週",
     "0": "今週",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} 週間前",
+      "pattern": " 週間前",
       "index": 0
     }
   },

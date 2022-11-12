@@ -1,5 +1,4 @@
 {
-  "display_name": "Year",
   "relatives": {
     "-1": "last year",
     "0": "this year",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} y",
+      "pattern": "- y",
       "index": 1
     }
   },

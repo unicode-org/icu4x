@@ -1,5 +1,4 @@
 {
-  "display_name": "hafta",
   "relatives": {
     "-1": "geçen hafta",
     "0": "bu hafta",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} hafta önce",
+      "pattern": " hafta önce",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} hafta önce",
+      "pattern": " hafta önce",
       "index": 0
     }
   },

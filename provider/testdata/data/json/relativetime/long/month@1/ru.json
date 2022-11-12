@@ -1,5 +1,4 @@
 {
-  "display_name": "месяц",
   "relatives": {
     "-1": "в прошлом месяце",
     "0": "в этом месяце",
@@ -8,20 +7,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} месяц назад",
+      "pattern": " месяц назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} месяца назад",
+      "pattern": " месяца назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} месяцев назад",
+      "pattern": " месяцев назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} месяца назад",
+      "pattern": " месяца назад",
       "index": 0
     }
   },

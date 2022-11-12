@@ -1,5 +1,4 @@
 {
-  "display_name": "四半期",
   "relatives": {
     "-1": "前四半期",
     "0": "今四半期",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0}四半期前",
+      "pattern": "四半期前",
       "index": 0
     }
   },

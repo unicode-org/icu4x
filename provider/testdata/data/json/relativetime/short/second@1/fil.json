@@ -1,19 +1,18 @@
 {
-  "display_name": "seg.",
   "relatives": {
     "0": "ngayon"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} seg. ang nakalipas",
+      "pattern": " seg. ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) seg. nakalipas",
+      "pattern": " (na) seg. nakalipas",
       "index": 0
     }
   },

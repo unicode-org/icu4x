@@ -1,19 +1,18 @@
 {
-  "display_name": "oras",
   "relatives": {
     "0": "ngayong oras"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} oras ang nakalipas",
+      "pattern": " oras ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) oras nakalipas",
+      "pattern": " (na) oras nakalipas",
       "index": 0
     }
   },

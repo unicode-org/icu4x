@@ -1,19 +1,18 @@
 {
-  "display_name": "dakika",
   "relatives": {
     "0": "bu dakika"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} dakika önce",
+      "pattern": " dakika önce",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} dakika önce",
+      "pattern": " dakika önce",
       "index": 0
     }
   },

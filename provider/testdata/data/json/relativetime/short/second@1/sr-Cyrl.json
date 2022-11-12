@@ -1,22 +1,21 @@
 {
-  "display_name": "сек.",
   "relatives": {
     "0": "сада"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} сек.",
+      "pattern": "пре  сек.",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} сек.",
+      "pattern": "пре  сек.",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} сек.",
+      "pattern": "пре  сек.",
       "index": 7
     }
   },

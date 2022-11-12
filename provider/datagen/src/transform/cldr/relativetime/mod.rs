@@ -4,7 +4,7 @@
 
 #![cfg(feature = "experimental")]
 
-use std::borrow::{Borrow, Cow};
+use std::borrow::Borrow;
 
 use crate::transform::cldr::cldr_serde;
 use icu_provider::datagen::IterableDataProvider;
@@ -130,7 +130,6 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
             relatives.insert(&relative.count, relative.pattern.as_ref());
         }
         Ok(Self {
-            display_name: Cow::Owned(field.display_name.clone()),
             relatives,
             past: PluralRulesCategoryMapping::try_from(&field.past)?,
             ..Default::default()

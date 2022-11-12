@@ -1,19 +1,18 @@
 {
-  "display_name": "saat",
   "relatives": {
     "0": "bu saat"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} saat önce",
+      "pattern": " saat önce",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} saat önce",
+      "pattern": " saat önce",
       "index": 0
     }
   },

@@ -1,22 +1,21 @@
 {
-  "display_name": "с",
   "relatives": {
     "0": "сада"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} с.",
+      "pattern": "пре  с.",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} с.",
+      "pattern": "пре  с.",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} с.",
+      "pattern": "пре  с.",
       "index": 7
     }
   },

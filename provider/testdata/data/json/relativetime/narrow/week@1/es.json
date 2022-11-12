@@ -1,5 +1,4 @@
 {
-  "display_name": "sem.",
   "relatives": {
     "-1": "sem. ant.",
     "0": "esta sem.",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} sem.",
+      "pattern": "hace  sem.",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} sem.",
+      "pattern": "hace  sem.",
       "index": 5
     }
   },

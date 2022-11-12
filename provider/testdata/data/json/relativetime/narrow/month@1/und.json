@@ -1,5 +1,4 @@
 {
-  "display_name": "Month",
   "relatives": {
     "-1": "last month",
     "0": "this month",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} m",
+      "pattern": "- m",
       "index": 1
     }
   },

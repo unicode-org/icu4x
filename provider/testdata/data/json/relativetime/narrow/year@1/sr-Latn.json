@@ -1,5 +1,4 @@
 {
-  "display_name": "g.",
   "relatives": {
     "-1": "prošle g.",
     "0": "ove g.",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} g.",
+      "pattern": "pre  g.",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} g.",
+      "pattern": "pre  g.",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} g.",
+      "pattern": "pre  g.",
       "index": 4
     }
   },

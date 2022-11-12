@@ -1,5 +1,4 @@
 {
-  "display_name": "jour",
   "relatives": {
     "-2": "avant-hier",
     "-1": "hier",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "il y a {0} jour",
+      "pattern": "il y a  jour",
       "index": 7
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "il y a {0} jours",
+      "pattern": "il y a  jours",
       "index": 7
     }
   },

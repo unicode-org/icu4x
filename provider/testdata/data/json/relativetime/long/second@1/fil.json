@@ -1,19 +1,18 @@
 {
-  "display_name": "segundo",
   "relatives": {
     "0": "ngayon"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} segundo ang nakalipas",
+      "pattern": " segundo ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) segundo ang nakalipas",
+      "pattern": " (na) segundo ang nakalipas",
       "index": 0
     }
   },

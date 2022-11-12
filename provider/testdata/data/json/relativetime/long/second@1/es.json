@@ -1,19 +1,18 @@
 {
-  "display_name": "segundo",
   "relatives": {
     "0": "ahora"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} segundo",
+      "pattern": "hace  segundo",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} segundos",
+      "pattern": "hace  segundos",
       "index": 5
     }
   },

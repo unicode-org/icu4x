@@ -1,5 +1,4 @@
 {
-  "display_name": "an",
   "relatives": {
     "-1": "l’année dernière",
     "0": "cette année",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "il y a {0} a",
+      "pattern": "il y a  a",
       "index": 7
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "il y a {0} a",
+      "pattern": "il y a  a",
       "index": 7
     }
   },

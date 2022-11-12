@@ -1,19 +1,18 @@
 {
-  "display_name": "hour",
   "relatives": {
     "0": "this hour"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} hour ago",
+      "pattern": " hour ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} hours ago",
+      "pattern": " hours ago",
       "index": 0
     }
   },

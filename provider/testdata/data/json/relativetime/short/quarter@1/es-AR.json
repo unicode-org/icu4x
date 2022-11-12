@@ -1,5 +1,4 @@
 {
-  "display_name": "trim.",
   "relatives": {
     "-1": "el trimestre pasado",
     "0": "este trimestre",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} trim.",
+      "pattern": "hace  trim.",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} trim.",
+      "pattern": "hace  trim.",
       "index": 5
     }
   },

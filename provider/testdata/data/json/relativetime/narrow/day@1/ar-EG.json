@@ -1,5 +1,4 @@
 {
-  "display_name": "يوم",
   "relatives": {
     "-2": "أول أمس",
     "-1": "أمس",
@@ -9,27 +8,27 @@
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} يوم",
+      "pattern": "قبل  يوم",
       "index": 7
     },
     "one": {
       "pattern": "قبل يوم واحد",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل يومين",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "قبل {0} أيام",
+      "pattern": "قبل  أيام",
       "index": 7
     },
     "many": {
-      "pattern": "قبل {0} يومًا",
+      "pattern": "قبل  يومًا",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} يوم",
+      "pattern": "قبل  يوم",
       "index": 7
     }
   },

@@ -1,5 +1,4 @@
 {
-  "display_name": "мес.",
   "relatives": {
     "-1": "в пр. мес.",
     "0": "в эт. мес.",
@@ -8,20 +7,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} мес.",
+      "pattern": "- мес.",
       "index": 1
     },
     "two": null,
     "few": {
-      "pattern": "-{0} мес.",
+      "pattern": "- мес.",
       "index": 1
     },
     "many": {
-      "pattern": "-{0} мес.",
+      "pattern": "- мес.",
       "index": 1
     },
     "other": {
-      "pattern": "-{0} мес.",
+      "pattern": "- мес.",
       "index": 1
     }
   },

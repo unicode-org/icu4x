@@ -1,22 +1,21 @@
 {
-  "display_name": "sekund",
   "relatives": {
     "0": "sada"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} sekunde",
+      "pattern": "pre  sekunde",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} sekunde",
+      "pattern": "pre  sekunde",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} sekundi",
+      "pattern": "pre  sekundi",
       "index": 4
     }
   },

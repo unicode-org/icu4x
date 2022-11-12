@@ -1,5 +1,4 @@
 {
-  "display_name": "kv.",
   "relatives": {
     "-1": "prošlog kvartala",
     "0": "ovog kvartala",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} kv.",
+      "pattern": "pre  kv.",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} kv.",
+      "pattern": "pre  kv.",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} kv.",
+      "pattern": "pre  kv.",
       "index": 4
     }
   },

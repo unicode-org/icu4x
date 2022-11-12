@@ -1,5 +1,4 @@
 {
-  "display_name": "day",
   "relatives": {
     "-1": "yesterday",
     "0": "today",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} day ago",
+      "pattern": " day ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} days ago",
+      "pattern": " days ago",
       "index": 0
     }
   },

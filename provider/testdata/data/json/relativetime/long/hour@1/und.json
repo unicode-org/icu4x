@@ -1,5 +1,4 @@
 {
-  "display_name": "Hour",
   "relatives": {
     "0": "this hour"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} h",
+      "pattern": "- h",
       "index": 1
     }
   },

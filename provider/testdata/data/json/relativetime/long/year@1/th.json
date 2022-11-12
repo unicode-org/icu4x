@@ -1,5 +1,4 @@
 {
-  "display_name": "ปี",
   "relatives": {
     "-1": "ปีที่แล้ว",
     "0": "ปีนี้",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} ปีที่แล้ว",
+      "pattern": " ปีที่แล้ว",
       "index": 0
     }
   },

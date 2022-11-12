@@ -1,5 +1,4 @@
 {
-  "display_name": "Minute",
   "relatives": {
     "0": "this minute"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} min",
+      "pattern": "- min",
       "index": 1
     }
   },

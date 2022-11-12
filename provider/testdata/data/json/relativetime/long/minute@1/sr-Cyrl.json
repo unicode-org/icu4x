@@ -1,22 +1,21 @@
 {
-  "display_name": "минут",
   "relatives": {
     "0": "овог минута"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} минута",
+      "pattern": "пре  минута",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} минута",
+      "pattern": "пре  минута",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} минута",
+      "pattern": "пре  минута",
       "index": 7
     }
   },

@@ -1,5 +1,4 @@
 {
-  "display_name": "г.",
   "relatives": {
     "-1": "в прошлом г.",
     "0": "в этом г.",
@@ -8,20 +7,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} г. назад",
+      "pattern": " г. назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} г. назад",
+      "pattern": " г. назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} л. назад",
+      "pattern": " л. назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} г. назад",
+      "pattern": " г. назад",
       "index": 0
     }
   },

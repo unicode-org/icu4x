@@ -1,19 +1,18 @@
 {
-  "display_name": "second",
   "relatives": {
     "0": "now"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} second ago",
+      "pattern": " second ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} seconds ago",
+      "pattern": " seconds ago",
       "index": 0
     }
   },

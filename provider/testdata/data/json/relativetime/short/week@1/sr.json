@@ -1,5 +1,4 @@
 {
-  "display_name": "нед.",
   "relatives": {
     "-1": "прошле нед.",
     "0": "ове нед.",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} нед.",
+      "pattern": "пре  нед.",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} нед.",
+      "pattern": "пре  нед.",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} нед.",
+      "pattern": "пре  нед.",
       "index": 7
     }
   },

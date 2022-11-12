@@ -1,25 +1,24 @@
 {
-  "display_name": "минута",
   "relatives": {
     "0": "в эту минуту"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} минуту назад",
+      "pattern": " минуту назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} минуты назад",
+      "pattern": " минуты назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} минут назад",
+      "pattern": " минут назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} минуты назад",
+      "pattern": " минуты назад",
       "index": 0
     }
   },

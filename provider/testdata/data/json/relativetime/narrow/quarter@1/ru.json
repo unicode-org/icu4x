@@ -1,5 +1,4 @@
 {
-  "display_name": "кв.",
   "relatives": {
     "-1": "посл. кв.",
     "0": "тек. кв.",
@@ -8,20 +7,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} кв.",
+      "pattern": "- кв.",
       "index": 1
     },
     "two": null,
     "few": {
-      "pattern": "-{0} кв.",
+      "pattern": "- кв.",
       "index": 1
     },
     "many": {
-      "pattern": "-{0} кв.",
+      "pattern": "- кв.",
       "index": 1
     },
     "other": {
-      "pattern": "-{0} кв.",
+      "pattern": "- кв.",
       "index": 1
     }
   },

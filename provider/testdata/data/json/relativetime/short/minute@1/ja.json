@@ -1,5 +1,4 @@
 {
-  "display_name": "分",
   "relatives": {
     "0": "1 分以内"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} 分前",
+      "pattern": " 分前",
       "index": 0
     }
   },

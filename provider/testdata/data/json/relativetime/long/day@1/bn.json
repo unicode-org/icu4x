@@ -1,5 +1,4 @@
 {
-  "display_name": "দিন",
   "relatives": {
     "-2": "গত পরশু",
     "-1": "গতকাল",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} দিন আগে",
+      "pattern": " দিন আগে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} দিন আগে",
+      "pattern": " দিন আগে",
       "index": 0
     }
   },

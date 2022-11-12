@@ -1,5 +1,4 @@
 {
-  "display_name": "god.",
   "relatives": {
     "-1": "prošle god.",
     "0": "ove god.",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} god.",
+      "pattern": "pre  god.",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} god.",
+      "pattern": "pre  god.",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} god.",
+      "pattern": "pre  god.",
       "index": 4
     }
   },

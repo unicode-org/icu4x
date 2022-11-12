@@ -1,5 +1,4 @@
 {
-  "display_name": "นาที",
   "relatives": {
     "0": "นาทีนี้"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} นาทีที่แล้ว",
+      "pattern": " นาทีที่แล้ว",
       "index": 0
     }
   },

@@ -1,19 +1,18 @@
 {
-  "display_name": "মিনিট",
   "relatives": {
     "0": "এই মিনিট"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} মিনিট আগে",
+      "pattern": " মিনিট আগে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} মিনিট আগে",
+      "pattern": " মিনিট আগে",
       "index": 0
     }
   },

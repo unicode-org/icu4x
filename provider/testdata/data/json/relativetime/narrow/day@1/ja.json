@@ -1,5 +1,4 @@
 {
-  "display_name": "日",
   "relatives": {
     "-2": "一昨日",
     "-1": "昨日",
@@ -14,7 +13,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0}日前",
+      "pattern": "日前",
       "index": 0
     }
   },

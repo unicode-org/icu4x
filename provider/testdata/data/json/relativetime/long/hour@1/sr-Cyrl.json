@@ -1,22 +1,21 @@
 {
-  "display_name": "сат",
   "relatives": {
     "0": "овог сата"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} сата",
+      "pattern": "пре  сата",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} сата",
+      "pattern": "пре  сата",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} сати",
+      "pattern": "пре  сати",
       "index": 7
     }
   },

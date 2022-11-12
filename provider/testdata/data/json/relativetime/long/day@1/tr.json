@@ -1,5 +1,4 @@
 {
-  "display_name": "gün",
   "relatives": {
     "-2": "evvelsi gün",
     "-1": "dün",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} gün önce",
+      "pattern": " gün önce",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} gün önce",
+      "pattern": " gün önce",
       "index": 0
     }
   },

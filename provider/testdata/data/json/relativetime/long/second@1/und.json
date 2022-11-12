@@ -1,5 +1,4 @@
 {
-  "display_name": "Second",
   "relatives": {
     "0": "now"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} s",
+      "pattern": "- s",
       "index": 1
     }
   },

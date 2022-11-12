@@ -1,25 +1,24 @@
 {
-  "display_name": "ч",
   "relatives": {
     "0": "в этот час"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} ч",
+      "pattern": "- ч",
       "index": 1
     },
     "two": null,
     "few": {
-      "pattern": "-{0} ч",
+      "pattern": "- ч",
       "index": 1
     },
     "many": {
-      "pattern": "-{0} ч",
+      "pattern": "- ч",
       "index": 1
     },
     "other": {
-      "pattern": "-{0} ч",
+      "pattern": "- ч",
       "index": 1
     }
   },

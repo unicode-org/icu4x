@@ -1,5 +1,4 @@
 {
-  "display_name": "недеља",
   "relatives": {
     "-1": "прошле недеље",
     "0": "ове недеље",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "пре {0} недеље",
+      "pattern": "пре  недеље",
       "index": 7
     },
     "two": null,
     "few": {
-      "pattern": "пре {0} недеље",
+      "pattern": "пре  недеље",
       "index": 7
     },
     "many": null,
     "other": {
-      "pattern": "пре {0} недеља",
+      "pattern": "пре  недеља",
       "index": 7
     }
   },

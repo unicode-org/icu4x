@@ -1,19 +1,18 @@
 {
-  "display_name": "hora",
   "relatives": {
     "0": "esta hora"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} hora",
+      "pattern": "hace  hora",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} horas",
+      "pattern": "hace  horas",
       "index": 5
     }
   },

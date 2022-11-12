@@ -24,7 +24,6 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("und", UND),
     ]);
 static AR_AR_EG: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("الشهر"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -44,28 +43,28 @@ static AR_AR_EG: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
     },
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("قبل {0} شهر"),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("قبل  شهر"),
+            index: 7u8,
         }),
         one: Some(::icu_relativetime::provider::SingularSubPattern {
             pattern: alloc::borrow::Cow::Borrowed("قبل شهر واحد"),
-            index: None,
+            index: 255u8,
         }),
         two: Some(::icu_relativetime::provider::SingularSubPattern {
             pattern: alloc::borrow::Cow::Borrowed("قبل شهرين"),
-            index: None,
+            index: 255u8,
         }),
         few: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("خلال {0} أشهر"),
-            index: Some(9u8),
+            pattern: alloc::borrow::Cow::Borrowed("خلال  أشهر"),
+            index: 9u8,
         }),
         many: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("قبل {0} شهر\u{64b}ا"),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("قبل  شهر\u{64b}ا"),
+            index: 7u8,
         }),
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("قبل {0} شهر"),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("قبل  شهر"),
+            index: 7u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -78,7 +77,6 @@ static AR_AR_EG: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
     },
 };
 static BN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("ম\u{9be}স"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -98,15 +96,15 @@ static BN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} ম\u{9be}স আগে"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" ম\u{9be}স আগে"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} ম\u{9be}স আগে"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" ম\u{9be}স আগে"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -119,7 +117,6 @@ static BN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("𑄟𑄏\u{11134}"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -143,15 +140,15 @@ static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} 𑄇𑄏\u{11127} 𑄃𑄉𑄬"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄇𑄏\u{11127} 𑄃𑄉𑄬"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} 𑄟𑄏\u{11127} 𑄃𑄉𑄬"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄟𑄏\u{11127} 𑄃𑄉𑄬"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -164,7 +161,6 @@ static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     },
 };
 static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("mo."),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -181,15 +177,15 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} mo. ago"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" mo. ago"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} mo. ago"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" mo. ago"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -202,7 +198,6 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("mo"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -219,15 +214,15 @@ static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePa
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} mo ago"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" mo ago"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} mo ago"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" mo ago"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -240,7 +235,6 @@ static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePa
     },
 };
 static ES_ES_AR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("m"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -258,15 +252,15 @@ static ES_ES_AR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("hace {0} m"),
-            index: Some(5u8),
+            pattern: alloc::borrow::Cow::Borrowed("hace  m"),
+            index: 5u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("hace {0} m"),
-            index: Some(5u8),
+            pattern: alloc::borrow::Cow::Borrowed("hace  m"),
+            index: 5u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -279,7 +273,6 @@ static ES_ES_AR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
     },
 };
 static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("buwan"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -298,15 +291,15 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} buwan ang nakalipas"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" buwan ang nakalipas"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} (na) buwan ang nakalipas"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" (na) buwan ang nakalipas"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -319,7 +312,6 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     },
 };
 static FR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("m."),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -338,15 +330,15 @@ static FR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("il y a {0} m."),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("il y a  m."),
+            index: 7u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("il y a {0} m."),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("il y a  m."),
+            index: 7u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -359,7 +351,6 @@ static FR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static JA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("月"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -380,8 +371,8 @@ static JA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} か月前"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" か月前"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -394,7 +385,6 @@ static JA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static RU: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("мес."),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -416,21 +406,21 @@ static RU: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} мес. назад"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" мес. назад"),
+            index: 0u8,
         }),
         two: None,
         few: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} мес. назад"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" мес. назад"),
+            index: 0u8,
         }),
         many: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} мес. назад"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" мес. назад"),
+            index: 0u8,
         }),
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} мес. назад"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" мес. назад"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -443,7 +433,6 @@ static RU: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static SR_LATN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("mes."),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -461,18 +450,18 @@ static SR_LATN: &DataStruct = &::icu_relativetime::provider::RelativeTimePattern
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("pre {0} mes."),
-            index: Some(4u8),
+            pattern: alloc::borrow::Cow::Borrowed("pre  mes."),
+            index: 4u8,
         }),
         two: None,
         few: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("pre {0} mes."),
-            index: Some(4u8),
+            pattern: alloc::borrow::Cow::Borrowed("pre  mes."),
+            index: 4u8,
         }),
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("pre {0} mes."),
-            index: Some(4u8),
+            pattern: alloc::borrow::Cow::Borrowed("pre  mes."),
+            index: 4u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -485,7 +474,6 @@ static SR_LATN: &DataStruct = &::icu_relativetime::provider::RelativeTimePattern
     },
 };
 static SR_SR_CYRL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("мес."),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -506,18 +494,18 @@ static SR_SR_CYRL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatt
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("пре {0} мес."),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("пре  мес."),
+            index: 7u8,
         }),
         two: None,
         few: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("пре {0} мес."),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("пре  мес."),
+            index: 7u8,
         }),
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("пре {0} мес."),
-            index: Some(7u8),
+            pattern: alloc::borrow::Cow::Borrowed("пре  мес."),
+            index: 7u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -530,7 +518,6 @@ static SR_SR_CYRL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatt
     },
 };
 static TH: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("เด\u{e37}อน"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -557,8 +544,8 @@ static TH: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} เด\u{e37}อนท\u{e35}\u{e48}แล\u{e49}ว"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" เด\u{e37}อนท\u{e35}\u{e48}แล\u{e49}ว"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -571,7 +558,6 @@ static TH: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static TR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("ay"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -588,15 +574,15 @@ static TR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} ay önce"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" ay önce"),
+            index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("{0} ay önce"),
-            index: Some(0u8),
+            pattern: alloc::borrow::Cow::Borrowed(" ay önce"),
+            index: 0u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
@@ -609,7 +595,6 @@ static TR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
 };
 static UND: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
-    display_name: alloc::borrow::Cow::Borrowed("Month"),
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -631,8 +616,8 @@ static UND: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("-{0} m"),
-            index: Some(1u8),
+            pattern: alloc::borrow::Cow::Borrowed("- m"),
+            index: 1u8,
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {

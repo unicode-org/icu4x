@@ -1,19 +1,18 @@
 {
-  "display_name": "heure",
   "relatives": {
     "0": "cette heure-ci"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "il y a {0} heure",
+      "pattern": "il y a  heure",
       "index": 7
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "il y a {0} heures",
+      "pattern": "il y a  heures",
       "index": 7
     }
   },

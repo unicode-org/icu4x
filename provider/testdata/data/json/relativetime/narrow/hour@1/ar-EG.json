@@ -1,31 +1,30 @@
 {
-  "display_name": "الساعات",
   "relatives": {
     "0": "الساعة الحالية"
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} ساعة",
+      "pattern": "قبل  ساعة",
       "index": 7
     },
     "one": {
       "pattern": "قبل ساعة واحدة",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل ساعتين",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "قبل {0} ساعات",
+      "pattern": "قبل  ساعات",
       "index": 7
     },
     "many": {
-      "pattern": "قبل {0} ساعة",
+      "pattern": "قبل  ساعة",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} ساعة",
+      "pattern": "قبل  ساعة",
       "index": 7
     }
   },

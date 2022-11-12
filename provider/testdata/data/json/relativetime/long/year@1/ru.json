@@ -1,5 +1,4 @@
 {
-  "display_name": "год",
   "relatives": {
     "-1": "в прошлом году",
     "0": "в этом году",
@@ -8,20 +7,20 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} год назад",
+      "pattern": " год назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} года назад",
+      "pattern": " года назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} лет назад",
+      "pattern": " лет назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} года назад",
+      "pattern": " года назад",
       "index": 0
     }
   },

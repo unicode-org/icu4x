@@ -1,25 +1,24 @@
 {
-  "display_name": "секунда",
   "relatives": {
     "0": "сейчас"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} секунду назад",
+      "pattern": " секунду назад",
       "index": 0
     },
     "two": null,
     "few": {
-      "pattern": "{0} секунды назад",
+      "pattern": " секунды назад",
       "index": 0
     },
     "many": {
-      "pattern": "{0} секунд назад",
+      "pattern": " секунд назад",
       "index": 0
     },
     "other": {
-      "pattern": "{0} секунды назад",
+      "pattern": " секунды назад",
       "index": 0
     }
   },

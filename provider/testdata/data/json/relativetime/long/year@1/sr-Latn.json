@@ -1,5 +1,4 @@
 {
-  "display_name": "godina",
   "relatives": {
     "-1": "prošle godine",
     "0": "ove godine",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} godine",
+      "pattern": "pre  godine",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} godine",
+      "pattern": "pre  godine",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} godina",
+      "pattern": "pre  godina",
       "index": 4
     }
   },

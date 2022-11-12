@@ -1,5 +1,4 @@
 {
-  "display_name": "semana",
   "relatives": {
     "-1": "la semana pasada",
     "0": "esta semana",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} semana",
+      "pattern": "hace  semana",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} semanas",
+      "pattern": "hace  semanas",
       "index": 5
     }
   },

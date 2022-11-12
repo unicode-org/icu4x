@@ -1,19 +1,18 @@
 {
-  "display_name": "saniye",
   "relatives": {
     "0": "şimdi"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} saniye önce",
+      "pattern": " saniye önce",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} saniye önce",
+      "pattern": " saniye önce",
       "index": 0
     }
   },

@@ -1,5 +1,4 @@
 {
-  "display_name": "d",
   "relatives": {
     "-2": "anteayer",
     "-1": "ayer",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} d",
+      "pattern": "hace  d",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} d",
+      "pattern": "hace  d",
       "index": 5
     }
   },

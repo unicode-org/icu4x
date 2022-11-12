@@ -1,5 +1,4 @@
 {
-  "display_name": "সপ্তাহ",
   "relatives": {
     "-1": "গত সপ্তাহ",
     "0": "এই সপ্তাহ",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} সপ্তাহ আগে",
+      "pattern": " সপ্তাহ আগে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} সপ্তাহ আগে",
+      "pattern": " সপ্তাহ আগে",
       "index": 0
     }
   },

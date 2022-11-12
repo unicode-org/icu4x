@@ -1,5 +1,4 @@
 {
-  "display_name": "Quarter",
   "relatives": {
     "-1": "last quarter",
     "0": "this quarter",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} Q",
+      "pattern": "- Q",
       "index": 1
     }
   },

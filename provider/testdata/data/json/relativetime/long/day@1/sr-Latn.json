@@ -1,5 +1,4 @@
 {
-  "display_name": "dan",
   "relatives": {
     "-2": "prekjuče",
     "-1": "juče",
@@ -10,17 +9,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} dana",
+      "pattern": "pre  dana",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} dana",
+      "pattern": "pre  dana",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} dana",
+      "pattern": "pre  dana",
       "index": 4
     }
   },

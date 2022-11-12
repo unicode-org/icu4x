@@ -1,5 +1,4 @@
 {
-  "display_name": "ned.",
   "relatives": {
     "-1": "prošle n.",
     "0": "ove n.",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} n.",
+      "pattern": "pre  n.",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} n.",
+      "pattern": "pre  n.",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} n.",
+      "pattern": "pre  n.",
       "index": 4
     }
   },

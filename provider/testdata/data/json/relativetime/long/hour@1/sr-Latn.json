@@ -1,22 +1,21 @@
 {
-  "display_name": "sat",
   "relatives": {
     "0": "ovog sata"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} sata",
+      "pattern": "pre  sata",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} sata",
+      "pattern": "pre  sata",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} sati",
+      "pattern": "pre  sati",
       "index": 4
     }
   },

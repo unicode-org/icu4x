@@ -1,5 +1,4 @@
 {
-  "display_name": "araw",
   "relatives": {
     "-2": "Araw bago ang kahapon",
     "-1": "kahapon",
@@ -10,14 +9,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} (na) araw ang nakalipas",
+      "pattern": " (na) araw ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) araw ang nakalipas",
+      "pattern": " (na) araw ang nakalipas",
       "index": 0
     }
   },

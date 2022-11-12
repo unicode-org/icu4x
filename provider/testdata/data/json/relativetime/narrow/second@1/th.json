@@ -1,5 +1,4 @@
 {
-  "display_name": "วิ",
   "relatives": {
     "0": "ขณะนี้"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} วินาทีที่แล้ว",
+      "pattern": " วินาทีที่แล้ว",
       "index": 0
     }
   },

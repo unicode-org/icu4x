@@ -1,22 +1,21 @@
 {
-  "display_name": "minut",
   "relatives": {
     "0": "ovog minuta"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} minuta",
+      "pattern": "pre  minuta",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} minuta",
+      "pattern": "pre  minuta",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} minuta",
+      "pattern": "pre  minuta",
       "index": 4
     }
   },

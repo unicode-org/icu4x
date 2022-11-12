@@ -1,19 +1,18 @@
 {
-  "display_name": "s",
   "relatives": {
     "0": "maintenant"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "-{0} s",
+      "pattern": "- s",
       "index": 1
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "-{0} s",
+      "pattern": "- s",
       "index": 1
     }
   },

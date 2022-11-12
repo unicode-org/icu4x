@@ -1,5 +1,4 @@
 {
-  "display_name": "ชั่วโมง",
   "relatives": {
     "0": "ชั่วโมงนี้"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} ชั่วโมงที่ผ่านมา",
+      "pattern": " ชั่วโมงที่ผ่านมา",
       "index": 0
     }
   },

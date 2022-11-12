@@ -1,19 +1,18 @@
 {
-  "display_name": "s",
   "relatives": {
     "0": "ahora"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "hace {0} s",
+      "pattern": "hace  s",
       "index": 5
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "hace {0} s",
+      "pattern": "hace  s",
       "index": 5
     }
   },

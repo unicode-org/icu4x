@@ -1,5 +1,4 @@
 {
-  "display_name": "taon",
   "relatives": {
     "-1": "nakaraang taon",
     "0": "ngayong taon",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} taon ang nakalipas",
+      "pattern": " taon ang nakalipas",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} (na) taon ang nakalipas",
+      "pattern": " (na) taon ang nakalipas",
       "index": 0
     }
   },

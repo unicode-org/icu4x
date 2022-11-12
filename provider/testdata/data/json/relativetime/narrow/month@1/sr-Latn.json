@@ -1,5 +1,4 @@
 {
-  "display_name": "mes.",
   "relatives": {
     "-1": "prošlog mes.",
     "0": "ovog mes.",
@@ -8,17 +7,17 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "pre {0} m.",
+      "pattern": "pre  m.",
       "index": 4
     },
     "two": null,
     "few": {
-      "pattern": "pre {0} m.",
+      "pattern": "pre  m.",
       "index": 4
     },
     "many": null,
     "other": {
-      "pattern": "pre {0} m.",
+      "pattern": "pre  m.",
       "index": 4
     }
   },

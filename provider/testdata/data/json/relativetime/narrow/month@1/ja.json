@@ -1,5 +1,4 @@
 {
-  "display_name": "月",
   "relatives": {
     "-1": "先月",
     "0": "今月",
@@ -12,7 +11,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0}か月前",
+      "pattern": "か月前",
       "index": 0
     }
   },

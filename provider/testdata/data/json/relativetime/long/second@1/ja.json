@@ -1,5 +1,4 @@
 {
-  "display_name": "秒",
   "relatives": {
     "0": "今"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} 秒前",
+      "pattern": " 秒前",
       "index": 0
     }
   },

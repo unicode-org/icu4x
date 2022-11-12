@@ -1,19 +1,18 @@
 {
-  "display_name": "s",
   "relatives": {
     "0": "maintenant"
   },
   "past": {
     "zero": null,
     "one": {
-      "pattern": "il y a {0} s",
+      "pattern": "il y a  s",
       "index": 7
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "il y a {0} s",
+      "pattern": "il y a  s",
       "index": 7
     }
   },

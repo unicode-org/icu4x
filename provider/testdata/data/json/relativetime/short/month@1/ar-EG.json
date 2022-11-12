@@ -1,5 +1,4 @@
 {
-  "display_name": "الشهر",
   "relatives": {
     "-1": "الشهر الماضي",
     "0": "هذا الشهر",
@@ -7,27 +6,27 @@
   },
   "past": {
     "zero": {
-      "pattern": "قبل {0} شهر",
+      "pattern": "قبل  شهر",
       "index": 7
     },
     "one": {
       "pattern": "قبل شهر واحد",
-      "index": null
+      "index": 255
     },
     "two": {
       "pattern": "قبل شهرين",
-      "index": null
+      "index": 255
     },
     "few": {
-      "pattern": "خلال {0} أشهر",
+      "pattern": "خلال  أشهر",
       "index": 9
     },
     "many": {
-      "pattern": "قبل {0} شهرًا",
+      "pattern": "قبل  شهرًا",
       "index": 7
     },
     "other": {
-      "pattern": "قبل {0} شهر",
+      "pattern": "قبل  شهر",
       "index": 7
     }
   },

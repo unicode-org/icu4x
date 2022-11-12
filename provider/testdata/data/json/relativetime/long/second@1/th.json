@@ -1,5 +1,4 @@
 {
-  "display_name": "วินาที",
   "relatives": {
     "0": "ขณะนี้"
   },
@@ -10,7 +9,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} วินาทีที่ผ่านมา",
+      "pattern": " วินาทีที่ผ่านมา",
       "index": 0
     }
   },

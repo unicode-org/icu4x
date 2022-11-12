@@ -1,5 +1,4 @@
 {
-  "display_name": "ত্রৈমাসিক",
   "relatives": {
     "-1": "গত ত্রৈমাসিক",
     "0": "এই ত্রৈমাসিক",
@@ -8,14 +7,14 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": "{0} ত্রৈমাসিক আগে",
+      "pattern": " ত্রৈমাসিক আগে",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "{0} ত্রৈমাসিক আগে",
+      "pattern": " ত্রৈমাসিক আগে",
       "index": 0
     }
   },
