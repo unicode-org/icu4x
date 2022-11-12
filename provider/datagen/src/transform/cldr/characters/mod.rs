@@ -112,7 +112,7 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
     // We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set
     let mut dedup_chars = HashSet::<Cow<str>>::new();
 
-    without_brackets.split(' ').for_each(|ch| {
+    without_brackets.split(&[' ', '{', '}']).for_each(|ch| {
         if ch.is_empty() {
             // no-op: We assume that a space (U+0020) does not belong in the exemplar character set, and that
             // any such occurrence is due to misleading formatting in the CLDR JSON files. See:
