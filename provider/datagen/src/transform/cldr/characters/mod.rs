@@ -117,7 +117,21 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
             // no-op: We assume that a space (U+0020) does not belong in the exemplar character set, and that
             // any such occurrence is due to misleading formatting in the CLDR JSON files. See:
             // https://unicode-org.atlassian.net/browse/CLDR-16128
+        } else if ch.starts_with("\\u") {
+            // interpret as a single code point
+            let ch_lite: String = serde_json::from_str(ch).unwrap();
+            assert_eq!(ch_lite.chars().count(), 1);
+            dedup_chars.insert(Cow::Owned(ch_lite));
+        } else if ch.starts_with("\\\\U") {
+            // interpret as a single code point
+            let ch_lite: String = serde_json::from_str(ch.get(1..).unwrap()).unwrap();
+            assert_eq!(ch_lite.chars().count(), 1);
+            dedup_chars.insert(Cow::Owned(ch_lite));
+        } else if ch.starts_with("\\\\") {
+            // TODO: we still have occurrences of "\\-" strings in string_list for some test data
+            dedup_chars.insert(Cow::Borrowed(ch.split_at(2).1));
         } else if ch.starts_with('\\') {
+            panic!("{}", ch);
             // TODO: we still have occurrences of "\\-" strings in string_list for some test data
             dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1));
         } else if ch.starts_with('{') {
