@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::borrow::Cow;
+use std::collections::HashSet;
 use std::marker::PhantomData;
 
 use crate::transform::cldr::cldr_serde;
@@ -9,7 +11,6 @@ use icu_collections::codepointinvliststringlist::CodePointInversionListAndString
 use icu_properties::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use itertools::Itertools;
 
 struct AnnotatedResource<'a, M: DataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
@@ -99,39 +100,50 @@ exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
 exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
 
 // helper function for parsing CLDR data string
-fn parse_exemplar_char_string(s: &str) -> Vec<&str> {
+fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
     debug_assert!(s.starts_with('['));
     debug_assert!(s.ends_with(']'));
     let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
 
     if without_brackets.is_empty() {
-        return Vec::new();
+        return HashSet::new();
     }
 
-    without_brackets
-        .split(' ')
-        .map(|ch| {
-            if ch.is_empty() {
-                // a space (U+0020) belongs in the exemplar character set
-                " "
-            } else if ch.starts_with('\\') {
-                // TODO: we still have occurrences of "\\-" strings in string_list for some test data
+    // We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set
+    let mut dedup_chars = HashSet::<Cow<str>>::new();
 
-                ch.split_at(1).1
-            } else if ch.starts_with('{') {
-                debug_assert!(ch.ends_with('}'));
-                ch.split_at(1).1.split_at(ch.len() - 2).0
-            } else {
-                ch
+    without_brackets.split(' ').for_each(|ch| {
+        if ch.is_empty() {
+            // a space (U+0020) belongs in the exemplar character set
+            dedup_chars.insert(Cow::Borrowed(" "));
+        } else if ch.starts_with('\\') {
+            // TODO: we still have occurrences of "\\-" strings in string_list for some test data
+            dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1));
+        } else if ch.starts_with('{') {
+            debug_assert!(ch.ends_with('}'));
+            dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1.split_at(ch.len() - 2).0));
+        } else if ch.contains('-') && ch.find('-').unwrap() > 0 {
+            let (begin, end) = ch.split_once('-').unwrap();
+            let begin_char = begin.chars().next().unwrap();
+            let end_char = end.chars().next().unwrap();
+
+            for code_point in (begin_char as u32)..=(end_char as u32) {
+                let char_str = char::from_u32(code_point)
+                    .expect("Character range should not span non-Unicode-scalar-value code points")
+                    .to_string();
+                dedup_chars.insert(Cow::Owned(char_str));
             }
-        })
-        .dedup() // in case of space (U+0020) literal being included in exemplar char set
-        .collect()
+        } else {
+            dedup_chars.insert(Cow::Borrowed(ch));
+        }
+    });
+
+    dedup_chars
 }
 
 fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
     PropertyUnicodeSetV1::CPInversionListStrList(CodePointInversionListAndStringList::from_iter(
-        parse_exemplar_char_string(s).iter().copied(),
+        parse_exemplar_char_string(s).iter().map(|s| &**s),
     ))
 }
 
@@ -144,9 +156,13 @@ mod tests {
     #[test]
     fn test_parse_exemplar_chars() {
         let af_numbers = "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]";
-        let expected = vec![
+        let expected: HashSet<Cow<str>> = [
             " ", "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-        ];
+        ]
+        .iter()
+        .copied()
+        .map(Cow::Borrowed)
+        .collect();
         let actual = parse_exemplar_char_string(af_numbers);
 
         assert_eq!(actual, expected);
@@ -155,10 +171,14 @@ mod tests {
     #[test]
     fn test_parse_exemplar_char_sequences() {
         let sr_main = "[a b c č ć d {dž} đ e f g h i j k l {lj} m n {nj} o p r s š t u v z ž]";
-        let expected = vec![
+        let expected: HashSet<Cow<str>> = [
             "a", "b", "c", "č", "ć", "d", "dž", "đ", "e", "f", "g", "h", "i", "j", "k", "l", "lj",
             "m", "n", "nj", "o", "p", "r", "s", "š", "t", "u", "v", "z", "ž",
-        ];
+        ]
+        .iter()
+        .copied()
+        .map(Cow::Borrowed)
+        .collect();
         let actual = parse_exemplar_char_string(sr_main);
 
         assert_eq!(actual, expected);
@@ -166,7 +186,15 @@ mod tests {
 
     #[test]
     fn test_parse_exemplar_char_ranges() {
-        todo!("Use example for locale `ja`, the `main` set of exmplar chars");
+        let ja_main_subset_range = "[万-下]";
+        let expected: HashSet<Cow<str>> = vec!["万", "丈", "三", "上", "下"]
+            .iter()
+            .copied()
+            .map(Cow::Borrowed)
+            .collect();
+        let actual = parse_exemplar_char_string(ja_main_subset_range);
+
+        assert_eq!(actual, expected);
     }
 
     #[test]
