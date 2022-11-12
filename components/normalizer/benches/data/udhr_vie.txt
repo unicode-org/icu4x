@@ -1,0 +1,221 @@
+Universal Declaration of Human Rights - Vietnamese
+© 1996 – 2009 The Office of the High Commissioner for Human Rights
+This plain text version prepared by the “UDHR in Unicode”
+project, https://www.unicode.org/udhr.
+---
+
+Tuyên ngôn toàn thế giới về nhân quyền của Liên Hợp Quốc
+      Được Đại hội đồng Liên Hợp Quốc thông qua và công bố theo Nghị quyết số 217 (III), ngày 10 tháng 12 năm 1948.
+   
+      Lời nói đầu
+      Với nhận thức rằng:
+      Việc thừa nhận nhân phẩm vốn có, các quyền bình đẳng và không thể tách rời của mọi thành viên trong gia đình nhân loại là cơ sở cho tự do, công bằng và hoà bình trên thế giới,
+      Sự xâm phạm và coi thường nhân quyền đã dẫn đến những hành động tàn bạo xâm phạm tới lương tâm của nhân loại, và việc xây dựng một thế giới trong đó con người được tự do ngôn luận và tín ngưỡng, không còn phải chịu nỗi sợ hãi và cùng cực được coi là nguyện vọng cao cả nhất của loài người,
+      Nhân quyền phải được pháp luật bảo vệ để mỗi người không buộc phải nổi loạn như là biện pháp cuối cùng để chống lại chế độ cường quyền và áp bức,
+      Cần phải khuyến khích việc phát triển quan hệ bằng hữu giữa các dân tộc,
+      Nhân dân các nước thành viên Liên Hợp Quốc trong bản Hiến chương đã một lần nữa khẳng định niềm tin của mình vào những quyền cơ bản của con người, vào nhân phẩm, vào giá trị của mỗi người, vào quyền bình đẳng nam nữ, và đã bầy tỏ quyết tâm thúc đẩy tiến bộ xã hội cũng như xây dựng các điều kiện sống tốt hơn, tự do hơn.
+      Các nước thành viên đã cam kết, cùng với tổ chức Liên Hợp Quốc, phấn đấu thúc đẩy mọi người tôn trọng và thực hiện các quyền cũng như những tự do cơ bản của con người.
+      Nhận thức thống nhất về những quyền và tự do đó của con người là yếu tố quan trọng nhất cho việc thực hiện đầy đủ cam kết này.
+      Nay, Đại hội đồng Liên Hợp Quốc tuyên bố:
+      Bản tuyên ngôn toàn thế giới về nhân quyền này là thước đo chung cho tất cả các nước và tất cả các dân tộc đánh giá việc thực hiện mục tiêu mà mọi cá nhân và mọi tổ chức trong xã hội, trên cơ sở luôn ghi nhớ Bản tuyên ngôn này, sẽ phấn đấu thúc đẩy sự tôn trọng các quyền và tự do cơ bản của con người thông qua truyền bá và giáo dục, cũng như sẽ phấn đấu đảm bảo cho mọi người dân, ở chính các nước thành viên của Liên Hợp Quốc và ở các lãnh thổ thuộc quyền quản lý của mình, công nhận và thực hiện những quyền và tự do đó một cách có hiệu quả thông qua những biện pháp tích cực, trong phạm vi quốc gia hay quốc tế.
+   
+      Điều 1:
+      Tất cả mọi người sinh ra đều được tự do và bình đẳng về nhân phẩm và quyền. Mọi con người đều được tạo hoá ban cho lý trí và lương tâm và cần phải đối xử với nhau trong tình bằng hữu.
+   
+      Điều 2:
+      Mọi người đều được hưởng tất cả những quyền và tự do nêu trong Bản tuyên ngôn này, không phân biệt chủng tộc, màu da, giới tính, ngôn ngữ, tôn giáo, quan điểm chính trị hay các quan điểm khác, nguồn gốc quốc gia hay xã hội, tài sản, thành phần xuất thân hay địa vị xã hội.
+      Ngoài ra, cũng không có bất cứ sự phân biệt nào về địa vị chính trị, pháp quyền hay quốc tế của quốc gia hay lãnh thổ mà một người xuất thân, cho dù quốc gia hay lãnh thổ đó được độc lập, được đặt dưới chế độ uỷ trị, chưa tự quản hay có chủ quyền hạn chế.
+   
+      Điều 3:
+      Mọi người đều có quyền sống, tự do và an toàn cá nhân.
+   
+      Điều 4:
+      Không ai phải làm nô lệ hay bị cưỡng bức làm việc như nô lệ; mọi hình thức nô lệ và buôn bán nô lệ đều bị ngăn cấm.
+   
+      Điều 5:
+      Không ai bị tra tấn hay bị đối xử, xử phạt một cách tàn bạo, vô nhân đạo hay hạ thấp nhân phẩm.
+   
+      Điều 6:
+      Mọi người đều có quyền được thừa nhận tư cách là con người trước pháp luật ở khắp mọi nơi.
+   
+      Điều 7:
+      Tất cả mọi người đều bình đẳng trước pháp luật và được pháp luật bảo vệ như nhau không có bất cứ sự phân biệt nào. Tất cả mọi người đều được bảo vệ như nhau chống lại mọi hình thức phân biệt đối xử vi phạm Bản tuyên ngôn này cũng như chống lại mọi hành vi xúi giục phân biệt đối xử như vậy.
+   
+      Điều 8:
+      Mọi người đều có quyền được các toà án quốc gia có thẩm quyền bênh vực theo pháp luật trước những hành vi vi phạm các quyền cơ bản do hiến pháp hay luật pháp quy định.
+   
+      Điều 9:
+      Không ai bị bắt, giam giữ hay đày đi nơi khác một cách độc đoán.
+   
+      Điều 10:
+      Mọi người, với tư cách bình đẳng về mọi phương diện, đều có quyền được một toà án độc lập và vô tư phân xử công bằng và công khai để xác định quyền, nghĩa vụ hoặc bất cứ một lời buộc tội nào đối với người đó.
+   
+      Điều 11:
+      
+         
+            Mọi người, nếu bị quy tội hình sự, đều có quyền được coi là vô tội cho đến khi một toà án công khai, nơi người đó đã có được tất cả những đảm bảo cần thiết để bào chữa cho mình, chứng minh được tội trạng của người đó dựa trên cơ sở luật pháp.
+         
+         
+            Không ai bị kết tội hình sự vì một hành vi hay sự tắc trách không bị coi là một tội hình sự theo quy định của luật pháp quốc gia hay quốc tế vào thời điểm đó. Cũng như không cho phép áp dụng hình thức xử phạt đối với một tội hình sự nặng hơn so với quy định của luật pháp lúc bấy giờ cho mức độ phạm tội cụ thể như vậy.
+         
+      
+   
+      Điều 12:
+      Không ai bị can thiệp một cách độc đoán đối với cuộc sống riêng tư, gia đình, nơi ở hay thư tín của cá nhân người đó cũng như không bị xâm phạm tới danh dự và uy tín. Mọi người đều được pháp luật bảo vệ chống lại những hành vi can thiệp hoặc xâm phạm như vậy.
+   
+      Điều 13:
+      
+         
+            Mọi người đều có quyền tự do đi lại và cư trú trong phạm vi lãnh thổ của mỗi quốc gia.
+         
+         
+            Mọi người đều có quyền rời khỏi bất cứ nước nào, kể cả nước mình, cũng như có quyền trở về nước mình.
+         
+      
+   
+      Điều 14:
+      
+         
+            Mọi người đều có quyền tìm kiếm và được lánh nạn ở những nước khác khi bị ngược đãi.
+         
+         
+            Quyền này không được áp dụng trong trường hợp đương sự bị truy tố vì những tội không mang tính chất chính trị hay vì những hành vi đi ngược lại mục tiêu và nguyên tắc của Liên Hợp Quốc.
+         
+      
+   
+      Điều 15:
+      
+         
+            Mọi người đều có quyền nhập quốc tịch của một nước nào đó.
+         
+         
+            Không ai bị tước đoạt quốc tịch của mình hay bị khước từ quyền được thay đổi quốc tịch một cách độc đoán.
+         
+      
+   
+      Điều 16:
+      
+         
+            Nam hay nữ đến tuổi thành niên đều có quyền kết hôn và xây dựng gia đình mà không có bất cứ một hạn chế nào về chủng tộc, quốc tịch hay tôn giáo. Họ có quyền bình đẳng trong việc kết hôn, trong cuộc sống vợ chồng và lúc ly hôn.
+         
+         
+            Việc kết hôn chỉ được tiến hành khi có sự đồng ý hoàn toàn và tự nguyện của cả hai bên.
+         
+         
+            Gia đình là một đơn vị tự nhiên và cơ bản của xã hội và được xã hội và nhà nước bảo vệ.
+         
+      
+   
+      Điều 17:
+      
+         
+            Mọi người đều có quyền sở hữu tài sản của riêng mình hay chung với những người khác.
+         
+         
+            Không ai bị tước đoạt tài sản của mình một cách độc đoán.
+         
+      
+   
+      Điều 18:
+      Mọi người đều có quyền tự do suy nghĩ, ý thức và tôn giáo, kể cả tự do thay đổi tôn giáo hay tín ngưỡng, và tự do thể hiện tôn giáo hoặc tín ngưỡng dưới hình thức truyền bá, thực hành, thờ phụng hoặc lễ tiết, với tư cách cá nhân hay tập thể, công khai hay riêng tư.
+   
+      Điều 19:
+      Mọi người đều có quyền tự do ngôn luận và bầy tỏ quan điểm; kể cả tự do bảo lưu ý kiến không phụ thuộc vào bất cứ sự can thiệp nào, cũng như tự do tìm kiếm, thu nhận, tryền bá thông tin và ý kiến bằng bất cứ phương tiện thông tin đại chúng nào và không giới hạn về biên giới.
+   
+      Điều 20:
+      
+         
+            Mọi người đều có quyền tự do họp hành và tham gia hiệp hội một cách hoà bình.
+         
+         
+            Không ai bị bắt buộc phải tham gia một hiệp hội nào.
+         
+      
+   
+      Điều 21:
+      
+         
+            Mọi người đều có quyền tham gia vào chính quyền của nước mình, một cách trực tiếp hay thông qua những đại diện được tự do lựa chọn.
+         
+         
+            Mọi người đều có quyền được hưởng các dịch vụ công cộng của đất nước mình một cách bình đẳng.
+         
+         
+            Ý chí của nhân dân là cơ sở tạo nên quyền lực của chính quyền; ý chí này được thể hiện qua các cuộc bầu cử định kỳ và thực sự, theo nguyên tắc bỏ phiếu phổ thông và bình đẳng và được thực hiện qua bỏ phiếu kín hoặc qua các thủ tục bỏ phiếu tự do tương tự.
+         
+      
+   
+      Điều 22:
+      Với tư cách là thành viên của xã hội, mọi người đều có quyền được hưởng bảo hiểm xã hội cũng như được thực hiện các quyền về kinh tế, xã hội và văn hoá không thể thiếu đối với nhân phẩm và tự do phát triển nhân cách của mình, thông qua nỗ lực quốc gia, hợp tác quốc tế và phù hợp với hệ thống tổ chức và nguồn lực của mỗi quốc gia.
+   
+      Điều 23:
+      
+         
+            Mọi người đều có quyền làm việc, tự do lựa chọn công việc, được hưởng điều kiện làm việc công bằng và thuận lợi và được bảo vệ chống lại tình trạng thất nghiệp.
+         
+         
+            Mọi người đều có quyền được trả công ngang nhau cho công việc như nhau, không có bất cứ sự phân biệt đối xử nào.
+         
+         
+            Mọi người lao động đều có quyền được hưởng chế độ thù lao công bằng và thuận lợi đảm bảo cho sự tồn tại của bản thân và gia đình xứng đáng với nhân phẩm và được hỗ trợ thêm từ các hình thức bảo trợ xã hội khác, nếu cần thiết.
+         
+         
+            Mọi người đều có quyền thành lập và tham gia các tổ chức công đoàn để bảo vệ quyền lợi của mình.
+         
+      
+   
+      Điều 24:
+      Mọi người đều có quyền nghỉ ngơi và giải trí, kể cả quyền được hạn chế hợp lý về số giờ làm việc và hưởng những ngày nghỉ định kỳ được trả lương.
+   
+      Điều 25:
+      
+         
+            Mọi người đều có quyền được hưởng mức sống đủ để đảm bảo sức khoẻ và phúc lợi của bản thân và gia đình, về các mặt ăn, mặc, ở, y tế và các dịch vụ xã hội cần thiết khác, cũng như có quyền được bảo hiểm trong trường hợp thất nghiệp, ốm đau, tàn tật, goá bụa, già nua hoặc thiếu phương tiện sinh sống do những hoàn cảnh khách quan vượt quá khả năng kiểm soát của mình.
+         
+         
+            Các bà mẹ và trẻ em cần được chăm sóc và giúp đỡ đặc biệt. Tất cả trẻ em, sinh ra trong hoặc ngoài giá thú, đều được hưởng mức độ bảo trợ xã hội như nhau.
+         
+      
+   
+      Điều 26:
+      
+         
+            Mọi người đều có quyền được học hành. Phải áp dụng chế độ giáo dục miễn phí, ít nhất là ở bậc tiểu học và giáo dục cơ sở. Giáo dục tiểu học là bắt buộc. Giáo dục kỹ thuật và ngành nghề phải mang tính phổ thông, và giáo dục cao học phải theo nguyên tắc công bằng cho bất cứ ai có đủ khả năng.
+         
+         
+            Giáo dục phải hướng tới mục tiêu giúp con người phát triển đầy đủ nhân cách và thúc đẩy sự tôn trọng đối với các quyền và tự do cơ bản của con người. Giáo dục phải tăng cường sự hiểu biết, lòng vị tha và tình bằng hữu giữa tất cả các dân tộc, các nhóm tôn giáo và chủng tộc, cũng như phải đẩy mạnh các hoạt động của Liên Hợp Quốc vì mục đích gìn giữ hoà bình.
+         
+         
+            Cha, mẹ có quyền ưu tiên lựa chọn loại hình giáo dục cho con cái.
+         
+      
+   
+      Điều 27:
+      
+         
+            Mọi người đều có quyền tự do tham gia vào đời sống văn hoá của cộng đồng, được thưởng thức nghệ thuật và chia xẻ những thành tựu và lợi ích của tiến bộ khoa học.
+         
+         
+            Mọi người đều có quyền được bảo hộ đối với những quyền lợi về vật chất và tinh thần xuất phát từ công trình khoa học, văn học và nhgệ thuật mà người đó là tác giả.
+         
+      
+   
+      Điều 28:
+      Mọi người đều có quyền được hưởng trật tự xã hội và trật tự quốc tế trong đó các quyền và tự do nêu trong Bản tuyên ngôn này có thể được thực hiện đầy đủ.
+   
+      Điều 29:
+      
+         
+            Mọi người đều có nghĩa vụ đối với cộng đồng là nơi duy nhất người đó có thể phát triển nhân cách của mình một cách tự do và đầy đủ.
+         
+         
+            Khi thực hiện các quyền và tự do của mình, mọi người chỉ chịu những hạn chế do luật định, nhằm mục đích duy nhất là đảm bảo sự công nhận và tôn trọng thích đáng đối với các quyền và tự do của người khác cũng như đáp ứng những yêu cầu chính đáng về đạo đức, trật tự xã hội và phúc lợi chung trong một xã hội dân chủ.
+         
+         
+            Trong bất cứ trường hợp nào, việc thực hiện những quyền và tự do này cũng knông được đi ngược lại với những mục tiêu và nguyên tắc của Liên Hợp Quốc.
+         
+      
+   
+      Điều 30:
+      Không được phép diễn giải bất kỳ điều khoản nào trong Bản tuyên ngôn này theo hướng ngầm ý cho phép bất kỳ quốc gia, nhóm người hay cá nhân nào được quyền tham gia vào bất kỳ hoạt động nào hay thực hiện bất kỳ hành vi nào nhằm phá hoại bất kỳ quyền và tự do nào nêu trong Bản tuyên ngôn này.
+   
