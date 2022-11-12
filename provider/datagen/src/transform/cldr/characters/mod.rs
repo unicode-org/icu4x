@@ -119,13 +119,21 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
             // https://unicode-org.atlassian.net/browse/CLDR-16128
         } else if ch.starts_with("\\u") {
             // interpret as a single code point
-            let ch_lite: String = serde_json::from_str(ch).unwrap();
-            assert_eq!(ch_lite.chars().count(), 1);
+            let ch_lite: String = serde_json::from_str(&format!("\"{}\"", ch)).expect(&format!("{:?}", ch));
             dedup_chars.insert(Cow::Owned(ch_lite));
         } else if ch.starts_with("\\\\U") {
             // interpret as a single code point
-            let ch_lite: String = serde_json::from_str(ch.get(1..).unwrap()).unwrap();
-            assert_eq!(ch_lite.chars().count(), 1);
+            let ch_for_json = format!("x=\"{}\"", ch.replace("\\\\", "\\"));
+            let ch_lite_t_val: toml::Value = toml::from_str(&ch_for_json).expect(&format!("{:?}", ch));
+            let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
+                if let Some(toml::Value::String(s)) = t.get("x") {
+                    s.to_owned()
+                } else {
+                    panic!();
+                }
+            } else {
+                panic!();
+            };
             dedup_chars.insert(Cow::Owned(ch_lite));
         } else if ch.starts_with("\\\\") {
             // TODO: we still have occurrences of "\\-" strings in string_list for some test data
@@ -135,7 +143,7 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
             // TODO: we still have occurrences of "\\-" strings in string_list for some test data
             dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1));
         } else if ch.starts_with('{') {
-            debug_assert!(ch.ends_with('}'));
+            debug_assert!(ch.ends_with('}'), "{:?}", ch);
             dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1.split_at(ch.len() - 2).0));
         } else if ch.contains('-') && ch.find('-').unwrap() > 0 {
             let (begin, end) = ch.split_once('-').unwrap();
