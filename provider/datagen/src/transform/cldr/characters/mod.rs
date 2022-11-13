@@ -125,9 +125,27 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     ch_lite.trim().to_string()
 }
 
-fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, s: &str) {
-    for ch in s.chars().filter(|c| !c.is_whitespace()) {
-        set.insert(Cow::Owned(ch.to_string()));
+fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
+    let s = if input.chars().count() > 1 && input.starts_with('\\') {
+        input.split_at(1).1
+    } else {
+        input
+    };
+    if s.contains('-') && s.find('-').unwrap() > 0 {
+        let (begin, end) = s.split_once('-').unwrap();
+        let begin_char = begin.chars().next().unwrap();
+        let end_char = end.chars().next().unwrap();
+
+        for code_point in (begin_char as u32)..=(end_char as u32) {
+            let char_str = char::from_u32(code_point)
+                .expect("Character range should not span non-Unicode-scalar-value code points")
+                .to_string();
+            set.insert(Cow::Owned(char_str));
+        }
+    } else {
+        for ch in s.chars().filter(|c| !c.is_whitespace()) {
+            set.insert(Cow::Owned(ch.to_string()));
+        }
     }
 }
 
@@ -155,8 +173,6 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
                 if token.contains('}') {
                 
                     dedup_chars.insert(Cow::Borrowed(maybe_char_string));
-                } else if maybe_char_string.chars().count() > 1 && maybe_char_string.starts_with('\\') {
-                    insert_chars_from_string(&mut dedup_chars, maybe_char_string.split_at(1).1);
                 } else {
                     insert_chars_from_string(&mut dedup_chars, &maybe_char_string);
                 }
