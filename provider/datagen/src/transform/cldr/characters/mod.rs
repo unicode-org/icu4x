@@ -99,6 +99,38 @@ exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
 exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
 exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
 
+fn is_exemplar_string_split_char(c: char) -> bool {
+    // don't include the close brace in the split criteria so that, after we split,
+    // we know where the `{...}` sequence ends
+    c.is_whitespace() || c == '{'
+}
+
+// unescape a (sub-)string of exemplar character data
+fn unescape_exemplar_chars(char_block: &str) -> String {
+    // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
+    // Also, workaround errant extra backslash escaping.
+    // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
+    let ch_for_json = format!("x=\"{}\"", char_block.replace("\\\\", "\\").replace("\\\\", "\\"));
+    let ch_lite_t_val: toml::Value = toml::from_str(&ch_for_json).expect(&format!("{:?}", char_block));
+    let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
+        if let Some(toml::Value::String(s)) = t.get("x") {
+            s.to_owned()
+        } else {
+            panic!();
+        }
+    } else {
+        panic!();
+    };
+
+    ch_lite.trim().to_string()
+}
+
+fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, s: &str) {
+    for ch in s.chars().filter(|c| !c.is_whitespace()) {
+        set.insert(Cow::Owned(ch.to_string()));
+    }
+}
+
 // helper function for parsing CLDR data string
 fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
     debug_assert!(s.starts_with('['));
@@ -112,60 +144,30 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
     // We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set
     let mut dedup_chars = HashSet::<Cow<str>>::new();
 
-    without_brackets.split(char::is_whitespace).for_each(|token| {
-        if token.starts_with('{') {
-            debug_assert!(token.ends_with('}'), "{:?}", token);
-            dedup_chars.insert(Cow::Borrowed(token.split_at(1).1.split_at(token.len() - 2).0));
-        } else {
-            token.chars().for_each(|ch| {
-                if ch.is_empty() {
-                    // no-op: We assume that a space (U+0020) does not belong in the exemplar character set, and that
-                    // any such occurrence is due to misleading formatting in the CLDR JSON files. See:
-                    // https://unicode-org.atlassian.net/browse/CLDR-16128
-                } else if ch.starts_with("\\u") {
-                    // interpret as a single code point
-                    let ch_lite: String = serde_json::from_str(&format!("\"{}\"", ch)).expect(&format!("{:?}", ch));
-                    dedup_chars.insert(Cow::Owned(ch_lite));
-                } else if ch.starts_with("\\\\U") {
-                    // interpret as a single code point
-                    let ch_for_json = format!("x=\"{}\"", ch.replace("\\\\", "\\"));
-                    let ch_lite_t_val: toml::Value = toml::from_str(&ch_for_json).expect(&format!("{:?}", ch));
-                    let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
-                        if let Some(toml::Value::String(s)) = t.get("x") {
-                            s.to_owned()
-                        } else {
-                            panic!();
-                        }
-                    } else {
-                        panic!();
-                    };
-                    dedup_chars.insert(Cow::Owned(ch_lite));
-                } else if ch.starts_with("\\\\") {
-                    // TODO: we still have occurrences of "\\-" strings in string_list for some test data
-                    dedup_chars.insert(Cow::Borrowed(ch.split_at(2).1));
-                } else if ch.starts_with('\\') {
-                    panic!("{}", ch);
-                    // TODO: we still have occurrences of "\\-" strings in string_list for some test data
-                    dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1));
-                } else if ch.starts_with('{') {
-                    debug_assert!(ch.ends_with('}'), "{:?}", ch);
-                    dedup_chars.insert(Cow::Borrowed(ch.split_at(1).1.split_at(ch.len() - 2).0));
-                } else if ch.contains('-') && ch.find('-').unwrap() > 0 {
-                    let (begin, end) = ch.split_once('-').unwrap();
-                    let begin_char = begin.chars().next().unwrap();
-                    let end_char = end.chars().next().unwrap();
-        
-                    for code_point in (begin_char as u32)..=(end_char as u32) {
-                        let char_str = char::from_u32(code_point)
-                            .expect("Character range should not span non-Unicode-scalar-value code points")
-                            .to_string();
-                        dedup_chars.insert(Cow::Owned(char_str));
-                    }
+    without_brackets.split(is_exemplar_string_split_char).filter(|t| !t.is_empty()).for_each(|token| {
+
+        let mut string_and_chars = token.split('}');
+
+        if let Some(maybe_char_string) = string_and_chars.next() {
+            
+            if !maybe_char_string.is_empty() {
+
+                if token.contains('}') {
+                
+                    dedup_chars.insert(Cow::Borrowed(maybe_char_string));
+                } else if maybe_char_string.chars().count() > 1 && maybe_char_string.starts_with('\\') {
+                    insert_chars_from_string(&mut dedup_chars, maybe_char_string.split_at(1).1);
                 } else {
-                    dedup_chars.insert(Cow::Borrowed(ch));
+                    insert_chars_from_string(&mut dedup_chars, &maybe_char_string);
                 }
-            })
-        }        
+            }
+
+            for char_block in string_and_chars.filter(|t| !t.is_empty()) {
+                let unescaped_char_block = unescape_exemplar_chars(char_block);
+
+                insert_chars_from_string(&mut dedup_chars, &unescaped_char_block);
+            }
+        }
     });
 
     dedup_chars
