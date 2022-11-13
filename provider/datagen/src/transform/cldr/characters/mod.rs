@@ -110,8 +110,12 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
-    let ch_for_json = format!("x=\"{}\"", char_block.replace("\\\\", "\\").replace("\\\\", "\\"));
-    let ch_lite_t_val: toml::Value = toml::from_str(&ch_for_json).expect(&format!("{:?}", char_block));
+    let ch_for_json = format!(
+        "x=\"{}\"",
+        char_block.replace("\\\\", "\\").replace("\\\\", "\\")
+    );
+    let ch_lite_t_val: toml::Value =
+        toml::from_str(&ch_for_json).expect(&format!("{:?}", char_block));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
         if let Some(toml::Value::String(s)) = t.get("x") {
             s.to_owned()
@@ -169,29 +173,30 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
     // We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set
     let mut dedup_chars = HashSet::<Cow<str>>::new();
 
-    without_brackets.split(is_exemplar_string_split_char).filter(|t| !t.is_empty()).for_each(|token| {
+    without_brackets
+        .split(is_exemplar_string_split_char)
+        .filter(|t| !t.is_empty())
+        .for_each(|token| {
 
-        let mut string_and_chars = token.split('}');
+            let mut string_and_chars = token.split('}');
 
-        if let Some(maybe_char_string) = string_and_chars.next() {
-            
-            if !maybe_char_string.is_empty() {
+            if let Some(maybe_char_string) = string_and_chars.next() {
 
-                if token.contains('}') {
-                
-                    dedup_chars.insert(Cow::Borrowed(maybe_char_string));
-                } else {
-                    insert_chars_from_string(&mut dedup_chars, &maybe_char_string);
+                if !maybe_char_string.is_empty() {
+                    if token.contains('}') {
+                        dedup_chars.insert(Cow::Borrowed(maybe_char_string));
+                    } else {
+                        insert_chars_from_string(&mut dedup_chars, &maybe_char_string);
+                    }
+                }
+
+                for char_block in string_and_chars.filter(|t| !t.is_empty()) {
+                    let unescaped_char_block = unescape_exemplar_chars(char_block);
+
+                    insert_chars_from_string(&mut dedup_chars, &unescaped_char_block);
                 }
             }
-
-            for char_block in string_and_chars.filter(|t| !t.is_empty()) {
-                let unescaped_char_block = unescape_exemplar_chars(char_block);
-
-                insert_chars_from_string(&mut dedup_chars, &unescaped_char_block);
-            }
-        }
-    });
+        });
 
     dedup_chars
 }
