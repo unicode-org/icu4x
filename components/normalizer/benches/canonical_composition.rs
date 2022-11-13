@@ -2,42 +2,47 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, BenchmarkId, Criterion, Throughput};
+use criterion::{BenchmarkId, Criterion, Throughput};
 
 use icu_normalizer::properties::CanonicalComposition;
 
 fn function_under_bench(
     canonical_composer: &CanonicalComposition,
-    starter_character: char,
-    second_character: char,
+    composable_points: &Vec<Vec<char>>,
 ) {
-    canonical_composer.compose(starter_character, second_character);
+    composable_points.iter().for_each(|points| {
+        canonical_composer.compose(points[0], points[1]);
+    });
+}
+
+// transform the source part as a vector of characters.
+fn as_vec_char(points: &str) -> Vec<char> {
+    points
+        .split_whitespace()
+        .map(|point| u32::from_str_radix(point, 16).unwrap())
+        .map(char::from_u32)
+        .map(|x| x.unwrap())
+        .collect::<Vec<char>>()
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_composition";
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-    let params = black_box([
-        ('a', 'b'),
-        ('a', '\u{0308}'),
-        ('A', '\u{0308}'),
-        ('ẹ', '\u{0302}'),
-        ('Ẹ', '\u{0302}'),
-        ('𑄱', '𑄧'),
-        ('𝅗', '𝅥'),
-        ('ে', 'া'),
-        ('ᄀ', 'ᅡ'),
-        ('가', 'ᆨ'),
-    ]);
+
+    let data: Vec<Vec<char>> = include_str!("../tests/data/NormalizationTest.txt")
+        .split('\n')
+        .filter(|&s| !s.starts_with("#") && !s.starts_with("@") && !s.is_empty()) // remove comments
+        .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
+        .map(|points| as_vec_char(points))
+        .filter(|x| x.len() > 1) // there's no point in composing one char.
+        .collect();
 
     let mut group = criterion.benchmark_group(group_name);
-    for tuple in params {
-        group.throughput(Throughput::Elements(1));
-        group.bench_with_input(
-            BenchmarkId::new(group_name, format!("{:?}", tuple)),
-            &tuple,
-            |bencher, tuple| bencher.iter(|| function_under_bench(&composer, tuple.0, tuple.1)),
-        );
-    }
+
+    group.throughput(Throughput::Elements(data.len() as u64));
+    group.bench_function(BenchmarkId::from_parameter("icu4x"), |bencher| {
+        bencher.iter(|| function_under_bench(&composer, &data))
+    });
+
     group.finish();
 }
