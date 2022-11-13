@@ -11,6 +11,7 @@ use icu_collections::codepointinvliststringlist::CodePointInversionListAndString
 use icu_properties::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use itertools::Itertools;
 
 struct AnnotatedResource<'a, M: DataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
@@ -112,8 +113,30 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
     let ch_for_json = format!(
         "x=\"{}\"",
-        char_block.replace("\\\\", "\\").replace("\\\\", "\\")
+        char_block
+            .replace("\\\\\\\\U", "\\U")
+            .replace("\\\\\\\\u", "\\u")
+            .replace("\\\\U", "\\U")
+            .replace("\\\\u", "\\u")
     );
+
+    // workaround for literal values like `\\-` that cause problems for the TOML parser.
+    // in such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character
+    let mut ch_vec = ch_for_json.chars().collect::<Vec<char>>();
+    let mut ch_indices_to_remove: Vec<usize> = vec![];
+    for (idx, ch) in ch_vec.iter().enumerate().rev() {
+        if ch == &'\\' {
+            let ch_after_slash = ch_vec.get(idx + 1).unwrap();
+            if ch_after_slash != &'u' && ch_after_slash != &'U' {
+                ch_indices_to_remove.push(idx);
+            }
+        }
+    }
+    for idx in ch_indices_to_remove {
+        ch_vec.remove(idx);
+    }
+    let ch_for_json = ch_vec.iter().collect::<String>();
+
     let ch_lite_t_val: toml::Value =
         toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{:?}", char_block));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
@@ -185,12 +208,19 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
             if let Some(maybe_char_string) = string_and_chars.next() {
                 if !maybe_char_string.is_empty() {
                     if token.contains('}') {
+                        // if we see a '}', then we assume it was the ending of a string
+                        // denoted by `{...}` in a well-formed input
                         dedup_chars.insert(Cow::Borrowed(maybe_char_string));
                     } else {
-                        insert_chars_from_string(&mut dedup_chars, maybe_char_string);
+                        // If we don't see '}', it means we have a string that was whitespace delimited
+                        let unescaped_char_block = unescape_exemplar_chars(maybe_char_string);
+                        insert_chars_from_string(&mut dedup_chars, &unescaped_char_block);
                     }
                 }
 
+                // since we already split on '{' in order to create `token`, then only the first
+                // subarray split could contain '}'. all other subarray splits should be considered
+                // as strings of one or more consecutive characters
                 for char_block in string_and_chars.filter(|t| !t.is_empty()) {
                     let unescaped_char_block = unescape_exemplar_chars(char_block);
 
@@ -204,7 +234,7 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
 
 fn string_to_prop_unicodeset(s: &str) -> PropertyUnicodeSetV1<'static> {
     PropertyUnicodeSetV1::CPInversionListStrList(CodePointInversionListAndStringList::from_iter(
-        parse_exemplar_char_string(s).iter().map(|s| &**s),
+        parse_exemplar_char_string(s).iter().map(|s| &**s).sorted(),
     ))
 }
 
@@ -283,6 +313,22 @@ mod tests {
         .map(Cow::Borrowed)
         .collect();
         let actual = parse_exemplar_char_string(sr_main);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_unescape() {
+        let ar_eg_auxiliary = "[ـ\\u200C\\u200D\\u200E\\u200F پ چ ژ ڜ ڢ ڤ ڥ ٯ ڧ ڨ ک گ ی]";
+        let expected: HashSet<Cow<str>> = [
+            "ـ", "\u{200C}", "\u{200D}", "\u{200E}", "\u{200F}", "پ", "چ", "ژ", "ڜ", "ڢ", "ڤ", "ڥ",
+            "ٯ", "ڧ", "ڨ", "ک", "گ", "ی",
+        ]
+        .iter()
+        .copied()
+        .map(Cow::Borrowed)
+        .collect();
+        let actual = parse_exemplar_char_string(ar_eg_auxiliary);
 
         assert_eq!(actual, expected);
     }
