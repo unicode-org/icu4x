@@ -115,7 +115,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
         char_block.replace("\\\\", "\\").replace("\\\\", "\\")
     );
     let ch_lite_t_val: toml::Value =
-        toml::from_str(&ch_for_json).expect(&format!("{:?}", char_block));
+        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{:?}", char_block));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
         if let Some(toml::Value::String(s)) = t.get("x") {
             s.to_owned()
@@ -154,8 +154,8 @@ fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
         // parts of the string
         let rem_begin_str = &begin[..(begin.len() - begin_char.len_utf8())];
         let rem_end_str = &end[end_char.len_utf8()..];
-        insert_chars_from_string(set, &rem_begin_str);
-        insert_chars_from_string(set, &rem_end_str);
+        insert_chars_from_string(set, rem_begin_str);
+        insert_chars_from_string(set, rem_end_str);
     } else {
         for ch in s.chars().filter(|c| !c.is_whitespace()) {
             set.insert(Cow::Owned(ch.to_string()));
@@ -187,7 +187,7 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
                     if token.contains('}') {
                         dedup_chars.insert(Cow::Borrowed(maybe_char_string));
                     } else {
-                        insert_chars_from_string(&mut dedup_chars, &maybe_char_string);
+                        insert_chars_from_string(&mut dedup_chars, maybe_char_string);
                     }
                 }
 
