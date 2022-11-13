@@ -108,16 +108,19 @@ fn is_exemplar_string_split_char(c: char) -> bool {
 
 // unescape a (sub-)string of exemplar character data
 fn unescape_exemplar_chars(char_block: &str) -> String {
+    let less_slashes = char_block.replace("\\\\\\\\", "\\").replace("\\\\", "\\");
+
+    // exit early with degenerate case that interferes with TOML parser workaround
+    if less_slashes.chars().all(|ch| ch == '\"' || ch == '＂' || ch == '\\') {
+        return less_slashes.replace("\\", "").to_string();
+    }
+
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
     let ch_for_json = format!(
         "x=\"{}\"",
-        char_block
-            .replace("\\\\\\\\U", "\\U")
-            .replace("\\\\\\\\u", "\\u")
-            .replace("\\\\U", "\\U")
-            .replace("\\\\u", "\\u")
+        less_slashes
     );
 
     // workaround for literal values like `\\-` that cause problems for the TOML parser.
@@ -329,6 +332,15 @@ mod tests {
         .map(Cow::Borrowed)
         .collect();
         let actual = parse_exemplar_char_string(ar_eg_auxiliary);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_quotes() {
+        let quotes = "[\"＂]";
+        let expected: HashSet<Cow<str>> = ["\"", "＂"].iter().copied().map(Cow::Borrowed).collect();
+        let actual = parse_exemplar_char_string(quotes);
 
         assert_eq!(actual, expected);
     }
