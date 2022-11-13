@@ -293,13 +293,13 @@ mod tests {
 
     #[test]
     fn test_parse_exemplar_char_ranges_no_whitespace() {
-        let ja_main_subset_range = "[a万-下z]";
+        let range_amid_chars = "[a万-下z]";
         let expected: HashSet<Cow<str>> = ["万", "丈", "三", "上", "下", "a", "z"]
             .iter()
             .copied()
             .map(Cow::Borrowed)
             .collect();
-        let actual = parse_exemplar_char_string(ja_main_subset_range);
+        let actual = parse_exemplar_char_string(range_amid_chars);
 
         assert_eq!(actual, expected);
     }
