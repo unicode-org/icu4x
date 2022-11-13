@@ -2,10 +2,10 @@
   "CPInversionListStrList": {
     "cp_inv_list": [
       2544,
-      2554
+      2554,
+      8204,
+      8206
     ],
-    "str_list": [
-      "u200C\\u200D"
-    ]
+    "str_list": []
   }
 }
