@@ -115,7 +115,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
         .chars()
         .all(|ch| ch == '\"' || ch == '＂' || ch == '\\')
     {
-        return less_slashes.replace("\\", "").to_string();
+        return less_slashes.replace('\\', "");
     }
 
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
