@@ -133,7 +133,7 @@ fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
     };
     if s.contains('-') && s.find('-').unwrap() > 0 {
         let (begin, end) = s.split_once('-').unwrap();
-        let begin_char = begin.chars().next().unwrap();
+        let begin_char = begin.chars().rev().next().unwrap();
         let end_char = end.chars().next().unwrap();
 
         for code_point in (begin_char as u32)..=(end_char as u32) {
@@ -142,6 +142,13 @@ fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
                 .to_string();
             set.insert(Cow::Owned(char_str));
         }
+
+        // after handling the range substring, recursively handle any chars/ranges in the remaining
+        // parts of the string
+        let rem_begin_str = &begin[..(begin.len() - begin_char.len_utf8())];
+        let rem_end_str = &end[end_char.len_utf8()..];
+        insert_chars_from_string(set, &rem_begin_str);
+        insert_chars_from_string(set, &rem_end_str);
     } else {
         for ch in s.chars().filter(|c| !c.is_whitespace()) {
             set.insert(Cow::Owned(ch.to_string()));
@@ -235,7 +242,20 @@ mod tests {
     #[test]
     fn test_parse_exemplar_char_ranges() {
         let ja_main_subset_range = "[万-下]";
-        let expected: HashSet<Cow<str>> = vec!["万", "丈", "三", "上", "下"]
+        let expected: HashSet<Cow<str>> = ["万", "丈", "三", "上", "下"]
+            .iter()
+            .copied()
+            .map(Cow::Borrowed)
+            .collect();
+        let actual = parse_exemplar_char_string(ja_main_subset_range);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_exemplar_char_ranges_no_whitespace() {
+        let ja_main_subset_range = "[a万-下z]";
+        let expected: HashSet<Cow<str>> = ["万", "丈", "三", "上", "下", "a", "z"]
             .iter()
             .copied()
             .map(Cow::Borrowed)
