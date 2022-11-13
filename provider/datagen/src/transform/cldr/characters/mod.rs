@@ -111,17 +111,17 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     let less_slashes = char_block.replace("\\\\\\\\", "\\").replace("\\\\", "\\");
 
     // exit early with degenerate case that interferes with TOML parser workaround
-    if less_slashes.chars().all(|ch| ch == '\"' || ch == '＂' || ch == '\\') {
+    if less_slashes
+        .chars()
+        .all(|ch| ch == '\"' || ch == '＂' || ch == '\\')
+    {
         return less_slashes.replace("\\", "").to_string();
     }
 
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
-    let ch_for_json = format!(
-        "x=\"{}\"",
-        less_slashes
-    );
+    let ch_for_json = format!("x=\"{}\"", less_slashes);
 
     // workaround for literal values like `\\-` that cause problems for the TOML parser.
     // in such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character
