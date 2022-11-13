@@ -131,9 +131,12 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
 
 fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
     let s = if input.chars().count() > 1 && input.starts_with('\\') {
-        input.split_at(1).1
-    } else {
         input
+            .chars()
+            .skip_while(|ch| ch == &'\\')
+            .collect::<String>()
+    } else {
+        input.to_string()
     };
     if s.contains('-') && s.find('-').unwrap() > 0 {
         let (begin, end) = s.split_once('-').unwrap();
@@ -177,11 +180,9 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
         .split(is_exemplar_string_split_char)
         .filter(|t| !t.is_empty())
         .for_each(|token| {
-
             let mut string_and_chars = token.split('}');
 
             if let Some(maybe_char_string) = string_and_chars.next() {
-
                 if !maybe_char_string.is_empty() {
                     if token.contains('}') {
                         dedup_chars.insert(Cow::Borrowed(maybe_char_string));
