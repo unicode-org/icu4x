@@ -29,8 +29,13 @@ use core::ops::Range;
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
 /// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
 ///
-/// This type can be nested within itself to allow for multi-level nested `Vec`s, for
-/// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
+/// This type can be nested within itself to allow for multi-level nested `Vec`s.
+///
+/// # Examples
+///
+/// ## Nested Slices
+///
+/// The following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
 /// use zerovec::ule::*;
@@ -70,6 +75,25 @@ use core::ops::Range;
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
 ///     VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
+/// ```
+///
+/// ## Iterate over Windows
+///
+/// Although [`VarZeroSlice`] does not itself have a `.windows` iterator like
+/// [core::slice::Windows], this behavior can be easily modeled using an iterator:
+///
+/// ```
+/// use zerovec::VarZeroVec;
+///
+/// let vzv = VarZeroVec::<str>::from(&["a", "b", "c", "d"]);
+/// # let mut pairs: Vec<(&str, &str)> = Vec::new();
+///
+/// let mut it = vzv.iter().peekable();
+/// while let (Some(x), Some(y)) = (it.next(), it.peek()) {
+///     // Evaluate (x, y) here.
+/// #   pairs.push((x, y));
+/// }
+/// # assert_eq!(pairs, &[("a", "b"), ("b", "c"), ("c", "d")]);
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
