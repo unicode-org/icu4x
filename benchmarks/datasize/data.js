@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668194899352,
+  "lastUpdate": 1668468784861,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31403,6 +31403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/46aad80e015dd1df5eb0828c9842fb9276c93cbd"
         },
         "date": 1668194833194,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4029816,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d418731826aea10cbc72d6a3b73789a981e425bd",
+          "message": "Add example for iterating over the windows of a VarZeroVec (#2797)",
+          "timestamp": "2022-11-14T15:29:45-08:00",
+          "tree_id": "292a1168cb0b382ad84784fc32fceb392d4fa0c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/d418731826aea10cbc72d6a3b73789a981e425bd"
+        },
+        "date": 1668468715348,
         "tool": "ndjson",
         "benches": [
           {
