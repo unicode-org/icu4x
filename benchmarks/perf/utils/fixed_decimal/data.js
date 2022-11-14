@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668195611589,
+  "lastUpdate": 1668469489879,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59368,6 +59368,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d418731826aea10cbc72d6a3b73789a981e425bd",
+          "message": "Add example for iterating over the windows of a VarZeroVec (#2797)",
+          "timestamp": "2022-11-14T15:29:45-08:00",
+          "tree_id": "292a1168cb0b382ad84784fc32fceb392d4fa0c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/d418731826aea10cbc72d6a3b73789a981e425bd"
+        },
+        "date": 1668469409894,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 141204,
+            "range": "± 586",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29001,
+            "range": "± 304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76281,
+            "range": "± 654",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
             "range": "± 0",
             "unit": "ns/iter"
           }
