@@ -123,6 +123,7 @@ impl<'l> Lstm<'l> {
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
+    #[allow(clippy::too_many_arguments)]
     fn compute_hc(
         &self,
         x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
