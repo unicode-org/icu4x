@@ -4,7 +4,7 @@
 
 //! This module contains types and implementations for the Displaynames component.
 
-use crate::options::DisplayNamesOptions;
+use crate::options::*;
 use crate::provider::TerritoryDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
@@ -22,7 +22,7 @@ use tinystr::TinyStrError;
 ///
 /// let locale = Locale::UND;
 /// let options: options::DisplayNamesOptions = Default::default();
-/// let display_name = DisplayNames::try_new_unstable(
+/// let display_name = DisplayNames::try_new_region_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -44,7 +44,7 @@ impl DisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_unstable<D: DataProvider<TerritoryDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_region_unstable<D: DataProvider<TerritoryDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -63,11 +63,14 @@ impl DisplayNames {
     pub fn of(&self, region_code: &str) -> Result<&str, TinyStrError> {
         match <TinyAsciiStr<3>>::from_str(region_code) {
             Ok(key) => {
-                return Ok(self.data.get().names.get(&key).unwrap());
+                let data = self.data.get();
+                let display_name_result = match self.options.style {
+                    Style::Short => data.short_names.get(&key),
+                    _ => data.names.get(&key),
+                };
+                Ok(display_name_result.unwrap())
             }
-            Err(err) => {
-                return Err(err);
-            }
+            Err(err) => Err(err),
         }
     }
 }

@@ -22,3 +22,7 @@
 pub mod displaynames;
 pub mod options;
 pub mod provider;
+
+pub use options::Fallback;
+pub use options::LanguageDisplay;
+pub use options::Style;
