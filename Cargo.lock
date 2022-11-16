@@ -1604,6 +1604,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "serde",
  "tinystr 0.7.0",
  "zerovec",

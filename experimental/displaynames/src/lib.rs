@@ -19,4 +19,12 @@
 
 #![warn(missing_docs)]
 
+pub mod displaynames;
+pub mod options;
 pub mod provider;
+
+pub use displaynames::DisplayNames;
+pub use options::DisplayNamesOptions;
+pub use options::Fallback;
+pub use options::LanguageDisplay;
+pub use options::Style;
