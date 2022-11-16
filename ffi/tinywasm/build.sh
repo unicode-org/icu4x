@@ -27,19 +27,19 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZ
     --release \
     --package icu_capi_tinywasm
 
-cp target/wasm32-unknown-unknown/release/icu_capi_tinywasm.wasm icu_capi.wasm
+cp target/wasm32-unknown-unknown/release/icu_capi_tinywasm.wasm icu_capi_tinywasm.wasm
 
 # Don't regen the postcard data by default; delete the file to regen
-if ! test -f "icu4x_data.postcard"; then
+if ! test -f "icu4x_data_tinywasm.postcard"; then
     # Regen all data
     cargo run --manifest-path ../../provider/datagen/Cargo.toml \
         --features=bin,experimental -- \
         --all-locales \
-        --keys-for-bin icu_capi.wasm \
+        --keys-for-bin icu_capi_tinywasm.wasm \
         --cldr-tag 41.0.0 \
         --icuexport-tag release-72-1 \
         --format blob \
-        --out ./icu4x_data.postcard
+        --out ./icu4x_data_tinywasm.postcard
 fi
 
 # Refresh the lib folder

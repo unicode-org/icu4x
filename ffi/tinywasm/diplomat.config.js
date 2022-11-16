@@ -3,6 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 export default {
-    wasm_path: new URL('./icu_capi.wasm', import.meta.url),
+    wasm_path: new URL('./icu_capi_tinywasm.wasm', import.meta.url),
     init: wasm => wasm.icu4x_init(),
 };
