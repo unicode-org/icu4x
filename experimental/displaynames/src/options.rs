@@ -10,22 +10,22 @@
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::options;
-/// use icu_displaynames::DisplayNames;
-/// use icu_locid::Locale;
+/// use icu_displaynames::options::{DisplayNamesOptions, Style};
+/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_locid::locale;
 ///
-/// let locale = Locale::UND;
-/// let mut options: options::DisplayNamesOptions = Default::default();
-/// options.style = options::Style::Narrow;
-/// let display_name = DisplayNames::try_new_unstable(
+/// let locale = locale!("en-001");
+/// let mut options: DisplayNamesOptions = Default::default();
+/// options.style = Style::Short;
+/// let display_name = DisplayNames::try_new_region_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "AE";
-/// assert_writeable_eq!(display_name.of(&region_code), "United Arab Emirates");
+/// let region_code = "BA";
+/// assert_eq!(display_name.of(&region_code), Ok("Bosnia"));
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {

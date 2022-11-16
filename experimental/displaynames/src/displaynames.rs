@@ -16,12 +16,12 @@ use tinystr::TinyStrError;
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::DisplayNames;
-/// use icu_displaynames::options;
-/// use icu_locid::Locale;
+/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_displaynames::options::DisplayNamesOptions;
+/// use icu_locid::locale;
 ///
-/// let locale = Locale::UND;
-/// let options: options::DisplayNamesOptions = Default::default();
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
 /// let display_name = DisplayNames::try_new_region_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
@@ -30,7 +30,7 @@ use tinystr::TinyStrError;
 /// .expect("Data should load successfully");
 ///
 /// let region_code = "AE";
-/// assert_writeable_eq!(display_name.of(&region_code), "United Arab Emirates");
+/// assert_eq!(display_name.of(&region_code), Ok("United Arab Emirates"));
 /// ```
 pub struct DisplayNames {
     options: DisplayNamesOptions,
