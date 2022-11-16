@@ -7,6 +7,16 @@ icu::collections::codepointinvliststringlist::CodePointInversionListAndStringLis
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::try_from#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringListError#Enum
 icu::collections::codepointinvliststringlist::Error#Enum
+icu::displaynames::Fallback#Enum
+icu::displaynames::LanguageDisplay#Enum
+icu::displaynames::Style#Enum
+icu::displaynames::displaynames::DisplayNames#Struct
+icu::displaynames::displaynames::DisplayNames::of#FnInStruct
+icu::displaynames::displaynames::DisplayNames::try_new_region_unstable#FnInStruct
+icu::displaynames::options::DisplayNamesOptions#Struct
+icu::displaynames::options::Fallback#Enum
+icu::displaynames::options::LanguageDisplay#Enum
+icu::displaynames::options::Style#Enum
 icu::displaynames::provider::TerritoryDisplayNamesV1#Struct
 icu::displaynames::provider::TerritoryDisplayNamesV1Marker#Struct
 icu::properties::sets::UnicodeSetData#Struct
