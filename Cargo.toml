@@ -64,6 +64,7 @@ exclude = [
     "ffi/gn",
     # Special linker flags shouldn't overwrite the top-level target directory
     "ffi/tinywasm",
+    "ffi/skiawasm",
 ]
 
 # LTO is needed for WASM and other size-optimized builds,
