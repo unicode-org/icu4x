@@ -30,7 +30,7 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZ
 cp target/wasm32-unknown-unknown/release/icu_capi_skiawasm.wasm icu_capi_skiawasm.wasm
 
 # Don't regen the postcard data by default; delete the file to regen
-if ! test -f "icu4x_data_skiawasm.postcard"; then
+if ! test -f "icu4x_data_skiawasm_bake"; then
     # Regen all data
     cargo run --manifest-path ../../provider/datagen/Cargo.toml \
         --features=bin,experimental -- \
@@ -38,8 +38,8 @@ if ! test -f "icu4x_data_skiawasm.postcard"; then
         --keys-for-bin icu_capi_skiawasm.wasm \
         --cldr-tag 41.0.0 \
         --icuexport-tag release-72-1 \
-        --format blob \
-        --out ./icu4x_data_skiawasm.postcard
+        --format mod \
+        --out ./icu4x_data_skiawasm_bake
 fi
 
 # Refresh the lib folder

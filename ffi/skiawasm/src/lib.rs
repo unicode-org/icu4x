@@ -5,3 +5,14 @@
 //! This is a example of how to build a size-optimized WASM library file using ICU4X.
 
 extern crate icu_capi;
+
+mod baked {
+    include!("../icu4x_data_skiawasm_bake/mod.rs");
+    include!("../icu4x_data_skiawasm_bake/any.rs");
+}
+
+#[no_mangle]
+pub extern "C" fn skiawasm_get_provider() -> Box<icu_capi::provider::ffi::ICU4XDataProvider> {
+    Box::new(icu_capi::provider::ffi::ICU4XDataProvider(icu_capi::provider::ICU4XDataProviderInner::Any(Box::new(baked::BakedDataProvider))))
+}
+

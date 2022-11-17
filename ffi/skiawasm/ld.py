@@ -19,6 +19,7 @@ SYMBOLS = [
     "ICU4XBidiParagraph_range_end",
     "ICU4XBidiParagraph_reorder_line",
     "ICU4XBidiParagraph_destroy",
+    "skiawasm_get_provider",
 ]
 
 def main():

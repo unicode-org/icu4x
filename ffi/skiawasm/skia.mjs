@@ -5,6 +5,7 @@
 import { ICU4XDataProvider } from "./lib/ICU4XDataProvider.js";
 import { ICU4XBidi } from "./lib/ICU4XBidi.js";
 import { readFileSync } from "fs";
+import * as wasm from "./lib/diplomat-wasm.mjs";
 
 const DATA = readFileSync("icu4x_data_skiawasm.postcard");
 
@@ -18,7 +19,9 @@ const SAMPLE_TEXT = [
 ].join();
 
 async function main() {
-    const provider = ICU4XDataProvider.create_from_byte_slice(DATA);
+    // const provider = ICU4XDataProvider.create_from_byte_slice(DATA);
+    console.log(wasm);
+    const provider = wasm.default.skiawasm_get_provider();
     const bidi = ICU4XBidi.create(provider);
     const bidiInfo = bidi.for_text(SAMPLE_TEXT);
 

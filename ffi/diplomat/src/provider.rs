@@ -364,8 +364,14 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
-            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load(req),
-            ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
+            ICU4XDataProviderInner::Empty => {
+                log::info!("EMPTY");
+                EmptyDataProvider::new().load(req)
+            },
+            ICU4XDataProviderInner::Any(any_provider) => {
+                log::info!("ANY");
+                any_provider.as_downcasting().load(req)
+            }
         }
     }
 }
