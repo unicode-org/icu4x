@@ -5,12 +5,14 @@
 use elsa::FrozenMap;
 use icu_provider::prelude::*;
 
+/// A DataProvider that records input (requested) and output (resolved) locales.
 pub(crate) struct ResolvedLocaleAdapter<P> {
     pub inner: P,
     pub resolved: FrozenMap<(DataKey, DataLocale), Box<Result<DataResponseMetadata, DataError>>>,
 }
 
 impl<P> ResolvedLocaleAdapter<P> {
+    /// Creates a new [`ResolvedLocaleAdapter`] by wrapping another provider.
     pub fn new(provider: P) -> Self {
         Self {
             inner: provider,
@@ -18,6 +20,9 @@ impl<P> ResolvedLocaleAdapter<P> {
         }
     }
 
+    /// Gets the resolved [`DataLocale`] for a request that previously ran to completion.
+    ///
+    /// Returns `None` if the request didn't occur or was not successful.
     pub fn resolved_locale_for(
         &self,
         key: DataKey,

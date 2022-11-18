@@ -129,8 +129,10 @@ impl<'data> LstmMatrix<'data> {
 
     pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
         if self.dim.len() == 2 {
+            #[allow(clippy::unwrap_used)]
             Array::from_shape_vec(
                 (
+                    // `unwrap` cannot fail due to `dim.len()` check above.
                     self.dim.get(0).unwrap() as usize,
                     self.dim.get(1).unwrap() as usize,
                 ),

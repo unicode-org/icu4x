@@ -155,6 +155,9 @@ impl AnyProvider for BakedDataProvider {
         const ASCIIHEXDIGITV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
+        const BASICEMOJIV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::BasicEmojiV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
         const BIDICLASSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::BidiClassV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -669,6 +672,12 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_properties")]
             ASCIIHEXDIGITV1MARKER => props::ahex_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            BASICEMOJIV1MARKER => props::basic_emoji_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

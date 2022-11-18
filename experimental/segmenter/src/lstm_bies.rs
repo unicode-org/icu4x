@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper;
 use crate::provider::LstmDataV1Marker;
@@ -11,9 +12,6 @@ use core::str;
 use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use zerovec::ule::AsULE;
-
-#[cfg(feature = "lstm-grapheme")]
-use unicode_segmentation::UnicodeSegmentation;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
@@ -26,23 +24,26 @@ pub struct Lstm<'l> {
     mat7: Array1<f32>,
     mat8: Array2<f32>,
     mat9: Array1<f32>,
+    grapheme: Option<&'l GraphemeClusterSegmenter>,
 }
 
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, Error> {
+    pub fn try_new(
+        data: &'l DataPayload<LstmDataV1Marker>,
+        grapheme: Option<&'l GraphemeClusterSegmenter>,
+    ) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
 
-        #[cfg(feature = "lstm-grapheme")]
         if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
         {
             return Err(Error::Syntax);
         }
 
-        #[cfg(not(feature = "lstm-grapheme"))]
-        if !data.get().model.contains("_codepoints_") {
+        if data.get().model.contains("_graphclust_") && grapheme.is_none() {
+            // grapheme cluster model requires grapheme cluster data.
             return Err(Error::Syntax);
         }
 
@@ -79,6 +80,11 @@ impl<'l> Lstm<'l> {
             mat7,
             mat8,
             mat9,
+            grapheme: if data.get().model.contains("_codepoints_") {
+                None
+            } else {
+                grapheme
+            },
         })
     }
 
@@ -139,23 +145,24 @@ impl<'l> Lstm<'l> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
-        let input_seq: Vec<i16> = if self.data.get().model.contains("_codepoints_") {
-            let starts = input.char_indices().map(|(start, _char)| start);
-            let ends = starts.clone().skip(1).chain(core::iter::once(input.len()));
-            let char_slices = starts.zip(ends).map(|(start, end)| &input[start..end]);
-            char_slices.map(|c| self.return_id(c)).collect()
+        let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
+            grapheme
+                .segment_str(input)
+                .collect::<Vec<usize>>()
+                .windows(2)
+                .map(|chunk| {
+                    self.return_id(
+                        input
+                            .get(*chunk.get(0).unwrap_or(&0)..*chunk.get(1).unwrap_or(&input.len()))
+                            .unwrap_or(input),
+                    )
+                })
+                .collect()
         } else {
-            #[cfg(feature = "lstm-grapheme")]
-            {
-                UnicodeSegmentation::graphemes(input, true)
-                    .map(|s| self.return_id(s))
-                    .collect()
-            }
-
-            #[cfg(not(feature = "lstm-grapheme"))]
-            {
-                panic!("Unreachable")
-            }
+            input
+                .chars()
+                .map(|c| self.return_id(&c.to_string()))
+                .collect()
         };
 
         // x_data is the data ready to be feed into the model
@@ -211,7 +218,8 @@ impl<'l> Lstm<'l> {
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
             let curr_est = concat_lstm.dot(&timew) + timeb;
             let probs = math_helper::softmax(curr_est);
-            bies.push(self.compute_bies(probs).unwrap());
+            // We use `unwrap_or` to fall back and prevent panics.
+            bies.push(self.compute_bies(probs).unwrap_or('s'));
         }
         bies
     }
@@ -220,6 +228,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_provider::prelude::*;
     use serde::{Deserialize, Serialize};
     use std::fs::File;
     use std::io::BufReader;
@@ -267,12 +276,14 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "dic entries of graphclust data aren't sorted"]
-    #[cfg(feature = "lstm-grapheme")]
     fn test_model_loading() {
-        let filename = "tests/testdata/Thai_graphclust_exclusive_model4_heavy/weights.json";
+        let filename =
+            "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
         let lstm_data = load_lstm_data(filename);
-        let lstm = Lstm::try_new(&lstm_data).unwrap();
+        let grapheme =
+            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
+        let lstm = Lstm::try_new(&lstm_data, Some(&grapheme)).expect("Test data is invalid");
         assert_eq!(
             lstm.get_model_name(),
             "Thai_graphclust_exclusive_model4_heavy"
@@ -287,7 +298,7 @@ mod tests {
         model_filename.push_str(embedding);
         model_filename.push_str("_exclusive_model4_heavy/weights.json");
         let lstm_data = load_lstm_data(&model_filename);
-        let lstm = Lstm::try_new(&lstm_data).unwrap();
+        let lstm = Lstm::try_new(&lstm_data, None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();

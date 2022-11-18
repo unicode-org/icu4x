@@ -126,6 +126,14 @@ fn main() -> eyre::Result<()> {
                 .help("Which collation han database to use.")
         )
         .arg(
+            Arg::with_name("INCLUDE_COLLATIONS")
+                .long("include-collations")
+                .multiple(true)
+                .takes_value(true)
+                .possible_values(&["gb2312", "big5han", "search", "searchjl", "search*"])
+                .help("Which less-common collation tables to include. 'search*' includes all search tables.")
+        )
+        .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
                 .takes_value(true)
@@ -296,6 +304,11 @@ fn main() -> eyre::Result<()> {
             Some("unihan") => CollationHanDatabase::Unihan,
             _ => CollationHanDatabase::Implicit,
         });
+
+    if let Some(collations) = matches.values_of("INCLUDE_COLLATIONS") {
+        source_data =
+            source_data.with_collations(collations.into_iter().map(String::from).collect());
+    }
 
     let out = match matches
         .value_of("FORMAT")

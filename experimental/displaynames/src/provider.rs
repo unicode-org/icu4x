@@ -33,4 +33,7 @@ pub struct TerritoryDisplayNamesV1<'data> {
     /// Mapping for region to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedRegion, str>,
+    /// Mapping for region to locale display short name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
