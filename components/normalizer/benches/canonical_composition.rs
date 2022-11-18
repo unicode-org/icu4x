@@ -7,7 +7,7 @@ use icu_normalizer::properties::CanonicalComposition;
 
 fn function_under_bench(
     canonical_composer: &CanonicalComposition,
-    composable_points: &Vec<Vec<char>>,
+    composable_points: &[Vec<char>],
 ) {
     composable_points.iter().for_each(|points| {
         canonical_composer.compose(points[0], points[1]);

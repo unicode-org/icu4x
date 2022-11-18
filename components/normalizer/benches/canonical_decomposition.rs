@@ -33,7 +33,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
         .split('\n')
         .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
         .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
-        .map(|points| as_char(points))
+        .map(as_char)
         .collect();
 
     let mut group = criterion.benchmark_group(group_name);
