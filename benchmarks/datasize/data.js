@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668618318387,
+  "lastUpdate": 1668806318515,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31463,6 +31463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cec3f13a7861395aa092e1434a0da4a7242ea3a2"
         },
         "date": 1668618250828,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "post@ralfj.de",
+            "name": "Ralf Jung",
+            "username": "RalfJung"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54876538f561785449efea762411259f49e4f404",
+          "message": "FlexZeroSlize: implement Eq and PartialEq by hand (#2834)",
+          "timestamp": "2022-11-18T21:16:11Z",
+          "tree_id": "1f5f7323d81c9c3562b4f90b988ee15943bc1393",
+          "url": "https://github.com/unicode-org/icu4x/commit/54876538f561785449efea762411259f49e4f404"
+        },
+        "date": 1668806269906,
         "tool": "ndjson",
         "benches": [
           {
