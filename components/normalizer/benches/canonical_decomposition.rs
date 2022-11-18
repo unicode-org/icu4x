@@ -19,7 +19,7 @@ fn function_under_bench(
 fn as_char(points: &str) -> char {
     points
         .split_whitespace()
-        .next()// just pick the first one.
+        .next() // just pick the first one.
         .map(|point| u32::from_str_radix(point, 16).unwrap())
         .map(|x| char::from_u32(x).unwrap())
         .unwrap()
