@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668619196929,
+  "lastUpdate": 1668807084458,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59489,6 +59489,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 94,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "post@ralfj.de",
+            "name": "Ralf Jung",
+            "username": "RalfJung"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "54876538f561785449efea762411259f49e4f404",
+          "message": "FlexZeroSlize: implement Eq and PartialEq by hand (#2834)",
+          "timestamp": "2022-11-18T21:16:11Z",
+          "tree_id": "1f5f7323d81c9c3562b4f90b988ee15943bc1393",
+          "url": "https://github.com/unicode-org/icu4x/commit/54876538f561785449efea762411259f49e4f404"
+        },
+        "date": 1668807004666,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 141007,
+            "range": "± 537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28921,
+            "range": "± 135",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 77884,
+            "range": "± 1924",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
