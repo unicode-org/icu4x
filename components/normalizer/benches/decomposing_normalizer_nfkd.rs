@@ -90,10 +90,9 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
         content_random_words_he,
         content_random_words_de,
     ] {
-        group.bench_function(
-            BenchmarkId::from_parameter(file_name),
-            |bencher| bencher.iter(|| function_under_bench(&normalizer, content)),
-        );
+        group.bench_function(BenchmarkId::from_parameter(file_name), |bencher| {
+            bencher.iter(|| function_under_bench(&normalizer, content))
+        });
     }
     group.finish();
 }
