@@ -29,7 +29,7 @@ const ALL_SLICE: &ZeroSlice<u32> =
 
 /// A membership wrapper for [`CodePointInversionList`].
 ///
-/// Provides exposure to membership functions and constructors from serialized [`CodePointSets`](CodePointInversionList)
+/// Provides exposure to membership functions and constructors from serialized `CodePointSet`s (sets of code points)
 /// and predefined ranges.
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 pub struct CodePointInversionList<'data> {

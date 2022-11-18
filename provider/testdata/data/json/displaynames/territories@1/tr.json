@@ -294,5 +294,13 @@
     "ZM": "Zambiya",
     "ZW": "Zimbabve",
     "ZZ": "Bilinmeyen Bölge"
+  },
+  "short_names": {
+    "GB": "BK",
+    "HK": "Hong Kong",
+    "MO": "Makao",
+    "PS": "Filistin",
+    "UN": "BM",
+    "US": "ABD"
   }
 }

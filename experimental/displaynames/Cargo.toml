@@ -31,6 +31,9 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 
+[dev-dependencies]
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_displaynames"] }
+
 [lib]
 path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI

@@ -4,7 +4,7 @@
 
 //! This module exists to contain implementation docs and notes for people who want to contribute.
 //!
-//!  # Contributor Notes
+//! # Contributor Notes
 //!
 //! ## Development environment (on Linux) for fuzzing and generating data
 //!
@@ -28,6 +28,14 @@
 //! ### Testing
 //!
 //! `cargo test --features serde`
+//!
+//! Note: some tests depend on collation test data files.
+//! These files are copied from the ICU and CLDR codebases,
+//! and they are stored in `tests/data/`.
+//! New versions of collation data from CLDR/ICU are kept in sync with these collation test data files.
+//! When updating ICU4X to pick up new Unicode data, including collation data, from ICU,
+//! the copies of collation test data files in maintained in ICU4X's icu_collator will need to be overridden with their newer corresponding versions.
+//! See the Readme in `/tests/data/README.md` for details.
 //!
 //! ### Fuzzing
 //!

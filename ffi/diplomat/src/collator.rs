@@ -9,20 +9,13 @@ pub mod ffi {
     use icu_collator::{Collator, CollatorOptions};
 
     use crate::{
-        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        common::ffi::ICU4XOrdering, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
     };
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::collator::Collator, Struct)]
     pub struct ICU4XCollator(pub Collator);
-
-    #[diplomat::enum_convert(core::cmp::Ordering)]
-    #[diplomat::rust_link(core::cmp::Ordering, Enum)]
-    pub enum ICU4XOrdering {
-        Less = -1,
-        Equal = 0,
-        Greater = 1,
-    }
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]

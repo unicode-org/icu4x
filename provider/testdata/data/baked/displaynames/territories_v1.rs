@@ -658,6 +658,31 @@ static AR_AR_EG: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNa
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 83u8,
+                    0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 29u8, 0u8, 46u8, 0u8, 54u8, 0u8, 66u8, 0u8,
+                    216u8, 167u8, 217u8, 132u8, 217u8, 133u8, 217u8, 133u8, 217u8, 132u8, 217u8,
+                    131u8, 216u8, 169u8, 32u8, 216u8, 167u8, 217u8, 132u8, 217u8, 133u8, 216u8,
+                    170u8, 216u8, 173u8, 216u8, 175u8, 216u8, 169u8, 217u8, 135u8, 217u8, 136u8,
+                    217u8, 134u8, 216u8, 186u8, 32u8, 217u8, 131u8, 217u8, 136u8, 217u8, 134u8,
+                    216u8, 186u8, 217u8, 133u8, 217u8, 131u8, 216u8, 167u8, 217u8, 136u8, 217u8,
+                    129u8, 217u8, 132u8, 216u8, 179u8, 216u8, 183u8, 217u8, 138u8, 217u8, 134u8,
+                    216u8, 167u8, 217u8, 132u8, 217u8, 136u8, 217u8, 132u8, 216u8, 167u8, 217u8,
+                    138u8, 216u8, 167u8, 216u8, 170u8, 32u8, 216u8, 167u8, 217u8, 132u8, 217u8,
+                    133u8, 216u8, 170u8, 216u8, 173u8, 216u8, 175u8, 216u8, 169u8,
+                ])
+            },
+        )
+    },
 };
 static BN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -1679,6 +1704,31 @@ static BN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
                     166u8, 190u8, 224u8, 166u8, 168u8, 224u8, 166u8, 190u8, 32u8, 224u8, 166u8,
                     133u8, 224u8, 166u8, 158u8, 224u8, 167u8, 141u8, 224u8, 166u8, 154u8, 224u8,
                     166u8, 178u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 13u8, 0u8, 25u8, 0u8, 46u8, 0u8, 73u8, 0u8, 85u8,
+                    0u8, 224u8, 166u8, 135u8, 224u8, 166u8, 137u8, 32u8, 224u8, 166u8, 149u8,
+                    224u8, 167u8, 135u8, 224u8, 166u8, 185u8, 224u8, 166u8, 130u8, 224u8, 166u8,
+                    149u8, 224u8, 166u8, 130u8, 224u8, 166u8, 174u8, 224u8, 167u8, 141u8, 224u8,
+                    166u8, 175u8, 224u8, 166u8, 190u8, 224u8, 166u8, 149u8, 224u8, 166u8, 190u8,
+                    224u8, 166u8, 147u8, 224u8, 166u8, 171u8, 224u8, 166u8, 191u8, 224u8, 166u8,
+                    178u8, 224u8, 166u8, 191u8, 224u8, 166u8, 184u8, 224u8, 167u8, 141u8, 224u8,
+                    166u8, 164u8, 224u8, 166u8, 191u8, 224u8, 166u8, 168u8, 224u8, 166u8, 135u8,
+                    224u8, 166u8, 137u8, 224u8, 166u8, 143u8, 224u8, 166u8, 168u8, 224u8, 166u8,
+                    135u8, 224u8, 166u8, 137u8, 32u8, 224u8, 166u8, 143u8, 224u8, 166u8, 184u8,
                 ])
             },
         )
@@ -2897,6 +2947,38 @@ static CCP: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 20u8, 0u8, 44u8, 0u8, 68u8, 0u8, 108u8, 0u8,
+                    140u8, 0u8, 240u8, 145u8, 132u8, 132u8, 240u8, 145u8, 132u8, 131u8, 240u8,
+                    145u8, 132u8, 170u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 172u8,
+                    240u8, 145u8, 132u8, 166u8, 240u8, 145u8, 132u8, 167u8, 240u8, 145u8, 132u8,
+                    129u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 167u8, 240u8, 145u8,
+                    132u8, 129u8, 240u8, 145u8, 132u8, 159u8, 240u8, 145u8, 132u8, 179u8, 240u8,
+                    145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 131u8,
+                    240u8, 145u8, 132u8, 174u8, 240u8, 145u8, 132u8, 156u8, 240u8, 145u8, 132u8,
+                    168u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 168u8, 240u8, 145u8,
+                    132u8, 140u8, 240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 150u8, 240u8,
+                    145u8, 132u8, 168u8, 240u8, 145u8, 132u8, 154u8, 240u8, 145u8, 132u8, 180u8,
+                    240u8, 145u8, 132u8, 131u8, 240u8, 145u8, 132u8, 168u8, 240u8, 145u8, 132u8,
+                    131u8, 240u8, 145u8, 132u8, 170u8, 240u8, 145u8, 132u8, 131u8, 240u8, 145u8,
+                    132u8, 172u8, 240u8, 145u8, 132u8, 154u8, 240u8, 145u8, 132u8, 180u8, 240u8,
+                    145u8, 132u8, 131u8, 240u8, 145u8, 132u8, 168u8, 240u8, 145u8, 132u8, 131u8,
+                    240u8, 145u8, 132u8, 170u8, 240u8, 145u8, 132u8, 131u8, 240u8, 145u8, 132u8,
+                    172u8, 240u8, 145u8, 132u8, 140u8, 240u8, 145u8, 132u8, 180u8,
+                ])
+            },
+        )
+    },
 };
 static EN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -3275,6 +3357,26 @@ static EN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    66u8, 65u8, 0u8, 71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 77u8, 0u8, 77u8, 79u8,
+                    0u8, 80u8, 83u8, 0u8, 85u8, 78u8, 0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    8u8, 0u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 8u8, 0u8, 17u8, 0u8, 24u8, 0u8, 29u8,
+                    0u8, 38u8, 0u8, 40u8, 0u8, 66u8, 111u8, 115u8, 110u8, 105u8, 97u8, 85u8, 75u8,
+                    72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8, 110u8, 103u8, 77u8, 121u8, 97u8,
+                    110u8, 109u8, 97u8, 114u8, 77u8, 97u8, 99u8, 97u8, 111u8, 80u8, 97u8, 108u8,
+                    101u8, 115u8, 116u8, 105u8, 110u8, 101u8, 85u8, 78u8, 85u8, 83u8,
+                ])
+            },
+        )
+    },
 };
 static EN_001_EN_ZA: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -3649,6 +3751,26 @@ static EN_001_EN_ZA: &DataStruct = &::icu_displaynames::provider::TerritoryDispl
                     105u8, 99u8, 97u8, 90u8, 97u8, 109u8, 98u8, 105u8, 97u8, 90u8, 105u8, 109u8,
                     98u8, 97u8, 98u8, 119u8, 101u8, 85u8, 110u8, 107u8, 110u8, 111u8, 119u8, 110u8,
                     32u8, 82u8, 101u8, 103u8, 105u8, 111u8, 110u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    66u8, 65u8, 0u8, 71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 77u8, 0u8, 77u8, 79u8,
+                    0u8, 80u8, 83u8, 0u8, 85u8, 78u8, 0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    8u8, 0u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 8u8, 0u8, 17u8, 0u8, 24u8, 0u8, 29u8,
+                    0u8, 38u8, 0u8, 40u8, 0u8, 66u8, 111u8, 115u8, 110u8, 105u8, 97u8, 85u8, 75u8,
+                    72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8, 110u8, 103u8, 77u8, 121u8, 97u8,
+                    110u8, 109u8, 97u8, 114u8, 77u8, 97u8, 99u8, 97u8, 111u8, 80u8, 97u8, 108u8,
+                    101u8, 115u8, 116u8, 105u8, 110u8, 101u8, 85u8, 78u8, 85u8, 83u8,
                 ])
             },
         )
@@ -4048,6 +4170,25 @@ static ES: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 83u8,
+                    0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 11u8, 0u8, 16u8, 0u8, 25u8, 0u8, 82u8,
+                    85u8, 72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8, 110u8, 103u8, 77u8, 97u8,
+                    99u8, 97u8, 111u8, 80u8, 97u8, 108u8, 101u8, 115u8, 116u8, 105u8, 110u8, 97u8,
+                    69u8, 69u8, 46u8, 32u8, 85u8, 85u8, 46u8,
+                ])
+            },
+        )
+    },
 };
 static ES_AR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -4439,6 +4580,25 @@ static ES_AR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNames
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 83u8,
+                    0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 11u8, 0u8, 16u8, 0u8, 25u8, 0u8, 82u8,
+                    85u8, 72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8, 110u8, 103u8, 77u8, 97u8,
+                    99u8, 97u8, 111u8, 80u8, 97u8, 108u8, 101u8, 115u8, 116u8, 105u8, 110u8, 97u8,
+                    69u8, 69u8, 46u8, 32u8, 85u8, 85u8, 46u8,
+                ])
+            },
+        )
+    },
 };
 static FIL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -4818,6 +4978,25 @@ static FIL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1
                     97u8, 90u8, 105u8, 109u8, 98u8, 97u8, 98u8, 119u8, 101u8, 72u8, 105u8, 110u8,
                     100u8, 105u8, 32u8, 75u8, 105u8, 108u8, 97u8, 108u8, 97u8, 110u8, 103u8, 32u8,
                     82u8, 101u8, 104u8, 105u8, 121u8, 111u8, 110u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 13u8, 0u8, 18u8, 0u8, 27u8, 0u8, 29u8,
+                    0u8, 85u8, 46u8, 75u8, 46u8, 72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8,
+                    110u8, 103u8, 77u8, 97u8, 99u8, 97u8, 117u8, 80u8, 97u8, 108u8, 101u8, 115u8,
+                    116u8, 105u8, 110u8, 101u8, 85u8, 78u8, 85u8, 46u8, 83u8, 46u8,
                 ])
             },
         )
@@ -5234,6 +5413,26 @@ static FR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
                     98u8, 119u8, 101u8, 114u8, 195u8, 169u8, 103u8, 105u8, 111u8, 110u8, 32u8,
                     105u8, 110u8, 100u8, 195u8, 169u8, 116u8, 101u8, 114u8, 109u8, 105u8, 110u8,
                     195u8, 169u8, 101u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 14u8, 0u8, 19u8, 0u8, 28u8, 0u8, 30u8,
+                    0u8, 82u8, 46u8, 45u8, 85u8, 46u8, 72u8, 111u8, 110u8, 103u8, 32u8, 75u8,
+                    111u8, 110u8, 103u8, 77u8, 97u8, 99u8, 97u8, 111u8, 80u8, 97u8, 108u8, 101u8,
+                    115u8, 116u8, 105u8, 110u8, 101u8, 78u8, 85u8, 195u8, 137u8, 46u8, 45u8, 85u8,
+                    46u8,
                 ])
             },
         )
@@ -5803,6 +6002,27 @@ static JA: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
                     130u8, 162u8, 227u8, 130u8, 184u8, 227u8, 131u8, 179u8, 227u8, 131u8, 144u8,
                     227u8, 131u8, 150u8, 227u8, 130u8, 168u8, 228u8, 184u8, 141u8, 230u8, 152u8,
                     142u8, 227u8, 129u8, 170u8, 229u8, 156u8, 176u8, 229u8, 159u8, 159u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 12u8, 0u8, 21u8, 0u8, 36u8, 0u8, 42u8,
+                    0u8, 232u8, 139u8, 177u8, 229u8, 155u8, 189u8, 233u8, 166u8, 153u8, 230u8,
+                    184u8, 175u8, 227u8, 131u8, 158u8, 227u8, 130u8, 171u8, 227u8, 130u8, 170u8,
+                    227u8, 131u8, 145u8, 227u8, 131u8, 172u8, 227u8, 130u8, 185u8, 227u8, 131u8,
+                    129u8, 227u8, 131u8, 138u8, 229u8, 155u8, 189u8, 233u8, 128u8, 163u8, 227u8,
+                    130u8, 162u8, 227u8, 131u8, 161u8, 227u8, 131u8, 170u8, 227u8, 130u8, 171u8,
                 ])
             },
         )
@@ -6474,6 +6694,29 @@ static RU: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 16u8, 0u8, 30u8, 0u8, 40u8, 0u8, 58u8, 0u8, 64u8,
+                    0u8, 208u8, 145u8, 209u8, 128u8, 208u8, 184u8, 209u8, 130u8, 208u8, 176u8,
+                    208u8, 189u8, 208u8, 184u8, 209u8, 143u8, 208u8, 147u8, 208u8, 190u8, 208u8,
+                    189u8, 208u8, 186u8, 208u8, 190u8, 208u8, 189u8, 208u8, 179u8, 208u8, 156u8,
+                    208u8, 176u8, 208u8, 186u8, 208u8, 176u8, 208u8, 190u8, 208u8, 159u8, 208u8,
+                    176u8, 208u8, 187u8, 208u8, 181u8, 209u8, 129u8, 209u8, 130u8, 208u8, 184u8,
+                    208u8, 189u8, 208u8, 176u8, 208u8, 158u8, 208u8, 158u8, 208u8, 157u8, 208u8,
+                    161u8, 208u8, 168u8, 208u8, 144u8,
+                ])
+            },
+        )
+    },
 };
 static SR_LATN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -6872,6 +7115,25 @@ static SR_LATN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNam
                     106u8, 97u8, 90u8, 105u8, 109u8, 98u8, 97u8, 98u8, 118u8, 101u8, 78u8, 101u8,
                     112u8, 111u8, 122u8, 110u8, 97u8, 116u8, 32u8, 114u8, 101u8, 103u8, 105u8,
                     111u8, 110u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 10u8, 0u8, 15u8, 0u8, 24u8, 0u8, 26u8,
+                    0u8, 85u8, 75u8, 72u8, 111u8, 110u8, 103u8, 107u8, 111u8, 110u8, 103u8, 77u8,
+                    97u8, 107u8, 97u8, 111u8, 80u8, 97u8, 108u8, 101u8, 115u8, 116u8, 105u8, 110u8,
+                    97u8, 85u8, 78u8, 83u8, 65u8, 68u8,
                 ])
             },
         )
@@ -7556,6 +7818,28 @@ static SR_SR_CYRL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplay
                     178u8, 208u8, 181u8, 208u8, 157u8, 208u8, 181u8, 208u8, 191u8, 208u8, 190u8,
                     208u8, 183u8, 208u8, 189u8, 208u8, 176u8, 209u8, 130u8, 32u8, 209u8, 128u8,
                     208u8, 181u8, 208u8, 179u8, 208u8, 184u8, 208u8, 190u8, 208u8, 189u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 20u8, 0u8, 30u8, 0u8, 48u8, 0u8, 52u8,
+                    0u8, 208u8, 163u8, 208u8, 154u8, 208u8, 165u8, 208u8, 190u8, 208u8, 189u8,
+                    208u8, 179u8, 208u8, 186u8, 208u8, 190u8, 208u8, 189u8, 208u8, 179u8, 208u8,
+                    156u8, 208u8, 176u8, 208u8, 186u8, 208u8, 176u8, 208u8, 190u8, 208u8, 159u8,
+                    208u8, 176u8, 208u8, 187u8, 208u8, 181u8, 209u8, 129u8, 209u8, 130u8, 208u8,
+                    184u8, 208u8, 189u8, 208u8, 176u8, 208u8, 163u8, 208u8, 157u8, 208u8, 161u8,
+                    208u8, 144u8, 208u8, 148u8,
                 ])
             },
         )
@@ -8522,6 +8806,33 @@ static TH: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 83u8,
+                    0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 39u8, 0u8, 57u8, 0u8, 75u8, 0u8, 102u8, 0u8,
+                    224u8, 184u8, 170u8, 224u8, 184u8, 171u8, 224u8, 184u8, 163u8, 224u8, 184u8,
+                    178u8, 224u8, 184u8, 138u8, 224u8, 184u8, 173u8, 224u8, 184u8, 178u8, 224u8,
+                    184u8, 147u8, 224u8, 184u8, 178u8, 224u8, 184u8, 136u8, 224u8, 184u8, 177u8,
+                    224u8, 184u8, 129u8, 224u8, 184u8, 163u8, 224u8, 184u8, 174u8, 224u8, 185u8,
+                    136u8, 224u8, 184u8, 173u8, 224u8, 184u8, 135u8, 224u8, 184u8, 129u8, 224u8,
+                    184u8, 135u8, 224u8, 184u8, 161u8, 224u8, 184u8, 178u8, 224u8, 185u8, 128u8,
+                    224u8, 184u8, 129u8, 224u8, 185u8, 138u8, 224u8, 184u8, 178u8, 224u8, 184u8,
+                    155u8, 224u8, 184u8, 178u8, 224u8, 185u8, 128u8, 224u8, 184u8, 165u8, 224u8,
+                    184u8, 170u8, 224u8, 185u8, 132u8, 224u8, 184u8, 149u8, 224u8, 184u8, 153u8,
+                    224u8, 185u8, 140u8, 224u8, 184u8, 170u8, 224u8, 184u8, 171u8, 224u8, 184u8,
+                    163u8, 224u8, 184u8, 177u8, 224u8, 184u8, 144u8, 224u8, 184u8, 175u8,
+                ])
+            },
+        )
+    },
 };
 static TR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -8913,6 +9224,25 @@ static TR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 78u8,
+                    0u8, 85u8, 83u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 11u8, 0u8, 16u8, 0u8, 24u8, 0u8, 26u8,
+                    0u8, 66u8, 75u8, 72u8, 111u8, 110u8, 103u8, 32u8, 75u8, 111u8, 110u8, 103u8,
+                    77u8, 97u8, 107u8, 97u8, 111u8, 70u8, 105u8, 108u8, 105u8, 115u8, 116u8, 105u8,
+                    110u8, 66u8, 77u8, 65u8, 66u8, 68u8,
+                ])
+            },
+        )
+    },
 };
 static UND: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
     names: unsafe {
@@ -9080,6 +9410,23 @@ static UND: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1
                     86u8, 69u8, 86u8, 71u8, 86u8, 73u8, 86u8, 78u8, 86u8, 85u8, 87u8, 70u8, 87u8,
                     83u8, 88u8, 65u8, 88u8, 66u8, 88u8, 75u8, 89u8, 69u8, 89u8, 84u8, 90u8, 65u8,
                     90u8, 77u8, 90u8, 87u8, 90u8, 90u8,
+                ])
+            },
+        )
+    },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    71u8, 66u8, 0u8, 72u8, 75u8, 0u8, 77u8, 79u8, 0u8, 80u8, 83u8, 0u8, 85u8, 83u8,
+                    0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 4u8, 0u8, 6u8, 0u8, 8u8, 0u8, 71u8,
+                    66u8, 72u8, 75u8, 77u8, 79u8, 80u8, 83u8, 85u8, 83u8,
                 ])
             },
         )

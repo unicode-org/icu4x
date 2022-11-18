@@ -9,7 +9,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
-fn get_enumerated<'a>(
+fn get_enumerated_prop<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
@@ -31,7 +31,7 @@ macro_rules! expand {
             impl DataProvider<$marker> for crate::DatagenProvider
             {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let source_cpt_data = &get_enumerated(&self.source, $prop_name)?.code_point_trie;
+                    let source_cpt_data = &get_enumerated_prop(&self.source, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
@@ -48,7 +48,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_enumerated(&self.source, $prop_name)?;
+                    get_enumerated_prop(&self.source, $prop_name)?;
                     Ok(vec![Default::default()])
                 }
             }

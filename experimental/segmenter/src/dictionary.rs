@@ -2,21 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::grapheme::*;
 use crate::provider::*;
 use crate::{indices::Utf16Indices, SegmenterError};
-
-use core::iter::Peekable;
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
-
-// SpacingMark and Extend for Myanmar shouldn't be first character of segment.
-//
-// TODO:
-// After moving dictionary to icudata, we should get this property from DataProvider
-fn is_grapheme_extend(ch: char) -> bool {
-    matches!(ch, /* Extened */ '\u{102d}'..='\u{1030}' | '\u{1032}'..='\u{1037}' | '\u{1039}'..='\u{103a}' | '\u{103d}'..='\u{103e}' | '\u{1058}'..='\u{1059}' | '\u{105e}'..='\u{1060}' | '\u{1071}'..='\u{1074}' | '\u{1082}' | '\u{1085}'..='\u{1086}' | '\u{108d}' | '\u{109d}' | /* SpacingMark */ '\u{1031}' | '\u{103b}'..='\u{103c}' | '\u{1056}'..='\u{1057}' | '\u{1084}')
-}
 
 /// A trait for dictionary based iterator
 pub trait DictionaryType<'l, 's> {
@@ -30,11 +21,16 @@ pub trait DictionaryType<'l, 's> {
     fn char_len(c: Self::CharType) -> usize;
 }
 
-#[derive(Clone)]
-pub struct DictionaryBreakIterator<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> {
+pub struct DictionaryBreakIterator<
+    'l,
+    's,
+    Y: DictionaryType<'l, 's> + ?Sized,
+    X: Iterator<Item = usize> + ?Sized,
+> {
     trie: Char16Trie<'l>,
-    iter: Peekable<Y::IterAttr>,
+    iter: Y::IterAttr,
     len: usize,
+    grapheme_iter: X,
     // TODO transform value for byte trie
 }
 
@@ -46,7 +42,9 @@ pub struct DictionaryBreakIterator<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
+    for DictionaryBreakIterator<'l, 's, Y, X>
+{
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -54,6 +52,7 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIte
         let mut intermediate_length = 0;
         let mut not_match = false;
         let mut previous_match = None;
+        let mut last_grapheme_offset = 0;
 
         while let Some(next) = self.iter.next() {
             let ch = Y::to_char(next.1);
@@ -62,14 +61,20 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized> Iterator for DictionaryBreakIte
                     return Some(next.0 + Y::char_len(next.1));
                 }
                 TrieResult::Intermediate(_) => {
-                    {
-                        // If next character doesn't allow for grapheme, we don't recognize this word as intermediate state.
-                        if let Some(tmp_next) = self.iter.peek() {
-                            if is_grapheme_extend(Y::to_char(tmp_next.1)) {
-                                continue;
-                            }
+                    // Dictionary has to match with grapheme cluster segment.
+                    // If not, we ignore it.
+                    while last_grapheme_offset < next.0 + Y::char_len(next.1) {
+                        if let Some(offset) = self.grapheme_iter.next() {
+                            last_grapheme_offset = offset;
+                            continue;
                         }
+                        last_grapheme_offset = self.len;
+                        break;
                     }
+                    if last_grapheme_offset != next.0 + Y::char_len(next.1) {
+                        continue;
+                    }
+
                     intermediate_length = next.0 + Y::char_len(next.1);
                     previous_match = Some(self.iter.clone());
                 }
@@ -134,31 +139,43 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
 
 pub struct DictionarySegmenter<'l> {
     payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+    grapheme: &'l GraphemeClusterSegmenter,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub fn try_new_unstable(
         payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+        grapheme: &'l GraphemeClusterSegmenter,
     ) -> Result<Self, SegmenterError> {
         // TODO: no way to verify trie data
-        Ok(Self { payload })
+        Ok(Self { payload, grapheme })
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(&self, input: &'s str) -> DictionaryBreakIterator<'l, 's, char> {
+    pub fn segment_str<'s>(
+        &'s self,
+        input: &'s str,
+    ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
+        let grapheme_iter = self.grapheme.segment_str(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: input.char_indices().peekable(),
+            iter: input.char_indices(),
             len: input.len(),
+            grapheme_iter,
         }
     }
 
     /// Create a dictionary based break iterator for a UTF-16 string.
-    pub fn segment_utf16<'s>(&self, input: &'s [u16]) -> DictionaryBreakIterator<'l, 's, u32> {
+    pub fn segment_utf16<'s>(
+        &'s self,
+        input: &'s [u16],
+    ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
+        let grapheme_iter = self.grapheme.segment_utf16(input);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
-            iter: Utf16Indices::new(input).peekable(),
+            iter: Utf16Indices::new(input),
             len: input.len(),
+            grapheme_iter,
         }
     }
 }
@@ -201,7 +218,11 @@ mod tests {
             trie_data: BURMESE_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
+        let grapheme =
+            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
+        let segmenter =
+            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -214,8 +235,12 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let payload = get_payload(locale!("ja")).unwrap();
-        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
+        let payload = get_payload(locale!("ja")).expect("Data exists");
+        let grapheme =
+            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
+        let segmenter =
+            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
 
         // Match case
         let s = "龟山岛龟山岛";
@@ -255,7 +280,11 @@ mod tests {
             trie_data: KHMER_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
+        let grapheme =
+            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
+        let segmenter =
+            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![27, 54, 81]);
@@ -283,7 +312,11 @@ mod tests {
             trie_data: LAO_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let segmenter = DictionarySegmenter::try_new_unstable(&payload).expect("Data exists");
+        let grapheme =
+            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Data exists");
+        let segmenter =
+            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);

@@ -37,4 +37,5 @@ extern crate alloc;
 
 pub mod char16trie;
 pub mod codepointinvlist;
+pub mod codepointinvliststringlist;
 pub mod codepointtrie;

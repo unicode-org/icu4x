@@ -722,6 +722,19 @@ impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for BakedDa
     }
 }
 #[cfg(feature = "icu_properties")]
+impl DataProvider<::icu_properties::provider::BasicEmojiV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BasicEmojiV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *props::basic_emoji_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BasicEmojiV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassV1Marker>, DataError> {
         Ok(DataResponse {

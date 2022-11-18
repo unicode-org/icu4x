@@ -154,9 +154,16 @@ icuexportdata_glob = [
     "collation/implicithan/ja_standard_data.toml",
     "collation/implicithan/ja_standard_meta.toml",
     "collation/implicithan/ja_standard_reord.toml",
+    "collation/implicithan/ko_search_data.toml",
+    "collation/implicithan/ko_search_meta.toml",
+    "collation/implicithan/ko_searchjl_data.toml",
+    "collation/implicithan/ko_searchjl_meta.toml",
     "collation/implicithan/ko_standard_data.toml",
     "collation/implicithan/ko_standard_meta.toml",
     "collation/implicithan/ko_standard_reord.toml",
+    "collation/implicithan/ko_unihan_data.toml",
+    "collation/implicithan/ko_unihan_meta.toml",
+    "collation/implicithan/ko_unihan_reord.toml",
     "collation/implicithan/lt_standard_data.toml",
     "collation/implicithan/lt_standard_meta.toml",
     "collation/implicithan/no_standard_data.toml",
@@ -166,12 +173,12 @@ icuexportdata_glob = [
     "collation/implicithan/root_standard_jamo.toml",
     "collation/implicithan/root_standard_meta.toml",
     "collation/implicithan/root_standard_prim.toml",
-    "collation/implicithan/sv_reformed_data.toml",
-    "collation/implicithan/sv_reformed_meta.toml",
     "collation/implicithan/sv_search_data.toml",
     "collation/implicithan/sv_search_meta.toml",
     "collation/implicithan/sv_standard_data.toml",
     "collation/implicithan/sv_standard_meta.toml",
+    "collation/implicithan/sv_traditional_data.toml",
+    "collation/implicithan/sv_traditional_meta.toml",
     "collation/implicithan/th_standard_data.toml",
     "collation/implicithan/th_standard_meta.toml",
     "collation/implicithan/th_standard_reord.toml",
@@ -207,6 +214,7 @@ icuexportdata_glob = [
     "ucase/small/ucase.toml",
     "uprops/small/AHex.toml",
     "uprops/small/Alpha.toml",
+    "uprops/small/Basic_Emoji.toml",
     "uprops/small/bc.toml",
     "uprops/small/Bidi_C.toml",
     "uprops/small/Bidi_M.toml",
@@ -266,7 +274,7 @@ icuexportdata_glob = [
     "uprops/small/XIDS.toml",
 ]
 
-icuexportdata_gitref = "icu4x/2022-08-17/71.x"
+icuexportdata_gitref = "release-72-1"
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

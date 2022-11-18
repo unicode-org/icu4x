@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[derive(Clone, Copy)]
-enum  DateTimeSeparator {
+enum DateTimeSeparator {
     CapitalT,
     LowCaseT,
     Space,
@@ -20,7 +20,7 @@ impl DateTimeSeparator {
 }
 
 #[derive(Clone, Copy)]
-enum  DecimalSeparator {
+enum DecimalSeparator {
     Dot,
     Comma,
 }
@@ -46,15 +46,16 @@ struct ParsedDateTime {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct DateTimeParser{}
+struct DateTimeParser {}
 
 impl DateTimeParser {
-
-    fn parse_date_extented_year<'a, I>(iter:  &mut core::iter::Peekable<I>) -> Option<i32>
-        where
-            I: Iterator<Item = &'a u8>,
+    fn parse_date_extented_year<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<i32>
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut year: i32 = 0;
+        // TODO: value assigned to `sign` is never read
+        #[allow(unused_assignments)]
         let mut sign = 1;
         if iter.peek() == Some(&&b'+') {
             sign = 1;
@@ -82,8 +83,8 @@ impl DateTimeParser {
     }
 
     fn parse_date_four_digit_year<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<i32>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut year: i32 = 0;
         let mut cnt = 0;
@@ -104,8 +105,8 @@ impl DateTimeParser {
     }
 
     fn parse_date_year<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<i32>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         if iter.peek() == Some(&&b'+') || iter.peek() == Some(&&b'-') {
             return Self::parse_date_extented_year(iter);
@@ -113,9 +114,12 @@ impl DateTimeParser {
         return Self::parse_date_four_digit_year(iter);
     }
 
-    fn parse_date_separator<'a, I>(iter: &mut core::iter::Peekable<I>, had_date_separator: &bool) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    fn parse_date_separator<'a, I>(
+        iter: &mut core::iter::Peekable<I>,
+        had_date_separator: &bool,
+    ) -> bool
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has data separator.
         let has_date_separator = iter.peek() == Some(&&b'-');
@@ -129,15 +133,15 @@ impl DateTimeParser {
     }
 
     fn parse_date_month<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut month: u8 = 0;
         let mut cnt = 0;
         while cnt < 2 {
             if let Some(m) = iter.peek() {
                 if **m >= b'0' && **m <= b'9' {
-                    month = month * 10 + **m - b'0' as u8;
+                    month = month * 10 + **m - b'0';
                 } else {
                     return None;
                 }
@@ -147,22 +151,22 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if month < 1 || month > 12 {
+        if !(1..=12).contains(&month) {
             return None;
         }
         return Some(month);
     }
 
     fn parse_date_day<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut day: u8 = 0;
         let mut cnt = 0;
         while cnt < 2 {
             if let Some(d) = iter.peek() {
                 if **d >= b'0' && **d <= b'9' {
-                    day = day * 10 + **d - b'0' as u8;
+                    day = day * 10 + **d - b'0';
                 } else {
                     return None;
                 }
@@ -172,18 +176,21 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if day < 1 || day > 31 {
+        if !(1..=31).contains(&day) {
             return None;
         }
         return Some(day);
     }
 
     fn parse_date_time_separator<'a, I>(iter: &mut core::iter::Peekable<I>) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has data separator.
-        if iter.peek() == Some(&&DateTimeSeparator::CapitalT.value()) || iter.peek() == Some(&&DateTimeSeparator::LowCaseT.value()) || iter.peek() == Some(&&DateTimeSeparator::Space.value()) {
+        if iter.peek() == Some(&&DateTimeSeparator::CapitalT.value())
+            || iter.peek() == Some(&&DateTimeSeparator::LowCaseT.value())
+            || iter.peek() == Some(&&DateTimeSeparator::Space.value())
+        {
             iter.next();
             return true;
         }
@@ -191,15 +198,15 @@ impl DateTimeParser {
     }
 
     fn parse_time_hour<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut hour: u8 = 0;
         let mut cnt = 0;
         while cnt < 2 {
             if let Some(h) = iter.peek() {
                 if **h >= b'0' && **h <= b'9' {
-                    hour = hour * 10 + **h - b'0' as u8;
+                    hour = hour * 10 + **h - b'0';
                 } else {
                     return None;
                 }
@@ -209,15 +216,18 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if hour < 1 || hour > 23 {
+        if !(1..=23).contains(&hour) {
             return None;
         }
         return Some(hour);
     }
 
-    fn parse_time_separator<'a, I>(iter: &mut core::iter::Peekable<I>, had_time_separator: &bool) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    fn parse_time_separator<'a, I>(
+        iter: &mut core::iter::Peekable<I>,
+        had_time_separator: &bool,
+    ) -> bool
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has time separator.
         let has_time_separator = iter.peek() == Some(&&b':');
@@ -231,15 +241,15 @@ impl DateTimeParser {
     }
 
     fn parse_time_minute<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut minute: u8 = 0;
         let mut cnt = 0;
         while cnt < 2 {
             if let Some(m) = iter.peek() {
                 if **m >= b'0' && **m <= b'9' {
-                    minute = minute * 10 + **m - b'0' as u8;
+                    minute = minute * 10 + **m - b'0';
                 } else {
                     return None;
                 }
@@ -249,22 +259,22 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if minute < 1 || minute > 59 {
+        if !(1..=59).contains(&minute) {
             return None;
         }
         return Some(minute);
     }
 
     fn parse_time_second<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<u8>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut second: u8 = 0;
         let mut cnt = 0;
         while cnt < 2 {
             if let Some(s) = iter.peek() {
                 if **s >= b'0' && **s <= b'9' {
-                    second = second * 10 + **s - b'0' as u8;
+                    second = second * 10 + **s - b'0';
                 } else {
                     return None;
                 }
@@ -274,18 +284,20 @@ impl DateTimeParser {
             iter.next();
             cnt += 1;
         }
-        if second < 1 || second > 60 {
+        if !(1..=60).contains(&second) {
             return None;
         }
         return Some(second);
     }
 
     fn parse_decimal_separator<'a, I>(iter: &mut core::iter::Peekable<I>) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has decimal separator.
-        if iter.peek() == Some(&&DecimalSeparator::Dot.value()) || iter.peek() == Some(&&DecimalSeparator::Comma.value()) {
+        if iter.peek() == Some(&&DecimalSeparator::Dot.value())
+            || iter.peek() == Some(&&DecimalSeparator::Comma.value())
+        {
             iter.next();
             return true;
         }
@@ -293,8 +305,8 @@ impl DateTimeParser {
     }
 
     fn parse_fraction_part<'a, I>(iter: &mut core::iter::Peekable<I>) -> Option<i32>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut fraction: i32 = 0;
         let mut cnt = 0;
@@ -321,13 +333,13 @@ impl DateTimeParser {
     pub fn parse(s: &[u8]) -> ParsedDateTime {
         let mut iter = s.iter().peekable();
         let mut result = ParsedDateTime {
-            year : None,
-            month : None,
-            day : None,
-            hour : None,
-            minute : None,
-            second : None,
-            nano_second : None
+            year: None,
+            month: None,
+            day: None,
+            hour: None,
+            minute: None,
+            second: None,
+            nano_second: None,
         };
         if iter.peek().is_none() {
             return result;
@@ -405,13 +417,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(11),
-                day : Some(8),
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(11),
+                day: Some(8),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -420,13 +432,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -435,13 +447,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : Some(4),
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -450,13 +462,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : Some(4),
-                minute : Some(34),
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: Some(34),
+                second: None,
+                nano_second: None
             },
         );
 
@@ -465,13 +477,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : Some(4),
-                minute : Some(34),
-                second : Some(22),
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: Some(34),
+                second: Some(22),
+                nano_second: None
             },
         );
 
@@ -480,13 +492,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : Some(4),
-                minute : Some(34),
-                second : Some(22),
-                nano_second : Some(0)
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: Some(34),
+                second: Some(22),
+                nano_second: Some(0)
             },
         );
 
@@ -495,13 +507,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : Some(5),
-                hour : Some(4),
-                minute : Some(34),
-                second : Some(22),
-                nano_second : Some(0)
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: Some(34),
+                second: Some(22),
+                nano_second: Some(0)
             },
         );
     }
@@ -513,13 +525,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : None,
-                month : None,
-                day : None,
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: None,
+                month: None,
+                day: None,
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -528,13 +540,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : None,
-                month : None,
-                day : None,
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: None,
+                month: None,
+                day: None,
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -543,13 +555,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : None,
-                month : None,
-                day : None,
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: None,
+                month: None,
+                day: None,
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -558,13 +570,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : None,
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: None,
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -573,13 +585,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(6),
-                day : None,
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: None,
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
     }
@@ -590,13 +602,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(06),
-                day : Some(5),
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -605,13 +617,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(06),
-                day : Some(5),
-                hour : Some(04),
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
 
@@ -620,13 +632,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(06),
-                day : Some(5),
-                hour : Some(04),
-                minute : Some(34),
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(4),
+                minute: Some(34),
+                second: None,
+                nano_second: None
             },
         );
 
@@ -635,13 +647,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(06),
-                day : Some(5),
-                hour : Some(03),
-                minute : Some(42),
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: Some(3),
+                minute: Some(42),
+                second: None,
+                nano_second: None
             },
         );
 
@@ -650,13 +662,13 @@ mod test {
         assert_eq!(
             parsed,
             ParsedDateTime {
-                year : Some(2022),
-                month : Some(06),
-                day : Some(5),
-                hour : None,
-                minute : None,
-                second : None,
-                nano_second : None
+                year: Some(2022),
+                month: Some(6),
+                day: Some(5),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None
             },
         );
     }
