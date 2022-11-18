@@ -8,7 +8,7 @@ use icu_normalizer::properties::CanonicalComposition;
 
 fn function_under_bench(
     canonical_composer: &CanonicalComposition,
-    composable_points: &Vec<Vec<char>>,
+    composable_points: &[Vec<char>],
 ) {
     composable_points.iter().for_each(|points| {
         canonical_composer.compose(points[0], points[1]);
@@ -16,21 +16,20 @@ fn function_under_bench(
 }
 
 // transform the source part as a vector of characters.
-fn as_vec_char(points: &str) -> &[char] {
+fn as_vec_char(points: &str) -> Vec<char> {
     points
         .split_whitespace()
         .map(|point| u32::from_str_radix(point, 16).unwrap())
         .map(char::from_u32)
         .map(|x| x.unwrap())
         .collect::<Vec<char>>()
-        .as_slice()
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_composition";
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    let data: Vec<Vec<char>> = include_str!("../tests/data/NormalizationTest.txt")
+    let data: Vec<&[char]> = include_str!("../tests/data/NormalizationTest.txt")
         .split('\n')
         .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
         .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.

@@ -8,7 +8,7 @@ use icu_normalizer::properties::CanonicalDecomposition;
 
 fn function_under_bench(
     canonical_decomposer: &CanonicalDecomposition,
-    decomposable_points: &Vec<char>,
+    decomposable_points: &[char],
 ) {
     decomposable_points.iter().for_each(|&point| {
         canonical_decomposer.decompose(point);
@@ -31,7 +31,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 
     let data: Vec<char> = include_str!("../tests/data/NormalizationTest.txt")
         .split('\n')
-        .filter(|&s| !s.starts_with("#") && !s.starts_with("@") && !s.is_empty()) // remove comments
+        .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
         .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
         .map(|points| as_char(points))
         .collect();
