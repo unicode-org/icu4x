@@ -16,13 +16,14 @@ fn function_under_bench(
 }
 
 // transform the source part as a vector of characters.
-fn as_vec_char(points: &str) -> Vec<char> {
+fn as_vec_char(points: &str) -> &[char] {
     points
         .split_whitespace()
         .map(|point| u32::from_str_radix(point, 16).unwrap())
         .map(char::from_u32)
         .map(|x| x.unwrap())
         .collect::<Vec<char>>()
+        .as_slice()
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
@@ -31,9 +32,9 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 
     let data: Vec<Vec<char>> = include_str!("../tests/data/NormalizationTest.txt")
         .split('\n')
-        .filter(|&s| !s.starts_with("#") && !s.starts_with("@") && !s.is_empty()) // remove comments
+        .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
         .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
-        .map(|points| as_vec_char(points))
+        .map(as_vec_char)
         .filter(|x| x.len() > 1) // there's no point in composing one char.
         .collect();
 
