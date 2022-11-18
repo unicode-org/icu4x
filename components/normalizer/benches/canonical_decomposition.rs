@@ -17,13 +17,10 @@ fn function_under_bench(
 
 // transform the source part as a vector of characters.
 fn as_char(points: &str) -> char {
-
     points
         .split_whitespace()
         .nth(0)
-        .map(|point| {
-            u32::from_str_radix(point, 16).unwrap()
-        } )
+        .map(|point| u32::from_str_radix(point, 16).unwrap())
         .map(|x| char::from_u32(x).unwrap())
         .unwrap()
 }
