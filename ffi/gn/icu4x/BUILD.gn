@@ -232,7 +232,7 @@ rust_library("icu_calendar-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -306,7 +306,7 @@ rust_library("icu_collator-v1_0_0") {
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -330,7 +330,7 @@ rust_library("icu_collections-v1_0_0") {
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
   deps += [ ":yoke-v0_6_2" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -364,7 +364,7 @@ rust_library("icu_datetime-v1_0_0") {
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -415,7 +415,7 @@ rust_library("icu_list-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":regex-automata-v0_2_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -439,7 +439,7 @@ rust_library("icu_locid-v1_0_0") {
   deps += [ ":litemap-v0_6_0" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -465,7 +465,7 @@ rust_library("icu_locid_transform-v1_0_0") {
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -495,7 +495,7 @@ rust_library("icu_normalizer-v1_0_0") {
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":write16-v1_0_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -520,7 +520,7 @@ rust_library("icu_plurals-v1_0_0") {
   deps += [ ":fixed_decimal-v0_5_1" ]
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -545,7 +545,7 @@ rust_library("icu_properties-v1_0_0") {
   deps += [ ":icu_collections-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":unicode-bidi-v0_3_8" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -576,7 +576,7 @@ rust_library("icu_provider-v1_0_1") {
   deps += [ ":writeable-v0_5_0" ]
   deps += [ ":yoke-v0_6_2" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -606,7 +606,7 @@ rust_library("icu_provider_adapters-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":yoke-v0_6_2" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -631,7 +631,7 @@ rust_library("icu_provider_blob-v1_0_0") {
   deps += [ ":serde-v1_0_130" ]
   deps += [ ":writeable-v0_5_0" ]
   deps += [ ":yoke-v0_6_2" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -680,7 +680,7 @@ rust_library("icu_segmenter-v0_7_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":serde_json-v1_0_69" ]
   deps += [ ":utf8_iter-v1_0_3" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -706,7 +706,7 @@ rust_library("icu_timezone-v1_0_0") {
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -1172,7 +1172,7 @@ rust_library("tinystr-v0_7_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -1424,10 +1424,10 @@ rust_proc_macro("zerofrom-derive-v0_1_1") {
   visibility = [ ":*" ]
 }
 
-rust_library("zerovec-v0_9_0") {
+rust_library("zerovec-v0_9_1") {
   crate_name = "zerovec"
   crate_root = "//utils/zerovec/src/lib.rs"
-  output_name = "zerovec-936a33a577867cad"
+  output_name = "zerovec-1834722305961906"
 
   deps = []
   deps += [ ":serde-v1_0_130" ]
@@ -1440,8 +1440,8 @@ rust_library("zerovec-v0_9_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=936a33a577867cad",
-    "-Cextra-filename=-936a33a577867cad",
+    "-Cmetadata=1834722305961906",
+    "-Cextra-filename=-1834722305961906",
     "--cfg=feature=\"derive\"",
     "--cfg=feature=\"serde\"",
     "--cfg=feature=\"yoke\"",
