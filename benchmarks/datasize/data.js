@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668806318515,
+  "lastUpdate": 1668964609342,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31493,6 +31493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/54876538f561785449efea762411259f49e4f404"
         },
         "date": 1668806269906,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f7972c97d2aaaca62f034e3690f0f991a164c7ef",
+          "message": "Bump zerovec to 0.9.1 (#2835)",
+          "timestamp": "2022-11-20T12:12:50-05:00",
+          "tree_id": "03f46def0cc184159a9607a44fe77e09334e1ce6",
+          "url": "https://github.com/unicode-org/icu4x/commit/f7972c97d2aaaca62f034e3690f0f991a164c7ef"
+        },
+        "date": 1668964528246,
         "tool": "ndjson",
         "benches": [
           {
