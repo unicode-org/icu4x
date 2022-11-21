@@ -142,6 +142,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         /// ```compile_fail
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
+        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
         const _: () = ();
         // Safe because `self.bytes.as_slice()` pointer-casts to `&[u8]`,
         // and changing the length of that slice to self.len() < N is safe.

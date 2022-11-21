@@ -356,6 +356,7 @@ where
         /// ```compile_fail
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
+        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
         const _: () = ();
         Self::new_borrowed(core::mem::transmute((
             bytes.as_ptr(),
