@@ -14,7 +14,6 @@ const USIZE_WIDTH: usize = mem::size_of::<usize>();
 
 /// A zero-copy "slice" that efficiently represents `[usize]`.
 #[repr(packed)]
-#[derive(Eq, PartialEq)]
 pub struct FlexZeroSlice {
     // Hard Invariant: 1 <= width <= USIZE_WIDTH (which is target_pointer_width)
     // Soft Invariant: width == the width of the largest element
@@ -22,6 +21,13 @@ pub struct FlexZeroSlice {
     // Hard Invariant: data.len() % width == 0
     data: [u8],
 }
+
+impl PartialEq for FlexZeroSlice {
+    fn eq(&self, other: &Self) -> bool {
+        self.width == other.width && self.data == other.data
+    }
+}
+impl Eq for FlexZeroSlice {}
 
 /// Helper function to decode a little-endian "chunk" (byte slice of a specific length)
 /// into a `usize`. We cannot call `usize::from_le_bytes` directly because that function
