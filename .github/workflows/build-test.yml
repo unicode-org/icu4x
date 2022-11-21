@@ -46,6 +46,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -92,6 +93,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -134,6 +136,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -186,6 +189,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -225,6 +229,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Attempt to load cached CLDR source data
@@ -282,6 +287,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -353,6 +359,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Load nightly for rustdoc-json
@@ -432,6 +439,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -500,6 +508,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Install cargo-all-features
@@ -548,6 +557,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load nightly Rust toolchain for WASM.
       run: |
         rustup install $INSTALLED_NIGHTLY_VERSION
@@ -604,6 +614,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -651,6 +662,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -759,6 +771,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
 
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
@@ -885,6 +898,7 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
     - name: echo
       run: echo "toolchain is $INSTALLED_NIGHTLY_VERSION"
     # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
