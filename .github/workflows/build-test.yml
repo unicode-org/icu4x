@@ -885,6 +885,8 @@ jobs:
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
+    - name: echo
+      run: echo "toolchain is $INSTALLED_NIGHTLY_VERSION"
     # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
     # then this line is no longer needed.
     - uses: actions-rs/toolchain@v1
@@ -894,7 +896,8 @@ jobs:
 
     - name: Run the example with dhat-rs to collect memory information
       run: |
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain $INSTALLED_NIGHTLY_VERSION
+        # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain ${{ env.INSTALLED_NIGHTLY_VERSION }}
 
     # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
     # dashboard HTML in a commit of a branch of the local repo.
