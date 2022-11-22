@@ -729,6 +729,8 @@ jobs:
 
     # We don't expect to keep being clippy-clean on nightly Rust,
     # so the "toolchain boilerplate" is deliberately omitted
+    # This just means we end up testing on the pinned stable even in the cronjob
+    # CI, which isn't that useful but specially omitting that task is more work than it's worth
 
     # Clippy job > Install and run clippy steps
     - name: Install clippy

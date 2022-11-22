@@ -194,7 +194,6 @@ if not ${event_name}
 end
 
 is_schedule = eq "${event_name}" "schedule"
-is_pr = eq "${event_name}" "pull_request"
 is_dispatch = eq "${event_name}" "workflow_dispatch"
 dispatch_needs_nightly = set false
 
@@ -207,7 +206,7 @@ if is_dispatch
     end
 end
 
-if ${is_schedule} or ${is_pr} or ${dispatch_needs_nightly}
+if ${is_schedule} or ${dispatch_needs_nightly}
     echo "Setting up CI environment for forced-nightly Rust build"
     appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
     appendfile ${env_file} "INSTALLED_NIGHTLY_VERSION=nightly\n"
