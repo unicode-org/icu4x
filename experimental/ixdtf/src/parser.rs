@@ -66,7 +66,6 @@ struct ParsedTime {
     pub nano_second: Option<i32>,
 }
 
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct ParsedDateTime {
     pub parsed_date: Option<ParsedDate>,
@@ -80,13 +79,13 @@ impl DateParser {
     fn parse_date_extended_year<'a, I>(
         iter: &mut core::iter::Peekable<I>,
     ) -> Result<Option<i32>, ParseError>
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         let mut year: i32 = 0;
         // TODO: value assigned to `sign` is never read
         #[allow(unused_assignments)]
-            let mut sign = 1;
+        let mut sign = 1;
         if iter.peek() == Some(&&b'+') {
             sign = 1;
         } else if iter.peek() == Some(&&b'-') {
@@ -150,8 +149,8 @@ impl DateParser {
         iter: &mut core::iter::Peekable<I>,
         had_date_separator: &bool,
     ) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has data separator.
         let has_date_separator = iter.peek() == Some(&&b'-');
@@ -288,8 +287,8 @@ impl TimeParser {
         iter: &mut core::iter::Peekable<I>,
         had_time_separator: &bool,
     ) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has time separator.
         let has_time_separator = iter.peek() == Some(&&b':');
@@ -363,8 +362,8 @@ impl TimeParser {
     }
 
     fn parse_decimal_separator<'a, I>(iter: &mut core::iter::Peekable<I>) -> bool
-        where
-            I: Iterator<Item = &'a u8>,
+    where
+        I: Iterator<Item = &'a u8>,
     {
         // Whether current position has decimal separator.
         if iter.peek() == Some(&&DecimalSeparator::Dot.value())
