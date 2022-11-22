@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668965308504,
+  "lastUpdate": 1669142297049,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59608,6 +59608,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f23e4f9fa7c62941ba893c876c9266367a3dc734",
+          "message": "Nightly cronjob CI (#2836)\n\n* Uniform indentation\r\n\r\n* wip nightly cronjob CI\r\n\r\n* Fix GN task on nightly\r\n\r\n* Pull in appropriate toolchain for memory CI\r\n\r\n* Skip c-tiny/tinywasm tests on forced nightlies\r\n\r\n* Make locale size tests work on forced nightlies\r\n\r\n* Add way to skip doctests using CFGs\r\n\r\n* fix for windows\r\n\r\n* Move to makefile\r\n\r\n* remove PR gating\r\n\r\n* fix memory",
+          "timestamp": "2022-11-22T18:23:49Z",
+          "tree_id": "db7bc5aa91508d0d822ac02fe02ef456c88898be",
+          "url": "https://github.com/unicode-org/icu4x/commit/f23e4f9fa7c62941ba893c876c9266367a3dc734"
+        },
+        "date": 1669142227274,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101548,
+            "range": "± 584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21768,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65759,
+            "range": "± 418",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 173,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
             "range": "± 0",
             "unit": "ns/iter"
           }
