@@ -53,13 +53,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -101,13 +110,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -145,13 +163,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -199,13 +226,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Get cargo-make version
@@ -240,13 +276,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Attempt to load cached CLDR source data
@@ -299,13 +344,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -372,13 +426,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Load nightly for rustdoc-json
@@ -453,13 +516,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -523,13 +595,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Install cargo-all-features
@@ -573,13 +654,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load nightly Rust toolchain for WASM.
       run: |
         rustup install $INSTALLED_NIGHTLY_VERSION
@@ -631,13 +721,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -680,13 +779,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
 
@@ -790,13 +898,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
 
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
@@ -918,13 +1035,22 @@ jobs:
     - uses: actions/checkout@v2
     - name: Potentially override rust version with nightly
       # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
-      if: "github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly)"
+      if: "(runner.os != 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
       run: |
         rustup override set nightly
         echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $GITHUB_ENV
         echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $GITHUB_ENV
         echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $GITHUB_ENV
         echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $GITHUB_ENV
+    - name: Potentially override rust version with nightly (Windows version)
+      # DO NOT LAND with the pull_request entry, that's purely for testing on PR CI
+      if: "(runner.os == 'Windows') && (github.event_name == 'schedule' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.nightly))"
+      run: |
+        rustup override set nightly
+        echo "ICU4X_NIGHTLY_TOOLCHAIN=nightly" >> $env:GITHUB_ENV
+        echo "INSTALLED_NIGHTLY_VERSION=nightly" >> $env:GITHUB_ENV
+        echo "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1" >> $env:GITHUB_ENV
+        echo "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY" >> $env:GITHUB_ENV
     - name: echo
       run: echo "toolchain is $INSTALLED_NIGHTLY_VERSION"
     # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
