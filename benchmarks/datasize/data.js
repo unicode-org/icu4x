@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668964609342,
+  "lastUpdate": 1669141638147,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31523,6 +31523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f7972c97d2aaaca62f034e3690f0f991a164c7ef"
         },
         "date": 1668964528246,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f23e4f9fa7c62941ba893c876c9266367a3dc734",
+          "message": "Nightly cronjob CI (#2836)\n\n* Uniform indentation\r\n\r\n* wip nightly cronjob CI\r\n\r\n* Fix GN task on nightly\r\n\r\n* Pull in appropriate toolchain for memory CI\r\n\r\n* Skip c-tiny/tinywasm tests on forced nightlies\r\n\r\n* Make locale size tests work on forced nightlies\r\n\r\n* Add way to skip doctests using CFGs\r\n\r\n* fix for windows\r\n\r\n* Move to makefile\r\n\r\n* remove PR gating\r\n\r\n* fix memory",
+          "timestamp": "2022-11-22T18:23:49Z",
+          "tree_id": "db7bc5aa91508d0d822ac02fe02ef456c88898be",
+          "url": "https://github.com/unicode-org/icu4x/commit/f23e4f9fa7c62941ba893c876c9266367a3dc734"
+        },
+        "date": 1669141567701,
         "tool": "ndjson",
         "benches": [
           {
