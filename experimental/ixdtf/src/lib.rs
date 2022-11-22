@@ -20,6 +20,4 @@
     )
 )]
 
-extern crate alloc;
-
 mod parser;
