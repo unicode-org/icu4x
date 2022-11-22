@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668965439416,
+  "lastUpdate": 1669142528809,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -121619,6 +121619,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 184,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f23e4f9fa7c62941ba893c876c9266367a3dc734",
+          "message": "Nightly cronjob CI (#2836)\n\n* Uniform indentation\r\n\r\n* wip nightly cronjob CI\r\n\r\n* Fix GN task on nightly\r\n\r\n* Pull in appropriate toolchain for memory CI\r\n\r\n* Skip c-tiny/tinywasm tests on forced nightlies\r\n\r\n* Make locale size tests work on forced nightlies\r\n\r\n* Add way to skip doctests using CFGs\r\n\r\n* fix for windows\r\n\r\n* Move to makefile\r\n\r\n* remove PR gating\r\n\r\n* fix memory",
+          "timestamp": "2022-11-22T18:23:49Z",
+          "tree_id": "db7bc5aa91508d0d822ac02fe02ef456c88898be",
+          "url": "https://github.com/unicode-org/icu4x/commit/f23e4f9fa7c62941ba893c876c9266367a3dc734"
+        },
+        "date": 1669142451259,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3728,
+            "range": "± 314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 979,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1087,
+            "range": "± 75",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 588,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 151,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1082,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 398,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2286,
+            "range": "± 115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4570,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2065,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1568,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1032,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 251,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2202,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 618,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3658,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 196,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 136,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 175,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 209,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
