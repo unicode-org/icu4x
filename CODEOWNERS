@@ -20,6 +20,7 @@ components/uniset/                @echeran @iainireland
 experimental/bies/                @sffc
 experimental/calendar/            @Manishearth @sffc
 experimental/codepointtrie/       @echeran
+experimental/harfbuzz/            @hsivonen
 experimental/provider_ppucd/      @echeran
 experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth

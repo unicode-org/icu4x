@@ -41,6 +41,7 @@ icu_properties = { version = "1.0.0", path = "../properties", default-features =
 icu_timezone = { version = "1.0.0", path = "../timezone", default-features = false }
 
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_harfbuzz = { version = "0.7.0", path = "../../experimental/harfbuzz", default-features = false, optional = true }
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 
@@ -61,6 +62,7 @@ std = [
     "icu_datetime/std",
     "icu_decimal/std",
     "icu_displaynames?/std",
+    "icu_harfbuzz?/std",
     "icu_list/std",
     "icu_locid_transform/std",
     "icu_locid/std",
@@ -78,6 +80,7 @@ serde = [
     "icu_datetime/serde",
     "icu_decimal/serde",
     "icu_displaynames?/serde",
+    "icu_harfbuzz?/serde",
     "icu_list/serde",
     "icu_locid_transform/serde",
     "icu_locid/serde",

@@ -21,6 +21,7 @@ members = [
     "components/timezone",
     "experimental/bies",
     "experimental/casemapping",
+    "experimental/harfbuzz",
     "experimental/ixdtf",
     "experimental/tutorials",
     "experimental/displaynames",
