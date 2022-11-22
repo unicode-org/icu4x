@@ -173,3 +173,48 @@ dependencies = [
 
     # benchmarking and coverage jobs not included
 ]
+
+[tasks.set-nightly-version-for-ci]
+description = "Set all nightly version env vars for CI"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+env_file = get_env GITHUB_ENV
+if not ${env_file}
+    echo "GITHUB_ENV not set!"
+    exit 1
+end
+
+event_name = get_env GITHUB_EVENT_NAME
+
+if not ${event_name}
+    echo "GITHUB_EVENT_NAME not set!"
+    exit 1
+end
+
+is_schedule = eq "${event_name}" "schedule"
+is_pr = eq "${event_name}" "pull_request"
+is_dispatch = eq "${event_name}" "workflow_dispatch"
+dispatch_needs_nightly = set false
+
+if is_dispatch
+    event_path = get_env GITHUB_EVENT_PATH
+    event_file = readfile ${event_path}
+    event_json = json_parse ${event_file}
+    if ${event_json.inputs.nightly}
+        dispatch_needs_nightly = set true
+    end
+end
+
+if ${is_schedule} or ${is_pr} or ${dispatch_needs_nightly}
+    echo "Setting up CI environment for forced-nightly Rust build"
+    appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
+    appendfile ${env_file} "INSTALLED_NIGHTLY_VERSION=nightly\n"
+    appendfile ${env_file} "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1\n"
+    appendfile ${env_file} "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY\n"
+    exec rustup override set nightly
+else
+    echo "forced-nightly environment not required"
+end
+'''
