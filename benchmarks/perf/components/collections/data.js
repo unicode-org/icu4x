@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1668965363199,
+  "lastUpdate": 1669142456677,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -33335,6 +33335,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50434066,
             "range": "± 949625",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f23e4f9fa7c62941ba893c876c9266367a3dc734",
+          "message": "Nightly cronjob CI (#2836)\n\n* Uniform indentation\r\n\r\n* wip nightly cronjob CI\r\n\r\n* Fix GN task on nightly\r\n\r\n* Pull in appropriate toolchain for memory CI\r\n\r\n* Skip c-tiny/tinywasm tests on forced nightlies\r\n\r\n* Make locale size tests work on forced nightlies\r\n\r\n* Add way to skip doctests using CFGs\r\n\r\n* fix for windows\r\n\r\n* Move to makefile\r\n\r\n* remove PR gating\r\n\r\n* fix memory",
+          "timestamp": "2022-11-22T18:23:49Z",
+          "tree_id": "db7bc5aa91508d0d822ac02fe02ef456c88898be",
+          "url": "https://github.com/unicode-org/icu4x/commit/f23e4f9fa7c62941ba893c876c9266367a3dc734"
+        },
+        "date": 1669142372562,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 574,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 467,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 491,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 529,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 845,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 959,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 465,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 486,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 538,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 559,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 908,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 46324393,
+            "range": "± 1522694",
             "unit": "ns/iter"
           },
           {
