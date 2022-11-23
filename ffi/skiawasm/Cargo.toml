@@ -41,5 +41,9 @@ features = [
 [dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_provider = { path = "../../provider/core", default-features = false }
+icu_provider_adapters = { path = "../../provider/adapters", default-features = false }
 litemap = { path = "../../utils/litemap", default-features = false }
 zerovec = { path = "../../utils/zerovec", default-features = false }
+
+[features]
+empty_data = []

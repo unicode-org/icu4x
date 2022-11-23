@@ -7,8 +7,6 @@ import { ICU4XBidi } from "./lib/ICU4XBidi.js";
 import { readFileSync } from "fs";
 import { default as wasm } from "./lib/diplomat-wasm.mjs";
 
-const DATA = readFileSync("icu4x_data_skiawasm.postcard");
-
 const SAMPLE_TEXT = [
     "א",
     "ב",

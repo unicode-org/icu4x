@@ -19,7 +19,28 @@ WASM_STACK_SIZE=1000000
 
 BASEDIR=$(dirname "$(realpath "$0")")
 
-# Build the WASM library
+# Don't regen the postcard data by default; delete the file to regen
+if ! test -f "icu4x_data_skiawasm_bake"; then
+    # Build the WASM library with an empty data provider
+    RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+        -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
+        --target wasm32-unknown-unknown \
+        --release \
+        --package icu_capi_skiawasm \
+        --features empty_data
+
+    # Regen all data
+    cargo run --manifest-path ../../provider/datagen/Cargo.toml \
+        --features=bin,experimental -- \
+        --all-locales \
+        --keys-for-bin target/wasm32-unknown-unknown/release/icu_capi_skiawasm.wasm \
+        --cldr-tag 41.0.0 \
+        --icuexport-tag release-72-1 \
+        --format mod \
+        --out ./icu4x_data_skiawasm_bake
+fi
+
+# Build the WASM library, linking in the bake data
 # TODO: This likely doesn't work if $BASEDIR has spaces
 RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
     -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
@@ -28,19 +49,6 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZ
     --package icu_capi_skiawasm
 
 cp target/wasm32-unknown-unknown/release/icu_capi_skiawasm.wasm icu_capi_skiawasm.wasm
-
-# Don't regen the postcard data by default; delete the file to regen
-if ! test -f "icu4x_data_skiawasm_bake"; then
-    # Regen all data
-    cargo run --manifest-path ../../provider/datagen/Cargo.toml \
-        --features=bin,experimental -- \
-        --all-locales \
-        --keys-for-bin icu_capi_skiawasm.wasm \
-        --cldr-tag 41.0.0 \
-        --icuexport-tag release-72-1 \
-        --format mod \
-        --out ./icu4x_data_skiawasm_bake
-fi
 
 # Refresh the lib folder
 rm -rf lib
