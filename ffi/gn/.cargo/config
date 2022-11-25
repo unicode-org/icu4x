@@ -3,7 +3,6 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 # AUTO-GENERATED in ffi.toml
-
 [source.crates-io]
 replace-with = "vendored-sources"
 

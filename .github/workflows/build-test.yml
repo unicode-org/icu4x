@@ -18,6 +18,31 @@ on:
     branches: [ main ]
   pull_request:
     branches: '*'
+  workflow_dispatch:
+    inputs:
+      nightly:
+        description: "Test on latest nightly"
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
+    - cron:  '0 14 * * *'
+
+# For the nightly CI, we set four environment variables, and set a rustup override to nightly.
+# Each env var has a different purpose:
+# - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by ICU4X FFI/etc tasks
+# - INSTALLED_NIGHTLY_VERSION: This overrides the nightly used in this build-test.yml file when installing components
+#                              We do not reuse ICU4X_NIGHTLY_TOOLCHAIN because we want the *default* CI experience to be
+#                              as close to running locally as possible, and we want to avoid there being a bug that only occurs
+#                              on pull request CI because it is always run with ICU4X_NIGHTLY_TOOLCHAIN=... . Basically, 
+#                              ICU4X_NIGHTLY_TOOLCHAIN affects the makefile, and INSTALLED_NIGHTLY_VERSION affects this Actions file only
+# - ICU4X_BUILDING_WITH_FORCED_NIGHTLY: This lets tests know that we're building with forced nightly, in case of tests testing the behavior of specific Rust versions.
+# - `RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY`: Same as previously, but works for disabling doctests. Use ICU4X_BUILDING_WITH_FORCED_NIGHTLY where possible.
+#
+# When updating the CI stable version, please audit all cases of ICU4X_BUILDING_WITH_FORCED_NIGHTLY and remove cfgs where necessary.
+env:
+  INSTALLED_NIGHTLY_VERSION: nightly-2022-04-05
 
 jobs:
 
@@ -26,9 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
 
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -49,6 +73,13 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
     - name: Check
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -65,8 +96,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
+
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -86,6 +117,14 @@ jobs:
       with:
         crate: cargo-make
         version: latest
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
     - name: Run `cargo make ci-job-test`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -100,8 +139,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
+
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -121,7 +160,14 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    # Note: rustfmt is required for databake formatting
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job specific dependencies
     - name: Install rustfmt
       run: rustup component add rustfmt
     - name: Build icu4x-testdata-datagen
@@ -134,6 +180,8 @@ jobs:
       with:
         command: build
         args: --bin=icu4x-datagen --features=experimental,bin
+
+    # Actual job
     - name: Run `cargo make ci-job-testdata`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -145,8 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -166,6 +213,14 @@ jobs:
       with:
         crate: cargo-make
         version: latest
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
     - name: Run `cargo make ci-job-test-docs`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -177,8 +232,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
       run: rustup show
+
+
+    # Job-specific dependencies
     - name: Attempt to load cached CLDR source data
       uses: actions/cache@v2
       id: source-data-cache
@@ -202,6 +285,8 @@ jobs:
         tag: "release-72-1"
         fileName: "icuexportdata_release-72-1.zip"
         out-file-path: "data/source/"
+
+    # Actual job
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
       # cargo make ci-job-full-datagen replicates this
@@ -227,31 +312,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
 
-    - name: Load cortex target for no_std build.
-      run: |
-        rustup install nightly-2022-04-05
-        rustup component add --toolchain nightly-2022-04-05 rust-src
-        rustup target add thumbv7m-none-eabi --toolchain nightly-2022-04-05
-        rustup target add thumbv8m.main-none-eabihf --toolchain nightly-2022-04-05
-        rustup target add x86_64-unknown-linux-gnu --toolchain nightly-2022-04-05
-        rustup target add wasm32-unknown-unknown --toolchain nightly-2022-04-05
-
-    - name: Set up Clang-14
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 14
-
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -272,6 +334,34 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Load cortex target for no_std build.
+      run: |
+        rustup install $INSTALLED_NIGHTLY_VERSION
+        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
+        rustup target add thumbv7m-none-eabi --toolchain $INSTALLED_NIGHTLY_VERSION
+        rustup target add thumbv8m.main-none-eabihf --toolchain $INSTALLED_NIGHTLY_VERSION
+        rustup target add x86_64-unknown-linux-gnu --toolchain $INSTALLED_NIGHTLY_VERSION
+        rustup target add wasm32-unknown-unknown --toolchain $INSTALLED_NIGHTLY_VERSION
+    - name: Set up Clang-14
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    # Actual job
     - name: Run `cargo make ci-job-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -291,11 +381,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-    - name: Load nightly for rustdoc-json
-      run: |
-        rustup install nightly-2022-08-25
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -316,6 +402,16 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Load nightly for rustdoc-json
+      run: |
+        rustup install nightly-2022-08-25
     - name: Run diplomat-get-rev to ensure it works
       id: diplomat-getrev-check
       run: cargo make --loglevel error diplomat-get-rev
@@ -347,6 +443,7 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
+    # Actual job
     - name: Run `cargo make ci-job-verify-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -363,9 +460,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
 
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -386,11 +482,18 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
     - name: Load wasi for gn.
       run: |
-        rustup install nightly-2022-04-05
-        rustup component add --toolchain nightly-2022-04-05 rust-src
-        rustup target add wasm32-wasi --toolchain nightly-2022-04-05
+        rustup install $INSTALLED_NIGHTLY_VERSION
+        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
+        rustup target add wasm32-wasi --toolchain $INSTALLED_NIGHTLY_VERSION
 
     - name: Attempt to load cached GN Third-Party Tools
       uses: actions/cache@v3
@@ -406,12 +509,12 @@ jobs:
         command: make
         args: gn-install
 
+    # Actual job
     - name: Run `cargo make ci-job-verify-gn`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
         args: ci-job-verify-gn
-
     - name: Run `cargo make ci-job-gn`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -424,14 +527,7 @@ jobs:
     needs: [check]
     steps:
     - uses: actions/checkout@v2
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-    - name: Install cargo-all-features
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: install
-        args: cargo-all-features --version "^1.6"
-
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -452,6 +548,13 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
     - name: Build All Feature Permutations
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -464,64 +567,8 @@ jobs:
     needs: [check]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Load nightly Rust toolchain for WASM.
-        run: |
-          rustup install nightly-2022-04-05
-          rustup target add wasm32-unknown-unknown --toolchain nightly-2022-04-05
-          rustup target add wasm32-unknown-emscripten --toolchain nightly-2022-04-05
-          rustup component add rust-src --toolchain nightly-2022-04-05
-
-      - name: Get cargo-make version
-        id: cargo-make-version
-        run: |
-          echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-        shell: bash
-      - name: Attempt to load cached cargo-make
-        uses: actions/cache@v2
-        id: cargo-make-cache
-        with:
-          path: |
-            ~/.cargo/bin/cargo-make
-            ~/.cargo/bin/cargo-make.exe
-          key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-      - name: Install cargo-make
-        if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/install@v0.1.2
-        with:
-          crate: cargo-make
-          version: latest
-      - name: Install emsdk
-        run: |
-          cd ~
-          git clone https://github.com/emscripten-core/emsdk.git --branch 2.0.27
-          cd emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
-      - name: Install Node.js v16.18.0
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.18.0
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-      - name: Run emscripten test
-        run: |
-          . ~/emsdk/emsdk_env.sh
-          cargo make ci-job-wasm
-
-  # Fmt job - runs cargo fmt
-  fmt:
-    runs-on: ubuntu-latest
-    steps:
     - uses: actions/checkout@v2
-
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
-    - name: Install rustfmt
-      run: rustup component add rustfmt
-
-
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -542,7 +589,69 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
 
+    # Job-specific dependencies
+    - name: Install emsdk
+      run: |
+        cd ~
+        git clone https://github.com/emscripten-core/emsdk.git --branch 2.0.27
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    # Actual job
+    - name: Run emscripten/wasm test
+      run: |
+        . ~/emsdk/emsdk_env.sh
+        cargo make ci-job-wasm
+
+  # Fmt job - runs cargo fmt
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+
+    # Actual job
     - name: Check Format
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -555,10 +664,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -579,6 +685,13 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
     - name: Get cargo-readme version
       id: cargo-readme-version
       run: |
@@ -601,6 +714,7 @@ jobs:
 
     # TODO(#234) re-include cache steps, also using Rust version in cache key
 
+    # Actual job
     - name: Tidy
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -610,15 +724,15 @@ jobs:
   # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
   clippy:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
 
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
+    # We don't expect to keep being clippy-clean on nightly Rust,
+    # so the "toolchain boilerplate" is deliberately omitted
+    # This just means we end up testing on the pinned stable even in the cronjob
+    # CI, which isn't that useful but specially omitting that task is more work than it's worth
 
     # Clippy job > Install and run clippy steps
-
     - name: Install clippy
       run: rustup component add clippy
 
@@ -631,6 +745,7 @@ jobs:
   # Benchmarking & dashboards job
 
   benchmark:
+    # We don't expect to keep being clippy-clean on nightly Rust
     strategy:
       # max-parallel: 1
       fail-fast: false
@@ -654,73 +769,102 @@ jobs:
     needs: [check]
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
 
-      - name: Load the default Rust toolchain via the rust-toolchain file.
-        run: rustup show
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
 
-      - name: Create output dir
-        run: mkdir -p ./benchmarks/perf/${{ matrix.component }}
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
 
-      # Benchmarking & dashboards job > Run benchmark.
+    - name: Create output dir
+      run: mkdir -p ./benchmarks/perf/${{ matrix.component }}
 
-      - name: Run benchmark
-        run: |
-          pushd $PWD && cd ${{ matrix.component }};
-          export REL_OUTPUT_PATH="`dirs +1`/benchmarks/perf/${{ matrix.component }}";
-          mkdir -p $REL_OUTPUT_PATH;
-          export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
-          export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-          cargo bench --features bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
-          popd
+    ## Actual job
+    ##
 
-      # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
-      # If it doesn't already exist, it should be created by someone with push permissions, like so:
-      #   # Create a local branch
-      #   $ git checkout --orphan <newbranch>
-      #   $ git commit --allow-empty -m "root commit"
-      #   # Push it to create a remote branch
-      #   $ git push origin <newbranch>:<newbranch>
+    # Benchmarking & dashboards job > Run benchmark.
 
-      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+    - name: Run benchmark
+      run: |
+        pushd $PWD && cd ${{ matrix.component }};
+        export REL_OUTPUT_PATH="`dirs +1`/benchmarks/perf/${{ matrix.component }}";
+        mkdir -p $REL_OUTPUT_PATH;
+        export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
+        export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
+        cargo bench --features bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+        popd
 
-      - name: Store benchmark result & create dashboard (unmerged PR only)
-        # any action that is not a merge to main implies unfinished PR
-        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
-        uses: rhysd/github-action-benchmark@v1.8.1
-        with:
-          name: Rust Benchmark
-          tool: 'cargo'
-          output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
-          benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
-          fail-on-alert: true
-          gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
-          auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
-                            # that the branch in `gh-pages-branch` is different from the branch used for merges to main branch.
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
+    # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
+    # If it doesn't already exist, it should be created by someone with push permissions, like so:
+    #   # Create a local branch
+    #   $ git checkout --orphan <newbranch>
+    #   $ git commit --allow-empty -m "root commit"
+    #   # Push it to create a remote branch
+    #   $ git push origin <newbranch>:<newbranch>
 
-      # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+    # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
-      - name: Store benchmark result & create dashboard (merge to main only)
-        # only merges to main (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        uses: rhysd/github-action-benchmark@v1.8.1
-        with:
-          name: Rust Benchmark
-          tool: 'cargo'
-          output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
-          benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
-          fail-on-alert: true
-          gh-pages-branch: merged-bench-data  # Requires one-time-only creation of this branch on remote repo.
-          auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
-          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+    - name: Store benchmark result & create dashboard (unmerged PR only)
+      # any action that is not a merge to main implies unfinished PR
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      uses: rhysd/github-action-benchmark@v1.8.1
+      with:
+        name: Rust Benchmark
+        tool: 'cargo'
+        output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
+        # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+        fail-on-alert: true
+        gh-pages-branch: unmerged-pr-bench-data  # Requires one-time-only creation of this branch on remote repo.
+        auto-push: false  # Do not store historical benchmark info of unfinished PRs. Commits seem to get made anyways, so make sure
+                          # that the branch in `gh-pages-branch` is different from the branch used for merges to main branch.
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+
+    # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
+
+    - name: Store benchmark result & create dashboard (merge to main only)
+      # only merges to main (implies PR is finished and approved by this point)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      uses: rhysd/github-action-benchmark@v1.8.1
+      with:
+        name: Rust Benchmark
+        tool: 'cargo'
+        output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
+        # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+        fail-on-alert: true
+        gh-pages-branch: merged-bench-data  # Requires one-time-only creation of this branch on remote repo.
+        auto-push: true  # Use the branch at `gh-pages-branch` to store historical info of benchmark data.
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -773,77 +917,108 @@ jobs:
     needs: [check]
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
 
-      # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
-      # then this line is no longer needed.
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly-2022-04-05
-          override: true
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
 
-      - name: Run the example with dhat-rs to collect memory information
-        run: |
-          cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain nightly-2022-04-05
+    # Job-specific dependencies
+    # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
+    # then this line is no longer needed.
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ env.INSTALLED_NIGHTLY_VERSION }}
+        override: true
 
-      # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
-      # dashboard HTML in a commit of a branch of the local repo.
+    ## Actual job
+    ##
 
-      - name: Store benchmark result & create dashboard (unmerged PR only)
-        # any action that is not a merge to main implies unfinished PR
-        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
-        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
-        # If the PR gets merged, this can be switched back to the main project.
-        # https://github.com/rhysd/github-action-benchmark/pull/54
-        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
-        with:
-          name: Heap – ${{ matrix.os }}
-          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
-          tool: 'ndjson'
-          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
-          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
-          # Show alert with commit comment on detecting possible memory regression
-          alert-threshold: '200%'
-          fail-on-alert: true
-          # Requires one-time-only creation of this branch on remote repo. This will
-          # store the generated information.
-          gh-pages-branch: unmerged-pr-bench-data
+    - name: Run the example with dhat-rs to collect memory information
+      run: |
+        # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain ${{ env.INSTALLED_NIGHTLY_VERSION }}
 
-          # Do not store historical benchmark info of unfinished PRs. Commits seem to get
-          # made anyways, so make sure that the branch in `gh-pages-branch` is
-          # different from the branch used for merges to main branch.
-          auto-push: false
+    # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
+    # dashboard HTML in a commit of a branch of the local repo.
 
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
+    - name: Store benchmark result & create dashboard (unmerged PR only)
+      # any action that is not a merge to main implies unfinished PR
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+      # If the PR gets merged, this can be switched back to the main project.
+      # https://github.com/rhysd/github-action-benchmark/pull/54
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        name: Heap – ${{ matrix.os }}
+        # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+        tool: 'ndjson'
+        benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+        output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+        # Show alert with commit comment on detecting possible memory regression
+        alert-threshold: '200%'
+        fail-on-alert: true
+        # Requires one-time-only creation of this branch on remote repo. This will
+        # store the generated information.
+        gh-pages-branch: unmerged-pr-bench-data
 
-      # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output
-      # into dashboard HTML in a commit of a branch of the local repo.
+        # Do not store historical benchmark info of unfinished PRs. Commits seem to get
+        # made anyways, so make sure that the branch in `gh-pages-branch` is
+        # different from the branch used for merges to main branch.
+        auto-push: false
 
-      - name: Store benchmark result & create dashboard (merge to main only)
-        # only merges to main (implies PR is finished and approved by this point)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-        # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
-        # If the PR gets merged, this can be switched back to the main project.
-        # https://github.com/rhysd/github-action-benchmark/pull/54
-        uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
-        with:
-          name: Heap – ${{ matrix.os }}
-          # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
-          tool: 'ndjson'
-          benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
-          output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
-          alert-threshold: '200%'
-          fail-on-alert: true
-          # The historical run information will be stored in this branch. This is the same
-          # branch that is being used by the performance benchmark. The information is
-          # computed by gregtatum/github-action-benchmark, and is added to a .js file in
-          # the branch, e.g. benchmarks/memory/{os}/data.js
-          gh-pages-branch: merged-bench-data
-          auto-push: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-on-alert: true
-          alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+
+    # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output
+    # into dashboard HTML in a commit of a branch of the local repo.
+
+    - name: Store benchmark result & create dashboard (merge to main only)
+      # only merges to main (implies PR is finished and approved by this point)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+      # If the PR gets merged, this can be switched back to the main project.
+      # https://github.com/rhysd/github-action-benchmark/pull/54
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        name: Heap – ${{ matrix.os }}
+        # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+        tool: 'ndjson'
+        benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+        output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+        alert-threshold: '200%'
+        fail-on-alert: true
+        # The historical run information will be stored in this branch. This is the same
+        # branch that is being used by the performance benchmark. The information is
+        # computed by gregtatum/github-action-benchmark, and is added to a .js file in
+        # the branch, e.g. benchmarks/memory/{os}/data.js
+        gh-pages-branch: merged-bench-data
+        auto-push: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        comment-on-alert: true
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
@@ -855,13 +1030,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      
+    # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
-
     - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
@@ -870,7 +1044,6 @@ jobs:
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -878,11 +1051,18 @@ jobs:
         crate: cargo-make
         version: latest
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
     - name: Install prerequisites for wasm build
       run: |
         rustup toolchain list
-        rustup toolchain install nightly-2022-04-05
-        rustup component add --toolchain nightly-2022-04-05 rust-src
+        rustup toolchain install $INSTALLED_NIGHTLY_VERSION
+        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
 
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
@@ -911,6 +1091,8 @@ jobs:
         command: install
         args: twiggy --version 0.7.0
 
+    ## Actual job
+    ##
     - name: Setup output data directory
       run: |
         mkdir -p benchmarks/binsize/${{ matrix.type }}

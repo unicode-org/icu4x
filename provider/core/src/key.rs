@@ -144,6 +144,7 @@ impl DataKeyPath {
         /// ```compile_fail
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
+        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
         const _: () = ();
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
