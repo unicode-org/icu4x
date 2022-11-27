@@ -8,6 +8,7 @@ Documentation
    bidi_ffi
    calendar_ffi
    collator_ffi
+   common_ffi
    data_struct_ffi
    date_ffi
    datetime_ffi

@@ -3,13 +3,12 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 # AUTO-GENERATED in ffi.toml
-
 [source.crates-io]
 replace-with = "vendored-sources"
 
 [source."https://github.com/rust-diplomat/diplomat"]
 git = "https://github.com/rust-diplomat/diplomat"
-rev = "046be4036b0defb0cffdeb8548f57789a3a31285"
+rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
 replace-with = "vendored-sources"
 
 [source.vendored-sources]

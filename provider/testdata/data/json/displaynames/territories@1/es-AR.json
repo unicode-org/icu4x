@@ -294,5 +294,12 @@
     "ZM": "Zambia",
     "ZW": "Zimbabue",
     "ZZ": "Región desconocida"
+  },
+  "short_names": {
+    "GB": "RU",
+    "HK": "Hong Kong",
+    "MO": "Macao",
+    "PS": "Palestina",
+    "US": "EE. UU."
   }
 }

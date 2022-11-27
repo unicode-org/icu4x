@@ -51,28 +51,40 @@ impl IterableDataProvider<TerritoryDisplayNamesV1Marker> for crate::DatagenProvi
 
 /// Substring used to denote alternative region names data variants for a given territory. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
+/// Substring used to denote short region display names data variants for a given territory. For example: "BA-alt-short".
+const SHORT_SUBSTRING: &str = "-short";
 
 impl TryFrom<&cldr_serde::displaynames::Resource> for TerritoryDisplayNamesV1<'static> {
     type Error = TinyStrError;
     fn try_from(other: &cldr_serde::displaynames::Resource) -> Result<Self, Self::Error> {
         let mut names = ZeroMap::new();
+        let mut short_names = ZeroMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.territories.iter() {
-                let region = entry.0;
+                let mut region = String::from(entry.0);
                 if !region.contains(ALT_SUBSTRING) {
-                    match <TinyAsciiStr<3>>::from_str(region) {
+                    match <TinyAsciiStr<3>>::from_str(&region) {
                         Ok(key) => {
                             names.insert(&key, entry.1.as_ref());
                         }
                         Err(err) => {
-                            print!("--region: {}", region);
+                            return Err(err);
+                        }
+                    }
+                } else if region.contains(SHORT_SUBSTRING) {
+                    region.truncate(region.find('-').unwrap());
+                    match <TinyAsciiStr<3>>::from_str(&region) {
+                        Ok(key) => {
+                            short_names.insert(&key, entry.1.as_ref());
+                        }
+                        Err(err) => {
                             return Err(err);
                         }
                     }
                 }
             }
         }
-        Ok(Self { names })
+        Ok(Self { names, short_names })
     }
 }
 
@@ -98,6 +110,25 @@ mod tests {
         assert_eq!(
             data.get().names.get(&tinystr!(3, "AE")).unwrap(),
             "United Arab Emirates"
+        );
+    }
+
+    #[test]
+    fn test_basic_short_names() {
+        let provider = crate::DatagenProvider::for_test();
+
+        let data: DataPayload<TerritoryDisplayNamesV1Marker> = provider
+            .load(DataRequest {
+                locale: &locale!("en-001").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+
+        assert_eq!(
+            data.get().short_names.get(&tinystr!(3, "BA")).unwrap(),
+            "Bosnia"
         );
     }
 }

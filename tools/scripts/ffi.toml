@@ -13,6 +13,7 @@ dependencies = [
     "test-c-tiny",
     "test-cpp",
     "test-js",
+    "test-tinywasm",
     "build-wearos-ffi",
     "test-nostd",
 ]
@@ -107,12 +108,16 @@ install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/c/examples/fixeddecimal_tiny
-rm -f ../../../../../target/debug/libicu_capi_staticlib.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
-exec --fail-on-error make
-exec ls -l
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cd ffi/diplomat/c/examples/fixeddecimal_tiny
+    rm -f ../../../../../target/debug/libicu_capi_staticlib.a
+    rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
+    rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
+    exec --fail-on-error make
+    exec ls -l
+end
 '''
 
 [tasks.test-cpp]
@@ -254,6 +259,23 @@ toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
+
+[tasks.test-tinywasm]
+description = "Test the Tiny WASM example"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cd ffi/tinywasm
+
+    exec --fail-on-error ./build.sh
+    exec --fail-on-error ls -l
+    exec --fail-on-error node tiny.mjs
+end
+'''
 
 [tasks.diplomat-get-rev]
 description = "Get current Diplomat revision"

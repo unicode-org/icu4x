@@ -22,8 +22,9 @@ pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakType
 /// Word break iterator for a potentially invalid UTF-8 string
 pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
+
 /// Word break iterator for a Latin-1 (8-bit) string.
-pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
+pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Word break iterator for a UTF-16 string.
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
@@ -257,7 +258,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
+        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -274,7 +275,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
+        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -284,6 +285,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+
 /// handle_complex_language impl for UTF8 iterators
 fn handle_complex_language_utf8<'l, 's, T>(
     iter: &mut RuleBreakIterator<'l, 's, T>,
@@ -298,12 +300,15 @@ where
     let mut s = String::new();
     s.push(left_codepoint);
     loop {
-        s.push(iter.current_pos_data.unwrap().1);
-        iter.current_pos_data = iter.iter.next();
-        if iter.current_pos_data.is_none() {
-            break;
-        }
-        if iter.get_current_break_property() != iter.data.complex_property {
+        debug_assert!(!iter.is_eof());
+        s.push(iter.get_current_codepoint()?);
+        iter.advance_iter();
+        if let Some(current_break_property) = iter.get_current_break_property() {
+            if current_break_property != iter.data.complex_property {
+                break;
+            }
+        } else {
+            // EOF
             break;
         }
     }
@@ -313,37 +318,20 @@ where
     iter.current_pos_data = start_point;
     let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
     iter.result_cache = breaks;
-    let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+    let first_pos = *iter.result_cache.first()?;
+    let mut i = iter.get_current_codepoint()?.len_utf8();
     loop {
-        if i == *iter.result_cache.first().unwrap() {
+        if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return Some(iter.current_pos_data.unwrap().0);
+            return iter.get_current_position();
         }
-        iter.current_pos_data = iter.iter.next();
-        if iter.current_pos_data.is_none() {
+        iter.advance_iter();
+        if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
         }
         i += T::get_current_position_character_len(iter);
-    }
-}
-
-pub struct WordBreakTypeLatin1;
-
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
-    type CharType = u8;
-
-    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        panic!("not reachable")
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<'l, 's, Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        panic!("not reachable")
     }
 }
 
@@ -354,11 +342,10 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        let ch = iter.current_pos_data.unwrap().1;
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
+        match iter.get_current_codepoint() {
+            None => 0,
+            Some(ch) if ch >= 0x10000 => 2,
+            _ => 1,
         }
     }
 
@@ -371,12 +358,15 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         let start_point = iter.current_pos_data;
         let mut s = vec![left_codepoint as u16];
         loop {
-            s.push(iter.current_pos_data.unwrap().1 as u16);
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                break;
-            }
-            if iter.get_current_break_property() != iter.data.complex_property {
+            debug_assert!(!iter.is_eof());
+            s.push(iter.get_current_codepoint()? as u16);
+            iter.advance_iter();
+            if let Some(current_break_property) = iter.get_current_break_property() {
+                if current_break_property != iter.data.complex_property {
+                    break;
+                }
+            } else {
+                // EOF
                 break;
             }
         }
@@ -388,14 +378,15 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
+        let first_pos = *iter.result_cache.first()?;
         loop {
-            if i == *iter.result_cache.first().unwrap() {
+            if i == first_pos {
                 // Re-calculate breaking offset
                 iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-                return Some(iter.current_pos_data.unwrap().0);
+                return iter.get_current_position();
             }
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
+            iter.advance_iter();
+            if iter.is_eof() {
                 iter.result_cache.clear();
                 return Some(iter.len);
             }
