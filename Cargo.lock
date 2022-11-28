@@ -1324,6 +1324,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
@@ -1522,6 +1523,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
@@ -1838,6 +1840,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_relativetime"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_provider",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "0.7.0"
 dependencies = [
@@ -1888,6 +1900,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
  "lazy_static",

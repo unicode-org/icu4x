@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "сейчас"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " секунду назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " секунды назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " секунд назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " секунды назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "relatives": {
+    "-1": "昨年",
+    "0": "今年",
+    "1": "来年"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "年前",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}

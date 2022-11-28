@@ -1,0 +1,34 @@
+{
+  "relatives": {
+    "-2": "прекјуче",
+    "-1": "јуче",
+    "0": "данас",
+    "1": "сутра",
+    "2": "прекосутра"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  д.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  д.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  д.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": null
+  }
+}
