@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669651181432,
+  "lastUpdate": 1669660682383,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31648,6 +31648,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2b9a1063052daee0c07ab13fc797a3cf12b3fbb",
+          "message": "Transformer for RelativeTimeFormat component (#2822)",
+          "timestamp": "2022-11-28T18:34:02Z",
+          "tree_id": "bb53287be1ccd608b85980b68e9f8deff06148d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/d2b9a1063052daee0c07ab13fc797a3cf12b3fbb"
+        },
+        "date": 1669660603469,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4061316,
             "unit": "bytes",
             "biggerIsBetter": false
           }
