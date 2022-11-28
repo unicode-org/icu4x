@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669660682383,
+  "lastUpdate": 1669673234100,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31673,6 +31673,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d2b9a1063052daee0c07ab13fc797a3cf12b3fbb"
         },
         "date": 1669660603469,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4061316,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "12311a43ddcb8a5ac04f1f36ece232c0e77926f2",
+          "message": "Don't upload stuff on schedule/triggered tasks (#2841)",
+          "timestamp": "2022-11-28T22:03:37Z",
+          "tree_id": "e0a2651a4fb77b951cdf2224fddae2fb1101bafd",
+          "url": "https://github.com/unicode-org/icu4x/commit/12311a43ddcb8a5ac04f1f36ece232c0e77926f2"
+        },
+        "date": 1669673162817,
         "tool": "ndjson",
         "benches": [
           {
