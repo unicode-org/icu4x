@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669622249419,
+  "lastUpdate": 1669651181432,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31613,6 +31613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/889dc290744dea36f77beaaa20229121811b654e"
         },
         "date": 1669622172321,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f244a8f5b5c89286214ed77fb90abfa596c76c8",
+          "message": "Pin wasmer-cli version (#2842)",
+          "timestamp": "2022-11-28T16:56:02+01:00",
+          "tree_id": "6f6d99bc30373ab47c212713072f2bf4739b3955",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f244a8f5b5c89286214ed77fb90abfa596c76c8"
+        },
+        "date": 1669651110211,
         "tool": "ndjson",
         "benches": [
           {
