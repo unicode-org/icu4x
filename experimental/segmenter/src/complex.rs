@@ -69,32 +69,35 @@ pub fn complex_language_segment_utf16(
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
     for str_per_lang in lang_iter {
-        #[cfg(feature = "lstm")]
-        {
-            if let Some(model) = lstm.best(str_per_lang[0] as u32) {
-                if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                    let breaks = segmenter.segment_utf16(&str_per_lang);
-                    result.extend(breaks.map(|n| offset + n));
-                    offset += str_per_lang.len();
-                    result.push(offset);
-                    continue;
+        if let Some(first_ch) = str_per_lang.get(0) {
+            #[cfg(feature = "lstm")]
+            {
+                if let Some(model) = lstm.best(*first_ch as u32) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                        let breaks = segmenter.segment_utf16(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.len();
+                        result.push(offset);
+                        continue;
+                    }
                 }
             }
-        }
 
-        if let Some(payload) = dictionary.best(str_per_lang[0] as u32) {
-            if let Some(grapheme) = grapheme {
-                if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme) {
-                    let breaks = segmenter.segment_utf16(&str_per_lang);
-                    result.extend(breaks.map(|n| offset + n));
-                    offset += str_per_lang.len();
-                    continue;
+            if let Some(payload) = dictionary.best(*first_ch as u32) {
+                if let Some(grapheme) = grapheme {
+                    if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme)
+                    {
+                        let breaks = segmenter.segment_utf16(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.len();
+                        continue;
+                    }
                 }
             }
-        }
 
-        offset += str_per_lang.len();
-        result.push(offset);
+            offset += str_per_lang.len();
+            result.push(offset);
+        }
     }
     result
 }
