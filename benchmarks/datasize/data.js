@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669169436810,
+  "lastUpdate": 1669622249419,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31583,6 +31583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b82dfd315bd17f50d23f721090e3efc837542a8f"
         },
         "date": 1669169355104,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4031343,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "889dc290744dea36f77beaaa20229121811b654e",
+          "message": "icu_segmenter: enforce clippy::indexing_slicing. (#2325)\n\n* icu_segmenter denies the clippy::indexing_slicing.\r\n\r\n* Fix clippy error",
+          "timestamp": "2022-11-28T01:53:36-06:00",
+          "tree_id": "4740cf8f388e26b8c04af2ccca208d605aac723f",
+          "url": "https://github.com/unicode-org/icu4x/commit/889dc290744dea36f77beaaa20229121811b654e"
+        },
+        "date": 1669622172321,
         "tool": "ndjson",
         "benches": [
           {
