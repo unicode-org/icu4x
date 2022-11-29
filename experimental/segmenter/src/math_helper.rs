@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
+#[allow(unused_imports)]
+use num_traits::Float;
 
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
