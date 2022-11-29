@@ -4,6 +4,7 @@
 
 #[derive(PartialEq, Clone, Copy, Debug)]
 enum ParseError {
+    DateYear,
     DateExtendedYear,
     DateFourDigitYear,
     DateMonth,
@@ -52,18 +53,24 @@ impl DecimalSeparator {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+struct SegmentIndex {
+    pub start: usize,
+    pub end: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 struct ParsedDate {
-    pub year: Option<i32>,
-    pub month: Option<u8>,
-    pub day: Option<u8>,
+    pub year: Option<SegmentIndex>,
+    pub month: Option<SegmentIndex>,
+    pub day: Option<SegmentIndex>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct ParsedTime {
-    pub hour: Option<u8>,
-    pub minute: Option<u8>,
-    pub second: Option<u8>,
-    pub nano_second: Option<i32>,
+    pub hour: Option<SegmentIndex>,
+    pub minute: Option<SegmentIndex>,
+    pub second: Option<SegmentIndex>,
+    pub nano_second: Option<SegmentIndex>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -76,175 +83,209 @@ struct ParsedDateTime {
 struct DateParser {}
 
 impl DateParser {
-    fn parse_date_extended_year<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-    ) -> Result<Option<i32>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        let mut year: i32 = 0;
-        // TODO: value assigned to `sign` is never read
-        #[allow(unused_assignments)]
-        let mut sign = 1;
-        if iter.peek() == Some(&&b'+') {
-            sign = 1;
-        } else if iter.peek() == Some(&&b'-') {
-            sign = -1
-        } else {
-            return Err(ParseError::DateExtendedYear);
-        }
-        iter.next();
-        let mut cnt = 0;
-        while cnt < 6 {
-            if let Some(y) = iter.peek() {
-                if **y >= b'0' && **y <= b'9' {
-                    year = year * 10 + **y as i32 - b'0' as i32;
-                } else {
-                    return Err(ParseError::DateExtendedYear);
+    fn parse_date_extended_year<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if let Some((first, remains)) = s.split_first() {
+            if first == &b'+' || first == &b'-' {
+                let mut cnt = 0;
+                let mut mut_inner_remains = remains;
+                while cnt < 6 {
+                    if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                            mut_inner_remains = inner_remains;
+                        } else {
+                            return Err(ParseError::DateExtendedYear);
+                        }
+                    } else {
+                        return Err(ParseError::DateExtendedYear);
+                    }
+                    cnt += 1;
                 }
+                return Ok((
+                    Some(SegmentIndex {
+                        start: start_index,
+                        end: start_index + 6,
+                    }),
+                    mut_inner_remains,
+                ));
             } else {
                 return Err(ParseError::DateExtendedYear);
             }
-            iter.next();
-            cnt += 1;
+        } else {
+            return Err(ParseError::DateExtendedYear);
         }
-        return Ok(Some(year * sign));
     }
 
-    fn parse_date_four_digit_year<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-    ) -> Result<Option<i32>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        let mut year: i32 = 0;
+    fn parse_date_four_digit_year<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 4 {
-            if let Some(y) = iter.peek() {
-                if **y >= b'0' && **y <= b'9' {
-                    year = year * 10 + **y as i32 - b'0' as i32;
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
                 } else {
                     return Err(ParseError::DateFourDigitYear);
                 }
             } else {
                 return Err(ParseError::DateFourDigitYear);
             }
-            iter.next();
             cnt += 1;
         }
-        return Ok(Some(year));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 3,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    fn parse_date_year<'a, I>(iter: &mut core::iter::Peekable<I>) -> Result<Option<i32>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        if iter.peek() == Some(&&b'+') || iter.peek() == Some(&&b'-') {
-            return Self::parse_date_extended_year(iter);
+    fn parse_date_year<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if let Some((first, _)) = s.split_first() {
+            if first == &b'+' || first == &b'-' {
+                return Self::parse_date_extended_year(s, start_index);
+            }
+            return Self::parse_date_four_digit_year(s, start_index);
         }
-        return Self::parse_date_four_digit_year(iter);
+        return Err(ParseError::DateYear);
     }
 
-    fn parse_date_separator<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-        had_date_separator: &bool,
-    ) -> bool
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        // Whether current position has data separator.
-        let has_date_separator = iter.peek() == Some(&&b'-');
-        if *had_date_separator != has_date_separator {
-            return false;
-        }
-        if has_date_separator {
-            iter.next();
-        }
-        return true;
-    }
-
-    fn parse_date_month<'a, I>(iter: &mut core::iter::Peekable<I>) -> Result<Option<u8>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
+    fn parse_date_month<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
         let mut month: u8 = 0;
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 2 {
-            if let Some(m) = iter.peek() {
-                if **m >= b'0' && **m <= b'9' {
-                    month = month * 10 + **m - b'0';
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    month = month * 10 + *inner_first - b'0';
                 } else {
                     return Err(ParseError::DateMonth);
                 }
             } else {
                 return Err(ParseError::DateMonth);
             }
-            iter.next();
             cnt += 1;
         }
         if !(1..=12).contains(&month) {
             return Err(ParseError::DateMonth);
         }
-        return Ok(Some(month));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    fn parse_date_day<'a, I>(iter: &mut core::iter::Peekable<I>) -> Result<Option<u8>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
+    fn parse_date_day<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
         let mut day: u8 = 0;
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 2 {
-            if let Some(d) = iter.peek() {
-                if **d >= b'0' && **d <= b'9' {
-                    day = day * 10 + **d - b'0';
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    day = day * 10 + *inner_first - b'0';
                 } else {
                     return Err(ParseError::DateDay);
                 }
             } else {
                 return Err(ParseError::DateDay);
             }
-            iter.next();
             cnt += 1;
         }
         if !(1..=31).contains(&day) {
             return Err(ParseError::DateDay);
         }
-        return Ok(Some(day));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
     pub fn parse(s: &[u8]) -> Result<ParsedDate, ParseError> {
-        let mut iter = s.iter().peekable();
         let mut result = ParsedDate {
             year: None,
             month: None,
             day: None,
         };
-        if iter.peek().is_none() {
+        if s.is_empty() {
             return Ok(result);
         }
-        // Process DataYear.
-        result.year = match Self::parse_date_year(&mut iter) {
-            Ok(year) => year,
+        let mut remains = s;
+        let mut start_index = 0;
+        (result.year, remains) = match Self::parse_date_year(remains, start_index) {
+            Ok((year, remains)) => {
+                if let Some(segment_index) = year {
+                    start_index = segment_index.end + 1;
+                }
+                (year, remains)
+            }
             Err(e) => return Err(e),
         };
-        // Whether input string had data separator previously.
-        let had_date_separator = iter.peek() == Some(&&b'-');
-        if !Self::parse_date_separator(&mut iter, &had_date_separator) {
+        let had_first_date_separator = {
+            if let Some((first, inner_remains)) = remains.split_first() {
+                if first == &b'-' {
+                    remains = inner_remains;
+                    start_index += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        };
+        (result.month, remains) = match Self::parse_date_month(remains, start_index) {
+            Ok((month, remains)) => {
+                if let Some(segment_index) = month {
+                    start_index = segment_index.end + 1;
+                }
+                (month, remains)
+            }
+            Err(e) => return Err(e),
+        };
+
+        let had_second_date_separator = {
+            if let Some((first, inner_remains)) = remains.split_first() {
+                if first == &b'-' {
+                    remains = inner_remains;
+                    start_index += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        };
+        if had_first_date_separator != had_second_date_separator {
             return Err(ParseError::DateSeparator);
         }
-        result.month = match Self::parse_date_month(&mut iter) {
-            Ok(month) => month,
+        (result.day, remains) = match Self::parse_date_day(remains, start_index) {
+            Ok((day, remains)) => (day, remains),
             Err(e) => return Err(e),
         };
-        if !Self::parse_date_separator(&mut iter, &had_date_separator) {
-            return Err(ParseError::DateSeparator);
-        }
-        result.day = match Self::parse_date_day(&mut iter) {
-            Ok(day) => day,
-            Err(e) => return Err(e),
-        };
-        if iter.peek().is_some() {
+        if remains.len() > 0 {
             return Err(ParseError::DateUnexpectedEnd);
         }
         return Ok(result);
@@ -255,202 +296,243 @@ impl DateParser {
 struct TimeParser {}
 
 impl TimeParser {
-    fn parse_time_hour<'a, I>(iter: &mut core::iter::Peekable<I>) -> Result<Option<u8>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        if iter.peek() == None {
-            return Ok(None);
+    fn parse_time_hour<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if s.len() == 0 {
+            return Ok((None, s));
         }
         let mut hour: u8 = 0;
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 2 {
-            if let Some(h) = iter.peek() {
-                if **h >= b'0' && **h <= b'9' {
-                    hour = hour * 10 + **h - b'0';
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    hour = hour * 10 + *inner_first - b'0';
                 } else {
                     return Err(ParseError::TimeHour);
                 }
             } else {
                 return Err(ParseError::TimeHour);
             }
-            iter.next();
             cnt += 1;
         }
         if !(0..=23).contains(&hour) {
             return Err(ParseError::TimeHour);
         }
-        return Ok(Some(hour));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    fn parse_time_separator<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-        had_time_separator: &bool,
-    ) -> bool
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        // Whether current position has time separator.
-        let has_time_separator = iter.peek() == Some(&&b':');
-        if *had_time_separator != has_time_separator {
-            return false;
-        }
-        if has_time_separator {
-            iter.next();
-        }
-        return true;
-    }
-
-    fn parse_time_minute<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-    ) -> Result<Option<u8>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        if iter.peek() == None {
-            return Ok(None);
+    fn parse_time_minute<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if s.len() == 0 {
+            return Ok((None, s));
         }
         let mut minute: u8 = 0;
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 2 {
-            if let Some(m) = iter.peek() {
-                if **m >= b'0' && **m <= b'9' {
-                    minute = minute * 10 + **m - b'0';
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    minute = minute * 10 + *inner_first - b'0';
                 } else {
                     return Err(ParseError::TimeMinute);
                 }
             } else {
                 return Err(ParseError::TimeMinute);
             }
-            iter.next();
             cnt += 1;
         }
         if !(0..=59).contains(&minute) {
             return Err(ParseError::TimeMinute);
         }
-        return Ok(Some(minute));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    fn parse_time_second<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-    ) -> Result<Option<u8>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        if iter.peek() == None {
-            return Ok(None);
+    fn parse_time_second<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if s.len() == 0 {
+            return Ok((None, s));
         }
         let mut second: u8 = 0;
         let mut cnt = 0;
+        let mut mut_inner_remains = s;
         while cnt < 2 {
-            if let Some(s) = iter.peek() {
-                if **s >= b'0' && **s <= b'9' {
-                    second = second * 10 + **s - b'0';
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    second = second * 10 + *inner_first - b'0';
                 } else {
                     return Err(ParseError::TimeSecond);
                 }
             } else {
                 return Err(ParseError::TimeSecond);
             }
-            iter.next();
             cnt += 1;
         }
         if !(1..=60).contains(&second) {
             return Err(ParseError::TimeSecond);
         }
-        return Ok(Some(second));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    fn parse_decimal_separator<'a, I>(iter: &mut core::iter::Peekable<I>) -> bool
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        // Whether current position has decimal separator.
-        if iter.peek() == Some(&&DecimalSeparator::Dot.value())
-            || iter.peek() == Some(&&DecimalSeparator::Comma.value())
-        {
-            iter.next();
-            return true;
-        }
-        return false;
-    }
-
-    fn parse_fraction_part<'a, I>(
-        iter: &mut core::iter::Peekable<I>,
-    ) -> Result<Option<i32>, ParseError>
-    where
-        I: Iterator<Item = &'a u8>,
-    {
-        if iter.peek() == None {
-            return Ok(None);
+    fn parse_fraction_part<'a>(
+        s: &[u8],
+        start_index: usize,
+    ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
+        if s.len() == 0 {
+            return Ok((None, s));
         }
         let mut fraction: i32 = 0;
         let mut cnt = 0;
-
+        let mut mut_inner_remains = s;
         while cnt < 9 {
-            if let Some(f) = iter.peek() {
-                if **f >= b'0' && **f <= b'9' {
-                    fraction = fraction * 10 + **f as i32 - b'0' as i32;
+            if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if inner_first >= &b'0' && inner_first <= &b'9' {
+                    mut_inner_remains = inner_remains;
+                    fraction = fraction * 10 + *inner_first as i32 - b'0' as i32;
                 } else {
-                    break;
+                    return Err(ParseError::FractionPart);
                 }
             } else {
                 break;
             }
-            iter.next();
             cnt += 1;
         }
         if cnt == 0 {
             return Err(ParseError::FractionPart);
         }
-        return Ok(Some(fraction));
+        return Ok((
+            Some(SegmentIndex {
+                start: start_index,
+                end: start_index + cnt - 1,
+            }),
+            mut_inner_remains,
+        ));
     }
 
-    pub fn parse(s: &[u8]) -> Result<ParsedTime, ParseError> {
-        let mut iter = s.iter().peekable();
+    pub fn parse(s: &[u8], start_index: usize) -> Result<ParsedTime, ParseError> {
         let mut result = ParsedTime {
             hour: None,
             minute: None,
             second: None,
             nano_second: None,
         };
-        if iter.peek().is_none() {
+        if s.is_empty() {
             return Ok(result);
         }
-        result.hour = match Self::parse_time_hour(&mut iter) {
-            Ok(hour) => hour,
+        let mut remains = s;
+        let mut start_index = start_index;
+        (result.hour, remains) = match Self::parse_time_hour(remains, start_index) {
+            Ok((hour, remains)) => {
+                if let Some(segment_index) = hour {
+                    start_index = segment_index.end + 1;
+                }
+                (hour, remains)
+            }
             Err(e) => return Err(e),
         };
-        // Whether input string had time separator previously.
-        let had_time_separator = iter.peek() == Some(&&b':');
-        if iter.peek() != None && iter.peek() != Some(&&b'[') {
-            if !Self::parse_time_separator(&mut iter, &had_time_separator) {
-                return Err(ParseError::TimeSeparator);
+        let had_first_time_separator = {
+            if let Some((first, inner_remains)) = remains.split_first() {
+                if first == &b':' {
+                    remains = inner_remains;
+                    start_index += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
             }
-            result.minute = match Self::parse_time_minute(&mut iter) {
-                Ok(minute) => minute,
+        };
+        (result.minute, remains) = match Self::parse_time_minute(remains, start_index) {
+            Ok((minute, remains)) => {
+                if let Some(segment_index) = minute {
+                    start_index = segment_index.end + 1;
+                }
+                (minute, remains)
+            }
+            Err(e) => return Err(e),
+        };
+        let had_second_time_separator = {
+            if let Some((first, inner_remains)) = remains.split_first() {
+                if first == &b':' {
+                    remains = inner_remains;
+                    start_index += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        };
+        if had_second_time_separator && remains.len() == 0
+            || had_first_time_separator != had_second_time_separator && remains.len() > 0
+        {
+            return Err(ParseError::TimeSeparator);
+        }
+
+        (result.second, remains) = match Self::parse_time_second(remains, start_index) {
+            Ok((second, remains)) => {
+                if let Some(segment_index) = second {
+                    start_index = segment_index.end + 1;
+                }
+                (second, remains)
+            }
+            Err(e) => return Err(e),
+        };
+        let had_decimal_separator = {
+            if let Some((first, inner_remains)) = remains.split_first() {
+                if first == &DecimalSeparator::Dot.value()
+                    || first == &DecimalSeparator::Comma.value()
+                {
+                    remains = inner_remains;
+                    start_index += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        };
+        if !had_decimal_separator && remains.len() > 0 {
+            return Err(ParseError::DecimalSeparator);
+        }
+        if had_decimal_separator {
+            (result.nano_second, remains) = match Self::parse_fraction_part(remains, start_index) {
+                Ok((nano_second, remains)) => (nano_second, remains),
                 Err(e) => return Err(e),
             };
-            if iter.peek() != None && iter.peek() != Some(&&b'[') {
-                if !Self::parse_time_separator(&mut iter, &had_time_separator) {
-                    return Err(ParseError::TimeSeparator);
-                }
-                result.second = match Self::parse_time_second(&mut iter) {
-                    Ok(second) => second,
-                    Err(e) => return Err(e),
-                };
-                if iter.peek() != None && iter.peek() != Some(&&b'[') {
-                    if !Self::parse_decimal_separator(&mut iter) {
-                        return Err(ParseError::DecimalSeparator);
-                    }
-                    result.nano_second = match Self::parse_fraction_part(&mut iter) {
-                        Ok(nano_second) => nano_second,
-                        Err(e) => return Err(e),
-                    };
-                }
-            }
         }
-        if iter.peek().is_some() {
+
+        if remains.len() > 0 {
             return Err(ParseError::TimeUnexpectedEnd);
         }
         return Ok(result);
@@ -477,19 +559,23 @@ impl DateTimeParser {
             parsed_date: None,
             parsed_time: None,
         };
-        let mut separator_index = s.len();
-        for (i, u) in s.iter().enumerate() {
-            if Self::is_date_time_separator(u) {
-                separator_index = i;
-                break;
+        let mut time_slice = s;
+        let mut cnt = 0;
+        while cnt < s.len() {
+            if let Some((first, remains)) = time_slice.split_first() {
+                time_slice = remains;
+                if Self::is_date_time_separator(first) {
+                    break;
+                }
             }
+            cnt += 1;
         }
-        result.parsed_date = match DateParser::parse(&s[..separator_index]) {
+        result.parsed_date = match DateParser::parse(&s[..cnt]) {
             Ok(date) => Some(date),
             Err(e) => return Err(e),
         };
-        if separator_index + 1 < s.len() {
-            result.parsed_time = match TimeParser::parse(&s[separator_index + 1..]) {
+        if cnt < s.len() {
+            result.parsed_time = match TimeParser::parse(time_slice, cnt + 1) {
                 Ok(time) => Some(time),
                 Err(e) => return Err(e),
             };
@@ -510,11 +596,11 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(11),
-                    day: Some(8),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
-                parsed_time: None,
+                parsed_time: None
             })
         );
 
@@ -524,11 +610,11 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 4, end: 5 }),
+                    day: Some(SegmentIndex { start: 6, end: 7 }),
                 }),
-                parsed_time: None,
+                parsed_time: None
             })
         );
 
@@ -538,16 +624,16 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
                 parsed_time: Some(ParsedTime {
-                    hour: Some(4),
+                    hour: Some(SegmentIndex { start: 11, end: 12 }),
                     minute: None,
                     second: None,
-                    nano_second: None,
-                }),
+                    nano_second: None
+                })
             })
         );
 
@@ -557,16 +643,16 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
                 parsed_time: Some(ParsedTime {
-                    hour: Some(4),
-                    minute: Some(34),
+                    hour: Some(SegmentIndex { start: 11, end: 12 }),
+                    minute: Some(SegmentIndex { start: 14, end: 15 }),
                     second: None,
-                    nano_second: None,
-                }),
+                    nano_second: None
+                })
             })
         );
 
@@ -576,16 +662,16 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
                 parsed_time: Some(ParsedTime {
-                    hour: Some(4),
-                    minute: Some(34),
-                    second: Some(22),
-                    nano_second: None,
-                }),
+                    hour: Some(SegmentIndex { start: 11, end: 12 }),
+                    minute: Some(SegmentIndex { start: 14, end: 15 }),
+                    second: Some(SegmentIndex { start: 17, end: 18 }),
+                    nano_second: None
+                })
             })
         );
 
@@ -595,16 +681,16 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
                 parsed_time: Some(ParsedTime {
-                    hour: Some(4),
-                    minute: Some(34),
-                    second: Some(22),
-                    nano_second: Some(0),
-                }),
+                    hour: Some(SegmentIndex { start: 11, end: 12 }),
+                    minute: Some(SegmentIndex { start: 14, end: 15 }),
+                    second: Some(SegmentIndex { start: 17, end: 18 }),
+                    nano_second: Some(SegmentIndex { start: 20, end: 22 }),
+                })
             })
         );
 
@@ -614,16 +700,16 @@ mod test {
             parsed,
             Ok(ParsedDateTime {
                 parsed_date: Some(ParsedDate {
-                    year: Some(2022),
-                    month: Some(6),
-                    day: Some(5),
+                    year: Some(SegmentIndex { start: 0, end: 3 }),
+                    month: Some(SegmentIndex { start: 5, end: 6 }),
+                    day: Some(SegmentIndex { start: 8, end: 9 }),
                 }),
                 parsed_time: Some(ParsedTime {
-                    hour: Some(4),
-                    minute: Some(34),
-                    second: Some(22),
-                    nano_second: Some(0),
-                }),
+                    hour: Some(SegmentIndex { start: 11, end: 12 }),
+                    minute: Some(SegmentIndex { start: 13, end: 14 }),
+                    second: Some(SegmentIndex { start: 15, end: 16 }),
+                    nano_second: Some(SegmentIndex { start: 18, end: 20 }),
+                })
             })
         );
     }
