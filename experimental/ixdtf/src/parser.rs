@@ -83,7 +83,7 @@ struct ParsedDateTime {
 struct DateParser {}
 
 impl DateParser {
-    fn parse_date_extended_year<'a>(
+    fn parse_date_extended_year(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
@@ -93,7 +93,7 @@ impl DateParser {
                 let mut mut_inner_remains = remains;
                 while cnt < 6 {
                     if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                        if (&b'0'..=&b'9').contains(&inner_first) {
                             mut_inner_remains = inner_remains;
                         } else {
                             return Err(ParseError::DateExtendedYear);
@@ -118,7 +118,7 @@ impl DateParser {
         }
     }
 
-    fn parse_date_four_digit_year<'a>(
+    fn parse_date_four_digit_year(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
@@ -126,7 +126,7 @@ impl DateParser {
         let mut mut_inner_remains = s;
         while cnt < 4 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                 } else {
                     return Err(ParseError::DateFourDigitYear);
@@ -145,7 +145,7 @@ impl DateParser {
         ));
     }
 
-    fn parse_date_year<'a>(
+    fn parse_date_year(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
@@ -158,7 +158,7 @@ impl DateParser {
         return Err(ParseError::DateYear);
     }
 
-    fn parse_date_month<'a>(
+    fn parse_date_month(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
@@ -167,7 +167,7 @@ impl DateParser {
         let mut mut_inner_remains = s;
         while cnt < 2 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     month = month * 10 + *inner_first - b'0';
                 } else {
@@ -190,7 +190,7 @@ impl DateParser {
         ));
     }
 
-    fn parse_date_day<'a>(
+    fn parse_date_day(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
@@ -199,7 +199,7 @@ impl DateParser {
         let mut mut_inner_remains = s;
         while cnt < 2 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     day = day * 10 + *inner_first - b'0';
                 } else {
@@ -285,7 +285,7 @@ impl DateParser {
             Ok((day, remains)) => (day, remains),
             Err(e) => return Err(e),
         };
-        if remains.len() > 0 {
+        if !remains.is_empty() {
             return Err(ParseError::DateUnexpectedEnd);
         }
         return Ok(result);
@@ -296,11 +296,11 @@ impl DateParser {
 struct TimeParser {}
 
 impl TimeParser {
-    fn parse_time_hour<'a>(
+    fn parse_time_hour(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
-        if s.len() == 0 {
+        if s.is_empty() {
             return Ok((None, s));
         }
         let mut hour: u8 = 0;
@@ -308,7 +308,7 @@ impl TimeParser {
         let mut mut_inner_remains = s;
         while cnt < 2 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     hour = hour * 10 + *inner_first - b'0';
                 } else {
@@ -331,11 +331,11 @@ impl TimeParser {
         ));
     }
 
-    fn parse_time_minute<'a>(
+    fn parse_time_minute(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
-        if s.len() == 0 {
+        if s.is_empty() {
             return Ok((None, s));
         }
         let mut minute: u8 = 0;
@@ -343,7 +343,7 @@ impl TimeParser {
         let mut mut_inner_remains = s;
         while cnt < 2 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     minute = minute * 10 + *inner_first - b'0';
                 } else {
@@ -366,11 +366,11 @@ impl TimeParser {
         ));
     }
 
-    fn parse_time_second<'a>(
+    fn parse_time_second(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
-        if s.len() == 0 {
+        if s.is_empty() {
             return Ok((None, s));
         }
         let mut second: u8 = 0;
@@ -378,7 +378,7 @@ impl TimeParser {
         let mut mut_inner_remains = s;
         while cnt < 2 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     second = second * 10 + *inner_first - b'0';
                 } else {
@@ -401,11 +401,11 @@ impl TimeParser {
         ));
     }
 
-    fn parse_fraction_part<'a>(
+    fn parse_fraction_part(
         s: &[u8],
         start_index: usize,
     ) -> Result<(Option<SegmentIndex>, &[u8]), ParseError> {
-        if s.len() == 0 {
+        if s.is_empty() {
             return Ok((None, s));
         }
         let mut fraction: i32 = 0;
@@ -413,7 +413,7 @@ impl TimeParser {
         let mut mut_inner_remains = s;
         while cnt < 9 {
             if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                if inner_first >= &b'0' && inner_first <= &b'9' {
+                if (&b'0'..=&b'9').contains(&inner_first) {
                     mut_inner_remains = inner_remains;
                     fraction = fraction * 10 + *inner_first as i32 - b'0' as i32;
                 } else {
@@ -492,8 +492,8 @@ impl TimeParser {
                 false
             }
         };
-        if had_second_time_separator && remains.len() == 0
-            || had_first_time_separator != had_second_time_separator && remains.len() > 0
+        if had_second_time_separator && remains.is_empty()
+            || had_first_time_separator != had_second_time_separator && !remains.is_empty()
         {
             return Err(ParseError::TimeSeparator);
         }
@@ -522,7 +522,7 @@ impl TimeParser {
                 false
             }
         };
-        if !had_decimal_separator && remains.len() > 0 {
+        if !had_decimal_separator && !remains.is_empty() {
             return Err(ParseError::DecimalSeparator);
         }
         if had_decimal_separator {
@@ -532,7 +532,7 @@ impl TimeParser {
             };
         }
 
-        if remains.len() > 0 {
+        if !remains.is_empty() {
             return Err(ParseError::TimeUnexpectedEnd);
         }
         return Ok(result);
