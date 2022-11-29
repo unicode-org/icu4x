@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669673234100,
+  "lastUpdate": 1669722646013,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31703,6 +31703,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/12311a43ddcb8a5ac04f1f36ece232c0e77926f2"
         },
         "date": 1669673162817,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4061316,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd8c66d06b4d0ca0d155aaee43dd141952fbb9ae",
+          "message": "Fixing datagen invocation (#2843)",
+          "timestamp": "2022-11-29T12:47:03+01:00",
+          "tree_id": "4fa6c1feb097b143213e0502be5f65435b90068c",
+          "url": "https://github.com/unicode-org/icu4x/commit/bd8c66d06b4d0ca0d155aaee43dd141952fbb9ae"
+        },
+        "date": 1669722570677,
         "tool": "ndjson",
         "benches": [
           {
