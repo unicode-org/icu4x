@@ -225,6 +225,37 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
             strings.push(s);
         }
 
+        // Ensure that the string list is sorted. If not, the binary search that
+        // is used for `.contains(&str)` will return garbase otuput.
+        strings.sort();
+
+        // Ensure that `strings` is deduplicated.
+        let is_deduped = strings
+            .windows(2)
+            .all(|adjacents| adjacents[0] != adjacents[1]);
+        let strings = if is_deduped {
+            strings
+        } else {
+            let mut deduped_strs = Vec::<&str>::new();
+            let mut strs_iter = strings.iter();
+
+            let first_str = strs_iter.next();
+            debug_assert!(first_str.is_some()); // If `strings` was empty or len() < 2, then
+                                                // `is_deduped_strs` would have been true.
+            let mut next_str = *first_str.unwrap();
+
+            deduped_strs.push(next_str);
+
+            for s in strs_iter {
+                if *s != next_str {
+                    deduped_strs.push(s);
+                    next_str = *s;
+                }
+            }
+
+            deduped_strs
+        };
+
         let cp_inv_list = builder.build();
         let str_list = VarZeroVec::<str>::from(&strings);
 
@@ -335,5 +366,28 @@ mod tests {
             cpilsl,
             Err(CodePointInversionListAndStringListError::StringListNotSorted(_, _))
         ));
+    }
+
+    #[test]
+    fn test_from_iter_invariants() {
+        let in_strs_1 = ["a", "abc", "xyz", "abc"];
+        let in_strs_2 = ["xyz", "abc", "a", "abc"];
+
+        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1.into_iter());
+        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2.into_iter());
+
+        assert_eq!(cpilsl_1, cpilsl_2);
+
+        assert!(cpilsl_1.has_strings());
+        assert!(cpilsl_1.contains("abc"));
+        assert!(cpilsl_1.contains("xyz"));
+        assert!(!cpilsl_1.contains("def"));
+
+        assert_eq!(1, cpilsl_1.cp_inv_list.size());
+        assert!(cpilsl_1.contains_char('a'));
+        assert!(!cpilsl_1.contains_char('0'));
+        assert!(!cpilsl_1.contains_char('q'));
+
+        assert_eq!(3, cpilsl_1.size());
     }
 }
