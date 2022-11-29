@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom, DataError};
+use icu_provider::{yoke, zerofrom, DataError, DataMarker};
 use zerovec::ZeroMap;
 
 /// Relative time format V1 data struct.
@@ -129,4 +129,10 @@ impl<'data> SingularSubPattern<'data> {
             index,
         })
     }
+}
+
+pub(crate) struct ErasedRelativeTimeFormatV1Marker;
+
+impl DataMarker for ErasedRelativeTimeFormatV1Marker {
+    type Yokeable = RelativeTimePatternDataV1<'static>;
 }

@@ -164,3 +164,7 @@ pub use icu_timezone as timezone;
 #[cfg(feature = "experimental")]
 #[doc(inline)]
 pub use icu_displaynames as displaynames;
+
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_relativetime as relativetime;

@@ -18,4 +18,13 @@
 
 extern crate alloc;
 
+mod error;
+mod format;
+pub mod options;
 pub mod provider;
+mod relativetime;
+
+pub use error::RelativeTimeError;
+pub use format::FormattedRelativeTime;
+pub use options::RelativeTimeFormatterOptions;
+pub use relativetime::RelativeTimeFormatter;
