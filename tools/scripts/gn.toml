@@ -60,11 +60,13 @@ cd ffi/gn
 
 rm -rf vendor
 output = exec --fail-on-error cargo vendor
+output_trimmed = trim_start ${output.stdout} # Needed since there are whitespace differences between cargo versions
+                                             # Probably can be removed when we update our CI stable
 writefile .cargo/config "# This file is part of ICU4X. For terms of use, please see the file\n"
 appendfile .cargo/config "# called LICENSE at the top level of the ICU4X source tree\n"
 appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n\n"
 appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
-appendfile .cargo/config ${output.stdout}
+appendfile .cargo/config ${output_trimmed}
 '''
 
 [tasks.gn-gen]
@@ -144,7 +146,7 @@ exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/d
 description = "Run the GN version of ICU4X"
 category = "ICU4X Development"
 install_crate = { crate_name = "wasmer-cli", binary = "wasmer", test_arg = ["--help"] }
-install_crate_args = ["--features=singlepass,cranelift"]
+install_crate_args = ["--features=singlepass,cranelift", "--version=2.3.0"]
 dependencies = [
     "gn-build",
     "gn-build-wasi",

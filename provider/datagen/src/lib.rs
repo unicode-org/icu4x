@@ -35,7 +35,7 @@
 //! $ cargo install icu_datagen --features bin
 //! $ icu4x-datagen \
 //! >    --all-keys \
-//! >    --locales de,en-AU \
+//! >    --locales de en-AU \
 //! >    --format blob \
 //! >    --out data.postcard
 //! ```

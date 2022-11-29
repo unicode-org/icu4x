@@ -294,5 +294,13 @@
     "ZM": "Zambija",
     "ZW": "Zimbabve",
     "ZZ": "Nepoznat region"
+  },
+  "short_names": {
+    "GB": "UK",
+    "HK": "Hongkong",
+    "MO": "Makao",
+    "PS": "Palestina",
+    "UN": "UN",
+    "US": "SAD"
   }
 }

@@ -44,6 +44,7 @@ icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", 
 icu_harfbuzz = { version = "0.7.0", path = "../../experimental/harfbuzz", default-features = false, optional = true }
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 
 # For docs links
 icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
@@ -93,7 +94,7 @@ serde = [
 serde_human = [
     "icu_list/serde_human"
 ]
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime"]
 
 [[example]]
 name = "tui"

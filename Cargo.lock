@@ -1406,6 +1406,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
@@ -1604,6 +1605,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
@@ -1686,6 +1688,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
  "serde",
  "tinystr 0.7.0",
  "zerovec",
@@ -1930,6 +1933,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_relativetime"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_provider",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_segmenter"
 version = "0.7.0"
 dependencies = [
@@ -1980,6 +1993,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
+ "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
  "lazy_static",
@@ -4315,7 +4329,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.0"
+version = "0.9.1"
 dependencies = [
  "bincode",
  "criterion",
