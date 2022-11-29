@@ -2149,9 +2149,13 @@ impl TryFrom<&[u8]> for ScientificDecimal {
             .map(|i| input_str.split_at(i))
         {
             let significand = FixedDecimal::try_from(significand_str)?;
-            exponent_str = &exponent_str[1..]; // Skip the 'e'.
-                                               // Fixed_Decimal::try_from supports scientific notation; ensure that
-                                               // we don’t accept something like 1e1e1.
+            #[allow(clippy::indexing_slicing)] // Nonempty, contains at least 'e'.
+            {
+                exponent_str = &exponent_str[1..]; // Skip the 'e'.
+            }
+
+            // Fixed_Decimal::try_from supports scientific notation; ensure that
+            // we don’t accept something like 1e1e1.
             if significand_str.contains(&b'E')
                 || exponent_str.iter().any(|&c| c == b'e' || c == b'E')
             {
@@ -2224,16 +2228,21 @@ impl TryFrom<&[u8]> for CompactDecimal {
             .map(|i| input_str.split_at(i))
         {
             let significand = FixedDecimal::try_from(significand_str)?;
-            exponent_str = &exponent_str[1..]; // Skip the 'c'.
+            #[allow(clippy::indexing_slicing)] // Nonempty, contains at least 'c'.
+            {
+                exponent_str = &exponent_str[1..]; // Skip the 'c'.
+            }
             if exponent_str.is_empty() {
                 return Err(Error::Syntax);
             }
+            #[allow(clippy::indexing_slicing)] // Nonempty.
             if exponent_str.is_empty()
                 || exponent_str[0] == b'0'
-                || !exponent_str.iter().all(|&c| c >= b'0' && c <= b'9')
+                || !exponent_str.iter().all(|c| (b'0'..=b'9').contains(c))
             {
                 return Err(Error::Syntax);
             }
+            #[allow(clippy::unwrap_used)] // All ASCII digits, so valid UTF-8.
             let exponent = core::str::from_utf8(exponent_str)
                 .unwrap()
                 .parse()
@@ -2920,6 +2929,10 @@ fn test_scientific_syntax_error() {
             expected_err: Some(Error::Syntax),
         },
         TestCase {
+            input_str: "-123e",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
             input_str: "1e10",
             expected_err: None,
         },
@@ -2975,6 +2988,10 @@ fn test_compact_syntax_error() {
         },
         TestCase {
             input_str: "-123e4",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-123c",
             expected_err: Some(Error::Syntax),
         },
         TestCase {
