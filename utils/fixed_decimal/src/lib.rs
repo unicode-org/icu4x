@@ -58,7 +58,9 @@ mod uint_iterator;
 #[cfg(feature = "ryu")]
 pub use decimal::DoublePrecision;
 
+pub use decimal::CompactDecimal;
 pub use decimal::FixedDecimal;
+pub use decimal::ScientificDecimal;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
@@ -91,6 +93,9 @@ pub enum Error {
     /// 123 (or 123.0) must be used.
     #[displaydoc("Failed to parse the input string")]
     Syntax,
+    /// An exponent with fractional digits is passed when constructing a [`ScientificDecimal`].
+    #[displaydoc("Exponent must not have fractional digits")]
+    IntegerExponent,
 }
 
 #[cfg(feature = "std")]

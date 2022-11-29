@@ -8,7 +8,7 @@ use core::cmp;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::fmt;
-use core::ops::RangeInclusive;
+use core::ops::{RangeInclusive, Index};
 
 use core::str::FromStr;
 
@@ -2078,6 +2078,159 @@ impl FixedDecimal {
     }
 }
 
+/// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
+/// number written in scientific notation, such as 1.729×10³.
+/// This structure represents any 0s shown in the significand and exponent,
+/// and an optional sign for both the significand and the exponent.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ScientificDecimal {
+    significand: FixedDecimal,
+    // Invariants:
+    // - exponent.lower_magnitude == 0 (exponent has no fractional part).
+    exponent: FixedDecimal,
+}
+
+impl ScientificDecimal {
+    pub fn from_parts(significand: FixedDecimal, exponent: FixedDecimal) -> Result<Self, Error>  {
+        if exponent.lower_magnitude != 0 {
+            Err(Error::IntegerExponent)
+        } else {
+            Ok(ScientificDecimal{significand, exponent})
+        }
+    }
+}
+
+/// Render the [`ScientificDecimal`] as a string of ASCII digits with a possible decimal point,
+/// followed by the letter 'e', and the exponent.
+///
+/// # Examples
+///
+/// ```
+/// # use fixed_decimal::FixedDecimal;
+/// # use fixed_decimal::ScientificDecimal;
+/// # use std::str::FromStr;
+/// # use writeable::assert_writeable_eq;
+/// #
+/// assert_writeable_eq!(
+///     ScientificDecimal::from_parts(FixedDecimal::from_str("+1.729").unwrap(),
+///                                   FixedDecimal::from_str("+03").unwrap()).unwrap(),
+///     "+1.729e+03");
+/// ```
+impl writeable::Writeable for ScientificDecimal {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.significand.write_to(sink)?;
+        sink.write_char('e')?;
+        self.exponent.write_to(sink)
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        self.significand.writeable_length_hint() + 1 +
+        self.exponent.writeable_length_hint()
+    }
+}
+
+writeable::impl_display_with_writeable!(ScientificDecimal);
+
+impl FromStr for ScientificDecimal {
+    type Err = Error;
+    fn from_str(input_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from(input_str.as_bytes())
+    }
+}
+
+impl TryFrom<&[u8]> for ScientificDecimal {
+    type Error = Error;
+    fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
+        if let Some((significand_str, mut exponent_str)) =
+        input_str.iter().position(|&c| c == b'e').map(|i| input_str.split_at(i)) {
+            let significand = FixedDecimal::try_from(significand_str)?;
+            exponent_str = &exponent_str[1..];  // Skip the 'e'.
+            // Fixed_Decimal::try_from supports scientific notation; ensure that
+            // we don’t accept something like 1e1e1.
+            if significand_str.contains(&b'E') || exponent_str.iter().any(|&c| c == b'e' || c == b'E') {
+                return Err(Error::Syntax);
+            }
+            let exponent = FixedDecimal::try_from(exponent_str)?;
+            ScientificDecimal::from_parts(significand, exponent)
+        } else {
+            Err(Error::Syntax)
+        }
+    }
+}
+
+/// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
+/// number written in compact notation (such as 1.2M).
+/// This represents a _source number_ that uses compact decimal notation, as defined
+/// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
+/// 
+/// This is distinct from [`ScientificDecimal`] because it does not represent leading 0s
+/// nor a sign in the exponent, and behaves differently in pluralization.
+#[derive(Debug, Clone, PartialEq)]
+pub struct CompactDecimal {
+    significand: FixedDecimal,
+    exponent: i16,
+}
+
+/// Render the [`CompactDecimal`] in sampleValue syntax.
+/// The letter c is used, rather than the deprecated e.
+///
+/// # Examples
+///
+/// ```
+/// # use fixed_decimal::CompactDecimal;
+/// # use std::str::FromStr;
+/// # use writeable::assert_writeable_eq;
+/// #
+/// assert_writeable_eq!(CompactDecimal::from_str("+1.20c6").unwrap(), "+1.20c3");
+/// ```
+impl writeable::Writeable for CompactDecimal {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        self.significand.write_to(sink)?;
+        sink.write_char('c')?;
+        self.exponent.write_to(sink)
+    }
+
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        self.significand.writeable_length_hint() + 1 +
+        self.exponent.writeable_length_hint()
+    }
+}
+
+writeable::impl_display_with_writeable!(CompactDecimal);
+
+impl FromStr for CompactDecimal {
+    type Err = Error;
+    fn from_str(input_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from(input_str.as_bytes())
+    }
+}
+
+/// The deprecated letter e is not accepted as a synonym for c.
+impl TryFrom<&[u8]> for CompactDecimal {
+    type Error = Error;
+    fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
+        if input_str.iter().any(|&c| c == b'e' || c == b'E') {
+            return Err(Error::Syntax);
+        }
+        if let Some((significand_str, mut exponent_str)) =
+        input_str.iter().position(|&c| c == b'c').map(|i| input_str.split_at(i)) {
+            let significand = FixedDecimal::try_from(significand_str)?;
+            exponent_str = &exponent_str[1..];  // Skip the 'c'.
+            if exponent_str.is_empty() {
+                return Err(Error::Syntax);
+            }
+            if exponent_str.is_empty() || exponent_str[0] == b'0' || !exponent_str.iter().all(|&c| c >= b'0' && c <= b'9') {
+                return Err(Error::Syntax);
+            }
+            let exponent =
+                core::str::from_utf8(exponent_str).unwrap().parse().map_err(|_| Error::Limit)?;
+            Ok(CompactDecimal { significand, exponent })
+        } else {
+            Err(Error::Syntax)
+        }
+    }
+}
+
 #[cfg(feature = "ryu")]
 #[test]
 fn test_float() {
@@ -2722,6 +2875,126 @@ fn test_syntax_error() {
     ];
     for cas in &cases {
         match FixedDecimal::from_str(cas.input_str) {
+            Ok(dec) => {
+                assert_eq!(cas.expected_err, None, "{:?}", cas);
+                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+            }
+            Err(err) => {
+                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_scientific_syntax_error() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_str: &'static str,
+        pub expected_err: Option<Error>,
+    }
+    let cases = [
+        TestCase {
+            input_str: "5",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-123c4",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1e10",
+            expected_err: None,
+        },
+        TestCase {
+            input_str: "1e1e1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1e1E1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1E1e1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-1e+01",
+            expected_err: None,
+        },
+        TestCase {
+            input_str: "-1e+1.0",
+            expected_err: Some(Error::IntegerExponent),
+        },
+        TestCase {
+            input_str: "-1e+-1",
+            expected_err: Some(Error::Syntax),
+        },
+    ];
+    for cas in &cases {
+        match ScientificDecimal::from_str(cas.input_str) {
+            Ok(dec) => {
+                assert_eq!(cas.expected_err, None, "{:?}", cas);
+                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+            }
+            Err(err) => {
+                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_compact_syntax_error() {
+    #[derive(Debug)]
+    struct TestCase {
+        pub input_str: &'static str,
+        pub expected_err: Option<Error>,
+    }
+    let cases = [
+        TestCase {
+            input_str: "5",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-123e4",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1c10",
+            expected_err: None,
+        },
+        TestCase {
+            input_str: "1E1c1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1e1c1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1c1e1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "1c1E1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-1c01",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-1c-1",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
+            input_str: "-1c1",
+            expected_err: None,
+        },
+    ];
+    for cas in &cases {
+        match CompactDecimal::from_str(cas.input_str) {
             Ok(dec) => {
                 assert_eq!(cas.expected_err, None, "{:?}", cas);
                 assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
