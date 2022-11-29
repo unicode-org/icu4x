@@ -8,7 +8,7 @@ use core::cmp;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::fmt;
-use core::ops::{Index, RangeInclusive};
+use core::ops::RangeInclusive;
 
 use core::str::FromStr;
 
