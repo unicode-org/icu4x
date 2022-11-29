@@ -8,7 +8,7 @@ use core::cmp;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::fmt;
-use core::ops::{RangeInclusive, Index};
+use core::ops::{Index, RangeInclusive};
 
 use core::str::FromStr;
 
@@ -2091,11 +2091,14 @@ pub struct ScientificDecimal {
 }
 
 impl ScientificDecimal {
-    pub fn from_parts(significand: FixedDecimal, exponent: FixedDecimal) -> Result<Self, Error>  {
+    pub fn from_parts(significand: FixedDecimal, exponent: FixedDecimal) -> Result<Self, Error> {
         if exponent.lower_magnitude != 0 {
             Err(Error::IntegerExponent)
         } else {
-            Ok(ScientificDecimal{significand, exponent})
+            Ok(ScientificDecimal {
+                significand,
+                exponent,
+            })
         }
     }
 }
@@ -2124,8 +2127,7 @@ impl writeable::Writeable for ScientificDecimal {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.significand.writeable_length_hint() + 1 +
-        self.exponent.writeable_length_hint()
+        self.significand.writeable_length_hint() + 1 + self.exponent.writeable_length_hint()
     }
 }
 
@@ -2141,13 +2143,18 @@ impl FromStr for ScientificDecimal {
 impl TryFrom<&[u8]> for ScientificDecimal {
     type Error = Error;
     fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
-        if let Some((significand_str, mut exponent_str)) =
-        input_str.iter().position(|&c| c == b'e').map(|i| input_str.split_at(i)) {
+        if let Some((significand_str, mut exponent_str)) = input_str
+            .iter()
+            .position(|&c| c == b'e')
+            .map(|i| input_str.split_at(i))
+        {
             let significand = FixedDecimal::try_from(significand_str)?;
-            exponent_str = &exponent_str[1..];  // Skip the 'e'.
-            // Fixed_Decimal::try_from supports scientific notation; ensure that
-            // we don’t accept something like 1e1e1.
-            if significand_str.contains(&b'E') || exponent_str.iter().any(|&c| c == b'e' || c == b'E') {
+            exponent_str = &exponent_str[1..]; // Skip the 'e'.
+                                               // Fixed_Decimal::try_from supports scientific notation; ensure that
+                                               // we don’t accept something like 1e1e1.
+            if significand_str.contains(&b'E')
+                || exponent_str.iter().any(|&c| c == b'e' || c == b'E')
+            {
                 return Err(Error::Syntax);
             }
             let exponent = FixedDecimal::try_from(exponent_str)?;
@@ -2162,7 +2169,7 @@ impl TryFrom<&[u8]> for ScientificDecimal {
 /// number written in compact notation (such as 1.2M).
 /// This represents a _source number_ that uses compact decimal notation, as defined
 /// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
-/// 
+///
 /// This is distinct from [`ScientificDecimal`] because it does not represent leading 0s
 /// nor a sign in the exponent, and behaves differently in pluralization.
 #[derive(Debug, Clone, PartialEq)]
@@ -2191,8 +2198,7 @@ impl writeable::Writeable for CompactDecimal {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.significand.writeable_length_hint() + 1 +
-        self.exponent.writeable_length_hint()
+        self.significand.writeable_length_hint() + 1 + self.exponent.writeable_length_hint()
     }
 }
 
@@ -2212,19 +2218,30 @@ impl TryFrom<&[u8]> for CompactDecimal {
         if input_str.iter().any(|&c| c == b'e' || c == b'E') {
             return Err(Error::Syntax);
         }
-        if let Some((significand_str, mut exponent_str)) =
-        input_str.iter().position(|&c| c == b'c').map(|i| input_str.split_at(i)) {
+        if let Some((significand_str, mut exponent_str)) = input_str
+            .iter()
+            .position(|&c| c == b'c')
+            .map(|i| input_str.split_at(i))
+        {
             let significand = FixedDecimal::try_from(significand_str)?;
-            exponent_str = &exponent_str[1..];  // Skip the 'c'.
+            exponent_str = &exponent_str[1..]; // Skip the 'c'.
             if exponent_str.is_empty() {
                 return Err(Error::Syntax);
             }
-            if exponent_str.is_empty() || exponent_str[0] == b'0' || !exponent_str.iter().all(|&c| c >= b'0' && c <= b'9') {
+            if exponent_str.is_empty()
+                || exponent_str[0] == b'0'
+                || !exponent_str.iter().all(|&c| c >= b'0' && c <= b'9')
+            {
                 return Err(Error::Syntax);
             }
-            let exponent =
-                core::str::from_utf8(exponent_str).unwrap().parse().map_err(|_| Error::Limit)?;
-            Ok(CompactDecimal { significand, exponent })
+            let exponent = core::str::from_utf8(exponent_str)
+                .unwrap()
+                .parse()
+                .map_err(|_| Error::Limit)?;
+            Ok(CompactDecimal {
+                significand,
+                exponent,
+            })
         } else {
             Err(Error::Syntax)
         }
