@@ -38,6 +38,35 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 ///         "10 seconds ago"
 /// );
 /// ```
+///
+/// # Example
+///
+/// ```
+/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
+/// use icu_relativetime::options::Numeric;
+/// use icu_locid::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("es").into(),
+///     RelativeTimeFormatterOptions { numeric: Numeric::Auto }
+/// )
+/// .expect("Data should load successfully.");
+///
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(0u8),
+///         "ahora"
+/// );
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(2u8),
+///         "dentro de 2 segundos"
+/// );
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(-15i8),
+///         "hace 15 segundos"
+/// );
+/// ```
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedRelativeTimeFormatV1Marker>,
