@@ -31,11 +31,29 @@
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "zero": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال ربع سنة واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال ربعي سنة",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  أرباع سنة",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    }
   }
 }

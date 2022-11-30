@@ -26,10 +26,22 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "через  квартал",
+      "index": 11
+    },
     "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "few": {
+      "pattern": "через  квартала",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  кварталов",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  квартала",
+      "index": 11
+    }
   }
 }

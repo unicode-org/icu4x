@@ -23,10 +23,19 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "za  kvartal",
+      "index": 3
+    },
     "two": null,
-    "few": null,
+    "few": {
+      "pattern": "za  kvartala",
+      "index": 3
+    },
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "za  kvartala",
+      "index": 3
+    }
   }
 }

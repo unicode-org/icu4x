@@ -20,10 +20,16 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "dans  m.",
+      "index": 5
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "dans  m.",
+      "index": 5
+    }
   }
 }
