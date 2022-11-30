@@ -26,10 +26,22 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "через  нед.",
+      "index": 11
+    },
     "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "few": {
+      "pattern": "через  нед.",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  нед.",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  нед.",
+      "index": 11
+    }
   }
 }

@@ -23,10 +23,19 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "за  год.",
+      "index": 5
+    },
     "two": null,
-    "few": null,
+    "few": {
+      "pattern": "за  год.",
+      "index": 5
+    },
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "за  год.",
+      "index": 5
+    }
   }
 }

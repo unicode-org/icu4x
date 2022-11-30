@@ -23,6 +23,9 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": " 日後",
+      "index": 0
+    }
   }
 }
