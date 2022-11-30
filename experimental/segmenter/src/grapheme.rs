@@ -5,7 +5,6 @@
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
-use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
@@ -68,8 +67,6 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// ```
 pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
 }
 
 impl GraphemeClusterSegmenter {
@@ -79,13 +76,7 @@ impl GraphemeClusterSegmenter {
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let dictionary = Dictionary::default();
-        let lstm = LstmPayloads::default();
-        Ok(Self {
-            payload,
-            dictionary,
-            lstm,
-        })
+        Ok(Self { payload })
     }
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
@@ -101,8 +92,25 @@ impl GraphemeClusterSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
+        }
+    }
+
+    /// Create a grapheme cluster break iterator from grapheme cluster rule payload
+    pub(crate) fn new_and_segment_str<'l, 's>(
+        input: &'s str,
+        payload: &'l RuleBreakDataV1<'l>,
+    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorUtf8 {
+            iter: input.char_indices(),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: payload,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -120,8 +128,8 @@ impl GraphemeClusterSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -136,8 +144,8 @@ impl GraphemeClusterSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -153,8 +161,25 @@ impl GraphemeClusterSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
+        }
+    }
+
+    /// Create a grapheme cluster break iterator from grapheme cluster rule payload
+    pub(crate) fn new_and_segment_utf16<'l, 's>(
+        input: &'s [u16],
+        payload: &'l RuleBreakDataV1<'l>,
+    ) -> GraphemeClusterBreakIteratorUtf16<'l, 's> {
+        GraphemeClusterBreakIteratorUtf16 {
+            iter: Utf16Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: payload,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }

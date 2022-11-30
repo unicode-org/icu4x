@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::dictionary::DictionarySegmenter;
-use crate::grapheme::GraphemeClusterSegmenter;
 use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
@@ -60,9 +59,9 @@ impl Dictionary {
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
 pub fn complex_language_segment_utf16(
-    dictionary: &Dictionary,
-    lstm: &LstmPayloads,
-    grapheme: Option<&GraphemeClusterSegmenter>,
+    dictionary: Option<&Dictionary>,
+    lstm: Option<&LstmPayloads>,
+    grapheme: Option<&RuleBreakDataV1>,
     input: &[u16],
 ) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
@@ -72,25 +71,30 @@ pub fn complex_language_segment_utf16(
         if let Some(first_ch) = str_per_lang.get(0) {
             #[cfg(feature = "lstm")]
             {
-                if let Some(model) = lstm.best(*first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                        let breaks = segmenter.segment_utf16(&str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.len();
-                        result.push(offset);
-                        continue;
+                if let Some(lstm) = lstm {
+                    if let Some(model) = lstm.best(*first_ch as u32) {
+                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                            let breaks = segmenter.segment_utf16(&str_per_lang);
+                            result.extend(breaks.map(|n| offset + n));
+                            offset += str_per_lang.len();
+                            result.push(offset);
+                            continue;
+                        }
                     }
                 }
             }
 
-            if let Some(payload) = dictionary.best(*first_ch as u32) {
+            if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
-                    if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme)
-                    {
-                        let breaks = segmenter.segment_utf16(&str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.len();
-                        continue;
+                    if let Some(payload) = dictionary.best(*first_ch as u32) {
+                        if let Ok(segmenter) =
+                            DictionarySegmenter::try_new_unstable(payload, grapheme)
+                        {
+                            let breaks = segmenter.segment_utf16(&str_per_lang);
+                            result.extend(breaks.map(|n| offset + n));
+                            offset += str_per_lang.len();
+                            continue;
+                        }
                     }
                 }
             }
@@ -105,9 +109,9 @@ pub fn complex_language_segment_utf16(
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
 pub fn complex_language_segment_str(
-    dictionary: &Dictionary,
-    lstm: &LstmPayloads,
-    grapheme: Option<&GraphemeClusterSegmenter>,
+    dictionary: Option<&Dictionary>,
+    lstm: Option<&LstmPayloads>,
+    grapheme: Option<&RuleBreakDataV1>,
     input: &str,
 ) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
@@ -117,25 +121,30 @@ pub fn complex_language_segment_str(
         if let Some(first_ch) = str_per_lang.chars().next() {
             #[cfg(feature = "lstm")]
             {
-                if let Some(model) = lstm.best(first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                        let breaks = segmenter.segment_str(&str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
-                        result.push(offset);
-                        continue;
+                if let Some(lstm) = lstm {
+                    if let Some(model) = lstm.best(first_ch as u32) {
+                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                            let breaks = segmenter.segment_str(&str_per_lang);
+                            result.extend(breaks.map(|n| offset + n));
+                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                            result.push(offset);
+                            continue;
+                        }
                     }
                 }
             }
 
-            if let Some(payload) = dictionary.best(first_ch as u32) {
+            if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
-                    if let Ok(segmenter) = DictionarySegmenter::try_new_unstable(payload, grapheme)
-                    {
-                        let breaks = segmenter.segment_str(&str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
-                        continue;
+                    if let Some(payload) = dictionary.best(first_ch as u32) {
+                        if let Ok(segmenter) =
+                            DictionarySegmenter::try_new_unstable(payload, grapheme)
+                        {
+                            let breaks = segmenter.segment_str(&str_per_lang);
+                            result.extend(breaks.map(|n| offset + n));
+                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                            continue;
+                        }
                     }
                 }
             }
@@ -188,14 +197,27 @@ mod tests {
             lao: None,
             thai: Some(payload),
         };
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
-        let breaks = complex_language_segment_str(&dictionary, &lstm, Some(&grapheme), TEST_STR);
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let breaks = complex_language_segment_str(
+            Some(&dictionary),
+            Some(&lstm),
+            Some(grapheme.get()),
+            TEST_STR,
+        );
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
-        let breaks = complex_language_segment_utf16(&dictionary, &lstm, Some(&grapheme), &utf16);
+        let breaks = complex_language_segment_utf16(
+            Some(&dictionary),
+            Some(&lstm),
+            Some(grapheme.get()),
+            &utf16,
+        );
         assert_eq!(breaks, [4, 7, 11, 14], "Thai test by UTF-16");
     }
 }

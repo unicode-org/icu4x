@@ -139,13 +139,13 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
 
 pub struct DictionarySegmenter<'l> {
     payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-    grapheme: &'l GraphemeClusterSegmenter,
+    grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub fn try_new_unstable(
         payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-        grapheme: &'l GraphemeClusterSegmenter,
+        grapheme: &'l RuleBreakDataV1<'l>,
     ) -> Result<Self, SegmenterError> {
         // TODO: no way to verify trie data
         Ok(Self { payload, grapheme })
@@ -156,7 +156,7 @@ impl<'l> DictionarySegmenter<'l> {
         &'s self,
         input: &'s str,
     ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
-        let grapheme_iter = self.grapheme.segment_str(input);
+        let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_str(input, self.grapheme);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: input.char_indices(),
@@ -170,7 +170,7 @@ impl<'l> DictionarySegmenter<'l> {
         &'s self,
         input: &'s [u16],
     ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
-        let grapheme_iter = self.grapheme.segment_utf16(input);
+        let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, self.grapheme);
         DictionaryBreakIterator {
             trie: Char16Trie::new(self.payload.get().trie_data.clone()),
             iter: Utf16Indices::new(input),
@@ -218,11 +218,14 @@ mod tests {
             trie_data: BURMESE_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
         let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
+            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -236,11 +239,14 @@ mod tests {
     #[test]
     fn cj_dictionary_test() {
         let payload = get_payload(locale!("ja")).expect("Data exists");
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
         let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
+            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
 
         // Match case
         let s = "龟山岛龟山岛";
@@ -280,11 +286,14 @@ mod tests {
             trie_data: KHMER_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
         let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
+            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![27, 54, 81]);
@@ -312,11 +321,14 @@ mod tests {
             trie_data: LAO_DICTIONARY.as_zerovec(),
         };
         let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
         let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, &grapheme).expect("Data exists");
+            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);

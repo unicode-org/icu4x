@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::*;
-use crate::grapheme::GraphemeClusterSegmenter;
 use crate::indices::*;
 use crate::provider::*;
 use crate::symbols::*;
@@ -197,7 +196,7 @@ pub struct LineSegmenter {
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
-    grapheme: Option<GraphemeClusterSegmenter>,
+    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
 
 impl LineSegmenter {
@@ -240,7 +239,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let burmese = Self::load_lstm(provider, locale!("my")).ok();
         let khmer = Self::load_lstm(provider, locale!("km")).ok();
@@ -274,7 +273,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let khmer = Self::load_dictionary(provider, locale!("km")).ok();
         let lao = Self::load_dictionary(provider, locale!("lo")).ok();
@@ -344,7 +343,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -363,7 +362,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -377,7 +376,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
 
@@ -392,7 +391,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
 }
@@ -638,7 +637,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
     lstm: &'l LstmPayloads,
-    grapheme: Option<&'l GraphemeClusterSegmenter>,
+    grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -941,7 +940,12 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
+    let breaks = complex_language_segment_str(
+        Some(iter.dictionary),
+        Some(iter.lstm),
+        Some(iter.grapheme),
+        &s,
+    );
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
@@ -1041,9 +1045,9 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
         let breaks = complex_language_segment_utf16(
-            iterator.dictionary,
-            iterator.lstm,
-            iterator.grapheme,
+            Some(iterator.dictionary),
+            Some(iterator.lstm),
+            Some(iterator.grapheme),
             &s,
         );
         let mut i = 1;
