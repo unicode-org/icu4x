@@ -64,8 +64,8 @@ impl TryFrom<&[u8]> for CompactDecimal {
             return Err(Error::Syntax);
         }
         let mut parts = input_str.split(|&c| c == b'c');
-        let significand = FixedDecimal::try_from(parts.next().ok_or_else(|| Error::Syntax)?)?;
-        let exponent_str = parts.next().ok_or_else(|| Error::Syntax)?;
+        let significand = FixedDecimal::try_from(parts.next().ok_or(Error::Syntax)?)?;
+        let exponent_str = parts.next().ok_or(Error::Syntax)?;
         if parts.next().is_some() {
             return Err(Error::Syntax);
         }

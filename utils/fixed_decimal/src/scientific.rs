@@ -82,8 +82,8 @@ impl TryFrom<&[u8]> for ScientificDecimal {
             return Err(Error::Syntax);
         }
         let mut parts = input_str.split(|&c| c == b'e');
-        let significand = parts.next().ok_or_else(|| Error::Syntax)?;
-        let exponent = parts.next().ok_or_else(|| Error::Syntax)?;
+        let significand = parts.next().ok_or(Error::Syntax)?;
+        let exponent = parts.next().ok_or(Error::Syntax)?;
         if parts.next().is_some() {
             return Err(Error::Syntax);
         }
