@@ -37,9 +37,7 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             let _ = &self.formatter.rt.get().relatives;
         }
 
-        let plural_rules_mapping = if self.value.sign() == Sign::Negative
-            || (self.value.sign() == Sign::Negative && self.value.is_zero())
-        {
+        let plural_rules_mapping = if self.value.sign() == Sign::Negative {
             &self.formatter.rt.get().past
         } else {
             &self.formatter.rt.get().future
@@ -69,9 +67,10 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             sink.with_part(parts::LITERAL, |s| {
                 s.write_str(&pattern.pattern[..pattern.index as usize])
             })?;
+            // TODO: Remove this clone.
             self.formatter
                 .fixed_decimal_format
-                .format(&self.value)
+                .format(&self.value.clone().with_sign(Sign::None))
                 .write_to_parts(sink)?;
             sink.with_part(parts::LITERAL, |s| {
                 s.write_str(&pattern.pattern[pattern.index as usize..])

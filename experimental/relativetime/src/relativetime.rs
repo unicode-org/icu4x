@@ -10,10 +10,34 @@ use icu_plurals::{provider::CardinalV1Marker, PluralRules};
 use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 
 use crate::format::FormattedRelativeTime;
-use crate::provider::{ErasedRelativeTimeFormatV1Marker, LongDayRelativeTimeFormatDataV1Marker};
+use crate::provider::*;
 use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 
 /// A formatter to render locale-sensitive relative time.
+///
+/// # Example
+///
+/// ```
+/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
+/// use icu_locid::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     RelativeTimeFormatterOptions::default()
+/// )
+/// .expect("Data should load successfully.");
+///
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(5i8),
+///         "in 5 seconds"
+/// );
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(-10i8),
+///         "10 seconds ago"
+/// );
+/// ```
 pub struct RelativeTimeFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) rt: DataPayload<ErasedRelativeTimeFormatV1Marker>,
@@ -62,33 +86,16 @@ macro_rules! constructor {
 impl RelativeTimeFormatter {
     constructor!(
         try_new_long_second_unstable,
-        LongDayRelativeTimeFormatDataV1Marker
+        LongSecondRelativeTimeFormatDataV1Marker
     );
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: FixedDecimal) -> FormattedRelativeTime<'_> {
+    pub fn format<D: Into<FixedDecimal>>(&self, value: D) -> FormattedRelativeTime<'_> {
         FormattedRelativeTime {
             options: &self.options,
             formatter: self,
-            value,
+            value: value.into(),
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use writeable::assert_writeable_eq;
-
-    fn test_basic() {
-        let rtf = RelativeTimeFormatter::try_new_long_second_unstable(
-            &icu_testdata::unstable_no_fallback(),
-            &icu_locid::locale!("en").into(),
-            RelativeTimeFormatterOptions::default(),
-        )
-        .expect("Unable to construct RelativeTimeFormatter");
-
-        assert_writeable_eq!(rtf.format(FixedDecimal::from(0i8)), "Today");
     }
 }

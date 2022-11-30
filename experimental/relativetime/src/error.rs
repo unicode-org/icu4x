@@ -11,7 +11,7 @@ use icu_provider::DataError;
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum RelativeTimeError {
-    /// An error originating from [`PluralRules`](icu_plural::PluralRules).
+    /// An error originating from [`PluralRules`](icu_plurals::PluralRules).
     #[displaydoc("Error loading plural rules: {0}")]
     PluralRules(PluralsError),
     /// An error originating from [`DataProvider`](icu_provider::DataProvider).
