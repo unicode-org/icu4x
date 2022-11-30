@@ -43,38 +43,37 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             &self.formatter.rt.get().future
         };
         let category = self.formatter.plural_rules.category_for(&self.value);
-        let pattern = match category {
+        let singular_sub_pattern = match category {
             icu_plurals::PluralCategory::Zero => &plural_rules_mapping.zero,
             icu_plurals::PluralCategory::One => &plural_rules_mapping.one,
             icu_plurals::PluralCategory::Two => &plural_rules_mapping.two,
             icu_plurals::PluralCategory::Few => &plural_rules_mapping.few,
             icu_plurals::PluralCategory::Many => &plural_rules_mapping.many,
-            icu_plurals::PluralCategory::Other => &plural_rules_mapping.other,
+            icu_plurals::PluralCategory::Other => &None,
         };
 
         // Default to using PluralCategory::Other mapping.
-        let pattern = pattern.as_ref().unwrap_or_else(|| {
-            plural_rules_mapping
-                .other
-                .as_ref()
-                .expect("Mapping for PluralCategory::Other must be present.")
-        });
+        let singular_sub_pattern = singular_sub_pattern
+            .as_ref()
+            .unwrap_or(&plural_rules_mapping.other);
 
         // 255 is used to denote a string without placeholder '{0}'.
-        if pattern.index == 255 {
-            sink.with_part(parts::LITERAL, |s| s.write_str(&pattern.pattern))?;
-        } else {
+        if singular_sub_pattern.index == 255 {
             sink.with_part(parts::LITERAL, |s| {
-                s.write_str(&pattern.pattern[..pattern.index as usize])
+                s.write_str(&singular_sub_pattern.pattern)
             })?;
+        } else {
+            let (prefix, suffix) = singular_sub_pattern
+                .pattern
+                .split_at(singular_sub_pattern.index as usize);
+
+            sink.with_part(parts::LITERAL, |s| s.write_str(prefix))?;
             // TODO: Remove this clone.
             self.formatter
                 .fixed_decimal_format
                 .format(&self.value.clone().with_sign(Sign::None))
                 .write_to_parts(sink)?;
-            sink.with_part(parts::LITERAL, |s| {
-                s.write_str(&pattern.pattern[pattern.index as usize..])
-            })?;
+            sink.with_part(parts::LITERAL, |s| s.write_str(suffix))?;
         }
 
         Ok(())

@@ -88,9 +88,9 @@ pub struct PluralRulesCategoryMapping<'data> {
     /// Mapping for PluralCategory::Many or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Other or `None` if not present.
+    /// Mapping for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: Option<SingularSubPattern<'data>>,
+    pub other: SingularSubPattern<'data>,
 }
 
 /// Singular substitution for pattern that optionally uses "{0}" as a placeholder.

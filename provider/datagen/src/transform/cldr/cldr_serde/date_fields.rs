@@ -28,7 +28,7 @@ pub struct PluralRulesPattern {
     #[serde(rename = "relativeTimePattern-count-many")]
     pub many: Option<String>,
     #[serde(rename = "relativeTimePattern-count-other")]
-    pub other: Option<String>,
+    pub other: String,
 }
 
 #[derive(Debug)]
