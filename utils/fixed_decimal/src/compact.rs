@@ -15,7 +15,7 @@ use crate::FixedDecimal;
 /// This represents a _source number_ that uses compact decimal notation, as defined
 /// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
 ///
-/// This is distinct from [`ScientificDecimal`] because it does not represent leading 0s
+/// This is distinct from [`crate::ScientificDecimal`] because it does not represent leading 0s
 /// nor a sign in the exponent, and behaves differently in pluralization.
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompactDecimal {
