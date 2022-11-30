@@ -132,7 +132,7 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
         Ok(Self {
             relatives,
             past: PluralRulesCategoryMapping::try_from(&field.past)?,
-            ..Default::default()
+            future: PluralRulesCategoryMapping::try_from(&field.future)?,
         })
     }
 }
@@ -213,5 +213,7 @@ mod tests {
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
         assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
+        assert_eq!(data.get().future.one.as_ref().unwrap().pattern, "in  qtr.");
+        assert_eq!(data.get().future.one.as_ref().unwrap().index, 3u8);
     }
 }

@@ -21,6 +21,9 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "ในอีก  สัปดาห์",
+      "index": 16
+    }
   }
 }

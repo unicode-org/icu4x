@@ -64,12 +64,30 @@ static AR_AR_EG: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
         }),
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
-        zero: None,
-        one: None,
-        two: None,
-        few: None,
-        many: None,
-        other: None,
+        zero: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"),
+            index: 9u8,
+        }),
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال ساعة واحدة"),
+            index: 255u8,
+        }),
+        two: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال ساعتين"),
+            index: 255u8,
+        }),
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال  ساعات"),
+            index: 9u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"),
+            index: 9u8,
+        }),
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("خلال  ساعة"),
+            index: 9u8,
+        }),
     },
 };
 static BN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -102,11 +120,17 @@ static BN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be}য\u{9bc}"),
+            index: 0u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" ঘন\u{9cd}ট\u{9be}য\u{9bc}"),
+            index: 0u8,
+        }),
     },
 };
 static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -141,11 +165,17 @@ static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄊\u{1112e}𑄚\u{11134}𑄓𑄠\u{11134}"),
+            index: 0u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄊\u{1112e}𑄚\u{11134}𑄓𑄠\u{11134}"),
+            index: 0u8,
+        }),
     },
 };
 static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -177,11 +207,17 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in  hr."),
+            index: 3u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in  hr."),
+            index: 3u8,
+        }),
     },
 };
 static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -213,11 +249,17 @@ static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePa
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in  hr"),
+            index: 3u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in  hr"),
+            index: 3u8,
+        }),
     },
 };
 static ES_ES_AR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -249,11 +291,17 @@ static ES_ES_AR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatter
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("dentro de  h"),
+            index: 10u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("dentro de  h"),
+            index: 10u8,
+        }),
     },
 };
 static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -285,11 +333,17 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  oras"),
+            index: 3u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  (na) oras"),
+            index: 3u8,
+        }),
     },
 };
 static FR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -321,11 +375,17 @@ static FR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ h"),
+            index: 1u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ h"),
+            index: 1u8,
+        }),
     },
 };
 static JA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -358,7 +418,10 @@ static JA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("時間後"),
+            index: 0u8,
+        }),
     },
 };
 static RU: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -396,11 +459,23 @@ static RU: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ ч"),
+            index: 1u8,
+        }),
         two: None,
-        few: None,
-        many: None,
-        other: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ ч"),
+            index: 1u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ ч"),
+            index: 1u8,
+        }),
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ ч"),
+            index: 1u8,
+        }),
     },
 };
 static SR_LATN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -435,11 +510,20 @@ static SR_LATN: &DataStruct = &::icu_relativetime::provider::RelativeTimePattern
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("za  č."),
+            index: 3u8,
+        }),
         two: None,
-        few: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("za  č."),
+            index: 3u8,
+        }),
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("za  č."),
+            index: 3u8,
+        }),
     },
 };
 static SR_SR_CYRL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -474,11 +558,20 @@ static SR_SR_CYRL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatt
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("за  ч."),
+            index: 5u8,
+        }),
         two: None,
-        few: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("за  ч."),
+            index: 5u8,
+        }),
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("за  ч."),
+            index: 5u8,
+        }),
     },
 };
 static TH: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -513,7 +606,10 @@ static TH: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("ใน  ชม."),
+            index: 7u8,
+        }),
     },
 };
 static TR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -544,11 +640,17 @@ static TR: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
-        one: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" sa. sonra"),
+            index: 0u8,
+        }),
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" sa. sonra"),
+            index: 0u8,
+        }),
     },
 };
 static UND: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
@@ -581,6 +683,9 @@ static UND: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         two: None,
         few: None,
         many: None,
-        other: None,
+        other: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("+ h"),
+            index: 1u8,
+        }),
     },
 };

@@ -24,10 +24,22 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "+ ч",
+      "index": 1
+    },
     "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "few": {
+      "pattern": "+ ч",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ ч",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ ч",
+      "index": 1
+    }
   }
 }

@@ -29,11 +29,29 @@
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "zero": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال دقيقة واحدة",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال دقيقتين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  دقائق",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    }
   }
 }

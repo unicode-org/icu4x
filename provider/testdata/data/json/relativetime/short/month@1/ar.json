@@ -31,11 +31,29 @@
     }
   },
   "future": {
-    "zero": null,
-    "one": null,
-    "two": null,
-    "few": null,
-    "many": null,
-    "other": null
+    "zero": {
+      "pattern": "خلال  شهر",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال شهر واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال شهرين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  أشهر",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  شهرًا",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  شهر",
+      "index": 9
+    }
   }
 }

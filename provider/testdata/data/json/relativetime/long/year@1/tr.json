@@ -20,10 +20,16 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": " yıl sonra",
+      "index": 0
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": " yıl sonra",
+      "index": 0
+    }
   }
 }

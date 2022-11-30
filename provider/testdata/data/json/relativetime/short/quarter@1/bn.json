@@ -20,10 +20,16 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": " ত্রৈমাসিকে",
+      "index": 0
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": " ত্রৈমাসিকে",
+      "index": 0
+    }
   }
 }

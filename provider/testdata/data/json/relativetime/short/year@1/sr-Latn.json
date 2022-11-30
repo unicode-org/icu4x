@@ -23,10 +23,19 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "za  god.",
+      "index": 3
+    },
     "two": null,
-    "few": null,
+    "few": {
+      "pattern": "za  god.",
+      "index": 3
+    },
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "za  god.",
+      "index": 3
+    }
   }
 }
