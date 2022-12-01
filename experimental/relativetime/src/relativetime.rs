@@ -21,6 +21,7 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
 /// use icu_locid::locale;
 /// use writeable::assert_writeable_eq;
+/// use fixed_decimal::FixedDecimal;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
 ///     &icu_testdata::unstable(),
@@ -30,11 +31,11 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// .expect("Data should load successfully.");
 ///
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(5i8),
+///         relative_time_formatter.format(FixedDecimal::from(5i8)),
 ///         "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(-10i8),
+///         relative_time_formatter.format(FixedDecimal::from(-10i8)),
 ///         "10 seconds ago"
 /// );
 /// ```
@@ -46,6 +47,7 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use icu_relativetime::options::Numeric;
 /// use icu_locid::locale;
 /// use writeable::assert_writeable_eq;
+/// use fixed_decimal::FixedDecimal;
 ///
 /// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
 ///     &icu_testdata::unstable(),
@@ -55,15 +57,15 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// .expect("Data should load successfully.");
 ///
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(0u8),
+///         relative_time_formatter.format(FixedDecimal::from(0u8)),
 ///         "ahora"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(2u8),
+///         relative_time_formatter.format(FixedDecimal::from(2u8)),
 ///         "dentro de 2 segundos"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(-15i8),
+///         relative_time_formatter.format(FixedDecimal::from(-15i8)),
 ///         "hace 15 segundos"
 /// );
 /// ```
@@ -120,11 +122,11 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format<D: Into<FixedDecimal>>(&self, value: D) -> FormattedRelativeTime<'_> {
+    pub fn format(&self, value: FixedDecimal) -> FormattedRelativeTime<'_> {
         FormattedRelativeTime {
             options: &self.options,
             formatter: self,
-            value: value.into(),
+            value,
         }
     }
 }

@@ -27,7 +27,6 @@ displaydoc = { version = "0.2.3", default-features = false }
 icu_decimal = { version = "1.0.0", path = "../../components/decimal" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 icu_plurals = { version = "1.0.0", path = "../../components/plurals" }
-icu_displaynames = { path = "../displaynames" }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 writeable = { version = "0.5", path = "../../utils/writeable" }

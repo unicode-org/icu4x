@@ -1847,7 +1847,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu_decimal",
- "icu_displaynames",
  "icu_locid",
  "icu_plurals",
  "icu_provider",
