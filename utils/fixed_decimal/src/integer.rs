@@ -23,6 +23,10 @@ use crate::FixedDecimal;
 /// use fixed_decimal::FixedInteger;
 ///
 /// assert_eq!(
+///     FixedDecimal::from(FixedInteger::from(5)),
+///     FixedDecimal::from(5)
+/// );
+/// assert_eq!(
 ///     FixedInteger::try_from(FixedDecimal::from(5)),
 ///     Ok(FixedInteger::from(5))
 /// );
@@ -38,9 +42,9 @@ use crate::FixedDecimal;
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct FixedInteger(FixedDecimal);
 
-impl<'a> From<&'a FixedInteger> for &'a FixedDecimal {
-    fn from(value: &'a FixedInteger) -> Self {
-        &value.0
+impl From<FixedInteger> for FixedDecimal {
+    fn from(value: FixedInteger) -> Self {
+        value.0
     }
 }
 
@@ -69,7 +73,7 @@ impl_fixed_integer_from_integer_type!(u8);
 
 impl writeable::Writeable for FixedInteger {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        <&FixedDecimal>::from(self).write_to(sink)
+        self.0.write_to(sink)
     }
 }
 
