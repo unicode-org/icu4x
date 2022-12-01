@@ -50,10 +50,11 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
     {
         use serde::de::Error;
 
-        if deserializer.is_human_readable() {
+        let parsed_inv_list = if deserializer.is_human_readable() {
             #[derive(serde::Deserialize)]
             #[serde(untagged)]
             pub enum De<'data> {
+                // Remove in ICU4X 2.0
                 #[serde(borrow)]
                 OldStyle(ZeroVec<'data, u32>),
                 #[serde(borrow)]
@@ -61,15 +62,10 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
             }
 
             match De::<'de>::deserialize(deserializer)? {
-                De::OldStyle(parsed_inv_list) => CodePointInversionList::try_from_inversion_list(parsed_inv_list).map_err(|e| {
-                    Error::custom(format!(
-                        "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
-                        e
-                    ))
-                }),
+                De::OldStyle(parsed_inv_list) => parsed_inv_list,
                 De::NewStyle(parsed_strings) => {
-                    let mut ranges = ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len()*2));
-                    let mut size = 0;
+                    let mut inv_list =
+                        ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len() * 2));
                     for range in parsed_strings {
                         let mut chars = range.chars();
                         let (start, end) = match (chars.next(), chars.next(), chars.next(), chars.next()) {
@@ -80,24 +76,23 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
                                 range
                             )))
                         };
-                        size += end - start;
-                        ranges.with_mut(|v| {
+                        inv_list.with_mut(|v| {
                             v.push(start.to_unaligned());
                             v.push(end.to_unaligned());
                         });
                     }
-                    Ok(unsafe {CodePointInversionList::from_parts_unchecked(ranges, size as usize)})
+                    inv_list
                 }
             }
         } else {
-            let parsed_inv_list = ZeroVec::<u32>::deserialize(deserializer)?;
-            CodePointInversionList::try_from_inversion_list(parsed_inv_list).map_err(|e| {
-                Error::custom(format!(
-                    "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
-                    e
-                ))
-            })
-        }
+            ZeroVec::<u32>::deserialize(deserializer)?
+        };
+        CodePointInversionList::try_from_inversion_list(parsed_inv_list).map_err(|e| {
+            Error::custom(format!(
+                "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
+                e
+            ))
+        })
     }
 }
 
@@ -122,11 +117,16 @@ impl<'data> serde::Serialize for CodePointInversionList<'data> {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
+            use serde::ser::Error;
             use serde::ser::SerializeSeq;
             let mut seq = serializer.serialize_seq(Some(self.inv_list.len() / 2))?;
             for range in self.iter_ranges() {
-                let start = unsafe { char::from_u32_unchecked(*range.start()) };
-                let end = unsafe { char::from_u32_unchecked(*range.end()) };
+                let start = char::from_u32(*range.start()).ok_or_else(|| {
+                    S::Error::custom(format!("Invalid code point {}", range.start()))
+                })?;
+                let end = char::from_u32(*range.end()).ok_or_else(|| {
+                    S::Error::custom(format!("Invalid code point {}", range.end()))
+                })?;
                 if start == end {
                     seq.serialize_element(&start)?;
                 } else {
