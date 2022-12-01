@@ -128,11 +128,14 @@ fn preprocess_char_literal_notation(set: &mut HashSet<String>, input: &mut Strin
                 // Also skip if we're seeing a suprious result, ex: we are looking for a double backslash
                 // (ex: "\\\\" in the presence of quad backslashes like "\\\\\\\\Uxxxxxxxx") that should
                 // be left alone.
-                if char_literal_str == "U" || char_literal_str == "u" || char_literal_str == "\\" {
-                    continue;
-                } else if char_literal.is_whitespace() {
-                    // This is part of a token of all backslashes. Allow that to be fully parsed and
-                    // handled later in `unescape_exemplar_chars()`.
+                // Also skip if there is whitespace after the backslahses. Let's assume that this
+                // is part of a token of all backslashes. Allow that to be fully parsed and
+                // handled later in `unescape_exemplar_chars()`.
+                if char_literal_str == "U"
+                    || char_literal_str == "u"
+                    || char_literal_str == "\\"
+                    || char_literal.is_whitespace()
+                {
                     continue;
                 }
 
@@ -423,10 +426,10 @@ mod tests {
 
         let actual = parse_exemplar_char_string(ja_punctuation);
 
-        let any_backslashes = actual.iter().any(|parsed_str| parsed_str.contains("\\"));
+        let any_backslashes = actual.iter().any(|parsed_str| parsed_str.contains('\\'));
 
         for s in actual.iter() {
-            if s.contains("\\") {
+            if s.contains('\\') {
                 println!("{}", s);
             }
         }

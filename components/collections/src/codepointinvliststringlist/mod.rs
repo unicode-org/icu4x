@@ -227,12 +227,16 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 
         // Ensure that the string list is sorted. If not, the binary search that
         // is used for `.contains(&str)` will return garbase otuput.
-        strings.sort();
+        strings.sort_unstable();
 
-        // Ensure that `strings` is deduplicated.
-        let is_deduped = strings
-            .windows(2)
-            .all(|adjacents| adjacents[0] != adjacents[1]);
+        // Ensure that `strings` is deduplicated. Check for any duplicates first.
+        let is_deduped = strings.windows(2).all(|adjacents| {
+            if let (Some(s1), Some(s2)) = (adjacents.get(0), adjacents.get(1)) {
+                s1 != s2
+            } else {
+                false
+            }
+        });
         let strings = if is_deduped {
             strings
         } else {
@@ -242,14 +246,14 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
             let first_str = strs_iter.next();
             debug_assert!(first_str.is_some()); // If `strings` was empty or len() < 2, then
                                                 // `is_deduped_strs` would have been true.
-            let mut next_str = *first_str.unwrap();
+            if let Some(mut next_str) = first_str {
+                deduped_strs.push(*next_str);
 
-            deduped_strs.push(next_str);
-
-            for s in strs_iter {
-                if *s != next_str {
-                    deduped_strs.push(s);
-                    next_str = *s;
+                for s in strs_iter {
+                    if s != next_str {
+                        deduped_strs.push(*s);
+                        next_str = s;
+                    }
                 }
             }
 
