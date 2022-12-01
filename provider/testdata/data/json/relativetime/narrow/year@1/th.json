@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "ปีที่แล้ว",
+    "0": "ปีนี้",
+    "1": "ปีหน้า"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " ปีที่แล้ว",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ใน  ปี",
+      "index": 7
+    }
+  }
+}

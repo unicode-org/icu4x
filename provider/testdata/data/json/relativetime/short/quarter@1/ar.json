@@ -1,0 +1,59 @@
+{
+  "relatives": {
+    "-1": "الربع الأخير",
+    "0": "هذا الربع",
+    "1": "الربع القادم"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل  ربع سنة",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل ربع سنة واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "قبل ربعي سنة",
+      "index": 255
+    },
+    "few": {
+      "pattern": "قبل  أرباع سنة",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل  ربع سنة",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل  ربع سنة",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال ربع سنة واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال ربعي سنة",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  أرباع سنة",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  ربع سنة",
+      "index": 9
+    }
+  }
+}

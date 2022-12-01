@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "в пр. мес.",
+    "0": "в эт. мес.",
+    "1": "в след. мес."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "- мес.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "- мес.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "- мес.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "- мес.",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "+ мес.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "+ мес.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ мес.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ мес.",
+      "index": 1
+    }
+  }
+}

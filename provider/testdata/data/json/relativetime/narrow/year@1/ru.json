@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "в пр. г.",
+    "0": "в эт. г.",
+    "1": "в сл. г."
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "- г.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "- г.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "- л.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "- г.",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "+ г.",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "+ г.",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ л.",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ г.",
+      "index": 1
+    }
+  }
+}

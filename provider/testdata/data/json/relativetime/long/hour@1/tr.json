@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "bu saat"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " saat önce",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " saat önce",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " saat sonra",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " saat sonra",
+      "index": 0
+    }
+  }
+}

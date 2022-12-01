@@ -1,0 +1,47 @@
+{
+  "relatives": {
+    "-1": "в прошлом квартале",
+    "0": "в текущем квартале",
+    "1": "в следующем квартале"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " квартал назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " квартала назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " кварталов назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " квартала назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "через  квартал",
+      "index": 11
+    },
+    "two": null,
+    "few": {
+      "pattern": "через  квартала",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  кварталов",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  квартала",
+      "index": 11
+    }
+  }
+}

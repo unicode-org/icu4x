@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "ovog minuta"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  min.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  min.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  min.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  min.",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  min.",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  min.",
+      "index": 3
+    }
+  }
+}
