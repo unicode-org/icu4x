@@ -1,0 +1,57 @@
+{
+  "relatives": {
+    "0": "هذه الدقيقة"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل  دقيقة",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل دقيقة واحدة",
+      "index": 255
+    },
+    "two": {
+      "pattern": "قبل دقيقتين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "قبل  دقائق",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل  دقيقة",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل  دقيقة",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال دقيقة واحدة",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال دقيقتين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  دقائق",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  دقيقة",
+      "index": 9
+    }
+  }
+}

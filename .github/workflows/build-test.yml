@@ -829,8 +829,7 @@ jobs:
     # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
     - name: Store benchmark result & create dashboard (unmerged PR only)
-      # any action that is not a merge to main implies unfinished PR
-      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      if: github.event_name == 'pull_request'
       uses: rhysd/github-action-benchmark@v1.8.1
       with:
         name: Rust Benchmark
@@ -965,8 +964,8 @@ jobs:
     # dashboard HTML in a commit of a branch of the local repo.
 
     - name: Store benchmark result & create dashboard (unmerged PR only)
-      # any action that is not a merge to main implies unfinished PR
-      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      # Unfinished PRs only
+      if: github.event_name == 'pull_request'
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
       # If the PR gets merged, this can be switched back to the main project.
       # https://github.com/rhysd/github-action-benchmark/pull/54
@@ -1109,8 +1108,8 @@ jobs:
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt ${{ matrix.type }} | tee benchmarks/binsize/${{ matrix.type }}/output.txt
 
     - name: Store benchmark result (non-merge action only)
-      # Data from anything that is not a merge to mainline goes to a preliminary branch
-      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      # PRs go to a preliminary branch
+      if: github.event_name == 'pull_request'
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
@@ -1160,7 +1159,7 @@ jobs:
 
     - name: Store benchmark result (non-merge action only)
       # Data from anything that is not a merge to mainline goes to a preliminary branch
-      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      if: github.event_name == 'pull_request'
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:

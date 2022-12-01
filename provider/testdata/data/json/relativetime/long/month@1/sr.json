@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "прошлог месеца",
+    "0": "овог месеца",
+    "1": "следећег месеца"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  месеца",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  месеца",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  месеци",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  месец",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  месеца",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  месеци",
+      "index": 5
+    }
+  }
+}

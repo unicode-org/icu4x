@@ -9,6 +9,7 @@
 
 pub mod aliases;
 pub mod ca;
+pub mod date_fields;
 pub mod displaynames;
 pub mod japanese;
 pub mod likely_subtags;
