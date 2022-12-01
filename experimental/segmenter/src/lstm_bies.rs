@@ -7,6 +7,7 @@ use crate::lstm_error::Error;
 use crate::math_helper;
 use crate::provider::LstmDataV1Marker;
 use alloc::string::String;
+use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
