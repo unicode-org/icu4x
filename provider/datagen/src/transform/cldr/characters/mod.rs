@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::borrow::Cow;
 use std::collections::HashSet;
 use std::marker::PhantomData;
 
@@ -100,31 +99,88 @@ exemplar_chars_impls!(ExemplarCharactersPunctuationV1Marker, punctuation);
 exemplar_chars_impls!(ExemplarCharactersNumbersV1Marker, numbers);
 exemplar_chars_impls!(ExemplarCharactersIndexV1Marker, index);
 
+/// In the occurrence of subsequences that are used to represent character literals,
+/// like "\\\\:" or "\\\\\\\\[", excise the subsequence from the input string
+/// and prepopulate the set with the corresponding characters like ":" and "[".
+/// But since Unicode code point escape sequences, like "\\\\\\\\U00011000" can & should
+/// be handled in a later step by the TOML parser, leave those subsequences alone.
+fn preprocess_char_literal_notation(set: &mut HashSet<String>, input: &mut String) {
+    let mut result = input.to_string();
+
+    // These are backslash substrings sometimes used to escape character literals like punctuation.
+    let possible_slash_strs = ["\\\\\\\\", "\\\\\\", "\\\\"];
+
+    // Iterate in order of largest to smallest. Guarantee this with `.sorted().rev()`.
+    for slash_str in possible_slash_strs.iter().sorted().rev() {
+        let mut slash_result = result.clone();
+
+        for match_tuple in result.rmatch_indices(slash_str) {
+            let slash_idx = match_tuple.0;
+
+            // find returns a byte index, so temporarily use a byte index just for size check
+            let maybe_next_char_idx = slash_idx + slash_str.len();
+            if maybe_next_char_idx < slash_result.len() {
+                let char_literal = slash_result[maybe_next_char_idx..].chars().next().unwrap();
+                let char_literal_str = char_literal.to_string();
+
+                // Skip if we're looking at a Unicode code point escape sequence (ex: "\\\\Uxxxxxxxx")
+                // rather than a Unix/bash-style escaped character literal (ex: "\\\\:", "\\\\-").
+                // Also skip if we're seeing a suprious result, ex: we are looking for a double backslash
+                // (ex: "\\\\" in the presence of quad backslashes like "\\\\\\\\Uxxxxxxxx") that should
+                // be left alone.
+                if char_literal_str == "U" || char_literal_str == "u" || char_literal_str == "\\" {
+                    continue;
+                } else if char_literal.is_whitespace() {
+                    // This is part of a token of all backslashes. Allow that to be fully parsed and
+                    // handled later in `unescape_exemplar_chars()`.
+                    continue;
+                }
+
+                let char_literal_byte_len = char_literal_str.len();
+                set.insert(char_literal_str);
+
+                // Remove the slash and the char literal following it from the original string.
+                let mut new_slash_result = slash_result[..slash_idx].to_string();
+                new_slash_result
+                    .push_str(&slash_result[(maybe_next_char_idx + char_literal_byte_len)..]);
+                slash_result = new_slash_result;
+            }
+        }
+        result.clear();
+        result.push_str(&slash_result);
+    }
+    input.clear();
+    input.push_str(&result);
+}
+
+/// Predicate fn that returns whether a character should be used in `.split()` to tokenize
+/// the exemplar characters JSON string.
 fn is_exemplar_string_split_char(c: char) -> bool {
-    // don't include the close brace in the split criteria so that, after we split,
-    // we know where the `{...}` sequence ends
+    // Don't include the close brace in the split criteria so that, after we split,
+    // we know where the `{...}` sequence ends.
     c.is_whitespace() || c == '{'
 }
 
-// unescape a (sub-)string of exemplar character data
+/// Unescape a (sub-)string of exemplar character data
 fn unescape_exemplar_chars(char_block: &str) -> String {
-    let less_slashes = char_block.replace("\\\\\\\\", "\\").replace("\\\\", "\\");
-
-    // exit early with degenerate case that interferes with TOML parser workaround
-    if less_slashes
+    // Exit early with degenerate case that interferes with TOML parser workaround.
+    // Also handle a char block solely consisting of all backslashes (ex: "\\\\\\\\") as a backslash literal.
+    if char_block.chars().all(|ch| ch == '\\') {
+        return "\\".to_string();
+    } else if char_block
         .chars()
         .all(|ch| ch == '\"' || ch == '＂' || ch == '\\')
     {
-        return less_slashes.replace('\\', "");
+        return char_block.replace('\\', "");
     }
 
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
-    // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser
-    let ch_for_json = format!("x=\"{}\"", less_slashes);
+    // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser.
+    let ch_for_json = format!("x=\"{}\"", char_block);
 
-    // workaround for literal values like `\\-` that cause problems for the TOML parser.
-    // in such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character
+    // Workaround for literal values like "\\-"" that cause problems for the TOML parser.
+    // In such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character.
     let mut ch_vec = ch_for_json.chars().collect::<Vec<char>>();
     let mut ch_indices_to_remove: Vec<usize> = vec![];
     for (idx, ch) in ch_vec.iter().enumerate().rev() {
@@ -152,10 +208,14 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
         panic!();
     };
 
-    ch_lite.trim().to_string()
+    let result = ch_lite.trim().to_string();
+
+    result
 }
 
-fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
+/// Parse the input string, and insert the represented exemplar "characters" (each of
+/// which could either be an individual code point or a code point sequence) into the set.
+fn insert_chars_from_string(set: &mut HashSet<String>, input: &str) {
     let s = if input.chars().count() > 1 && input.starts_with('\\') {
         input
             .chars()
@@ -164,6 +224,7 @@ fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
     } else {
         input.to_string()
     };
+    // A range of consecutive code point characters can be represented as <char_start>-<char_end>.
     if s.contains('-') && s.find('-').unwrap() > 0 {
         let (begin, end) = s.split_once('-').unwrap();
         let begin_char = begin.chars().rev().next().unwrap();
@@ -173,36 +234,44 @@ fn insert_chars_from_string(set: &mut HashSet<Cow<str>>, input: &str) {
             let char_str = char::from_u32(code_point)
                 .expect("Character range should not span non-Unicode-scalar-value code points")
                 .to_string();
-            set.insert(Cow::Owned(char_str));
+            set.insert(char_str);
         }
 
-        // after handling the range substring, recursively handle any chars/ranges in the remaining
-        // parts of the string
+        // After handling the range substring, recursively handle any chars/ranges in the remaining
+        // parts of the string.
         let rem_begin_str = &begin[..(begin.len() - begin_char.len_utf8())];
         let rem_end_str = &end[end_char.len_utf8()..];
         insert_chars_from_string(set, rem_begin_str);
         insert_chars_from_string(set, rem_end_str);
     } else {
-        for ch in s.chars().filter(|c| !c.is_whitespace()) {
-            set.insert(Cow::Owned(ch.to_string()));
+        for ch in s.chars() {
+            set.insert(ch.to_string());
         }
     }
 }
 
-// helper function for parsing CLDR data string
-fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
+/// Parse the input CLDR JSON string representing exemplar character data and return a
+/// set of strings representing each code point or string represented by the CLDR JSON
+/// serialized form.
+fn parse_exemplar_char_string(s: &str) -> HashSet<String> {
     debug_assert!(s.starts_with('['));
     debug_assert!(s.ends_with(']'));
-    let without_brackets = s.split_at(1).1.split_at(s.len() - 2).0;
+    let mut transformed_input = s.split_at(1).1.split_at(s.len() - 2).0.to_string();
 
-    if without_brackets.is_empty() {
+    if transformed_input.is_empty() {
         return HashSet::new();
     }
 
-    // We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set
-    let mut dedup_chars = HashSet::<Cow<str>>::new();
+    // Initialize result collection of parsed element strings of exemplar character data.
+    // Note: We want to use the hashset to dedup in case of space (U+0020) literal being included in exemplar char set.
+    let mut dedup_chars = HashSet::<String>::new();
 
-    without_brackets
+    // CLDR JSON uses an "over"-escaped notation to indicate a character literal, including
+    // for characters that overlap with notational syntax characters. Since these are special
+    // cases, handle them first before proceeding.
+    preprocess_char_literal_notation(&mut dedup_chars, &mut transformed_input);
+
+    transformed_input
         .split(is_exemplar_string_split_char)
         .filter(|t| !t.is_empty())
         .for_each(|token| {
@@ -211,9 +280,9 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
             if let Some(maybe_char_string) = string_and_chars.next() {
                 if !maybe_char_string.is_empty() {
                     if token.contains('}') {
-                        // if we see a '}', then we assume it was the ending of a string
-                        // denoted by `{...}` in a well-formed input
-                        dedup_chars.insert(Cow::Borrowed(maybe_char_string));
+                        // If we see a '}', then we assume it was the ending of a string
+                        // denoted by `{...}` in a well-formed input.
+                        dedup_chars.insert(maybe_char_string.to_string());
                     } else {
                         // If we don't see '}', it means we have a string that was whitespace delimited
                         let unescaped_char_block = unescape_exemplar_chars(maybe_char_string);
@@ -226,7 +295,6 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<Cow<str>> {
                 // as strings of one or more consecutive characters
                 for char_block in string_and_chars.filter(|t| !t.is_empty()) {
                     let unescaped_char_block = unescape_exemplar_chars(char_block);
-
                     insert_chars_from_string(&mut dedup_chars, &unescaped_char_block);
                 }
             }
@@ -250,12 +318,12 @@ mod tests {
     #[test]
     fn test_parse_exemplar_chars() {
         let af_numbers = "[  \\- ‑ , % ‰ + 0 1 2 3 4 5 6 7 8 9]";
-        let expected: HashSet<Cow<str>> = [
+        let expected: HashSet<String> = [
             "-", "‑", ",", "%", "‰", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
         ]
         .iter()
         .copied()
-        .map(Cow::Borrowed)
+        .map(std::string::String::from)
         .collect();
         let actual = parse_exemplar_char_string(af_numbers);
 
@@ -265,13 +333,13 @@ mod tests {
     #[test]
     fn test_parse_exemplar_char_sequences() {
         let sr_main = "[a b c č ć d {dž} đ e f g h i j k l {lj} m n {nj} o p r s š t u v z ž]";
-        let expected: HashSet<Cow<str>> = [
+        let expected: HashSet<String> = [
             "a", "b", "c", "č", "ć", "d", "dž", "đ", "e", "f", "g", "h", "i", "j", "k", "l", "lj",
             "m", "n", "nj", "o", "p", "r", "s", "š", "t", "u", "v", "z", "ž",
         ]
         .iter()
         .copied()
-        .map(Cow::Borrowed)
+        .map(std::string::String::from)
         .collect();
         let actual = parse_exemplar_char_string(sr_main);
 
@@ -281,10 +349,10 @@ mod tests {
     #[test]
     fn test_parse_exemplar_char_ranges() {
         let ja_main_subset_range = "[万-下]";
-        let expected: HashSet<Cow<str>> = ["万", "丈", "三", "上", "下"]
+        let expected: HashSet<String> = ["万", "丈", "三", "上", "下"]
             .iter()
             .copied()
-            .map(Cow::Borrowed)
+            .map(std::string::String::from)
             .collect();
         let actual = parse_exemplar_char_string(ja_main_subset_range);
 
@@ -294,10 +362,10 @@ mod tests {
     #[test]
     fn test_parse_exemplar_char_ranges_no_whitespace() {
         let range_amid_chars = "[a万-下z]";
-        let expected: HashSet<Cow<str>> = ["万", "丈", "三", "上", "下", "a", "z"]
+        let expected: HashSet<String> = ["万", "丈", "三", "上", "下", "a", "z"]
             .iter()
             .copied()
-            .map(Cow::Borrowed)
+            .map(std::string::String::from)
             .collect();
         let actual = parse_exemplar_char_string(range_amid_chars);
 
@@ -307,13 +375,13 @@ mod tests {
     #[test]
     fn test_parse_splits() {
         let sr_main = "[a b cčć d{dž}đ    e\u{00A0}f  \u{202F}   ghijkl{lj}mn{nj}oprsštuvzž]";
-        let expected: HashSet<Cow<str>> = [
+        let expected: HashSet<String> = [
             "a", "b", "c", "č", "ć", "d", "dž", "đ", "e", "f", "g", "h", "i", "j", "k", "l", "lj",
             "m", "n", "nj", "o", "p", "r", "s", "š", "t", "u", "v", "z", "ž",
         ]
         .iter()
         .copied()
-        .map(Cow::Borrowed)
+        .map(std::string::String::from)
         .collect();
         let actual = parse_exemplar_char_string(sr_main);
 
@@ -323,13 +391,13 @@ mod tests {
     #[test]
     fn test_parse_unescape() {
         let ar_eg_auxiliary = "[ـ\\u200C\\u200D\\u200E\\u200F پ چ ژ ڜ ڢ ڤ ڥ ٯ ڧ ڨ ک گ ی]";
-        let expected: HashSet<Cow<str>> = [
+        let expected: HashSet<String> = [
             "ـ", "\u{200C}", "\u{200D}", "\u{200E}", "\u{200F}", "پ", "چ", "ژ", "ڜ", "ڢ", "ڤ", "ڥ",
             "ٯ", "ڧ", "ڨ", "ک", "گ", "ی",
         ]
         .iter()
         .copied()
-        .map(Cow::Borrowed)
+        .map(std::string::String::from)
         .collect();
         let actual = parse_exemplar_char_string(ar_eg_auxiliary);
 
@@ -339,10 +407,54 @@ mod tests {
     #[test]
     fn test_parse_quotes() {
         let quotes = "[\"＂]";
-        let expected: HashSet<Cow<str>> = ["\"", "＂"].iter().copied().map(Cow::Borrowed).collect();
+        let expected: HashSet<String> = ["\"", "＂"]
+            .iter()
+            .copied()
+            .map(std::string::String::from)
+            .collect();
         let actual = parse_exemplar_char_string(quotes);
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_parse_escaped_punctuation() {
+        let ja_punctuation = "[‾ _＿ \\\\\\\\-－ ‐ ‑ — ― 〜 ・ ･ ,， 、､ ;； \\\\\\\\:： !！ ?？ .． ‥ … 。｡ ＇ ‘ ’ \\\\\\\"＂ “ ” (（ )） \\\\\\\\[［ \\\\\\\\]］ \\\\\\\\{｛ \\\\\\\\}｝ 〈 〉 《 》 「｢ 」｣ 『 』 【 】 〔 〕 ‖ § ¶ @＠ *＊ /／ \\\\\\\\＼ \\\\\\\\&＆ #＃ %％ ‰ † ‡ ′ ″ 〃 ※]";
+
+        let actual = parse_exemplar_char_string(ja_punctuation);
+
+        let any_backslashes = actual.iter().any(|parsed_str| parsed_str.contains("\\"));
+
+        for s in actual.iter() {
+            if s.contains("\\") {
+                println!("{}", s);
+            }
+        }
+
+        assert!(!any_backslashes);
+        assert!(actual.contains("-"));
+        assert!(actual.contains(":"));
+        assert!(actual.contains("\""));
+    }
+
+    #[test]
+    fn test_parse_escaped_punctuation_preserve_code_point_notation() {
+        let ccp_main = "[\\\\\\\\U00011100 \\\\\\\\U00011101 \\\\\\\\U00011102 𑄃 𑄄 𑄅 𑄆 𑄇 𑄈 𑄉 𑄊 𑄋 𑄌 𑄍 𑄎 𑄏 𑄐 𑄑 𑄒 𑄓 𑄔 𑄕 𑄖 𑄗 𑄘 𑄙 𑄚 𑄛 𑄜 𑄝 𑄞 𑄟 𑄠 𑄡 𑄢 𑄣 𑄤 𑄥 𑄦 \\\\\\\\U00011127 \\\\\\\\U00011128 \\\\\\\\U00011129 \\\\\\\\U0001112A \\\\\\\\U0001112B 𑄬 \\\\\\\\U0001112D \\\\\\\\U0001112E \\\\\\\\U0001112F \\\\\\\\U00011130 \\\\\\\\U00011131 \\\\\\\\U00011132 \\\\\\\\U00011133 \\\\\\\\U00011134]";
+
+        let actual = parse_exemplar_char_string(ccp_main);
+
+        assert!(actual.contains("\u{11100}"));
+        assert!(actual.contains("𑄃"));
+    }
+
+    #[test]
+    fn test_parse_escaped_punctuation_allow_backslash_literal() {
+        let es_puncutation = "[\\\\\\\\- ‐ ‑ – — , ; \\\\\\\\: ! ¡ ? ¿ . … ' ‘ ’ \\\\\\\" “ ” « » ( ) \\\\\\\\[ \\\\\\\\] § @ * / \\\\\\\\ \\\\& # † ‡ ′ ″]";
+
+        let actual = parse_exemplar_char_string(es_puncutation);
+
+        assert!(actual.contains("\\"));
+        assert!(!actual.contains(" "));
     }
 
     #[test]
