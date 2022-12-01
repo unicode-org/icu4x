@@ -285,7 +285,10 @@ fn parse_exemplar_char_string(s: &str) -> HashSet<String> {
                     if token.contains('}') {
                         // If we see a '}', then we assume it was the ending of a string
                         // denoted by `{...}` in a well-formed input.
-                        dedup_chars.insert(maybe_char_string.to_string());
+                        // We need to unescape first so that we turn a substring like "...{ɛ\\u0300}..."
+                        // into "...ɛ̀..."
+                        let unescaped_char_string = unescape_exemplar_chars(maybe_char_string);
+                        dedup_chars.insert(unescaped_char_string);
                     } else {
                         // If we don't see '}', it means we have a string that was whitespace delimited
                         let unescaped_char_block = unescape_exemplar_chars(maybe_char_string);
@@ -458,6 +461,16 @@ mod tests {
 
         assert!(actual.contains("\\"));
         assert!(!actual.contains(" "));
+    }
+
+    #[test]
+    fn test_parse_unescape_in_strings() {
+        let bn_main = "[\\\\u09BC ৺ অ আ ই ঈ উ ঊ ঋ ৠ ঌ ৡ এ ঐ ও ঔ ং ঃ \\\\u0981 ক {ক\\\\u09CDষ} খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড {ড\\u09BC} ঢ {ঢ\\\\u09BC} ণ ত ৎ থ দ ধ ন প ফ ব ভ ম য {য\\\\u09BC} র ল শ ষ স হ ঽ া ি ী \\\\u09C1 \\\\u09C2 \\\\u09C3 \\\\u09C4 \\\\u09E2 \\\\u09E3 ে ৈ ো ৌ \\\\u09CD ৗ]";
+
+        let actual = parse_exemplar_char_string(bn_main);
+
+        assert!(actual.contains("\u{0981}"));
+        assert!(actual.contains("ক\u{09CD}ষ"));
     }
 
     #[test]
