@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{BenchmarkId, Criterion, Throughput};
+use criterion::{BenchmarkId, Criterion};
 
 use icu_normalizer::properties::CanonicalDecomposition;
 
@@ -38,7 +38,6 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 
     let mut group = criterion.benchmark_group(group_name);
 
-    group.throughput(Throughput::Elements(data.len() as u64));
     group.bench_function(BenchmarkId::from_parameter("icu4x"), |bencher| {
         bencher.iter(|| function_under_bench(&decomposer, &data))
     });
