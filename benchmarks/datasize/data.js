@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669923474729,
+  "lastUpdate": 1669984382907,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31823,6 +31823,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fafee0df273ee2b6ff173ce95724eb8205ee942e"
         },
         "date": 1669923403640,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4071194,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7050db4ba86c554520a169bdb3d523e18af12ffc",
+          "message": "Readable JSON inversion lists (#2855)",
+          "timestamp": "2022-12-02T13:29:33+01:00",
+          "tree_id": "36efa6cb879c1bb56a7e752db8b5b5aa2e5868dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/7050db4ba86c554520a169bdb3d523e18af12ffc"
+        },
+        "date": 1669984311661,
         "tool": "ndjson",
         "benches": [
           {
