@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1669984382907,
+  "lastUpdate": 1670000824368,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31853,6 +31853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7050db4ba86c554520a169bdb3d523e18af12ffc"
         },
         "date": 1669984311661,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4071194,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2c94820406ddc22989c9bf054af474df9b8cbd7e",
+          "message": "Fix sv_reformed warning (#2859)",
+          "timestamp": "2022-12-02T18:03:43+01:00",
+          "tree_id": "8fb721ff0fff518c5b3d23bc577e1686daf448ec",
+          "url": "https://github.com/unicode-org/icu4x/commit/2c94820406ddc22989c9bf054af474df9b8cbd7e"
+        },
+        "date": 1670000757568,
         "tool": "ndjson",
         "benches": [
           {
