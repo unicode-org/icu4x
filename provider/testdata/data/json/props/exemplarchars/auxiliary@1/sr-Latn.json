@@ -1,12 +1,9 @@
 {
   "CPInversionListStrList": {
     "cp_inv_list": [
-      113,
-      114,
-      119,
-      122,
-      229,
-      230
+      "q",
+      "w-y",
+      "å"
     ],
     "str_list": []
   }
