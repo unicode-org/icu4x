@@ -5,6 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_bies::Lstm;
 use crate::provider::LstmDataV1Marker;
+use alloc::borrow::ToOwned;
 use alloc::string::String;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use icu_provider::{DataError, DataErrorKind, DataPayload};

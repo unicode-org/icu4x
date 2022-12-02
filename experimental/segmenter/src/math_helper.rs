@@ -4,6 +4,10 @@
 
 use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
 
+// Polyfill float operations with libm in case we're no_std.
+#[allow(unused_imports)]
+use num_traits::Float;
+
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
 fn sigmoid(x: f32) -> f32 {

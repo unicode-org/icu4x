@@ -283,92 +283,97 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 
 macro_rules! expand {
     (
-        ($(($bin_code_point_set_marker:ident, $bin_cp_s:literal),)+),
-        ($(($bin_unicode_set_marker:ident, $bin_us_s:literal),)+),
-        ($(($enum_marker:ident, $enum_s:literal, $value_ty:ident),)+)
+        ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
+        ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
+        ($(($code_point_map_marker:ident, $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
-            // binary properties of code points only (represented as CodePointSetData)
+            // Data keys that return code point sets (represented as CodePointSetData).
+            // For now, synonymous with binary properties of code points only.
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
-                pub struct $bin_code_point_set_marker;
+                pub struct $code_point_set_marker;
 
-                impl DataMarker for $bin_code_point_set_marker {
+                impl DataMarker for $code_point_set_marker {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl KeyedDataMarker for $bin_code_point_set_marker {
+                impl KeyedDataMarker for $code_point_set_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $bin_code_point_set_marker {
+                impl Default for $code_point_set_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $bin_code_point_set_marker {
+                impl databake::Bake for $code_point_set_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$bin_code_point_set_marker }
+                        databake::quote!{ ::icu_properties::provider::$code_point_set_marker }
                     }
                 }
             )+
 
-            // binary properties of strings + code points (represented as UnicodeSetData)
+            // Data keys that return sets of strings + code points (represented as UnicodeSetData).
+            // Includes:
+            //   - binary properties of strings + code points
+            //   - exemplar characters
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
-                pub struct $bin_unicode_set_marker;
+                pub struct $unicode_set_marker;
 
-                impl DataMarker for $bin_unicode_set_marker {
+                impl DataMarker for $unicode_set_marker {
                     type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
-                impl KeyedDataMarker for $bin_unicode_set_marker {
+                impl KeyedDataMarker for $unicode_set_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $bin_unicode_set_marker {
+                impl Default for $unicode_set_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $bin_unicode_set_marker {
+                impl databake::Bake for $unicode_set_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$bin_unicode_set_marker }
+                        databake::quote!{ ::icu_properties::provider::$unicode_set_marker }
                     }
                 }
             )+
 
-            // enumerated properties
+            // Data keys that return code point map (represented as CodePointMapData).
+            // For now, synonymous with enumerated properties [of code points only].
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
-                pub struct $enum_marker;
+                pub struct $code_point_map_marker;
 
-                impl DataMarker for $enum_marker {
+                impl DataMarker for $code_point_map_marker {
                     type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
                 }
 
-                impl KeyedDataMarker for $enum_marker {
+                impl KeyedDataMarker for $code_point_map_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $enum_marker {
+                impl Default for $code_point_map_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $enum_marker {
+                impl databake::Bake for $code_point_map_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$enum_marker }
+                        databake::quote!{ ::icu_properties::provider::$code_point_map_marker }
                     }
                 }
             )+
@@ -377,7 +382,7 @@ macro_rules! expand {
 
 expand!(
     (
-        // Binary properties as code point sets
+        // code point sets
         (AsciiHexDigitV1Marker, "AHex"),
         (AlnumV1Marker, "alnum"),
         (AlphabeticV1Marker, "Alpha"),
@@ -445,11 +450,22 @@ expand!(
         (XidStartV1Marker, "XIDS"),
     ),
     (
-        // Binary properties as UnicodeSets (code points + strings)
+        // UnicodeSets (code points + strings)
         (BasicEmojiV1Marker, "Basic_Emoji"),
+        (ExemplarCharactersMainV1Marker, "exemplarchars/main"),
+        (
+            ExemplarCharactersAuxiliaryV1Marker,
+            "exemplarchars/auxiliary"
+        ),
+        (
+            ExemplarCharactersPunctuationV1Marker,
+            "exemplarchars/punctuation"
+        ),
+        (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers"),
+        (ExemplarCharactersIndexV1Marker, "exemplarchars/index"),
     ),
     (
-        // Enumerated properties
+        // code point maps
         (
             CanonicalCombiningClassV1Marker,
             "ccc",
