@@ -54,13 +54,13 @@ rust_library("cobs-v0_2_3") {
   visibility = [ ":*" ]
 }
 
-rust_proc_macro("diplomat-v0_4_0") {
+rust_proc_macro("diplomat-v0_4_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
-  output_name = "diplomat-9f45cdc13e589c37"
+  output_name = "diplomat-9f296b2540875f41"
 
   deps = []
-  deps += [ ":diplomat_core-v0_4_0" ]
+  deps += [ ":diplomat_core-v0_4_4" ]
   deps += [ ":proc-macro2-v1_0_32" ]
   deps += [ ":quote-v1_0_10" ]
   deps += [ ":syn-v1_0_81" ]
@@ -70,17 +70,17 @@ rust_proc_macro("diplomat-v0_4_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=9f45cdc13e589c37",
-    "-Cextra-filename=-9f45cdc13e589c37",
+    "-Cmetadata=9f296b2540875f41",
+    "-Cextra-filename=-9f296b2540875f41",
   ]
 
   visibility = [ ":*" ]
 }
 
-rust_library("diplomat-runtime-v0_4_0") {
+rust_library("diplomat-runtime-v0_4_2") {
   crate_name = "diplomat_runtime"
   crate_root = "//ffi/gn/vendor/diplomat-runtime/src/lib.rs"
-  output_name = "diplomat_runtime-d8570b581842b307"
+  output_name = "diplomat_runtime-eff23b5306de0076"
 
   deps = []
 
@@ -89,24 +89,22 @@ rust_library("diplomat-runtime-v0_4_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=d8570b581842b307",
-    "-Cextra-filename=-d8570b581842b307",
+    "-Cmetadata=eff23b5306de0076",
+    "-Cextra-filename=-eff23b5306de0076",
   ]
 
   visibility = [ ":*" ]
 }
 
-rust_library("diplomat_core-v0_4_0") {
+rust_library("diplomat_core-v0_4_4") {
   crate_name = "diplomat_core"
   crate_root = "//ffi/gn/vendor/diplomat_core/src/lib.rs"
-  output_name = "diplomat_core-e9a1f86367a0e26e"
+  output_name = "diplomat_core-b867f0fdeb1f181c"
 
   deps = []
-  deps += [ ":impls-v1_0_3" ]
   deps += [ ":lazy_static-v1_4_0" ]
   deps += [ ":proc-macro2-v1_0_32" ]
   deps += [ ":quote-v1_0_10" ]
-  deps += [ ":rustdoc-types-v0_11_0" ]
   deps += [ ":serde-v1_0_130" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":strck_ident-v0_1_1" ]
@@ -117,8 +115,8 @@ rust_library("diplomat_core-v0_4_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=e9a1f86367a0e26e",
-    "-Cextra-filename=-e9a1f86367a0e26e",
+    "-Cmetadata=b867f0fdeb1f181c",
+    "-Cextra-filename=-b867f0fdeb1f181c",
   ]
 
   visibility = [ ":*" ]
@@ -234,7 +232,7 @@ rust_library("icu_calendar-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -254,8 +252,8 @@ rust_library("icu_capi-v1_0_0") {
   output_name = "icu_capi-e3e3519444f45361"
 
   deps = []
-  deps += [ ":diplomat-v0_4_0($host_toolchain)" ]
-  deps += [ ":diplomat-runtime-v0_4_0" ]
+  deps += [ ":diplomat-v0_4_2($host_toolchain)" ]
+  deps += [ ":diplomat-runtime-v0_4_2" ]
   deps += [ ":fixed_decimal-v0_5_1" ]
   deps += [ ":icu_calendar-v1_0_0" ]
   deps += [ ":icu_collator-v1_0_0" ]
@@ -308,7 +306,7 @@ rust_library("icu_collator-v1_0_0") {
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -332,7 +330,7 @@ rust_library("icu_collections-v1_0_0") {
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
   deps += [ ":yoke-v0_6_2" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -366,7 +364,7 @@ rust_library("icu_datetime-v1_0_0") {
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -417,7 +415,7 @@ rust_library("icu_list-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":regex-automata-v0_2_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -441,7 +439,7 @@ rust_library("icu_locid-v1_0_0") {
   deps += [ ":litemap-v0_6_0" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -467,7 +465,7 @@ rust_library("icu_locid_transform-v1_0_0") {
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -497,7 +495,7 @@ rust_library("icu_normalizer-v1_0_0") {
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":write16-v1_0_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -522,7 +520,7 @@ rust_library("icu_plurals-v1_0_0") {
   deps += [ ":fixed_decimal-v0_5_1" ]
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -547,7 +545,7 @@ rust_library("icu_properties-v1_0_0") {
   deps += [ ":icu_collections-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":unicode-bidi-v0_3_8" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -578,7 +576,7 @@ rust_library("icu_provider-v1_0_1") {
   deps += [ ":writeable-v0_5_0" ]
   deps += [ ":yoke-v0_6_2" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -608,7 +606,7 @@ rust_library("icu_provider_adapters-v1_0_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":yoke-v0_6_2" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -633,7 +631,7 @@ rust_library("icu_provider_blob-v1_0_0") {
   deps += [ ":serde-v1_0_130" ]
   deps += [ ":writeable-v0_5_0" ]
   deps += [ ":yoke-v0_6_2" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -682,7 +680,7 @@ rust_library("icu_segmenter-v0_7_0") {
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":serde_json-v1_0_69" ]
   deps += [ ":utf8_iter-v1_0_3" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -708,7 +706,7 @@ rust_library("icu_timezone-v1_0_0") {
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":tinystr-v0_7_0" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -717,25 +715,6 @@ rust_library("icu_timezone-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=314451d4936520e9",
     "-Cextra-filename=-314451d4936520e9",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("impls-v1_0_3") {
-  crate_name = "impls"
-  crate_root = "//ffi/gn/vendor/impls/src/lib.rs"
-  output_name = "impls-4a11699b08f2f277"
-
-  deps = []
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2015",
-    "-Cmetadata=4a11699b08f2f277",
-    "-Cextra-filename=-4a11699b08f2f277",
   ]
 
   visibility = [ ":*" ]
@@ -929,26 +908,6 @@ rust_library("regex-automata-v0_2_0") {
     "--edition=2018",
     "-Cmetadata=cee29454c33d28cf",
     "-Cextra-filename=-cee29454c33d28cf",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("rustdoc-types-v0_11_0") {
-  crate_name = "rustdoc_types"
-  crate_root = "//ffi/gn/vendor/rustdoc-types/src/lib.rs"
-  output_name = "rustdoc_types-4f9cd9c828c1aa4a"
-
-  deps = []
-  deps += [ ":serde-v1_0_130" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=4f9cd9c828c1aa4a",
-    "-Cextra-filename=-4f9cd9c828c1aa4a",
   ]
 
   visibility = [ ":*" ]
@@ -1213,7 +1172,7 @@ rust_library("tinystr-v0_7_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
-  deps += [ ":zerovec-v0_9_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -1465,10 +1424,10 @@ rust_proc_macro("zerofrom-derive-v0_1_1") {
   visibility = [ ":*" ]
 }
 
-rust_library("zerovec-v0_9_0") {
+rust_library("zerovec-v0_9_1") {
   crate_name = "zerovec"
   crate_root = "//utils/zerovec/src/lib.rs"
-  output_name = "zerovec-936a33a577867cad"
+  output_name = "zerovec-1834722305961906"
 
   deps = []
   deps += [ ":serde-v1_0_130" ]
@@ -1481,8 +1440,8 @@ rust_library("zerovec-v0_9_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=936a33a577867cad",
-    "-Cextra-filename=-936a33a577867cad",
+    "-Cmetadata=1834722305961906",
+    "-Cextra-filename=-1834722305961906",
     "--cfg=feature=\"derive\"",
     "--cfg=feature=\"serde\"",
     "--cfg=feature=\"yoke\"",

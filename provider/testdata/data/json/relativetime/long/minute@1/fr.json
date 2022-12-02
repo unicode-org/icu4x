@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "cette minute-ci"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "il y a  minute",
+      "index": 7
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "il y a  minutes",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dans  minute",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dans  minutes",
+      "index": 5
+    }
+  }
+}

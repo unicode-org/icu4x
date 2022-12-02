@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/js/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*" "ffi/gn/vendor/**/*"
+glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/js/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*"
 
 blank_line = set ""
 
@@ -108,7 +108,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml"
-skip_path_prefixes = array "ffi/gn/vendor/"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/tinywasm/node_modules"
 
 template = canonicalize README.tpl
 
@@ -173,7 +173,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "ffi/gn/vendor/"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -201,7 +201,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "ffi/gn/vendor/"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}

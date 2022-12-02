@@ -1,0 +1,45 @@
+{
+  "relatives": {
+    "0": "сейчас"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "- с",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "- с",
+      "index": 1
+    },
+    "many": {
+      "pattern": "- с",
+      "index": 1
+    },
+    "other": {
+      "pattern": "- с",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "+ с",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "+ с",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ с",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ с",
+      "index": 1
+    }
+  }
+}

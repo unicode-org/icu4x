@@ -1,0 +1,37 @@
+{
+  "relatives": {
+    "-2": "গত পরশু",
+    "-1": "গতকাল",
+    "0": "আজ",
+    "1": "আগামীকাল",
+    "2": "আগামী পরশু"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " দিন আগে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " দিন আগে",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " দিনের মধ্যে",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " দিনের মধ্যে",
+      "index": 0
+    }
+  }
+}

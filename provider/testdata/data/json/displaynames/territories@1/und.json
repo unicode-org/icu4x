@@ -294,5 +294,12 @@
     "ZM": "ZM",
     "ZW": "ZW",
     "ZZ": "ZZ"
+  },
+  "short_names": {
+    "GB": "GB",
+    "HK": "HK",
+    "MO": "MO",
+    "PS": "PS",
+    "US": "US"
   }
 }
