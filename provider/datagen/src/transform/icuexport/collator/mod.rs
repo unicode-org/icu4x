@@ -34,10 +34,7 @@ fn has_legacy_swedish_variants(
 ) -> Result<bool, DataError> {
     icuexport
         .list(&format!("collation/{}", collation_han_database))
-        .map(|mut iter| {
-            iter.find(|s| s.as_os_str() == "sv_reformed_meta.toml")
-                .is_some()
-        })
+        .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
 }
 
 fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
