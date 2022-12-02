@@ -36,7 +36,13 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> core::fmt::Result {
         if self.options.numeric == Numeric::Auto {
             let relatives = &self.formatter.rt.get().relatives;
-            if let Ok(i8_value) = self.value.to_string().parse::<i8>() {
+            if self.value.magnitude_range() == (0..=0) {
+                // Can be cast without overflow as it is a single digit.
+                let i8_value = if self.is_negative {
+                    -(self.value.digit_at(0) as i8)
+                } else {
+                    self.value.digit_at(0) as i8
+                };
                 if let Some(v) = relatives.get(&i8_value) {
                     sink.with_part(parts::LITERAL, |s| s.write_str(v))?;
                     return Ok(());
