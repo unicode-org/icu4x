@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670000824368,
+  "lastUpdate": 1670001038328,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31888,6 +31888,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4071194,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "28a6b68a1d327af33655ff25464eebef971d3eab",
+          "message": "Add APIs for returning exemplar characters data (#2812)",
+          "timestamp": "2022-12-02T09:07:11-08:00",
+          "tree_id": "7ae30537846291ce7161316383d7d7eb5d566e29",
+          "url": "https://github.com/unicode-org/icu4x/commit/28a6b68a1d327af33655ff25464eebef971d3eab"
+        },
+        "date": 1670000969898,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4091138,
             "unit": "bytes",
             "biggerIsBetter": false
           }
