@@ -69,9 +69,14 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
                 s.write_str(&singular_sub_pattern.pattern)
             })?;
         } else {
-            let (prefix, suffix) = singular_sub_pattern
-                .pattern
-                .split_at(singular_sub_pattern.index as usize);
+            let (prefix, suffix) =
+                if singular_sub_pattern.index as usize <= singular_sub_pattern.pattern.len() {
+                    singular_sub_pattern
+                        .pattern
+                        .split_at(singular_sub_pattern.index as usize)
+                } else {
+                    return Err(core::fmt::Error);
+                };
 
             sink.with_part(parts::LITERAL, |s| s.write_str(prefix))?;
             // TODO: Remove this clone.
