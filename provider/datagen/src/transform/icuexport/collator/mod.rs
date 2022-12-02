@@ -34,9 +34,8 @@ fn has_legacy_swedish_variants(
 ) -> Result<bool, DataError> {
     icuexport
         .list(&format!("collation/{}", collation_han_database))
-        .map(|iter| {
-            iter.filter(|s| s.as_os_str() == "sv_reformed_meta.toml")
-                .next()
+        .map(|mut iter| {
+            iter.find(|s| s.as_os_str() == "sv_reformed_meta.toml")
                 .is_some()
         })
 }
