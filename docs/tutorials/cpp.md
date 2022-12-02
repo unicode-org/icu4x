@@ -76,7 +76,7 @@ int main() {
 }
 ```
 
-## Embedded platforms
+## Embedded platforms (`no_std`)
 
 Building `icu_capi_staticlib` for embedded systems (i.e. without `libc`) requires some additional parameters. The feature `x86tiny` includes an allocator and removes Rust's panicking code. This should be built with `-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort`, which requires a nightly compiler (`cargo +nightly ...`).
 
