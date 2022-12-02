@@ -4,7 +4,7 @@
 
 use std::fmt::Write;
 
-use fixed_decimal::{FixedDecimal, Sign};
+use fixed_decimal::FixedDecimal;
 use writeable::Writeable;
 
 use crate::{
@@ -29,6 +29,7 @@ pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,
     pub(crate) value: FixedDecimal,
+    pub(crate) is_negative: bool,
 }
 
 impl<'a> Writeable for FormattedRelativeTime<'a> {
@@ -43,7 +44,7 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
             }
         }
 
-        let plural_rules_mapping = if self.value.sign() == Sign::Negative {
+        let plural_rules_mapping = if self.is_negative {
             &self.formatter.rt.get().past
         } else {
             &self.formatter.rt.get().future
@@ -79,10 +80,9 @@ impl<'a> Writeable for FormattedRelativeTime<'a> {
                 };
 
             sink.with_part(parts::LITERAL, |s| s.write_str(prefix))?;
-            // TODO: Remove this clone.
             self.formatter
                 .fixed_decimal_format
-                .format(&self.value.clone().with_sign(Sign::None))
+                .format(&self.value)
                 .write_to_parts(sink)?;
             sink.with_part(parts::LITERAL, |s| s.write_str(suffix))?;
         }
