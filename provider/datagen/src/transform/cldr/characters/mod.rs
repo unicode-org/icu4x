@@ -431,12 +431,6 @@ mod tests {
 
         let any_backslashes = actual.iter().any(|parsed_str| parsed_str.contains('\\'));
 
-        for s in actual.iter() {
-            if s.contains('\\') {
-                println!("{}", s);
-            }
-        }
-
         assert!(!any_backslashes);
         assert!(actual.contains("-"));
         assert!(actual.contains(":"));
