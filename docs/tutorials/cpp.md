@@ -18,7 +18,7 @@ _We are still working on improving the user experience of using ICU4X from other
     - Specify features with `cargo add icu_capi_staticlib@1.0.0 --features ...`:
         - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
         - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
-        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate: `cargo add icu_provider --features deserialize_{json,postcard,bincode}`
+        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate: `cargo add icu_provider --features deserialize_{json,postcard_1,bincode_1}`
         - `logging` and `simple_logger` enable basic stdout logging of error metadata. Further loggers can be added on request.
         - `cpp_default` turns on a bunch of these and is useful for exploration, but should not be used in production as it enables `provider_test`
     - You can now use `cargo build -p icu_capi_staticlib --release` to build the library
