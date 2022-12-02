@@ -119,6 +119,7 @@ cldr_json_glob = [
     "cldr-dates-full/main/$LOCALES/dateFields.json",
     "cldr-numbers-full/main/$LOCALES/numbers.json",
     "cldr-dates-full/main/$LOCALES/timeZoneNames.json",
+    "cldr-misc-full/main/$LOCALES/characters.json",
     "cldr-misc-full/main/$LOCALES/listPatterns.json",
     "cldr-cal-buddhist-full/main/$LOCALES/ca-buddhist.json",
     "cldr-cal-japanese-full/main/$LOCALES/ca-japanese.json",

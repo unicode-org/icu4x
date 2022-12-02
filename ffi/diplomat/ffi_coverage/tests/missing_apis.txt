@@ -2,6 +2,7 @@ icu::collections::codepointinvliststringlist::CodePointInversionListAndStringLis
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains32#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains_char#FnInStruct
+icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_iter#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::has_strings#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::size#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::try_from#FnInStruct
@@ -23,6 +24,11 @@ icu::displaynames::options::LanguageDisplay#Enum
 icu::displaynames::options::Style#Enum
 icu::displaynames::provider::TerritoryDisplayNamesV1#Struct
 icu::displaynames::provider::TerritoryDisplayNamesV1Marker#Struct
+icu::properties::exemplar_chars::load_exemplars_auxiliary#Fn
+icu::properties::exemplar_chars::load_exemplars_index#Fn
+icu::properties::exemplar_chars::load_exemplars_main#Fn
+icu::properties::exemplar_chars::load_exemplars_numbers#Fn
+icu::properties::exemplar_chars::load_exemplars_punctuation#Fn
 icu::properties::sets::UnicodeSetData#Struct
 icu::properties::sets::UnicodeSetData::as_borrowed#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct

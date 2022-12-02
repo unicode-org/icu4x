@@ -221,6 +221,21 @@ impl AnyProvider for BakedDataProvider {
         const EMOJIV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::EmojiV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSAUXILIARYV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSINDEXV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSMAINV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSNUMBERSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
         const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -876,6 +891,36 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_properties")]
             EMOJIV1MARKER => props::emoji_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSAUXILIARYV1MARKER => props::exemplarchars::auxiliary_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSINDEXV1MARKER => props::exemplarchars::index_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSMAINV1MARKER => props::exemplarchars::main_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSNUMBERSV1MARKER => props::exemplarchars::numbers_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSPUNCTUATIONV1MARKER => props::exemplarchars::punctuation_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)
