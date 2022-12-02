@@ -54,7 +54,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
             #[derive(serde::Deserialize)]
             #[serde(untagged)]
             pub enum De<'data> {
-                // Remove in ICU4X 2.0
+                // TODO(#2856): Remove in ICU4X 2.0
                 #[serde(borrow)]
                 OldStyle(ZeroVec<'data, u32>),
                 #[serde(borrow)]
