@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670001038328,
+  "lastUpdate": 1670083530854,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -31913,6 +31913,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/28a6b68a1d327af33655ff25464eebef971d3eab"
         },
         "date": 1670000969898,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4091138,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kelebra20@gmail.com",
+            "name": "Oleksii Tkachuk",
+            "username": "kelebra"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d474a7997a9a408a45791e29a9308feb63043689",
+          "message": "Address last for/vec.push case in favor of vec.extend (#2861)",
+          "timestamp": "2022-12-03T18:01:30+02:00",
+          "tree_id": "4d8b20bdaa531c376511eb31333a77b2e310466b",
+          "url": "https://github.com/unicode-org/icu4x/commit/d474a7997a9a408a45791e29a9308feb63043689"
+        },
+        "date": 1670083450338,
         "tool": "ndjson",
         "benches": [
           {
