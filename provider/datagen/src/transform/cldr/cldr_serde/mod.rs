@@ -20,3 +20,4 @@ pub mod parent_locales;
 pub mod plurals;
 pub mod time_zones;
 pub mod week_data;
+pub mod language_displaynames;

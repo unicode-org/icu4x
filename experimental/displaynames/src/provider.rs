@@ -17,6 +17,7 @@ use zerovec::ZeroMap;
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just
 // become inaccessible).
+type UnvalidatedLanguage = TinyAsciiStr<3>;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
 #[icu_provider::data_struct(TerritoryDisplayNamesV1Marker = "displaynames/territories@1")]
@@ -36,4 +37,20 @@ pub struct TerritoryDisplayNamesV1<'data> {
     /// Mapping for region to locale display short name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
+}
+
+#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "language_displaynames/languages@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// LanguageDisplayNames provides mapping between a language code and it's display name.
+pub struct LanguageDisplayNamesV1<'data> {
+    /// Mapping for langage to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }

@@ -9,6 +9,7 @@ pub mod cldr_serde;
 pub mod datetime;
 pub mod decimal;
 pub mod displaynames;
+pub mod language_displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
