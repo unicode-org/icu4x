@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670234616942,
+  "lastUpdate": 1670240037217,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60509,6 +60509,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 71,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "95d1d3736d7d4f2197b11fd813ed29290a402458",
+          "message": "Add RelativeTimeFormatter (#2846)\n\n* Add RelativeTimeFormatter\n\n* Minor changes\n\n- Fix negative number checking\n- Move lib test to doc test\n- Fix docs in relativetime/src/error.rs\n- Change format method to take Into<FixedDecimal>\n\n* Changes\n\n- Make \"dateFields.other\" a non-optional field\n- This removes the 'expect' in FormattedRelativeTime.format\n- Replace indexing slicing by 'split_at'\n- Add tests in cldr/relativetime for sentinel index (pattern without\n  placeholder)\n\n* Path for Numeric::Auto\n\n- Handle Numeric::Auto\n- Add doc tests\n\n* Change in deps, RelativeTimeFormatter api\n\n- Remove displaynames component from deps\n- Make RelativeTimeFormatter.format take FixedDecimal arg\n- Fix clippy error\n\n* Remove split_at function\n\n* store is_negative and don't clone in format\n\n* Fix relative time path\n\n* update missing_apis.txt\n\n* update testdata",
+          "timestamp": "2022-12-05T16:49:06+05:30",
+          "tree_id": "b6e1bdd647c30066cf423d65a4072ac599d95f47",
+          "url": "https://github.com/unicode-org/icu4x/commit/95d1d3736d7d4f2197b11fd813ed29290a402458"
+        },
+        "date": 1670239958459,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112794,
+            "range": "± 5981",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23384,
+            "range": "± 1347",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67827,
+            "range": "± 4975",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 189,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
