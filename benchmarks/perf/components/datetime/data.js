@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670259702562,
+  "lastUpdate": 1670268713372,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -85523,6 +85523,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5147,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40835f7721d3c60aa751b9910bfcded6a0ea5103",
+          "message": "Store grapheme cluster payload instead of grapheme cluster segmenter. (#2864)",
+          "timestamp": "2022-12-05T11:16:36-08:00",
+          "tree_id": "2752c6ac5ee234c48b719f0f586f79d70d7bf6a0",
+          "url": "https://github.com/unicode-org/icu4x/commit/40835f7721d3c60aa751b9910bfcded6a0ea5103"
+        },
+        "date": 1670268645004,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 63932,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 106432,
+            "range": "± 237",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 58732,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 66998,
+            "range": "± 102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64089,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71110,
+            "range": "± 211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 66959,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 101468,
+            "range": "± 146",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 115142,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 106503,
+            "range": "± 231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 118343,
+            "range": "± 580",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 115051,
+            "range": "± 202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5214,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
