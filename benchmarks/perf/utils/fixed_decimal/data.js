@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670249225427,
+  "lastUpdate": 1670259745958,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60689,6 +60689,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 83,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d9c42cd543c08d2218e1fa99ca7fdd26fafe084",
+          "message": "Remove ICU4XCreateDataProviderResult from FFI (#2866)",
+          "timestamp": "2022-12-05T16:44:36Z",
+          "tree_id": "eb407ee266d0363679c380897741974ee1c080fd",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d9c42cd543c08d2218e1fa99ca7fdd26fafe084"
+        },
+        "date": 1670259663606,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121410,
+            "range": "± 5130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25423,
+            "range": "± 974",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69949,
+            "range": "± 3150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 214,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 98,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
