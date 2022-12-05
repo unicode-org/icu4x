@@ -1,0 +1,49 @@
+{
+  "relatives": {
+    "-2": "позавчера",
+    "-1": "вчера",
+    "0": "сегодня",
+    "1": "завтра",
+    "2": "послезавтра"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " день назад",
+      "index": 0
+    },
+    "two": null,
+    "few": {
+      "pattern": " дня назад",
+      "index": 0
+    },
+    "many": {
+      "pattern": " дней назад",
+      "index": 0
+    },
+    "other": {
+      "pattern": " дня назад",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "через  день",
+      "index": 11
+    },
+    "two": null,
+    "few": {
+      "pattern": "через  дня",
+      "index": 11
+    },
+    "many": {
+      "pattern": "через  дней",
+      "index": 11
+    },
+    "other": {
+      "pattern": "через  дня",
+      "index": 11
+    }
+  }
+}

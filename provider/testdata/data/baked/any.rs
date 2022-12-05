@@ -221,6 +221,21 @@ impl AnyProvider for BakedDataProvider {
         const EMOJIV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::EmojiV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSAUXILIARYV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersAuxiliaryV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSINDEXV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersIndexV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSMAINV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersMainV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSNUMBERSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersNumbersV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
+        const EXEMPLARCHARACTERSPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_properties::provider::ExemplarCharactersPunctuationV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_properties")]
         const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -339,6 +354,78 @@ impl AnyProvider for BakedDataProvider {
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY
                 .hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const LONGYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::LongYearRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const NARROWYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTDAYRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortDayRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTHOURRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortHourRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTMINUTERELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortMinuteRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTMONTHRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortMonthRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTQUARTERRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortQuarterRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTSECONDRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortSecondRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTWEEKRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortWeekRelativeTimeFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_relativetime")]
+        const SHORTYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
@@ -809,6 +896,36 @@ impl AnyProvider for BakedDataProvider {
                 .map(AnyPayload::from_static_ref)
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSAUXILIARYV1MARKER => props::exemplarchars::auxiliary_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSINDEXV1MARKER => props::exemplarchars::index_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSMAINV1MARKER => props::exemplarchars::main_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSNUMBERSV1MARKER => props::exemplarchars::numbers_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
+            EXEMPLARCHARACTERSPUNCTUATIONV1MARKER => props::exemplarchars::punctuation_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_properties")]
             EXTENDEDPICTOGRAPHICV1MARKER => props::extpict_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
@@ -1040,6 +1157,150 @@ impl AnyProvider for BakedDataProvider {
                 .map(AnyPayload::from_static_ref)
                 .ok_or(DataErrorKind::MissingLocale),
             LOCALEFALLBACKPARENTSV1MARKER => fallback::parents_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGDAYRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::day_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGHOURRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::hour_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGMINUTERELATIVETIMEFORMATDATAV1MARKER => relativetime::long::minute_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGMONTHRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::month_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGQUARTERRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::quarter_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGSECONDRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::second_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGWEEKRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::week_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            LONGYEARRELATIVETIMEFORMATDATAV1MARKER => relativetime::long::year_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWDAYRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::day_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWHOURRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::hour_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWMINUTERELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::minute_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWMONTHRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::month_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWQUARTERRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::quarter_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWSECONDRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::second_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWWEEKRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::week_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            NARROWYEARRELATIVETIMEFORMATDATAV1MARKER => relativetime::narrow::year_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTDAYRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::day_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTHOURRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::hour_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTMINUTERELATIVETIMEFORMATDATAV1MARKER => relativetime::short::minute_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTMONTHRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::month_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTQUARTERRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::quarter_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTSECONDRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::second_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTWEEKRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::week_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_relativetime")]
+            SHORTYEARRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::year_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

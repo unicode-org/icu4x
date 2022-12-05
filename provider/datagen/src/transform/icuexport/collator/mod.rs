@@ -27,26 +27,17 @@ static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
 #[cfg(test)]
 mod test;
 
-/// Forward compatibility with https://unicode-org.atlassian.net/browse/CLDR-15603
-/// See https://github.com/unicode-org/cldr/commit/aca740fb9c59efa1f1717bee682d98bded5d0428
-/// and https://github.com/unicode-org/cldr/commit/5b1423acc49c6b539e0cfbc69ae38c9cf044b1ca
-fn reformed_swedish_exists(
+/// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
+fn has_legacy_swedish_variants(
     icuexport: &crate::SerdeCache,
     collation_han_database: crate::CollationHanDatabase,
-) -> bool {
+) -> Result<bool, DataError> {
     icuexport
-        .read_and_parse_toml::<collator_serde::CollationMetadata>(&format!(
-            "collation/{}/sv_reformed_meta.toml",
-            collation_han_database
-        ))
-        .is_ok()
+        .list(&format!("collation/{}", collation_han_database))
+        .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
 }
 
-fn locale_to_file_name(
-    icuexport: &crate::SerdeCache,
-    collation_han_database: crate::CollationHanDatabase,
-    locale: &DataLocale,
-) -> String {
+fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         "root".to_owned()
     } else {
@@ -65,31 +56,21 @@ fn locale_to_file_name(
             "gb2312" => "gb2312han",
             extension => extension,
         });
+    } else if locale.get_langid().language == language!("zh") {
+        // "zh" uses "_pinyin" as the default
+        s.push_str("_pinyin");
+    } else if has_legacy_swedish_variants && locale.get_langid().language == language!("sv") {
+        // "sv" used to use "_reformed" as the default
+        // TODO(#2856): Remove when dropping pre-42 support in 2.0
+        s.push_str("_reformed");
     } else {
-        // "standard" is the default for all but two languages: sv and zh.
-        // Since there are only two special cases, hard-coding them
-        // here for now instead of making the defaulting fancy and data driven.
-        // The Swedish naming seems ad hoc from
-        // https://unicode-org.atlassian.net/browse/CLDR-679 .
-
-        if locale.get_langid().language == language!("zh") {
-            s.push_str("_pinyin");
-        } else if locale.get_langid().language == language!("sv")
-            && reformed_swedish_exists(icuexport, collation_han_database)
-        {
-            s.push_str("_reformed");
-        } else {
-            s.push_str("_standard");
-        }
+        // Everyting else uses "_standard"
+        s.push_str("_standard");
     }
     s
 }
 
-fn file_name_to_locale(
-    icuexport: &crate::SerdeCache,
-    collation_han_database: crate::CollationHanDatabase,
-    file_name: &str,
-) -> Option<Locale> {
+fn file_name_to_locale(file_name: &str, has_legacy_swedish_variants: bool) -> Option<Locale> {
     let (language, variant) = file_name.rsplit_once('_').unwrap();
     let langid = if language == "root" {
         LanguageIdentifier::UND
@@ -97,24 +78,32 @@ fn file_name_to_locale(
         language.parse().ok()?
     };
     let mut locale = Locale::from(langid);
+
     // See above for the two special cases.
-    let reformed_exists = reformed_swedish_exists(icuexport, collation_han_database);
-    if !((language == "zh" && variant == "pinyin")
-        || (language == "sv" && reformed_exists && variant == "reformed")
-        || ((language != "zh" && !(language == "sv" && reformed_exists)) && variant == "standard"))
-    {
-        let shortened = match variant {
-            "traditional" => "trad",
-            "phonebook" => "phonebk",
-            "dictionary" => "dict",
-            "gb2312han" => "gb2312",
-            _ => variant,
-        };
-        locale.extensions.unicode.keywords.set(
-            key!("co"),
-            Value::from_str(shortened).expect("valid extension subtag"),
-        );
+    if language == "zh" {
+        if variant == "pinyin" {
+            return Some(locale);
+        }
+    } else if has_legacy_swedish_variants && language == "sv" {
+        // TODO(#2856): Remove when dropping pre-42 support in 2.0
+        if variant == "reformed" {
+            return Some(locale);
+        }
+    } else if variant == "standard" {
+        return Some(locale);
+    }
+
+    let shortened = match variant {
+        "traditional" => "trad",
+        "phonebook" => "phonebk",
+        "dictionary" => "dict",
+        "gb2312han" => "gb2312",
+        _ => variant,
     };
+    locale.extensions.unicode.keywords.set(
+        key!("co"),
+        Value::from_str(shortened).expect("valid extension subtag"),
+    );
     Some(locale)
 }
 
@@ -144,25 +133,22 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    let has_legacy_swedish_variants =
+                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?
-                        .read_and_parse_toml(
-                            &format!(
-                                "collation/{}/{}{}.toml",
-                                self.source.collation_han_database(),
-                                locale_to_file_name(self
-                                    .source
-                                    // `unwrap` OK due to the `?` earlier
-                                    .icuexport().unwrap(), self.source.collation_han_database(), &req.locale), $suffix)
-                        )
+                        .read_and_parse_toml(&format!(
+                            "collation/{}/{}{}.toml",
+                            self.source.collation_han_database(),
+                            locale_to_file_name(&req.locale, has_legacy_swedish_variants),
+                            $suffix
+                        ))
                         .map_err(|e| match e.kind {
-                            DataErrorKind::Io(
-                                std::io::ErrorKind::NotFound
-                            ) => DataErrorKind::MissingLocale.with_req(
-                                $marker::KEY, req
-                            ),
-                            _ => e
+                            DataErrorKind::Io(std::io::ErrorKind::NotFound) => {
+                                DataErrorKind::MissingLocale.with_req($marker::KEY, req)
+                            }
+                            _ => e,
                         })?;
 
                     Ok(DataResponse {
@@ -178,11 +164,16 @@ macro_rules! collation_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                    let has_legacy_swedish_variants =
+                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
                     Ok(self
                         .source
                         .icuexport()?
-                        .list(&format!("collation/{}", self.source.collation_han_database()))?
-                        .filter_map(|entry|
+                        .list(&format!(
+                            "collation/{}",
+                            self.source.collation_han_database()
+                        ))?
+                        .filter_map(|entry| {
                             entry
                                 .file_stem()
                                 .unwrap()
@@ -190,11 +181,8 @@ macro_rules! collation_provider {
                                 .into_owned()
                                 .strip_suffix($suffix)
                                 .map(ToString::to_string)
-                        )
-                        .filter_map(|s|file_name_to_locale(self
-                            .source
-                            // `unwrap` OK due to the `?` earlier
-                            .icuexport().unwrap(), self.source.collation_han_database(), &s))
+                        })
+                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants))
                         .filter(|locale| {
                             locale
                                 .extensions
@@ -205,8 +193,7 @@ macro_rules! collation_provider {
                                 .unwrap_or(true)
                         })
                         .map(DataLocale::from)
-                        .collect()
-                    )
+                        .collect())
                 }
             }
         )+

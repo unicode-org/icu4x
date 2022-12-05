@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "сада"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  сек.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  сек.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  сек.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  сек.",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  сек.",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  сек.",
+      "index": 5
+    }
+  }
+}

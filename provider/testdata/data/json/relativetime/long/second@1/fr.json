@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "maintenant"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "il y a  seconde",
+      "index": 7
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "il y a  secondes",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dans  seconde",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dans  secondes",
+      "index": 5
+    }
+  }
+}

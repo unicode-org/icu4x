@@ -1,0 +1,29 @@
+{
+  "relatives": {
+    "-1": "yesterday",
+    "0": "today",
+    "1": "tomorrow"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "- d",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "+ d",
+      "index": 1
+    }
+  }
+}

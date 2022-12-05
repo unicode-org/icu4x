@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "this hour"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " hr ago",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " hr ago",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "in  hr",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "in  hr",
+      "index": 3
+    }
+  }
+}

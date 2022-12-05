@@ -49,8 +49,44 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
-        let parsed_inv_list = ZeroVec::<u32>::deserialize(deserializer)?;
 
+        let parsed_inv_list = if deserializer.is_human_readable() {
+            #[derive(serde::Deserialize)]
+            #[serde(untagged)]
+            pub enum De<'data> {
+                // TODO(#2856): Remove in ICU4X 2.0
+                #[serde(borrow)]
+                OldStyle(ZeroVec<'data, u32>),
+                #[serde(borrow)]
+                NewStyle(Vec<alloc::borrow::Cow<'data, str>>),
+            }
+
+            match De::<'de>::deserialize(deserializer)? {
+                De::OldStyle(parsed_inv_list) => parsed_inv_list,
+                De::NewStyle(parsed_strings) => {
+                    let mut inv_list =
+                        ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len() * 2));
+                    for range in parsed_strings {
+                        let mut chars = range.chars();
+                        let (start, end) = match (chars.next(), chars.next(), chars.next(), chars.next()) {
+                            (Some(single), None, None, None) => (single as u32, single as u32 + 1),
+                            (Some(start), Some('-'), Some(end), None) => (start as u32, end as u32 + 1),
+                            _ => return Err(Error::custom(format!(
+                                "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
+                                range
+                            )))
+                        };
+                        inv_list.with_mut(|v| {
+                            v.push(start.to_unaligned());
+                            v.push(end.to_unaligned());
+                        });
+                    }
+                    inv_list
+                }
+            }
+        } else {
+            ZeroVec::<u32>::deserialize(deserializer)?
+        };
         CodePointInversionList::try_from_inversion_list(parsed_inv_list).map_err(|e| {
             Error::custom(format!(
                 "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
@@ -74,17 +110,36 @@ impl databake::Bake for CodePointInversionList<'_> {
     }
 }
 
-// Note: serde(flatten) currently does not promote a struct field of type Vec
-// to replace the struct when serializing. The error message from the default
-// serialization is: "can only flatten structs and maps (got a sequence)".
-
 #[cfg(feature = "serde")]
 impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        self.inv_list.serialize(serializer)
+        if serializer.is_human_readable() {
+            use serde::ser::Error;
+            use serde::ser::SerializeSeq;
+            let mut seq = serializer.serialize_seq(Some(self.inv_list.len() / 2))?;
+            for range in self.iter_ranges() {
+                let start = char::from_u32(*range.start()).ok_or_else(|| {
+                    S::Error::custom(format!("Invalid code point {}", range.start()))
+                })?;
+                let end = char::from_u32(*range.end()).ok_or_else(|| {
+                    S::Error::custom(format!("Invalid code point {}", range.end()))
+                })?;
+                if start == end {
+                    seq.serialize_element(&start)?;
+                } else {
+                    seq.serialize_element(&format!("{start}-{end}"))?;
+                }
+            }
+            seq.end()
+        } else {
+            // Note: serde(flatten) currently does not promote a struct field of type Vec
+            // to replace the struct when serializing. The error message from the default
+            // serialization is: "can only flatten structs and maps (got a sequence)".
+            self.inv_list.serialize(serializer)
+        }
     }
 }
 
@@ -839,11 +894,21 @@ mod tests {
         let inv_list = vec![0x41, 0x46, 0x4B, 0x55];
         let uniset = CodePointInversionList::try_from_inversion_list_slice(&inv_list).unwrap();
         let json_str = serde_json::to_string(&uniset).unwrap();
-        assert_eq!(json_str, "[65,70,75,85]");
+        assert_eq!(json_str, r#"["A-E","K-T"]"#);
     }
 
     #[test]
     fn test_serde_deserialize() {
+        let inv_list_str = r#"["A-E","K-T"]"#;
+        let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
+        let exp_uniset =
+            CodePointInversionList::try_from_inversion_list_slice(&exp_inv_list).unwrap();
+        let act_uniset: CodePointInversionList = serde_json::from_str(inv_list_str).unwrap();
+        assert_eq!(act_uniset, exp_uniset);
+    }
+
+    #[test]
+    fn test_serde_deserialize_legacy() {
         let inv_list_str = "[65,70,75,85]";
         let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
         let exp_uniset =

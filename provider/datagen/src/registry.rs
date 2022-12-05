@@ -23,6 +23,8 @@ use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
+use icu_relativetime::provider::*;
+#[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
@@ -134,6 +136,11 @@ registry!(
     EthiopianDateLengthsV1Marker,
     EthiopianDateSymbolsV1Marker,
     ExemplarCitiesV1Marker,
+    ExemplarCharactersAuxiliaryV1Marker,
+    ExemplarCharactersIndexV1Marker,
+    ExemplarCharactersMainV1Marker,
+    ExemplarCharactersNumbersV1Marker,
+    ExemplarCharactersPunctuationV1Marker,
     ExtendedPictographicV1Marker,
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
@@ -220,6 +227,30 @@ registry!(
         SentenceBreakDataV1Marker,
         UCharDictionaryBreakDataV1Marker,
         WordBreakDataV1Marker,
+        LongSecondRelativeTimeFormatDataV1Marker,
+        ShortSecondRelativeTimeFormatDataV1Marker,
+        NarrowSecondRelativeTimeFormatDataV1Marker,
+        LongMinuteRelativeTimeFormatDataV1Marker,
+        ShortMinuteRelativeTimeFormatDataV1Marker,
+        NarrowMinuteRelativeTimeFormatDataV1Marker,
+        LongHourRelativeTimeFormatDataV1Marker,
+        ShortHourRelativeTimeFormatDataV1Marker,
+        NarrowHourRelativeTimeFormatDataV1Marker,
+        LongDayRelativeTimeFormatDataV1Marker,
+        ShortDayRelativeTimeFormatDataV1Marker,
+        NarrowDayRelativeTimeFormatDataV1Marker,
+        LongWeekRelativeTimeFormatDataV1Marker,
+        ShortWeekRelativeTimeFormatDataV1Marker,
+        NarrowWeekRelativeTimeFormatDataV1Marker,
+        LongMonthRelativeTimeFormatDataV1Marker,
+        ShortMonthRelativeTimeFormatDataV1Marker,
+        NarrowMonthRelativeTimeFormatDataV1Marker,
+        LongQuarterRelativeTimeFormatDataV1Marker,
+        ShortQuarterRelativeTimeFormatDataV1Marker,
+        NarrowQuarterRelativeTimeFormatDataV1Marker,
+        LongYearRelativeTimeFormatDataV1Marker,
+        ShortYearRelativeTimeFormatDataV1Marker,
+        NarrowYearRelativeTimeFormatDataV1Marker,
     }
 );
 
