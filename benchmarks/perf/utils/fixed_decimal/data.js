@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670248608238,
+  "lastUpdate": 1670249225427,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60611,6 +60611,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 63530,
             "range": "± 591",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 186,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "583207162d72f50365234e14a80863da1dd372d8",
+          "message": "Use rustup run instead of +nightly in ffi-coverage (#2865)",
+          "timestamp": "2022-12-05T13:52:23Z",
+          "tree_id": "ea80c9403e92e0d2cd261a01bdd2e249a0ab0b3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/583207162d72f50365234e14a80863da1dd372d8"
+        },
+        "date": 1670249158086,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117287,
+            "range": "± 333",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24195,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63445,
+            "range": "± 837",
             "unit": "ns/iter"
           },
           {
