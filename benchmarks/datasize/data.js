@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670248561022,
+  "lastUpdate": 1670258916137,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32063,6 +32063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/583207162d72f50365234e14a80863da1dd372d8"
         },
         "date": 1670248487788,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d9c42cd543c08d2218e1fa99ca7fdd26fafe084",
+          "message": "Remove ICU4XCreateDataProviderResult from FFI (#2866)",
+          "timestamp": "2022-12-05T16:44:36Z",
+          "tree_id": "eb407ee266d0363679c380897741974ee1c080fd",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d9c42cd543c08d2218e1fa99ca7fdd26fafe084"
+        },
+        "date": 1670258835836,
         "tool": "ndjson",
         "benches": [
           {
