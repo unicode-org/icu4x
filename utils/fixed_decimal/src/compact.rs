@@ -65,21 +65,18 @@ impl TryFrom<&[u8]> for CompactDecimal {
         }
         let mut parts = input_str.split(|&c| c == b'c');
         let significand = FixedDecimal::try_from(parts.next().ok_or(Error::Syntax)?)?;
-        let exponent_str = parts.next().ok_or(Error::Syntax)?;
+        let exponent_str =
+            core::str::from_utf8(parts.next().ok_or(Error::Syntax)?).map_err(|_| Error::Syntax)?;
         if parts.next().is_some() {
             return Err(Error::Syntax);
         }
         if exponent_str.is_empty()
-            || exponent_str.first() == Some(&b'0')
-            || !exponent_str.iter().all(|c| (b'0'..=b'9').contains(c))
+            || exponent_str.bytes().next() == Some(b'0')
+            || !exponent_str.bytes().all(|c| (b'0'..=b'9').contains(&c))
         {
             return Err(Error::Syntax);
         }
-        #[allow(clippy::unwrap_used)] // All ASCII digits, so valid UTF-8.
-        let exponent = core::str::from_utf8(exponent_str)
-            .unwrap()
-            .parse()
-            .map_err(|_| Error::Limit)?;
+        let exponent = exponent_str.parse().map_err(|_| Error::Limit)?;
         Ok(CompactDecimal {
             significand,
             exponent,
