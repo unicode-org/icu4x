@@ -5,6 +5,7 @@
 //! This module contains provider implementations backed by the JSON files shipped by CLDR.
 
 pub mod calendar;
+pub mod characters;
 pub mod cldr_serde;
 pub mod datetime;
 pub mod decimal;
