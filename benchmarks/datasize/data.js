@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670247849813,
+  "lastUpdate": 1670248561022,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32033,6 +32033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/967898f219a221dea3e9525c9ab8d6bb4d085cd2"
         },
         "date": 1670247767389,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "583207162d72f50365234e14a80863da1dd372d8",
+          "message": "Use rustup run instead of +nightly in ffi-coverage (#2865)",
+          "timestamp": "2022-12-05T13:52:23Z",
+          "tree_id": "ea80c9403e92e0d2cd261a01bdd2e249a0ab0b3b",
+          "url": "https://github.com/unicode-org/icu4x/commit/583207162d72f50365234e14a80863da1dd372d8"
+        },
+        "date": 1670248487788,
         "tool": "ndjson",
         "benches": [
           {
