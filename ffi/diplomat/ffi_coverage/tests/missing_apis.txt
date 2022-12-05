@@ -1,3 +1,13 @@
+fixed_decimal::CompactDecimal#Struct
+fixed_decimal::CompactDecimal::from_str#FnInStruct
+fixed_decimal::CompactDecimal::write_to#FnInStruct
+fixed_decimal::FixedInteger#Struct
+fixed_decimal::FixedInteger::from_str#FnInStruct
+fixed_decimal::FixedInteger::write_to#FnInStruct
+fixed_decimal::ScientificDecimal#Struct
+fixed_decimal::ScientificDecimal::from#FnInStruct
+fixed_decimal::ScientificDecimal::from_str#FnInStruct
+fixed_decimal::ScientificDecimal::write_to#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList#Struct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains#FnInStruct
 icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::contains32#FnInStruct
