@@ -142,6 +142,10 @@ fn test_scientific_syntax_error() {
             input_str: "-1e+-1",
             expected_err: Some(Error::Syntax),
         },
+        TestCase {
+            input_str: "123E4",
+            expected_err: Some(Error::Syntax),
+        },
     ];
     for cas in &cases {
         match ScientificDecimal::from_str(cas.input_str) {
