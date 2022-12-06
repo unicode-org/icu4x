@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670268684730,
+  "lastUpdate": 1670297289578,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60809,6 +60809,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 83,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d4684e162ec2e0d3bdab7f2a4ad76830150f295",
+          "message": "Simplify construction of grapheme cluster break iterators (#2870)\n\nWe can simply a bit with the newly added helpers `new_and_segment_str` and\r\n`new_and_segment_utf16`.",
+          "timestamp": "2022-12-06T12:10:11+09:00",
+          "tree_id": "00011e32b5058732a154e01ffb1f0cafdbd51389",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d4684e162ec2e0d3bdab7f2a4ad76830150f295"
+        },
+        "date": 1670297211756,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 104951,
+            "range": "± 2957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23341,
+            "range": "± 1294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63634,
+            "range": "± 3491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 192,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 88,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
