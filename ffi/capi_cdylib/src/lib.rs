@@ -28,5 +28,5 @@
 // Necessary for symbols to be linked in
 extern crate icu_capi;
 
-// Necessary to get a default allocator
+// Necessary to get an allocator
 extern crate std;

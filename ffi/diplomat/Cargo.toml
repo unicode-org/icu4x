@@ -40,6 +40,7 @@ denylist = ["bench", "logging"]
 default = ["any_provider"]
 any_provider = []
 buffer_provider = [
+    "dep:icu_provider_blob",
     "dep:serde",
     "icu_collator/serde",
     "icu_datetime/serde",
@@ -52,13 +53,12 @@ buffer_provider = [
     "icu_properties/serde",
     "icu_provider/serde",
     "icu_provider_adapters/serde",
-    "icu_provider_blob",
     "icu_segmenter/serde",
     "icu_testdata?/buffer",
 ]
-provider_fs = ["icu_provider_fs", "buffer_provider"]
-provider_test = ["icu_testdata"]
-logging = ["icu_provider/log_error_context", "log"]
+provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
+provider_test = ["dep:icu_testdata"]
+logging = ["icu_provider/log_error_context", "dep:log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
 

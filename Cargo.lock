@@ -1424,14 +1424,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_capi_staticlib_tiny"
-version = "1.0.0"
-dependencies = [
- "dlmalloc",
- "icu_capi",
-]
-
-[[package]]
 name = "icu_casemapping"
 version = "0.7.0"
 dependencies = [
