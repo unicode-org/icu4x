@@ -19,7 +19,7 @@ _We are still working on improving the user experience of using ICU4X from other
         - Add ICU4X as a dependency 
             - `cargo add icu_capi@1.0.0`
         - Reexport ICU4X symbols
-            - `echo "extern crate icu_capi;" >> src/lib.rs`
+            - `echo "extern crate icu_capi;" > src/lib.rs`
         - Specify features with `cargo add icu_capi@1.0.0 --features ...`:
             - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
             - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
@@ -33,10 +33,7 @@ _We are still working on improving the user experience of using ICU4X from other
             - Under `Cargo.toml`'s `[profile.release]` key, you can set options like `lto = true`, `opt-level = "s"`, etc.
             - See [cargo profiles](cargo-profiles) for more options
     - You can now use `cargo build --release` to build the library
-        - The output will be in ``
-    - Copy the library to the desired location
-        - Its location is `icu/target/release/libicu.a`
-        - When building a dynamic library, it will use a system-specific file extension (`.so`, `.dylib`, etc.) 
+        - The resulting library will be in `icu/target/release/libicu.{a,so,dylib,...}`.
 - Copy the header files from the `icu_capi` crate's source
     - Their location is `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
         - The `*` in this path is some fingerprint, your shell will expand it when using e.g. `cp`
