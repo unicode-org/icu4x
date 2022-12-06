@@ -78,7 +78,7 @@ int main() {
 
 ## Embedded platforms (`no_std`)
 
-Building `icu_capi_staticlib` for embedded systems (i.e. without `libc`) requires some additional parameters. The feature `x86tiny` includes an allocator and removes Rust's panicking code. This should be built with `-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort`, which requires a nightly compiler (`cargo +nightly ...`).
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [freertos port](https://github.com/unicode-org/icu4x/blob/main/ffi/freertos/src/lib.rs#L27).
 
 ## Tips
 
