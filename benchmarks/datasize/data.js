@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670268007457,
+  "lastUpdate": 1670296430426,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32123,6 +32123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/40835f7721d3c60aa751b9910bfcded6a0ea5103"
         },
         "date": 1670267938623,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d4684e162ec2e0d3bdab7f2a4ad76830150f295",
+          "message": "Simplify construction of grapheme cluster break iterators (#2870)\n\nWe can simply a bit with the newly added helpers `new_and_segment_str` and\r\n`new_and_segment_utf16`.",
+          "timestamp": "2022-12-06T12:10:11+09:00",
+          "tree_id": "00011e32b5058732a154e01ffb1f0cafdbd51389",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d4684e162ec2e0d3bdab7f2a4ad76830150f295"
+        },
+        "date": 1670296357533,
         "tool": "ndjson",
         "benches": [
           {
