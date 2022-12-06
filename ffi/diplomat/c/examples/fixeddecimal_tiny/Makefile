@@ -22,11 +22,11 @@ LLD := lld-14
 	cargo build -p icu_capi_staticlib --no-default-features --features buffer_provider
 
 icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: $(ALL_RUST)
-	cd icu_capi_staticlib_tiny
+	cd icu_capi_staticlib_tiny && \
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu
 
 icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: $(ALL_RUST)
-	cd icu_capi_staticlib_tiny
+	cd icu_capi_staticlib_tiny && \
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu --profile=release-opt-size
 
 decimal-bn-en.postcard:
