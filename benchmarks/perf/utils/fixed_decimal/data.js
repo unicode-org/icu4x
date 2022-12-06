@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670297289578,
+  "lastUpdate": 1670328617766,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60869,6 +60869,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 81,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "70e53c4b00b71b9c89008826bf3b2666a16ff5bc",
+          "message": "Removing `serde` feature from `icu_capi` (#2857)",
+          "timestamp": "2022-12-06T12:55:22+01:00",
+          "tree_id": "3b12be597792e6717ab8e6363145f4e76e873f48",
+          "url": "https://github.com/unicode-org/icu4x/commit/70e53c4b00b71b9c89008826bf3b2666a16ff5bc"
+        },
+        "date": 1670328545678,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101225,
+            "range": "± 635",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21955,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65809,
+            "range": "± 287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
