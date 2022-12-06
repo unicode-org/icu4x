@@ -28,11 +28,12 @@ include = [
 all-features = true
 
 [lib]
-crate-type = ["staticlib", "rlib"]
-path = "src/lib.rs"
+crate-type = ["staticlib"]
 
 [dependencies]
 icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
+# Included to allow syntax selection
+icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
@@ -43,27 +44,12 @@ provider_fs = ["icu_capi/provider_fs"] # Indirectly implies buffer_provider
 provider_test = ["icu_capi/provider_test"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
-
-# meta feature for things we enable by default in C and C++
-# do not sync with other crates
-cpp_default = ["provider_test", "logging", "simple_logger"]
-
-# Enables size-optimized builds on x86_64
-x86tiny = ["dlmalloc"]
-
-# Hack to prevent nightly code from being compiled with --all-features
-internal_all_features_hack = []
+wasm_default = ["icu_capi/wasm_default"]
+cpp_default = ["icu_capi/cpp_default"]
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
-skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# x86tiny is not relevant in normal environments,
 # logging enables a feature of a dependency that has no externally visible API changes
 # serde enables dependency features but buffer_provider affects the actual code
-# cpp_default is a meta-feature
-denylist = ["bench", "x86tiny", "serde", "internal_all_features_hack", "logging", "cpp_default"]
-
-# This cfg originates in dlmalloc/lib.rs
-[target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
-dlmalloc = { version = "0.2", optional = true, features = ["global"] }
+# wasm_default and cpp_default are metafeatures
+denylist = ["bench", "serde", "logging", "wasm_default", "cpp_default"]

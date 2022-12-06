@@ -35,7 +35,7 @@ skip_optional_dependencies = true
 # serde enables dependency features but buffer_provider affects the actual code
 denylist = ["bench", "logging"]
 
-# Please keep the features list in sync with the icu_capi_staticlib crate
+# Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates
 [features]
 default = ["any_provider"]
 any_provider = []
@@ -61,6 +61,12 @@ provider_test = ["icu_testdata"]
 logging = ["icu_provider/log_error_context", "log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
+
+# meta feature for things we enable by default in C and C++
+cpp_default = ["provider_test", "logging", "simple_logger"]
+
+# meta feature for things we enable by default in wasm
+wasm_default = ["buffer_provider", "logging"]
 
 [dependencies]
 fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal", features = ["ryu"] }

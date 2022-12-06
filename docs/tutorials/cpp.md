@@ -4,7 +4,7 @@ ICU4X's core functionality is completely available from C++, with headers genera
 
 Generated headers can be found under [`ffi/diplomat/cpp/include`], with Sphinx docs at [`ffi/diplomat/cpp/docs`]. The port is header-only; no additional C++ translation units need to be compiled to use ICU4X from C++.
 
-Typically C++ users can build ICU4X by building a thin Rust wrapper around the `icu_capi` crate, and link the resultant static library to their C++ application.
+Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate ([crates.io][staticlib-crates], [source][staticlib-source]) with the `cpp_default` feature, and link the resultant static library to their C++ application. This crate builds on the `icu_capi` crate: a `no_std` crate containing all of the relevant [Diplomat]-generated `extern "C"` declarations.
 
 Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
 
@@ -12,33 +12,25 @@ _We are still working on improving the user experience of using ICU4X from other
 
 ## Building and linking ICU4X
 
- - The `icu_capi` crate cannot be built directly; this is both because `cargo build` does not support non-local crates, and because the correct crate type (`staticlib` vs `cdylib`) can only be set in `Cargo.toml`.
-    - We will define a wrapper create with all your project-specific config
-        - Create a new cargo project
-            - `cargo init --lib icu; cd icu`
-        - Add ICU4X as a dependency 
-            - `cargo add icu_capi@1.0.0`
-        - Reexport ICU4X symbols
-            - `echo "extern crate icu_capi;" > src/lib.rs`
-        - Specify features with `cargo add icu_capi@1.0.0 --features ...`:
-            - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
-            - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
-            - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate: `cargo add icu_provider --features deserialize_{json,postcard_1,bincode_1}`
-            - `logging` and `simple_logger` enable basic stdout logging of error metadata. Further loggers can be added on request.
-            - `cpp_default` turns on a bunch of these and is useful for exploration, but should not be used in production as it enables `provider_test`
-        - Set the desired crate type
-            - Insert `crate-type = ["staticlib"]` in `Cargo.toml`'s `[lib]` section
-            - You can also use `cdylib` to build a dynamic library
-        - *Optional*: configure additional build options
-            - Under `Cargo.toml`'s `[profile.release]` key, you can set options like `lto = true`, `opt-level = "s"`, etc.
-            - See [cargo profiles](cargo-profiles) for more options
-    - You can now use `cargo build --release` to build the library
-        - The resulting library will be in `icu/target/release/libicu.{a,so,dylib,...}`.
-- Copy the header files from the `icu_capi` crate's source
+- `cargo build` only supports local crates, so you have to clone the crate using `cargo clone icu_capi_staticlib@1.0.0`
+    - Run `cargo install cargo-clone` if the command is not installed
+- Inside the cloned crate you can use `cargo build` to build the library
+    - Be sure to pass `--release` to get an optimized build
+    - Specify features with `--features ...`:
+        - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
+        - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
+        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate.
+        - `logging` and `simple_logger` enable basic stdout logging of error metadata. Further loggers can be added on request.
+        - `cpp_default` turns on a bunch of these and is useful for exploration, but should not be used in production as it enables `provider_test`
+    - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
+    - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
+    - See [cargo profiles](cargo-profiles) for more options
+ - Copy the header files from the `icu_capi` crate's source
     - Their location is `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
         - The `*` in this path is some fingerprint, your shell will expand it when using e.g. `cp`
     - Make sure to use the same version as above
-- Compile with `g++ -std=c++17 libicu.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
+        - While we selected a version for `icu_capi_staticlib` before, and here we're looking at `icu_capi`, those versions will always be in sync. You can sanity check this by running `cargo pkgid -p icu_capi`.
+ - Compile with `g++ -std=c++17 icu/target/releaselibicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Using ICU4X from C++
 Here's an annotated, shorter version of the fixed decimal example, that can be built using the steps above, using `--features cpp_default`:
@@ -85,9 +77,7 @@ int main() {
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to add an allocator and panic hooks the wrapper crate. For example using the `dlmalloc` allocator:
-
-`lib.rs:`
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
 
 ```rust
 #![feature(alloc_error_handler)]

@@ -28,11 +28,12 @@ include = [
 all-features = true
 
 [lib]
-crate-type = ["cdylib", "rlib"]
-path = "src/lib.rs"
+crate-type = ["cdylib"]
 
 [dependencies]
 icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
+# Included to allow syntax selection
+icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
@@ -43,16 +44,12 @@ provider_fs = ["icu_capi/provider_fs"] # Indirectly implies buffer_provider
 provider_test = ["icu_capi/provider_test"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
-
-# meta feature for things we enable by default in wasm
-# do not sync with other crates
-wasm_default = ["buffer_provider", "logging"]
+wasm_default = ["icu_capi/wasm_default"]
+cpp_default = ["icu_capi/cpp_default"]
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
-skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
 # serde enables dependency features but buffer_provider affects the actual code
-# wasm_default is a metafeature
-denylist = ["bench", "serde", "logging", "wasm_default"]
+# wasm_default and cpp_default are metafeatures
+denylist = ["bench", "serde", "logging", "wasm_default", "cpp_default"]
