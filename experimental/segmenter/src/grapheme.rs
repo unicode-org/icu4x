@@ -86,19 +86,10 @@ impl GraphemeClusterSegmenter {
         &'l self,
         input: &'s str,
     ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
-        GraphemeClusterBreakIteratorUtf8 {
-            iter: input.char_indices(),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
-        }
+        GraphemeClusterSegmenter::new_and_segment_str(input, self.payload.get())
     }
 
-    /// Create a grapheme cluster break iterator from grapheme cluster rule payload
+    /// Create a grapheme cluster break iterator from grapheme cluster rule payload.
     pub(crate) fn new_and_segment_str<'l, 's>(
         input: &'s str,
         payload: &'l RuleBreakDataV1<'l>,
@@ -155,19 +146,10 @@ impl GraphemeClusterSegmenter {
         &'l self,
         input: &'s [u16],
     ) -> GraphemeClusterBreakIteratorUtf16<'l, 's> {
-        GraphemeClusterBreakIteratorUtf16 {
-            iter: Utf16Indices::new(input),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
-        }
+        GraphemeClusterSegmenter::new_and_segment_utf16(input, self.payload.get())
     }
 
-    /// Create a grapheme cluster break iterator from grapheme cluster rule payload
+    /// Create a grapheme cluster break iterator from grapheme cluster rule payload.
     pub(crate) fn new_and_segment_utf16<'l, 's>(
         input: &'s [u16],
         payload: &'l RuleBreakDataV1<'l>,
