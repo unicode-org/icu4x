@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670296430426,
+  "lastUpdate": 1670327966880,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32153,6 +32153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1d4684e162ec2e0d3bdab7f2a4ad76830150f295"
         },
         "date": 1670296357533,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "70e53c4b00b71b9c89008826bf3b2666a16ff5bc",
+          "message": "Removing `serde` feature from `icu_capi` (#2857)",
+          "timestamp": "2022-12-06T12:55:22+01:00",
+          "tree_id": "3b12be597792e6717ab8e6363145f4e76e873f48",
+          "url": "https://github.com/unicode-org/icu4x/commit/70e53c4b00b71b9c89008826bf3b2666a16ff5bc"
+        },
+        "date": 1670327887945,
         "tool": "ndjson",
         "benches": [
           {
