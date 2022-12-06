@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![feature(alloc_error_handler)]
-
 #![no_std]
 
 extern crate icu_capi;
