@@ -198,19 +198,23 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
-        struct ParsedPattern {
-            literal_text: Cow<'static, str>,
+        struct ParsedPlaceholder {
             index: usize,
             number_of_0s: usize,
         }
-        let mut patterns: BTreeMap<(i8, Count), Pattern>;
+        struct ParsedPattern {
+            literal_text: Cow<'static, str>,
+            placeholder: Option<ParsedPlaceholder>,
+        }
+        let mut patterns: BTreeMap<i8, BTreeMap<Count, ParsedPattern>> = BTreeMap::new();
         for pattern in other.patterns.iter() {
             let type_bytes = pattern.compact_decimal_type.bytes();
+
             if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
-                return Err("Ill-formed type".into());
+                return Err(format!("Ill-formed type {}", pattern.compact_decimal_type).into());
             }
             let log10_type = i8::try_from(pattern.compact_decimal_type.len() - 1)
-                .map_err(|_| "Too many digits in type")?;
+                .map_err(|_| format!("Too many digits in type {}", pattern.compact_decimal_type))?;
             let count = match &*pattern.compact_decimal_count {
                 "zero" => Count::Zero,
                 "one" => Count::One,
@@ -219,7 +223,7 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 "other" => Count::Other,
                 "1" => Count::Explicit1,
             };
-            let placeholder: Option<PlaceholderDetails> = None;
+            let placeholder: Option<ParsedPlaceholder> = None;
             let literal_text: String;
             for (i, chunk) in pattern.pattern.split('\'').enumerate() {
                 let escaped = i % 2 == 1;
@@ -254,13 +258,13 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                                     "Multiple placeholders in compact decimal pattern".into()
                                 );
                             }
-                            placeholder = Some(PlaceholderDetails {
+                            placeholder = Some(ParsedPlaceholder {
                                 index: literal_text.len(),
                                 number_of_0s: middle_0s.len() + 2,
                             });
                             literal_text.push_str(suffix);
                         } else {
-                            placeholder = Some(PlaceholderDetails {
+                            placeholder = Some(ParsedPlaceholder {
                                 index: literal_text.len(),
                                 number_of_0s: 1,
                             });
@@ -272,29 +276,37 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     }
                 }
             }
-            patterns.insert(
-                (log10_type, count),
-                Pattern {
-                    exponent: placeholder
-                        .map_or(
-                            Ok(0), // TODO(egg): no, this is the "mille" case, not the "0" case; maybe a struct with an optional exponent?
-                            |p| Ok(log10_type - i8::try_from(p.number_of_0s)? + 1),
-                        )
-                        .map_err(|_| "Too many 0s")?,
-                    index: placeholder
-                        .map_or(Some(u8::MAX), |p| {
-                            u8::try_from(p.index).ok().and_then(|i| {
-                                if i < u8::MAX {
-                                    Some(i)
-                                } else {
-                                    None
-                                }
-                            })
-                        })
-                        .ok_or_else(|| "Placeholder index too large")?,
-                    literal_text: Cow::Owned(literal_text),
-                },
-            );
+            patterns.get(&log10_type).and_then(|plural_map| {
+                plural_map.insert(
+                    count,
+                    ParsedPattern {
+                        literal_text: Cow::Owned(literal_text),
+                        placeholder: placeholder,
+                    },
+                )
+            });
+        }
+        let mut patterns: BTreeMap<i8, BTreeMap<Count, ParsedPattern>> = BTreeMap::new();
+        for (log10_type, plural_map) in patterns {
+            let other_case = plural_map
+                .get(&Count::Other)
+                .ok_or_else(|| "Missing other case")?;
+            let other_placeholder = other_case
+                .placeholder
+                .ok_or_else(|| "Missing placeholder in other case")?;
+            for (count, pattern) in plural_map {
+                if let Some(placeholder) = pattern.placeholder {
+                    if placeholder.number_of_0s != other_placeholder.number_of_0s {
+                        return Err(
+                            format!("Inconsistent placeholders within type 10^{}: {} 0s for other, {} 0s for {:?}",
+                                    log10_type,
+                                    other_placeholder.number_of_0s,
+                                    placeholder.number_of_0s,
+                                    count).into());
+                    }
+                }
+            }
+            let exponent = log10_type - other_placeholder.number_of_0s + 1;
         }
         Err("meow".into())
     }
