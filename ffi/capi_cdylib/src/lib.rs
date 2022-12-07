@@ -7,7 +7,7 @@
 //!
 //! This leads to problems like emscripten being unable to link
 //! because symbols like log_js are not defined even if the crate_type
-//! is not actually desired. As a workaround, the `icu_capi_staticlib` and 
+//! is not actually desired. As a workaround, the `icu_capi_staticlib` and
 //! `icu_capi_cdylib` crates exist as endpoints to be built when those
 //! respective library types are needed.
 

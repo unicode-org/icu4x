@@ -79,7 +79,7 @@ int main() {
 
 Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
 
-```rust
+```rust,compile_fail
 #![feature(alloc_error_handler)]
 
 #![no_std]
