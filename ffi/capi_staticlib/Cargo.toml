@@ -29,6 +29,7 @@ all-features = true
 
 [lib]
 crate-type = ["staticlib"]
+path = "src/lib.rs"
 
 [dependencies]
 icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }

@@ -7,26 +7,9 @@
 //!
 //! This leads to problems like emscripten being unable to link
 //! because symbols like log_js are not defined even if the crate_type
-//! is not actually desired. As a workaround, the capi_staticlib and capi_dylib
-//! crates exist as endpoints to be built when those respective library types are needed.
-
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![no_std]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        clippy::exhaustive_enums,
-        missing_debug_implementations,
-    )
-)]
+//! is not actually desired. As a workaround, the `icu_capi_staticlib` and 
+//! `icu_capi_cdylib` crates exist as endpoints to be built when those
+//! respective library types are needed.
 
 // Necessary for symbols to be linked in
 extern crate icu_capi;
-
-// Necessary to get an allocator
-extern crate std;
