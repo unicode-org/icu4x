@@ -198,6 +198,11 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
+        struct ParsedPattern {
+            literal_text: Cow<'static, str>,
+            index: usize,
+            number_of_0s: usize,
+        }
         let mut patterns: BTreeMap<(i8, Count), Pattern>;
         for pattern in other.patterns.iter() {
             let type_bytes = pattern.compact_decimal_type.bytes();
@@ -214,10 +219,6 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 "other" => Count::Other,
                 "1" => Count::Explicit1,
             };
-            struct PlaceholderDetails {
-                index: usize,
-                number_of_0s: usize,
-            }
             let placeholder: Option<PlaceholderDetails> = None;
             let literal_text: String;
             for (i, chunk) in pattern.pattern.split('\'').enumerate() {
