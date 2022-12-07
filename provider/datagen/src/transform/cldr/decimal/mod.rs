@@ -3,15 +3,24 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
+#[cfg(feature = "experimental")]
+use icu_compactdecimal::provider::*;
 use icu_decimal::provider::*;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use itertools::Itertools;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
+use std::iter::once;
+use std::iter::Once;
 use tinystr::TinyAsciiStr;
+
+use super::cldr_serde::numbers::CompactDecimalPattern;
+use super::cldr_serde::numbers::DecimalFormat;
 
 mod decimal_pattern;
 
@@ -181,6 +190,112 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
             },
             digits: Default::default(), // to be filled in
         })
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
+    type Error = Cow<'static, str>;
+
+    fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
+        let mut patterns: BTreeMap<(i8, Count), Pattern>;
+        for pattern in other.patterns.iter() {
+            let type_bytes = pattern.compact_decimal_type.bytes();
+            if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
+                return Err("Ill-formed type".into());
+            }
+            let log10_type = i8::try_from(pattern.compact_decimal_type.len() - 1)
+                .map_err(|_| "Too many digits in type")?;
+            let count = match &*pattern.compact_decimal_count {
+                "zero" => Count::Zero,
+                "one" => Count::One,
+                "few" => Count::Few,
+                "many" => Count::Many,
+                "other" => Count::Other,
+                "1" => Count::Explicit1,
+            };
+            struct PlaceholderDetails {
+                index: usize,
+                number_of_0s: usize,
+            }
+            let placeholder: Option<PlaceholderDetails> = None;
+            let literal_text: String;
+            for (i, chunk) in pattern.pattern.split('\'').enumerate() {
+                let escaped = i % 2 == 1;
+                if escaped {
+                    if chunk.is_empty() {
+                        // '' means '.
+                        literal_text.push('\'');
+                    } else {
+                        // Anything else wrapped in apostrophes is literal text.
+                        literal_text.push_str(chunk);
+                    }
+                } else {
+                    // We are in unquoted text, so we need to check for the
+                    // symbols defined in https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Pattern_Character_Definitions.
+                    if chunk
+                        .chars()
+                        .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
+                    {
+                        return Err(
+                            "0 is the only supported symbol in compact decimal patterns".into()
+                        );
+                    }
+                    if let Some((prefix, additional_0s_and_suffix)) = chunk.split_once('0') {
+                        if placeholder.is_some() {
+                            return Err("Multiple placeholders in compact decimal pattern".into());
+                        }
+                        literal_text.push_str(prefix);
+                        if let Some((middle_0s, suffix)) = additional_0s_and_suffix.rsplit_once('0')
+                        {
+                            if !middle_0s.chars().all(|c| c == '0') {
+                                return Err(
+                                    "Multiple placeholders in compact decimal pattern".into()
+                                );
+                            }
+                            placeholder = Some(PlaceholderDetails {
+                                index: literal_text.len(),
+                                number_of_0s: middle_0s.len() + 2,
+                            });
+                            literal_text.push_str(suffix);
+                        } else {
+                            placeholder = Some(PlaceholderDetails {
+                                index: literal_text.len(),
+                                number_of_0s: 1,
+                            });
+                            literal_text.push_str(additional_0s_and_suffix);
+                        }
+                    } else {
+                        // No symbols, all literal text.
+                        literal_text.push_str(chunk);
+                    }
+                }
+            }
+            patterns.insert(
+                (log10_type, count),
+                Pattern {
+                    exponent: placeholder
+                        .map_or(
+                            Ok(0), // TODO(egg): no, this is the "mille" case, not the "0" case; maybe a struct with an optional exponent?
+                            |p| Ok(log10_type - i8::try_from(p.number_of_0s)? + 1),
+                        )
+                        .map_err(|_| "Too many 0s")?,
+                    index: placeholder
+                        .map_or(Some(u8::MAX), |p| {
+                            u8::try_from(p.index).ok().and_then(|i| {
+                                if i < u8::MAX {
+                                    Some(i)
+                                } else {
+                                    None
+                                }
+                            })
+                        })
+                        .ok_or_else(|| "Placeholder index too large")?,
+                    literal_text: Cow::Owned(literal_text),
+                },
+            );
+        }
+        Err("meow".into())
     }
 }
 

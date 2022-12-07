@@ -21,6 +21,8 @@ use icu_timezone::provider::*;
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
+use icu_compactdecimal::provider::*;
+#[cfg(feature = "experimental")]
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
 use icu_relativetime::provider::*;
@@ -251,6 +253,8 @@ registry!(
         LongYearRelativeTimeFormatDataV1Marker,
         ShortYearRelativeTimeFormatDataV1Marker,
         NarrowYearRelativeTimeFormatDataV1Marker,
+        LongCompactDecimalFormatDataV1Marker,
+        ShortCompactDecimalFormatDataV1Marker,
     }
 );
 

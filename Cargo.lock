@@ -1493,6 +1493,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_compactdecimal"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_decimal",
+ "icu_locid",
+ "icu_plurals",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "writeable",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_datagen"
 version = "1.0.2"
 dependencies = [
@@ -1510,6 +1527,7 @@ dependencies = [
  "icu_codepointtrie_builder",
  "icu_collator",
  "icu_collections",
+ "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
  "icu_displaynames",
