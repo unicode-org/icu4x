@@ -189,28 +189,28 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" sec. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("s ago"),
             index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" sec. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("s ago"),
             index: 0u8,
         },
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  sec."),
+            pattern: alloc::borrow::Cow::Borrowed("in s"),
             index: 3u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  sec."),
+            pattern: alloc::borrow::Cow::Borrowed("in s"),
             index: 3u8,
         },
     },
@@ -360,7 +360,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) seg. nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" seg. ang nakalipas"),
             index: 0u8,
         },
     },
@@ -374,7 +374,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) seg."),
+            pattern: alloc::borrow::Cow::Borrowed("sa  seg."),
             index: 3u8,
         },
     },

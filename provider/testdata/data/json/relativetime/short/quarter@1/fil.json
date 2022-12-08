@@ -14,21 +14,21 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) quarter ang nakalipas",
+      "pattern": " quarter ang nakalipas",
       "index": 0
     }
   },
   "future": {
     "zero": null,
     "one": {
-      "pattern": "sa  (na) quarter",
+      "pattern": "sa  quarter",
       "index": 3
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) quarter",
+      "pattern": "sa  quarter",
       "index": 3
     }
   }

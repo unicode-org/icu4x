@@ -25,20 +25,20 @@
       "st": "Standard na Oras sa Amazon"
     },
     "amce": {
-      "dt": "Sentral na Daylight Time",
-      "st": "Sentral na Standard na Oras"
+      "dt": "Sentral na Daylight na Oras sa North America",
+      "st": "Sentral na Standard na Oras sa North America"
     },
     "amea": {
-      "dt": "Eastern Daylight Time",
-      "st": "Eastern na Standard na Oras"
+      "dt": "Daylight na Oras sa Silangan ng Hilagang Amerika",
+      "st": "Standard na Oras sa Silangan ng Hilangang Amerika"
     },
     "ammo": {
-      "dt": "Daylight Time sa Bundok",
-      "st": "Standard na Oras sa Bundok"
+      "dt": "Daylight na Oras sa Bundok sa Hilagang Amerika",
+      "st": "Standard na Oras sa Bundok sa Hilagang Amerika"
     },
     "ampa": {
-      "dt": "Daylight Time sa Pasipiko",
-      "st": "Standard na Oras sa Pasipiko"
+      "dt": "Daylight na Oras sa Pasipiko sa Hilagang Amerika",
+      "st": "Standard na Oras sa Pasipiko sa Hilagang Amerika"
     },
     "anad": {
       "dt": "Summer Time sa Anadyr",
@@ -65,7 +65,7 @@
       "st": "Standard na Oras sa Kanlurang Argentina"
     },
     "atla": {
-      "dt": "Daylight Time sa Atlantiko",
+      "dt": "Daylight na Oras sa Atlantiko",
       "st": "Standard na Oras sa Atlantiko"
     },
     "auce": {
@@ -147,7 +147,7 @@
       "st": "Standard na Oras sa Cook Islands"
     },
     "cuba": {
-      "dt": "Daylight Time sa Cuba",
+      "dt": "Daylight na Oras sa Cuba",
       "st": "Standard na Oras sa Cuba"
     },
     "davi": {
@@ -326,11 +326,11 @@
       "st": "Oras sa Mawson"
     },
     "meno": {
-      "dt": "Daylight Time sa Hilagang-kanlurang Mexico",
+      "dt": "Daylight na Oras sa Hilagang-kanlurang Mexico",
       "st": "Standard na Oras sa Hilagang-kanlurang Mexico"
     },
     "mepa": {
-      "dt": "Daylight Time sa Pasipiko ng Mexico",
+      "dt": "Daylight na Oras sa Pasipiko ng Mexico",
       "st": "Standard na Oras sa Pasipiko ng Mexico"
     },
     "mgmt": {
@@ -358,7 +358,7 @@
       "st": "Oras sa Nepal"
     },
     "newf": {
-      "dt": "Daylight Time sa Newfoundland",
+      "dt": "Daylight na Oras sa Newfoundland",
       "st": "Standard na Oras sa Newfoundland"
     },
     "neze": {
@@ -410,7 +410,7 @@
       "st": "Oras sa Phoenix Islands"
     },
     "pimi": {
-      "dt": "Daylight Time sa Saint Pierre & Miquelon",
+      "dt": "Daylight na Oras sa Saint Pierre & Miquelon",
       "st": "Standard na Oras sa Saint Pierre & Miquelon"
     },
     "pitc": {
@@ -526,7 +526,7 @@
       "st": "Standard na Oras sa Yekaterinburg"
     },
     "yuko": {
-      "st": "Yukon Time"
+      "st": "Oras sa Yukon"
     }
   },
   "overrides": {

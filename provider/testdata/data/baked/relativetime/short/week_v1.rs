@@ -408,7 +408,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) linggo"),
+            pattern: alloc::borrow::Cow::Borrowed("sa  linggo"),
             index: 3u8,
         },
     },

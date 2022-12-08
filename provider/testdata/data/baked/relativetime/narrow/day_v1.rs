@@ -7,9 +7,9 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("ar-EG", AR_AR_EG),
         ("bn", BN),
         ("ccp", CCP),
-        ("en", EN_EN_001_EN_ZA),
-        ("en-001", EN_EN_001_EN_ZA),
-        ("en-ZA", EN_EN_001_EN_ZA),
+        ("en", EN),
+        ("en-001", EN_001_EN_ZA),
+        ("en-ZA", EN_001_EN_ZA),
         ("es", ES),
         ("es-AR", ES_AR),
         ("fil", FIL),
@@ -216,7 +216,50 @@ static CCP: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         },
     },
 };
-static EN_EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
+static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[255u8, 0u8, 1u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 9u8, 0u8, 14u8, 0u8, 121u8, 101u8, 115u8, 116u8,
+                    101u8, 114u8, 100u8, 97u8, 121u8, 116u8, 111u8, 100u8, 97u8, 121u8, 116u8,
+                    111u8, 109u8, 111u8, 114u8, 114u8, 111u8, 119u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("d ago"),
+            index: 0u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("d ago"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in d"),
+            index: 3u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("in d"),
+            index: 3u8,
+        },
+    },
+};
+static EN_001_EN_ZA: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV1 {
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -374,7 +417,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) araw ang nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" araw ang nakalipas"),
             index: 0u8,
         },
     },
@@ -388,7 +431,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) araw"),
+            pattern: alloc::borrow::Cow::Borrowed("sa  araw"),
             index: 3u8,
         },
     },

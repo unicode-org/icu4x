@@ -105,8 +105,8 @@
       "taisho": "Taishō"
     },
     "abbr": {
-      "bce": "a. C.",
-      "ce": "d. C.",
+      "bce": "a.C.",
+      "ce": "d.C.",
       "heisei": "Heisei",
       "meiji": "Meiji",
       "reiwa": "Reiwa",
@@ -114,8 +114,8 @@
       "taisho": "Taishō"
     },
     "narrow": {
-      "bce": "a. C.",
-      "ce": "d. C.",
+      "bce": "a.C.",
+      "ce": "d.C.",
       "heisei": "H",
       "meiji": "M",
       "reiwa": "R",
