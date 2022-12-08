@@ -8,10 +8,7 @@ use icu_normalizer::properties::CanonicalDecomposition;
 
 include!("bench_data.rs");
 
-fn function_under_bench(
-    canonical_decomposer: &CanonicalDecomposition,
-    decomposable_points: &str,
-) {
+fn function_under_bench(canonical_decomposer: &CanonicalDecomposition, decomposable_points: &str) {
     decomposable_points.chars().for_each(|point| {
         canonical_decomposer.decompose(point);
     });
@@ -26,33 +23,19 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     for bench_data_content in normalizer_bench_data() {
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
-            |bencher| {
-                bencher
-                    .iter(|| function_under_bench(&decomposer, &bench_data_content.nfc))
-            },
+            |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfc)),
         );
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfd_{}", bench_data_content.file_name)),
-            |bencher| {
-                bencher
-                    .iter(|| function_under_bench(&decomposer, &bench_data_content.nfd))
-            },
+            |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfd)),
         );
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfkc_{}", bench_data_content.file_name)),
-            |bencher| {
-                bencher.iter(|| {
-                    function_under_bench(&decomposer, &bench_data_content.nfkc)
-                })
-            },
+            |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkc)),
         );
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfkd_{}", bench_data_content.file_name)),
-            |bencher| {
-                bencher.iter(|| {
-                    function_under_bench(&decomposer, &bench_data_content.nfkd)
-                })
-            },
+            |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkd)),
         );
     }
     group.finish();

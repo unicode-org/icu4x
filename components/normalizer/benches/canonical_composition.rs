@@ -13,13 +13,10 @@ fn function_under_bench(
     composable_points: &Vec<Decomposed>,
 ) {
     for decomposed in composable_points.iter() {
-        match decomposed {
-            Decomposed::Expansion(a, b) => {
-                canonical_composer.compose(*a, *b);
-            }
-            _ => {}
+        if let Decomposed::Expansion(a, b) = decomposed {
+            canonical_composer.compose(*a, *b);
         }
-    };
+    }
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
@@ -31,13 +28,14 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let mut group = criterion.benchmark_group(group_name);
 
     for bench_data_content in normalizer_bench_data() {
-        let decompose_data = bench_data_content.nfc.chars().map(|c| decomposer.decompose(c)).collect();
+        let decompose_data = bench_data_content
+            .nfc
+            .chars()
+            .map(|c| decomposer.decompose(c))
+            .collect();
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
-            |bencher| {
-                bencher
-                    .iter(|| function_under_bench(&composer, &decompose_data))
-            },
+            |bencher| bencher.iter(|| function_under_bench(&composer, &decompose_data)),
         );
     }
 
