@@ -104,6 +104,9 @@ impl AnyProvider for BakedDataProvider {
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_displaynames")]
+        const LANGUAGEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_displaynames")]
         const TERRITORYDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_displaynames::provider::TerritoryDisplayNamesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_list")]
@@ -662,7 +665,13 @@ impl AnyProvider for BakedDataProvider {
                 .map(AnyPayload::from_static_ref)
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_displaynames")]
-            TERRITORYDISPLAYNAMESV1MARKER => displaynames::territories_v1::DATA
+            LANGUAGEDISPLAYNAMESV1MARKER => language_displaynames::languages_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_displaynames")]
+            TERRITORYDISPLAYNAMESV1MARKER => territory_displaynames::territories_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

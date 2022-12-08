@@ -11,16 +11,16 @@
 
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just
 // become inaccessible).
-type UnvalidatedLanguage = TinyAsciiStr<3>;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
-#[icu_provider::data_struct(TerritoryDisplayNamesV1Marker = "displaynames/territories@1")]
+#[icu_provider::data_struct(TerritoryDisplayNamesV1Marker = "territory_displaynames/territories@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -52,5 +52,5 @@ pub struct TerritoryDisplayNamesV1<'data> {
 pub struct LanguageDisplayNamesV1<'data> {
     /// Mapping for langage to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, UnvalidatedLanguage, str>,
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
 }
