@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::*;
-use crate::grapheme::GraphemeClusterSegmenter;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
@@ -70,7 +69,7 @@ pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
-    grapheme: Option<GraphemeClusterSegmenter>,
+    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
 
 impl WordSegmenter {
@@ -85,7 +84,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let cj = Self::load_dictionary(provider, locale!("ja")).ok();
 
@@ -128,7 +127,7 @@ impl WordSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let dictionary = if cfg!(feature = "lstm") {
             let cj = Self::load_dictionary(provider, locale!("ja")).ok();
@@ -197,9 +196,9 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            dictionary: Some(&self.dictionary),
+            lstm: Some(&self.lstm),
+            grapheme: Some(self.grapheme.get()),
         }
     }
 
@@ -216,9 +215,9 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            dictionary: Some(&self.dictionary),
+            lstm: Some(&self.lstm),
+            grapheme: Some(self.grapheme.get()),
         }
     }
 
@@ -230,9 +229,9 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            dictionary: Some(&self.dictionary),
+            lstm: Some(&self.lstm),
+            grapheme: Some(self.grapheme.get()),
         }
     }
 
@@ -244,9 +243,9 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            dictionary: Some(&self.dictionary),
+            lstm: Some(&self.lstm),
+            grapheme: Some(self.grapheme.get()),
         }
     }
 }

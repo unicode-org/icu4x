@@ -162,7 +162,7 @@ impl TryFrom<&cldr_serde::date_fields::PluralRulesPattern> for PluralRulesCatego
             two: optional_convert(&pattern.two)?,
             few: optional_convert(&pattern.few)?,
             many: optional_convert(&pattern.many)?,
-            other: optional_convert(&pattern.other)?,
+            other: SingularSubPattern::try_from_str(&pattern.other)?,
         })
     }
 }
@@ -213,7 +213,40 @@ mod tests {
         assert_eq!(data.get().relatives.get(&0).unwrap(), "this qtr.");
         assert_eq!(data.get().past.one.as_ref().unwrap().pattern, " qtr. ago");
         assert_eq!(data.get().past.one.as_ref().unwrap().index, 0u8);
+        assert_eq!(data.get().past.other.pattern, " qtrs. ago");
+        assert_eq!(data.get().past.other.index, 0u8);
         assert_eq!(data.get().future.one.as_ref().unwrap().pattern, "in  qtr.");
         assert_eq!(data.get().future.one.as_ref().unwrap().index, 3u8);
+    }
+
+    #[test]
+    fn test_singular_sub_pattern() {
+        let provider = crate::DatagenProvider::for_test();
+        let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
+            .load(DataRequest {
+                locale: &locale!("ar").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        assert_eq!(data.get().relatives.get(&-1).unwrap(), "السنة الماضية");
+
+        // past.one, future.two are without a placeholder.
+        assert_eq!(
+            data.get().past.one.as_ref().unwrap().pattern,
+            "قبل سنة واحدة"
+        );
+        assert_eq!(data.get().past.one.as_ref().unwrap().index, 255u8);
+        assert_eq!(
+            data.get().future.two.as_ref().unwrap().pattern,
+            "خلال سنتين"
+        );
+        assert_eq!(data.get().future.two.as_ref().unwrap().index, 255u8);
+
+        assert_eq!(data.get().past.many.as_ref().unwrap().pattern, "قبل  سنة");
+        assert_eq!(data.get().past.many.as_ref().unwrap().index, 7u8);
+        assert_eq!(data.get().future.other.pattern, "خلال  سنة");
+        assert_eq!(data.get().future.other.index, 9u8);
     }
 }

@@ -1,18 +1,6 @@
 ``provider::ffi``
 =================
 
-.. js:class:: ICU4XCreateDataProviderResult
-
-    A result type for ``ICU4XDataProvider::create``.
-
-
-    .. js:attribute:: provider
-
-        Will be ``None`` if ``success`` is ``false``, do not use in that case.
-
-
-    .. js:attribute:: success
-
 .. js:class:: ICU4XDataProvider
 
     An ICU4X data provider, capable of loading ICU4X data keys from some source.

@@ -33,13 +33,11 @@ path = "src/lib.rs"
 
 [dependencies]
 icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
-icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
 default = ["icu_capi/default"]
 any_provider = ["icu_capi/any_provider"]
-serde = ["icu_capi/serde"]
 buffer_provider = ["icu_capi/buffer_provider"]
 provider_fs = ["icu_capi/provider_fs"] # Indirectly implies buffer_provider
 provider_test = ["icu_capi/provider_test"]

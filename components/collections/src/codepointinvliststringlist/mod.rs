@@ -9,8 +9,11 @@
 //!
 //! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
-use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListError};
+use crate::codepointinvlist::{
+    CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
+};
 use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 use displaydoc::Display;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
@@ -204,6 +207,69 @@ impl<'data> CodePointInversionListAndStringList<'data> {
     }
 }
 
+impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
+    fn from_iter<I>(it: I) -> Self
+    where
+        I: IntoIterator<Item = &'a str>,
+    {
+        let mut builder = CodePointInversionListBuilder::new();
+        let mut strings = Vec::<&str>::new();
+        for s in it {
+            let mut chars = s.chars();
+            if let Some(first_char) = chars.next() {
+                if chars.next().is_none() {
+                    builder.add_char(first_char);
+                    continue;
+                }
+            }
+            strings.push(s);
+        }
+
+        // Ensure that the string list is sorted. If not, the binary search that
+        // is used for `.contains(&str)` will return garbase otuput.
+        strings.sort_unstable();
+
+        // Ensure that `strings` is deduplicated. Check for any duplicates first.
+        let is_deduped = strings.windows(2).all(|adjacents| {
+            if let (Some(s1), Some(s2)) = (adjacents.get(0), adjacents.get(1)) {
+                s1 != s2
+            } else {
+                false
+            }
+        });
+        let strings = if is_deduped {
+            strings
+        } else {
+            let mut deduped_strs = Vec::<&str>::new();
+            let mut strs_iter = strings.iter();
+
+            let first_str = strs_iter.next();
+            debug_assert!(first_str.is_some()); // If `strings` was empty or len() < 2, then
+                                                // `is_deduped_strs` would have been true.
+            if let Some(mut next_str) = first_str {
+                deduped_strs.push(*next_str);
+
+                for s in strs_iter {
+                    if s != next_str {
+                        deduped_strs.push(*s);
+                        next_str = s;
+                    }
+                }
+            }
+
+            deduped_strs
+        };
+
+        let cp_inv_list = builder.build();
+        let str_list = VarZeroVec::<str>::from(&strings);
+
+        CodePointInversionListAndStringList {
+            cp_inv_list,
+            str_list,
+        }
+    }
+}
+
 /// Custom Errors for [`CodePointInversionListAndStringList`].
 ///
 /// Re-exported as [`Error`](Error).
@@ -304,5 +370,28 @@ mod tests {
             cpilsl,
             Err(CodePointInversionListAndStringListError::StringListNotSorted(_, _))
         ));
+    }
+
+    #[test]
+    fn test_from_iter_invariants() {
+        let in_strs_1 = ["a", "abc", "xyz", "abc"];
+        let in_strs_2 = ["xyz", "abc", "a", "abc"];
+
+        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1.into_iter());
+        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2.into_iter());
+
+        assert_eq!(cpilsl_1, cpilsl_2);
+
+        assert!(cpilsl_1.has_strings());
+        assert!(cpilsl_1.contains("abc"));
+        assert!(cpilsl_1.contains("xyz"));
+        assert!(!cpilsl_1.contains("def"));
+
+        assert_eq!(1, cpilsl_1.cp_inv_list.size());
+        assert!(cpilsl_1.contains_char('a'));
+        assert!(!cpilsl_1.contains_char('0'));
+        assert!(!cpilsl_1.contains_char('q'));
+
+        assert_eq!(3, cpilsl_1.size());
     }
 }
