@@ -81,7 +81,7 @@ pub fn normalizer_bench_data() -> [BenchDataContent; 15] {
     );
     let content_viet: (&str, &str) = ("udhr_vie", include_str!("./data/udhr_vie.txt"));
 
-    return [
+    [
         content_latin,
         content_viet,
         content_jp_k,
@@ -105,5 +105,5 @@ pub fn normalizer_bench_data() -> [BenchDataContent; 15] {
         nfd: nfd_normalizer.normalize(raw_content),
         nfkc: nfkc_normalizer.normalize(raw_content),
         nfkd: nfkd_normalizer.normalize(raw_content),
-    });
+    })
 }
