@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "41"
+      "_cldrVersion": "42"
     },
     "parentLocales": {
       "parentLocale": {
@@ -122,6 +122,7 @@
         "es-US": "es-419",
         "es-UY": "es-419",
         "es-VE": "es-419",
+        "ht": "fr-HT",
         "nb": "no",
         "nn": "no",
         "pt-AO": "pt-PT",

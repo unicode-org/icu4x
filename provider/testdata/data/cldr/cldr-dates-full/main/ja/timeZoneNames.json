@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "ja"
       },
@@ -571,7 +571,7 @@
                 "exemplarCity": "カリーニングラード"
               },
               "Kiev": {
-                "exemplarCity": "キエフ"
+                "exemplarCity": "キーウ"
               },
               "Kirov": {
                 "exemplarCity": "キーロフ"
@@ -1223,7 +1223,7 @@
                 "exemplarCity": "ジョンストン島"
               },
               "Kanton": {
-                "exemplarCity": "Kanton"
+                "exemplarCity": "カントン島"
               },
               "Kiritimati": {
                 "exemplarCity": "キリスィマスィ島"

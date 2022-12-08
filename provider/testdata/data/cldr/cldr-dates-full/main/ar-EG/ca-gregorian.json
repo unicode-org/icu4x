@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "ar",
         "territory": "EG"
@@ -338,10 +338,10 @@
               "short": "ahmm"
             },
             "dateTimeFormats": {
-              "full": "{1} في {0}",
-              "long": "{1} في {0}",
-              "medium": "{1}, {0}",
-              "short": "{1}, {0}",
+              "full": "{1}، {0}",
+              "long": "{1}، {0}",
+              "medium": "{1}، {0}",
+              "short": "{1}، {0}",
               "availableFormats": {
                 "Bh": "h B",
                 "Bhm": "h:mm B",
@@ -371,8 +371,8 @@
                 "hmv": "h:mm a v",
                 "Hmv": "HH:mm v",
                 "M": "L",
-                "Md": "d/‏M",
-                "MEd": "E، d/‏M",
+                "Md": "d‏/M",
+                "MEd": "E، d‏/M",
                 "MMdd": "dd‏/MM",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
@@ -389,7 +389,7 @@
                 "y": "y",
                 "yM": "M‏/y",
                 "yMd": "d‏/M‏/y",
-                "yMEd": "E، d/‏M/‏y",
+                "yMEd": "E، d‏/M‏/y",
                 "yMM": "MM‏/y",
                 "yMMM": "MMM y",
                 "yMMMd": "d MMM y",
@@ -505,12 +505,12 @@
                   "M": "M–M"
                 },
                 "Md": {
-                  "d": "d-M – d-M",
-                  "M": "M/d – M/d"
+                  "d": "d‏/M – d‏/M",
+                  "M": "d‏/M – d‏/M"
                 },
                 "MEd": {
-                  "d": "E، d/‏M –‏ E، d/‏M",
-                  "M": "E، d/‏M – E، d/‏M"
+                  "d": "E، d‏/M – E، d‏/M",
+                  "M": "E، d‏/M – E، d‏/M"
                 },
                 "MMM": {
                   "M": "MMM–MMM"
@@ -561,6 +561,14 @@
                   "M": "MMMM – MMMM، y",
                   "y": "MMMM، y – MMMM، y"
                 }
+              }
+            },
+            "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} في {0}",
+                "long": "{1} في {0}",
+                "medium": "{1}، {0}",
+                "short": "{1}، {0}"
               }
             }
           }

@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "41"
+      "_cldrVersion": "42"
     },
     "numberingSystems": {
       "adlm": {
@@ -157,6 +157,10 @@
         "_digits": "꤀꤁꤂꤃꤄꤅꤆꤇꤈꤉",
         "_type": "numeric"
       },
+      "kawi": {
+        "_digits": "𑽐𑽑𑽒𑽓𑽔𑽕𑽖𑽗𑽘𑽙",
+        "_type": "numeric"
+      },
       "khmr": {
         "_digits": "០១២៣៤៥៦៧៨៩",
         "_type": "numeric"
@@ -239,6 +243,10 @@
       },
       "mymrtlng": {
         "_digits": "꧰꧱꧲꧳꧴꧵꧶꧷꧸꧹",
+        "_type": "numeric"
+      },
+      "nagm": {
+        "_digits": "𞓰𞓱𞓲𞓳𞓴𞓵𞓶𞓷𞓸𞓹",
         "_type": "numeric"
       },
       "newa": {

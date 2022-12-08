@@ -1579,7 +1579,7 @@
         },
         "uaiev": {
           "_description": "Kyiv, Ukraine",
-          "_alias": "Europe/Kiev"
+          "_alias": "Europe/Kiev Europe/Kyiv"
         },
         "uaozh": {
           "_description": "Zaporizhia (Zaporozhye), Ukraine",
