@@ -29,13 +29,6 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_decomposition";
     let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    let data: Vec<char> = include_str!("../tests/data/NormalizationTest.txt")
-        .split('\n')
-        .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
-        .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
-        .map(as_char)
-        .collect();
-
     let mut group = criterion.benchmark_group(group_name);
 
     group.bench_function(BenchmarkId::from_parameter("icu4x"), |bencher| {

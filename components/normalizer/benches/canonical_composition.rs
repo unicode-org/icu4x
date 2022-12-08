@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{BenchmarkId, Criterion};
+
 use icu_normalizer::properties::CanonicalComposition;
 
 fn function_under_bench(
@@ -26,6 +27,7 @@ fn as_vec_char(points: &str) -> Vec<char> {
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_composition";
+
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     let data: Vec<Vec<char>> = include_str!("../tests/data/NormalizationTest.txt")
