@@ -617,10 +617,10 @@ where
             );
         if low & 0x1000 != 0 {
             // All the rest are combining
-            for u in tail.iter() {
-                self.buffer
-                    .push(CharacterAndClass::new_with_placeholder(char_from_u16(u)));
-            }
+            self.buffer.extend(
+                tail.iter()
+                    .map(|u| CharacterAndClass::new_with_placeholder(char_from_u16(u))),
+            );
             (starter, 0)
         } else {
             let mut i = 0;

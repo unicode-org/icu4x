@@ -5,7 +5,6 @@
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
-use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
@@ -63,8 +62,6 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBrea
 /// ```
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
 }
 
 impl SentenceSegmenter {
@@ -74,13 +71,7 @@ impl SentenceSegmenter {
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let dictionary = Dictionary::default();
-        let lstm = LstmPayloads::default();
-        Ok(Self {
-            payload,
-            dictionary,
-            lstm,
-        })
+        Ok(Self { payload })
     }
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
@@ -93,8 +84,8 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -111,8 +102,8 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -127,8 +118,8 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }
@@ -141,8 +132,8 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
             grapheme: None,
         }
     }

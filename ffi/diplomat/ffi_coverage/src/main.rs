@@ -489,9 +489,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
-            let output = std::process::Command::new("cargo")
+            let output = std::process::Command::new("rustup")
                 .args(&[
-                    "+nightly-2022-08-25",
+                    "run",
+                    "nightly-2022-08-25",
+                    "cargo",
                     "rustdoc",
                     "-p",
                     krate,
