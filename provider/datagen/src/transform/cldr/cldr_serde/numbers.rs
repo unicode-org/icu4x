@@ -43,6 +43,7 @@ pub struct DecimalFormat {
     pub patterns: Vec<CompactDecimalPattern>,
 }
 
+#[derive(PartialEq, Debug, Default)]
 pub struct CompactDecimalPattern {
     pub compact_decimal_type: String,
     pub compact_decimal_count: String,
@@ -66,7 +67,7 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
         formatter.write_str("a map from keys of the form 10*-count-(zero|one|few|many|other) to compact decimal patterns")
     }
 
-    fn visit_map<M>(self, access: M) -> Result<Self::Value, M::Error>
+    fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
     where
         M: MapAccess<'de>,
     {

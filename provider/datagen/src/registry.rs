@@ -253,8 +253,8 @@ registry!(
         LongYearRelativeTimeFormatDataV1Marker,
         ShortYearRelativeTimeFormatDataV1Marker,
         NarrowYearRelativeTimeFormatDataV1Marker,
-        LongCompactDecimalFormatDataV1Marker,
-        ShortCompactDecimalFormatDataV1Marker,
+        //LongCompactDecimalFormatDataV1Marker,
+        //ShortCompactDecimalFormatDataV1Marker,
     }
 );
 

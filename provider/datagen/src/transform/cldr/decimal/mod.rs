@@ -11,6 +11,7 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_provider::zerofrom::ZeroFrom;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -18,6 +19,7 @@ use std::convert::TryFrom;
 use std::iter::once;
 use std::iter::Once;
 use tinystr::TinyAsciiStr;
+use zerovec::ule::encode_varule_to_box;
 
 use super::cldr_serde::numbers::CompactDecimalPattern;
 use super::cldr_serde::numbers::DecimalFormat;
@@ -200,15 +202,15 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
         struct ParsedPlaceholder {
             index: usize,
-            number_of_0s: usize,
+            number_of_0s: i8,
         }
         struct ParsedPattern {
             literal_text: Cow<'static, str>,
             placeholder: Option<ParsedPlaceholder>,
         }
-        let mut patterns: BTreeMap<i8, BTreeMap<Count, ParsedPattern>> = BTreeMap::new();
+        let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, ParsedPattern>> = BTreeMap::new();
         for pattern in other.patterns.iter() {
-            let type_bytes = pattern.compact_decimal_type.bytes();
+            let mut type_bytes = pattern.compact_decimal_type.bytes();
 
             if !(type_bytes.next() == Some(b'1') && type_bytes.all(|b| b == b'0')) {
                 return Err(format!("Ill-formed type {}", pattern.compact_decimal_type).into());
@@ -222,9 +224,16 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 "many" => Count::Many,
                 "other" => Count::Other,
                 "1" => Count::Explicit1,
+                _ => {
+                    return Err(format!(
+                        "Invalid count {} in type {}",
+                        pattern.compact_decimal_count, pattern.compact_decimal_type
+                    )
+                    .into())
+                }
             };
-            let placeholder: Option<ParsedPlaceholder> = None;
-            let literal_text: String;
+            let mut placeholder: Option<ParsedPlaceholder> = None;
+            let mut literal_text = String::with_capacity(pattern.pattern.len());
             for (i, chunk) in pattern.pattern.split('\'').enumerate() {
                 let escaped = i % 2 == 1;
                 if escaped {
@@ -243,24 +252,44 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                         .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
                     {
                         return Err(
-                            "0 is the only supported symbol in compact decimal patterns".into()
+                            format!("Unsupported symbol in compact decimal pattern {} (type={}, count={:?})",
+                                    pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
+                            )
+                            .into()
                         );
                     }
                     if let Some((prefix, additional_0s_and_suffix)) = chunk.split_once('0') {
                         if placeholder.is_some() {
-                            return Err("Multiple placeholders in compact decimal pattern".into());
+                            return Err(
+                                format!(
+                                    "Multiple placeholders in compact decimal pattern {} (type={}, count={:?})",
+                                    pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
+                                )
+                                .into()
+                            );
                         }
                         literal_text.push_str(prefix);
                         if let Some((middle_0s, suffix)) = additional_0s_and_suffix.rsplit_once('0')
                         {
                             if !middle_0s.chars().all(|c| c == '0') {
                                 return Err(
-                                    "Multiple placeholders in compact decimal pattern".into()
+                                    format!(
+                                        "Multiple placeholders in compact decimal pattern {} (type={}, count={:?})",
+                                        pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
+                                    )
+                                    .into()
                                 );
                             }
                             placeholder = Some(ParsedPlaceholder {
                                 index: literal_text.len(),
-                                number_of_0s: middle_0s.len() + 2,
+                                number_of_0s: i8::try_from(middle_0s.len() + 2).map_err(|_| {
+                                    format!(
+                                        "Too many 0s in pattern {} (type={}, count={:?})",
+                                        pattern.pattern,
+                                        pattern.compact_decimal_type,
+                                        pattern.compact_decimal_count
+                                    )
+                                })?,
                             });
                             literal_text.push_str(suffix);
                         } else {
@@ -276,39 +305,98 @@ impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     }
                 }
             }
-            patterns.get(&log10_type).and_then(|plural_map| {
-                plural_map.insert(
+            parsed_patterns
+                .entry(log10_type)
+                .or_insert(BTreeMap::new())
+                .insert(
                     count,
                     ParsedPattern {
                         literal_text: Cow::Owned(literal_text),
                         placeholder: placeholder,
                     },
                 )
-            });
+                .map_or_else(
+                    // TODO(egg): This should be try_insert.
+                    || Ok(()),
+                    |_| {
+                        Err(format!(
+                            "Plural case {:?} is duplicated for type 10^{}",
+                            count, log10_type
+                        )
+                        .to_string())
+                    },
+                )?;
         }
-        let mut patterns: BTreeMap<i8, BTreeMap<Count, ParsedPattern>> = BTreeMap::new();
-        for (log10_type, plural_map) in patterns {
-            let other_case = plural_map
+        let mut patterns: BTreeMap<i8, BTreeMap<Count, Pattern>> = BTreeMap::new();
+        for (log10_type, parsed_plural_map) in parsed_patterns {
+            let plural_map = patterns.entry(log10_type).or_insert(BTreeMap::new());
+            let other_case = parsed_plural_map
                 .get(&Count::Other)
-                .ok_or_else(|| "Missing other case")?;
-            let other_placeholder = other_case
-                .placeholder
-                .ok_or_else(|| "Missing placeholder in other case")?;
-            for (count, pattern) in plural_map {
-                if let Some(placeholder) = pattern.placeholder {
+                .ok_or_else(|| format!("Missing other case for type 10^{}", log10_type))?;
+            let other_placeholder = other_case.placeholder.as_ref().ok_or_else(|| {
+                format!(
+                    "Missing placeholder in other case of type within type 10^{}",
+                    log10_type
+                )
+            })?;
+            for (count, pattern) in &parsed_plural_map {
+                if let Some(placeholder) = &pattern.placeholder {
                     if placeholder.number_of_0s != other_placeholder.number_of_0s {
                         return Err(
-                            format!("Inconsistent placeholders within type 10^{}: {} 0s for other, {} 0s for {:?}",
-                                    log10_type,
-                                    other_placeholder.number_of_0s,
-                                    placeholder.number_of_0s,
-                                    count).into());
+                            format!(
+                                "Inconsistent placeholders within type 10^{}: {} 0s for other, {} 0s for {:?}",
+                                log10_type,
+                                other_placeholder.number_of_0s,
+                                placeholder.number_of_0s,
+                                count
+                            )
+                            .into()
+                        );
                     }
                 }
             }
             let exponent = log10_type - other_placeholder.number_of_0s + 1;
+            if exponent < 1 {
+                return Err(format!(
+                    "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={})",
+                    log10_type, other_placeholder.number_of_0s, exponent
+                )
+                .into());
+            }
+            for (count, pattern) in parsed_plural_map {
+                plural_map.insert(
+                    count,
+                    Pattern {
+                        exponent: exponent,
+                        literal_text: pattern.literal_text,
+                        index: pattern
+                            .placeholder
+                            .map_or(Some(u8::MAX), |p| {
+                                u8::try_from(p.index)
+                                    .ok()
+                                    .and_then(|i| (i < u8::MAX).then(|| i))
+                            })
+                            .ok_or_else(|| {
+                                format!(
+                                    "Placeholder index is too large in type=10^{}, count={:?}",
+                                    log10_type, count
+                                )
+                            })?,
+                    },
+                );
+            }
         }
-        Err("meow".into())
+        // TODO(egg): Compactify the data here.
+        Ok(CompactDecimalPatternDataV1 {
+            patterns: patterns
+                .iter()
+                .flat_map(|(log10_type, plural_map)| {
+                    plural_map.iter().map(|(count, pattern)| {
+                        (*log10_type, *count, encode_varule_to_box(pattern))
+                    })
+                })
+                .collect(),
+        })
     }
 }
 
