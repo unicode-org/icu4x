@@ -4,45 +4,42 @@
 
 use criterion::{BenchmarkId, Criterion};
 
-use icu_normalizer::properties::CanonicalComposition;
+use icu_normalizer::properties::{CanonicalComposition, CanonicalDecomposition, Decomposed};
+
+include!("bench_data.rs");
 
 fn function_under_bench(
     canonical_composer: &CanonicalComposition,
-    composable_points: &[Vec<char>],
+    composable_points: &Vec<Decomposed>,
 ) {
-    composable_points.iter().for_each(|points| {
-        canonical_composer.compose(points[0], points[1]);
-    });
-}
-
-// transform the source part as a vector of characters.
-fn as_vec_char(points: &str) -> Vec<char> {
-    points
-        .split_whitespace()
-        .map(|point| u32::from_str_radix(point, 16).unwrap())
-        .map(char::from_u32)
-        .map(|x| x.unwrap())
-        .collect::<Vec<char>>()
+    for decomposed in composable_points.iter() {
+        match decomposed {
+            Decomposed::Expansion(a, b) => {
+                canonical_composer.compose(*a, *b);
+            }
+            _ => {}
+        }
+    };
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
     let group_name = "canonical_composition";
 
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-
-    let data: Vec<Vec<char>> = include_str!("../tests/data/NormalizationTest.txt")
-        .split('\n')
-        .filter(|&s| !s.starts_with('#') && !s.starts_with('@') && !s.is_empty()) // remove comments
-        .map(|line| &line[..line.find(';').unwrap()]) // split at delimiter.
-        .map(as_vec_char)
-        .filter(|x| x.len() > 1) // there's no point in composing one char.
-        .collect();
+    let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut group = criterion.benchmark_group(group_name);
 
-    group.bench_function(BenchmarkId::from_parameter("icu4x"), |bencher| {
-        bencher.iter(|| function_under_bench(&composer, &data))
-    });
+    for bench_data_content in normalizer_bench_data() {
+        let decompose_data = bench_data_content.nfc.chars().map(|c| decomposer.decompose(c)).collect();
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
+            |bencher| {
+                bencher
+                    .iter(|| function_under_bench(&composer, &decompose_data))
+            },
+        );
+    }
 
     group.finish();
 }

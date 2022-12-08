@@ -4,10 +4,7 @@
 
 use criterion::{BenchmarkId, Criterion};
 
-use icu_normalizer::DecomposingNormalizer;
-
-#[path = "bench_data.rs"]
-mod bench_data;
+include!("bench_data.rs");
 
 fn function_under_bench(normalizer: &DecomposingNormalizer, text: &str) {
     normalizer.normalize(text);
@@ -20,7 +17,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
         DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut group = criterion.benchmark_group(group_name);
-    for bench_data_content in bench_data::normalizer_bench_data() {
+    for bench_data_content in normalizer_bench_data() {
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
             |bencher| {
