@@ -21,6 +21,8 @@ use std::iter::once;
 use std::iter::Once;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::encode_varule_to_box;
+use zerovec::ule::AsULE;
+use zerovec::ule::EncodeAsVarULE;
 
 use super::cldr_serde::numbers::CompactDecimalPattern;
 use super::cldr_serde::numbers::DecimalFormat;
@@ -225,12 +227,15 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
             None => numbers.default_numbering_system,
         };
 
-        let mut result = CompactDecimalPatternDataV1::try_from(
-            numbers
+        let result = CompactDecimalPatternDataV1::try_from(
+            &numbers
                 .numsys_data
                 .formats
                 .get(&nsname)
-                .ok_or("Could not find formats for numbering system")?
+                .ok_or_else(|| {
+                    DataError::custom("Could not find formats for numbering system")
+                        .with_display_context(&nsname)
+                })?
                 .short
                 .decimal_format,
         )
@@ -239,8 +244,6 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
                 .with_display_context(&s)
                 .with_display_context(&nsname)
         })?;
-
-        result.digits = self.get_digits_for_numbering_system(nsname)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -278,10 +281,10 @@ impl IterableDataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::Data
 }
 
 #[cfg(feature = "experimental")]
-impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
+impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
-    fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
+    fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
         // DO NOT SUBMIT this abomination should be split into multiple functions.
         #[derive(PartialEq, Clone)]
         struct ParsedPlaceholder {
@@ -577,4 +580,62 @@ fn test_basic() {
 
     assert_eq!(ar_decimal.get().decimal_separator, "٫");
     assert_eq!(ar_decimal.get().digits[0], '٠');
+}
+
+#[test]
+fn test_compact_short() {
+    use icu_locid::locale;
+
+    let provider = crate::DatagenProvider::for_test();
+
+    let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
+        .load(DataRequest {
+            locale: &locale!("ja").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let meow: Box<[(i8, Count, Pattern)]> = ja_compact_short.get()
+        .patterns
+        .iter0()
+        .flat_map(|kkv| {
+            let key0 = *kkv.key0();
+            kkv.into_iter1()
+                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+        })
+        .collect();
+    assert_eq!(
+        meow.as_ref(),
+        [
+            (
+                4,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 4,
+                    literal_text: Cow::Borrowed("万")
+                }
+            ),
+            (
+                8,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 8,
+                    literal_text: Cow::Borrowed("億")
+                }
+            ),
+            (
+                12,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 12,
+                    literal_text: Cow::Borrowed("兆")
+                }
+            )
+        ]
+    );
 }

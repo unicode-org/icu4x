@@ -34,6 +34,7 @@ pub struct CompactDecimalPatternDataV1<'data> {
 }
 
 #[zerovec::make_ule(CountULE)]
+#[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
