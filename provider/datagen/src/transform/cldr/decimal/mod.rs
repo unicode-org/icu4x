@@ -197,10 +197,92 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 }
 
 #[cfg(feature = "experimental")]
+impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
+        let langid = req.locale.get_langid();
+
+        let resource: &cldr_serde::numbers::Resource = self
+            .source
+            .cldr()?
+            .numbers()
+            .read_and_parse(&langid, "numbers.json")?;
+
+        let numbers = &resource
+            .main
+            .0
+            .get(&langid)
+            .expect("CLDR file contains the expected language")
+            .numbers;
+
+        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+            Some(v) => *v
+                .as_tinystr_slice()
+                .first()
+                .expect("expecting subtag if key is present"),
+            None => numbers.default_numbering_system,
+        };
+
+        let mut result = CompactDecimalPatternDataV1::try_from(
+            numbers
+                .numsys_data
+                .formats
+                .get(&nsname)
+                .ok_or("Could not find formats for numbering system")?
+                .short
+                .decimal_format,
+        )
+        .map_err(|s| {
+            DataError::custom("Could not create compact decimal patterns")
+                .with_display_context(&s)
+                .with_display_context(&nsname)
+        })?;
+
+        result.digits = self.get_digits_for_numbering_system(nsname)?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(result)),
+        })
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl IterableDataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .source
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .flat_map(|langid| {
+                let last = DataLocale::from(&langid);
+                self.get_supported_numsys_for_langid_without_default(&langid)
+                    .expect("All languages from list_langs should be present")
+                    .into_iter()
+                    .map(move |nsname| {
+                        let mut data_locale = DataLocale::from(&langid);
+                        data_locale.set_unicode_ext(
+                            key!("nu"),
+                            Value::try_from_single_subtag(nsname.as_bytes())
+                                .expect("CLDR should have valid numbering system names"),
+                        );
+                        data_locale
+                    })
+                    .chain(core::iter::once(last))
+            })
+            .collect())
+    }
+}
+
+#[cfg(feature = "experimental")]
 impl TryFrom<DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: DecimalFormat) -> Result<Self, Self::Error> {
+        // DO NOT SUBMIT this abomination should be split into multiple functions.
         #[derive(PartialEq, Clone)]
         struct ParsedPlaceholder {
             index: usize,
