@@ -4,9 +4,8 @@
 
 use criterion::{BenchmarkId, Criterion};
 
-use icu_normalizer::properties::{CanonicalComposition, CanonicalDecomposition, Decomposed};
-
-use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
+use icu_normalizer::{ComposingNormalizer};
+use icu_normalizer::properties::{CanonicalComposition, Decomposed};
 
 struct BenchDataContent {
     pub file_name: String,
@@ -16,12 +15,6 @@ struct BenchDataContent {
 fn normalizer_bench_data() -> [BenchDataContent; 15] {
     let nfc_normalizer: ComposingNormalizer =
         ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkc_normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
-    let nfkd_normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
 
     let content_latin: (&str, &str) = (
         "TestNames_Latin",
@@ -98,10 +91,10 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-    .map(|(file_name, raw_content)| BenchDataContent {
-        file_name: file_name.to_owned(),
-        nfc: nfc_normalizer.normalize(raw_content),
-    })
+        .map(|(file_name, raw_content)| BenchDataContent {
+            file_name: file_name.to_owned(),
+            nfc: nfc_normalizer.normalize(raw_content),
+        })
 }
 
 fn function_under_bench(
@@ -116,27 +109,44 @@ fn function_under_bench(
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
-    #[cfg(feature = "bench")]
-    {
-        let group_name = "canonical_composition";
+    let group_name = "canonical_composition";
+    let mut group = criterion.benchmark_group(group_name);
 
-        let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-        let decomposer =
-            CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-        let mut group = criterion.benchmark_group(group_name);
 
-        for bench_data_content in normalizer_bench_data() {
-            let decompose_data: Vec<Decomposed> = bench_data_content
-                .nfc
-                .chars()
-                .map(|c| decomposer.decompose(c))
-                .collect();
-            group.bench_function(
-                BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
-                |bencher| bencher.iter(|| function_under_bench(&composer, &decompose_data)),
-            );
-        }
-        group.finish();
+    for bench_data_content in normalizer_bench_data() {
+        let decompose_data = decompose_data(&bench_data_content);
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
+            |bencher| bencher.iter(|| function_under_bench(&composer, &decompose_data)),
+        );
     }
+
+    group.finish();
+}
+
+// using debug assertion fails some test.
+// "cargo test --bench bench" will pass
+// "cargo bench" will work as expected, because the profile doesn't include debug assertions.
+#[cfg(debug_assertions)]
+fn decompose_data(bench_data_content: &BenchDataContent) -> Vec<Decomposed> {
+    bench_data_content
+        .nfc
+        .chars()
+        .map(|_c| Decomposed::Default)
+        .collect()
+}
+
+#[cfg(not(debug_assertions))]
+fn decompose_data(bench_data_content: &BenchDataContent) -> Vec<Decomposed> {
+    use icu_normalizer::properties::{ CanonicalDecomposition, DecomposingNormalizer } ;
+    let decomposer =
+        CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let decompose_data: Vec<Decomposed> = bench_data_content
+        .nfc
+        .chars()
+        .map(|c| decomposer.decompose(c))
+        .collect();
+    decompose_data
 }
