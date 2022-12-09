@@ -4,7 +4,6 @@
 
 use criterion::{criterion_group, criterion_main};
 
-mod bench_data;
 mod canonical_composition;
 mod canonical_decomposition;
 mod composing_normalizer_nfc;
