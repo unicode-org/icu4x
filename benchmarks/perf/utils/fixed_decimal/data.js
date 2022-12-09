@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670328617766,
+  "lastUpdate": 1670597516896,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60928,6 +60928,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1fcba346999f226177dd1f14b8f792c5bc33bd6f",
+          "message": "Align FFI wrapper crates (#2872)",
+          "timestamp": "2022-12-09T15:36:03+01:00",
+          "tree_id": "a0bcee0283524097d8b540e66b6cd88e49183361",
+          "url": "https://github.com/unicode-org/icu4x/commit/1fcba346999f226177dd1f14b8f792c5bc33bd6f"
+        },
+        "date": 1670597445944,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116212,
+            "range": "± 479",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22724,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63992,
+            "range": "± 282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 189,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
             "range": "± 0",
             "unit": "ns/iter"
           }
