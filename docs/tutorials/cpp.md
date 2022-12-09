@@ -12,9 +12,9 @@ _We are still working on improving the user experience of using ICU4X from other
 
 ## Building and linking ICU4X
 
-- `cargo build` only supports local crates, so you have to clone the crate using `cargo clone icu_capi_staticlib@1.0.0`
-    - Run `cargo install cargo-clone` if the command is not installed
-- Inside the cloned crate you can use `cargo build` to build the library
+- `cargo build` only supports local crates, so you have to download the published code from crates.io
+    - You can use `cargo clone icu_capi_staticlib@1.0.0` to do this (`cargo install cargo-clone` if the command is not installed)
+- Inside the crate you can use `cargo build` to build the library
     - Be sure to pass `--release` to get an optimized build
     - Specify features with `--features ...`:
         - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
@@ -25,9 +25,9 @@ _We are still working on improving the user experience of using ICU4X from other
     - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
     - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
     - See [cargo profiles](cargo-profiles) for more options
- - Copy the header files from the `icu_capi` crate's source
-    - Their location is `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
-        - The `*` in this path is some fingerprint, your shell will expand it when using e.g. `cp`
+ - Copy the header files from the `icu_capi' crate
+    - If you're using the default crate registry, they will be in `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
+    - If you cannot find the crate, download it from crates.io
     - Make sure to use the same version as above
         - While we selected a version for `icu_capi_staticlib` before, and here we're looking at `icu_capi`, those versions will always be in sync. You can sanity check this by running `cargo pkgid -p icu_capi`.
  - Compile with `g++ -std=c++17 icu/target/releaselibicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
