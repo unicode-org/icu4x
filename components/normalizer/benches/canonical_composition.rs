@@ -4,8 +4,8 @@
 
 use criterion::{BenchmarkId, Criterion};
 
-use icu_normalizer::{ComposingNormalizer};
 use icu_normalizer::properties::{CanonicalComposition, Decomposed};
+use icu_normalizer::ComposingNormalizer;
 
 struct BenchDataContent {
     pub file_name: String,
@@ -91,10 +91,10 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-        .map(|(file_name, raw_content)| BenchDataContent {
-            file_name: file_name.to_owned(),
-            nfc: nfc_normalizer.normalize(raw_content),
-        })
+    .map(|(file_name, raw_content)| BenchDataContent {
+        file_name: file_name.to_owned(),
+        nfc: nfc_normalizer.normalize(raw_content),
+    })
 }
 
 fn function_under_bench(
@@ -113,7 +113,6 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     let mut group = criterion.benchmark_group(group_name);
 
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-
 
     for bench_data_content in normalizer_bench_data() {
         let decompose_data = decompose_data(&bench_data_content);
@@ -140,9 +139,8 @@ fn decompose_data(bench_data_content: &BenchDataContent) -> Vec<Decomposed> {
 
 #[cfg(not(debug_assertions))]
 fn decompose_data(bench_data_content: &BenchDataContent) -> Vec<Decomposed> {
-    use icu_normalizer::properties::{ CanonicalDecomposition, DecomposingNormalizer } ;
-    let decomposer =
-        CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    use icu_normalizer::properties::{CanonicalDecomposition, DecomposingNormalizer};
+    let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     let decompose_data: Vec<Decomposed> = bench_data_content
         .nfc
         .chars()
