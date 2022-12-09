@@ -98,12 +98,11 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-        .map(|(file_name, raw_content)| BenchDataContent {
-            file_name: file_name.to_owned(),
-            nfc: nfc_normalizer.normalize(raw_content),
-        })
+    .map(|(file_name, raw_content)| BenchDataContent {
+        file_name: file_name.to_owned(),
+        nfc: nfc_normalizer.normalize(raw_content),
+    })
 }
-
 
 fn function_under_bench(
     canonical_composer: &CanonicalComposition,
@@ -122,7 +121,8 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
         let group_name = "canonical_composition";
 
         let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
-        let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+        let decomposer =
+            CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
         let mut group = criterion.benchmark_group(group_name);
 

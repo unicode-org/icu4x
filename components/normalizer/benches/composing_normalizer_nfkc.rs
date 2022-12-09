@@ -99,15 +99,14 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-        .map(|(file_name, raw_content)| BenchDataContent {
-            file_name: file_name.to_owned(),
-            nfc: nfc_normalizer.normalize(raw_content),
-            nfd: nfd_normalizer.normalize(raw_content),
-            nfkc: nfkc_normalizer.normalize(raw_content),
-            nfkd: nfkd_normalizer.normalize(raw_content),
-        })
+    .map(|(file_name, raw_content)| BenchDataContent {
+        file_name: file_name.to_owned(),
+        nfc: nfc_normalizer.normalize(raw_content),
+        nfd: nfd_normalizer.normalize(raw_content),
+        nfkc: nfkc_normalizer.normalize(raw_content),
+        nfkd: nfkd_normalizer.normalize(raw_content),
+    })
 }
-
 
 fn function_under_bench(normalizer: &ComposingNormalizer, text: &str) {
     normalizer.normalize(text);

@@ -101,13 +101,13 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-        .map(|(file_name, raw_content)| BenchDataContent {
-            file_name: file_name.to_owned(),
-            nfc: nfc_normalizer.normalize(raw_content),
-            nfd: nfd_normalizer.normalize(raw_content),
-            nfkc: nfkc_normalizer.normalize(raw_content),
-            nfkd: nfkd_normalizer.normalize(raw_content),
-        })
+    .map(|(file_name, raw_content)| BenchDataContent {
+        file_name: file_name.to_owned(),
+        nfc: nfc_normalizer.normalize(raw_content),
+        nfd: nfd_normalizer.normalize(raw_content),
+        nfkc: nfkc_normalizer.normalize(raw_content),
+        nfkd: nfkd_normalizer.normalize(raw_content),
+    })
 }
 
 fn function_under_bench(canonical_decomposer: &CanonicalDecomposition, decomposable_points: &str) {
@@ -120,26 +120,35 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         let group_name = "canonical_decomposition";
-        let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
+        let decomposer =
+            CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
         let mut group = criterion.benchmark_group(group_name);
 
         for bench_data_content in normalizer_bench_data() {
             group.bench_function(
                 BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
-                |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfc)),
+                |bencher| {
+                    bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfc))
+                },
             );
             group.bench_function(
                 BenchmarkId::from_parameter(format!("from_nfd_{}", bench_data_content.file_name)),
-                |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfd)),
+                |bencher| {
+                    bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfd))
+                },
             );
             group.bench_function(
                 BenchmarkId::from_parameter(format!("from_nfkc_{}", bench_data_content.file_name)),
-                |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkc)),
+                |bencher| {
+                    bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkc))
+                },
             );
             group.bench_function(
                 BenchmarkId::from_parameter(format!("from_nfkd_{}", bench_data_content.file_name)),
-                |bencher| bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkd)),
+                |bencher| {
+                    bencher.iter(|| function_under_bench(&decomposer, &bench_data_content.nfkd))
+                },
             );
         }
         group.finish();
