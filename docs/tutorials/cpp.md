@@ -25,7 +25,7 @@ _We are still working on improving the user experience of using ICU4X from other
     - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
     - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
     - See [cargo profiles](cargo-profiles) for more options
- - Copy the header files from the `icu_capi' crate
+ - Copy the header files from the `icu_capi` crate
     - If you're using the default crate registry, they will be in `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
     - If you cannot find the crate, download it from crates.io
     - Make sure to use the same version as above
