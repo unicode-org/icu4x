@@ -28,6 +28,8 @@ use super::cldr_serde::numbers::CompactDecimalPattern;
 use super::cldr_serde::numbers::DecimalFormat;
 
 mod decimal_pattern;
+#[cfg(feature = "experimental")]
+mod compact_decimal_pattern;
 
 impl crate::DatagenProvider {
     /// Returns the digits for the given numbering system name.
@@ -286,16 +288,6 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
         // DO NOT SUBMIT this abomination should be split into multiple functions.
-        #[derive(PartialEq, Clone)]
-        struct ParsedPlaceholder {
-            index: usize,
-            number_of_0s: i8,
-        }
-        #[derive(PartialEq, Clone)]
-        struct ParsedPattern {
-            literal_text: Cow<'static, str>,
-            placeholder: Option<ParsedPlaceholder>,
-        }
         let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
             BTreeMap::new();
         for pattern in other.patterns.iter() {
@@ -322,95 +314,6 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 }
             };
             let plural_map = parsed_patterns.entry(log10_type).or_insert(BTreeMap::new());
-            if pattern.pattern == "0" {
-                plural_map.insert(count, None).map_or_else(
-                    // TODO(egg): This should be try_insert.
-                    || Ok(()),
-                    |_| {
-                        Err(format!(
-                            "Plural case {:?} is duplicated for type 10^{}",
-                            count, log10_type
-                        )
-                        .to_string())
-                    },
-                )?;
-            } else {
-                let mut placeholder: Option<ParsedPlaceholder> = None;
-                let mut literal_text = String::with_capacity(pattern.pattern.len());
-                for (i, chunk) in pattern.pattern.split('\'').enumerate() {
-                    let escaped = i % 2 == 1;
-                    if escaped {
-                        if chunk.is_empty() {
-                            // '' means '.
-                            literal_text.push('\'');
-                        } else {
-                            // Anything else wrapped in apostrophes is literal text.
-                            literal_text.push_str(chunk);
-                        }
-                    } else {
-                        // We are in unquoted text, so we need to check for the
-                        // symbols defined in https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Pattern_Character_Definitions.
-                        if chunk
-                            .chars()
-                            .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
-                        {
-                            return Err(
-                            format!("Unsupported symbol in compact decimal pattern {} (type={}, count={:?})",
-                                    pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
-                            )
-                            .into()
-                        );
-                        }
-                        if let Some((prefix, additional_0s_and_suffix)) = chunk.split_once('0') {
-                            if placeholder.is_some() {
-                                return Err(
-                                format!(
-                                    "Multiple placeholders in compact decimal pattern {} (type={}, count={:?})",
-                                    pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
-                                )
-                                .into()
-                            );
-                            }
-                            literal_text.push_str(prefix);
-                            if let Some((middle_0s, suffix)) =
-                                additional_0s_and_suffix.rsplit_once('0')
-                            {
-                                if !middle_0s.chars().all(|c| c == '0') {
-                                    return Err(
-                                    format!(
-                                        "Multiple placeholders in compact decimal pattern {} (type={}, count={:?})",
-                                        pattern.pattern, pattern.compact_decimal_type, pattern.compact_decimal_count
-                                    )
-                                    .into()
-                                );
-                                }
-                                placeholder = Some(ParsedPlaceholder {
-                                    index: literal_text.len(),
-                                    number_of_0s: i8::try_from(middle_0s.len() + 2).map_err(
-                                        |_| {
-                                            format!(
-                                                "Too many 0s in pattern {} (type={}, count={:?})",
-                                                pattern.pattern,
-                                                pattern.compact_decimal_type,
-                                                pattern.compact_decimal_count
-                                            )
-                                        },
-                                    )?,
-                                });
-                                literal_text.push_str(suffix);
-                            } else {
-                                placeholder = Some(ParsedPlaceholder {
-                                    index: literal_text.len(),
-                                    number_of_0s: 1,
-                                });
-                                literal_text.push_str(additional_0s_and_suffix);
-                            }
-                        } else {
-                            // No symbols, all literal text.
-                            literal_text.push_str(chunk);
-                        }
-                    }
-                }
                 plural_map
                     .insert(
                         count,
