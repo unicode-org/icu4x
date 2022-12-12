@@ -58,7 +58,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(
 ///     dtf.format(&any_datetime).expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34 PM"
+///     "Sep 1, 2020, 12:34\u{202f}PM"
 /// );
 /// ```
 ///
@@ -102,10 +102,10 @@ use writeable::Writeable;
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");
-/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
+/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33\u{202f}PM");
 ///
 /// let converted_value = dtf.format(&iso_converted).expect("Calendars should match");
-/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
+/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34\u{202f}PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -181,7 +181,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34\u{202f}PM"
     /// );
     /// ```
     #[inline]
@@ -331,7 +331,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34\u{202f}PM"
     /// );
     /// ```
     #[inline(never)]
@@ -425,7 +425,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34 PM"
+    ///     "Sep 1, 2020, 12:34\u{202f}PM"
     /// );
     /// ```
     ///
@@ -571,11 +571,11 @@ mod tests {
         let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");
+        test_format(&datetime, locale!("fr"), "5 avril 2022, 12:33");
         test_format(
             &datetime,
             locale!("fr-u-ca-blahblah"),
-            "5 avril 2022 à 12:33",
+            "5 avril 2022, 12:33",
         );
         // thai falls back to buddhist
         test_format(
