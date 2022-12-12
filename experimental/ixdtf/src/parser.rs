@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// An enum for Parser errors.
 #[derive(PartialEq, Clone, Copy, Debug)]
-enum ParseError {
+pub enum ParseError {
     DateYear,
     DateExtendedYear,
     DateFourDigitYear,
@@ -20,6 +21,7 @@ enum ParseError {
     TimeUnexpectedEnd,
 }
 
+// An enum for date time separator.
 #[derive(Clone, Copy)]
 enum DateTimeSeparator {
     CapitalT,
@@ -37,6 +39,7 @@ impl DateTimeSeparator {
     }
 }
 
+// An enum for decimal separator.
 #[derive(Clone, Copy)]
 enum DecimalSeparator {
     Dot,
@@ -52,8 +55,13 @@ impl DecimalSeparator {
     }
 }
 
+/// [`ParsedDateTime`] is the parsed result from the DateTimeParser.
+///
+/// The structure contains all the information needed for IXDTF. Now it only supports date and time
+/// fields.
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct ParsedDateTime {
+pub struct ParsedDateTime {
     pub year: Option<i32>,
     pub month: Option<u8>,
     pub day: Option<u8>,
@@ -63,12 +71,26 @@ struct ParsedDateTime {
     pub nano_second: Option<i32>,
 }
 
+/// [`DateTimeParser`] is the parser to parse IXDTF bytes.
+///
+/// # Examples
+/// ```
+/// use ixdtf::parser::DateTimeParser;
+///
+/// let dt = "2022-11-08".as_bytes();
+/// let parsed = DateTimeParser::new(dt).parse();
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct DateTimeParser<'a> {
+pub struct DateTimeParser<'a> {
     bytes: &'a [u8],
 }
 
 impl<'a> DateTimeParser<'a> {
+    /// Create a new instance of [`DateTimeParser`].
+    pub fn new(bytes: &'a [u8]) -> DateTimeParser {
+        return DateTimeParser { bytes }
+    }
+
     fn parse_date_extended_year(&mut self) -> Result<Option<i32>, ParseError> {
         if let Some((first, remains)) = self.bytes.split_first() {
             if first == &b'+' || first == &b'-' {
@@ -298,6 +320,7 @@ impl<'a> DateTimeParser<'a> {
         return false;
     }
 
+    /// Parse the IXDTF bytes to human readable results, stored in [`ParsedDateTime`].
     pub fn parse(&mut self) -> Result<ParsedDateTime, ParseError> {
         let mut result = ParsedDateTime {
             year: None,
@@ -435,7 +458,7 @@ mod test {
     #[test]
     fn test_correct_datetime() {
         let dt = "2022-11-08".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -450,7 +473,7 @@ mod test {
         );
 
         let dt = "20220605".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -465,7 +488,7 @@ mod test {
         );
 
         let dt = "2022-06-05T04".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -480,7 +503,7 @@ mod test {
         );
 
         let dt = "2022-06-05t04:34".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -495,7 +518,7 @@ mod test {
         );
 
         let dt = "2022-06-05 04:34:22".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -510,7 +533,7 @@ mod test {
         );
 
         let dt = "2022-06-05 04:34:22.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -525,7 +548,7 @@ mod test {
         );
 
         let dt = "2022-06-05 043422.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -543,54 +566,54 @@ mod test {
     #[test]
     fn test_bad_date() {
         let dt = "-2022-06-05".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateExtendedYear));
 
         let dt = "!2022-06-05".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateFourDigitYear));
 
         let dt = "20-06-05".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateFourDigitYear));
 
         let dt = "2022-0605".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateSeparator));
 
         let dt = "202206-05".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateSeparator));
 
         let dt = "2022-06-05e".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateUnexpectedEnd));
     }
 
     #[test]
     fn test_bad_time_spec_separator() {
         let dt = "2022-06-05  043422.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::TimeHour));
 
         let dt = "2022-06-05 04:3422.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::TimeSeparator));
 
         let dt = "2022-06-05 0434:22.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::TimeSeparator));
 
         let dt = "2022-06-05 03422.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::TimeSecond));
 
         let dt = "2022-06-05 3:42:22.000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::TimeHour));
 
         let dt = "2022-06-05 03:42:22;000".as_bytes();
-        let parsed = DateTimeParser { bytes: dt }.parse();
+        let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(parsed, Err(ParseError::DateUnexpectedEnd));
     }
 }
