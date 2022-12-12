@@ -2,5 +2,5 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod language_displaynames;
-pub mod territory_displaynames;
+pub mod language;
+pub mod territory;
