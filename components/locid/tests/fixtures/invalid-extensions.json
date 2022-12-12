@@ -108,5 +108,25 @@
       "error": "InvalidExtension",
       "text": "Invalid subtag"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-u-ca-"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-u-ca-gregory-"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
   }
 ]

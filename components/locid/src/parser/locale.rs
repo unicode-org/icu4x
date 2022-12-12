@@ -6,13 +6,13 @@ use tinystr::TinyAsciiStr;
 
 use crate::extensions::{self, Extensions};
 use crate::parser::errors::ParserError;
-use crate::parser::{get_subtag_iterator, parse_language_identifier_from_iter, ParserMode};
+use crate::parser::{parse_language_identifier_from_iter, ParserMode, SubtagIterator};
 use crate::{subtags, Locale};
 
 use super::parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter;
 
 pub fn parse_locale(t: &[u8]) -> Result<Locale, ParserError> {
-    let mut iter = get_subtag_iterator(t);
+    let mut iter = SubtagIterator::try_new(t)?;
 
     let id = parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
     let extensions = if iter.peek().is_some() {
@@ -37,6 +37,11 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_keyword_ext
     ),
     ParserError,
 > {
-    let iter = get_subtag_iterator(t);
+    let iter = match SubtagIterator::try_new(t) {
+        Ok(iter) => iter,
+        Err(err) => {
+            return Err(err);
+        }
+    };
     parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(iter, mode)
 }

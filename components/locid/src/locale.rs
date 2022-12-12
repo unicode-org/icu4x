@@ -4,9 +4,8 @@
 
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_locale,
-    parse_locale_with_single_variant_single_keyword_unicode_keyword_extension, ParserError,
-    ParserMode,
+    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
+    ParserError, ParserMode, SubtagIterator,
 };
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -293,7 +292,11 @@ impl Locale {
             };
         }
 
-        let mut iter = get_subtag_iterator(other.as_bytes());
+        let mut iter = if let Ok(iter) = SubtagIterator::try_new(other.as_bytes()) {
+            iter
+        } else {
+            return false;
+        };
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }

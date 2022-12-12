@@ -7,8 +7,8 @@ use core::str::FromStr;
 
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_language_identifier, parse_language_identifier_with_single_variant,
-    ParserError, ParserMode,
+    parse_language_identifier, parse_language_identifier_with_single_variant, ParserError,
+    ParserMode, SubtagIterator,
 };
 use crate::subtags;
 use alloc::string::String;
@@ -288,7 +288,11 @@ impl LanguageIdentifier {
             };
         }
 
-        let mut iter = get_subtag_iterator(other.as_bytes());
+        let mut iter = if let Ok(iter) = SubtagIterator::try_new(other.as_bytes()) {
+            iter
+        } else {
+            return false;
+        };
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }

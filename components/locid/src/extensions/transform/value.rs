@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{get_subtag_iterator, ParserError};
+use crate::parser::{ParserError, SubtagIterator};
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
@@ -48,7 +48,7 @@ impl Value {
         let mut v = vec![];
         let mut has_value = false;
 
-        for subtag in get_subtag_iterator(input) {
+        for subtag in SubtagIterator::try_new(input)? {
             if !Self::is_type_subtag(subtag) {
                 return Err(ParserError::InvalidExtension);
             }

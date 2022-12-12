@@ -210,8 +210,10 @@ impl Extensions {
         let mut private = None;
         let mut other = Vec::new();
 
-        let mut st = iter.next();
-        while let Some(subtag) = st {
+        while let Some(subtag) = iter.next() {
+            if subtag.is_empty() {
+                return Err(ParserError::InvalidExtension);
+            }
             match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     unicode = Some(Unicode::try_from_iter(iter)?);
@@ -233,8 +235,6 @@ impl Extensions {
                 None => {}
                 _ => return Err(ParserError::InvalidExtension),
             }
-
-            st = iter.next();
         }
 
         Ok(Self {
