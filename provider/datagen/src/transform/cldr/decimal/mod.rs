@@ -452,7 +452,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 },
             )
             .filter(|(log10_type, plural_map)| {
-                **log10_type != 0 || plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
+                **log10_type != 0 || !plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
             });
         Ok(CompactDecimalPatternDataV1 {
             patterns: deduplicated_patterns
@@ -513,15 +513,6 @@ fn test_compact_short() {
     assert_eq!(
         meow.as_ref(),
         [
-            (
-                0,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 0,
-                    literal_text: Cow::Borrowed("")
-                }
-            ),
             (
                 4,
                 Count::Other,
