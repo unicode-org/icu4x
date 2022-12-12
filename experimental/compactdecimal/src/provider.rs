@@ -17,7 +17,7 @@ use zerovec::ZeroMap2d;
 
 #[icu_provider::data_struct(
     LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
-    ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1",
+    ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -44,19 +44,21 @@ pub struct CompactDecimalPatternDataV1<'data> {
 )]
 #[repr(u8)]
 pub enum Count {
-  Zero = 0,
-  One = 1,
-  Two = 2,
-  Few = 3,
-  Many = 4,
-  Other = 5,
-  Explicit1 = 6,
-  // NOTE(egg): No explicit 0, because the compact decimal pattern selection
-  // algorithm does not allow such a thing to arise.
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Few = 3,
+    Many = 4,
+    Other = 5,
+    Explicit1 = 6,
+    // NOTE(egg): No explicit 0, because the compact decimal pattern selection
+    // algorithm does not allow such a thing to arise.
 }
 
 /// TODO(egg): words
-#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq)]
+#[derive(
+    Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
@@ -65,10 +67,7 @@ pub enum Count {
 )]
 #[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
-#[cfg_attr(
-    feature = "serde",
-    zerovec::derive(Serialize, Deserialize)
-)]
+#[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize))]
 pub struct Pattern<'data> {
     /// The index in literal_text before which the placeholder is inserted;
     /// this is 0 for insertion at the beginning, which is most common.

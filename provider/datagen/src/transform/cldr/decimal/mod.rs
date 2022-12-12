@@ -27,9 +27,9 @@ use zerovec::ule::EncodeAsVarULE;
 use super::cldr_serde::numbers::CompactDecimalPattern;
 use super::cldr_serde::numbers::DecimalFormat;
 
-mod decimal_pattern;
 #[cfg(feature = "experimental")]
 mod compact_decimal_pattern;
+mod decimal_pattern;
 
 impl crate::DatagenProvider {
     /// Returns the digits for the given numbering system name.
@@ -288,8 +288,10 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
         // DO NOT SUBMIT this abomination should be split into multiple functions.
-        let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
-            BTreeMap::new();
+        let mut parsed_patterns: BTreeMap<
+            i8,
+            BTreeMap<Count, Option<compact_decimal_pattern::ParsedPattern>>,
+        > = BTreeMap::new();
         for pattern in other.patterns.iter() {
             let mut type_bytes = pattern.compact_decimal_type.bytes();
 
@@ -314,26 +316,19 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 }
             };
             let plural_map = parsed_patterns.entry(log10_type).or_insert(BTreeMap::new());
-                plural_map
-                    .insert(
-                        count,
-                        Some(ParsedPattern {
-                            literal_text: Cow::Owned(literal_text),
-                            placeholder: placeholder,
-                        }),
-                    )
-                    .map_or_else(
-                        // TODO(egg): This should be try_insert.
-                        || Ok(()),
-                        |_| {
-                            Err(format!(
-                                "Plural case {:?} is duplicated for type 10^{}",
-                                count, log10_type
-                            )
-                            .to_string())
-                        },
-                    )?;
-            }
+            plural_map
+                .insert(count, compact_decimal_pattern::parse(&pattern.pattern)?)
+                .map_or_else(
+                    // TODO(egg): This should be try_insert.
+                    || Ok(()),
+                    |_| {
+                        Err(format!(
+                            "Plural case {:?} is duplicated for type 10^{}",
+                            count, log10_type
+                        )
+                        .to_string())
+                    },
+                )?;
         }
         let plural_cases: BTreeSet<Count> = parsed_patterns
             .iter()
@@ -357,7 +352,8 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 .get(&Count::Other)
                 .ok_or_else(|| format!("Missing other case for type 10^{}", log10_type))?
                 .clone();
-            match other_pattern {
+            let exponent: i8;
+            match &other_pattern {
                 None => {
                     if !parsed_plural_map.iter().all(|(_, p)| p.is_none()) {
                         return Err(format!(
@@ -366,6 +362,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                         )
                         .into());
                     }
+                    exponent = 0;
                 }
                 Some(other_pattern) => {
                     let other_placeholder =
@@ -393,7 +390,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                             }
                         }
                     }
-                    let exponent = log10_type - other_placeholder.number_of_0s + 1;
+                    exponent = log10_type - other_placeholder.number_of_0s + 1;
                     if exponent < 1 {
                         return Err(format!(
                             "Too many 0s in type 10^{}, ({}, implying nonpositive exponent c={})",
@@ -401,59 +398,62 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                         )
                         .into());
                     }
-                    for (count, optional_pattern) in parsed_plural_map {
-                        // Omit duplicates of the other case.
-                        // TODO(egg): optional_pattern.is_some_and(|p| p == other_pattern)
-                        if count != Count::Other
-                            && optional_pattern
-                                .as_ref()
-                                .map_or(false, |p| p == &other_pattern)
-                        {
-                            continue;
-                        }
-                        plural_map.insert(
-                            count,
-                            match optional_pattern {
-                                None => Pattern {
-                                    exponent: 0,
-                                    literal_text: std::borrow::Cow::Borrowed(""),
-                                    index: 0,
-                                },
-                                Some(pattern) => Pattern {
-                                    exponent: exponent,
-                                    literal_text: pattern.literal_text,
-                                    index: pattern
-                                        .placeholder
-                                        .map_or(Some(u8::MAX), |p| {
-                                            u8::try_from(p.index)
-                                                .ok()
-                                                .and_then(|i| (i < u8::MAX).then(|| i))
-                                        })
-                                        .ok_or_else(|| {
-                                            format!(
-                                "Placeholder index is too large in type=10^{}, count={:?}",
-                                log10_type, count
-                            )
-                                        })?,
-                                },
-                            },
-                        );
-                    }
                 }
             }
+            for (count, optional_pattern) in parsed_plural_map {
+                // Omit duplicates of the other case.
+                // TODO(egg): optional_pattern.is_some_and(|p| p == other_pattern)
+                if count != Count::Other && optional_pattern == other_pattern {
+                    continue;
+                }
+                plural_map.insert(
+                    count,
+                    match optional_pattern {
+                        None => Pattern {
+                            exponent: 0,
+                            literal_text: std::borrow::Cow::Borrowed(""),
+                            index: 0,
+                        },
+                        Some(pattern) => Pattern {
+                            exponent: exponent,
+                            literal_text: pattern.literal_text,
+                            index: pattern
+                                .placeholder
+                                .map_or(Some(u8::MAX), |p| {
+                                    u8::try_from(p.index)
+                                        .ok()
+                                        .and_then(|i| (i < u8::MAX).then(|| i))
+                                })
+                                .ok_or_else(|| {
+                                    format!(
+                                        "Placeholder index is too large in type=10^{}, count={:?}",
+                                        log10_type, count
+                                    )
+                                })?,
+                        },
+                    },
+                );
+            }
         }
-        let deduplicated_patterns = patterns.iter().coalesce(
-            |(log10_low_type, low_plural_map), (log10_high_type, high_plural_map)| {
-                (low_plural_map == high_plural_map)
-                    .then(|| (log10_low_type, low_plural_map))
-                    .ok_or_else(|| {
-                        (
-                            (log10_low_type, low_plural_map),
-                            (log10_high_type, high_plural_map),
-                        )
-                    })
-            },
-        );
+        // Deduplicate sequences of types that have the same plural map, keeping the lowest type.
+        // The pattern 0 for type 1 is implicit.
+        let deduplicated_patterns = patterns
+            .iter()
+            .coalesce(
+                |(log10_low_type, low_plural_map), (log10_high_type, high_plural_map)| {
+                    (low_plural_map == high_plural_map)
+                        .then(|| (log10_low_type, low_plural_map))
+                        .ok_or_else(|| {
+                            (
+                                (log10_low_type, low_plural_map),
+                                (log10_high_type, high_plural_map),
+                            )
+                        })
+                },
+            )
+            .filter(|(log10_type, plural_map)| {
+                **log10_type != 0 || plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
+            });
         Ok(CompactDecimalPatternDataV1 {
             patterns: deduplicated_patterns
                 .flat_map(|(log10_type, plural_map)| {
@@ -500,7 +500,8 @@ fn test_compact_short() {
         .take_payload()
         .unwrap();
 
-    let meow: Box<[(i8, Count, Pattern)]> = ja_compact_short.get()
+    let meow: Box<[(i8, Count, Pattern)]> = ja_compact_short
+        .get()
         .patterns
         .iter0()
         .flat_map(|kkv| {
@@ -512,6 +513,15 @@ fn test_compact_short() {
     assert_eq!(
         meow.as_ref(),
         [
+            (
+                0,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 0,
+                    literal_text: Cow::Borrowed("")
+                }
+            ),
             (
                 4,
                 Count::Other,
