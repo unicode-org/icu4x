@@ -25,7 +25,7 @@ struct ParsedPattern {
 
 fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
     if pattern == "0" {
-        return Ok(None);
+        Ok(None)
     } else {
         let mut placeholder: Option<ParsedPlaceholder> = None;
         let mut literal_text = String::with_capacity(pattern.len());
@@ -90,7 +90,7 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
         }
         Ok(Some(ParsedPattern {
             literal_text: Cow::Owned(literal_text),
-            placeholder: placeholder,
+            placeholder,
         }))
     }
 }
@@ -136,8 +136,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                         Err(format!(
                             "Plural case {:?} is duplicated for type 10^{}",
                             count, log10_type
-                        )
-                        .to_string())
+                        ))
                     },
                 )?;
         }
@@ -226,7 +225,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                             index: 0,
                         },
                         Some(pattern) => Pattern {
-                            exponent: exponent,
+                            exponent,
                             literal_text: pattern.literal_text,
                             index: pattern
                                 .placeholder
@@ -261,8 +260,6 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                             .iter()
                             .all(|(k, v)| low_plural_map.get(k) == Some(v))
                     {
-                        Ok((log10_low_type, low_plural_map))
-                    } else if low_plural_map == high_plural_map {
                         Ok((log10_low_type, low_plural_map))
                     } else {
                         Err((

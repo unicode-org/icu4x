@@ -73,13 +73,10 @@ impl<'de> Visitor<'de> for DecimalFormatVisitor {
     {
         let mut result = DecimalFormat::default();
         while let Some(key) = access.next_key::<String>()? {
-            let (compact_decimal_type, compact_decimal_count) = key
-                .split("-count-")
-                .next_tuple()
-                .ok_or(M::Error::invalid_value(
-                Unexpected::Str(&key),
-                &"key to contain -count-",
-            ))?;
+            let (compact_decimal_type, compact_decimal_count) =
+                key.split("-count-").next_tuple().ok_or_else(|| {
+                    M::Error::invalid_value(Unexpected::Str(&key), &"key to contain -count-")
+                })?;
             result.patterns.push(CompactDecimalPattern {
                 compact_decimal_type: compact_decimal_type.to_string(),
                 compact_decimal_count: compact_decimal_count.to_string(),
