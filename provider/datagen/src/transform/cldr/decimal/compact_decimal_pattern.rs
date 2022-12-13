@@ -411,3 +411,78 @@ fn test_french_compressibility() {
         ]
     );
 }
+
+#[test]
+fn test_holes() {
+    // Spanish compact-short data as of CLDR 42, up to 10¹¹.
+    // Note that the abbreviation for 10⁹ is used only starting with 10¹⁰.
+    let spanish_data = CompactDecimalPatternDataV1::try_from(
+        &serde_json::from_str::<DecimalFormat>(
+            r#"
+                {
+                    "1000-count-one": "0 mil",
+                    "1000-count-other": "0 mil",
+                    "10000-count-one": "00 mil",
+                    "10000-count-other": "00 mil",
+                    "100000-count-one": "000 mil",
+                    "100000-count-other": "000 mil",
+                    "1000000-count-one": "0 M",
+                    "1000000-count-other": "0 M",
+                    "10000000-count-one": "00 M",
+                    "10000000-count-other": "00 M",
+                    "100000000-count-one": "000 M",
+                    "100000000-count-other": "000 M",
+                    "1000000000-count-one": "0000 M",
+                    "1000000000-count-other": "0000 M",
+                    "10000000000-count-one": "00 mil M",
+                    "10000000000-count-other": "00 mil M",
+                    "100000000000-count-one": "000 mil M",
+                    "100000000000-count-other": "000 mil M"
+                }
+            "#,
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let spanish: Box<[(i8, Count, Pattern)]> = spanish_data
+        .patterns
+        .iter0()
+        .flat_map(|kkv| {
+            let key0 = *kkv.key0();
+            kkv.into_iter1()
+                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+        })
+        .collect();
+    assert_eq!(
+        spanish.as_ref(),
+        [
+            (
+                3,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed(" mil")
+                }
+            ),
+            (
+                6,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 6,
+                    literal_text: Cow::Borrowed(" M")
+                }
+            ),
+            (
+                10,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 9,
+                    literal_text: Cow::Borrowed(" mil M")
+                }
+            ),
+        ]
+    );
+}
