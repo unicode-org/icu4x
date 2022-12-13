@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670954895368,
+  "lastUpdate": 1670972243087,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32273,6 +32273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8db7faadb24f7842f814fc0a8447f0a54a9772d3"
         },
         "date": 1670954808797,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da92c61b191261b26e40eda310662600f54fce9a",
+          "message": "Create DateParser and TimeParser in ixdtf (#2837)\n\n* Split into DateParser and TimeParser\r\n\r\n* cargo fmt\r\n\r\n* get rid of iterator\r\n\r\n* fix lint\r\n\r\n* address comments\r\n\r\n* add comments\r\n\r\n* fix errors\r\n\r\n* fix doc error",
+          "timestamp": "2022-12-13T14:53:40-08:00",
+          "tree_id": "f918e729d663f0128570c75618e4724ee9a3dc7a",
+          "url": "https://github.com/unicode-org/icu4x/commit/da92c61b191261b26e40eda310662600f54fce9a"
+        },
+        "date": 1670972172396,
         "tool": "ndjson",
         "benches": [
           {
