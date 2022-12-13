@@ -2,6 +2,7 @@ use crate::transform::cldr::decimal::DecimalFormat;
 use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu_compactdecimal::provider::*;
 use itertools::Itertools;
+use zerovec::ule::AsULE;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
