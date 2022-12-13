@@ -2,7 +2,7 @@
 
 🚧 \[Experimental\] Relative time formatting
 
-This module is published as its own crate ([`icu_compactdecimal`](https://docs.rs/icu_relativetime/latest/icu_compactdecimal/))
+This module is published as its own crate ([`icu_relativetime`](https://docs.rs/icu_relativetime/latest/icu_relativetime/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 <div class="stab unstable">
