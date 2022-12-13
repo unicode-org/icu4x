@@ -1,12 +1,14 @@
-use std::borrow::Cow;
 use crate::transform::cldr::decimal::DecimalFormat;
 use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
-use itertools::Itertools;
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 #[cfg(feature = "experimental")]
 use icu_compactdecimal::provider::*;
+use icu_provider::zerofrom::ZeroFrom;
+use itertools::Itertools;
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use zerovec::ule::encode_varule_to_box;
+use zerovec::ule::AsULE;
 
 #[derive(PartialEq, Clone)]
 struct ParsedPlaceholder {
@@ -98,10 +100,8 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
         // DO NOT SUBMIT this abomination should be split into multiple functions.
-        let mut parsed_patterns: BTreeMap<
-            i8,
-            BTreeMap<Count, Option<ParsedPattern>>,
-        > = BTreeMap::new();
+        let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
+            BTreeMap::new();
         for pattern in other.patterns.iter() {
             let mut type_bytes = pattern.compact_decimal_type.bytes();
 
@@ -146,7 +146,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             .copied()
             .filter(|count| count != &Count::Explicit1)
             .collect();
-        for log10_type in 0..=parsed_patterns.iter().last().map_or(14, |(key, _)| *key) {
+        for log10_type in 0..=parsed_patterns.iter().last().map_or(0, |(key, _)| *key) {
             for plural_case in &plural_cases {
                 parsed_patterns
                     .entry(log10_type)
@@ -245,20 +245,30 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 );
             }
         }
-        // Deduplicate sequences of types that have the same plural map, keeping the lowest type.
+        // Deduplicate sequences of types that have the same plural map (up to =1), keeping the lowest type.
         // The pattern 0 for type 1 is implicit.
         let deduplicated_patterns = patterns
             .iter()
             .coalesce(
                 |(log10_low_type, low_plural_map), (log10_high_type, high_plural_map)| {
-                    (low_plural_map == high_plural_map)
-                        .then(|| (log10_low_type, low_plural_map))
-                        .ok_or_else(|| {
-                            (
-                                (log10_low_type, low_plural_map),
-                                (log10_high_type, high_plural_map),
-                            )
-                        })
+                    if low_plural_map.contains_key(&Count::Explicit1)
+                        && low_plural_map
+                            .iter()
+                            .filter(|(count, _)| **count != Count::Explicit1)
+                            .all(|(k, v)| high_plural_map.get(k) == Some(v))
+                        && high_plural_map
+                            .iter()
+                            .all(|(k, v)| low_plural_map.get(k) == Some(v))
+                    {
+                        Ok((log10_low_type, low_plural_map))
+                    } else if low_plural_map == high_plural_map {
+                        Ok((log10_low_type, low_plural_map))
+                    } else {
+                        Err((
+                            (log10_low_type, low_plural_map),
+                            (log10_high_type, high_plural_map),
+                        ))
+                    }
                 },
             )
             .filter(|(log10_type, plural_map)| {
@@ -274,4 +284,130 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 .collect(),
         })
     }
+}
+
+#[test]
+fn test_french_compressibility() {
+    // French compact-long thousands as of CLDR 42.
+    // The type=1000, count=one case is incorrect (it is inconsistent with the
+    // plural rules), but it is interesting because it forces a distinction
+    // between 1000 and 10000 to be made in the ICU4X data.
+    let cldr_42_long_french_data = CompactDecimalPatternDataV1::try_from(
+        &serde_json::from_str::<DecimalFormat>(
+            r#"
+                {
+                    "1000-count-1": "mille",
+                    "1000-count-one": "0 millier",
+                    "1000-count-other": "0 mille",
+                    "10000-count-one": "00 mille",
+                    "10000-count-other": "00 mille",
+                    "100000-count-one": "000 mille",
+                    "100000-count-other": "000 mille"
+                }
+            "#,
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let cldr_42_long_french: Box<[(i8, Count, Pattern)]> = cldr_42_long_french_data
+        .patterns
+        .iter0()
+        .flat_map(|kkv| {
+            let key0 = *kkv.key0();
+            kkv.into_iter1()
+                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+        })
+        .collect();
+    assert_eq!(
+        cldr_42_long_french.as_ref(),
+        [
+            (
+                3,
+                Count::One,
+                Pattern {
+                    index: 0,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed(" millier")
+                }
+            ),
+            (
+                3,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed(" mille")
+                }
+            ),
+            (
+                3,
+                Count::Explicit1,
+                Pattern {
+                    index: 255,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed("mille")
+                }
+            ),
+            (
+                4,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed(" mille")
+                }
+            ),
+        ]
+    );
+    // French compact-long thousands, with the anomalous « millier » removed.
+    // This allows 10000 and 1000 to be collapsed.
+    let compressible_long_french_data = CompactDecimalPatternDataV1::try_from(
+        &serde_json::from_str::<DecimalFormat>(
+            r#"
+                {
+                    "1000-count-1": "mille",
+                    "1000-count-one": "0 mille",
+                    "1000-count-other": "0 mille",
+                    "10000-count-one": "00 mille",
+                    "10000-count-other": "00 mille",
+                    "100000-count-one": "000 mille",
+                    "100000-count-other": "000 mille"
+                }
+            "#,
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let compressible_long_french: Box<[(i8, Count, Pattern)]> = compressible_long_french_data
+        .patterns
+        .iter0()
+        .flat_map(|kkv| {
+            let key0 = *kkv.key0();
+            kkv.into_iter1()
+                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+        })
+        .collect();
+    assert_eq!(
+        compressible_long_french.as_ref(),
+        [
+            (
+                3,
+                Count::Other,
+                Pattern {
+                    index: 0,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed(" mille")
+                }
+            ),
+            (
+                3,
+                Count::Explicit1,
+                Pattern {
+                    index: 255,
+                    exponent: 3,
+                    literal_text: Cow::Borrowed("mille")
+                }
+            ),
+        ]
+    );
 }
