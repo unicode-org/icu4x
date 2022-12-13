@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670597516896,
+  "lastUpdate": 1670930926097,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60988,6 +60988,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 84,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jedel0124@gmail.com",
+            "name": "José Julián Espina",
+            "username": "jedel1043"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b67b11be05cfaebb8465b0467ada3acd165a6d41",
+          "message": "Derive `Clone` for `LocaleFallbackProvider` (#2881)",
+          "timestamp": "2022-12-13T11:12:39Z",
+          "tree_id": "c1326b7c55018a1b0e8f468facc57174c555d66e",
+          "url": "https://github.com/unicode-org/icu4x/commit/b67b11be05cfaebb8465b0467ada3acd165a6d41"
+        },
+        "date": 1670930847510,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101608,
+            "range": "± 484",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20399,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66880,
+            "range": "± 259",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 173,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
             "range": "± 0",
             "unit": "ns/iter"
           }
