@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // An enum for Parser errors.
+#[non_exhaustive]
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum ParseError {
     DateYear,
@@ -18,7 +19,6 @@ pub enum ParseError {
     DateSeparator,
     TimeSeparator,
     DecimalSeparator,
-    TimeUnexpectedEnd,
 }
 
 // An enum for date time separator.
@@ -60,6 +60,7 @@ impl DecimalSeparator {
 /// The structure contains all the information needed for IXDTF. Now it only supports date and time
 /// fields.
 /// ```
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ParsedDateTime {
     pub year: Option<i32>,
@@ -88,7 +89,7 @@ pub struct DateTimeParser<'a> {
 impl<'a> DateTimeParser<'a> {
     /// Create a new instance of [`DateTimeParser`].
     pub fn new(bytes: &'a [u8]) -> DateTimeParser {
-        return DateTimeParser { bytes }
+        return DateTimeParser { bytes };
     }
 
     fn parse_date_extended_year(&mut self) -> Result<Option<i32>, ParseError> {
