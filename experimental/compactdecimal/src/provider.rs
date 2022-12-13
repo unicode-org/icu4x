@@ -36,7 +36,7 @@ pub struct CompactDecimalPatternDataV1<'data> {
 }
 
 /// A CLDR plural keyword, or the explicit value 1.
-/// See https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules.
+/// See <https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>.
 #[zerovec::make_ule(CountULE)]
 #[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
@@ -60,7 +60,7 @@ pub enum Count {
     Many = 4,
     /// The CLDR keyword `other`.
     Other = 5,
-    /// The explicit 1 case, see https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules.
+    /// The explicit 1 case, see <https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules>.
     Explicit1 = 6,
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
