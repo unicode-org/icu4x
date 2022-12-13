@@ -24,6 +24,7 @@ members = [
     "experimental/displaynames",
     "experimental/ixdtf",
     "experimental/relativetime",
+    "experimental/single_number_formatter",
     "experimental/tutorials",
     "utils/databake",
     "utils/databake/derive",
