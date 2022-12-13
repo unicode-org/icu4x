@@ -9,6 +9,7 @@
 
 pub mod aliases;
 pub mod ca;
+pub mod currencies;
 pub mod date_fields;
 pub mod exemplar_chars;
 pub mod japanese;

@@ -113,3 +113,12 @@ pub struct LangData(pub HashMap<LanguageIdentifier, LangNumbers>);
 pub struct Resource {
     pub main: LangData,
 }
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct CurrencyRules {
+    // This list is not comprehensive; add more fields when needed
+    pub standard: String,
+
+    #[serde(rename = "standard-alphaNextToNumber")]
+    pub standard_next_to_number: String,
+}
