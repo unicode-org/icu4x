@@ -1,18 +1,6 @@
 ``provider::ffi``
 =================
 
-.. cpp:struct:: ICU4XCreateDataProviderResult
-
-    A result type for ``ICU4XDataProvider::create``.
-
-
-    .. cpp:member:: std::optional<ICU4XDataProvider> provider
-
-        Will be ``None`` if ``success`` is ``false``, do not use in that case.
-
-
-    .. cpp:member:: bool success
-
 .. cpp:class:: ICU4XDataProvider
 
     An ICU4X data provider, capable of loading ICU4X data keys from some source.

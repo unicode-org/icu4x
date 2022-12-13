@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper;
-use crate::provider::LstmDataV1Marker;
+use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -25,7 +25,7 @@ pub struct Lstm<'l> {
     mat7: Array1<f32>,
     mat8: Array2<f32>,
     mat9: Array1<f32>,
-    grapheme: Option<&'l GraphemeClusterSegmenter>,
+    grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
     backward_hunits: usize,
 }
@@ -34,7 +34,7 @@ impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(
         data: &'l DataPayload<LstmDataV1Marker>,
-        grapheme: Option<&'l GraphemeClusterSegmenter>,
+        grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
@@ -153,8 +153,7 @@ impl<'l> Lstm<'l> {
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
         let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
-            grapheme
-                .segment_str(input)
+            GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
@@ -237,6 +236,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::provider::GraphemeClusterBreakDataV1Marker;
     use icu_provider::prelude::*;
     use serde::{Deserialize, Serialize};
     use std::fs::File;
@@ -289,10 +289,13 @@ mod tests {
         let filename =
             "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
         let lstm_data = load_lstm_data(filename);
-        let grapheme =
-            GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
-        let lstm = Lstm::try_new(&lstm_data, Some(&grapheme)).expect("Test data is invalid");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let lstm = Lstm::try_new(&lstm_data, Some(grapheme.get())).expect("Test data is invalid");
         assert_eq!(
             lstm.get_model_name(),
             "Thai_graphclust_exclusive_model4_heavy"

@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom, DataError};
+use icu_provider::{yoke, zerofrom, DataError, DataMarker};
 use zerovec::ZeroMap;
 
 /// Relative time format V1 data struct.
@@ -88,9 +88,9 @@ pub struct PluralRulesCategoryMapping<'data> {
     /// Mapping for PluralCategory::Many or `None` if not present.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub many: Option<SingularSubPattern<'data>>,
-    /// Mapping for PluralCategory::Other or `None` if not present.
+    /// Mapping for PluralCategory::Other
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub other: Option<SingularSubPattern<'data>>,
+    pub other: SingularSubPattern<'data>,
 }
 
 /// Singular substitution for pattern that optionally uses "{0}" as a placeholder.
@@ -129,4 +129,10 @@ impl<'data> SingularSubPattern<'data> {
             index,
         })
     }
+}
+
+pub(crate) struct ErasedRelativeTimeFormatV1Marker;
+
+impl DataMarker for ErasedRelativeTimeFormatV1Marker {
+    type Yokeable = RelativeTimePatternDataV1<'static>;
 }

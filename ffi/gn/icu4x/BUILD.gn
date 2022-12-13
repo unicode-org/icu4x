@@ -35,25 +35,6 @@ rust_library("cfg-if-v1_0_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("cobs-v0_2_3") {
-  crate_name = "cobs"
-  crate_root = "//ffi/gn/vendor/cobs/src/lib.rs"
-  output_name = "cobs-cef948be0bacfc79"
-
-  deps = []
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=cef948be0bacfc79",
-    "-Cextra-filename=-cef948be0bacfc79",
-  ]
-
-  visibility = [ ":*" ]
-}
-
 rust_proc_macro("diplomat-v0_4_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -268,7 +249,6 @@ rust_library("icu_capi-v1_0_0") {
   deps += [ ":icu_properties-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":icu_provider_adapters-v1_0_0" ]
-  deps += [ ":icu_provider_blob-v1_0_0" ]
   deps += [ ":icu_segmenter-v0_7_0" ]
   deps += [ ":icu_timezone-v1_0_0" ]
   deps += [ ":tinystr-v0_7_0" ]
@@ -570,8 +550,6 @@ rust_library("icu_provider-v1_0_1") {
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider_macros-v1_0_0($host_toolchain)" ]
-  deps += [ ":postcard-v1_0_2" ]
-  deps += [ ":serde-v1_0_130" ]
   deps += [ ":stable_deref_trait-v1_2_0" ]
   deps += [ ":writeable-v0_5_0" ]
   deps += [ ":yoke-v0_6_2" ]
@@ -586,11 +564,8 @@ rust_library("icu_provider-v1_0_1") {
     "-Cmetadata=233818899f786646",
     "-Cextra-filename=-233818899f786646",
     "--cfg=feature=\"default\"",
-    "--cfg=feature=\"deserialize_postcard_1\"",
     "--cfg=feature=\"icu_provider_macros\"",
     "--cfg=feature=\"macros\"",
-    "--cfg=feature=\"postcard\"",
-    "--cfg=feature=\"serde\"",
   ]
 
   visibility = [ ":*" ]
@@ -615,32 +590,6 @@ rust_library("icu_provider_adapters-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=def3906e3e0d0887",
     "-Cextra-filename=-def3906e3e0d0887",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("icu_provider_blob-v1_0_0") {
-  crate_name = "icu_provider_blob"
-  crate_root = "//provider/blob/src/lib.rs"
-  output_name = "icu_provider_blob-95fed9f40a420c35"
-
-  deps = []
-  deps += [ ":icu_provider-v1_0_1" ]
-  deps += [ ":postcard-v1_0_2" ]
-  deps += [ ":serde-v1_0_130" ]
-  deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":yoke-v0_6_2" ]
-  deps += [ ":zerovec-v0_9_1" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=95fed9f40a420c35",
-    "-Cextra-filename=-95fed9f40a420c35",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -815,28 +764,6 @@ rust_library("memchr-v2_5_0") {
     "--edition=2018",
     "-Cmetadata=7487f9414aaf0c2b",
     "-Cextra-filename=-7487f9414aaf0c2b",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("postcard-v1_0_2") {
-  crate_name = "postcard"
-  crate_root = "//ffi/gn/vendor/postcard/src/lib.rs"
-  output_name = "postcard-6f05bc6c849a087e"
-
-  deps = []
-  deps += [ ":cobs-v0_2_3" ]
-  deps += [ ":serde-v1_0_130" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=6f05bc6c849a087e",
-    "-Cextra-filename=-6f05bc6c849a087e",
-    "--cfg=feature=\"alloc\"",
   ]
 
   visibility = [ ":*" ]
@@ -1346,7 +1273,6 @@ rust_library("yoke-v0_6_2") {
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
-    "--cfg=feature=\"serde\"",
     "--cfg=feature=\"yoke-derive\"",
     "--cfg=feature=\"zerofrom\"",
   ]
@@ -1430,7 +1356,6 @@ rust_library("zerovec-v0_9_1") {
   output_name = "zerovec-1834722305961906"
 
   deps = []
-  deps += [ ":serde-v1_0_130" ]
   deps += [ ":yoke-v0_6_2" ]
   deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-derive-v0_9_0($host_toolchain)" ]
@@ -1443,7 +1368,6 @@ rust_library("zerovec-v0_9_1") {
     "-Cmetadata=1834722305961906",
     "-Cextra-filename=-1834722305961906",
     "--cfg=feature=\"derive\"",
-    "--cfg=feature=\"serde\"",
     "--cfg=feature=\"yoke\"",
     "--cfg=feature=\"zerovec-derive\"",
   ]

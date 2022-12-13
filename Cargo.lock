@@ -1419,7 +1419,6 @@ dependencies = [
 name = "icu_capi_staticlib"
 version = "1.0.0"
 dependencies = [
- "dlmalloc",
  "icu_capi",
  "icu_provider",
 ]
@@ -1844,8 +1843,15 @@ name = "icu_relativetime"
 version = "0.1.0"
 dependencies = [
  "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_decimal",
+ "icu_locid",
+ "icu_plurals",
  "icu_provider",
+ "icu_testdata",
  "serde",
+ "writeable",
  "zerovec",
 ]
 
