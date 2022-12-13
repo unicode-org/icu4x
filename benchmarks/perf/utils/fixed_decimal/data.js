@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670930926097,
+  "lastUpdate": 1670955599477,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61048,6 +61048,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8db7faadb24f7842f814fc0a8447f0a54a9772d3",
+          "message": "Add remaining RelativeTimeFormatter constructors (#2862)\n\n* Add remaining relative time format constructors\n\n- Add constructors for other width, unit combinations\n- Add more examples\n\n* run cargo make diplomat-coverage\n\n* Add tests for remaining constructors.\n\n* Add tests for English locale\n\n* make macro better",
+          "timestamp": "2022-12-13T23:33:54+05:30",
+          "tree_id": "e371324e045a727454e493bd0b744e268ad9eb12",
+          "url": "https://github.com/unicode-org/icu4x/commit/8db7faadb24f7842f814fc0a8447f0a54a9772d3"
+        },
+        "date": 1670955514332,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 140181,
+            "range": "± 1660",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27272,
+            "range": "± 470",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 75158,
+            "range": "± 832",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 244,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
             "range": "± 0",
             "unit": "ns/iter"
           }
