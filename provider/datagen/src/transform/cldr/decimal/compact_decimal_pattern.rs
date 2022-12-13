@@ -486,3 +486,23 @@ fn test_holes() {
         ]
     );
 }
+
+#[test]
+fn test_errors() {
+    // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
+    let ambiguous_myriads = CompactDecimalPatternDataV1::try_from(
+        &serde_json::from_str::<DecimalFormat>(
+            r#"
+                {
+                    "10000-count-other": "00 thousand",
+                    "10000-count-one": "0 myriad"
+                }
+            "#,
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        ambiguous_myriads.err().unwrap(),
+        "Inconsistent placeholders within type 10^4: 2 0s for other, 1 0s for One"
+    );
+}
