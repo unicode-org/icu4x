@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670930921899,
+  "lastUpdate": 1670955647215,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -86033,6 +86033,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5277,
             "range": "± 41",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8db7faadb24f7842f814fc0a8447f0a54a9772d3",
+          "message": "Add remaining RelativeTimeFormatter constructors (#2862)\n\n* Add remaining relative time format constructors\n\n- Add constructors for other width, unit combinations\n- Add more examples\n\n* run cargo make diplomat-coverage\n\n* Add tests for remaining constructors.\n\n* Add tests for English locale\n\n* make macro better",
+          "timestamp": "2022-12-13T23:33:54+05:30",
+          "tree_id": "e371324e045a727454e493bd0b744e268ad9eb12",
+          "url": "https://github.com/unicode-org/icu4x/commit/8db7faadb24f7842f814fc0a8447f0a54a9772d3"
+        },
+        "date": 1670955560772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77494,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 128711,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 71062,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 81653,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77471,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 86017,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 81205,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 122915,
+            "range": "± 218",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 138966,
+            "range": "± 209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 129030,
+            "range": "± 152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 143386,
+            "range": "± 446",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 137786,
+            "range": "± 155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6326,
+            "range": "± 30",
             "unit": "ns/iter"
           }
         ]
