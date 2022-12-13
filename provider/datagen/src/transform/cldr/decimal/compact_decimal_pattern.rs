@@ -2,7 +2,6 @@ use crate::transform::cldr::decimal::DecimalFormat;
 use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu_compactdecimal::provider::*;
 use itertools::Itertools;
-use zerovec::ule::AsULE;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -284,15 +283,21 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     }
 }
 
-#[test]
-fn test_french_compressibility() {
-    // French compact-long thousands as of CLDR 42.
-    // The type=1000, count=one case is incorrect (it is inconsistent with the
-    // plural rules), but it is interesting because it forces a distinction
-    // between 1000 and 10000 to be made in the ICU4X data.
-    let cldr_42_long_french_data = CompactDecimalPatternDataV1::try_from(
-        &serde_json::from_str::<DecimalFormat>(
-            r#"
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_provider::zerofrom::ZeroFrom;
+    use zerovec::ule::AsULE;
+
+    #[test]
+    fn test_french_compressibility() {
+        // French compact-long thousands as of CLDR 42.
+        // The type=1000, count=one case is incorrect (it is inconsistent with the
+        // plural rules), but it is interesting because it forces a distinction
+        // between 1000 and 10000 to be made in the ICU4X data.
+        let cldr_42_long_french_data = CompactDecimalPatternDataV1::try_from(
+            &serde_json::from_str::<DecimalFormat>(
+                r#"
                 {
                     "1000-count-1": "mille",
                     "1000-count-one": "0 millier",
@@ -303,65 +308,65 @@ fn test_french_compressibility() {
                     "100000-count-other": "000 mille"
                 }
             "#,
+            )
+            .unwrap(),
         )
-        .unwrap(),
-    )
-    .unwrap();
-    let cldr_42_long_french: Box<[(i8, Count, Pattern)]> = cldr_42_long_french_data
-        .patterns
-        .iter0()
-        .flat_map(|kkv| {
-            let key0 = *kkv.key0();
-            kkv.into_iter1()
-                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-        })
-        .collect();
-    assert_eq!(
-        cldr_42_long_french.as_ref(),
-        [
-            (
-                3,
-                Count::One,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" millier")
-                }
-            ),
-            (
-                3,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" mille")
-                }
-            ),
-            (
-                3,
-                Count::Explicit1,
-                Pattern {
-                    index: 255,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed("mille")
-                }
-            ),
-            (
-                4,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" mille")
-                }
-            ),
-        ]
-    );
-    // French compact-long thousands, with the anomalous « millier » removed.
-    // This allows 10000 and 1000 to be collapsed.
-    let compressible_long_french_data = CompactDecimalPatternDataV1::try_from(
-        &serde_json::from_str::<DecimalFormat>(
-            r#"
+        .unwrap();
+        let cldr_42_long_french: Box<[(i8, Count, Pattern)]> = cldr_42_long_french_data
+            .patterns
+            .iter0()
+            .flat_map(|kkv| {
+                let key0 = *kkv.key0();
+                kkv.into_iter1()
+                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+            })
+            .collect();
+        assert_eq!(
+            cldr_42_long_french.as_ref(),
+            [
+                (
+                    3,
+                    Count::One,
+                    Pattern {
+                        index: 0,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed(" millier")
+                    }
+                ),
+                (
+                    3,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed(" mille")
+                    }
+                ),
+                (
+                    3,
+                    Count::Explicit1,
+                    Pattern {
+                        index: 255,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed("mille")
+                    }
+                ),
+                (
+                    4,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed(" mille")
+                    }
+                ),
+            ]
+        );
+        // French compact-long thousands, with the anomalous « millier » removed.
+        // This allows 10000 and 1000 to be collapsed.
+        let compressible_long_french_data = CompactDecimalPatternDataV1::try_from(
+            &serde_json::from_str::<DecimalFormat>(
+                r#"
                 {
                     "1000-count-1": "mille",
                     "1000-count-one": "0 mille",
@@ -372,51 +377,51 @@ fn test_french_compressibility() {
                     "100000-count-other": "000 mille"
                 }
             "#,
+            )
+            .unwrap(),
         )
-        .unwrap(),
-    )
-    .unwrap();
-    let compressible_long_french: Box<[(i8, Count, Pattern)]> = compressible_long_french_data
-        .patterns
-        .iter0()
-        .flat_map(|kkv| {
-            let key0 = *kkv.key0();
-            kkv.into_iter1()
-                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-        })
-        .collect();
-    assert_eq!(
-        compressible_long_french.as_ref(),
-        [
-            (
-                3,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" mille")
-                }
-            ),
-            (
-                3,
-                Count::Explicit1,
-                Pattern {
-                    index: 255,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed("mille")
-                }
-            ),
-        ]
-    );
-}
+        .unwrap();
+        let compressible_long_french: Box<[(i8, Count, Pattern)]> = compressible_long_french_data
+            .patterns
+            .iter0()
+            .flat_map(|kkv| {
+                let key0 = *kkv.key0();
+                kkv.into_iter1()
+                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+            })
+            .collect();
+        assert_eq!(
+            compressible_long_french.as_ref(),
+            [
+                (
+                    3,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed(" mille")
+                    }
+                ),
+                (
+                    3,
+                    Count::Explicit1,
+                    Pattern {
+                        index: 255,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed("mille")
+                    }
+                ),
+            ]
+        );
+    }
 
-#[test]
-fn test_holes() {
-    // Spanish compact-short data as of CLDR 42, up to 10¹¹.
-    // Note that the abbreviation for 10⁹ is used only starting with 10¹⁰.
-    let spanish_data = CompactDecimalPatternDataV1::try_from(
-        &serde_json::from_str::<DecimalFormat>(
-            r#"
+    #[test]
+    fn test_holes() {
+        // Spanish compact-short data as of CLDR 42, up to 10¹¹.
+        // Note that the abbreviation for 10⁹ is used only starting with 10¹⁰.
+        let spanish_data = CompactDecimalPatternDataV1::try_from(
+            &serde_json::from_str::<DecimalFormat>(
+                r#"
                 {
                     "1000-count-one": "0 mil",
                     "1000-count-other": "0 mil",
@@ -438,69 +443,70 @@ fn test_holes() {
                     "100000000000-count-other": "000 mil M"
                 }
             "#,
+            )
+            .unwrap(),
         )
-        .unwrap(),
-    )
-    .unwrap();
-    let spanish: Box<[(i8, Count, Pattern)]> = spanish_data
-        .patterns
-        .iter0()
-        .flat_map(|kkv| {
-            let key0 = *kkv.key0();
-            kkv.into_iter1()
-                .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
-        })
-        .collect();
-    assert_eq!(
-        spanish.as_ref(),
-        [
-            (
-                3,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" mil")
-                }
-            ),
-            (
-                6,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 6,
-                    literal_text: Cow::Borrowed(" M")
-                }
-            ),
-            (
-                10,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 9,
-                    literal_text: Cow::Borrowed(" mil M")
-                }
-            ),
-        ]
-    );
-}
+        .unwrap();
+        let spanish: Box<[(i8, Count, Pattern)]> = spanish_data
+            .patterns
+            .iter0()
+            .flat_map(|kkv| {
+                let key0 = *kkv.key0();
+                kkv.into_iter1()
+                    .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
+            })
+            .collect();
+        assert_eq!(
+            spanish.as_ref(),
+            [
+                (
+                    3,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 3,
+                        literal_text: Cow::Borrowed(" mil")
+                    }
+                ),
+                (
+                    6,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 6,
+                        literal_text: Cow::Borrowed(" M")
+                    }
+                ),
+                (
+                    10,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 9,
+                        literal_text: Cow::Borrowed(" mil M")
+                    }
+                ),
+            ]
+        );
+    }
 
-#[test]
-fn test_errors() {
-    // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
-    let ambiguous_myriads = CompactDecimalPatternDataV1::try_from(
-        &serde_json::from_str::<DecimalFormat>(
-            r#"
+    #[test]
+    fn test_errors() {
+        // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
+        let ambiguous_myriads = CompactDecimalPatternDataV1::try_from(
+            &serde_json::from_str::<DecimalFormat>(
+                r#"
                 {
                     "10000-count-other": "00 thousand",
                     "10000-count-one": "0 myriad"
                 }
             "#,
-        )
-        .unwrap(),
-    );
-    assert_eq!(
-        ambiguous_myriads.err().unwrap(),
-        "Inconsistent placeholders within type 10^4: 2 0s for other, 1 0s for One"
-    );
+            )
+            .unwrap(),
+        );
+        assert_eq!(
+            ambiguous_myriads.err().unwrap(),
+            "Inconsistent placeholders within type 10^4: 2 0s for other, 1 0s for One"
+        );
+    }
 }

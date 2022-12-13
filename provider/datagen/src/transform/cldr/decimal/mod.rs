@@ -378,6 +378,8 @@ fn test_basic() {
 
 fn test_compact_long() {
     use icu_locid::locale;
+    use icu_provider::zerofrom::ZeroFrom;
+    use zerovec::ule::AsULE;
 
     let provider = crate::DatagenProvider::for_test();
 
@@ -447,6 +449,8 @@ fn test_compact_long() {
 #[test]
 fn test_compact_short() {
     use icu_locid::locale;
+    use icu_provider::zerofrom::ZeroFrom;
+    use zerovec::ule::AsULE;
 
     let provider = crate::DatagenProvider::for_test();
 
