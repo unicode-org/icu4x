@@ -100,7 +100,6 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
-        // DO NOT SUBMIT this abomination should be split into multiple functions.
         let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
             BTreeMap::new();
         for pattern in other.patterns.iter() {
@@ -179,7 +178,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     let other_placeholder =
                         other_pattern.placeholder.as_ref().ok_or_else(|| {
                             format!(
-                                "Missing placeholder in other case of type within type 10^{}",
+                                "Missing placeholder in other case of type 10^{}",
                                 log10_type
                             )
                         })?;
@@ -495,22 +494,126 @@ mod tests {
     }
 
     #[test]
-    fn test_errors() {
-        // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
-        let ambiguous_myriads = CompactDecimalPatternDataV1::try_from(
-            &serde_json::from_str::<DecimalFormat>(
-                r#"
-                {
-                    "10000-count-other": "00 thousand",
-                    "10000-count-one": "0 myriad"
-                }
-            "#,
-            )
-            .unwrap(),
-        );
+    fn test_pattern_syntax_errors() {
         assert_eq!(
-            ambiguous_myriads.err().unwrap(),
+            parse("M.").err().unwrap(),
+            "Unsupported symbol in compact decimal pattern M."
+        );
+        assert_eq!(parse("M'.'").unwrap().unwrap().literal_text, "M.");
+        assert_eq!(
+            parse("0 0").err().unwrap(),
+            "Multiple placeholders in compact decimal pattern 0 0"
+        );
+        assert_eq!(parse("0 '0'").unwrap().unwrap().literal_text, " 0");
+        let zeros = str::repeat("0", 256);
+        assert_eq!(
+            parse(&zeros[..128]).err().unwrap(),
+            String::from("Too many 0s in pattern ") + &zeros[..128]
+        );
+        assert_eq!(parse(&zeros[..127]).unwrap().unwrap().literal_text, "");
+    }
+
+    #[test]
+    fn test_inter_pattern_errors() {
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(
+                    r#"{ "1000-count-other": "0k", "1000-count-other": "0K" }"#,
+                )
+                .unwrap(),
+            )
+            .err()
+            .unwrap(),
+            "Plural case Other is duplicated for type 10^3"
+        );
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(r#"{ "1-count-one": "0" }"#).unwrap()
+            )
+            .err()
+            .unwrap(),
+            "Missing other case for type 10^0"
+        );
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(
+                    r#"{ "1000-count-one": "0k", "1000-count-other": "0" }"#
+                )
+                .unwrap()
+            )
+            .err()
+            .unwrap(),
+            "Non-0 pattern for type 10^3 whose pattern for count=other is 0"
+        );
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "k" }"#).unwrap()
+            )
+            .err()
+            .unwrap(),
+            "Missing placeholder in other case of type 10^3"
+        );
+
+        // Given this data, it is ambiguous whether the 10 000 should be formatted as 10 thousand or 1 myriad.
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(
+                    r#"
+                        {
+                            "10000-count-other": "00 thousand",
+                            "10000-count-one": "0 myriad"
+                        }
+                    "#,
+                )
+                .unwrap(),
+            )
+            .err()
+            .unwrap(),
             "Inconsistent placeholders within type 10^4: 2 0s for other, 1 0s for One"
+        );
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(r#"{ "1000-count-other": "00000 tenths" }"#)
+                    .unwrap()
+            )
+            .err()
+            .unwrap(),
+            "Too many 0s in type 10^3, (5, implying nonpositive exponent c=-1)"
+        );
+
+        let long_pattern = format!("thous{}nds (0)", str::repeat("a", 244));
+        let overlong_pattern = format!("thous{}nds (0)", str::repeat("a", 245));
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(
+                    format!(r#"{{ "1000-count-other": "{}" }}"#, overlong_pattern).as_str()
+                )
+                .unwrap()
+            )
+            .err()
+            .unwrap(),
+            "Placeholder index is too large in type=10^3, count=Other"
+        );
+
+        assert_eq!(
+            CompactDecimalPatternDataV1::try_from(
+                &serde_json::from_str::<DecimalFormat>(
+                    format!(r#"{{ "1000-count-other": "{}" }}"#, long_pattern).as_str()
+                )
+                .unwrap()
+            )
+            .unwrap()
+            .patterns
+            .get0(&3)
+            .and_then(|plural_map| plural_map.get1(&Count::Other))
+            .unwrap()
+            .index,
+            254
         );
     }
 }
