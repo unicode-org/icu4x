@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670596792429,
+  "lastUpdate": 1670930180275,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32213,6 +32213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1fcba346999f226177dd1f14b8f792c5bc33bd6f"
         },
         "date": 1670596713103,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "jedel0124@gmail.com",
+            "name": "José Julián Espina",
+            "username": "jedel1043"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b67b11be05cfaebb8465b0467ada3acd165a6d41",
+          "message": "Derive `Clone` for `LocaleFallbackProvider` (#2881)",
+          "timestamp": "2022-12-13T11:12:39Z",
+          "tree_id": "c1326b7c55018a1b0e8f468facc57174c555d66e",
+          "url": "https://github.com/unicode-org/icu4x/commit/b67b11be05cfaebb8465b0467ada3acd165a6d41"
+        },
+        "date": 1670930108859,
         "tool": "ndjson",
         "benches": [
           {
