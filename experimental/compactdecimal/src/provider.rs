@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// Provider structs must be stable
+// Provider structs must be stable.
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+// Suppress a warning on zerovec::makevarule.
+#![allow(missing_docs)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom, DataError, DataMarker};
+use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.
@@ -33,6 +35,8 @@ pub struct CompactDecimalPatternDataV1<'data> {
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
 
+/// A CLDR plural keyword, or the explicit value 1.
+/// See https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules.
 #[zerovec::make_ule(CountULE)]
 #[zerovec::derive(Debug)]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
@@ -44,18 +48,26 @@ pub struct CompactDecimalPatternDataV1<'data> {
 )]
 #[repr(u8)]
 pub enum Count {
+    /// The CLDR keyword `other`.
     Zero = 0,
+    /// The CLDR keyword `one`.
     One = 1,
+    /// The CLDR keyword `two`.
     Two = 2,
+    /// The CLDR keyword `few`.
     Few = 3,
+    /// The CLDR keyword `many`.
     Many = 4,
+    /// The CLDR keyword `other`.
     Other = 5,
+    /// The explicit 1 case, see https://www.unicode.org/reports/tr35/tr35-numbers.html#Explicit_0_1_rules.
     Explicit1 = 6,
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
 }
 
-/// TODO(egg): words
+/// A compact decimal pattern, representing some literal text with an optional
+/// placeholder, and the power of 10 expressed by the text.
 #[derive(
     Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
 )]
@@ -88,16 +100,4 @@ pub struct Pattern<'data> {
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
-}
-
-impl<'data> Pattern<'data> {
-    pub fn try_from_str(value: &str) -> Result<Self, DataError> {
-        Err(DataError::custom("NYI"))
-    }
-}
-
-pub(crate) struct ErasedCompactDecimalFormatV1Marker;
-
-impl DataMarker for ErasedCompactDecimalFormatV1Marker {
-    type Yokeable = CompactDecimalPatternDataV1<'static>;
 }

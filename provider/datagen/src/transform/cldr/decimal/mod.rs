@@ -11,20 +11,10 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider::zerofrom::ZeroFrom;
-use itertools::Itertools;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
 use std::convert::TryFrom;
-use std::iter::once;
-use std::iter::Once;
 use tinystr::TinyAsciiStr;
-use zerovec::ule::encode_varule_to_box;
-use zerovec::ule::AsULE;
-use zerovec::ule::EncodeAsVarULE;
 
-use super::cldr_serde::numbers::CompactDecimalPattern;
 use super::cldr_serde::numbers::DecimalFormat;
 
 #[cfg(feature = "experimental")]
