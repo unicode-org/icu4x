@@ -1,0 +1,157 @@
+{
+  "patterns": {
+    "1": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "2": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "3": {
+      "One": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " millier"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " mille"
+      },
+      "Explicit1": {
+        "index": 255,
+        "exponent": 3,
+        "literal_text": "mille"
+      }
+    },
+    "4": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " mille"
+      }
+    },
+    "5": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " mille"
+      }
+    },
+    "6": {
+      "One": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " million"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " millions"
+      }
+    },
+    "7": {
+      "One": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " million"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " millions"
+      }
+    },
+    "8": {
+      "One": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " million"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " millions"
+      }
+    },
+    "9": {
+      "One": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliard"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliards"
+      }
+    },
+    "10": {
+      "One": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliard"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliards"
+      }
+    },
+    "11": {
+      "One": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliard"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " milliards"
+      }
+    },
+    "12": {
+      "One": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billion"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billions"
+      }
+    },
+    "13": {
+      "One": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billion"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billions"
+      }
+    },
+    "14": {
+      "One": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billion"
+      },
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " billions"
+      }
+    }
+  }
+}

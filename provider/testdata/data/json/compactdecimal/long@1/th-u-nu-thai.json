@@ -1,0 +1,102 @@
+{
+  "patterns": {
+    "1": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "2": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "3": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " พัน"
+      }
+    },
+    "4": {
+      "Other": {
+        "index": 0,
+        "exponent": 4,
+        "literal_text": " หมื่น"
+      }
+    },
+    "5": {
+      "Other": {
+        "index": 0,
+        "exponent": 5,
+        "literal_text": " แสน"
+      }
+    },
+    "6": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " ล้าน"
+      }
+    },
+    "7": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " ล้าน"
+      }
+    },
+    "8": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " ล้าน"
+      }
+    },
+    "9": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " พันล้าน"
+      }
+    },
+    "10": {
+      "Other": {
+        "index": 0,
+        "exponent": 10,
+        "literal_text": " หมื่นล้าน"
+      }
+    },
+    "11": {
+      "Other": {
+        "index": 0,
+        "exponent": 11,
+        "literal_text": " แสนล้าน"
+      }
+    },
+    "12": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " ล้านล้าน"
+      }
+    },
+    "13": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " ล้านล้าน"
+      }
+    },
+    "14": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " ล้านล้าน"
+      }
+    }
+  }
+}

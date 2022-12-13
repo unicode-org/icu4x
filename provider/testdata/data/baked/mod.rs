@@ -1,6 +1,7 @@
 // @generated
 mod calendar;
 mod collator;
+mod compactdecimal;
 mod core;
 mod datetime;
 mod decimal;
@@ -145,6 +146,36 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> f
                 *collator::prim_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_compactdecimal")]
+impl DataProvider<::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *compactdecimal::long_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_compactdecimal")]
+impl DataProvider<::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *compactdecimal::short_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY, req)
+                    })?,
             ))),
         })
     }

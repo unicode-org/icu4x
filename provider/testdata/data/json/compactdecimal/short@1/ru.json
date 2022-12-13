@@ -1,0 +1,102 @@
+{
+  "patterns": {
+    "1": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "2": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "3": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " тыс."
+      }
+    },
+    "4": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " тыс."
+      }
+    },
+    "5": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": " тыс."
+      }
+    },
+    "6": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " млн"
+      }
+    },
+    "7": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " млн"
+      }
+    },
+    "8": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": " млн"
+      }
+    },
+    "9": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " млрд"
+      }
+    },
+    "10": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " млрд"
+      }
+    },
+    "11": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": " млрд"
+      }
+    },
+    "12": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " трлн"
+      }
+    },
+    "13": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " трлн"
+      }
+    },
+    "14": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": " трлн"
+      }
+    }
+  }
+}

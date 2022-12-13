@@ -31,6 +31,12 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_collator")]
         const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_compactdecimal")]
+        const LONGCOMPACTDECIMALFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_compactdecimal")]
+        const SHORTCOMPACTDECIMALFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const BUDDHISTDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.hashed();
@@ -505,6 +511,18 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_collator")]
             COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_compactdecimal")]
+            LONGCOMPACTDECIMALFORMATDATAV1MARKER => compactdecimal::long_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_compactdecimal")]
+            SHORTCOMPACTDECIMALFORMATDATAV1MARKER => compactdecimal::short_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

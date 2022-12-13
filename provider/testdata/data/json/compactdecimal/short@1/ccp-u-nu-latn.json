@@ -1,0 +1,102 @@
+{
+  "patterns": {
+    "1": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "2": {
+      "Other": {
+        "index": 0,
+        "exponent": 0,
+        "literal_text": ""
+      }
+    },
+    "3": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": "K"
+      }
+    },
+    "4": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": "K"
+      }
+    },
+    "5": {
+      "Other": {
+        "index": 0,
+        "exponent": 3,
+        "literal_text": "K"
+      }
+    },
+    "6": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": "M"
+      }
+    },
+    "7": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": "M"
+      }
+    },
+    "8": {
+      "Other": {
+        "index": 0,
+        "exponent": 6,
+        "literal_text": "M"
+      }
+    },
+    "9": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": "G"
+      }
+    },
+    "10": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": "G"
+      }
+    },
+    "11": {
+      "Other": {
+        "index": 0,
+        "exponent": 9,
+        "literal_text": "G"
+      }
+    },
+    "12": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": "T"
+      }
+    },
+    "13": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": "T"
+      }
+    },
+    "14": {
+      "Other": {
+        "index": 0,
+        "exponent": 12,
+        "literal_text": "T"
+      }
+    }
+  }
+}
