@@ -42,3 +42,8 @@ default = []
 std = ["icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
+
+
+[[test]]
+name = "tests"
+path = "tests/tests.rs"
