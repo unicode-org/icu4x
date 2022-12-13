@@ -113,6 +113,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             let count = match &*pattern.compact_decimal_count {
                 "zero" => Count::Zero,
                 "one" => Count::One,
+                "two" => Count::Two,
                 "few" => Count::Few,
                 "many" => Count::Many,
                 "other" => Count::Other,
