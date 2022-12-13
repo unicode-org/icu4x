@@ -59,7 +59,6 @@ impl DecimalSeparator {
 ///
 /// The structure contains all the information needed for IXDTF. Now it only supports date and time
 /// fields.
-/// ```
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ParsedDateTime {
