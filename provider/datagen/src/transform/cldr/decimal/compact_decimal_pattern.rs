@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::transform::cldr::decimal::DecimalFormat;
 use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu_compactdecimal::provider::*;
