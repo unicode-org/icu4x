@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670930180275,
+  "lastUpdate": 1670954895368,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32243,6 +32243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b67b11be05cfaebb8465b0467ada3acd165a6d41"
         },
         "date": 1670930108859,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8db7faadb24f7842f814fc0a8447f0a54a9772d3",
+          "message": "Add remaining RelativeTimeFormatter constructors (#2862)\n\n* Add remaining relative time format constructors\n\n- Add constructors for other width, unit combinations\n- Add more examples\n\n* run cargo make diplomat-coverage\n\n* Add tests for remaining constructors.\n\n* Add tests for English locale\n\n* make macro better",
+          "timestamp": "2022-12-13T23:33:54+05:30",
+          "tree_id": "e371324e045a727454e493bd0b744e268ad9eb12",
+          "url": "https://github.com/unicode-org/icu4x/commit/8db7faadb24f7842f814fc0a8447f0a54a9772d3"
+        },
+        "date": 1670954808797,
         "tool": "ndjson",
         "benches": [
           {
