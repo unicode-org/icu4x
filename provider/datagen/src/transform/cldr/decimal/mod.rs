@@ -393,7 +393,7 @@ fn test_compact_long() {
 
     let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("fr").into(),
+            locale: &locale!("en").into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -413,45 +413,18 @@ fn test_compact_long() {
     assert_eq!(
         nonzero_copy.as_ref(),
         [
-            (  // TODO(egg): This one is dubious and breaks the plural rules.  It should just go away.
-                3,
-                Count::One,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" millier")
-                }
-            ),
             (
                 3,
                 Count::Other,
                 Pattern {
                     index: 0,
                     exponent: 3,
-                    literal_text: Cow::Borrowed(" mille")
-                }
-            ),
-            (
-                3,
-                Count::Explicit1,
-                Pattern {
-                    index: 255,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed("mille")
-                }
-            ),
-            (
-                4,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 3,
-                    literal_text: Cow::Borrowed(" mille")
+                    literal_text: Cow::Borrowed(" thousand")
                 }
             ),
             (
                 6,
-                Count::One,
+                Count::Other,
                 Pattern {
                     index: 0,
                     exponent: 6,
@@ -459,38 +432,11 @@ fn test_compact_long() {
                 }
             ),
             (
-                6,
-                Count::Other,
-                Pattern {
-                    index: 0,
-                    exponent: 6,
-                    literal_text: Cow::Borrowed(" millions")
-                }
-            ),
-            (
-                9,
-                Count::One,
-                Pattern {
-                    index: 0,
-                    exponent: 9,
-                    literal_text: Cow::Borrowed(" milliard")
-                }
-            ),
-            (
                 9,
                 Count::Other,
                 Pattern {
                     index: 0,
                     exponent: 9,
-                    literal_text: Cow::Borrowed(" milliards")
-                }
-            ),
-            (
-                12,
-                Count::One,
-                Pattern {
-                    index: 0,
-                    exponent: 12,
                     literal_text: Cow::Borrowed(" billion")
                 }
             ),
@@ -500,7 +446,7 @@ fn test_compact_long() {
                 Pattern {
                     index: 0,
                     exponent: 12,
-                    literal_text: Cow::Borrowed(" billions")
+                    literal_text: Cow::Borrowed(" trillion")
                 }
             ),
         ]
