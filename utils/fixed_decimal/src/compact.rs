@@ -12,8 +12,10 @@ use crate::FixedDecimal;
 
 /// A struct containing a [`FixedDecimal`] significand together with an exponent, representing a
 /// number written in compact notation (such as 1.2M).
-/// This represents a _source number_ that uses compact decimal notation, as defined
+/// This represents a _source number_, as defined
 /// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
+/// The value exponent=0 is used internally to represent a non-compact notation
+/// (such as 1 200 000).
 ///
 /// This is distinct from [`crate::ScientificDecimal`] because it does not represent leading 0s
 /// nor a sign in the exponent, and behaves differently in pluralization.
@@ -21,6 +23,16 @@ use crate::FixedDecimal;
 pub struct CompactDecimal {
     significand: FixedDecimal,
     exponent: i16,
+}
+
+impl CompactDecimal {
+    pub fn significand(self) -> FixedDecimal {
+        self.significand
+    }
+
+    pub fn exponent(self) -> i16 {
+        self.exponent
+    }
 }
 
 /// Render the [`CompactDecimal`] in sampleValue syntax.
@@ -34,12 +46,16 @@ pub struct CompactDecimal {
 /// # use writeable::assert_writeable_eq;
 /// #
 /// assert_writeable_eq!(CompactDecimal::from_str("+1.20c6").unwrap(), "+1.20c6");
+/// assert_writeable_eq!(CompactDecimal::from_str("+1729").unwrap(), "+1729");
 /// ```
 impl writeable::Writeable for CompactDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         self.significand.write_to(sink)?;
-        sink.write_char('c')?;
-        self.exponent.write_to(sink)
+        if self.exponent != 0 {
+            sink.write_char('c')?;
+            self.exponent.write_to(sink)?;
+        }
+        Ok(())
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
@@ -65,37 +81,42 @@ impl TryFrom<&[u8]> for CompactDecimal {
         }
         let mut parts = input_str.split(|&c| c == b'c');
         let significand = FixedDecimal::try_from(parts.next().ok_or(Error::Syntax)?)?;
-        let exponent_str =
-            core::str::from_utf8(parts.next().ok_or(Error::Syntax)?).map_err(|_| Error::Syntax)?;
-        if parts.next().is_some() {
-            return Err(Error::Syntax);
+        match parts.next() {
+            None => Ok(CompactDecimal {
+                significand,
+                exponent: 0,
+            }),
+            Some(exponent_str) => {
+                let exponent_str = core::str::from_utf8(exponent_str).map_err(|_| Error::Syntax)?;
+                if parts.next().is_some() {
+                    return Err(Error::Syntax);
+                }
+                if exponent_str.is_empty()
+                    || exponent_str.bytes().next() == Some(b'0')
+                    || !exponent_str.bytes().all(|c| (b'0'..=b'9').contains(&c))
+                {
+                    return Err(Error::Syntax);
+                }
+                let exponent = exponent_str.parse().map_err(|_| Error::Limit)?;
+                Ok(CompactDecimal {
+                    significand,
+                    exponent,
+                })
+            }
         }
-        if exponent_str.is_empty()
-            || exponent_str.bytes().next() == Some(b'0')
-            || !exponent_str.bytes().all(|c| (b'0'..=b'9').contains(&c))
-        {
-            return Err(Error::Syntax);
-        }
-        let exponent = exponent_str.parse().map_err(|_| Error::Limit)?;
-        Ok(CompactDecimal {
-            significand,
-            exponent,
-        })
     }
 }
 
 #[test]
 fn test_compact_syntax_error() {
+    assert_eq!(CompactDecimal::from_str("+1729").unwrap().significand(), FixedDecimal::from_str("+1729").unwrap());
+    assert_eq!(format!("{}", CompactDecimal::from_str("+1729").unwrap()), "+1729");
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
         pub expected_err: Option<Error>,
     }
     let cases = [
-        TestCase {
-            input_str: "5",
-            expected_err: Some(Error::Syntax),
-        },
         TestCase {
             input_str: "-123e4",
             expected_err: Some(Error::Syntax),
