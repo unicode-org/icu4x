@@ -30,7 +30,7 @@ impl CompactDecimal {
         self.significand
     }
 
-    pub fn exponent(self) -> i16 {
+    pub fn exponent(&self) -> i16 {
         self.exponent
     }
 }
