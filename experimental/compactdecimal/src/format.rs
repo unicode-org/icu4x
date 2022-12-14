@@ -6,10 +6,6 @@ use writeable::Writeable;
 use crate::provider::{CompactDecimalPatternDataV1, Count};
 use crate::CompactDecimalError;
 
-pub enum PossiblyCompactDecimal {
-    Noncompact(FixedDecimal),
-    Compact(CompactDecimal),
-}
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](crate::CompactDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
