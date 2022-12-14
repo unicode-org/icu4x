@@ -43,6 +43,7 @@ use crate::helpers::result_is_err_missing_data_options;
 ///     "こんにちは世界",
 /// );
 /// ```
+#[derive(Clone)]
 pub struct LocaleFallbackProvider<P> {
     inner: P,
     fallbacker: LocaleFallbacker,

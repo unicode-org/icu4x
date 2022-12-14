@@ -14,8 +14,8 @@ use crate::FixedDecimal;
 /// number written in compact notation (such as 1.2M).
 /// This represents a _source number_, as defined
 /// [in UTS #35](https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax).
-/// The value exponent=0 is used internally to represent a non-compact notation
-/// (such as 1 200 000).
+/// The value exponent=0 is used internally to represent a number in non-compact
+/// notation (such as 1 200 000).
 ///
 /// This is distinct from [`crate::ScientificDecimal`] because it does not represent leading 0s
 /// nor a sign in the exponent, and behaves differently in pluralization.

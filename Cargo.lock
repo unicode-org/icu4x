@@ -1419,7 +1419,6 @@ dependencies = [
 name = "icu_capi_staticlib"
 version = "1.0.0"
 dependencies = [
- "dlmalloc",
  "icu_capi",
  "icu_provider",
 ]
