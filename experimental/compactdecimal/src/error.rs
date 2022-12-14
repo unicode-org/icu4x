@@ -20,6 +20,15 @@ pub enum CompactDecimalError {
     /// An error originating from [`FixedDecimalFormatter`](icu_decimal::FixedDecimalFormatter).
     #[displaydoc("Error loading FixedDecimalFormatter: {0}")]
     Decimal(DecimalError),
+    /// An error due to a [`CompactDecimal`](fixed_decimal::CompactDecimal) with an
+    /// exponent inconsistent with the compact decimal data for the locale, e.g.,
+    /// when formatting 1c5 in English (US).
+    #[displaydoc("Expected compact exponent {1} for 10^{2}, got {0}")]
+    Exponent {
+        actual: i16,
+        expected: i16,
+        log10_type: i16,
+    },
 }
 
 impl From<PluralsError> for CompactDecimalError {

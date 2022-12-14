@@ -33,6 +33,7 @@
 extern crate alloc;
 
 mod error;
+mod format;
 pub mod provider;
 
 pub use error::CompactDecimalError;
