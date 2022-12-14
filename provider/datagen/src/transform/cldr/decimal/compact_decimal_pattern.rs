@@ -251,14 +251,15 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             .iter()
             .coalesce(
                 |(log10_low_type, low_plural_map), (log10_high_type, high_plural_map)| {
-                    if low_plural_map.contains_key(&Count::Explicit1)
-                        && low_plural_map
-                            .iter()
-                            .filter(|(count, _)| **count != Count::Explicit1)
-                            .all(|(k, v)| high_plural_map.get(k) == Some(v))
-                        && high_plural_map
-                            .iter()
-                            .all(|(k, v)| low_plural_map.get(k) == Some(v))
+                    if low_plural_map == high_plural_map
+                        || (low_plural_map.contains_key(&Count::Explicit1)
+                            && low_plural_map
+                                .iter()
+                                .filter(|(count, _)| **count != Count::Explicit1)
+                                .all(|(k, v)| high_plural_map.get(k) == Some(v))
+                            && high_plural_map
+                                .iter()
+                                .all(|(k, v)| low_plural_map.get(k) == Some(v)))
                     {
                         Ok((log10_low_type, low_plural_map))
                     } else {
