@@ -1,48 +1,6 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "3": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "4": {
-      "Other": {
-        "index": 0,
-        "exponent": 4,
-        "literal_text": "万"
-      }
-    },
-    "5": {
-      "Other": {
-        "index": 0,
-        "exponent": 4,
-        "literal_text": "万"
-      }
-    },
-    "6": {
-      "Other": {
-        "index": 0,
-        "exponent": 4,
-        "literal_text": "万"
-      }
-    },
-    "7": {
       "Other": {
         "index": 0,
         "exponent": 4,
@@ -56,42 +14,7 @@
         "literal_text": "億"
       }
     },
-    "9": {
-      "Other": {
-        "index": 0,
-        "exponent": 8,
-        "literal_text": "億"
-      }
-    },
-    "10": {
-      "Other": {
-        "index": 0,
-        "exponent": 8,
-        "literal_text": "億"
-      }
-    },
-    "11": {
-      "Other": {
-        "index": 0,
-        "exponent": 8,
-        "literal_text": "億"
-      }
-    },
     "12": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": "兆"
-      }
-    },
-    "13": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": "兆"
-      }
-    },
-    "14": {
       "Other": {
         "index": 0,
         "exponent": 12,

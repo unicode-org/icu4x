@@ -1,19 +1,5 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "3": {
       "Few": {
         "index": 0,
@@ -26,55 +12,7 @@
         "literal_text": " хиљада"
       }
     },
-    "4": {
-      "Few": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " хиљаде"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " хиљада"
-      }
-    },
-    "5": {
-      "Few": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " хиљаде"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " хиљада"
-      }
-    },
     "6": {
-      "One": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " милион"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " милиона"
-      }
-    },
-    "7": {
-      "One": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " милион"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " милиона"
-      }
-    },
-    "8": {
       "One": {
         "index": 0,
         "exponent": 6,
@@ -103,65 +41,7 @@
         "literal_text": " милијарди"
       }
     },
-    "10": {
-      "One": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарда"
-      },
-      "Few": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарде"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарди"
-      }
-    },
-    "11": {
-      "One": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарда"
-      },
-      "Few": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарде"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " милијарди"
-      }
-    },
     "12": {
-      "One": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " билион"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " билиона"
-      }
-    },
-    "13": {
-      "One": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " билион"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " билиона"
-      }
-    },
-    "14": {
       "One": {
         "index": 0,
         "exponent": 12,

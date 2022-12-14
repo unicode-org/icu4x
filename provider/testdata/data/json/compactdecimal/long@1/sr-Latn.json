@@ -1,19 +1,5 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "3": {
       "Few": {
         "index": 0,
@@ -26,55 +12,7 @@
         "literal_text": " hiljada"
       }
     },
-    "4": {
-      "Few": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " hiljade"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " hiljada"
-      }
-    },
-    "5": {
-      "Few": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " hiljade"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " hiljada"
-      }
-    },
     "6": {
-      "One": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " milion"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " miliona"
-      }
-    },
-    "7": {
-      "One": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " milion"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " miliona"
-      }
-    },
-    "8": {
       "One": {
         "index": 0,
         "exponent": 6,
@@ -103,65 +41,7 @@
         "literal_text": " milijardi"
       }
     },
-    "10": {
-      "One": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijarda"
-      },
-      "Few": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijarde"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijardi"
-      }
-    },
-    "11": {
-      "One": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijarda"
-      },
-      "Few": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijarde"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 9,
-        "literal_text": " milijardi"
-      }
-    },
     "12": {
-      "One": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " bilion"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " biliona"
-      }
-    },
-    "13": {
-      "One": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " bilion"
-      },
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " biliona"
-      }
-    },
-    "14": {
       "One": {
         "index": 0,
         "exponent": 12,

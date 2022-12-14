@@ -1,27 +1,6 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "3": {
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " হা"
-      }
-    },
-    "4": {
       "Other": {
         "index": 0,
         "exponent": 3,
@@ -35,28 +14,7 @@
         "literal_text": " লা"
       }
     },
-    "6": {
-      "Other": {
-        "index": 0,
-        "exponent": 5,
-        "literal_text": " লা"
-      }
-    },
     "7": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কো"
-      }
-    },
-    "8": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কো"
-      }
-    },
-    "9": {
       "Other": {
         "index": 0,
         "exponent": 7,
@@ -83,20 +41,6 @@
       }
     },
     "12": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " লা.কো."
-      }
-    },
-    "13": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " লা.কো."
-      }
-    },
-    "14": {
       "Other": {
         "index": 0,
         "exponent": 12,

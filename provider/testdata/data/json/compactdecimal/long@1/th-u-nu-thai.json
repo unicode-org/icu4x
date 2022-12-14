@@ -1,19 +1,5 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "3": {
       "Other": {
         "index": 0,
@@ -42,20 +28,6 @@
         "literal_text": " ล้าน"
       }
     },
-    "7": {
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " ล้าน"
-      }
-    },
-    "8": {
-      "Other": {
-        "index": 0,
-        "exponent": 6,
-        "literal_text": " ล้าน"
-      }
-    },
     "9": {
       "Other": {
         "index": 0,
@@ -78,20 +50,6 @@
       }
     },
     "12": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " ล้านล้าน"
-      }
-    },
-    "13": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " ล้านล้าน"
-      }
-    },
-    "14": {
       "Other": {
         "index": 0,
         "exponent": 12,

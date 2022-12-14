@@ -1,27 +1,6 @@
 {
   "patterns": {
-    "1": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
-    "2": {
-      "Other": {
-        "index": 0,
-        "exponent": 0,
-        "literal_text": ""
-      }
-    },
     "3": {
-      "Other": {
-        "index": 0,
-        "exponent": 3,
-        "literal_text": " হাজার"
-      }
-    },
-    "4": {
       "Other": {
         "index": 0,
         "exponent": 3,
@@ -35,13 +14,6 @@
         "literal_text": " লাখ"
       }
     },
-    "6": {
-      "Other": {
-        "index": 0,
-        "exponent": 5,
-        "literal_text": " লাখ"
-      }
-    },
     "7": {
       "Other": {
         "index": 0,
@@ -49,49 +21,7 @@
         "literal_text": " কোটি"
       }
     },
-    "8": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কোটি"
-      }
-    },
-    "9": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কোটি"
-      }
-    },
-    "10": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কোটি"
-      }
-    },
-    "11": {
-      "Other": {
-        "index": 0,
-        "exponent": 7,
-        "literal_text": " কোটি"
-      }
-    },
     "12": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " লাখ কোটি"
-      }
-    },
-    "13": {
-      "Other": {
-        "index": 0,
-        "exponent": 12,
-        "literal_text": " লাখ কোটি"
-      }
-    },
-    "14": {
       "Other": {
         "index": 0,
         "exponent": 12,
