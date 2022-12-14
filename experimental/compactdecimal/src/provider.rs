@@ -71,15 +71,16 @@ pub enum Count {
 #[derive(
     Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom, Ord, PartialOrd, Eq,
 )]
+#[zerovec::make_varule(PatternULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_compactdecimal::provider)
+    databake(path = icu_compactdecimal::provider),
+    zerovec::derive(Serialize),
 )]
-#[zerovec::make_varule(PatternULE)]
 #[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", zerovec::derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct Pattern<'data> {
     /// The index in literal_text before which the placeholder is inserted;
     /// this is 0 for insertion at the beginning, which is most common.
