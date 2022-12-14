@@ -12,6 +12,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
+use icu_locid::extensions::other::Other;
+use icu_plurals::PluralCategory;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap2d;
 
@@ -64,6 +66,19 @@ pub enum Count {
     Explicit1 = 6,
     // NOTE(egg): No explicit 0, because the compact decimal pattern selection
     // algorithm does not allow such a thing to arise.
+}
+
+impl From<PluralCategory> for Count {
+    fn from(other: PluralCategory) -> Self {
+        return match other {
+            Zero => Count::Zero,
+            One => Count::One,
+            Two => Count::Two,
+            Few => Count::Few,
+            Many => Count::Many,
+            Other => Count::Other,
+        };
+    }
 }
 
 /// A compact decimal pattern, representing some literal text with an optional
