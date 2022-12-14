@@ -32,6 +32,8 @@ icu::displaynames::options::DisplayNamesOptions#Struct
 icu::displaynames::options::Fallback#Enum
 icu::displaynames::options::LanguageDisplay#Enum
 icu::displaynames::options::Style#Enum
+icu::displaynames::provider::LanguageDisplayNamesV1#Struct
+icu::displaynames::provider::LanguageDisplayNamesV1Marker#Struct
 icu::displaynames::provider::TerritoryDisplayNamesV1#Struct
 icu::displaynames::provider::TerritoryDisplayNamesV1Marker#Struct
 icu::properties::exemplar_chars::load_exemplars_auxiliary#Fn

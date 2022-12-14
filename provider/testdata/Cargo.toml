@@ -129,6 +129,7 @@ cldr_json_glob = [
     "cldr-cal-ethiopic-full/main/$LOCALES/ca-ethiopic-amete-alem.json",
     "cldr-bcp47/bcp47/timezone.json",
     "cldr-localenames-full/main/$LOCALES/territories.json",
+    "cldr-localenames-full/main/$LOCALES/languages.json",
     # Extra data for feature coverage in provider_cldr tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/cs/timeZoneNames.json",
