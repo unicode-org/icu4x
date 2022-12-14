@@ -26,7 +26,7 @@ pub struct CompactDecimal {
 }
 
 impl CompactDecimal {
-    pub fn significand(self) -> FixedDecimal {
+    pub fn into_significand(self) -> FixedDecimal {
         self.significand
     }
 
