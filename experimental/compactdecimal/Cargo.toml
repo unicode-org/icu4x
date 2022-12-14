@@ -40,5 +40,5 @@ icu_locid = { version = "1.0.0", path = "../../components/locid" }
 [features]
 default = []
 std = ["icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_decimal/serde", "icu_plurals/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
