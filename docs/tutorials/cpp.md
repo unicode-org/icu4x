@@ -12,23 +12,22 @@ _We are still working on improving the user experience of using ICU4X from other
 
 ## Building and linking ICU4X
 
- - While in our examples you will see invocations like `cargo build -p icu_capi_staticlib --features foo`, neither `cargo install` nor `cargo build` work for non-local library crates (i.e. crates from `crates.io`). To work around this: 
-    - Create a new cargo project (`mkdir icu; cd icu; cargo init`)
-    - Add `icu_capi_staticlib` as a dependency (`cargo add icu_capi_staticlib@1.0.0`)
-    - Specify features with `cargo add icu_capi_staticlib@1.0.0 --features ...`:
+- `cargo build` only supports local crates, so you have to download the published code from crates.io
+    - You can use `cargo clone icu_capi_staticlib@1.0.0` to do this (`cargo install cargo-clone` if the command is not installed)
+- Inside the crate you can use `cargo build` to build the library
+    - Be sure to pass `--release` to get an optimized build
+    - Specify features with `--features ...`:
         - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
         - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
-        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate: `cargo add icu_provider --features deserialize_{json,postcard_1,bincode_1}`
+        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate.
         - `logging` and `simple_logger` enable basic stdout logging of error metadata. Further loggers can be added on request.
         - `cpp_default` turns on a bunch of these and is useful for exploration, but should not be used in production as it enables `provider_test`
-    - You can now use `cargo build -p icu_capi_staticlib --release` to build the library
-        - Be sure to pass `--release` to get an optimized build
-        - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
-        - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
-        - See [cargo profiles](cargo-profiles) for more options
- - Copy the header files from the `icu_capi` crate's source
-    - Their location is `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
-        - The `*` in this path is some fingerprint, your shell will expand it when using e.g. `cp`
+    - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
+    - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
+    - See [cargo profiles](cargo-profiles) for more options
+ - Copy the header files from the `icu_capi` crate
+    - If you're using the default crate registry, they will be in `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
+    - If you cannot find the crate, download it from crates.io
     - Make sure to use the same version as above
         - While we selected a version for `icu_capi_staticlib` before, and here we're looking at `icu_capi`, those versions will always be in sync. You can sanity check this by running `cargo pkgid -p icu_capi`.
  - Compile with `g++ -std=c++17 icu/target/releaselibicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
@@ -78,7 +77,35 @@ int main() {
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [freertos port](https://github.com/unicode-org/icu4x/blob/main/ffi/freertos/src/lib.rs#L27).
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
+
+```rust,compile_fail
+#![feature(alloc_error_handler)]
+
+#![no_std]
+
+extern crate icu_capi;
+extern crate dlmalloc;
+
+use core::alloc::Layout;
+use core::panic::PanicInfo;
+use dlmalloc::GlobalDlmalloc;
+
+#[global_allocator]
+static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
+
+#[alloc_error_handler]
+fn alloc_error(_layout: Layout) -> ! {
+    loop {}
+}
+
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
+```
+
+This can then be compiled with `cargo +nightly -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
 
 ## Tips
 

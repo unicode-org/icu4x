@@ -11,6 +11,7 @@
 
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
@@ -36,4 +37,20 @@ pub struct TerritoryDisplayNamesV1<'data> {
     /// Mapping for region to locale display short name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
+}
+
+#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// LanguageDisplayNames provides mapping between a language code and it's display name.
+pub struct LanguageDisplayNamesV1<'data> {
+    /// Mapping for langage to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
 }

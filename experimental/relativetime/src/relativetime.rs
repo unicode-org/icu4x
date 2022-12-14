@@ -49,7 +49,7 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use writeable::assert_writeable_eq;
 /// use fixed_decimal::FixedDecimal;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("es").into(),
 ///     RelativeTimeFormatterOptions { numeric: Numeric::Auto }
@@ -58,15 +58,45 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 ///
 /// assert_writeable_eq!(
 ///         relative_time_formatter.format(FixedDecimal::from(0u8)),
-///         "ahora"
+///         "hoy"
+/// );
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(FixedDecimal::from(-2i8)),
+///         "anteayer"
 /// );
 /// assert_writeable_eq!(
 ///         relative_time_formatter.format(FixedDecimal::from(2u8)),
-///         "dentro de 2 segundos"
+///         "pasado mañana"
+/// );
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(FixedDecimal::from(15i8)),
+///         "dentro de 15 d"
+/// );
+///
+/// ```
+///
+/// # Example
+/// ```
+/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
+/// use icu_relativetime::options::Numeric;
+/// use icu_locid::locale;
+/// use writeable::assert_writeable_eq;
+/// use fixed_decimal::FixedDecimal;
+///
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("bn").into(),
+///     RelativeTimeFormatterOptions::default()
+/// )
+/// .expect("Data should load successfully.");
+///
+/// assert_writeable_eq!(
+///         relative_time_formatter.format(FixedDecimal::from(3u8)),
+///         "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
 ///         relative_time_formatter.format(FixedDecimal::from(-15i8)),
-///         "hace 15 segundos"
+///         "১৫ বছর পূর্বে"
 /// );
 /// ```
 pub struct RelativeTimeFormatter {
@@ -118,6 +148,98 @@ impl RelativeTimeFormatter {
     constructor!(
         try_new_long_second_unstable,
         LongSecondRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_minute_unstable,
+        LongMinuteRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_hour_unstable,
+        LongHourRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_day_unstable,
+        LongDayRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_week_unstable,
+        LongWeekRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_month_unstable,
+        LongMonthRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_quarter_unstable,
+        LongQuarterRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_long_year_unstable,
+        LongYearRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_second_unstable,
+        ShortSecondRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_minute_unstable,
+        ShortMinuteRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_hour_unstable,
+        ShortHourRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_day_unstable,
+        ShortDayRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_week_unstable,
+        ShortWeekRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_month_unstable,
+        ShortMonthRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_quarter_unstable,
+        ShortQuarterRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_short_year_unstable,
+        ShortYearRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_second_unstable,
+        NarrowSecondRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_minute_unstable,
+        NarrowMinuteRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_hour_unstable,
+        NarrowHourRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_day_unstable,
+        NarrowDayRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_week_unstable,
+        NarrowWeekRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_month_unstable,
+        NarrowMonthRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_quarter_unstable,
+        NarrowQuarterRelativeTimeFormatDataV1Marker
+    );
+    constructor!(
+        try_new_narrow_year_unstable,
+        NarrowYearRelativeTimeFormatDataV1Marker
     );
 
     /// Format a `value` according to the locale and formatting options of
