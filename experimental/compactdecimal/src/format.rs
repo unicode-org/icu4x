@@ -1,16 +1,24 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use fixed_decimal::CompactDecimal;
+use icu_decimal::{FormattedFixedDecimal};
 use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::provider::DecimalSymbolsV1;
 use writeable::Writeable;
+use zerovec::maps::ZeroMap2d;
 
-use crate::provider::{CompactDecimalPatternDataV1, Count};
+use crate::compactdecimal::CompactDecimalFormatter;
+use crate::provider::{CompactDecimalPatternDataV1, Count, PatternULE};
 use crate::CompactDecimalError;
 
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](crate::CompactDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug)]
 pub struct FormattedCompactDecimal<'l> {
+    pub(crate) formatter: &'l CompactDecimalFormatter,
     pub(crate) value: &'l CompactDecimal,
     pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
@@ -18,26 +26,10 @@ pub struct FormattedCompactDecimal<'l> {
 }
 
 impl<'l> FormattedCompactDecimal<'l> {
-    fn check_exponent(&self) -> Result<(), CompactDecimalError> {
+    fn log10_type(&self) -> i16 {
         let significand = self.value.significand();
         let exponent = self.value.exponent();
-        let log10_type = significand.nonzero_magnitude_start() + exponent;
-        let expected_exponent = self
-            .compact_data
-            .patterns
-            .iter0()
-            .filter(|cursor| i16::from(*cursor.key0()) <= log10_type)
-            .last()
-            .and_then(|cursor| cursor.get1(&Count::Other))
-            .and_then(|pattern| Some(i16::from(pattern.exponent)))
-            .unwrap_or(0);
-        (expected_exponent == exponent)
-            .then(|| ())
-            .ok_or_else(|| CompactDecimalError::Exponent {
-                actual: exponent,
-                expected: expected_exponent,
-                log10_type,
-            })
+        significand.nonzero_magnitude_start() + exponent
     }
 }
 
@@ -46,31 +38,22 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let affixes = self.get_affixes();
-        if let Some(affixes) = affixes {
-            sink.write_str(&affixes.prefix)?;
+        let plural_map =
+            self.compact_data
+                .patterns
+                .iter0()
+                .filter(|cursor| i16::from(*cursor.key0()) <= self.log10_type())
+                .last();        
+        let expected_exponent = plural_map.and_then(|map| map.get1(&Count::Other).and_then(|pattern| Some(i16::from(pattern.exponent)))).unwrap_or(0);
+        if self.value.exponent() != expected_exponent {
+            return Err(core::fmt::Error);
         }
-        let range = self.value.magnitude_range();
-        let upper_magnitude = *range.end();
-        for m in range.rev() {
-            if m == -1 {
-                sink.write_str(&self.symbols.decimal_separator)?;
-            }
-            #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
-            sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
-            if grouper::check(
-                upper_magnitude,
-                m,
-                self.options.grouping_strategy,
-                &self.symbols.grouping_sizes,
-            ) {
-                sink.write_str(&self.symbols.grouping_separator)?;
-            }
+
+        if self.value.exponent() == 0 {
+            self.formatter.fixed_decimal_format.format(&self.value.significand()).write_to(sink)
+        } else {
+            Ok(())
         }
-        if let Some(affixes) = affixes {
-            sink.write_str(&affixes.suffix)?;
-        }
-        Ok(())
     }
 }
 

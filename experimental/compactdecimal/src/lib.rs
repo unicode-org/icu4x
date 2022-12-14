@@ -32,6 +32,7 @@
 
 extern crate alloc;
 
+mod compactdecimal;
 mod error;
 mod format;
 pub mod provider;
