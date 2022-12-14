@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1670972243087,
+  "lastUpdate": 1671011101262,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32308,6 +32308,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4090676,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7712586c15cbbbedccea1b34c96a482d4c020f5b",
+          "message": "Transformer code for Language display names (#2871)",
+          "timestamp": "2022-12-14T10:41:06+01:00",
+          "tree_id": "ea032346c5d19ed26e1174fbfe221e0d1f2bbb46",
+          "url": "https://github.com/unicode-org/icu4x/commit/7712586c15cbbbedccea1b34c96a482d4c020f5b"
+        },
+        "date": 1671011023201,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4284806,
             "unit": "bytes",
             "biggerIsBetter": false
           }
