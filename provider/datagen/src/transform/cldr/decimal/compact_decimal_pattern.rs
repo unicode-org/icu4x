@@ -42,9 +42,11 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
             } else {
                 // We are in unquoted text, so we need to check for the
                 // symbols defined in https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Pattern_Character_Definitions.
+                // NOTE(egg): We allow `-` because, as of CLDR 42, yrl-VE
+                // (Nhengatu (Venezuela)) has it unescaped in its patterns.
                 if chunk
                     .chars()
-                    .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
+                    .any(|c| ('1'..'9').contains(&c) || "@#.,E+%‰,¤*'".contains(c))
                 {
                     return Err(format!(
                         "Unsupported symbol in compact decimal pattern {}",
