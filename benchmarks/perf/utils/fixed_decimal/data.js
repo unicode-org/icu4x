@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671011838716,
+  "lastUpdate": 1671102260438,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61229,6 +61229,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 100,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "67f08879dfb219e2b429d89e9d91bd90da54a5da",
+          "message": "fix missing 10 from tests (#2891)",
+          "timestamp": "2022-12-15T16:16:46+05:30",
+          "tree_id": "ddb77b26902696505bd064a50a742c6f4e79b51d",
+          "url": "https://github.com/unicode-org/icu4x/commit/67f08879dfb219e2b429d89e9d91bd90da54a5da"
+        },
+        "date": 1671102173461,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112136,
+            "range": "± 4014",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23860,
+            "range": "± 1126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68695,
+            "range": "± 3714",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 217,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
