@@ -11,24 +11,43 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use zerovec::ule::encode_varule_to_box;
 
+/// A [`ParsedPattern`] represents a compact decimal pattern, which consists of
+/// literal text with an optional placeholder.  The literal text is unescaped,
+/// and the information about the number of 0s in the placeholder is stored
+/// separately.
+#[derive(PartialEq, Clone)]
+struct ParsedPattern {
+    /// The unescaped literal text, e.g., " mille" for the pattern "00 mille",
+    /// "mille" for the pattern "mille".
+    pub literal_text: Cow<'static, str>,
+    /// The placeholder; None for patterns such as "mille".
+    pub placeholder: Option<ParsedPlaceholder>,
+}
+
+/// Represents the placeholder in a compact decimal pattern as its position in
+/// the associated text and the number of 0s (which, together with the type
+/// associated with the pattern, determines the power of ten being abbreviated).
 #[derive(PartialEq, Clone)]
 struct ParsedPlaceholder {
+    /// The position in the literal text where the placeholder is to be inserted;
+    /// in particular, this is 0 for insertion at the beginning, which is the
+    /// most frequent case, as in "00 mille".
     pub index: usize,
     pub number_of_0s: i8,
 }
 
-#[derive(PartialEq, Clone)]
-struct ParsedPattern {
-    pub literal_text: Cow<'static, str>,
-    pub placeholder: Option<ParsedPlaceholder>,
-}
-
+/// Parses a compact decimal pattern string, performing any validation that can
+/// be done without the context of the associated type and count.
 fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
     if pattern == "0" {
         Ok(None)
     } else {
         let mut placeholder: Option<ParsedPlaceholder> = None;
         let mut literal_text = String::with_capacity(pattern.len());
+        // CLDR patterns use quoting for escaping, thus '.' for a literal FULL
+        // STOP, as opposed to . for the decimal separator.  A doubled
+        // APOSTROPHE ('') represents a single one.
+        // See https://www.unicode.org/reports/tr35/tr35-numbers.html#Special_Pattern_Characters.
         for (i, chunk) in pattern.split('\'').enumerate() {
             let escaped = i % 2 == 1;
             if escaped {

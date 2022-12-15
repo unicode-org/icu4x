@@ -16,7 +16,30 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.
-
+/// As in CLDR, this is a mapping from type (a power of ten, corresponding to
+/// the magnitude of the number being formatted) and count (a plural case or an
+/// explicit 1) to a pattern.
+/// 
+/// However, plural cases that are identical to the other case are omitted, thus
+/// given
+/// > (1000, one) ↦ 0K, (1000, other) ↦ 0K
+/// 
+/// only
+/// > (1000, other) ↦ 0K
+/// 
+/// is stored.
+/// 
+/// Further, if all plural cases are compatible across consecutive types, the
+/// larger types are omitted, thus given
+/// > (1000, other) ↦ 0K, (10000, other) ↦ 00K, (100000, other) ↦ 000K
+/// 
+/// only 
+/// > (1000, other) ↦ 0K
+/// 
+/// is stored.
+/// 
+/// Finally, the pattern indicating noncompact notation for the first few powers
+/// of ten is omitted; that is, there is an implict (1, other) ↦ 0.
 #[icu_provider::data_struct(
     LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
     ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
@@ -30,7 +53,7 @@ use zerovec::ZeroMap2d;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CompactDecimalPatternDataV1<'data> {
-    /// A map keyed on log10 of the CLDR `type` attribute and the `cldr` count attribute.
+    /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
