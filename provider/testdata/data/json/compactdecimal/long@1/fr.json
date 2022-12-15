@@ -2,61 +2,61 @@
   "patterns": {
     "3": {
       "One": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " millier"
       },
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " mille"
       },
       "Explicit1": {
-        "index": 255,
         "exponent": 3,
+        "index": 255,
         "literal_text": "mille"
       }
     },
     "4": {
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " mille"
       }
     },
     "6": {
       "One": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " million"
       },
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " millions"
       }
     },
     "9": {
       "One": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " milliard"
       },
       "Other": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " milliards"
       }
     },
     "12": {
       "One": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " billion"
       },
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " billions"
       }
     }

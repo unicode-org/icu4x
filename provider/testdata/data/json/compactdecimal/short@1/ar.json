@@ -2,41 +2,41 @@
   "patterns": {
     "3": {
       "Few": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " آلاف"
       },
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " ألف"
       }
     },
     "4": {
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " ألف"
       }
     },
     "6": {
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " مليون"
       }
     },
     "9": {
       "Other": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " مليار"
       }
     },
     "12": {
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " ترليون"
       }
     }

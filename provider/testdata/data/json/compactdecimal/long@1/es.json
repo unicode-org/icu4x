@@ -2,53 +2,53 @@
   "patterns": {
     "3": {
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " mil"
       }
     },
     "6": {
       "One": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " millón"
       },
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " millones"
       }
     },
     "7": {
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " millones"
       }
     },
     "9": {
       "Other": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " mil millones"
       }
     },
     "12": {
       "One": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " billón"
       },
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " billones"
       }
     },
     "13": {
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " billones"
       }
     }

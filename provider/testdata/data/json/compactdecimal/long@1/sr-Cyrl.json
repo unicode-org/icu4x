@@ -2,54 +2,54 @@
   "patterns": {
     "3": {
       "Few": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " хиљаде"
       },
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " хиљада"
       }
     },
     "6": {
       "One": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " милион"
       },
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " милиона"
       }
     },
     "9": {
       "One": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " милијарда"
       },
       "Few": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " милијарде"
       },
       "Other": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " милијарди"
       }
     },
     "12": {
       "One": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " билион"
       },
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " билиона"
       }
     }

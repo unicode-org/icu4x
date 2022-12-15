@@ -2,29 +2,29 @@
   "patterns": {
     "3": {
       "Other": {
-        "index": 0,
         "exponent": 3,
+        "index": 0,
         "literal_text": " k"
       }
     },
     "6": {
       "Other": {
-        "index": 0,
         "exponent": 6,
+        "index": 0,
         "literal_text": " M"
       }
     },
     "9": {
       "Other": {
-        "index": 0,
         "exponent": 9,
+        "index": 0,
         "literal_text": " Md"
       }
     },
     "12": {
       "Other": {
-        "index": 0,
         "exponent": 12,
+        "index": 0,
         "literal_text": " Bn"
       }
     }
