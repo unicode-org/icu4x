@@ -82,21 +82,21 @@ pub enum Count {
 #[zerovec::derive(Debug)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct Pattern<'data> {
-    /// The index in literal_text before which the placeholder is inserted;
-    /// this is 0 for insertion at the beginning, which is most common.
-    /// The value 255 indicates that the pattern does not have a placeholder,
-    /// as in French "mille" for 1000.
+    /// The compact decimal exponent, e.g., 6 for "million".
+    /// The value 0 indicates that compact notation is not used; in that case,
+    /// literal text must be empty; this corresponds to the CLDR pattern "0".
     /// This is derived from the numbers of 0s in the pattern and the associated
     /// `type` attribute; it is a more convenient representation than the number
     /// of 0s, because it is often common to multiple types; for instance, the
     /// following correspond to the same [`Pattern`]:
     ///   <pattern type="1000000" count="other">0 M</pattern>
     ///   <pattern type="10000000" count="other">00 M</pattern>
-    pub index: u8,
-    /// The compact decimal exponent, e.g., 6 for "million".
-    /// The value 0 indicates that compact notation is not used; in that case,
-    /// literal text must be empty; this corresponds to the CLDR pattern "0".
     pub exponent: i8,
+    /// The index in literal_text before which the placeholder is inserted;
+    /// this is 0 for insertion at the beginning, which is most common.
+    /// The value 255 indicates that the pattern does not have a placeholder,
+    /// as in French "mille" for 1000.
+    pub index: u8,
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
