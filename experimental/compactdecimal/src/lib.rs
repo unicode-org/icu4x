@@ -25,7 +25,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        missing_debug_implementations,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -37,4 +37,5 @@ mod error;
 mod format;
 pub mod provider;
 
+pub use compactdecimal::CompactDecimalFormatter;
 pub use error::CompactDecimalError;

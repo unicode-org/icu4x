@@ -12,7 +12,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_locid::extensions::other::Other;
 use icu_plurals::PluralCategory;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap2d;
