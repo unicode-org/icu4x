@@ -30,14 +30,14 @@ use crate::{
 ///     FixedDecimalFormatterOptions::default(),
 /// ).unwrap();
 ///
-/// assert_writable_eq!(formatter.format(CompactDecimal::from_str("1.2c6").unwrap()), "12:34 PM");
+/// assert_writeable_eq!(formatter.format(&CompactDecimal::from_str("1.2c6").unwrap()).unwrap(), "12:34 PM");
 /// ```
 ///
 /// [data provider]: icu_provider
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) fixed_decimal_format: FixedDecimalFormatter,
-    pub(crate) compact_data: DataPayload<ShortCompactDecimalFormatDataV1Marker>,
+    pub(crate) compact_data: DataPayload<ShortCompactDecimalFormatDataV1Marker>,  // TODO(egg): Erased nonsense.
 }
 
 impl CompactDecimalFormatter {
@@ -54,8 +54,8 @@ impl CompactDecimalFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::compactdecimal::CompactDecimalFormatter;
-    /// use icu::locid::locale;
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
     ///
     /// CompactDecimalFormatter::try_new_short_unstable(
     ///     &icu_testdata::unstable(),
