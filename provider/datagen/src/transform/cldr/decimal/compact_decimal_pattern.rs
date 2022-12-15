@@ -48,6 +48,8 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
         // STOP, as opposed to . for the decimal separator.  A doubled
         // APOSTROPHE ('') represents a single one.
         // See https://www.unicode.org/reports/tr35/tr35-numbers.html#Special_Pattern_Characters.
+        // We process the pattern in chunks delimited by ', which are
+        // alternatingly unescaped and escaped.
         for (i, chunk) in pattern.split('\'').enumerate() {
             let escaped = i % 2 == 1;
             if escaped {
@@ -73,6 +75,9 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
                     )
                     .into());
                 }
+                // Given the chunk "me0000w", the prefix is "me", and
+                // additional_0s_and_suffix is "000w"; given the chunk
+                // "me0w", these are "me" and "w" respectively.
                 if let Some((prefix, additional_0s_and_suffix)) = chunk.split_once('0') {
                     if placeholder.is_some() {
                         return Err(format!(
@@ -81,8 +86,13 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
                         )
                         .into());
                     }
+                    // The prefix goes into the literal text, and the position
+                    // of the placeholder is then at the end of the accumulated
+                    // text, at literal_text.len().
                     literal_text.push_str(prefix);
                     if let Some((middle_0s, suffix)) = additional_0s_and_suffix.rsplit_once('0') {
+                        // More than one 0; in the "me0000w" example, middle_0s
+                        // is "00", suffix is "w".
                         if !middle_0s.chars().all(|c| c == '0') {
                             return Err(format!(
                                 "Multiple placeholders in compact decimal pattern {}",
@@ -97,6 +107,7 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
                         });
                         literal_text.push_str(suffix);
                     } else {
+                        // Only one 0, we are in the "me0w" case.
                         placeholder = Some(ParsedPlaceholder {
                             index: literal_text.len(),
                             number_of_0s: 1,
@@ -123,6 +134,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     fn try_from(other: &DecimalFormat) -> Result<Self, Self::Error> {
         let mut parsed_patterns: BTreeMap<i8, BTreeMap<Count, Option<ParsedPattern>>> =
             BTreeMap::new();
+        // First ingest the CLDR mapping.
         for pattern in other.patterns.iter() {
             let mut type_bytes = pattern.compact_decimal_type.bytes();
 
@@ -161,6 +173,8 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     },
                 )?;
         }
+        // Figure out which plural cases are used, and make the map dense by
+        // filling out the implicit fallbacks to the 0 (noncompact) pattern.
         let plural_cases: BTreeSet<Count> = parsed_patterns
             .iter()
             .flat_map(|(_, plural_map)| plural_map.keys())
@@ -177,6 +191,10 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             }
         }
         let mut patterns: BTreeMap<i8, BTreeMap<Count, Pattern>> = BTreeMap::new();
+        // Compute the exponents based on the numbers of 0s in the placeholders
+        // and the type values: the exponent is 3 for type=1000, "0K", as well
+        // as for type=10000, "00K", etc.
+        // Remove duplicates of the count=other case in the same iteration.
         for (log10_type, parsed_plural_map) in parsed_patterns {
             let plural_map = patterns.entry(log10_type).or_insert(BTreeMap::new());
             let other_pattern = parsed_plural_map
@@ -233,7 +251,6 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             }
             for (count, optional_pattern) in parsed_plural_map {
                 // Omit duplicates of the other case.
-                // TODO(egg): optional_pattern.is_some_and(|p| p == other_pattern)
                 if count != Count::Other && optional_pattern == other_pattern {
                     continue;
                 }
@@ -294,6 +311,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
             .filter(|(log10_type, plural_map)| {
                 **log10_type != 0 || !plural_map.iter().all(|(_, pattern)| pattern.exponent == 0)
             });
+        // Turn the BTreeMap of BTreeMaps into a ZeroMap2d.
         Ok(CompactDecimalPatternDataV1 {
             patterns: deduplicated_patterns
                 .flat_map(|(log10_type, plural_map)| {
