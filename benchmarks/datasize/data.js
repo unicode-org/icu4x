@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671011101262,
+  "lastUpdate": 1671101434546,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32333,6 +32333,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7712586c15cbbbedccea1b34c96a482d4c020f5b"
         },
         "date": 1671011023201,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4284806,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "67f08879dfb219e2b429d89e9d91bd90da54a5da",
+          "message": "fix missing 10 from tests (#2891)",
+          "timestamp": "2022-12-15T16:16:46+05:30",
+          "tree_id": "ddb77b26902696505bd064a50a742c6f4e79b51d",
+          "url": "https://github.com/unicode-org/icu4x/commit/67f08879dfb219e2b429d89e9d91bd90da54a5da"
+        },
+        "date": 1671101361603,
         "tool": "ndjson",
         "benches": [
           {
