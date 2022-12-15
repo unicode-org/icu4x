@@ -48,7 +48,7 @@ pub struct CompactDecimalPatternDataV1<'data> {
 )]
 #[repr(u8)]
 pub enum Count {
-    /// The CLDR keyword `other`.
+    /// The CLDR keyword `zero`.
     Zero = 0,
     /// The CLDR keyword `one`.
     One = 1,
