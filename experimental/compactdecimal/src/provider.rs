@@ -17,7 +17,30 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.
-
+/// As in CLDR, this is a mapping from type (a power of ten, corresponding to
+/// the magnitude of the number being formatted) and count (a plural case or an
+/// explicit 1) to a pattern.
+///
+/// However, plural cases that are identical to the other case are omitted, thus
+/// given
+/// > (1000, one) ↦ 0K, (1000, other) ↦ 0K
+///
+/// only
+/// > (1000, other) ↦ 0K
+///
+/// is stored.
+///
+/// Further, if all plural cases are compatible across consecutive types, the
+/// larger types are omitted, thus given
+/// > (1000, other) ↦ 0K, (10000, other) ↦ 00K, (100000, other) ↦ 000K
+///
+/// only
+/// > (1000, other) ↦ 0K
+///
+/// is stored.
+///
+/// Finally, the pattern indicating noncompact notation for the first few powers
+/// of ten is omitted; that is, there is an implict (1, other) ↦ 0.
 #[icu_provider::data_struct(
     LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
     ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
@@ -31,7 +54,7 @@ use zerovec::ZeroMap2d;
 )]
 #[yoke(prove_covariance_manually)]
 pub struct CompactDecimalPatternDataV1<'data> {
-    /// A map keyed on log10 of the CLDR `type` attribute and the `cldr` count attribute.
+    /// A map keyed on log10 of the CLDR `type` attribute and the CLDR `count` attribute.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: ZeroMap2d<'data, i8, Count, PatternULE>,
 }
@@ -49,7 +72,7 @@ pub struct CompactDecimalPatternDataV1<'data> {
 )]
 #[repr(u8)]
 pub enum Count {
-    /// The CLDR keyword `other`.
+    /// The CLDR keyword `zero`.
     Zero = 0,
     /// The CLDR keyword `one`.
     One = 1,
@@ -96,21 +119,21 @@ impl From<PluralCategory> for Count {
 #[zerovec::derive(Debug)]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct Pattern<'data> {
-    /// The index in literal_text before which the placeholder is inserted;
-    /// this is 0 for insertion at the beginning, which is most common.
-    /// The value 255 indicates that the pattern does not have a placeholder,
-    /// as in French "mille" for 1000.
+    /// The compact decimal exponent, e.g., 6 for "million".
+    /// The value 0 indicates that compact notation is not used; in that case,
+    /// literal text must be empty; this corresponds to the CLDR pattern "0".
     /// This is derived from the numbers of 0s in the pattern and the associated
     /// `type` attribute; it is a more convenient representation than the number
     /// of 0s, because it is often common to multiple types; for instance, the
     /// following correspond to the same [`Pattern`]:
     ///   <pattern type="1000000" count="other">0 M</pattern>
     ///   <pattern type="10000000" count="other">00 M</pattern>
-    pub index: u8,
-    /// The compact decimal exponent, e.g., 6 for "million".
-    /// The value 0 indicates that compact notation is not used; in that case,
-    /// literal text must be empty; this corresponds to the CLDR pattern "0".
     pub exponent: i8,
+    /// The index in literal_text before which the placeholder is inserted;
+    /// this is 0 for insertion at the beginning, which is most common.
+    /// The value 255 indicates that the pattern does not have a placeholder,
+    /// as in French "mille" for 1000.
+    pub index: u8,
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
