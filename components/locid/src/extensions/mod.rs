@@ -216,15 +216,27 @@ impl Extensions {
             }
             match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
+                    if unicode.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Transform)) => {
+                    if transform.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     transform = Some(Transform::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Private)) => {
+                    if private.is_some() {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     private = Some(Private::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Other(ext))) => {
+                    if other.iter().any(|o: &Other| o.get_ext_byte() == ext) {
+                        return Err(ParserError::DuplicatedExtension);
+                    }
                     let parsed = Other::try_from_iter(ext, iter)?;
                     if let Err(idx) = other.binary_search(&parsed) {
                         other.insert(idx, parsed);
