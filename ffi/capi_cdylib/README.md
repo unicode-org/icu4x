@@ -5,8 +5,9 @@ cargo being [unable to conditionally compile crate-types](https://github.com/rus
 
 This leads to problems like emscripten being unable to link
 because symbols like log_js are not defined even if the crate_type
-is not actually desired. As a workaround, the capi_staticlib and capi_dylib
-crates exist as endpoints to be built when those respective library types are needed.
+is not actually desired. As a workaround, the `icu_capi_staticlib` and
+`icu_capi_cdylib` crates exist as endpoints to be built when those
+respective library types are needed.
 
 ## More Information
 

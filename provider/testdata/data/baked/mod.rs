@@ -523,6 +523,19 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
     }
 }
 #[cfg(feature = "icu_displaynames")]
+impl DataProvider<::icu_displaynames::provider::LanguageDisplayNamesV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::LanguageDisplayNamesV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *displaynames::languages_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_displaynames")]
 impl DataProvider<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker>, DataError> {
         Ok(DataResponse {

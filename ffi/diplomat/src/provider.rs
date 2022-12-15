@@ -44,14 +44,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu_provider, Mod)]
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
-    /// A result type for `ICU4XDataProvider::create`.
-    pub struct ICU4XCreateDataProviderResult {
-        /// Will be `None` if `success` is `false`, do not use in that case.
-        pub provider: Option<Box<ICU4XDataProvider>>,
-        // May potentially add a better error type in the future
-        pub success: bool,
-    }
-
     #[cfg(feature = "any_provider")]
     #[allow(dead_code)] // feature-specific
     fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(
