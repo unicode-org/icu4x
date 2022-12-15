@@ -1,0 +1,2 @@
+// @generated
+pub mod usd;

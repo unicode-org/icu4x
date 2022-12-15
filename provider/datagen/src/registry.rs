@@ -26,6 +26,8 @@ use icu_displaynames::provider::*;
 use icu_relativetime::provider::*;
 #[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
+#[cfg(feature = "experimental")]
+use icu_singlenumberformatter::provider::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
@@ -252,6 +254,7 @@ registry!(
         LongYearRelativeTimeFormatDataV1Marker,
         ShortYearRelativeTimeFormatDataV1Marker,
         NarrowYearRelativeTimeFormatDataV1Marker,
+        CurrencyEssentialUsdV1Marker,
     }
 );
 

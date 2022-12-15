@@ -149,6 +149,9 @@ impl AnyProvider for BakedDataProvider {
         const CARDINALV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_plurals::provider::CardinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_plurals")]
+        const CURRENCYESSENTIALUSDV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_plurals::provider::CurrencyEssentialUsdV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_plurals")]
         const ORDINALV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -750,6 +753,12 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_plurals")]
             CARDINALV1MARKER => plurals::cardinal_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_plurals")]
+            CURRENCYESSENTIALUSDV1MARKER => currency::usd::essential_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

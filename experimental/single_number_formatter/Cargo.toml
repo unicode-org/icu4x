@@ -1,5 +1,5 @@
 [package]
-name = "single_number_formatter"
+name = "icu_singlenumberformatter"
 version = "0.1.0"
 edition = "2021"
 

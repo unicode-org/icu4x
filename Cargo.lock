@@ -1524,6 +1524,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
+ "icu_singlenumberformatter",
  "icu_testdata",
  "icu_timezone",
  "itertools",
@@ -1873,6 +1874,19 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "utf8_iter",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_singlenumberformatter"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_locid",
+ "icu_provider",
+ "serde",
  "zerovec",
 ]
 
@@ -3155,19 +3169,6 @@ dependencies = [
  "colored",
  "log",
  "winapi",
-]
-
-[[package]]
-name = "single_number_formatter"
-version = "0.1.0"
-dependencies = [
- "databake",
- "displaydoc",
- "fixed_decimal",
- "icu_locid",
- "icu_provider",
- "serde",
- "zerovec",
 ]
 
 [[package]]
