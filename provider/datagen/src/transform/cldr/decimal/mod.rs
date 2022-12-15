@@ -7,6 +7,8 @@ use crate::transform::cldr::cldr_serde;
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use icu_locid::extensions::unicode::Value;
+use icu_locid::extensions_unicode_key as key;
 
 use super::cldr_serde::numbers::DecimalFormat;
 
@@ -77,6 +79,31 @@ impl crate::DatagenProvider {
             .keys()
             .filter(|nsname| **nsname != numbers.default_numbering_system)
             .copied()
+            .collect())
+    }
+    
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .source
+            .cldr()?
+            .numbers()
+            .list_langs()?
+            .flat_map(|langid| {
+                let last = DataLocale::from(&langid);
+                self.get_supported_numsys_for_langid_without_default(&langid)
+                    .expect("All languages from list_langs should be present")
+                    .into_iter()
+                    .map(move |nsname| {
+                        let mut data_locale = DataLocale::from(&langid);
+                        data_locale.set_unicode_ext(
+                            key!("nu"),
+                            Value::try_from_single_subtag(nsname.as_bytes())
+                                .expect("CLDR should have valid numbering system names"),
+                        );
+                        data_locale
+                    })
+                    .chain(core::iter::once(last))
+            })
             .collect())
     }
 }
