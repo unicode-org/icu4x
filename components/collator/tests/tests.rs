@@ -1404,6 +1404,20 @@ fn test_conformance_non_ignorable() {
     }
 }
 
+#[test]
+fn test_case_level() {
+    let mut options = CollatorOptions::new();
+    options.strength = Some(Strength::Primary);
+    options.case_level = Some(CaseLevel::On);
+    let collator_with_case =
+        Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options)
+            .unwrap();
+    assert_ne!(
+        collator_with_case.compare("aA", "Aa"),
+        core::cmp::Ordering::Equal
+    );
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)

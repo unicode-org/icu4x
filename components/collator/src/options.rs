@@ -510,7 +510,7 @@ impl CollatorOptionsBitField {
         if let Some(case_level) = case_level {
             self.0 |= CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;
             if case_level {
-                self.0 |= CollatorOptionsBitField::ALTERNATE_HANDLING_MASK;
+                self.0 |= CollatorOptionsBitField::CASE_LEVEL_MASK;
             }
         } else {
             self.0 &= !CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;
