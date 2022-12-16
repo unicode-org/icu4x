@@ -35,7 +35,7 @@ compactdecimal/long@1, es, 963B, 345762f694d7106487b9824f85fea0a5f47033f7492c69d
 compactdecimal/long@1, es-AR, 859B, 584231fb32a4cbed2101e4853a94e0fcecbb13c91c4b492831e171ce9d4f8e8e
 compactdecimal/long@1, fil, 920B, 6e430d8a69424e0e059b6d0132433caed35e370d3cbf48dfcb2151f6fb61fb93
 compactdecimal/long@1, fr, 1147B, 8d09cc3277810431496d3da3de168d5021cc3da59bafc075ce657b148ccc1075
-compactdecimal/long@1, ja, 373B, def43e70aace5ac700776e4429e735088ea165223c416ef9cfbf141f5c57647e
+compactdecimal/long@1, ja, 491B, 6634f54581a2403eab66cadda6ef5305fcb787b9125bff23d9f81222be0a6c92
 compactdecimal/long@1, ru, 1437B, ae03f49311ade08c52ed13c3b536ccb89d89ae745014e9c91f9c052a5ca5d828
 compactdecimal/long@1, sr, 1087B, f8032188903b2b89dc144ab7be7a710ac418bc8817a1d7506ff9b8fb22504d20
 compactdecimal/long@1, sr-Cyrl, 1087B, f8032188903b2b89dc144ab7be7a710ac418bc8817a1d7506ff9b8fb22504d20
@@ -59,7 +59,7 @@ compactdecimal/short@1, es, 497B, 31bf82b59c8e9c9a7a35ee4017a36abd432f56072b86c0
 compactdecimal/short@1, es-AR, 611B, b74bd221b910824365c8c765c0a8196848b3cfccf517121d1ecbe43d92640be0
 compactdecimal/short@1, fil, 481B, 3a6f739b2a36003f0f13fcea1a730e114cd117a718b9d96ec6e78aad34c12d98
 compactdecimal/short@1, fr, 491B, 9563936a8b21fb1c307533cffe529e562cf37936a98997aaf73a05781cad9e8c
-compactdecimal/short@1, ja, 373B, def43e70aace5ac700776e4429e735088ea165223c416ef9cfbf141f5c57647e
+compactdecimal/short@1, ja, 491B, 6634f54581a2403eab66cadda6ef5305fcb787b9125bff23d9f81222be0a6c92
 compactdecimal/short@1, ru, 514B, cca761f39df719b580a2974b63300e40b996df14dcb6360e68aed557cb790272
 compactdecimal/short@1, sr, 515B, 100ba55d615685350c9c0ef2a3c5b03f86eb7141364a6ff34a732a29f35778ea
 compactdecimal/short@1, sr-Cyrl, 515B, 100ba55d615685350c9c0ef2a3c5b03f86eb7141364a6ff34a732a29f35778ea
