@@ -698,19 +698,6 @@ impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for BakedDataProvid
     }
 }
 #[cfg(feature = "icu_plurals")]
-impl DataProvider<::icu_plurals::provider::CurrencyEssentialUsdV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::CurrencyEssentialUsdV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *currency::usd::essential_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_plurals::provider::CurrencyEssentialUsdV1Marker::KEY, req))?,
-            ))),
-        })
-    }
-}
-#[cfg(feature = "icu_plurals")]
 impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::OrdinalV1Marker>, DataError> {
         Ok(DataResponse {
@@ -2070,6 +2057,21 @@ impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDat
                 *segmenter::word_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::WordBreakDataV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+#[cfg(feature = "icu_singlenumberformatter")]
+impl DataProvider<::icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *currency::usd::essential_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker::KEY, req)
+                    })?,
             ))),
         })
     }

@@ -149,9 +149,6 @@ impl AnyProvider for BakedDataProvider {
         const CARDINALV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_plurals::provider::CardinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_plurals")]
-        const CURRENCYESSENTIALUSDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_plurals::provider::CurrencyEssentialUsdV1Marker::KEY.hashed();
-        #[cfg(feature = "icu_plurals")]
         const ORDINALV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
@@ -450,6 +447,9 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_segmenter")]
         const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
+        #[cfg(feature = "icu_singlenumberformatter")]
+        const CURRENCYESSENTIALUSDV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_singlenumberformatter::provider::CurrencyEssentialUsdV1Marker::KEY.hashed();
         #[cfg(feature = "icu_timezone")]
         const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
@@ -753,12 +753,6 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_plurals")]
             CARDINALV1MARKER => plurals::cardinal_v1::DATA
-                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                .copied()
-                .map(AnyPayload::from_static_ref)
-                .ok_or(DataErrorKind::MissingLocale),
-            #[cfg(feature = "icu_plurals")]
-            CURRENCYESSENTIALUSDV1MARKER => currency::usd::essential_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)
@@ -1355,6 +1349,12 @@ impl AnyProvider for BakedDataProvider {
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_segmenter")]
             WORDBREAKDATAV1MARKER => segmenter::word_v1::DATA
+                .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                .copied()
+                .map(AnyPayload::from_static_ref)
+                .ok_or(DataErrorKind::MissingLocale),
+            #[cfg(feature = "icu_singlenumberformatter")]
+            CURRENCYESSENTIALUSDV1MARKER => currency::usd::essential_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

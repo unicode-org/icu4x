@@ -9,7 +9,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroMap;
@@ -19,17 +18,17 @@ use zerovec::ZeroMap;
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_plurals::provider),
+    databake(path = icu_singlenumberformatter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub symbol: Cow<'data, str>,
 
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: CurrencyPattern<'data>,
 }
-
 
 #[icu_provider::data_struct(CurrencyLongUsdV1Marker = "currency/usd/long@1")]
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -42,7 +41,7 @@ pub struct CurrencyEssentialV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyLong<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: ZeroMap<'data, Count , CurrencyPatternULE>,
+    pub patterns: ZeroMap<'data, Count, CurrencyPatternULE>,
 }
 
 #[derive(
@@ -60,6 +59,7 @@ pub struct CurrencyLong<'data> {
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 pub struct CurrencyPattern<'data> {
     pub index: u8,
+
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: Cow<'data, str>,
 }

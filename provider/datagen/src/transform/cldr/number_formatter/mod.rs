@@ -9,10 +9,10 @@ use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_singlenumberformatter::provider::*;
-use std::convert::TryFrom;
-use tinystr::TinyAsciiStr;
-use tinystr::tinystr;
 use std::borrow::Cow;
+use std::convert::TryFrom;
+use tinystr::tinystr;
+use tinystr::TinyAsciiStr;
 
 impl DataProvider<CurrencyEssentialUsdV1Marker> for crate::DatagenProvider {
     fn load(
@@ -57,7 +57,7 @@ impl IterableDataProvider<CurrencyEssentialUsdV1Marker> for crate::DatagenProvid
 fn extract_currency_essential<'data>(
     currencies_resource: &cldr_serde::currencies::Resource,
     numbers_resource: &cldr_serde::numbers::Resource,
-    langid: &LanguageIdentifier
+    langid: &LanguageIdentifier,
 ) -> Result<CurrencyEssentialV1<'data>, DataError> {
     let usd = &currencies_resource
         .main
@@ -74,10 +74,13 @@ fn extract_currency_essential<'data>(
     // Cow::from(usd.symbol.clone())
     // usd.symbol.clone().into()
 
-    let result = CurrencyEssentialV1 { symbol: usd.symbol.clone().into() , pattern: CurrencyPattern{
-        index: 0,
-        pattern: Cow::from("not yet"),
-    } };
+    let result = CurrencyEssentialV1 {
+        symbol: usd.symbol.clone().into(),
+        pattern: CurrencyPattern {
+            index: 0,
+            pattern: Cow::from("not yet"),
+        },
+    };
 
     Ok(result)
 }
