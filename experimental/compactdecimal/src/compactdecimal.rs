@@ -159,7 +159,7 @@ impl CompactDecimalFormatter {
     /// use writeable::assert_writeable_eq;
     /// use std::str::FromStr;
     ///
-    /// let long_bengali = CompactDecimalFormatter::try_new_long_unstable(
+    /// let long_bangla = CompactDecimalFormatter::try_new_long_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("bn").into(),
     ///     FixedDecimalFormatterOptions::default(),
@@ -187,10 +187,10 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_french.format_compact_decimal(&three_millions).unwrap(), "3\u{A0}M");
     /// assert_writeable_eq!(long_french.format_compact_decimal(&three_millions).unwrap(), "3 millions");
     ///
-    /// assert_writeable_eq!(long_bengali.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
+    /// assert_writeable_eq!(long_bangla.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
     ///
     /// assert_eq!(
-    ///     long_bengali.format_compact_decimal(&about_a_million).err().unwrap().to_string(),
+    ///     long_bangla.format_compact_decimal(&about_a_million).err().unwrap().to_string(),
     ///     "Expected compact exponent 5 for 10^6, got 6",
     /// );
     /// assert_eq!(
