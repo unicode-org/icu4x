@@ -25,8 +25,11 @@ pub enum CompactDecimalError {
     /// when formatting 1c5 in English (US).
     #[displaydoc("Expected compact exponent {expected} for 10^{log10_type}, got {actual}")]
     Exponent {
+        /// The compact decimal exponent passed to the formatter.
         actual: i16,
+        /// The appropriate compact decimal exponent for a number of the given magnitude.
         expected: i16,
+        /// The magnitude of the number being formatted.
         log10_type: i16,
     },
 }
