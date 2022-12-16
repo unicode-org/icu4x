@@ -9,7 +9,10 @@ use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 
 use crate::{
     format::FormattedCompactDecimal,
-    provider::{Count, ShortCompactDecimalFormatDataV1Marker, ErasedCompactDecimalFormatDataV1Marker},
+    provider::{
+        Count, ErasedCompactDecimalFormatDataV1Marker, LongCompactDecimalFormatDataV1Marker,
+        ShortCompactDecimalFormatDataV1Marker,
+    },
     CompactDecimalError,
 };
 
@@ -23,15 +26,39 @@ use crate::{
 /// use icu_locid::locale;
 /// use writeable::assert_writeable_eq;
 /// use std::str::FromStr;
+/// 
+/// let long_bengali = CompactDecimalFormatter::try_new_long_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("bn").into(),
+///     FixedDecimalFormatterOptions::default(),
+/// ).unwrap();
 ///
-/// let formatter = CompactDecimalFormatter::try_new_short_unstable(
+/// let short_french = CompactDecimalFormatter::try_new_short_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale!("fr").into(),
 ///     FixedDecimalFormatterOptions::default(),
 /// ).unwrap();
 ///
-/// let compact = CompactDecimal::from_str("1.2c6").unwrap();
-/// assert_writeable_eq!(formatter.format(&compact).unwrap(), "1,2\u{a0}M");
+/// let long_french = CompactDecimalFormatter::try_new_long_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("fr").into(),
+///     FixedDecimalFormatterOptions::default(),
+/// ).unwrap();
+///
+/// let about_a_million = CompactDecimal::from_str("1.2c6").unwrap();
+/// let three_millions = CompactDecimal::from_str("3c6").unwrap();
+/// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
+///
+/// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,2\u{A0}M");
+/// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,2 million");
+///
+/// assert_writeable_eq!(short_french.format_compact_decimal(&three_millions).unwrap(), "3\u{A0}M");
+/// assert_writeable_eq!(long_french.format_compact_decimal(&three_millions).unwrap(), "3 millions");
+/// 
+/// assert_writeable_eq!(long_bengali.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
+/// 
+/// assert_eq!(long_bengali.format_compact_decimal(&about_a_million).err().unwrap().to_string(), "Expected compact exponent 5 for 10^6, got 6");
+/// assert_eq!(long_french.format_compact_decimal(&ten_lakhs).err().unwrap().to_string(), "Expected compact exponent 6 for 10^6, got 5");
 /// ```
 ///
 /// [data provider]: icu_provider
@@ -61,7 +88,7 @@ impl CompactDecimalFormatter {
     ///
     /// CompactDecimalFormatter::try_new_short_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
+    ///     &locale!("sv").into(),
     ///     FixedDecimalFormatterOptions::default());
     /// ```
     ///
@@ -84,12 +111,15 @@ impl CompactDecimalFormatter {
                 options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
-            compact_data: data_provider
-                .load(DataRequest {
+            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
+                data_provider,
+                DataRequest {
                     locale,
                     metadata: Default::default(),
-                })?
-                .take_payload()?,
+                },
+            )?
+            .take_payload()?
+            .cast(),
         })
     }
 
@@ -104,7 +134,30 @@ impl CompactDecimalFormatter {
         ]
     );
 
-    // TODO(egg): meow
+    /// Constructor that takes a selected locale, reference to a
+    /// [data provider] and a list of preferences, then collects all data
+    /// necessary to format numbers in short compact decimal notation for
+    /// the given locale.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_decimal::options::FixedDecimalFormatterOptions;
+    /// use icu_locid::locale;
+    ///
+    /// CompactDecimalFormatter::try_new_long_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("sv").into(),
+    ///     FixedDecimalFormatterOptions::default());
+    /// ```
+    ///
+    /// [data provider]: icu_provider
     pub fn try_new_long_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
@@ -123,17 +176,20 @@ impl CompactDecimalFormatter {
                 options,
             )?,
             plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
-            compact_data: data_provider
-                .load(DataRequest {
+            compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
+                data_provider,
+                DataRequest {
                     locale,
                     metadata: Default::default(),
-                })?
-                .take_payload()?,
+                },
+            )?
+            .take_payload()?
+            .cast(),
         })
     }
 
     /// TODO(egg): meow
-    pub fn format<'l>(
+    pub fn format_compact_decimal<'l>(
         &'l self,
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, CompactDecimalError> {
@@ -146,7 +202,8 @@ impl CompactDecimalFormatter {
             .iter0()
             .filter(|cursor| i16::from(*cursor.key0()) <= log10_type)
             .last();
-        let expected_exponent = plural_map.as_ref()
+        let expected_exponent = plural_map
+            .as_ref()
             .and_then(|map| {
                 map.get1(&Count::Other)
                     .and_then(|pattern| Some(i16::from(pattern.exponent)))
