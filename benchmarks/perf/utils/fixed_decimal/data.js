@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671187193724,
+  "lastUpdate": 1671197195962,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61331,6 +61331,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 62925,
             "range": "± 475",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 189,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "346d1a23a009d0e1fb28baf9386fceecf11db690",
+          "message": "Make ZVCursor2d public and add iter1_copied (#2897)",
+          "timestamp": "2022-12-16T14:10:15+01:00",
+          "tree_id": "9495aa224e66ee35c68b6850ffbd30b2e23571fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/346d1a23a009d0e1fb28baf9386fceecf11db690"
+        },
+        "date": 1671197125237,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116406,
+            "range": "± 393",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22843,
+            "range": "± 167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62523,
+            "range": "± 308",
             "unit": "ns/iter"
           },
           {
