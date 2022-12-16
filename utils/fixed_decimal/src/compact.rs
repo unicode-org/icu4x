@@ -80,7 +80,7 @@ impl writeable::Writeable for CompactDecimal {
         if self.exponent != 0 {
             result += self.exponent.writeable_length_hint() + 1;
         }
-        return result;
+        result
     }
 }
 
