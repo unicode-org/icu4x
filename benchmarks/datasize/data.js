@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671210182202,
+  "lastUpdate": 1671218355979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32453,6 +32453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/356bfa82d8e4a950a986d785a4ecca1b578f5f01"
         },
         "date": 1671210109090,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "856b3dcc07e34ef2935c256cd50265cbe04aa6b9",
+          "message": "Use the right mask for case level (#2892)\n\n* Use the right mask for case level\r\n\r\nFixes #2884",
+          "timestamp": "2022-12-16T21:15:19+02:00",
+          "tree_id": "bc065a0989e45253d1d471edb7e821d51dee46bf",
+          "url": "https://github.com/unicode-org/icu4x/commit/856b3dcc07e34ef2935c256cd50265cbe04aa6b9"
+        },
+        "date": 1671218275460,
         "tool": "ndjson",
         "benches": [
           {
