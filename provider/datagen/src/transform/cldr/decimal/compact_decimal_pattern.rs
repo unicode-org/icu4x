@@ -64,7 +64,7 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
         ("0B;-0B", "0B"),
         ("0T;-0T", "0B"),
         // Unescaped E in hu (Hungarian).
-        ("0\u{A0}E", "0\u{A0}'E'")
+        ("0\u{A0}E", "0\u{A0}'E'"),
     ]
     .iter()
     .flat_map(|(key, value)| {
