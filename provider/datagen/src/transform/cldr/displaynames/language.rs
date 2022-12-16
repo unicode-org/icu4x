@@ -48,7 +48,7 @@ impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvid
     }
 }
 
-/// Substring used to denote alternative region names data variants for a given territory. For example: "BA-alt-short", "TL-alt-variant".
+/// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
 
 impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNamesV1<'static> {

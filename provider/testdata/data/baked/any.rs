@@ -107,8 +107,8 @@ impl AnyProvider for BakedDataProvider {
         const LANGUAGEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_displaynames")]
-        const TERRITORYDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_displaynames::provider::TerritoryDisplayNamesV1Marker::KEY.hashed();
+        const REGIONDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_list")]
         const ANDLISTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_list::provider::AndListV1Marker::KEY.hashed();
@@ -671,7 +671,7 @@ impl AnyProvider for BakedDataProvider {
                 .map(AnyPayload::from_static_ref)
                 .ok_or(DataErrorKind::MissingLocale),
             #[cfg(feature = "icu_displaynames")]
-            TERRITORYDISPLAYNAMESV1MARKER => displaynames::territories_v1::DATA
+            REGIONDISPLAYNAMESV1MARKER => displaynames::regions_v1::DATA
                 .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                 .copied()
                 .map(AnyPayload::from_static_ref)

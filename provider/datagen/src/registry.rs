@@ -220,7 +220,7 @@ registry!(
     {
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
-        TerritoryDisplayNamesV1Marker,
+        RegionDisplayNamesV1Marker,
         LanguageDisplayNamesV1Marker,
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
