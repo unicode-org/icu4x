@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671197195962,
+  "lastUpdate": 1671210905372,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61409,6 +61409,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "356bfa82d8e4a950a986d785a4ecca1b578f5f01",
+          "message": "Data and provider for compact decimal formatting (#2883)",
+          "timestamp": "2022-12-16T17:59:15+01:00",
+          "tree_id": "2772510bf158fe053a14ae703747116f47e62abd",
+          "url": "https://github.com/unicode-org/icu4x/commit/356bfa82d8e4a950a986d785a4ecca1b578f5f01"
+        },
+        "date": 1671210825333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101010,
+            "range": "± 368",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20417,
+            "range": "± 176",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68380,
+            "range": "± 253",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 173,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
