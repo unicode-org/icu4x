@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671196438942,
+  "lastUpdate": 1671210182202,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32428,6 +32428,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4284806,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "356bfa82d8e4a950a986d785a4ecca1b578f5f01",
+          "message": "Data and provider for compact decimal formatting (#2883)",
+          "timestamp": "2022-12-16T17:59:15+01:00",
+          "tree_id": "2772510bf158fe053a14ae703747116f47e62abd",
+          "url": "https://github.com/unicode-org/icu4x/commit/356bfa82d8e4a950a986d785a4ecca1b578f5f01"
+        },
+        "date": 1671210109090,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288293,
             "unit": "bytes",
             "biggerIsBetter": false
           }
