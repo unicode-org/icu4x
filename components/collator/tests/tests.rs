@@ -1412,9 +1412,9 @@ fn test_case_level() {
     let collator_with_case =
         Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options)
             .unwrap();
-    assert_ne!(
+    assert_eq!(
         collator_with_case.compare("aA", "Aa"),
-        core::cmp::Ordering::Equal
+        core::cmp::Ordering::Less
     );
 }
 
