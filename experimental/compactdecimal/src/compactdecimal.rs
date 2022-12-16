@@ -178,14 +178,14 @@ impl CompactDecimalFormatter {
     /// ).unwrap();
     ///
     /// let about_a_million = CompactDecimal::from_str("1.2c6").unwrap();
-    /// let three_millions = CompactDecimal::from_str("3c6").unwrap();
+    /// let three_million = CompactDecimal::from_str("3c6").unwrap();
     /// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
     ///
     /// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,2\u{A0}M");
     /// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,2 million");
     ///
-    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_millions).unwrap(), "3\u{A0}M");
-    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_millions).unwrap(), "3 millions");
+    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_million).unwrap(), "3\u{A0}M");
+    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_million).unwrap(), "3 millions");
     ///
     /// assert_writeable_eq!(long_bangla.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
     ///
