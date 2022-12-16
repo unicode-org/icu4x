@@ -9,7 +9,7 @@ use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
 
 use crate::{
     format::FormattedCompactDecimal,
-    provider::{Count, ShortCompactDecimalFormatDataV1Marker},
+    provider::{Count, ShortCompactDecimalFormatDataV1Marker, ErasedCompactDecimalFormatDataV1Marker},
     CompactDecimalError,
 };
 
@@ -30,14 +30,15 @@ use crate::{
 ///     FixedDecimalFormatterOptions::default(),
 /// ).unwrap();
 ///
-/// assert_writeable_eq!(formatter.format(&CompactDecimal::from_str("1.2c6").unwrap()).unwrap(), "12:34 PM");
+/// let compact = CompactDecimal::from_str("1.2c6").unwrap();
+/// assert_writeable_eq!(formatter.format(&compact).unwrap(), "1,2\u{a0}M");
 /// ```
 ///
 /// [data provider]: icu_provider
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
     pub(crate) fixed_decimal_format: FixedDecimalFormatter,
-    pub(crate) compact_data: DataPayload<ShortCompactDecimalFormatDataV1Marker>,  // TODO(egg): Erased nonsense.
+    pub(crate) compact_data: DataPayload<ErasedCompactDecimalFormatDataV1Marker>,
 }
 
 impl CompactDecimalFormatter {
@@ -55,15 +56,16 @@ impl CompactDecimalFormatter {
     ///
     /// ```
     /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_decimal::options::FixedDecimalFormatterOptions;
     /// use icu_locid::locale;
     ///
     /// CompactDecimalFormatter::try_new_short_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into());
+    ///     &locale!("en").into(),
+    ///     FixedDecimalFormatterOptions::default());
     /// ```
     ///
     /// [data provider]: icu_provider
-    #[inline]
     pub fn try_new_short_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
@@ -102,14 +104,40 @@ impl CompactDecimalFormatter {
         ]
     );
 
+    // TODO(egg): meow
+    pub fn try_new_long_unstable<D>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: FixedDecimalFormatterOptions,
+    ) -> Result<Self, CompactDecimalError>
+    where
+        D: DataProvider<LongCompactDecimalFormatDataV1Marker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1Marker>
+            + DataProvider<icu_plurals::provider::CardinalV1Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
+                data_provider,
+                locale,
+                options,
+            )?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
+            compact_data: data_provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?,
+        })
+    }
+
     /// TODO(egg): meow
     pub fn format<'l>(
         &'l self,
         value: &'l CompactDecimal,
     ) -> Result<FormattedCompactDecimal<'l>, CompactDecimalError> {
-        let significand = value.clone().into_significand();
-        let exponent = value.exponent();
-        let log10_type = significand.nonzero_magnitude_start() + exponent;
+        let log10_type = value.significand().nonzero_magnitude_start() + value.exponent();
 
         let plural_map = self
             .compact_data

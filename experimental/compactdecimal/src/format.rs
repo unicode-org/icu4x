@@ -22,16 +22,15 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
     where
         W: core::fmt::Write + ?Sized,
     {
-        let significand = self.value.clone().into_significand();
         if self.value.exponent() == 0 {
             self.formatter
                 .fixed_decimal_format
-                .format(&significand)
+                .format(self.value.significand())
                 .write_to(sink)
         } else {
             let plural_map = self.plural_map.as_ref().ok_or(core::fmt::Error)?;
             let chosen_pattern = (|| {
-                if significand == FixedDecimal::from(1) {
+                if self.value.significand() == &FixedDecimal::from(1) {
                     if let Some(pattern) = plural_map.get1(&Count::Explicit1) {
                         return Some(pattern);
                     }
@@ -39,7 +38,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                 let plural_category = self
                     .formatter
                     .plural_rules
-                    .category_for(&significand);
+                    .category_for(self.value.significand());
                 plural_map
                     .get1(&plural_category.into())
                     .or_else(|| plural_map.get1(&Count::Other))
@@ -57,7 +56,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                     )?;
                     self.formatter
                         .fixed_decimal_format
-                        .format(&significand)
+                        .format(self.value.significand())
                         .write_to(sink)?;
                     sink.write_str(
                         &chosen_pattern

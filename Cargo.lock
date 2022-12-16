@@ -1910,6 +1910,7 @@ dependencies = [
  "icu_casemapping",
  "icu_collator",
  "icu_collections",
+ "icu_compactdecimal",
  "icu_datagen",
  "icu_datetime",
  "icu_decimal",

@@ -13,7 +13,7 @@
 
 use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::{yoke, zerofrom, DataMarker};
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.
@@ -139,4 +139,9 @@ pub struct Pattern<'data> {
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
+}
+pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
+
+impl DataMarker for ErasedCompactDecimalFormatDataV1Marker {
+    type Yokeable = CompactDecimalPatternDataV1<'static>;
 }
