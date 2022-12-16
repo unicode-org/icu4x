@@ -9,6 +9,7 @@ use itertools::Itertools;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use std::collections::HashMap;
 use zerovec::ule::encode_varule_to_box;
 
 /// A [`ParsedPattern`] represents a compact decimal pattern, which consists of
@@ -39,6 +40,46 @@ struct ParsedPlaceholder {
 /// Parses a compact decimal pattern string, performing any validation that can
 /// be done without the context of the associated type and count.
 fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
+    let cldr_overrides: HashMap<String, String> = [
+        // Unescaped - in yrl (Nheengatu).
+        ("0 millón-ita", "0 millón'-'ita"),
+        ("0 billón-ita", "0 billón'-'ita"),
+        ("0 tirillón-ita", "0 tirillón'-'ita"),
+        ("0 miliãu-ita", "0 miliãu'-'ita"),
+        ("0 biliãu-ita", "0 biliãu'-'ita"),
+        ("0 tiriliãu-ita", "0 tiriliãu'-'ita"),
+        // All compact decimal patterns for sw (Swahili) are split by sign;
+        // the sign ends up where it would be as part of the significand, so
+        // this special handling is unneeded.  Depending on the region subtag,
+        // the space may be breaking or nonbreaking.
+        ("elfu 0;elfu -0", "elfu 0"),
+        ("milioni 0;milioni -0", "milioni 0"),
+        ("bilioni 0;bilioni -0", "bilioni 0"),
+        ("trilioni 0;trilioni -0", "trilioni 0"),
+        ("elfu\u{A0}0;elfu\u{A0}-0", "elfu\u{A0}0"),
+        ("milioni\u{A0}0;milioni\u{A0}-0", "milioni\u{A0}0"),
+        ("bilioni\u{A0}0;bilioni\u{A0}-0", "bilioni\u{A0}0"),
+        ("trilioni\u{A0}0;trilioni\u{A0}-0", "trilioni\u{A0}0"),
+        ("0M;-0M", "0M"),
+        ("0B;-0B", "0B"),
+        ("0T;-0T", "0B"),
+        // Unescaped E in hu (Hungarian).
+        ("0\u{A0}E", "0\u{A0}'E'")
+    ]
+    .iter()
+    .flat_map(|(key, value)| {
+        [
+            (key.to_string(), value.to_string()),
+            (key.replace('0', "00"), value.replace('0', "00")),
+            (key.replace('0', "000"), value.replace('0', "000")),
+        ]
+    })
+    .collect();
+    let pattern = cldr_overrides
+        .get(pattern)
+        .map(|s| s.as_str())
+        .unwrap_or(pattern);
+
     if pattern == "0" {
         Ok(None)
     } else {
@@ -63,11 +104,9 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
             } else {
                 // We are in unquoted text, so we need to check for the
                 // symbols defined in https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Pattern_Character_Definitions.
-                // NOTE(egg): We allow `-` because, as of CLDR 42, yrl-VE
-                // (Nhengatu (Venezuela)) has it unescaped in its patterns.
                 if chunk
                     .chars()
-                    .any(|c| ('1'..'9').contains(&c) || "@#.,E+%‰,¤*'".contains(c))
+                    .any(|c| ('1'..'9').contains(&c) || "@#.-,E+%‰,¤*'".contains(c))
                 {
                     return Err(format!(
                         "Unsupported symbol in compact decimal pattern {}",
