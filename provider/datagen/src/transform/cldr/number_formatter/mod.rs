@@ -2,6 +2,7 @@
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::DataProvider;
+use tinystr::TinyStr8;
 
 use crate::transform::cldr::cldr_serde;
 use icu_plurals::provider::*;
@@ -66,19 +67,26 @@ fn extract_currency_essential<'data>(
         .expect("CLDR file contains the expected language")
         .numbers
         .currencies
-        //.get(&tinystr!(10, "currencies"))
         .get(&tinystr!(3, "USD"))
         .ok_or_else(|| DataError::custom("Could not find the USD data"))?;
+    let symbol = usd.symbol.clone().into();
 
-    // Cow::from(String::clone(&usd.symbol))
-    // Cow::from(usd.symbol.clone())
-    // usd.symbol.clone().into()
+    let currency_formats = &&numbers_resource
+        .main
+        .0
+        .get(&langid)
+        .expect("CLDR file contains the expected language")
+        .numbers
+        .numsys_data
+        .currency_formats
+        .get(&tinystr!(8, "latn"))
+        .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
 
     let result = CurrencyEssentialV1 {
-        symbol: usd.symbol.clone().into(),
+        symbol: symbol,
         pattern: CurrencyPattern {
             index: 0,
-            pattern: Cow::from("not yet"),
+            pattern: currency_formats.standard.clone().into(),
         },
     };
 
@@ -99,4 +107,5 @@ fn test_basic() {
         .take_payload()
         .unwrap();
     assert_eq!(usd.get().symbol, "US$");
+    assert_eq!(usd.get().pattern.pattern, "¤\u{a0}#,##0.00");
 }

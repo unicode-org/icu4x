@@ -12,7 +12,7 @@ use itertools::Itertools;
 use serde::de::{Deserializer, Error, MapAccess, Unexpected, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
-use tinystr::TinyStr8;
+use tinystr::{TinyAsciiStr, TinyStr8};
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Symbols {
@@ -30,12 +30,22 @@ pub struct DecimalFormats {
     pub standard: String,
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct CurrencyFormats {
+    pub standard: String,
+
+    #[serde(rename = "standard-alphaNextToNumber")]
+    pub standard_next: Option<String>,
+}
+
 #[derive(PartialEq, Debug, Default)]
 pub struct NumberingSystemData {
     /// Map from numbering system to symbols
     pub symbols: HashMap<TinyStr8, Symbols>,
     /// Map from numbering system to decimal formats
     pub formats: HashMap<TinyStr8, DecimalFormats>,
+    /// Map from currency formats to patterns
+    pub currency_formats: HashMap<TinyStr8, CurrencyFormats>,
 }
 
 pub struct NumberingSystemDataVisitor;
@@ -70,6 +80,10 @@ impl<'de> Visitor<'de> for NumberingSystemDataVisitor {
                 "decimalFormats" => {
                     let value: DecimalFormats = access.next_value()?;
                     result.formats.insert(numsys, value);
+                }
+                "currencyFormats" => {
+                    let value: CurrencyFormats = access.next_value()?;
+                    result.currency_formats.insert(numsys, value);
                 }
                 _ => {
                     // When needed, consume "scientificFormats", "percentFormats", ...
