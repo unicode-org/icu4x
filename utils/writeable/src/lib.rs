@@ -329,9 +329,17 @@ macro_rules! assert_writeable_eq {
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
-        assert!(length_hint.0 <= actual_str.len(), $($arg)*);
+        assert!(
+            length_hint.0 <= actual_str.len(),
+            "hint lower bound {} larger than actual length {}: {}",
+            length_hint.0, actual_str.len(), format!($($arg)*),
+        );
         if let Some(upper) = length_hint.1 {
-            assert!(actual_str.len() <= upper, $($arg)*);
+            assert!(
+                actual_str.len() <= upper,
+                "hint upper bound {} smaller than actual length {}: {}",
+                length_hint.0, actual_str.len(), format!($($arg)*),
+            );
         }
         assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
