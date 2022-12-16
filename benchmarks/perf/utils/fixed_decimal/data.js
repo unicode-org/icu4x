@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671210905372,
+  "lastUpdate": 1671219046234,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61469,6 +61469,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 72,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "856b3dcc07e34ef2935c256cd50265cbe04aa6b9",
+          "message": "Use the right mask for case level (#2892)\n\n* Use the right mask for case level\r\n\r\nFixes #2884",
+          "timestamp": "2022-12-16T21:15:19+02:00",
+          "tree_id": "bc065a0989e45253d1d471edb7e821d51dee46bf",
+          "url": "https://github.com/unicode-org/icu4x/commit/856b3dcc07e34ef2935c256cd50265cbe04aa6b9"
+        },
+        "date": 1671218967417,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100420,
+            "range": "± 713",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20593,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67476,
+            "range": "± 386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 175,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
