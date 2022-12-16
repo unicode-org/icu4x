@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671186496144,
+  "lastUpdate": 1671196438942,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32393,6 +32393,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8587c00baa529a875958b8518030c87e6c2aadf8"
         },
         "date": 1671186410660,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4284806,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "346d1a23a009d0e1fb28baf9386fceecf11db690",
+          "message": "Make ZVCursor2d public and add iter1_copied (#2897)",
+          "timestamp": "2022-12-16T14:10:15+01:00",
+          "tree_id": "9495aa224e66ee35c68b6850ffbd30b2e23571fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/346d1a23a009d0e1fb28baf9386fceecf11db690"
+        },
+        "date": 1671196366878,
         "tool": "ndjson",
         "benches": [
           {
