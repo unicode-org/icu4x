@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671101434546,
+  "lastUpdate": 1671186496144,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32363,6 +32363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/67f08879dfb219e2b429d89e9d91bd90da54a5da"
         },
         "date": 1671101361603,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4284806,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8587c00baa529a875958b8518030c87e6c2aadf8",
+          "message": "Allow noncompact CompactDecimal (#2889)",
+          "timestamp": "2022-12-16T11:23:51+01:00",
+          "tree_id": "97c19d7c20ce247ebbfae8ab3273f15402a974ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/8587c00baa529a875958b8518030c87e6c2aadf8"
+        },
+        "date": 1671186410660,
         "tool": "ndjson",
         "benches": [
           {
