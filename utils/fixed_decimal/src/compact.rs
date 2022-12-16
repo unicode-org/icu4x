@@ -130,14 +130,6 @@ impl TryFrom<&[u8]> for CompactDecimal {
 
 #[test]
 fn test_compact_syntax_error() {
-    assert_eq!(
-        CompactDecimal::from_str("+1729").unwrap().significand(),
-        FixedDecimal::from_str("+1729").unwrap()
-    );
-    assert_eq!(
-        format!("{}", CompactDecimal::from_str("+1729").unwrap()),
-        "+1729"
-    );
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
