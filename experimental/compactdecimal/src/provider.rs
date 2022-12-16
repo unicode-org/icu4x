@@ -92,6 +92,7 @@ pub enum Count {
 
 impl From<PluralCategory> for Count {
     fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
         return match other {
             Zero => Count::Zero,
             One => Count::One,
