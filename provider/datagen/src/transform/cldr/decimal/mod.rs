@@ -5,7 +5,6 @@
 use crate::transform::cldr::cldr_serde;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
-#[cfg(feature = "experimental")]
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;

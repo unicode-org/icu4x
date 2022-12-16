@@ -76,7 +76,11 @@ impl writeable::Writeable for CompactDecimal {
     }
 
     fn writeable_length_hint(&self) -> writeable::LengthHint {
-        self.significand.writeable_length_hint() + 1 + self.exponent.writeable_length_hint()
+        let mut result = self.significand.writeable_length_hint();
+        if self.exponent != 0 {
+            result += self.exponent.writeable_length_hint() + 1;
+        }
+        result
     }
 }
 
