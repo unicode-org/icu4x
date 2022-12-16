@@ -271,6 +271,8 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2dCursor;
 
     pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+
+    pub use crate::map2d::ZeroMap2dCursor;
 }
 
 pub mod vecs {
