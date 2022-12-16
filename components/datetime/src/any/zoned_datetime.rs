@@ -70,7 +70,7 @@ use writeable::Writeable;
 /// assert_writeable_eq!(
 ///     zdtf.format(&any_datetime, &time_zone)
 ///         .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28\u{202f}PM GMT"
+///     "Sep 1, 2020, 12:34:28 PM GMT"
 /// );
 /// ```
 ///
@@ -115,7 +115,7 @@ use writeable::Writeable;
 ///     zdtf
 ///       .format(&any_datetime, &time_zone)
 ///       .expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34:28\u{202f}PM Central Daylight Time");
+///     "Sep 1, 2020, 12:34:28 PM Central Daylight Time");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
@@ -288,7 +288,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37\u{202f}PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     ///
@@ -398,7 +398,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37\u{202f}PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     #[inline]
@@ -461,7 +461,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37\u{202f}PM GMT-07:00"
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
     #[inline]

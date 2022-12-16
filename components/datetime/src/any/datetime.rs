@@ -58,7 +58,7 @@ use writeable::Writeable;
 ///
 /// assert_writeable_eq!(
 ///     dtf.format(&any_datetime).expect("Calendars should match"),
-///     "Sep 1, 2020, 12:34\u{202f}PM"
+///     "Sep 1, 2020, 12:34 PM"
 /// );
 /// ```
 ///
@@ -102,10 +102,10 @@ use writeable::Writeable;
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format(&manual_datetime).expect("Calendars should match");
-/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33\u{202f}PM");
+/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
 /// let converted_value = dtf.format(&iso_converted).expect("Calendars should match");
-/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34\u{202f}PM");
+/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -181,7 +181,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34\u{202f}PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     #[inline]
@@ -331,7 +331,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34\u{202f}PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     #[inline(never)]
@@ -425,7 +425,7 @@ impl DateTimeFormatter {
     ///
     /// assert_writeable_eq!(
     ///     dtf.format(&any_datetime).expect("Calendars should match"),
-    ///     "Sep 1, 2020, 12:34\u{202f}PM"
+    ///     "Sep 1, 2020, 12:34 PM"
     /// );
     /// ```
     ///

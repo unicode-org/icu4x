@@ -55,7 +55,7 @@ use crate::options::components;
 /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// assert_writeable_eq!(tf.format(&datetime), "12:34\u{202f}PM");
+/// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -142,7 +142,7 @@ impl TimeFormatter {
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// assert_writeable_eq!(tf.format(&datetime), "12:34\u{202f}PM");
+    /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
     /// ```
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
@@ -170,7 +170,7 @@ impl TimeFormatter {
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// assert_eq!(tf.format_to_string(&datetime), "12:34\u{202f}PM");
+    /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
@@ -404,7 +404,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// assert_writeable_eq!(dtf.format(&datetime), "Sep 1, 2020, 12:34\u{202f}PM");
+/// assert_writeable_eq!(dtf.format(&datetime), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -559,7 +559,7 @@ where {
     /// let datetime =
     ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
-    /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03\u{202f}AM");
+    /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03 AM");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -619,7 +619,7 @@ where {
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28\u{202f}PM");
+    /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
@@ -644,7 +644,7 @@ where {
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28\u{202f}PM");
+    /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
