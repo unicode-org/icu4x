@@ -19,47 +19,6 @@ use crate::{
 /// TODO words
 /// # Examples
 ///
-/// ```
-/// use fixed_decimal::CompactDecimal;
-/// use icu_compactdecimal::CompactDecimalFormatter;
-/// use icu_decimal::options::FixedDecimalFormatterOptions;
-/// use icu_locid::locale;
-/// use writeable::assert_writeable_eq;
-/// use std::str::FromStr;
-/// 
-/// let long_bengali = CompactDecimalFormatter::try_new_long_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("bn").into(),
-///     FixedDecimalFormatterOptions::default(),
-/// ).unwrap();
-///
-/// let short_french = CompactDecimalFormatter::try_new_short_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("fr").into(),
-///     FixedDecimalFormatterOptions::default(),
-/// ).unwrap();
-///
-/// let long_french = CompactDecimalFormatter::try_new_long_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("fr").into(),
-///     FixedDecimalFormatterOptions::default(),
-/// ).unwrap();
-///
-/// let about_a_million = CompactDecimal::from_str("1.2c6").unwrap();
-/// let three_millions = CompactDecimal::from_str("3c6").unwrap();
-/// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
-///
-/// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,2\u{A0}M");
-/// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,2 million");
-///
-/// assert_writeable_eq!(short_french.format_compact_decimal(&three_millions).unwrap(), "3\u{A0}M");
-/// assert_writeable_eq!(long_french.format_compact_decimal(&three_millions).unwrap(), "3 millions");
-/// 
-/// assert_writeable_eq!(long_bengali.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
-/// 
-/// assert_eq!(long_bengali.format_compact_decimal(&about_a_million).err().unwrap().to_string(), "Expected compact exponent 5 for 10^6, got 6");
-/// assert_eq!(long_french.format_compact_decimal(&ten_lakhs).err().unwrap().to_string(), "Expected compact exponent 6 for 10^6, got 5");
-/// ```
 ///
 /// [data provider]: icu_provider
 pub struct CompactDecimalFormatter {
@@ -188,7 +147,57 @@ impl CompactDecimalFormatter {
         })
     }
 
-    /// TODO(egg): meow
+    /// TODO(egg): Explain that this is an advanced API which can fail (and you
+    /// should use the API that does not exist instead).
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::CompactDecimal;
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_decimal::options::FixedDecimalFormatterOptions;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    /// use std::str::FromStr;
+    ///
+    /// let long_bengali = CompactDecimalFormatter::try_new_long_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("bn").into(),
+    ///     FixedDecimalFormatterOptions::default(),
+    /// ).unwrap();
+    ///
+    /// let short_french = CompactDecimalFormatter::try_new_short_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("fr").into(),
+    ///     FixedDecimalFormatterOptions::default(),
+    /// ).unwrap();
+    ///
+    /// let long_french = CompactDecimalFormatter::try_new_long_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("fr").into(),
+    ///     FixedDecimalFormatterOptions::default(),
+    /// ).unwrap();
+    ///
+    /// let about_a_million = CompactDecimal::from_str("1.2c6").unwrap();
+    /// let three_millions = CompactDecimal::from_str("3c6").unwrap();
+    /// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
+    ///
+    /// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,2\u{A0}M");
+    /// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,2 million");
+    ///
+    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_millions).unwrap(), "3\u{A0}M");
+    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_millions).unwrap(), "3 millions");
+    ///
+    /// assert_writeable_eq!(long_bengali.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
+    ///
+    /// assert_eq!(
+    ///     long_bengali.format_compact_decimal(&about_a_million).err().unwrap().to_string(),
+    ///     "Expected compact exponent 5 for 10^6, got 6",
+    /// );
+    /// assert_eq!(
+    ///     long_french.format_compact_decimal(&ten_lakhs).err().unwrap().to_string(),
+    ///     "Expected compact exponent 6 for 10^6, got 5",
+    /// );
+    /// ```
     pub fn format_compact_decimal<'l>(
         &'l self,
         value: &'l CompactDecimal,
