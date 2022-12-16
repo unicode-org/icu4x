@@ -156,7 +156,7 @@ mod tests {
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.iter1()
+                kkv.into_iter1()
                     .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
             })
             .collect();
@@ -222,7 +222,7 @@ mod tests {
             .iter0()
             .flat_map(|kkv| {
                 let key0 = *kkv.key0();
-                kkv.iter1()
+                kkv.into_iter1()
                     .map(move |(k, v)| (key0, Count::from_unaligned(*k), Pattern::zero_from(v)))
             })
             .collect();
