@@ -1,0 +1,57 @@
+{
+  "patterns": {
+    "3": {
+      "Few": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " hiljade"
+      },
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " hiljada"
+      }
+    },
+    "6": {
+      "One": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " milion"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " miliona"
+      }
+    },
+    "9": {
+      "One": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " milijarda"
+      },
+      "Few": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " milijarde"
+      },
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " milijardi"
+      }
+    },
+    "12": {
+      "One": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " bilion"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " biliona"
+      }
+    }
+  }
+}

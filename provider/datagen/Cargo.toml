@@ -51,6 +51,7 @@ icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", 
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", features = ["datagen"], optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", features = ["datagen"], optional = true }
+icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "1.0.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
@@ -96,7 +97,7 @@ icu = { path = "../../components/icu" }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime", "icu_compactdecimal"]
 bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]
