@@ -235,7 +235,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format(1750), "1.8K");
     /// assert_writeable_eq!(short_english.format(1950), "2K");
     /// ```
-    pub fn format<'l>(&'l self, value: i64) -> FormattedCompactDecimal<'l> {
+    pub fn format(&self, value: i64) -> FormattedCompactDecimal<'_> {
         fn round(significand: &mut FixedDecimal) {
             if significand.nonzero_magnitude_start() == 0 {
                 significand.half_even(-1);
