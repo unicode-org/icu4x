@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671219201013,
+  "lastUpdate": 1671471220326,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -86849,6 +86849,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 7050,
             "range": "± 351",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2989ddb0e60d56fe5b8d1c75b279dc42598084f4",
+          "message": "Update version of CLDR data to 42.0.0 (#2874)",
+          "timestamp": "2022-12-19T17:19:31Z",
+          "tree_id": "ad6b79a5d0122354075c96a5f879a247c13d08d4",
+          "url": "https://github.com/unicode-org/icu4x/commit/2989ddb0e60d56fe5b8d1c75b279dc42598084f4"
+        },
+        "date": 1671471138472,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 83733,
+            "range": "± 10423",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 138474,
+            "range": "± 8158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 75246,
+            "range": "± 3989",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 84791,
+            "range": "± 4925",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 83482,
+            "range": "± 5581",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 91034,
+            "range": "± 5067",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 85415,
+            "range": "± 4498",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 136498,
+            "range": "± 7343",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 154135,
+            "range": "± 8351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 136794,
+            "range": "± 7420",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 155073,
+            "range": "± 10043",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 150861,
+            "range": "± 11293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5796,
+            "range": "± 363",
             "unit": "ns/iter"
           }
         ]
