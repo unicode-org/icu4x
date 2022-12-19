@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671219046234,
+  "lastUpdate": 1671471193315,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61529,6 +61529,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 72,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2989ddb0e60d56fe5b8d1c75b279dc42598084f4",
+          "message": "Update version of CLDR data to 42.0.0 (#2874)",
+          "timestamp": "2022-12-19T17:19:31Z",
+          "tree_id": "ad6b79a5d0122354075c96a5f879a247c13d08d4",
+          "url": "https://github.com/unicode-org/icu4x/commit/2989ddb0e60d56fe5b8d1c75b279dc42598084f4"
+        },
+        "date": 1671471102809,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119636,
+            "range": "± 9289",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24575,
+            "range": "± 1919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70735,
+            "range": "± 6429",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 244,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 104,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 91,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
