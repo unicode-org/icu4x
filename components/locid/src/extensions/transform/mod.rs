@@ -15,9 +15,11 @@
 //! use icu::locid::extensions::transform::{Fields, Key, Transform, Value};
 //! use icu::locid::{LanguageIdentifier, Locale};
 //!
-//! let mut loc: Locale = "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
+//! let mut loc: Locale =
+//!     "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
 //!
-//! let lang: LanguageIdentifier = "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
+//! let lang: LanguageIdentifier =
+//!     "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
 //!
 //! let key: Key = "h0".parse().expect("Parsing key failed.");
 //! let value: Value = "hybrid".parse().expect("Parsing value failed.");
@@ -26,7 +28,7 @@
 //! assert!(loc.extensions.transform.fields.contains_key(&key));
 //! assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 //!
-//! assert_eq!(&loc.extensions.transform.to_string(), "-t-es-AR-h0-hybrid");
+//! assert_eq!(&loc.extensions.transform.to_string(), "t-es-AR-h0-hybrid");
 //! ```
 mod fields;
 mod key;
@@ -56,7 +58,8 @@ use litemap::LiteMap;
 /// use icu::locid::extensions::transform::{Key, Value};
 /// use icu::locid::{LanguageIdentifier, Locale};
 ///
-/// let mut loc: Locale = "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
+/// let mut loc: Locale =
+///     "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
 ///
 /// let en_us: LanguageIdentifier = "en-US".parse().expect("Parsing failed.");
 ///
@@ -105,7 +108,7 @@ impl Transform {
     ///
     /// let mut loc: Locale = "en-US-t-es-AR".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.transform.is_empty(), false);
+    /// assert!(!loc.extensions.transform.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.lang.is_none() && self.fields.is_empty()
@@ -132,7 +135,7 @@ impl Transform {
         let mut tfields = LiteMap::new();
 
         if let Some(subtag) = iter.peek() {
-            if Language::from_bytes(subtag).is_ok() {
+            if Language::try_from_bytes(subtag).is_ok() {
                 tlang = Some(parse_language_identifier_from_iter(
                     iter,
                     ParserMode::Partial,
@@ -158,7 +161,7 @@ impl Transform {
                     current_tkey = None;
                     continue;
                 }
-            } else if let Ok(tkey) = Key::from_bytes(subtag) {
+            } else if let Ok(tkey) = Key::try_from_bytes(subtag) {
                 current_tkey = Some(tkey);
             } else {
                 break;
@@ -205,7 +208,7 @@ impl writeable::Writeable for Transform {
         if self.is_empty() {
             return Ok(());
         }
-        sink.write_str("-t")?;
+        sink.write_str("t")?;
         if let Some(lang) = &self.lang {
             sink.write_char('-')?;
             writeable::Writeable::write_to(lang, sink)?;
@@ -221,7 +224,7 @@ impl writeable::Writeable for Transform {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
-        let mut result = writeable::LengthHint::exact(2);
+        let mut result = writeable::LengthHint::exact(1);
         if let Some(lang) = &self.lang {
             result += writeable::Writeable::writeable_length_hint(lang) + 1;
         }

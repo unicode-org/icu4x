@@ -232,8 +232,9 @@ pub fn create_best_pattern_for_fields<'data>(
             date_patterns.for_each_mut(|pattern| {
                 let date = pattern.clone();
                 let time = time_pattern.clone();
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
+
+                // TODO(#2626) - Since this is fallible, we should make this method fallible.
+                #[allow(clippy::expect_used)] // Generic pattern combination should never fail.
                 let dt = dt_pattern
                     .clone()
                     .combined(date, time)
@@ -365,6 +366,10 @@ fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
 ///  * 2.6.2.2 Missing Skeleton Fields
 ///    - TODO(#586) - Using the CLDR appendItems field. Note: There is not agreement yet on how
 ///      much of this step to implement. See the issue for more information.
+///
+/// # Panics
+///
+/// Panics if `prefer_matched_pattern` is set to true in a non-datagen mode.
 pub fn get_best_available_format_pattern<'data>(
     skeletons: &DateSkeletonPatternsV1<'data>,
     fields: &[Field],
@@ -485,10 +490,11 @@ pub fn get_best_available_format_pattern<'data>(
         }
     }
 
-    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let mut closest_format_pattern = closest_format_pattern
-        .expect("At least one closest format pattern will always be found.")
-        .clone();
+    let mut closest_format_pattern = if let Some(pattern) = closest_format_pattern {
+        pattern.clone()
+    } else {
+        return BestSkeleton::NoMatch;
+    };
 
     if closest_missing_fields == fields.len() {
         return BestSkeleton::NoMatch;
@@ -499,7 +505,7 @@ pub fn get_best_available_format_pattern<'data>(
     }
 
     // Modify the resulting pattern to have fields of the same length.
-    #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    #[allow(clippy::panic)] // guards against running this branch in non-datagen mode.
     if prefer_matched_pattern {
         #[cfg(not(feature = "datagen"))]
         panic!("This code branch should only be run when transforming provider code.");

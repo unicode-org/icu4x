@@ -8,10 +8,16 @@ use crate::marker::DataMarker;
 use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
-use core::any::Any;
+use alloc::boxed::Box;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
+use core::ops::Deref;
+
+#[cfg(not(feature = "sync"))]
+use alloc::rc::Rc as SelectedRc;
+#[cfg(feature = "sync")]
+use alloc::sync::Arc as SelectedRc;
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -26,20 +32,15 @@ pub struct DataResponseMetadata {
 /// A container for data payloads returned from a data provider.
 ///
 /// [`DataPayload`] is built on top of the [`yoke`] framework, which allows for cheap, zero-copy
-/// operations on data via the use of self-references. A [`DataPayload`] may be backed by one of
-/// several data stores ("carts"):
+/// operations on data via the use of self-references.
 ///
-/// 1. Fully-owned structured data ([`DataPayload::from_owned()`])
-/// 2. A reference-counted byte buffer ([`DataPayload::try_from_rc_buffer()`])
-///
-/// The type of the data stored in [`DataPayload`], and the type of the structured data store
-/// (cart), is determined by the [`DataMarker`] type parameter.
+/// The type of the data stored in [`DataPayload`] is determined by the [`DataMarker`] type parameter.
 ///
 /// ## Accessing the data
 ///
 /// To get a reference to the data inside [`DataPayload`], use [`DataPayload::get()`]. If you need
-/// to store the data for later use, it is recommended to store the [`DataPayload`] itself, not
-/// the ephemeral reference, since the reference results in a short-lived lifetime.
+/// to store the data for later use, you need to store the [`DataPayload`] itself, since `get` only
+/// returns a reference with an ephemeral lifetime.
 ///
 /// ## Mutating the data
 ///
@@ -52,8 +53,8 @@ pub struct DataResponseMetadata {
 ///
 /// # `sync` feature
 ///
-/// By default, the payload uses an [`Rc<[u8]>`] internally and hence is neither [`Sync`] nor [`Send`].
-/// If these traits are required, the `sync` feature can be enabled to use an [`Arc<[u8]>`] instead.
+/// By default, the payload uses non-concurrent reference counting internally, and hence is neither
+/// [`Sync`] nor [`Send`]; if these traits are required, the `sync` feature can be enabled.
 ///
 /// # Examples
 ///
@@ -64,7 +65,9 @@ pub struct DataResponseMetadata {
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 { message: Cow::Borrowed("Demo") });
+/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 {
+///     message: Cow::Borrowed("Demo"),
+/// });
 ///
 /// assert_eq!("Demo", payload.get().message);
 /// ```
@@ -72,7 +75,37 @@ pub struct DataPayload<M>
 where
     M: DataMarker,
 {
-    pub(crate) yoke: Yoke<M::Yokeable, Option<RcWrap<[u8]>>>,
+    pub(crate) yoke: Yoke<M::Yokeable, Option<Cart>>,
+}
+
+/// The type of the "cart" that is used by `DataPayload`.
+#[derive(Clone)]
+#[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
+pub struct Cart(SelectedRc<Box<[u8]>>);
+
+impl Deref for Cart {
+    type Target = Box<[u8]>;
+    fn deref(&self) -> &Self::Target {
+        &*self.0
+    }
+}
+// Safe because both Rc and Arc are StableDeref, and our impl delegates.
+unsafe impl stable_deref_trait::StableDeref for Cart {}
+// Safe because both Rc and Arc are CloneableCart, and our impl delegates.
+unsafe impl yoke::CloneableCart for Cart {}
+
+impl Cart {
+    /// Creates a Yoke<Y, Option<Cart>> from owned bytes by applying f.
+    pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
+    where
+        for<'a> Y: Yokeable<'a>,
+        F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
+    {
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
+            // Safe because the cart is only wrapped
+            .map(|yoke| unsafe { yoke.replace_cart(Cart) })
+            .map(Yoke::wrap_cart_in_option)
+    }
 }
 
 impl<M> Debug for DataPayload<M>
@@ -126,122 +159,6 @@ where
 {
 }
 
-/// A wrapper type that wraps either an [`Rc`](alloc::rc::Rc) or an
-/// [`Arc`](alloc::sync::Arc), depending on the "sync" feature. Create
-/// this from a `&[T]`.
-#[derive(Debug)]
-pub struct RcWrap<T: ?Sized>(
-    #[cfg(not(feature = "sync"))] alloc::rc::Rc<T>,
-    #[cfg(feature = "sync")] alloc::sync::Arc<T>,
-);
-
-impl<T: ?Sized> core::ops::Deref for RcWrap<T> {
-    type Target = T;
-    fn deref(&self) -> &Self::Target {
-        self.0.deref()
-    }
-}
-
-impl<T: ?Sized> Clone for RcWrap<T> {
-    fn clone(&self) -> Self {
-        RcWrap(self.0.clone())
-    }
-}
-
-// Safe because both Rc and Arc are CloneableCart
-unsafe impl<T: ?Sized> CloneableCart for RcWrap<T> {}
-
-// Safe because both Rc and Arc are StableDeref
-unsafe impl<T: ?Sized> stable_deref_trait::StableDeref for RcWrap<T> {}
-
-impl<T> From<T> for RcWrap<T> {
-    fn from(other: T) -> Self {
-        Self(other.into())
-    }
-}
-
-impl From<alloc::vec::Vec<u8>> for RcWrap<[u8]> {
-    fn from(other: alloc::vec::Vec<u8>) -> Self {
-        Self(other.into())
-    }
-}
-
-// Constructing from `Box<[u8]>` copies the whole slice, so we might
-// as well define this on a slice directly.
-impl From<&[u8]> for RcWrap<[u8]> {
-    fn from(other: &[u8]) -> Self {
-        Self(other.into())
-    }
-}
-
-#[cfg(feature = "sync")]
-impl RcWrap<dyn Any + Send + Sync> {
-    /// Attempt to downcast the `RcWrap<dyn Any + Send + Sync>` to a concrete type.
-    pub fn downcast<T: Any + Send + Sync>(
-        self,
-    ) -> Result<RcWrap<T>, RcWrap<dyn Any + Send + Sync>> {
-        match self.0.downcast() {
-            Ok(s) => Ok(RcWrap(s)),
-            Err(e) => Err(RcWrap(e)),
-        }
-    }
-}
-
-#[cfg(not(feature = "sync"))]
-impl RcWrap<dyn Any> {
-    /// Attempt to downcast the `RcWrap<dyn Any>` to a concrete type.
-    pub fn downcast<T: Any>(self) -> Result<RcWrap<T>, RcWrap<dyn Any>> {
-        match self.0.downcast() {
-            Ok(s) => Ok(RcWrap(s)),
-            Err(e) => Err(RcWrap(e)),
-        }
-    }
-}
-
-#[cfg(feature = "sync")]
-impl<T: Send + Sync + 'static> RcWrap<T> {
-    /// Creates an `RcWrap<dyn Any + Send + Sync>` from an `RcWrap<T>`.
-    pub fn into_dyn_any(self) -> RcWrap<dyn Any + Send + Sync> {
-        RcWrap(self.0)
-    }
-
-    /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
-    pub fn try_unwrap(self) -> Result<T, Self> {
-        match alloc::sync::Arc::try_unwrap(self.0) {
-            Ok(t) => Ok(t),
-            Err(e) => Err(RcWrap(e)),
-        }
-    }
-}
-
-#[cfg(not(feature = "sync"))]
-impl<T: 'static> RcWrap<T> {
-    /// Creates an `RcWrap<dyn Any>` from an `RcWrap<T>`.
-    pub fn into_dyn_any(self) -> RcWrap<dyn Any> {
-        RcWrap(self.0)
-    }
-
-    /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
-    pub fn try_unwrap(self) -> Result<T, Self> {
-        match alloc::rc::Rc::try_unwrap(self.0) {
-            Ok(t) => Ok(t),
-            Err(e) => Err(RcWrap(e)),
-        }
-    }
-}
-
-/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is on.
-#[cfg(feature = "sync")]
-pub trait RcWrapBounds: Send + Sync {}
-#[cfg(feature = "sync")]
-impl<T: Send + Sync> RcWrapBounds for T {}
-
-/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is off.
-#[cfg(not(feature = "sync"))]
-pub trait RcWrapBounds {}
-#[cfg(not(feature = "sync"))]
-impl<T> RcWrapBounds for T {}
-
 #[test]
 fn test_clone_eq() {
     use crate::hello_world::*;
@@ -254,99 +171,6 @@ impl<M> DataPayload<M>
 where
     M: DataMarker,
 {
-    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
-    /// conversion. This can often be a Serde deserialization operation.
-    ///
-    /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
-    ///
-    /// Due to [compiler bug #84937](https://github.com/rust-lang/rust/issues/84937), call sites
-    /// for this function may not compile; if this happens, use
-    /// [`try_from_rc_buffer_badly()`](Self::try_from_rc_buffer_badly) instead.
-    #[inline]
-    pub fn try_from_rc_buffer<E>(
-        buffer: RcWrap<[u8]>,
-        f: impl for<'de> FnOnce(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
-        Ok(Self { yoke })
-    }
-
-    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
-    /// conversion. This can often be a Serde deserialization operation.
-    ///
-    /// This constructor creates `'static` payloads; borrowing is handled by [`Yoke`].
-    ///
-    /// For a version of this function that takes a `FnOnce` instead of a raw function pointer,
-    /// see [`try_from_rc_buffer()`](Self::try_from_rc_buffer).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # #[cfg(feature = "serde_json")] {
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_rc_buffer_badly(
-    ///     "{\"message\":\"Hello World\"}".as_bytes().into(),
-    ///     |bytes| serde_json::from_slice(bytes),
-    /// )
-    /// .expect("JSON is valid");
-    ///
-    /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "serde_json"
-    /// ```
-    #[allow(clippy::type_complexity)]
-    pub fn try_from_rc_buffer_badly<E>(
-        buffer: RcWrap<[u8]>,
-        f: for<'de> fn(&'de [u8]) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E> {
-        let yoke = Yoke::try_attach_to_cart(buffer, f)?.wrap_cart_in_option();
-        Ok(Self { yoke })
-    }
-
-    /// Convert a byte buffer into a [`DataPayload`]. A function must be provided to perform the
-    /// conversion. This can often be a Serde deserialization operation.
-    ///
-    /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
-    /// that is already yoked.
-    ///
-    /// The callback takes an additional `PhantomData<&()>` parameter to anchor lifetimes
-    /// (see [#86702](https://github.com/rust-lang/rust/issues/86702)) This parameter
-    /// should just be ignored in the callback.
-    ///
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # #[cfg(feature = "serde_json")] {
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::yoke::Yoke;
-    ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
-    ///     Yoke::attach_to_cart("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
-    ///     |bytes, _| serde_json::from_slice(bytes),
-    /// )
-    /// .expect("JSON is valid");
-    ///
-    /// assert_eq!("Hello World", payload.get().message);
-    /// # } // feature = "serde_json"
-    /// ```
-    #[allow(clippy::type_complexity)]
-    pub fn try_from_yoked_buffer<F, E>(
-        yoked_buffer: Yoke<&'static [u8], RcWrap<[u8]>>,
-        f: F,
-    ) -> Result<Self, E>
-    where
-        F: for<'de> FnOnce(
-            <&'static [u8] as yoke::Yokeable<'de>>::Output,
-            PhantomData<&'de ()>,
-        ) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
-    {
-        let yoke = yoked_buffer.wrap_cart_in_option().try_map_project(f)?;
-        Ok(Self { yoke })
-    }
-
     /// Convert a fully owned (`'static`) data struct into a DataPayload.
     ///
     /// This constructor creates `'static` payloads.
@@ -359,10 +183,11 @@ where
     /// use std::borrow::Cow;
     ///
     /// let local_struct = HelloWorldV1 {
-    ///     message: Cow::Owned("example".to_string()),
+    ///     message: Cow::Owned("example".to_owned()),
     /// };
     ///
-    /// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
+    /// let payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_owned(local_struct.clone());
     ///
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
@@ -394,7 +219,8 @@ where
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    /// let mut payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
     /// payload.with_mut(|s| s.message.to_mut().push_str(" World"));
     ///
@@ -407,10 +233,11 @@ where
     /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
+    /// let mut payload =
+    ///     DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
-    /// let suffix = " World".to_string();
-    /// payload.with_mut(move |s| s.message.to_mut().push_str(&suffix));
+    /// let suffix = " World";
+    /// payload.with_mut(move |s| s.message.to_mut().push_str(suffix));
     ///
     /// assert_eq!("Hello World", payload.get().message);
     /// ```
@@ -513,9 +340,10 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -555,9 +383,10 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
@@ -604,15 +433,16 @@ where
     /// #     type Yokeable = Cow<'static, str>;
     /// # }
     ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
+    /// let p1: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Hello World"),
+    ///     });
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
     /// let string_to_append = "Extra";
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.try_map_project_cloned(|obj, _| {
+    /// let p2: DataPayload<HelloWorldV1MessageMarker> = p1
+    ///     .try_map_project_cloned(|obj, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }
@@ -672,17 +502,24 @@ where
 }
 
 impl DataPayload<BufferMarker> {
-    /// Converts an [`RcWrap`] into a `DataPayload<BufferMarker>`. The [`RcWrap`]
-    /// can be obtained from a `&[u8]`.
-    pub fn from_rc_buffer(buffer: RcWrap<[u8]>) -> Self {
-        Self {
-            yoke: Yoke::attach_to_cart(buffer, |b| b).wrap_cart_in_option(),
-        }
+    /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
+    pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
+        let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b);
+        // Safe because cart is wrapped
+        let yoke = unsafe { yoke.replace_cart(|b| Some(Cart(b))) };
+        Self { yoke }
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
-    pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<RcWrap<[u8]>>>) -> Self {
+    pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
         Self { yoke }
+    }
+
+    /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
+    pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
+        Self {
+            yoke: Yoke::new_owned(buffer),
+        }
     }
 }
 

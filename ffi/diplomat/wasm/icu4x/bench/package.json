@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "benchmark": "2.1.4"
-  },
-  "scripts": {
-    "bench": "node --experimental-wasm-bigint all.mjs"
-  }
-}

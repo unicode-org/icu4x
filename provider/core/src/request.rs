@@ -53,11 +53,11 @@ pub struct DataRequestMetadata;
 /// use icu_locid::locale;
 /// use icu_provider::DataLocale;
 ///
-/// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(locale1);
-/// let locale2 = data_locale.into_locale();
+/// let locale = locale!("en-u-ca-buddhist");
+/// let data_locale = DataLocale::from(locale);
+/// let locale = data_locale.into_locale();
 ///
-/// assert_eq!(locale2.to_string(), "en-u-ca-buddhist");
+/// assert_eq!(locale, locale!("en-u-ca-buddhist"));
 /// ```
 ///
 /// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
@@ -81,24 +81,26 @@ pub struct DataRequestMetadata;
 /// use icu_locid::langid;
 /// use icu_provider::DataLocale;
 ///
-/// let langid1 = langid!("es-CA-valencia");
-/// let data_locale = DataLocale::from(langid1);
-/// let langid2 = data_locale.get_langid();
+/// let langid = langid!("es-CA-valencia");
+/// let data_locale = DataLocale::from(langid);
+/// let langid = data_locale.get_langid();
 ///
-/// assert_eq!(langid2.to_string(), "es-CA-valencia");
+/// assert_eq!(langid, langid!("es-CA-valencia"));
 /// ```
 ///
 /// [`DataLocale`] only supports `-u` keywords, to reflect the current state of CLDR data
 /// lookup and fallback. This may change in the future.
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu_locid::{locale, Locale};
 /// use icu_provider::DataLocale;
 ///
-/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist".parse::<Locale>().unwrap();
+/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist"
+///     .parse::<Locale>()
+///     .unwrap();
 /// let data_locale = DataLocale::from(locale);
 ///
-/// assert_eq!(data_locale.to_string(), "hi-u-ca-buddhist");
+/// assert_eq!(data_locale.into_locale(), locale!("hi-u-ca-buddhist"));
 /// ```
 #[derive(PartialEq, Clone, Default, Eq, Hash)]
 pub struct DataLocale {
@@ -139,6 +141,16 @@ impl Writeable for DataLocale {
             } else {
                 LengthHint::exact(0)
             }
+    }
+
+    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+        if self.keywords.is_empty() {
+            return self.langid.write_to_string();
+        }
+        let mut string =
+            alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
+        let _ = self.write_to(&mut string);
+        alloc::borrow::Cow::Owned(string)
     }
 }
 
@@ -192,8 +204,8 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::DataLocale;
     /// use icu_locid::Locale;
+    /// use icu_provider::DataLocale;
     /// use std::cmp::Ordering;
     ///
     /// let bcp47_strings: &[&str] = &[
@@ -213,13 +225,31 @@ impl DataLocale {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_loc: DataLocale = a.parse::<Locale>().unwrap().into();
-    ///     assert_eq!(a, a_loc.to_string());
-    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal, "{} == {}", a, a);
-    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less, "{} < {}", a, b);
+    ///     assert!(
+    ///         a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal,
+    ///         "{} == {}",
+    ///         a,
+    ///         a
+    ///     );
+    ///     assert!(
+    ///         a_loc.strict_cmp(b.as_bytes()) == Ordering::Less,
+    ///         "{} < {}",
+    ///         a,
+    ///         b
+    ///     );
     ///     let b_loc: DataLocale = b.parse::<Locale>().unwrap().into();
-    ///     assert_eq!(b, b_loc.to_string());
-    ///     assert!(b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal, "{} == {}", b, b);
-    ///     assert!(b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater, "{} > {}", b, a);
+    ///     assert!(
+    ///         b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal,
+    ///         "{} == {}",
+    ///         b,
+    ///         b
+    ///     );
+    ///     assert!(
+    ///         b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater,
+    ///         "{} > {}",
+    ///         b,
+    ///         a
+    ///     );
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
@@ -305,20 +335,21 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{langid, subtags_language as language, subtags_region as region, Locale};
+    /// use icu_locid::{
+    ///     langid, locale, subtags_language as language, subtags_region as region,
+    ///     Locale,
+    /// };
     /// use icu_provider::prelude::*;
     ///
-    /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
-    /// let locale: DataLocale = locale.into();
+    /// let locale: DataLocale = locale!("it-IT-u-ca-coptic").into();
     ///
-    /// assert_eq!(locale.to_string(), "it-IT-u-ca-coptic");
     /// assert_eq!(locale.get_langid(), langid!("it-IT"));
     /// assert_eq!(locale.language(), language!("it"));
     /// assert_eq!(locale.script(), None);
     /// assert_eq!(locale.region(), Some(region!("IT")));
     ///
     /// let locale = locale.into_locale();
-    /// assert_eq!(locale.to_string(), "it-IT-u-ca-coptic");
+    /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
     /// ```
     pub fn into_locale(self) -> Locale {
         let mut loc = Locale {
@@ -407,17 +438,17 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+    /// use icu_locid::{
+    ///     extensions_unicode_key as key, extensions_unicode_value as value,
+    ///     Locale,
+    /// };
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
     /// let locale: DataLocale = locale.into();
     ///
     /// assert_eq!(locale.get_unicode_ext(&key!("hc")), None);
-    /// assert_eq!(
-    ///     locale.get_unicode_ext(&key!("ca")),
-    ///     Some(value!("coptic"))
-    /// );
+    /// assert_eq!(locale.get_unicode_ext(&key!("ca")), Some(value!("coptic")));
     /// assert!(locale.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
     /// ```
     #[inline]
@@ -454,6 +485,8 @@ impl DataLocale {
 
 #[test]
 fn test_data_locale_to_string() {
+    use icu_locid::locale;
+
     struct TestCase {
         pub locale: DataLocale,
         pub expected: &'static str,
@@ -465,15 +498,14 @@ fn test_data_locale_to_string() {
             expected: "und",
         },
         TestCase {
-            locale: "und-u-cu-gbp".parse::<Locale>().unwrap().into(),
+            locale: locale!("und-u-cu-gbp").into(),
             expected: "und-u-cu-gbp",
         },
         TestCase {
-            locale: "en-ZA-u-cu-gbp".parse::<Locale>().unwrap().into(),
+            locale: locale!("en-ZA-u-cu-gbp").into(),
             expected: "en-ZA-u-cu-gbp",
         },
     ] {
-        assert_eq!(cas.expected, cas.locale.to_string());
-        writeable::assert_writeable_eq!(&cas.locale, cas.expected);
+        writeable::assert_writeable_eq!(cas.locale, cas.expected);
     }
 }

@@ -3,15 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-#[cfg(any(feature = "serde_human", feature = "datagen"))]
-use alloc::string::ToString;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
 use regex_automata::dfa::Automaton;
 
 /// A precompiled regex
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[allow(clippy::exhaustive_structs)] // not a public API
 pub struct StringMatcher<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
@@ -68,8 +65,10 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
 
         #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
+            #[cfg(not(feature = "std"))]
+            use alloc::string::ToString;
             use serde::de::Error;
-            return StringMatcher::new(<&str>::deserialize(deserializer)?)
+            return StringMatcher::new(Cow::<str>::deserialize(deserializer)?)
                 .map_err(|e| D::Error::custom(e.to_string()));
         }
 
@@ -112,7 +111,7 @@ impl<'data> StringMatcher<'data> {
 
     /// Creates a `StringMatcher` from regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
-    pub fn new(pattern: &str) -> Result<Self, icu_provider::DataError> {
+    pub fn new(pattern: Cow<'data, str>) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
             dfa::dense::{Builder, Config},
             SyntaxConfig,
@@ -122,7 +121,7 @@ impl<'data> StringMatcher<'data> {
         let dfa = builder
             .syntax(SyntaxConfig::new().case_insensitive(true))
             .configure(Config::new().anchored(true).minimize(true))
-            .build(pattern)
+            .build(&pattern)
             .map_err(|_| {
                 icu_provider::DataError::custom("Cannot build DFA").with_display_context(&pattern)
             })?
@@ -134,7 +133,7 @@ impl<'data> StringMatcher<'data> {
 
         Ok(Self {
             dfa_bytes: dfa.to_bytes_little_endian().into(),
-            pattern: Some(pattern.to_string().into()),
+            pattern: Some(pattern),
         })
     }
 
@@ -156,7 +155,7 @@ mod test {
 
     #[test]
     fn test_string_matcher() {
-        let matcher = StringMatcher::new("abc.*").unwrap();
+        let matcher = StringMatcher::new(Cow::Borrowed("abc.*")).unwrap();
         assert!(!matcher.test("ab"));
         assert!(matcher.test("abc"));
         assert!(matcher.test("abcde"));
@@ -164,7 +163,7 @@ mod test {
 
     #[test]
     fn test_postcard_serialization() {
-        let matcher = StringMatcher::new("abc*").unwrap();
+        let matcher = StringMatcher::new(Cow::Borrowed("abc*")).unwrap();
 
         let mut bytes = postcard::to_stdvec(&matcher).unwrap();
         assert_eq!(
@@ -189,7 +188,7 @@ mod test {
     #[test]
     #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
-        let matcher = StringMatcher::new("abc*").unwrap();
+        let matcher = StringMatcher::new(Cow::Borrowed("abc*")).unwrap();
 
         let json = serde_json::to_string(&matcher).unwrap();
         assert_eq!(

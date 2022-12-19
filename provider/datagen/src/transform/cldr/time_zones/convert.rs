@@ -37,8 +37,8 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
 fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
     let index = hour_format.rfind(';').unwrap();
-    let positive = String::from(&hour_format[0..index]);
-    let negative = String::from(&hour_format[index + 1..]);
+    let positive = hour_format[0..index].to_owned();
+    let negative = hour_format[index + 1..].to_owned();
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
@@ -478,7 +478,8 @@ fn metazone_periods_iter(
                 let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
                 let hour = time_parts[0].parse::<u8>().unwrap();
                 let minute = time_parts[1].parse::<u8>().unwrap();
-                let iso = DateTime::new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+                let iso =
+                    DateTime::try_new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
                 let minutes = iso.minutes_since_local_unix_epoch();
 
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
@@ -498,7 +499,7 @@ fn metazone_periods_iter(
                 }
             }
             None => {
-                let iso = DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
+                let iso = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
                 let minutes = iso.minutes_since_local_unix_epoch();
                 match meta_zone_id_data.get(&period.uses_meta_zone.mzone) {
                     Some(meta_zone_short_id) => (time_zone_key, minutes, Some(*meta_zone_short_id)),

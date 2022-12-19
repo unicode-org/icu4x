@@ -13,8 +13,8 @@
 //! ## `build.rs`
 //!
 //! ```no_run
-//! use icu_datagen::*;
 //! use icu::locid::langid;
+//! use icu_datagen::*;
 //! use std::fs::File;
 //! use std::path::PathBuf;
 //!
@@ -30,14 +30,14 @@
 //! ```
 //!
 //! ## Command line
-//! The command line interface is available with the `bin` feature.
+//! The command line interface can be installed with the `bin` feature.
 //! ```bash
-//! cargo run --features bin -- \
-//!     --icu_exports-root /path/to/icu_exports/root \
-//!     --all-keys \
-//!     --locales de,en-AU \
-//!     --format blob \
-//!     --out data.postcard
+//! $ cargo install icu_datagen --features bin
+//! $ icu4x-datagen \
+//! >    --all-keys \
+//! >    --locales de en-AU \
+//! >    --format blob \
+//! >    --out data.postcard
 //! ```
 
 //! More details can be found by running `--help`.
@@ -61,6 +61,8 @@ mod databake;
 mod error;
 mod registry;
 mod source;
+#[cfg(test)]
+mod testutil;
 mod transform;
 
 pub use error::*;
@@ -91,14 +93,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::default()
-                    .with_cldr(
-                        icu_testdata::paths::cldr_json_root(),
-                        CldrLocaleSubset::Full,
-                    )
-                    .expect("testdata is valid")
-                    .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-                    .expect("testdata is valid"),
+                source: SourceData::for_test(),
             };
         }
         TEST_PROVIDER.clone()

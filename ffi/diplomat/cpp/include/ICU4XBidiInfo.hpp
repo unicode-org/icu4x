@@ -37,6 +37,8 @@ class ICU4XBidiInfo {
 
   /**
    * Get the nth paragraph, returning None if out of bounds
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
   std::optional<ICU4XBidiParagraph> paragraph_at(size_t n) const;
 

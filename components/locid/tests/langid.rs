@@ -6,6 +6,7 @@ mod fixtures;
 mod helpers;
 
 use std::convert::TryInto;
+use writeable::*;
 
 use icu_locid::{subtags, LanguageIdentifier, ParserError};
 
@@ -21,7 +22,7 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
                     }
                 }
                 let input: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-                assert_eq!(input.to_string(), s);
+                assert_writeable_eq!(input, s);
             }
             fixtures::LocaleInfo::Error(err) => {
                 let err: ParserError = err.into();
@@ -83,28 +84,28 @@ fn test_langid_subtag_language() {
     assert_eq!(lang, subtags::Language::UND);
     assert!(lang.is_empty());
 
-    assert_eq!(lang.to_string(), "und");
+    assert_writeable_eq!(lang, "und");
 }
 
 #[test]
 fn test_langid_subtag_region() {
     let region: subtags::Region = "en".parse().expect("Failed to parse a region.");
     assert_eq!(region.as_str(), "EN");
-    assert_eq!(region.to_string(), "EN");
+    assert_writeable_eq!(region, "EN");
 }
 
 #[test]
 fn test_langid_subtag_script() {
     let script: subtags::Script = "Latn".parse().expect("Failed to parse a script.");
     assert_eq!(script.as_str(), "Latn");
-    assert_eq!(script.to_string(), "Latn");
+    assert_writeable_eq!(script, "Latn");
 }
 
 #[test]
 fn test_langid_subtag_variant() {
     let variant: subtags::Variant = "macos".parse().expect("Failed to parse a variant.");
     assert_eq!(variant.as_str(), "macos");
-    assert_eq!(variant.to_string(), "macos");
+    assert_writeable_eq!(variant, "macos");
 }
 
 #[test]
@@ -123,7 +124,7 @@ fn test_langid_normalizing_eq_str() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: LanguageIdentifier = test.input.try_into().expect("Parsing failed.");
-        assert!(parsed.normalizing_eq(parsed.to_string().as_str()));
+        assert!(parsed.normalizing_eq(&*parsed.write_to_string()));
     }
 
     // Check that trailing characters are not ignored
@@ -148,7 +149,7 @@ fn test_langid_strict_cmp() {
             let a_langid = a
                 .parse::<LanguageIdentifier>()
                 .expect("Invalid BCP-47 in fixture");
-            let a_normalized = a_langid.to_string();
+            let a_normalized = a_langid.write_to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
             let test_cmp = a_langid.strict_cmp(b.as_bytes());
             assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);

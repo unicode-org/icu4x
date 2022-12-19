@@ -16,7 +16,8 @@ use core::ops::Deref;
 /// ```
 /// use icu::locid::extensions::unicode::{Attribute, Attributes};
 ///
-/// let attribute1: Attribute = "foobar".parse().expect("Failed to parse a variant subtag.");
+/// let attribute1: Attribute =
+///     "foobar".parse().expect("Failed to parse a variant subtag.");
 ///
 /// let attribute2: Attribute = "testing"
 ///     .parse()
@@ -78,18 +79,19 @@ impl Attributes {
     ///
     /// ```
     /// use icu::locid::extensions::unicode::{Attribute, Attributes};
+    /// use icu::locid::extensions_unicode_attribute as attribute;
+    /// use writeable::assert_writeable_eq;
     ///
-    /// let attribute1: Attribute = "foobar".parse().expect("Parsing failed.");
-    /// let attribute2: Attribute = "testing".parse().expect("Parsing failed.");
-    /// let mut v = vec![attribute1, attribute2];
+    /// let mut attributes = Attributes::from_vec_unchecked(vec![
+    ///     attribute!("foobar"),
+    ///     attribute!("testing"),
+    /// ]);
     ///
-    /// let mut attributes: Attributes = Attributes::from_vec_unchecked(v);
-    ///
-    /// assert_eq!(attributes.to_string(), "foobar-testing");
+    /// assert_writeable_eq!(attributes, "foobar-testing");
     ///
     /// attributes.clear();
     ///
-    /// assert_eq!(attributes.to_string(), "");
+    /// assert_writeable_eq!(attributes, "");
     /// ```
     pub fn clear(&mut self) -> Self {
         core::mem::take(self)

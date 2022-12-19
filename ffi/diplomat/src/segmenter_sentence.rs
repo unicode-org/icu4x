@@ -13,13 +13,13 @@ pub mod ffi {
     use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
         SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
-        SentenceBreakIteratorUtf16, SentenceBreakSegmenter,
+        SentenceBreakIteratorUtf16, SentenceSegmenter,
     };
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter, Struct)]
-    pub struct ICU4XSentenceBreakSegmenter(SentenceBreakSegmenter);
+    #[diplomat::rust_link(icu::segmenter::SentenceSegmenter, Struct)]
+    pub struct ICU4XSentenceSegmenter(SentenceSegmenter);
 
     #[diplomat::opaque]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
@@ -32,34 +32,28 @@ pub mod ffi {
     #[diplomat::opaque]
     pub struct ICU4XSentenceBreakIteratorLatin1<'a>(SentenceBreakIteratorLatin1<'a, 'a>);
 
-    impl ICU4XSentenceBreakSegmenter {
-        /// Construct an [`ICU4XSentenceBreakSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::try_new, FnInStruct)]
+    impl ICU4XSentenceSegmenter {
+        /// Construct an [`ICU4XSentenceSegmenter`].
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError> {
+        ) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(
-            provider: &D,
-        ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError>
+        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError>
         where
             D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
         {
-            SentenceBreakSegmenter::try_new(provider)
-                .map(|o| Box::new(ICU4XSentenceBreakSegmenter(o)))
+            SentenceSegmenter::try_new_unstable(provider)
+                .map(|o| Box::new(ICU4XSentenceSegmenter(o)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceBreakSegmenter::segment_str,
-            FnInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,
@@ -69,7 +63,7 @@ pub mod ffi {
         }
 
         /// Segments a UTF-16 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf16, FnInStruct)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a [u16],
@@ -78,7 +72,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_latin1, FnInStruct)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

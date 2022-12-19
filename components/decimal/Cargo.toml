@@ -5,7 +5,7 @@
 [package]
 name = "icu_decimal"
 description = "API for formatting basic decimal numbers in a locale-sensitive way"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
@@ -31,10 +31,10 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "1.0.0-beta1", path = "../locid" }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
-fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
-writeable = { version = "0.4", path = "../../utils/writeable" }
+icu_locid = { version = "1.0.0", path = "../locid" }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
+writeable = { version = "0.5", path = "../../utils/writeable" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}

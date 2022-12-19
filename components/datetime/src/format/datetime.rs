@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DateTimeFormatterError as Error;
+use crate::error::DateTimeError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
@@ -43,7 +43,7 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// let formatted_date = dtf.format(&datetime);
@@ -509,7 +509,7 @@ mod tests {
         use icu::datetime::DateFormatter;
 
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_unstable(
+        let dtf = DateFormatter::try_new_with_length_unstable(
             &icu_testdata::unstable(),
             &locale.into(),
             length::Date::Medium,
@@ -518,7 +518,7 @@ mod tests {
 
         let japanext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
             .expect("Cannot load japanext data");
-        let date = Date::new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
+        let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
         writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
@@ -549,7 +549,7 @@ mod tests {
             .take_payload()
             .unwrap();
         let pattern = "MMM".parse().unwrap();
-        let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
+        let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
             &icu_testdata::unstable(),
             &locale,

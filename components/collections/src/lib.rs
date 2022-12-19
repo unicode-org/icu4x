@@ -19,7 +19,6 @@
 //! which map to integer values.
 //! It is an implementation of the existing [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
 //! / [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
-//!
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -38,4 +37,5 @@ extern crate alloc;
 
 pub mod char16trie;
 pub mod codepointinvlist;
+pub mod codepointinvliststringlist;
 pub mod codepointtrie;

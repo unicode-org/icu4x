@@ -34,7 +34,7 @@ pub fn parse_language_identifier_from_iter(
     let mut variants = Vec::new();
 
     let language = if let Some(subtag) = iter.next() {
-        subtags::Language::from_bytes(subtag)?
+        subtags::Language::try_from_bytes(subtag)?
     } else {
         return Err(ParserError::InvalidLanguage);
     };
@@ -47,13 +47,13 @@ pub fn parse_language_identifier_from_iter(
         }
 
         if position == ParserPosition::Script {
-            if let Ok(s) = subtags::Script::from_bytes(subtag) {
+            if let Ok(s) = subtags::Script::try_from_bytes(subtag) {
                 script = Some(s);
                 position = ParserPosition::Region;
-            } else if let Ok(s) = subtags::Region::from_bytes(subtag) {
+            } else if let Ok(s) = subtags::Region::try_from_bytes(subtag) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
+            } else if let Ok(v) = subtags::Variant::try_from_bytes(subtag) {
                 if let Err(idx) = variants.binary_search(&v) {
                     variants.insert(idx, v);
                 }
@@ -64,10 +64,10 @@ pub fn parse_language_identifier_from_iter(
                 return Err(ParserError::InvalidSubtag);
             }
         } else if position == ParserPosition::Region {
-            if let Ok(s) = subtags::Region::from_bytes(subtag) {
+            if let Ok(s) = subtags::Region::try_from_bytes(subtag) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
+            } else if let Ok(v) = subtags::Variant::try_from_bytes(subtag) {
                 if let Err(idx) = variants.binary_search(&v) {
                     variants.insert(idx, v);
                 }
@@ -77,7 +77,7 @@ pub fn parse_language_identifier_from_iter(
             } else {
                 return Err(ParserError::InvalidSubtag);
             }
-        } else if let Ok(v) = subtags::Variant::from_bytes(subtag) {
+        } else if let Ok(v) = subtags::Variant::try_from_bytes(subtag) {
             if let Err(idx) = variants.binary_search(&v) {
                 variants.insert(idx, v);
             } else {
@@ -129,7 +129,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
 
     if let (i, Some((t, start, end))) = iter.next_manual() {
         iter = i;
-        match subtags::Language::from_bytes_manual_slice(t, start, end) {
+        match subtags::Language::try_from_bytes_manual_slice(t, start, end) {
             Ok(l) => language = l,
             Err(e) => return Err(e),
         }
@@ -145,13 +145,13 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
         }
 
         if matches!(position, ParserPosition::Script) {
-            if let Ok(s) = subtags::Script::from_bytes_manual_slice(t, start, end) {
+            if let Ok(s) = subtags::Script::try_from_bytes_manual_slice(t, start, end) {
                 script = Some(s);
                 position = ParserPosition::Region;
-            } else if let Ok(r) = subtags::Region::from_bytes_manual_slice(t, start, end) {
+            } else if let Ok(r) = subtags::Region::try_from_bytes_manual_slice(t, start, end) {
                 region = Some(r);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+            } else if let Ok(v) = subtags::Variant::try_from_bytes_manual_slice(t, start, end) {
                 // We cannot handle multiple variants in a const context
                 debug_assert!(variant.is_none());
                 variant = Some(v);
@@ -162,10 +162,10 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                 return Err(ParserError::InvalidSubtag);
             }
         } else if matches!(position, ParserPosition::Region) {
-            if let Ok(s) = subtags::Region::from_bytes_manual_slice(t, start, end) {
+            if let Ok(s) = subtags::Region::try_from_bytes_manual_slice(t, start, end) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+            } else if let Ok(v) = subtags::Variant::try_from_bytes_manual_slice(t, start, end) {
                 // We cannot handle multiple variants in a const context
                 debug_assert!(variant.is_none());
                 variant = Some(v);
@@ -175,7 +175,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
             } else {
                 return Err(ParserError::InvalidSubtag);
             }
-        } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+        } else if let Ok(v) = subtags::Variant::try_from_bytes_manual_slice(t, start, end) {
             debug_assert!(matches!(position, ParserPosition::Variant));
             if variant.is_some() {
                 // We cannot handle multiple variants in a const context
@@ -193,11 +193,11 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
 
     if matches!(mode, ParserMode::Locale) {
         if let Some((bytes, start, end)) = iter.peek_manual() {
-            match ExtensionType::from_bytes_manual_slice(bytes, start, end) {
+            match ExtensionType::try_from_bytes_manual_slice(bytes, start, end) {
                 Ok(ExtensionType::Unicode) => {
                     iter = iter.next_manual().0;
                     if let Some((bytes, start, end)) = iter.peek_manual() {
-                        if Attribute::from_bytes_manual_slice(bytes, start, end).is_ok() {
+                        if Attribute::try_from_bytes_manual_slice(bytes, start, end).is_ok() {
                             // We cannot handle Attributes in a const context
                             return Err(ParserError::InvalidSubtag);
                         }
@@ -213,7 +213,7 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_f
                                 // We cannot handle more than one Key in a const context
                                 return Err(ParserError::InvalidSubtag);
                             }
-                            match Key::from_bytes_manual_slice(bytes, start, end) {
+                            match Key::try_from_bytes_manual_slice(bytes, start, end) {
                                 Ok(k) => key = Some(k),
                                 Err(e) => return Err(e),
                             };

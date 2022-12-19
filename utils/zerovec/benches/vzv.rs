@@ -102,7 +102,7 @@ fn binary_search_benches(c: &mut Criterion) {
     let (needles, _) = random_alphanums(2..=20, 10, seed);
     let bytes: Vec<u8> = VarZeroVec::<str>::from(&string_vec).into_bytes();
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
-    let single_needle = "lmnop".to_string();
+    let single_needle = "lmnop".to_owned();
 
     // *** Binary search vec of 500 strings 10 times ***
     c.bench_function("vzv/binary_search/slice", |b| {
@@ -169,7 +169,7 @@ fn vzv_precompute_bench(c: &mut Criterion) {
     let vzv = VarZeroVec::<str>::parse_byte_slice(black_box(bytes.as_slice())).unwrap();
     let borrowed = vzv.as_components();
     let slice = vzv.as_slice();
-    let single_needle = "lmnop".to_string();
+    let single_needle = "lmnop";
 
     c.bench_function("vzv_precompute/get/precomputed", |b| {
         b.iter(|| black_box(&borrowed).get(100));
@@ -180,11 +180,11 @@ fn vzv_precompute_bench(c: &mut Criterion) {
     });
 
     c.bench_function("vzv_precompute/search/precomputed", |b| {
-        b.iter(|| black_box(&borrowed).binary_search(&single_needle));
+        b.iter(|| black_box(&borrowed).binary_search(single_needle));
     });
 
     c.bench_function("vzv_precompute/search/slice", |b| {
-        b.iter(|| black_box(&slice).binary_search(&single_needle));
+        b.iter(|| black_box(&slice).binary_search(single_needle));
     });
 
     c.bench_function("vzv_precompute/search_multi/precomputed", |b| {

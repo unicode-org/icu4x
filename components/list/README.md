@@ -11,10 +11,10 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_and_unstable(
+let list_formatter = ListFormatter::try_new_and_with_length_unstable(
     &icu_testdata::unstable(),
     &locale!("es").into(),
-    ListStyle::Wide,
+    ListLength::Wide,
 )
 .expect("Data should load successfully");
 
@@ -34,10 +34,10 @@ assert_writeable_eq!(
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_or_unstable(
+let list_formatter = ListFormatter::try_new_or_with_length_unstable(
     &icu_testdata::unstable(),
     &locale!("th").into(),
-    ListStyle::Short,
+    ListLength::Short,
 )
 .expect("Data should load successfully");
 
@@ -49,10 +49,10 @@ assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_unit_unstable(
+let list_formatter = ListFormatter::try_new_unit_with_length_unstable(
     &icu_testdata::unstable(),
     &locale!("en").into(),
-    ListStyle::Wide,
+    ListLength::Wide,
 )
 .expect("Data should load successfully");
 

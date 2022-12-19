@@ -6,6 +6,7 @@ mod fixtures;
 mod helpers;
 
 use std::convert::TryInto;
+use writeable::*;
 
 use icu_locid::{LanguageIdentifier, Locale, ParserError};
 
@@ -16,7 +17,7 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
         match test.output {
             fixtures::LocaleInfo::String(s) => {
                 let input: Locale = test.input.try_into().expect("Parsing failed.");
-                assert_eq!(input.to_string(), s);
+                assert_writeable_eq!(input, s);
             }
             fixtures::LocaleInfo::Error(err) => {
                 let err: ParserError = err.into();
@@ -27,7 +28,7 @@ fn test_langid_fixtures(tests: Vec<fixtures::LocaleTest>) {
                 let input: Locale = test.input.try_into().expect("Parsing failed.");
                 let output: Locale = ident.clone().try_into().expect("Parsing failed.");
                 assert_eq!(input, output);
-                assert_eq!(input.to_string(), ident.identifier);
+                assert_writeable_eq!(input, ident.identifier);
             }
             fixtures::LocaleInfo::Object(o) => {
                 let input: Locale = test.input.try_into().expect("Parsing failed.");
@@ -58,7 +59,7 @@ fn test_langid_invalid() {
 fn test_locale_is_empty() {
     let locale: Locale = Locale::default();
     assert!(locale.extensions.is_empty());
-    assert_eq!(locale.to_string(), "und".to_string());
+    assert_writeable_eq!(locale, "und");
 }
 
 #[test]
@@ -74,10 +75,7 @@ fn test_locale_canonicalize() {
     let locale: Locale = "En-latn-US-MacOS"
         .parse()
         .expect("Failed to parse a locale.");
-    assert_eq!(
-        locale.to_string(),
-        Locale::canonicalize("eN-latN-uS-macOS").unwrap()
-    );
+    assert_writeable_eq!(locale, Locale::canonicalize("eN-latN-uS-macOS").unwrap());
 }
 
 #[test]
@@ -87,7 +85,7 @@ fn test_locale_normalizing_eq_str() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
     for test in tests {
         let parsed: Locale = test.input.try_into().expect("Parsing failed.");
-        assert!(parsed.normalizing_eq(parsed.to_string().as_str()));
+        assert!(parsed.normalizing_eq(&*parsed.write_to_string()));
     }
 
     // Check that trailing characters are not ignored
@@ -113,7 +111,7 @@ fn test_locale_strict_cmp() {
     for a in bcp47_strings.iter() {
         for b in bcp47_strings.iter() {
             let a_langid = a.parse::<Locale>().expect("Invalid BCP-47 in fixture");
-            let a_normalized = a_langid.to_string();
+            let a_normalized = a_langid.write_to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
             let test_cmp = a_langid.strict_cmp(b.as_bytes());
             assert_eq!(string_cmp, test_cmp, "{:?}/{:?}", a, b);

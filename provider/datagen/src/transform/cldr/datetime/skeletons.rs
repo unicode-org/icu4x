@@ -54,7 +54,7 @@ impl From<&cldr_serde::ca::Dates> for DateSkeletonPatternsV1<'_> {
                         if key == "other" {
                             continue;
                         }
-                        let cat = PluralCategory::from_tr35_string(key)
+                        let cat = PluralCategory::get_for_cldr_string(key)
                             .expect("Failed to retrieve plural category");
                         let pattern = pattern_str.parse().expect("Unable to parse a pattern");
                         plural_pattern.maybe_set_variant(cat, pattern);

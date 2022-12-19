@@ -47,7 +47,7 @@ class ICU4XDate {
   /**
    * Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
    * 
-   * See the [Rust documentation for `new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes) for more information.
+   * See the [Rust documentation for `try_new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
    */
   static diplomat::result<ICU4XDate, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar);
 

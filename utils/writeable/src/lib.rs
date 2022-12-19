@@ -240,7 +240,11 @@ pub trait Writeable {
     /// }
     /// ```
     fn write_to_string(&self) -> Cow<str> {
-        let mut output = String::with_capacity(self.writeable_length_hint().capacity());
+        let hint = self.writeable_length_hint();
+        if hint.is_zero() {
+            return Cow::Borrowed("");
+        }
+        let mut output = String::with_capacity(hint.capacity());
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
@@ -289,7 +293,10 @@ macro_rules! impl_display_with_writeable {
 ///
 /// struct Demo;
 /// impl Writeable for Demo {
-///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
+///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+///         &self,
+///         sink: &mut S,
+///     ) -> fmt::Result {
 ///         sink.with_part(WORD, |w| w.write_str("foo"))
 ///     }
 ///     fn writeable_length_hint(&self) -> LengthHint {
@@ -303,7 +310,13 @@ macro_rules! impl_display_with_writeable {
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 ///
 /// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)]);
-/// assert_writeable_parts_eq!(&Demo, "foo", [(0, 3, WORD)], "Message: {}", "Hello World");
+/// assert_writeable_parts_eq!(
+///     &Demo,
+///     "foo",
+///     [(0, 3, WORD)],
+///     "Message: {}",
+///     "Hello World"
+/// );
 /// ```
 #[macro_export]
 macro_rules! assert_writeable_eq {
@@ -316,10 +329,19 @@ macro_rules! assert_writeable_eq {
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
-        assert!(length_hint.0 <= actual_str.len(), $($arg)*);
+        assert!(
+            length_hint.0 <= actual_str.len(),
+            "hint lower bound {} larger than actual length {}: {}",
+            length_hint.0, actual_str.len(), format!($($arg)*),
+        );
         if let Some(upper) = length_hint.1 {
-            assert!(actual_str.len() <= upper, $($arg)*);
+            assert!(
+                actual_str.len() <= upper,
+                "hint upper bound {} smaller than actual length {}: {}",
+                length_hint.0, actual_str.len(), format!($($arg)*),
+            );
         }
+        assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
 }
 
@@ -340,6 +362,7 @@ macro_rules! assert_writeable_parts_eq {
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)+);
         }
+        assert_eq!(actual_writeable.to_string(), $expected_str);
     }};
 }
 

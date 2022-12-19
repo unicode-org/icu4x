@@ -1,18 +1,6 @@
 ``provider::ffi``
 =================
 
-.. cpp:struct:: ICU4XCreateDataProviderResult
-
-    A result type for ``ICU4XDataProvider::create``.
-
-
-    .. cpp:member:: std::optional<ICU4XDataProvider> provider
-
-        Will be ``None`` if ``success`` is ``false``, do not use in that case.
-
-
-    .. cpp:member:: bool success
-
 .. cpp:class:: ICU4XDataProvider
 
     An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -39,6 +27,8 @@
         Constructs a ``BlobDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for BlobDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html>`__ for more information.
+
+        Lifetimes: ``blob`` must live for the duration of the program.
 
 
     .. cpp:function:: static ICU4XDataProvider create_empty()

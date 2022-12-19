@@ -4,20 +4,24 @@
 
 //! This module exposes tooling for running the [unicode bidi algorithm](https://unicode.org/reports/tr9/) using ICU4X data.
 //!
-//! `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`].
+//! `BidiClassAdapter` enables ICU4X to provide data to [`unicode-bidi`], an external crate implementing UAX #9.
 //!
 //! # Examples
 //!
 //!```
-//! use icu_collections::codepointtrie::CodePointTrie;
 //! use icu_properties::bidi::BidiClassAdapter;
-//! use icu_properties::{maps, BidiClass};
-//! use unicode_bidi::BidiClass as DataSourceBidiClass;
-//! use unicode_bidi::BidiDataSource;
+//! use icu_properties::maps;
 //! use unicode_bidi::BidiInfo;
 //! // This example text is defined using `concat!` because some browsers
 //! // and text editors have trouble displaying bidi strings.
-//! let text = concat!["א", "ב", "ג", "a", "b", "c",];
+//! let text =  concat!["א", // RTL#1
+//!                     "ב", // RTL#2
+//!                     "ג", // RTL#3
+//!                     "a", // LTR#1
+//!                     "b", // LTR#2
+//!                     "c", // LTR#3
+//!                     ]; //
+//!
 //!
 //! let data = maps::load_bidi_class(&icu_testdata::unstable()).expect("The data should be valid");
 //! let bc = data.as_borrowed();
@@ -26,13 +30,13 @@
 //! // Resolve embedding levels within the text.  Pass `None` to detect the
 //! // paragraph level automatically.
 //!
-//! let bidi_info = BidiInfo::new_with_data_source(&adapter, &text, None);
+//! let bidi_info = BidiInfo::new_with_data_source(&adapter, text, None);
 //!
 //! // This paragraph has embedding level 1 because its first strong character is RTL.
 //! assert_eq!(bidi_info.paragraphs.len(), 1);
 //! let para = &bidi_info.paragraphs[0];
 //! assert_eq!(para.level.number(), 1);
-//! assert_eq!(para.level.is_rtl(), true);
+//! assert!(para.level.is_rtl());
 //!
 //! // Re-ordering is done after wrapping each paragraph into a sequence of
 //! // lines. For this example, I'll just use a single line that spans the
@@ -40,7 +44,13 @@
 //! let line = para.range.clone();
 //!
 //! let display = bidi_info.reorder_line(para, line);
-//! assert_eq!(display, concat!["a", "b", "c", "ג", "ב", "א",]);
+//! assert_eq!(display, concat!["a", // LTR#1
+//!                             "b", // LTR#2
+//!                             "c", // LTR#3
+//!                             "ג", // RTL#3
+//!                             "ב", // RTL#2
+//!                             "א", // RTL#1
+//!                             ]);
 //! ```
 
 use crate::maps::CodePointMapDataBorrowed;

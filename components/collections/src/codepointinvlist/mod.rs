@@ -4,7 +4,8 @@
 
 //! This module provides necessary functionality for highly efficient querying of sets of Unicode characters.
 //!
-//! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
+//! It is an implementation of the code point portion of the existing
+//! [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
 //! # Architecture
 //! ICU4X [`CodePointInversionList`] is split up into independent levels, with [`CodePointInversionList`] representing the membership/query API,
@@ -19,10 +20,12 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{
+//!     CodePointInversionList, CodePointInversionListBuilder,
+//! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -33,10 +36,12 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{
+//!     CodePointInversionList, CodePointInversionListBuilder,
+//! };
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
-//! builder.add_range(&('A'..'Z'));
+//! builder.add_range(&('A'..='Z'));
 //! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
@@ -62,11 +67,12 @@ pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
 pub use cpinvlist::CodePointInversionList;
 use displaydoc::Display;
-pub use utils::*;
 
 /// Custom Errors for [`CodePointInversionList`].
+///
+/// Re-exported as [`Error`](Error).
 #[derive(Display, Debug)]
-pub enum CodePointSetError {
+pub enum CodePointInversionListError {
     /// A CodePointInversionList was constructed with an invalid inversion list
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
@@ -76,4 +82,7 @@ pub enum CodePointSetError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for CodePointSetError {}
+impl std::error::Error for CodePointInversionListError {}
+
+#[doc(inline)]
+pub use CodePointInversionListError as Error;

@@ -61,8 +61,8 @@
 
         See the `Rust documentation for as_borrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed>`__ for more information.
 
-
         Lifetimes: ``this`` must live at least as long as the output.
+
 
 .. cpp:class:: ICU4XScriptWithExtensionsBorrowed
 
@@ -84,8 +84,8 @@
 
         See the `Rust documentation for get_script_extensions_val <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val>`__ for more information.
 
-
         Lifetimes: ``this`` must live at least as long as the output.
+
 
     .. cpp:function:: bool has_script(uint32_t code_point, uint16_t script) const
 

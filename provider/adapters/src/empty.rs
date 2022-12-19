@@ -15,15 +15,18 @@ use icu_provider::prelude::*;
 /// # Examples
 ///
 /// ```
-/// use icu_provider_adapters::empty::EmptyDataProvider;
-/// use icu_provider::prelude::*;
 /// use icu_provider::hello_world::HelloWorldV1Marker;
+/// use icu_provider::prelude::*;
+/// use icu_provider_adapters::empty::EmptyDataProvider;
 ///
 /// let provider = EmptyDataProvider::new();
 ///
 /// assert!(matches!(
 ///     provider.load_any(HelloWorldV1Marker::KEY, Default::default()),
-///     Err(DataError { kind: DataErrorKind::MissingDataKey, .. })
+///     Err(DataError {
+///         kind: DataErrorKind::MissingDataKey,
+///         ..
+///     })
 /// ));
 /// ```
 pub struct EmptyDataProvider {

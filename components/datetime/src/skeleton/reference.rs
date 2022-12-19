@@ -8,7 +8,6 @@ use crate::fields::{self, Field, FieldLength, FieldSymbol};
 use crate::pattern::reference::Pattern;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
-use core::fmt::{self, Write};
 use smallvec::SmallVec;
 
 /// A [`Skeleton`] is used to represent what types of `Field`s are present in a [`Pattern`]. The
@@ -151,8 +150,10 @@ impl TryFrom<&str> for Skeleton {
     }
 }
 
-impl fmt::Display for Skeleton {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+#[cfg(feature = "datagen")]
+impl core::fmt::Display for Skeleton {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        use core::fmt::Write;
         for field in self.fields_iter() {
             let ch: char = field.symbol.into();
             for _ in 0..field.length.to_len() {

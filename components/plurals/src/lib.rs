@@ -89,13 +89,16 @@ pub mod provider;
 pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
-pub use error::PluralRulesError;
+pub use error::PluralsError;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use rules::runtime::test_rule;
+
+#[doc(inline)]
+pub use PluralsError as Error;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -247,11 +250,11 @@ impl PluralCategory {
     }
 
     /// Returns the PluralCategory coresponding to given TR35 string.
-    pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
-        Self::from_tr35_bytes(category.as_bytes())
+    pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
+        Self::get_for_cldr_bytes(category.as_bytes())
     }
     /// Returns the PluralCategory coresponding to given TR35 string as bytes
-    pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
+    pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),
             b"one" => Some(PluralCategory::One),
@@ -293,6 +296,11 @@ impl PluralRules {
     ///
     /// This constructor will fail if the [`Data Provider`] does not have the data.
     ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// ```
@@ -312,7 +320,7 @@ impl PluralRules {
         data_provider: &D,
         locale: &DataLocale,
         rule_type: PluralRuleType,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
     {
@@ -325,7 +333,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         rule_type: PluralRuleType,
-        error: PluralRulesError
+        error: PluralsError
     );
 
     /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
@@ -337,6 +345,11 @@ impl PluralRules {
     ///
     /// * [`One`]: `1 day`
     /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -358,7 +371,7 @@ impl PluralRules {
     pub fn try_new_cardinal_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<CardinalV1Marker> + ?Sized,
     {
@@ -376,7 +389,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: skip,
-        error: PluralRulesError,
+        error: PluralsError,
         functions: [
             Self::try_new_cardinal_unstable,
             try_new_cardinal_with_any_provider,
@@ -394,6 +407,11 @@ impl PluralRules {
     /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
     /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
     /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     ///
     /// # Examples
     ///
@@ -417,7 +435,7 @@ impl PluralRules {
     pub fn try_new_ordinal_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
-    ) -> Result<Self, PluralRulesError>
+    ) -> Result<Self, PluralsError>
     where
         D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
@@ -435,7 +453,7 @@ impl PluralRules {
     icu_provider::gen_any_buffer_constructors!(
         locale: include,
         options: skip,
-        error: PluralRulesError,
+        error: PluralsError,
         functions: [
             Self::try_new_ordinal_unstable,
             try_new_ordinal_with_any_provider,

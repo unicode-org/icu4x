@@ -1,4 +1,4 @@
-# C++ FFI for ICU4X
+# C FFI for ICU4X
 
 This folder contains the C FFI for ICU4X. To re-generate the bindings run:
 

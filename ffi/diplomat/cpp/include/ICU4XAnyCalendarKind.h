@@ -25,16 +25,16 @@ typedef enum ICU4XAnyCalendarKind {
 } // namespace capi
 #endif
 #include "ICU4XLocale.h"
-#include "diplomat_result_ICU4XAnyCalendarKind_ICU4XError.h"
+#include "diplomat_result_ICU4XAnyCalendarKind_void.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_ICU4XAnyCalendarKind_ICU4XError ICU4XAnyCalendarKind_from_locale(const ICU4XLocale* locale);
+diplomat_result_ICU4XAnyCalendarKind_void ICU4XAnyCalendarKind_get_for_locale(const ICU4XLocale* locale);
 
-diplomat_result_ICU4XAnyCalendarKind_ICU4XError ICU4XAnyCalendarKind_from_bcp47(const char* s_data, size_t s_len);
+diplomat_result_ICU4XAnyCalendarKind_void ICU4XAnyCalendarKind_get_for_bcp47(const char* s_data, size_t s_len);
 
 diplomat_result_void_ICU4XError ICU4XAnyCalendarKind_bcp47(ICU4XAnyCalendarKind self, DiplomatWriteable* write);
 void ICU4XAnyCalendarKind_destroy(ICU4XAnyCalendarKind* self);

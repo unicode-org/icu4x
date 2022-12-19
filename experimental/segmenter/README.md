@@ -28,42 +28,44 @@ of the icu meta-crate. Use with caution.
 Segment a string with default options:
 
 ```rust
-use icu::segmenter::LineBreakSegmenter;
+use icu::segmenter::LineSegmenter;
 
-let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
-    .expect("Data exists");
+let segmenter =
+    LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+        .expect("Data exists");
 
 let breakpoints: Vec<usize> =
     segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[6, 11]);
 ```
 
-See [`LineBreakSegmenter`] for more examples.
+See [`LineSegmenter`] for more examples.
 
 ### Grapheme Cluster Break
 
-See [`GraphemeClusterBreakSegmenter`] for examples.
+See [`GraphemeClusterSegmenter`] for examples.
 
 ### Word Break
 
 Segment a string:
 
 ```rust
-use icu::segmenter::WordBreakSegmenter;
+use icu::segmenter::WordSegmenter;
 
-let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
-    .expect("Data exists");
+let segmenter =
+    WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+        .expect("Data exists");
 
 let breakpoints: Vec<usize> =
     segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 ```
 
-See [`WordBreakSegmenter`] for more examples.
+See [`WordSegmenter`] for more examples.
 
 ### Sentence Break
 
-See [`SentenceBreakSegmenter`] for examples.
+See [`SentenceSegmenter`] for examples.
 
 ## More Information
 

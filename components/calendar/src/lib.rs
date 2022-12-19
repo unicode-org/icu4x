@@ -31,7 +31,7 @@
 //! use icu::calendar::{types::IsoWeekday, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::new_iso_date(1992, 9, 2)
+//! let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
@@ -50,7 +50,7 @@
 //! use icu::calendar::{buddhist::Buddhist, indian::Indian, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
-//! let mut date_iso = Date::new_iso_date(1992, 9, 2)
+//! let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
 //! assert_eq!(date_iso.year().number, 1992);
@@ -79,7 +79,7 @@
 //! use icu::calendar::{types::IsoWeekday, types::Time, DateTime};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
-//! let mut datetime_iso = DateTime::new_iso_datetime(1992, 9, 2, 8, 59, 0)
+//! let mut datetime_iso = DateTime::try_new_iso_datetime(1992, 9, 2, 8, 59, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //!
 //! assert_eq!(datetime_iso.date.day_of_week(), IsoWeekday::Wednesday);
@@ -124,6 +124,7 @@ mod duration;
 mod error;
 pub mod ethiopian;
 pub mod gregorian;
+mod helpers;
 pub mod indian;
 pub mod iso;
 pub mod japanese;
@@ -146,6 +147,10 @@ pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
 #[doc(hidden)]
 pub use duration::{DateDuration, DateDurationUnit};
-pub use error::DateTimeError;
+pub use error::CalendarError;
 pub use gregorian::Gregorian;
 pub use iso::Iso;
+
+/// Re-export of [`CalendarError`].
+#[doc(no_inline)]
+pub use CalendarError as Error;

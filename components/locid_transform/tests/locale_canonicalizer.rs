@@ -7,6 +7,7 @@ mod helpers;
 
 use icu_locid::Locale;
 use icu_locid_transform::{LocaleCanonicalizer, LocaleExpander, TransformResult};
+use writeable::assert_writeable_eq;
 
 #[test]
 fn test_maximize() {
@@ -23,7 +24,7 @@ fn test_maximize() {
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
         let result = lc.maximize(&mut locale);
-        assert_eq!(locale.to_string(), case.output);
+        assert_writeable_eq!(locale, case.output);
         if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
@@ -47,7 +48,7 @@ fn test_minimize() {
         let mut locale: Locale = case.input.parse().unwrap();
         let unmodified = locale.clone();
         let result = lc.minimize(&mut locale);
-        assert_eq!(locale.to_string(), case.output);
+        assert_writeable_eq!(locale, case.output);
         if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
@@ -71,7 +72,7 @@ fn test_canonicalize() {
         let mut locale: Locale = case.input.parse().expect("Unable to parse input");
         let unmodified = locale.clone();
         let result = lc.canonicalize(&mut locale);
-        assert_eq!(locale.to_string(), case.output);
+        assert_writeable_eq!(locale, case.output);
         if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {

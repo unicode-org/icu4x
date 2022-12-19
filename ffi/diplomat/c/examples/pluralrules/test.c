@@ -30,20 +30,25 @@ int main() {
     printf("Plural Category many  (should be true): %s\n", categories.many  ? "true" : "false");
     printf("Plural Category other (should be true): %s\n", categories.other ? "true" : "false");
 
-    ICU4XPluralOperands op1 = { .i = 3 };
+    diplomat_result_box_ICU4XPluralOperands_ICU4XError op1_result = ICU4XPluralOperands_create_from_string("3", 1);
 
-    ICU4XPluralCategory cat1 = ICU4XPluralRules_category_for(rules, op1);
-
-    printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
-
-    diplomat_result_ICU4XPluralOperands_ICU4XError op_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
-
-    if (!op_result.is_ok) {
+    if (!op1_result.is_ok) {
         printf("Failed to create PluralOperands from string\n");
         return 1;
     }
 
-    ICU4XPluralCategory cat2 = ICU4XPluralRules_category_for(rules, op_result.ok);
+    ICU4XPluralCategory cat1 = ICU4XPluralRules_category_for(rules, op1_result.ok);
+
+    printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
+
+    diplomat_result_box_ICU4XPluralOperands_ICU4XError op2_result = ICU4XPluralOperands_create_from_string("1011.0", 6);
+
+    if (!op2_result.is_ok) {
+        printf("Failed to create PluralOperands from string\n");
+        return 1;
+    }
+
+    ICU4XPluralCategory cat2 = ICU4XPluralRules_category_for(rules, op2_result.ok);
 
     printf("Plural Category %d (should be %d)\n", (int)cat2, (int)ICU4XPluralCategory_Many);
 

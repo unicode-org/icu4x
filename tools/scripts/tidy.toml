@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/wasm/icu4x/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*"
+glob_skip_pattern_array = array "**/target/**/*.rs" "ffi/diplomat/cpp/docs/**/*" "ffi/diplomat/js/docs/**/*" "**/node_modules/**/*" "provider/testdata/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*"
 
 blank_line = set ""
 
@@ -108,6 +108,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/tinywasm/node_modules" "ffi/diplomat/c/examples"
 
 template = canonicalize README.tpl
 
@@ -118,12 +119,19 @@ end
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
-    if not set_contains ${skip_paths} ${path}
-        root_dir = dirname ${path}
-        if not is_empty ${root_dir}
-            echo "Automatically generating ${root_dir}/README.md"
-            exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+    root_dir = dirname ${path}
+    skip_this = is_empty ${root_dir}
+    if set_contains ${skip_paths} ${path}
+        skip_this = set true
+    end
+    for skip_path_prefix in ${skip_path_prefixes}
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = set true
         end
+    end
+    if not ${skip_this}
+        echo "Automatically generating ${root_dir}/README.md"
+        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
     end
 end
 '''
@@ -165,11 +173,18 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
     root_dir = dirname ${path}
-    if not is_empty ${root_dir}
+    skip_this = is_empty ${root_dir}
+    for skip_path_prefix in ${skip_path_prefixes}
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = set true
+        end
+    end
+    if not ${skip_this}
         echo "Copying LICENSE to ${root_dir}/LICENSE"
         cp ${license} ${root_dir}/LICENSE
     end
@@ -186,11 +201,18 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
     root_dir = dirname ${path}
-    if not is_empty ${root_dir}
+    skip_this = is_empty ${root_dir}
+    for skip_path_prefix in ${skip_path_prefixes}
+        if starts_with ${path} ${skip_path_prefix}
+            skip_this = set true
+        end
+    end
+    if not ${skip_this}
         if not is_path_exists ${root_dir}/LICENSE
             trigger_error "LICENSE file missing in ${root_dir}, run `cargo make copy-license` to copy the license file to all necessary locations."
         end

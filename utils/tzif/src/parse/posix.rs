@@ -11,7 +11,7 @@ use combine::parser::byte::{byte, digit};
 use combine::{between, choice, many, many1, optional, satisfy, value, ParseError, Parser, Stream};
 
 /// Parses a byte that not a digit, a comma, a plus nor a minus signs.
-fn aplhabetic_zone_variant_name_value<Input>() -> impl Parser<Input, Output = u8>
+fn alphabetic_zone_variant_name_value<Input>() -> impl Parser<Input, Output = u8>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
@@ -28,8 +28,8 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    many(aplhabetic_zone_variant_name_value())
-        .map(|bytes: Vec<u8>| String::from_utf8_lossy(&bytes).to_string())
+    many(alphabetic_zone_variant_name_value())
+        .map(|bytes: Vec<u8>| String::from_utf8_lossy(&bytes).into_owned())
 }
 
 /// Parses an arbitrary time-zone variant name. This name must be enclosed in angled brackets, e.g. `<name>`.
@@ -42,7 +42,7 @@ where
         byte(b'>'),
         many1::<Vec<u8>, _, _>(satisfy(|byte| byte != b'>')),
     )
-    .map(|name| String::from_utf8_lossy(&name).to_string())
+    .map(|name| String::from_utf8_lossy(&name).into_owned())
 }
 
 /// The string specifies the name of the time zone variant. It must be three or more characters
@@ -647,7 +647,7 @@ mod test {
             std_variant_info(),
             "EST+5",
             ZoneVariantInfo {
-                name: String::from("EST"),
+                name: "EST".to_owned(),
                 offset: Hours(5).as_seconds(),
             }
         );
@@ -655,7 +655,7 @@ mod test {
             std_variant_info(),
             "IST-2",
             ZoneVariantInfo {
-                name: String::from("IST"),
+                name: "IST".to_owned(),
                 offset: Hours(-2).as_seconds(),
             }
         );
@@ -663,7 +663,7 @@ mod test {
             std_variant_info(),
             "<0made+up0>-24:59:59",
             ZoneVariantInfo {
-                name: String::from("0made+up0"),
+                name: "0made+up0".to_owned(),
                 offset: Hours(-24).as_seconds() - Minutes(59).as_seconds() - Seconds(59)
             }
         );
@@ -694,7 +694,7 @@ mod test {
             dst_variant_info(Hours(5).as_seconds()),
             "EDT",
             ZoneVariantInfo {
-                name: String::from("EDT"),
+                name: "EDT".to_owned(),
                 offset: Hours(4).as_seconds(),
             }
         );
@@ -702,7 +702,7 @@ mod test {
             dst_variant_info(Hours(-2).as_seconds()),
             "IDT",
             ZoneVariantInfo {
-                name: String::from("IDT"),
+                name: "IDT".to_owned(),
                 offset: Hours(-3).as_seconds(),
             }
         );
@@ -710,7 +710,7 @@ mod test {
             dst_variant_info(Seconds(0)),
             "<0made+up0>-24:59:59",
             ZoneVariantInfo {
-                name: String::from("0made+up0"),
+                name: "0made+up0".to_owned(),
                 offset: Hours(-24).as_seconds() - Minutes(59).as_seconds() - Seconds(59)
             }
         );
@@ -778,7 +778,7 @@ mod test {
             "WARST,J1/0,J365/25",
             DstTransitionInfo {
                 variant_info: ZoneVariantInfo {
-                    name: String::from("WARST"),
+                    name: "WARST".to_owned(),
                     offset: Hours(3).as_seconds()
                 },
                 start_date: TransitionDate {
@@ -796,7 +796,7 @@ mod test {
             "IDT,M3.4.4/26,M10.5.0",
             DstTransitionInfo {
                 variant_info: ZoneVariantInfo {
-                    name: String::from("IDT"),
+                    name: "IDT".to_owned(),
                     offset: Hours(-3).as_seconds()
                 },
                 start_date: TransitionDate {
@@ -818,12 +818,12 @@ mod test {
             "WGT3WGST,M3.5.0/-2,M10.5.0/-1",
             PosixTzString {
                 std_info: ZoneVariantInfo {
-                    name: String::from("WGT"),
+                    name: "WGT".to_owned(),
                     offset: Hours(3).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
                     variant_info: ZoneVariantInfo {
-                        name: String::from("WGST"),
+                        name: "WGST".to_owned(),
                         offset: Hours(2).as_seconds()
                     },
                     start_date: TransitionDate {
@@ -842,12 +842,12 @@ mod test {
             "WART4WARST,J1/0,J365/25",
             PosixTzString {
                 std_info: ZoneVariantInfo {
-                    name: String::from("WART"),
+                    name: "WART".to_owned(),
                     offset: Hours(4).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
                     variant_info: ZoneVariantInfo {
-                        name: String::from("WARST"),
+                        name: "WARST".to_owned(),
                         offset: Hours(3).as_seconds()
                     },
                     start_date: TransitionDate {

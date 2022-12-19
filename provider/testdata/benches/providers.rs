@@ -28,7 +28,8 @@ fn create_static_data_provider() -> BlobDataProvider {
 
 #[inline(never)]
 fn create_blob_data_provider() -> BlobDataProvider {
-    icu_provider_blob::BlobDataProvider::try_new_from_blob(black_box(POSTCARD_BYTES)).unwrap()
+    icu_provider_blob::BlobDataProvider::try_new_from_blob(black_box(POSTCARD_BYTES.into()))
+        .unwrap()
 }
 
 #[inline(never)]

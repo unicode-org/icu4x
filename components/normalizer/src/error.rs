@@ -14,7 +14,7 @@ use icu_provider::prelude::DataError;
 pub enum NormalizerError {
     /// Error coming from the data provider
     #[displaydoc("{0}")]
-    DataProvider(DataError),
+    Data(DataError),
     /// The data uses a planned but unsupported feature.
     FutureExtension,
     /// Data failed manual validation
@@ -26,14 +26,14 @@ impl std::error::Error for NormalizerError {}
 
 impl From<DataError> for NormalizerError {
     fn from(e: DataError) -> Self {
-        NormalizerError::DataProvider(e)
+        NormalizerError::Data(e)
     }
 }
 
 impl From<PropertiesError> for NormalizerError {
     fn from(e: PropertiesError) -> Self {
         match e {
-            PropertiesError::PropDataLoad(d) => NormalizerError::DataProvider(d),
+            PropertiesError::PropDataLoad(d) => NormalizerError::Data(d),
             _ => unreachable!("Shouldn't have non-Data PropertiesError"),
         }
     }

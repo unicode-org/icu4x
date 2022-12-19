@@ -27,8 +27,8 @@ use synstructure::{AddBounds, Structure};
 /// #[derive(Bake)]
 /// #[databake(path = bar::module)]
 /// pub struct Person<'a> {
-///    pub name: &'a str,
-///    pub age: u32,
+///     pub name: &'a str,
+///     pub age: u32,
 /// }
 /// ```
 #[proc_macro_derive(Bake, attributes(databake))]

@@ -74,7 +74,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub(crate) const fn from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn try_from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(Self::Unicode),
@@ -85,7 +85,7 @@ impl ExtensionType {
         }
     }
 
-    pub(crate) const fn from_bytes_manual_slice(
+    pub(crate) const fn try_from_bytes_manual_slice(
         bytes: &[u8],
         start: usize,
         end: usize,
@@ -94,7 +94,7 @@ impl ExtensionType {
             return Err(ParserError::InvalidExtension);
         }
         #[allow(clippy::indexing_slicing)]
-        Self::from_byte(bytes[start])
+        Self::try_from_byte(bytes[start])
     }
 }
 
@@ -155,7 +155,7 @@ impl Extensions {
     ///
     /// let loc: Locale = "en-US-u-foo".parse().expect("Parsing failed.");
     ///
-    /// assert_eq!(loc.extensions.is_empty(), false);
+    /// assert!(!loc.extensions.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
         self.unicode.is_empty()
@@ -172,7 +172,8 @@ impl Extensions {
     /// use icu::locid::extensions::ExtensionType;
     /// use icu::locid::Locale;
     ///
-    /// let loc: Locale = "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
+    /// let loc: Locale =
+    ///     "und-a-hello-t-mul-u-world-z-zzz-x-extra".parse().unwrap();
     ///
     /// let mut only_unicode = loc.clone();
     /// only_unicode
@@ -181,9 +182,9 @@ impl Extensions {
     /// assert_eq!(only_unicode, "und-u-world".parse().unwrap());
     ///
     /// let mut only_t_z = loc.clone();
-    /// only_t_z
-    ///     .extensions
-    ///     .retain_by_type(|t| t == ExtensionType::Transform || t == ExtensionType::Other(b'z'));
+    /// only_t_z.extensions.retain_by_type(|t| {
+    ///     t == ExtensionType::Transform || t == ExtensionType::Other(b'z')
+    /// });
     /// assert_eq!(only_t_z, "und-t-mul-z-zzz".parse().unwrap());
     /// ```
     pub fn retain_by_type<F>(&mut self, mut predicate: F)
@@ -211,7 +212,7 @@ impl Extensions {
 
         let mut st = iter.next();
         while let Some(subtag) = st {
-            match subtag.get(0).map(|b| ExtensionType::from_byte(*b)) {
+            match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     unicode = Some(Unicode::try_from_iter(iter)?);
                 }
@@ -282,7 +283,7 @@ impl_writeable_for_each_subtag_str_no_test!(Extensions);
 fn test_writeable() {
     use crate::Locale;
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Extensions::new(), "",);
+    assert_writeable_eq!(Extensions::new(), "");
     assert_writeable_eq!(
         "my-t-my-d0-zawgyi".parse::<Locale>().unwrap().extensions,
         "t-my-d0-zawgyi",

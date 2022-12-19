@@ -38,7 +38,7 @@
 
 .. cpp:enum-struct:: ICU4XFixedDecimalGroupingStrategy
 
-    See the `Rust documentation for GroupingStrategy <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.GroupingStrategy.html>`__ for more information.
+    See the `Rust documentation for GroupingStrategy <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/options/enum.GroupingStrategy.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto

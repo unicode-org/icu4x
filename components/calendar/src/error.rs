@@ -3,16 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use tinystr::{TinyStr16, TinyStr4};
+use icu_provider::DataError;
+use tinystr::{tinystr, TinyStr16, TinyStr4};
+use writeable::Writeable;
 
 #[cfg(feature = "std")]
-impl std::error::Error for DateTimeError {}
+impl std::error::Error for CalendarError {}
 
-/// A list of possible error outcomes for working with various inputs to DateTime inputs
-/// and operations.
+/// A list of error outcomes for various operations in the `icu_calendar` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum DateTimeError {
+pub enum CalendarError {
     /// An input could not be parsed.
     #[displaydoc("Could not parse as integer")]
     Parse,
@@ -50,10 +53,46 @@ pub enum DateTimeError {
     /// An operation required a calendar but a calendar was not provided.
     #[displaydoc("An operation required a calendar but a calendar was not provided")]
     MissingCalendar,
+    /// An error originating inside of the [data provider](icu_provider).
+    #[displaydoc("{0}")]
+    Data(DataError),
 }
 
-impl From<core::num::ParseIntError> for DateTimeError {
+impl From<core::num::ParseIntError> for CalendarError {
     fn from(_: core::num::ParseIntError) -> Self {
-        DateTimeError::Parse
+        CalendarError::Parse
+    }
+}
+
+impl From<DataError> for CalendarError {
+    fn from(e: DataError) -> Self {
+        CalendarError::Data(e)
+    }
+}
+
+impl CalendarError {
+    /// Create an error when an [`AnyCalendarKind`] is expected but not available.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::AnyCalendarKind;
+    /// use icu_calendar::CalendarError;
+    ///
+    /// let cal_str = "maori";
+    ///
+    /// AnyCalendarKind::get_for_bcp47_string(cal_str)
+    ///     .ok_or_else(|| CalendarError::unknown_any_calendar_kind(cal_str))
+    ///     .expect_err("Māori calendar is not yet supported");
+    /// ```
+    ///
+    /// [`AnyCalendarKind`]: crate::AnyCalendarKind
+    pub fn unknown_any_calendar_kind(description: impl Writeable) -> Self {
+        let tiny = description
+            .write_to_string()
+            .get(0..16)
+            .and_then(|x| TinyStr16::from_str(x).ok())
+            .unwrap_or(tinystr!(16, "invalid"));
+        Self::UnknownAnyCalendarKind(tiny)
     }
 }

@@ -12,14 +12,14 @@
 //! ## Formatting *and* lists in Spanish
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::list::{ListFormatter, ListLength};
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_and_unstable(
+//! let list_formatter = ListFormatter::try_new_and_with_length_unstable(
 //!     &icu_testdata::unstable(),
 //!     &locale!("es").into(),
-//!     ListStyle::Wide,
+//!     ListLength::Wide,
 //! )
 //! .expect("Data should load successfully");
 //!
@@ -38,14 +38,14 @@
 //! ## Formatting *or* lists in Thai
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::list::{ListFormatter, ListLength};
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_or_unstable(
+//! let list_formatter = ListFormatter::try_new_or_with_length_unstable(
 //!     &icu_testdata::unstable(),
 //!     &locale!("th").into(),
-//!     ListStyle::Short,
+//!     ListLength::Short,
 //! )
 //! .expect("Data should load successfully");
 //!
@@ -56,14 +56,14 @@
 //! ## Formatting unit lists in English
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::list::{ListFormatter, ListLength};
 //! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_unit_unstable(
+//! let list_formatter = ListFormatter::try_new_unit_with_length_unstable(
 //!     &icu_testdata::unstable(),
 //!     &locale!("en").into(),
-//!     ListStyle::Wide,
+//!     ListLength::Wide,
 //! )
 //! .expect("Data should load successfully");
 //!
@@ -92,6 +92,7 @@
 
 extern crate alloc;
 
+mod error;
 mod list_formatter;
 mod string_matcher;
 
@@ -99,12 +100,17 @@ pub mod provider;
 
 pub use list_formatter::*;
 
+pub use error::ListError;
+
+#[doc(inline)]
+pub use ListError as Error;
+
 /// Represents the style of a list. See the
 /// [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns)
 /// for an explanation of the different styles.
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[non_exhaustive]
-pub enum ListStyle {
+pub enum ListLength {
     /// A typical list
     Wide,
     /// A shorter list

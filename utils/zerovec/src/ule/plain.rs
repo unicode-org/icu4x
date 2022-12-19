@@ -97,6 +97,12 @@ macro_rules! impl_const_constructors {
             ///
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
+                /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
+                /// ```compile_fail
+                /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
+                /// ```
+                #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
+                const _: () = ();
                 let len = bytes.len();
                 #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
@@ -108,10 +114,7 @@ macro_rules! impl_const_constructors {
                         // Safety:
                         // * [u8] and [RawBytesULE<N>] have different lengths but the same alignment
                         // * ZeroSlice<$base> is repr(transparent) with [RawBytesULE<N>]
-                        let [ptr, _]: [usize; 2] = mem::transmute(bytes);
-                        let new_len = len / $size;
-                        let raw = [ptr, new_len];
-                        Ok(mem::transmute(raw))
+                        Ok(mem::transmute((bytes.as_ptr(), len / $size)))
                     }
                 } else {
                     Err(ZeroVecError::InvalidLength {

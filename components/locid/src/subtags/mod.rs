@@ -25,10 +25,14 @@
 //! ```
 //! use icu::locid::subtags::{Language, Region, Script, Variant};
 //!
-//! let language: Language = "en".parse().expect("Failed to parse a language subtag.");
-//! let script: Script = "arab".parse().expect("Failed to parse a script subtag.");
-//! let region: Region = "cn".parse().expect("Failed to parse a region subtag.");
-//! let variant: Variant = "MacOS".parse().expect("Failed to parse a variant subtag.");
+//! let language: Language =
+//!     "en".parse().expect("Failed to parse a language subtag.");
+//! let script: Script =
+//!     "arab".parse().expect("Failed to parse a script subtag.");
+//! let region: Region =
+//!     "cn".parse().expect("Failed to parse a region subtag.");
+//! let variant: Variant =
+//!     "MacOS".parse().expect("Failed to parse a variant subtag.");
 //!
 //! assert_eq!(language.as_str(), "en");
 //! assert_eq!(script.as_str(), "Arab");

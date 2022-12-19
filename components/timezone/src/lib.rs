@@ -82,20 +82,22 @@
 //! the metazone based on a certain local datetime:
 //!
 //! ```
-//! use icu_timezone::CustomTimeZone;
-//! use icu_timezone::MetazoneCalculator;
-//! use icu_timezone::GmtOffset;
 //! use icu_calendar::DateTime;
+//! use icu_timezone::CustomTimeZone;
+//! use icu_timezone::GmtOffset;
+//! use icu_timezone::MetazoneCalculator;
 //! use tinystr::TinyAsciiStr;
 //!
 //! // Create a time zone for America/Chicago at GMT-6:
 //! let mut time_zone = CustomTimeZone::new_empty();
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-//! time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+//! time_zone.time_zone_id =
+//!     "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
 //!
 //! // Compute the metazone at January 1, 2022:
-//! let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
-//! let datetime = DateTime::new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
+//! let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
+//!     .unwrap();
+//! let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 //! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //!
 //! assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
@@ -129,3 +131,6 @@ pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
+
+#[doc(inline)]
+pub use TimeZoneError as Error;

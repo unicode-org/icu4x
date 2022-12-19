@@ -12,12 +12,12 @@ use icu_calendar::Calendar;
 use icu_calendar::{AsCalendar, Date, DateTime, Iso};
 use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
-// TODO (Manishearth) fix up imports to directly import from icu_calendar
-pub use icu_calendar::types::{
-    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, Era, FormattableMonth, FormattableYear, IsoHour,
-    IsoMinute, IsoSecond, IsoWeekday, MonthCode, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+// TODO(#2630) fix up imports to directly import from icu_calendar
+pub(crate) use icu_calendar::types::{
+    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, FormattableMonth, FormattableYear, IsoHour,
+    IsoMinute, IsoSecond, IsoWeekday, NanoSecond, Time, WeekOfMonth, WeekOfYear,
 };
-pub use icu_calendar::DateTimeError;
+pub(crate) use icu_calendar::CalendarError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses
 /// solar days indexed by an era, year, month, and day.
@@ -105,17 +105,17 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// The week of the month.
     ///
     /// For example, January 1, 2021 is part of the first week of January.
-    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError>;
+    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError>;
 
     /// The week number of the year and the corresponding year.
     ///
     /// For example, December 31, 2020 is part of the first week of 2021.
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), DateTimeError>;
+    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError>;
 
     /// The day of week in this month.
     ///
     /// For example, July 8, 2020 is the 2nd Wednesday of July.
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError>;
+    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError>;
 
     /// TODO(#487): Implement flexible day periods.
     fn flexible_day_period(&self);
@@ -273,48 +273,48 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
         self.data
     }
 
-    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
-        let config = self.calendar.ok_or(DateTimeError::MissingCalendar)?;
+    fn week_of_month(&self) -> Result<WeekOfMonth, CalendarError> {
+        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
         let day_of_month = self
             .data
             .day_of_month()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
         let iso_weekday = self
             .data
             .iso_weekday()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
+            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
         Ok(config.week_of_month(day_of_month, iso_weekday))
     }
 
-    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), DateTimeError> {
-        let config = self.calendar.ok_or(DateTimeError::MissingCalendar)?;
+    fn week_of_year(&self) -> Result<(FormattableYear, WeekOfYear), CalendarError> {
+        let config = self.calendar.ok_or(CalendarError::MissingCalendar)?;
         let day_of_year_info = self
             .data
             .day_of_year_info()
-            .ok_or(DateTimeError::MissingInput(
+            .ok_or(CalendarError::MissingInput(
                 "DateTimeInput::day_of_year_info",
             ))?;
         let iso_weekday = self
             .data
             .iso_weekday()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
+            .ok_or(CalendarError::MissingInput("DateTimeInput::iso_weekday"))?;
         let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
         let year = match week_of.unit {
             RelativeUnit::Previous => day_of_year_info.prev_year,
             RelativeUnit::Current => self
                 .data
                 .year()
-                .ok_or(DateTimeError::MissingInput("DateTimeInput::year"))?,
+                .ok_or(CalendarError::MissingInput("DateTimeInput::year"))?,
             RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))
     }
 
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
+    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, CalendarError> {
         let day_of_month = self
             .data
             .day_of_month()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+            .ok_or(CalendarError::MissingInput("DateTimeInput::day_of_month"))?;
         Ok(day_of_month.into())
     }
 

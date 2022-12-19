@@ -42,7 +42,9 @@ where
     /// use std::borrow::Cow;
     /// use yoke::Yoke;
     ///
-    /// let yoke = Yoke::<Cow<'static, str>, String>::attach_to_zero_copy_cart("demo".to_string());
+    /// let yoke = Yoke::<Cow<'static, str>, String>::attach_to_zero_copy_cart(
+    ///     "demo".to_owned(),
+    /// );
     ///
     /// assert_eq!("demo", yoke.get());
     /// ```

@@ -6,5 +6,5 @@ provider/testdata/data/icuexport/** linguist-generated=true
 ffi/diplomat/c/include/** linguist-generated=true
 ffi/diplomat/cpp/include/** linguist-generated=true
 ffi/diplomat/cpp/docs/** linguist-generated=true
-ffi/diplomat/wasm/icu4x/lib/** linguist-generated=true
-ffi/diplomat/wasm/icu4x/docs/** linguist-generated=true
+ffi/diplomat/js/include//** linguist-generated=true
+ffi/diplomat/js/docs/** linguist-generated=true

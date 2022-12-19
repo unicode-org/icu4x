@@ -5,7 +5,7 @@
 [package]
 name = "icu_timezone"
 description = "API for resolving and manipulating time zone information"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -39,12 +39,12 @@ denylist = ["bench"]
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
-icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
-icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar" }
+tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "1.0.0", path = "../../components/locid" }
+icu_calendar = { version = "1.0.0", path = "../../components/calendar" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.8", path = "../../utils/zerovec", default-features = false, features = ["derive", "yoke"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", default-features = false, features = ["derive", "yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 
 [dev-dependencies]

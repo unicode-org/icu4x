@@ -8,9 +8,9 @@
 //!
 //! ```
 //! use icu_provider::datagen::DataExporter;
+//! use icu_provider::dynutil::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
-//! use icu_provider::dynutil::*;
 //! use icu_provider_blob::export::BlobExporter;
 //! use icu_provider_blob::BlobDataProvider;
 //! use std::borrow::Cow;
@@ -40,7 +40,8 @@
 //!
 //! // Create a blob provider reading from the buffer
 //! let provider =
-//!     BlobDataProvider::try_new_from_blob(buffer).expect("Should successfully read from buffer");
+//!     BlobDataProvider::try_new_from_blob(buffer.into_boxed_slice())
+//!         .expect("Should successfully read from buffer");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {

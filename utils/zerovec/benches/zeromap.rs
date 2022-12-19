@@ -214,13 +214,13 @@ fn bench_hashmap(c: &mut Criterion) {
 
 fn build_hashmap(large: bool) -> HashMap<String, String> {
     let mut map: HashMap<String, String> = HashMap::new();
-    for (key, value) in DATA.iter() {
+    for &(key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_string());
+                map.insert(format!("{}{}", key, n), value.to_owned());
             }
         } else {
-            map.insert(key.to_string(), value.to_string());
+            map.insert(key.to_owned(), value.to_owned());
         }
     }
     map
@@ -231,7 +231,7 @@ fn bench_deserialize_hashmap(c: &mut Criterion) {
         b.iter(|| {
             let map: HashMap<String, String> =
                 postcard::from_bytes(black_box(&POSTCARD_HASHMAP)).unwrap();
-            assert_eq!(map.get("iu"), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get("iu"), Some(&"Inuktitut".to_owned()));
         })
     });
 }
@@ -241,7 +241,7 @@ fn bench_deserialize_large_hashmap(c: &mut Criterion) {
     c.bench_function("zeromap/deserialize/large/hashmap", |b| {
         b.iter(|| {
             let map: HashMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
-            assert_eq!(map.get("iu3333"), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get("iu3333"), Some(&"Inuktitut".to_owned()));
         })
     });
 }
@@ -250,7 +250,7 @@ fn bench_lookup_hashmap(c: &mut Criterion) {
     let map: HashMap<String, String> = postcard::from_bytes(black_box(&POSTCARD_HASHMAP)).unwrap();
     c.bench_function("zeromap/lookup/small/hashmap", |b| {
         b.iter(|| {
-            assert_eq!(map.get(black_box("iu")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("iu")), Some(&"Inuktitut".to_owned()));
             assert_eq!(map.get(black_box("zz")), None);
         });
     });
@@ -261,7 +261,7 @@ fn bench_lookup_large_hashmap(c: &mut Criterion) {
     let map: HashMap<String, String> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large/hashmap", |b| {
         b.iter(|| {
-            assert_eq!(map.get(black_box("iu3333")), Some(&"Inuktitut".to_string()));
+            assert_eq!(map.get(black_box("iu3333")), Some(&"Inuktitut".to_owned()));
             assert_eq!(map.get(black_box("zz")), None);
         });
     });

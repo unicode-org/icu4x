@@ -4,7 +4,7 @@
 
 use crate::provider::calendar::*;
 use crate::{calendar, options::length, raw};
-use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
+use crate::{input::DateInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
@@ -40,16 +40,21 @@ use writeable::Writeable;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
-///     .expect("Failed to create TypedDateFormatter instance.");
+/// let df = DateFormatter::try_new_with_length_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en-u-ca-gregory").into(),
+///     length,
+/// )
+/// .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_iso_date(2020, 9, 1)
-///     .expect("Failed to construct Date.");
+/// let date =
+///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
-/// assert_writeable_eq!(df
-///     .format(&any_date)
-///     .expect("Calendars should match"), "Sep 1, 2020");
+/// assert_writeable_eq!(
+///     df.format(&any_date).expect("Calendars should match"),
+///     "Sep 1, 2020"
+/// );
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -72,16 +77,16 @@ impl DateFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     #[inline]
-    pub fn try_new_with_any_provider<P>(
+    pub fn try_new_with_length_with_any_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: AnyProvider,
     {
         let downcasting = data_provider.as_downcasting();
-        Self::try_new_unstable(&downcasting, locale, length)
+        Self::try_new_with_length_unstable(&downcasting, locale, length)
     }
 
     /// Construct a new [`DateFormatter`] from a data provider that implements
@@ -110,41 +115,42 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_buffer_provider(
+    /// let df = DateFormatter::try_new_with_length_with_buffer_provider(
     ///     &icu_testdata::buffer(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_iso_date(2020, 9, 1)
-    ///     .expect("Failed to construct Date.");
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(df
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020");
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider<P>(
+    pub fn try_new_with_length_with_buffer_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: BufferProvider,
     {
         let deserializing = data_provider.as_deserializing();
-        Self::try_new_unstable(&deserializing, locale, length)
+        Self::try_new_with_length_unstable(&deserializing, locale, length)
     }
 
     /// Construct a new [`DateFormatter`] from a data provider that can provide all of the requested data.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
     /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
-    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
-    /// may also be used if compile stability is desired.
+    /// appropriate. The [`Self::try_new_with_length_with_buffer_provider()`], [`Self::try_new_with_length_with_any_provider()`]
+    /// constructors may also be used if compile stability is desired.
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
@@ -162,27 +168,28 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(
+    /// let df = DateFormatter::try_new_with_length_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     length,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_iso_date(2020, 9, 1)
-    ///     .expect("Failed to construct Date.");
+    /// let datetime =
+    ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_writeable_eq!(df
-    ///     .format(&any_datetime)
-    ///     .expect("Calendars should match"), "Sep 1, 2020");
+    /// assert_writeable_eq!(
+    ///     df.format(&any_datetime).expect("Calendars should match"),
+    ///     "Sep 1, 2020"
+    /// );
     /// ```
     #[inline(never)]
-    pub fn try_new_unstable<P>(
+    pub fn try_new_with_length_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, DateTimeError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
@@ -229,10 +236,7 @@ impl DateFormatter {
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
     /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
-    pub fn format<'l, T>(
-        &'l self,
-        value: &T,
-    ) -> Result<FormattedDateTime<'l>, DateTimeFormatterError>
+    pub fn format<'l, T>(&'l self, value: &T) -> Result<FormattedDateTime<'l>, DateTimeError>
     where
         T: DateInput<Calendar = AnyCalendar>,
     {
@@ -252,7 +256,7 @@ impl DateFormatter {
     pub fn format_to_string(
         &self,
         value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<String, DateTimeFormatterError> {
+    ) -> Result<String, DateTimeError> {
         Ok(self.format(value)?.write_to_string().into_owned())
     }
 
@@ -263,13 +267,13 @@ impl DateFormatter {
     fn convert_if_necessary<'a>(
         &'a self,
         value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
+    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
 
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

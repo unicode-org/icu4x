@@ -49,7 +49,7 @@ macro_rules! tagged {
 pub struct DataKeyHash([u8; 4]);
 
 impl DataKeyHash {
-    const fn compute_from_path(path: &DataKeyPath) -> Self {
+    const fn compute_from_path(path: DataKeyPath) -> Self {
         let hash = helpers::fxhash_32(
             path.tagged.as_bytes(),
             leading_tag!().len(),
@@ -59,7 +59,7 @@ impl DataKeyHash {
     }
 
     /// Gets the hash value as a byte array.
-    pub const fn to_bytes(&self) -> [u8; 4] {
+    pub const fn to_bytes(self) -> [u8; 4] {
         self.0
     }
 }
@@ -139,11 +139,12 @@ pub struct DataKeyPath {
 impl DataKeyPath {
     /// Gets the path as a static string slice.
     #[inline]
-    pub const fn get(&self) -> &'static str {
+    pub const fn get(self) -> &'static str {
         /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
         /// ```compile_fail
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
+        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
         const _: () = ();
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
@@ -277,7 +278,7 @@ impl DataKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub const fn path(&self) -> DataKeyPath {
+    pub const fn path(self) -> DataKeyPath {
         self.path
     }
 
@@ -297,13 +298,13 @@ impl DataKey {
     /// assert_eq!(KEY_HASH.to_bytes(), [0xe2, 0xb6, 0x17, 0x71]);
     /// ```
     #[inline]
-    pub const fn hashed(&self) -> DataKeyHash {
+    pub const fn hashed(self) -> DataKeyHash {
         self.hash
     }
 
     /// Gets the metadata associated with this [`DataKey`].
     #[inline]
-    pub const fn metadata(&self) -> DataKeyMetadata {
+    pub const fn metadata(self) -> DataKeyMetadata {
         self.metadata
     }
 
@@ -317,10 +318,8 @@ impl DataKey {
     ///
     /// const CONST_KEY: DataKey = data_key!("foo@1");
     ///
-    /// let runtime_key = DataKey::from_path_and_metadata(
-    ///     CONST_KEY.path(),
-    ///     CONST_KEY.metadata(),
-    /// );
+    /// let runtime_key =
+    ///     DataKey::from_path_and_metadata(CONST_KEY.path(), CONST_KEY.metadata());
     ///
     /// assert_eq!(CONST_KEY, runtime_key);
     /// ```
@@ -328,7 +327,7 @@ impl DataKey {
     pub const fn from_path_and_metadata(path: DataKeyPath, metadata: DataKeyMetadata) -> Self {
         Self {
             path,
-            hash: DataKeyHash::compute_from_path(&path),
+            hash: DataKeyHash::compute_from_path(path),
             metadata,
         }
     }
@@ -373,7 +372,7 @@ impl DataKey {
 
         Ok(Self {
             path,
-            hash: DataKeyHash::compute_from_path(&path),
+            hash: DataKeyHash::compute_from_path(path),
             metadata,
         })
     }
@@ -453,8 +452,8 @@ impl DataKey {
     /// // The error context contains the argument:
     /// assert_eq!(FOO_BAR.match_key(BAR_BAZ).unwrap_err().key, Some(BAR_BAZ));
     /// ```
-    pub fn match_key(&self, key: Self) -> Result<(), DataError> {
-        if *self == key {
+    pub fn match_key(self, key: Self) -> Result<(), DataError> {
+        if self == key {
             Ok(())
         } else {
             Err(DataErrorKind::MissingDataKey.with_key(key))
@@ -626,7 +625,6 @@ fn test_key_to_string() {
             expected: "core/cardinal@65535",
         },
     ] {
-        assert_eq!(cas.expected, cas.key.to_string());
         writeable::assert_writeable_eq!(&cas.key, cas.expected);
     }
 }

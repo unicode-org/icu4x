@@ -286,7 +286,7 @@ mod test {
             1, // [2] => [0]
         ];
 
-        assert_eq!(postcard::to_stdvec(&STRUCT).unwrap(), bytes);
+        assert_eq!(postcard::to_allocvec(&STRUCT).unwrap(), bytes);
 
         let de_struct = postcard::from_bytes::<TestStruct>(bytes).unwrap();
 

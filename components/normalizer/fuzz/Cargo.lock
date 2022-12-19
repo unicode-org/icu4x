@@ -191,7 +191,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "displaydoc",
  "serde",
@@ -202,7 +202,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -214,7 +214,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -246,7 +246,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -257,7 +257,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -273,7 +273,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -285,7 +285,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_provider",
  "postcard",
@@ -297,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -306,7 +306,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.0.0-beta1"
+version = "1.0.0"
 dependencies = [
  "icu_provider",
  "icu_provider_adapters",

@@ -25,8 +25,8 @@ pub enum StyleOption {
 /// # Examples
 ///
 /// ```
-/// use icu_provider_fs::export::FilesystemExporter;
 /// use icu_provider_fs::export::serializers;
+/// use icu_provider_fs::export::FilesystemExporter;
 ///
 /// let serializer = serializers::postcard::Serializer::new(Default::default());
 ///
@@ -34,8 +34,9 @@ pub enum StyleOption {
 /// let demo_path = std::env::temp_dir().join("icu4x_json_serializer_demo");
 /// FilesystemExporter::try_new(
 ///     Box::from(serializer),
-///     demo_path.clone().into()
-/// ).unwrap();
+///     demo_path.clone().into(),
+/// )
+/// .unwrap();
 /// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
 pub struct Serializer {

@@ -32,10 +32,12 @@
 //! ```
 //! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::{
-//!     options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
+//!     options::length, DateTimeFormatter, DateTimeFormatterOptions,
+//!     TypedDateTimeFormatter,
 //! };
 //! use icu::locid::{locale, Locale};
 //! use std::str::FromStr;
+//! use writeable::assert_writeable_eq;
 //!
 //! // See the next code example for a more ergonomic example with .into().
 //! let options =
@@ -61,15 +63,23 @@
 //! )
 //! .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
-//! let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+//! let typed_date =
+//!     DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 //! // prefer using ISO dates with DateTimeFormatter
 //! let date = typed_date.to_iso().to_any();
 //!
 //! let formatted_date = dtf.format(&date).expect("Calendars should match");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
-//! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
-//! assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
+//! assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
+//! assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
+//!
+//! let formatted_date_string =
+//!     dtf.format_to_string(&date).expect("Calendars should match");
+//! let typed_formatted_date_string = typed_dtf.format_to_string(&typed_date);
+//!
+//! assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
+//! assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
@@ -149,9 +159,12 @@ mod any;
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
-pub use error::DateTimeFormatterError;
+pub use error::DateTimeError;
 pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
+
+#[doc(inline)]
+pub use DateTimeError as Error;

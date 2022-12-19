@@ -5,14 +5,30 @@
 //! Traits for data providers that produce `Any` objects.
 
 use crate::prelude::*;
-use crate::response::RcWrap;
-use crate::response::RcWrapBounds;
 use core::any::Any;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+
+#[cfg(not(feature = "sync"))]
+use alloc::rc::Rc as SelectedRc;
+#[cfg(feature = "sync")]
+use alloc::sync::Arc as SelectedRc;
+
+/// A trait that allows to specify `Send + Sync` bounds that are only required when
+/// the `sync` feature is enabled. Without the feature, this is an empty bound.
+#[cfg(feature = "sync")]
+pub trait MaybeSendSync: Send + Sync {}
+#[cfg(feature = "sync")]
+impl<T: Send + Sync> MaybeSendSync for T {}
+
+#[allow(missing_docs)] // docs generated with all features
+#[cfg(not(feature = "sync"))]
+pub trait MaybeSendSync {}
+#[cfg(not(feature = "sync"))]
+impl<T> MaybeSendSync for T {}
 
 /// Representations of the `Any` trait object.
 ///
@@ -24,15 +40,15 @@ enum AnyPayloadInner {
     StructRef(&'static dyn Any),
     /// A boxed `DataPayload<M>`.
     ///
-    /// Note: This needs to be an `RcWrap`, not a `Box`, so that `AnyPayload` is cloneable.
+    /// Note: This needs to be reference counted, not a `Box`, so that `AnyPayload` is cloneable.
     /// If an `AnyPayload` is cloned, the actual cloning of the data is delayed until
     /// `downcast()` is invoked (at which point we have the concrete type).
 
     #[cfg(not(feature = "sync"))]
-    PayloadRc(RcWrap<dyn Any>),
+    PayloadRc(SelectedRc<dyn Any>),
 
     #[cfg(feature = "sync")]
-    PayloadRc(RcWrap<dyn Any + Send + Sync>),
+    PayloadRc(SelectedRc<dyn Any + Send + Sync>),
 }
 
 /// A type-erased data payload.
@@ -58,7 +74,7 @@ impl DataMarker for AnyMarker {
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
     M: DataMarker + 'static,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
     #[inline]
     fn upcast(other: DataPayload<M>) -> DataPayload<AnyMarker> {
@@ -78,7 +94,7 @@ impl AnyPayload {
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
-        M::Yokeable: RcWrapBounds,
+        M::Yokeable: MaybeSendSync,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     {
         use AnyPayloadInner::*;
@@ -91,10 +107,10 @@ impl AnyPayload {
                 Ok(DataPayload::from_owned(M::Yokeable::zero_from(down_ref)))
             }
             PayloadRc(any_rc) => {
-                let down_rc: RcWrap<DataPayload<M>> = any_rc
-                    .downcast()
+                let down_rc = any_rc
+                    .downcast::<DataPayload<M>>()
                     .map_err(|_| DataError::for_type::<M>().with_str_context(type_name))?;
-                Ok(RcWrap::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
+                Ok(SelectedRc::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
             }
         }
     }
@@ -114,7 +130,8 @@ impl AnyPayload {
     ///
     /// let any_payload = AnyPayload::from_static_ref(&HELLO_DATA);
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn from_static_ref<Y>(static_ref: &'static Y) -> Self
@@ -128,45 +145,15 @@ impl AnyPayload {
             type_name: core::any::type_name::<Y>(),
         }
     }
-
-    /// Creates an `AnyPayload` from a [`DataPayload`] stored in an [`RcWrap`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::RcWrap;
-    /// use std::borrow::Cow;
-    ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World"),
-    /// });
-    /// let rc_payload = RcWrap::from(payload);
-    ///
-    /// let any_payload = AnyPayload::from_rcwrap_payload(rc_payload);
-    ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
-    /// assert_eq!("Custom Hello World", payload.get().message);
-    /// ```
-    pub fn from_rcwrap_payload<M>(rc_payload: RcWrap<DataPayload<M>>) -> Self
-    where
-        M: DataMarker + 'static,
-        M::Yokeable: RcWrapBounds,
-    {
-        AnyPayload {
-            inner: AnyPayloadInner::PayloadRc(rc_payload.into_dyn_any()),
-            type_name: core::any::type_name::<M>(),
-        }
-    }
 }
 
 impl<M> DataPayload<M>
 where
     M: DataMarker + 'static,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
-    /// Wraps this DataPayload in an `Rc` and returns it as an `AnyPayload`.
+    /// Moves this DataPayload to the heap (requiring an allocation) and returns it as an
+    /// erased `AnyPayload`.
     ///
     /// # Examples
     ///
@@ -176,18 +163,20 @@ where
     /// use std::borrow::Cow;
     /// use std::rc::Rc;
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Custom Hello World"),
-    /// });
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     DataPayload::from_owned(HelloWorldV1 {
+    ///         message: Cow::Borrowed("Custom Hello World"),
+    ///     });
     ///
     /// let any_payload = payload.wrap_into_any_payload();
     ///
-    /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
+    /// let payload: DataPayload<HelloWorldV1Marker> =
+    ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
     pub fn wrap_into_any_payload(self) -> AnyPayload {
         AnyPayload {
-            inner: AnyPayloadInner::PayloadRc(RcWrap::from(self).into_dyn_any()),
+            inner: AnyPayloadInner::PayloadRc(SelectedRc::from(self)),
             type_name: core::any::type_name::<M>(),
         }
     }
@@ -201,7 +190,7 @@ impl DataPayload<AnyMarker> {
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-        M::Yokeable: RcWrapBounds,
+        M::Yokeable: MaybeSendSync,
     {
         self.try_unwrap_owned()?.downcast()
     }
@@ -248,7 +237,7 @@ impl AnyResponse {
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-        M::Yokeable: RcWrapBounds,
+        M::Yokeable: MaybeSendSync,
     {
         Ok(DataResponse {
             metadata: self.metadata,
@@ -352,7 +341,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -366,7 +355,7 @@ where
     M: DataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
+    M::Yokeable: MaybeSendSync,
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -392,7 +381,7 @@ mod test {
 
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
-            "AnyPayload { inner: PayloadRc(RcWrap(Any { .. })), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
+            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)
         );
 
@@ -412,14 +401,10 @@ mod test {
     #[test]
     fn test_non_owned_any_marker() {
         // This test demonstrates a code path that can trigger the InvalidState error kind.
-        let payload_result: Result<DataPayload<AnyMarker>, core::convert::Infallible> =
-            DataPayload::try_from_rc_buffer_badly((&[] as &[u8]).into(), |_| {
-                Ok(AnyPayload::from_static_ref(&CONST_DATA))
-            });
-        let err = payload_result
-            .expect("infallible")
-            .downcast::<HelloWorldV1Marker>()
-            .unwrap_err();
+        let payload_result: DataPayload<AnyMarker> =
+            DataPayload::from_owned_buffer(Box::new(*b"pretend we're borrowing from here"))
+                .map_project(|_, _| AnyPayload::from_static_ref(&CONST_DATA));
+        let err = payload_result.downcast::<HelloWorldV1Marker>().unwrap_err();
         assert!(matches!(
             err,
             DataError {

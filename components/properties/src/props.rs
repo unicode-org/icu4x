@@ -468,6 +468,7 @@ impl Script {
     pub const Kaithi: Script = Script(120);
     pub const Kannada: Script = Script(21);
     pub const Katakana: Script = Script(22);
+    pub const Kawi: Script = Script(198);
     pub const KayahLi: Script = Script(79);
     pub const Kharoshthi: Script = Script(57);
     pub const KhitanSmallScript: Script = Script(191);
@@ -502,6 +503,7 @@ impl Script {
     pub const Multani: Script = Script(164);
     pub const Myanmar: Script = Script(28);
     pub const Nabataean: Script = Script(143);
+    pub const NagMundari: Script = Script(199);
     pub const Nandinagari: Script = Script(187);
     pub const NewTaiLue: Script = Script(59);
     pub const Newa: Script = Script(170);
@@ -791,6 +793,11 @@ impl SentenceBreak {
 ///
 /// See `icu_normalizer::properties::CanonicalCombiningClassMap` for the API
 /// to look up the Canonical_Combining_Class property by scalar value.
+//
+// NOTE: The Pernosco debugger has special knowledge
+// of this struct. Please do not change the bit layout
+// or the crate-module-qualified name of this struct
+// without coordination.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]

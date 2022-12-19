@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Variant;
     ///
-    /// let variant: Variant = "macos".parse().expect("Failed to parse a variant subtag.");
+    /// let variant: Variant =
+    ///     "macos".parse().expect("Failed to parse a variant subtag.");
     /// ```
     ///
     /// [`unicode_variant_id`]: https://unicode.org/reports/tr35/#unicode_variant_id

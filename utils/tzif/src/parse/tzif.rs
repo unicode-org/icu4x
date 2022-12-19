@@ -385,7 +385,7 @@ where
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
     count_min_max(charcnt, charcnt, any())
-        .map(|bytes: Vec<u8>| String::from_utf8_lossy(&bytes).to_string())
+        .map(|bytes: Vec<u8>| String::from_utf8_lossy(&bytes).into_owned())
 }
 
 /// A series of bytes constituting an array of
@@ -428,7 +428,7 @@ where
                         String::from_utf8_lossy(
                             raw_time_zone_designations[record.idx..end_idx].as_bytes(),
                         )
-                        .to_string(),
+                        .into_owned(),
                     );
                     break;
                 }
@@ -1217,11 +1217,7 @@ mod test {
                 ]
             ),
             "LMT\0AEDT\0AEST\0",
-            vec![
-                String::from("LMT"),
-                String::from("AEDT"),
-                String::from("AEST")
-            ],
+            vec!["LMT".to_owned(), "AEDT".to_owned(), "AEST".to_owned()],
         );
     }
 
@@ -1489,12 +1485,12 @@ mod test {
             "\nEST+5EDT,M3.2.0/2,M11.1.0/2\n",
             PosixTzString {
                 std_info: ZoneVariantInfo {
-                    name: String::from("EST"),
+                    name: "EST".to_owned(),
                     offset: Hours(5).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
                     variant_info: ZoneVariantInfo {
-                        name: String::from("EDT"),
+                        name: "EDT".to_owned(),
                         offset: Hours(4).as_seconds()
                     },
                     start_date: TransitionDate {

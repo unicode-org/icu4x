@@ -53,6 +53,8 @@ class ICU4XDataProvider {
    * Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
    * See the [Rust documentation for `BlobDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
+   * 
+   * Lifetimes: `blob` must live for the duration of the program.
    */
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
 

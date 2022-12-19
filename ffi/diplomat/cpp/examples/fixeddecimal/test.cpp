@@ -11,7 +11,7 @@
 
 int main() {
     ICU4XLogger::init_simple_logger();
-    ICU4XLocale locale = ICU4XLocale::create_bn();
+    ICU4XLocale locale = ICU4XLocale::create_from_string("bn").ok().value();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::create_with_grouping_strategy(

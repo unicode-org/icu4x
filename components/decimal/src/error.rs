@@ -6,20 +6,22 @@
 
 use displaydoc::Display;
 
-/// A list of possible error outcomes for operations in this crate.
-#[derive(Display, Debug, Copy, Clone)]
+/// A list of error outcomes for various operations in the `icu_decimal` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
-pub enum Error {
+pub enum DecimalError {
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("error loading data: {0}")]
     Data(icu_provider::DataError),
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for Error {}
+impl std::error::Error for DecimalError {}
 
-impl From<icu_provider::DataError> for Error {
+impl From<icu_provider::DataError> for DecimalError {
     fn from(e: icu_provider::DataError) -> Self {
-        Error::Data(e)
+        DecimalError::Data(e)
     }
 }

@@ -5,6 +5,7 @@
 //! The collection of code for locale canonicalization.
 
 use crate::provider::*;
+use crate::LocaleTransformError;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
@@ -34,11 +35,9 @@ use tinystr::TinyAsciiStr;
 /// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
 ///     .expect("create failed");
 ///
-/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
-///     .parse()
-///     .expect("parse failed");
+/// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-/// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+/// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
 /// ```
 ///
 /// [`ICU4X`]: ../icu/index.html
@@ -208,7 +207,12 @@ where
 
 impl LocaleCanonicalizer {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
-    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, LocaleTransformError>
     where
         P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
     {
@@ -220,7 +224,11 @@ impl LocaleCanonicalizer {
         Ok(LocaleCanonicalizer { aliases, expander })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: LocaleTransformError
+    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
@@ -240,11 +248,9 @@ impl LocaleCanonicalizer {
     /// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
     ///     .expect("create failed");
     ///
-    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
-    ///     .parse()
-    ///     .expect("parse failed");
+    /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
-    /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
+    /// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
     /// ```
     pub fn canonicalize(&self, locale: &mut Locale) -> TransformResult {
         let mut result = TransformResult::Unmodified;

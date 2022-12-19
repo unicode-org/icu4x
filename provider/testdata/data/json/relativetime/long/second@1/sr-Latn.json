@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "sada"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  sekunde",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  sekunde",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  sekundi",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  sekundu",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  sekunde",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  sekundi",
+      "index": 3
+    }
+  }
+}

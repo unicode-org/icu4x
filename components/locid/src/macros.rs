@@ -21,7 +21,7 @@
 /// *Note*: The macro cannot produce language identifiers with more than one variants due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::langid!("und-variant1-variant2");
 /// ```
 ///
@@ -38,7 +38,7 @@
 macro_rules! langid {
     ($langid:literal) => {{
         const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::from_bytes_with_single_variant($langid.as_bytes()) {
+            match $crate::LanguageIdentifier::try_from_bytes_with_single_variant($langid.as_bytes()) {
                 Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
                     language,
                     script,
@@ -75,39 +75,47 @@ macro_rules! langid {
 /// (only single keyword unicode extension is supported) due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
-/// ```compile_fail
-/// icu::locid::locale!("sl-IT-rozaj-biske-1994")
+/// ```compile_fail,E0080
+/// icu::locid::locale!("sl-IT-rozaj-biske-1994");
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "sl-IT-rozaj-biske-1994".parse::<icu::locid::Locale>().unwrap();
+/// "sl-IT-rozaj-biske-1994"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with multiple keys are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("th-TH-u-ca-buddhist-nu-thai");
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "th-TH-u-ca-buddhist-nu-thai".parse::<icu::locid::Locale>().unwrap();
+/// "th-TH-u-ca-buddhist-nu-thai"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with attributes are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("en-US-u-foobar-ca-buddhist");
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-foobar-ca-buddhist".parse::<icu::locid::Locale>().unwrap();
+/// "en-US-u-foobar-ca-buddhist"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 ///
 /// Locales with single key but multiple types are not supported
-/// ```compile_fail
+/// ```compile_fail,E0080
 /// icu::locid::locale!("en-US-u-ca-islamic-umalqura");
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-islamic-umalqura".parse::<icu::locid::Locale>().unwrap();
+/// "en-US-u-ca-islamic-umalqura"
+///     .parse::<icu::locid::Locale>()
+///     .unwrap();
 /// ```
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
@@ -115,7 +123,7 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::Locale::from_bytes_with_single_variant_single_keyword_unicode_extension(
+            match $crate::Locale::try_from_bytes_with_single_variant_single_keyword_unicode_extension(
                 $locale.as_bytes(),
             ) {
                 Ok((language, script, region, variant, keyword)) => $crate::Locale {

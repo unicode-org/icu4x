@@ -5,12 +5,15 @@
 //! This module contains provider implementations backed by the JSON files shipped by CLDR.
 
 pub mod calendar;
+pub mod characters;
 pub mod cldr_serde;
 pub mod datetime;
 pub mod decimal;
+pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
 pub mod plurals;
+pub mod relativetime;
 pub mod source;
 pub mod time_zones;

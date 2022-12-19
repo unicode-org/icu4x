@@ -29,9 +29,9 @@
 //! #[derive(Bake)]
 //! #[databake(path = my_crate)]
 //! struct MyStruct {
-//!   number: u32,
-//!   string: &'static str,
-//!   slice: &'static [bool],
+//!     number: u32,
+//!     string: &'static str,
+//!     slice: &'static [bool],
 //! }
 //!
 //! #[derive(Bake)]
@@ -111,7 +111,7 @@ impl IntoIterator for CrateEnv {
 ///
 /// This can be used to generate files with hardcoded data.
 pub trait Bake {
-    /// Returns a [`TokenStream`] that would evalutate to `self`.
+    /// Returns a [`TokenStream`] that would evaluate to `self`.
     ///
     /// Crates that are required for the evaluation of the [`TokenStream`] will be
     /// added to `ctx`.

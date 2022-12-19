@@ -52,6 +52,8 @@ class ICU4XLocaleFallbacker {
    * Associates this `ICU4XLocaleFallbacker` with configuration options.
    * 
    * See the [Rust documentation for `for_config`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
   diplomat::result<ICU4XLocaleFallbackerWithConfig, ICU4XError> for_config(ICU4XLocaleFallbackConfig config) const;
   inline const capi::ICU4XLocaleFallbacker* AsFFI() const { return this->inner.get(); }

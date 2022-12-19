@@ -5,17 +5,10 @@
 use crate::fields::Field;
 use crate::skeleton::reference;
 use alloc::vec::Vec;
-use core::fmt::{self, Write};
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Skeleton<'data>(pub(crate) ZeroVec<'data, Field>);
-
-impl<'data> Skeleton<'data> {
-    pub(crate) fn fields_iter(&self) -> impl Iterator<Item = Field> + '_ {
-        self.0.iter()
-    }
-}
 
 impl From<reference::Skeleton> for Skeleton<'_> {
     fn from(input: reference::Skeleton) -> Self {
@@ -30,9 +23,11 @@ impl<'data> From<ZeroVec<'data, Field>> for Skeleton<'data> {
     }
 }
 
-impl fmt::Display for Skeleton<'_> {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        for field in self.fields_iter() {
+#[cfg(feature = "datagen")]
+impl core::fmt::Display for Skeleton<'_> {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        use core::fmt::Write;
+        for field in self.0.iter() {
             let ch: char = field.symbol.into();
             for _ in 0..field.length.to_len() {
                 formatter.write_char(ch)?;

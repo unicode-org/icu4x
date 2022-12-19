@@ -5,7 +5,7 @@
 [package]
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
@@ -31,12 +31,13 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "1.0.0-beta1", path = "../locid", features = ["serde", "zerovec"] }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "1.0.0", path = "../locid", features = ["zerovec"] }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { path = "../../utils/tinystr", version = "0.6.0", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { path = "../../utils/zerovec", version = "0.8", features = ["yoke"] }
+tinystr = { version = "0.7", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec",  features = ["yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 criterion = "0.3.3"
@@ -44,6 +45,7 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../icu" }
+writeable = { path = "../../utils/writeable" }
 
 [lib]
 bench = false  # This option is required for Benchmark CI

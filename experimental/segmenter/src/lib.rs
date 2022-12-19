@@ -30,52 +30,54 @@
 //! Segment a string with default options:
 //!
 //!```rust
-//! use icu::segmenter::LineBreakSegmenter;
+//! use icu::segmenter::LineSegmenter;
 //!
-//! let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
-//!     .expect("Data exists");
+//! let segmenter =
+//!     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+//!         .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
 //! assert_eq!(&breakpoints, &[6, 11]);
 //! ```
 //!
-//! See [`LineBreakSegmenter`] for more examples.
+//! See [`LineSegmenter`] for more examples.
 //!
 //! ## Grapheme Cluster Break
 //!
-//! See [`GraphemeClusterBreakSegmenter`] for examples.
+//! See [`GraphemeClusterSegmenter`] for examples.
 //!
 //! ## Word Break
 //!
 //! Segment a string:
 //!
 //!```rust
-//! use icu::segmenter::WordBreakSegmenter;
+//! use icu::segmenter::WordSegmenter;
 //!
-//! let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
-//!     .expect("Data exists");
+//! let segmenter =
+//!     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+//!         .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
 //! assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 //! ```
 //!
-//! See [`WordBreakSegmenter`] for more examples.
+//! See [`WordSegmenter`] for more examples.
 //!
 //! ## Sentence Break
 //!
-//! See [`SentenceBreakSegmenter`] for examples.
+//! See [`SentenceSegmenter`] for examples.
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
-        // TODO(#2325): clippy::indexing_slicing,
-        // TODO: clippy::unwrap_used,
-        // TODO: clippy::expect_used,
-        // TODO: clippy::panic,
+        clippy::indexing_slicing,
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
         // TODO(#2266): missing_debug_implementations,
@@ -87,6 +89,7 @@ extern crate alloc;
 
 mod complex;
 mod dictionary;
+mod error;
 mod indices;
 mod language;
 mod rule_segmenter;
@@ -114,21 +117,25 @@ mod math_helper;
 
 pub use crate::grapheme::{
     GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
-    GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
 };
 pub use crate::line::{
     LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
-    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule,
-    LineBreakSegmenter, WordBreakRule,
+    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter,
+    WordBreakRule,
 };
 pub use crate::sentence::{
     SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
-    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
+    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceSegmenter,
 };
 pub use crate::word::{
     WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-    WordBreakIteratorUtf8, WordBreakSegmenter,
+    WordBreakIteratorUtf8, WordSegmenter,
 };
 
 pub use crate::rule_segmenter::RuleBreakIterator;
+
+pub use error::SegmenterError;
+
+#[doc(inline)]
+pub use SegmenterError as Error;

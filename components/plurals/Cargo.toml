@@ -5,7 +5,7 @@
 [package]
 name = "icu_plurals"
 description = "Unicode Plural Rules categorizer for numeric input"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -32,18 +32,18 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
-icu_locid = { version = "1.0.0-beta1", path = "../locid" }
+fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "1.0.0", path = "../locid" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
-zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3"
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
+icu_provider = { version = "1.0.0", path = "../../provider/core" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
@@ -59,6 +59,7 @@ default = []
 bench = ["serde"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "databake"]
+experimental = []
 
 [[bench]]
 name = "operands"
@@ -80,7 +81,11 @@ required-features = ["serde"]
 
 [[test]]
 name = "operands"
-required-features = ["serde", "std"]
+required-features = ["serde", "std", "experimental"]
+
+[[test]]
+name = "rules"
+required-features = ["experimental"]
 
 [[example]]
 name = "unread_emails"

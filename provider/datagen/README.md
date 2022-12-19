@@ -10,8 +10,8 @@ command-line utility.
 ### `build.rs`
 
 ```rust
-use icu_datagen::*;
 use icu::locid::langid;
+use icu_datagen::*;
 use std::fs::File;
 use std::path::PathBuf;
 
@@ -27,14 +27,14 @@ fn main() {
 ```
 
 ### Command line
-The command line interface is available with the `bin` feature.
+The command line interface can be installed with the `bin` feature.
 ```bash
-cargo run --features bin -- \
-    --icu_exports-root /path/to/icu_exports/root \
-    --all-keys \
-    --locales de,en-AU \
-    --format blob \
-    --out data.postcard
+$ cargo install icu_datagen --features bin
+$ icu4x-datagen \
+>    --all-keys \
+>    --locales de en-AU \
+>    --format blob \
+>    --out data.postcard
 ```
 More details can be found by running `--help`.
 

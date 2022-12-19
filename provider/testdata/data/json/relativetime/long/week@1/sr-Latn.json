@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "prošle nedelje",
+    "0": "ove nedelje",
+    "1": "sledeće nedelje"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  nedelje",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  nedelje",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  nedelja",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  nedelju",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  nedelje",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  nedelja",
+      "index": 3
+    }
+  }
+}

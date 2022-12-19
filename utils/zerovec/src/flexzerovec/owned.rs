@@ -127,10 +127,7 @@ impl FlexZeroVecOwned {
     /// fzv.insert_sorted(5);
     /// fzv.insert_sorted(8);
     ///
-    /// assert!(Iterator::eq(
-    ///     fzv.iter(),
-    ///     [5, 8, 10].iter().copied()
-    /// ));
+    /// assert!(Iterator::eq(fzv.iter(), [5, 8, 10].iter().copied()));
     /// ```
     pub fn insert_sorted(&mut self, item: usize) {
         let index = match self.binary_search(item) {

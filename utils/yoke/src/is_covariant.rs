@@ -95,7 +95,7 @@ use alloc::{
 /// }
 ///
 /// // Example usage: a Yoke of a trait object
-/// let s = "Hello World".to_string();
+/// let s = "Hello World".to_owned();
 /// let yoke: Yoke<ExampleTraitDynRef<'static>, Box<dyn ExampleTrait>> =
 ///     Yoke::attach_to_zero_copy_cart(Box::new(MyStruct(&s)));
 ///

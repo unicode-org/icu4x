@@ -11,8 +11,7 @@ the individual digits of a number.
 ```rust
 use fixed_decimal::FixedDecimal;
 
-let dec = FixedDecimal::from(250)
-    .multiplied_pow10(-2);
+let dec = FixedDecimal::from(250).multiplied_pow10(-2);
 assert_eq!("2.50", format!("{}", dec));
 
 #[derive(Debug, PartialEq)]

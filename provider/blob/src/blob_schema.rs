@@ -71,7 +71,6 @@ impl<'data> BlobSchemaV1<'data> {
     /// Verifies the weak invariants using debug assertions
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
-        use zerovec::maps::ZeroVecLike;
         if self.keys.is_empty() && self.buffers.is_empty() {
             return;
         }
@@ -80,12 +79,7 @@ impl<'data> BlobSchemaV1<'data> {
         let mut seen_min = false;
         let mut seen_max = false;
         for cursor in self.keys.iter0() {
-            for (_, ule) in cursor.iter1() {
-                let mut result = Option::<usize>::None;
-                zerovec::vecs::FlexZeroVec::zvl_get_as_t(ule, |v| result.replace(*v));
-                #[allow(clippy::unwrap_used)]
-                // `zvl_get_as_t` guarantees that the callback is invoked
-                let idx = result.unwrap();
+            for (_, idx) in cursor.iter1_copied() {
                 debug_assert!(idx < self.buffers.len());
                 if idx == 0 {
                     seen_min = true;

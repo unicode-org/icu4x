@@ -52,6 +52,7 @@ impl FromStr for GenericPattern {
 }
 
 #[cfg(test)]
+#[cfg(feature = "datagen")]
 mod test {
     use super::*;
 

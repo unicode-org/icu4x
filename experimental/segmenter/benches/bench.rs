@@ -6,7 +6,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakRule;
-use icu_segmenter::LineBreakSegmenter;
+use icu_segmenter::LineSegmenter;
 use icu_segmenter::WordBreakRule;
 
 // Example is MIT license.
@@ -17,13 +17,14 @@ const TEST_STR_TH: &str =
 fn line_break_iter_latin1(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/Latin1");
 
-    let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter =
+        LineSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineBreakSegmenter::try_new_with_options(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {
@@ -46,7 +47,8 @@ fn line_break_iter_latin1(c: &mut Criterion) {
 fn line_break_iter_utf8(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF8");
 
-    let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter =
+        LineSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     group.bench_function("En", |b| {
         b.iter(|| {
@@ -71,13 +73,14 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
     let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
 
-    let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter =
+        LineSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineBreakSegmenter::try_new_with_options(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {

@@ -23,8 +23,8 @@
 
         See the `Rust documentation for new_with_data_source <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source>`__ for more information.
 
-
         Lifetimes: ``text`` must live at least as long as the output.
+
 
     .. cpp:function:: static bool level_is_rtl(uint8_t level)
 
@@ -82,8 +82,8 @@
 
         Get the nth paragraph, returning None if out of bounds
 
-
         Lifetimes: ``this`` must live at least as long as the output.
+
 
     .. cpp:function:: size_t size() const
 

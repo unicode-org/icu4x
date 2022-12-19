@@ -45,6 +45,9 @@ fn process_cli_args() -> ProcessedArgs {
                     .help("The toolchain for cargo to use. Defaults to nightly.")
             ).get_matches();
 
+    let default_toolchain =
+        env::var("ICU4X_NIGHTLY_TOOLCHAIN").unwrap_or_else(|_| "nightly-2022-04-05".into());
+
     ProcessedArgs {
         // Validate the OS, and copy into an owned String.
         os: matches.value_of("OS").map(|os| {
@@ -74,7 +77,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
-            .unwrap_or("nightly-2022-04-05")
+            .unwrap_or(&default_toolchain)
             .to_string(),
     }
 }
@@ -344,11 +347,11 @@ mod test {
 
     #[test]
     fn test_byte_extraction() {
-        let log = vec![
-            String::from("dhat: Total:     20,122 bytes in 129 blocks"),
-            String::from("dhat: At t-gmax: 9,328 bytes in 90 blocks"),
-            String::from("dhat: At t-end:  0 bytes in 0 blocks"),
-            String::from("dhat: The data in dhat-heap.json is viewable with dhat/dh_view.html"),
+        let log = [
+            "dhat: Total:     20,122 bytes in 129 blocks".to_owned(),
+            "dhat: At t-gmax: 9,328 bytes in 90 blocks".to_owned(),
+            "dhat: At t-end:  0 bytes in 0 blocks".to_owned(),
+            "dhat: The data in dhat-heap.json is viewable with dhat/dh_view.html".to_owned(),
         ];
         let (total, gmax, end) = parse_dhat_log(&log);
 

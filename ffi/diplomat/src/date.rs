@@ -35,13 +35,13 @@ pub mod ffi {
 
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::Date::new_iso_date, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
         pub fn create(
             year: i32,
             month: u8,
             day: u8,
         ) -> DiplomatResult<Box<ICU4XIsoDate>, ICU4XError> {
-            Date::new_iso_date(year, month, day)
+            Date::try_new_iso_date(year, month, day)
                 .map(|dt| Box::new(ICU4XIsoDate(dt)))
                 .map_err(Into::into)
                 .into()
@@ -150,14 +150,14 @@ pub mod ffi {
             calendar: &ICU4XCalendar,
         ) -> DiplomatResult<Box<ICU4XDate>, ICU4XError> {
             let cal = calendar.0.clone();
-            Date::new_iso_date(year, month, day)
+            Date::try_new_iso_date(year, month, day)
                 .map(|dt| Box::new(ICU4XDate(dt.to_calendar(cal))))
                 .map_err(Into::into)
                 .into()
         }
 
         /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
-        #[diplomat::rust_link(icu::calendar::Date::new_from_codes, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
         pub fn create_from_codes_in_calendar(
             era_code: &str,
             year: i32,
@@ -170,7 +170,7 @@ pub mod ffi {
             let era = try_icu4x!(TinyAsciiStr::from_bytes(era_code)).into();
             let month = try_icu4x!(TinyAsciiStr::from_bytes(month_code)).into();
             let cal = calendar.0.clone();
-            Date::new_from_codes(era, year, month, day, cal)
+            Date::try_new_from_codes(era, year, month, day, cal)
                 .map(|dt| Box::new(ICU4XDate(dt)))
                 .map_err(Into::into)
                 .into()

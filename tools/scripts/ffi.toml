@@ -12,6 +12,8 @@ dependencies = [
     "test-c",
     "test-c-tiny",
     "test-cpp",
+    "test-js",
+    "test-tinywasm",
     "build-wearos-ffi",
     "test-nostd",
 ]
@@ -33,7 +35,7 @@ dependencies = [
 [tasks.cargo-make-min-version]
 description = "Verify that the minimum version of cargo-make exists"
 category = "ICU4X Development"
-install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
 
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
@@ -106,12 +108,16 @@ install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/c/examples/fixeddecimal_tiny
-rm -f ../../../../../target/debug/libicu_capi_staticlib.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
-rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
-exec --fail-on-error make
-exec ls -l
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cd ffi/diplomat/c/examples/fixeddecimal_tiny
+    rm -f ../../../../../target/debug/libicu_capi_staticlib.a
+    rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
+    rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
+    exec --fail-on-error make
+    exec ls -l
+end
 '''
 
 [tasks.test-cpp]
@@ -144,6 +150,27 @@ exec --fail-on-error make test-host
 cd ../locale
 rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
+'''
+
+[tasks.test-cpp-emscripten]
+description = "Run the C++-emscripten test (needs emsdk)"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/diplomat/cpp/examples/fixeddecimal_wasm
+exec make test
+'''
+
+[tasks.test-js]
+description = "Run JS tests"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+# Note: --foreground-scripts makes npm forward the output of build.sh
+script = '''
+cd ffi/diplomat/js/examples/node
+exec --fail-on-error npm ci --foreground-scripts
+exec --fail-on-error npm test
 '''
 
 [tasks.test-cppdoc]
@@ -189,12 +216,35 @@ writefile ./cpp/docs/source/conf.py ${conf_py}
 exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/ 
 '''
 
+[tasks.diplomat-gen-js]
+description = "Generate JS bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+script_runner = "bash"
+script = '''
+set -e
+cd ffi/diplomat
+
+# Duckscript doesn't support globs in rm, so we delete the dir.
+# Preserve conf.py across the deletion.
+conf_py=$(<./js/docs/source/conf.py)
+rm -r ./js/include
+mkdir ./js/include
+rm -r ./js/docs/source
+mkdir ./js/docs/source
+echo "$conf_py" > ./js/docs/source/conf.py
+
+diplomat-tool js ./js/include/ --docs ./js/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+
+# TODO: Fix diplomat bug
+find ./js/docs/source -type f -exec sed -i  {} -e 's/staticfunction/function/g' \;
+'''
+
 [tasks.build-wearos-ffi]
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-04-05"
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
-env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
+env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
 args = ["build", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
@@ -205,10 +255,27 @@ args = ["build", "--package", "icu_freertos",
 [tasks.test-nostd]
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
-toolchain = "nightly-2022-04-05"
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
+
+[tasks.test-tinywasm]
+description = "Test the Tiny WASM example"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cd ffi/tinywasm
+
+    exec --fail-on-error ./build.sh
+    exec --fail-on-error ls -l
+    exec --fail-on-error node tiny.mjs
+end
+'''
 
 [tasks.diplomat-get-rev]
 description = "Get current Diplomat revision"

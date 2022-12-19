@@ -20,34 +20,21 @@ If in doubt, use [`Locale`].
 ## Examples
 
 ```rust
-use icu::locid::subtags::{Language, Region};
 use icu::locid::Locale;
+use icu::locid::{
+    locale, subtags_language as language, subtags_region as region,
+};
 
-let mut loc: Locale = "en-US".parse().expect("Parsing failed.");
+let mut loc: Locale = locale!("en-US");
 
-let lang: Language = "en".parse().expect("Parsing failed.");
-let region: Region = "US".parse().expect("Parsing failed.");
-
-assert_eq!(loc.id.language, lang);
+assert_eq!(loc.id.language, language!("en"));
 assert_eq!(loc.id.script, None);
-assert_eq!(loc.id.region, Some(region));
+assert_eq!(loc.id.region, Some(region!("US")));
 assert_eq!(loc.id.variants.len(), 0);
 
-let region: Region = "GB".parse().expect("Parsing failed.");
-loc.id.region = Some(region);
+loc.id.region = Some(region!("GB"));
 
-assert_eq!(loc.to_string(), "en-GB");
-```
-
-### Macros
-
-```rust
-use icu::locid::{langid, subtags_language as language, subtags_region as region};
-
-let lid = langid!("EN_US");
-
-assert_eq!(lid.language, language!("en"));
-assert_eq!(lid.region, Some(region!("US")));
+assert_eq!(loc, locale!("en-GB"));
 ```
 
 For more details, see [`Locale`] and [`LanguageIdentifier`].

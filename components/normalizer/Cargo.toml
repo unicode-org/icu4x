@@ -5,7 +5,7 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -34,11 +34,11 @@ all-features = true
 [dependencies]
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.0.0-beta1", path = "../../components/collections" }
-icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
+icu_collections = { version = "1.0.0", path = "../../components/collections" }
+icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-zerovec = { version = "0.8", path = "../../utils/zerovec" }
-icu_properties = { version = "1.0.0-beta1", path = "../../components/properties" }
+zerovec = { version = "0.9", path = "../../utils/zerovec" }
+icu_properties = { version = "1.0.0", path = "../../components/properties" }
 utf8_iter = "1.0.1"
 utf16_iter = "1.0.3"
 write16 = { version = "1.0", features = ["alloc"] }

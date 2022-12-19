@@ -166,7 +166,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn get(&self, ch: char) -> T {
+    pub fn get(self, ch: char) -> T {
         self.map.get32(ch as u32)
     }
 
@@ -186,7 +186,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
     /// assert_eq!(gc.get32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn get32(&self, ch: u32) -> T {
+    pub fn get32(self, ch: u32) -> T {
         self.map.get32(ch)
     }
 
@@ -209,7 +209,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert!(other_letter_set.contains('木')); // U+6728
     /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
+    pub fn get_set_for_value(self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
         CodePointSetData::from_code_point_inversion_list(set)
     }
@@ -248,7 +248,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(ranges.next(), None);
     /// assert_eq!(ranges.next(), None);
     /// ```
-    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+    pub fn iter_ranges(self) -> impl Iterator<Item = CodePointMapRange<T>> + 'a {
         self.map.iter_ranges()
     }
 }

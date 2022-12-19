@@ -13,7 +13,8 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let language: Language = "en".parse().expect("Failed to parse a language subtag.");
+    /// let language: Language =
+    ///     "en".parse().expect("Failed to parse a language subtag.");
     /// ```
     ///
     /// If the [`Language`] has no value assigned, it serializes to a string `"und"`, which
@@ -54,7 +55,6 @@ impl Language {
     /// use icu::locid::subtags::Language;
     ///
     /// assert_eq!(Language::default(), Language::UND);
-    /// assert_eq!("und", Language::UND.to_string());
     /// ```
     pub const UND: Self = unsafe { Self::from_raw_unchecked(*b"und") };
 
@@ -63,15 +63,15 @@ impl Language {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::Language;
+    /// use icu::locid::{subtags::Language, subtags_language as language};
     ///
-    /// let mut lang: Language = "csb".parse().expect("Parsing failed.");
+    /// let mut lang = language!("csb");
     ///
-    /// assert_eq!(lang.as_str(), "csb");
+    /// assert_ne!(lang, Language::UND);
     ///
     /// lang.clear();
     ///
-    /// assert_eq!(lang.as_str(), "und");
+    /// assert_eq!(lang, Language::UND);
     /// ```
     #[inline]
     pub fn clear(&mut self) {
@@ -85,13 +85,13 @@ impl Language {
     /// ```
     /// use icu::locid::subtags::Language;
     ///
-    /// let mut lang: Language = "und".parse().expect("Parsing failed.");
+    /// let mut lang = Language::UND;
     ///
-    /// assert_eq!(lang.is_empty(), true);
+    /// assert!(lang.is_empty());
     ///
     /// lang.clear();
     ///
-    /// assert_eq!(lang.is_empty(), true);
+    /// assert!(lang.is_empty());
     /// ```
     #[inline]
     pub fn is_empty(self) -> bool {

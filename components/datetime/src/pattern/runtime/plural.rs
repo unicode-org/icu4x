@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    error::DateTimeFormatterError,
+    error::DateTimeError,
     fields::{Field, FieldSymbol, Week},
     input::{DateTimeInput, LocalizedDateTimeInput},
     pattern::{runtime::Pattern, PatternError, PatternItem},
@@ -156,7 +156,7 @@ impl<'data> PatternPlurals<'data> {
         &self,
         loc_datetime: &impl LocalizedDateTimeInput<T>,
         ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeFormatterError>
+    ) -> Result<&Pattern, DateTimeError>
     where
         T: DateTimeInput,
     {
@@ -168,7 +168,7 @@ impl<'data> PatternPlurals<'data> {
                     Week::WeekOfYear => loc_datetime.week_of_year()?.1 .0,
                 };
                 let category = ordinal_rules
-                    .ok_or(DateTimeFormatterError::MissingOrdinalRules)?
+                    .ok_or(DateTimeError::MissingOrdinalRules)?
                     .category_for(week_number);
                 Ok(plural_pattern.variant(category))
             }
@@ -204,8 +204,16 @@ impl<'data> PatternPlurals<'data> {
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!("expect_pattern failed: {}", msg),
+
+            Self::MultipleVariants(patterns) => {
+                // Potentially change to log::warn! in #2648
+                debug_assert!(
+                    false,
+                    "expect_pattern called with bad data (falling back to `other` pattern): {}",
+                    msg
+                );
+                patterns.other
+            }
         }
     }
 

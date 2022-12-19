@@ -23,8 +23,8 @@
 //!
 //! ```
 //! use icu_locid::Locale;
-//! use zerovec::ZeroMap;
 //! use zerovec::ule::UnvalidatedStr;
+//! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from locales to integers
 //! let data: &[(&UnvalidatedStr, u32)] = &[
@@ -38,7 +38,7 @@
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(&uvstr).reverse());
+//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(uvstr).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -59,11 +59,14 @@
 //! ```
 //! use icu_locid::subtags::{Language, Region, Script};
 //! use icu_locid::LanguageIdentifier;
-//! use icu_locid::{langid, subtags_language as language, subtags_region as region, subtags_script as script};
+//! use icu_locid::{
+//!     langid, subtags_language as language, subtags_region as region,
+//!     subtags_script as script,
+//! };
 //! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to LSR (language-script-region)
-//! let data: &[(u32, (Language, Option<Script>, Option<Region>))] = &[
+//! let zm: ZeroMap<u32, (Language, Option<Script>, Option<Region>)> = [
 //!     (5, (language!("de"), None, Some(region!("DE")))),
 //!     (10, (language!("en"), None, Some(region!("US")))),
 //!     (15, (language!("my"), None, Some(region!("MM")))),
@@ -72,12 +75,13 @@
 //!         (language!("sr"), Some(script!("Cyrl")), Some(region!("ME"))),
 //!     ),
 //!     (25, (language!("zh"), None, Some(region!("TW")))),
-//! ];
-//! let zm: ZeroMap<u32, (Language, Option<Script>, Option<Region>)> =
-//!     data.iter().copied().collect();
+//! ]
+//! .into_iter()
+//! .collect();
 //!
 //! // Construct a LanguageIdentifier from a tuple entry
-//! let lid: LanguageIdentifier = zm.get_copied(&25).expect("element is present").into();
+//! let lid: LanguageIdentifier =
+//!     zm.get_copied(&25).expect("element is present").into();
 //!
 //! assert_eq!(lid, langid!("zh-TW"));
 //! ```
@@ -88,7 +92,7 @@
 //! store a BCP-47 string and parse it when needed.
 //!
 //! Since the string is stored in an unparsed state, it is not safe to `unwrap` the result from
-//! `Locale::from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
+//! `Locale::try_from_bytes()`. See [icu4x#831](https://github.com/unicode-org/icu4x/issues/831)
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
@@ -97,8 +101,8 @@
 //! ```
 //! use icu_locid::langid;
 //! use icu_locid::Locale;
-//! use zerovec::ZeroMap;
 //! use zerovec::ule::UnvalidatedStr;
+//! use zerovec::ZeroMap;
 //!
 //! // ZeroMap from integer to locale string
 //! let data: &[(u32, &UnvalidatedStr)] = &[
@@ -113,12 +117,12 @@
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::from_bytes(&*value);
+//! let loc = Locale::try_from_bytes(value);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::from_bytes(&*err_value);
+//! let err_loc = Locale::try_from_bytes(err_value);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!

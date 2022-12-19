@@ -716,6 +716,11 @@ impl CharacterAndClassAndTrieValue {
 /// Note that 0xFF is won't be assigned to an actual
 /// canonical combining class per definition D104
 /// in The Unicode Standard.
+//
+// NOTE: The Pernosco debugger has special knowledge
+// of this struct. Please do not change the bit layout
+// or the crate-module-qualified name of this struct
+// without coordination.
 #[derive(Debug, Clone)]
 struct CharacterAndClass(u32);
 
@@ -786,7 +791,7 @@ where
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
     /// first `char` in `upcoming` must have its decompostion start with a
     /// starter.
-    upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, // TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long
+    upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.
     root: &'data CollationDataV1<'data>,
     /// Tailoring if applicable.

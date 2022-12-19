@@ -2,13 +2,26 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extend = [{ path = "./tools/scripts/data.toml"}, { path = "./tools/scripts/valgrind.toml"},
-          { path = "./tools/scripts/tidy.toml"}, { path = "./tools/scripts/wasm.toml"},
-          { path = "./tools/scripts/tests.toml"}, { path = "./tools/scripts/ffi.toml"}]
+extend = [
+    { path = "./tools/scripts/data.toml"}, #
+    { path = "./tools/scripts/valgrind.toml"}, #
+    { path = "./tools/scripts/tidy.toml"}, #
+    { path = "./tools/scripts/wasm.toml"}, #
+    { path = "./tools/scripts/tests.toml"}, #
+    { path = "./tools/scripts/ffi.toml"}, #
+    { path = "./tools/scripts/gn.toml"}, #
+]
 
 [config]
 default_to_workspace = false
 
+[env]
+ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-04-05", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
+# To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
+# https://chrome-infra-packages.appspot.com/p/gn/gn
+# TODO: Choose the correct distribution of GN automatically.
+ICU4X_GN_PACKAGE = { value = "gn/gn/linux-amd64", condition = { env_not_set = ["ICU4X_GN_PACKAGE"] } }
+ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -86,6 +99,20 @@ dependencies = [
     "verify-ffi",
 ]
 
+[tasks.ci-job-gn]
+description = "Run all tests for the CI 'gn' job"
+category = "CI"
+dependencies = [
+    "gn-run",
+]
+
+[tasks.ci-job-verify-gn]
+description = "Run all tests for the CI 'verify-gn' job"
+category = "CI"
+dependencies = [
+    "verify-gn-gen",
+]
+
 
 [tasks.ci-job-features]
 description = "Run all tests for the CI 'features' job"
@@ -114,12 +141,7 @@ dependencies = [
 description = "Run all tests for the CI 'wasm' job"
 category = "CI"
 dependencies = [
-    # note: CI does not call `cargo make ci-job-wasm` since
-    # we have to set up the environment for the emscripten job separately
-    # Instead, each of these is called individually.
-    "wasm-release",
-    "wasm-test-release",
-    "wasm-cpp-emscripten",
+    "test-cpp-emscripten",
 ]
 
 [tasks.ci-job-clippy]
@@ -151,3 +173,47 @@ dependencies = [
 
     # benchmarking and coverage jobs not included
 ]
+
+[tasks.set-nightly-version-for-ci]
+description = "Set all nightly version env vars for CI"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+env_file = get_env GITHUB_ENV
+if not ${env_file}
+    echo "GITHUB_ENV not set!"
+    exit 1
+end
+
+event_name = get_env GITHUB_EVENT_NAME
+
+if not ${event_name}
+    echo "GITHUB_EVENT_NAME not set!"
+    exit 1
+end
+
+is_schedule = eq "${event_name}" "schedule"
+is_dispatch = eq "${event_name}" "workflow_dispatch"
+dispatch_needs_nightly = set false
+
+if is_dispatch
+    event_path = get_env GITHUB_EVENT_PATH
+    event_file = readfile ${event_path}
+    event_json = json_parse ${event_file}
+    if ${event_json.inputs.nightly}
+        dispatch_needs_nightly = set true
+    end
+end
+
+if ${is_schedule} or ${dispatch_needs_nightly}
+    echo "Setting up CI environment for forced-nightly Rust build"
+    appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
+    appendfile ${env_file} "INSTALLED_NIGHTLY_VERSION=nightly\n"
+    appendfile ${env_file} "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1\n"
+    appendfile ${env_file} "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY\n"
+    exec rustup override set nightly
+else
+    echo "forced-nightly environment not required"
+end
+'''

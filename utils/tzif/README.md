@@ -17,7 +17,8 @@ let data = tzif::parse_tzif_file("path_to_file").unwrap();
 
 #### Parse POSIX time-zone strings
 ```rust
-let data = tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
+let data =
+    tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 ```
 
 ## More Information

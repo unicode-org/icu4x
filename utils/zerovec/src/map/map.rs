@@ -44,11 +44,12 @@ use core::iter::FromIterator;
 ///
 /// let data = Data { map };
 ///
-/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without any allocations
-/// let deserialized: Data =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(data.map.get(&1), Some("one"));
 /// assert_eq!(data.map.get(&2), Some("two"));
@@ -193,8 +194,8 @@ where
     /// let mut map = ZeroMap::new();
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
-    /// assert_eq!(map.contains_key(&1), true);
-    /// assert_eq!(map.contains_key(&3), false);
+    /// assert!(map.contains_key(&1));
+    /// assert!(!map.contains_key(&3));
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
         self.keys.zvl_binary_search(key).is_ok()

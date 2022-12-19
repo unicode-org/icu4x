@@ -144,7 +144,7 @@ fn test_databake() {
         ),
         quote!(
             #[doc = "Marker type for [`FooV1`]: \"demo/bar@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
-            #[derive(Default, databake::Bake)]
+            #[derive(databake::Bake)]
             #[databake(path = test::path)]
             pub struct BarV1Marker;
             impl icu_provider::DataMarker for BarV1Marker {

@@ -11,7 +11,7 @@
 
 #include "ICU4XPluralOperands.h"
 
-struct ICU4XPluralOperands;
+class ICU4XPluralOperands;
 #include "ICU4XError.hpp"
 
 /**
@@ -28,14 +28,8 @@ struct ICU4XPluralOperandsDeleter {
  * 
  * See the [Rust documentation for `PluralOperands`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html) for more information.
  */
-struct ICU4XPluralOperands {
+class ICU4XPluralOperands {
  public:
-  uint64_t i;
-  size_t v;
-  size_t w;
-  uint64_t f;
-  uint64_t t;
-  size_t c;
 
   /**
    * Construct for a given string representing a number
@@ -43,6 +37,14 @@ struct ICU4XPluralOperands {
    * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s);
+  inline const capi::ICU4XPluralOperands* AsFFI() const { return this->inner.get(); }
+  inline capi::ICU4XPluralOperands* AsFFIMut() { return this->inner.get(); }
+  inline ICU4XPluralOperands(capi::ICU4XPluralOperands* i) : inner(i) {}
+  ICU4XPluralOperands() = default;
+  ICU4XPluralOperands(ICU4XPluralOperands&&) noexcept = default;
+  ICU4XPluralOperands& operator=(ICU4XPluralOperands&& other) noexcept = default;
+ private:
+  std::unique_ptr<capi::ICU4XPluralOperands, ICU4XPluralOperandsDeleter> inner;
 };
 
 
@@ -50,8 +52,7 @@ inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::cr
   auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create_from_string(s.data(), s.size());
   diplomat::result<ICU4XPluralOperands, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-  capi::ICU4XPluralOperands diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;
-    diplomat_result_out_value = diplomat::Ok<ICU4XPluralOperands>(std::move(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value.i), .v = std::move(diplomat_raw_struct_out_value.v), .w = std::move(diplomat_raw_struct_out_value.w), .f = std::move(diplomat_raw_struct_out_value.f), .t = std::move(diplomat_raw_struct_out_value.t), .c = std::move(diplomat_raw_struct_out_value.c) }));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPluralOperands>(std::move(ICU4XPluralOperands(diplomat_result_raw_out_value.ok)));
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }

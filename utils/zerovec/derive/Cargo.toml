@@ -4,7 +4,7 @@
 
 [package]
 name = "zerovec-derive"
-version = "0.8.0"
+version = "0.9.0"
 description = "Custom derive for the zerovec crate"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -26,7 +26,7 @@ syn = { version = "1.0.73", features = ["derive", "parsing"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
-zerovec = { version = "0.8", path = "..", features = ["serde", "derive"] }
+zerovec = { path = "..", features = ["serde", "derive"] }
 serde = { version = "1.0", features = ["derive"] }
 zerofrom = { version = "0.1", path = "../../zerofrom" }
 bincode = "1.3"

@@ -438,6 +438,11 @@ impl CharacterAndTrieValue {
 /// Note that 0xFF is won't be assigned to an actual
 /// canonical combining class per definition D104
 /// in The Unicode Standard.
+//
+// NOTE: The Pernosco debugger has special knowledge
+// of this struct. Please do not change the bit layout
+// or the crate-module-qualified name of this struct
+// without coordination.
 #[derive(Debug)]
 struct CharacterAndClass(u32);
 
@@ -612,10 +617,10 @@ where
             );
         if low & 0x1000 != 0 {
             // All the rest are combining
-            for u in tail.iter() {
-                self.buffer
-                    .push(CharacterAndClass::new_with_placeholder(char_from_u16(u)));
-            }
+            self.buffer.extend(
+                tail.iter()
+                    .map(|u| CharacterAndClass::new_with_placeholder(char_from_u16(u))),
+            );
             (starter, 0)
         } else {
             let mut i = 0;
@@ -1515,6 +1520,11 @@ pub struct DecomposingNormalizer {
 
 impl DecomposingNormalizer {
     /// NFD constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1558,6 +1568,11 @@ impl DecomposingNormalizer {
     );
 
     /// NFKD constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfkd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -1977,6 +1992,11 @@ pub struct ComposingNormalizer {
 
 impl ComposingNormalizer {
     /// NFC constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2007,6 +2027,11 @@ impl ComposingNormalizer {
     );
 
     /// NFKC constructor.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
     pub fn try_new_nfkc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
@@ -2066,7 +2091,7 @@ impl ComposingNormalizer {
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. It can be enabled with the "experimental" feature
     /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// <a href="https://github.com/unicode-org/icu4x/issues/2614">#2614</a>
     /// </div>
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(

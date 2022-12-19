@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_adapters"
 description = "Adapters for composing and manipulating data providers."
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -24,17 +24,17 @@ include = [
 ]
 
 [dependencies]
-icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["macros"] }
-icu_locid = { version = "1.0.0-beta1", path = "../../components/locid", features = ["zerovec"] }
+icu_provider = { version = "1.0.0", path = "../core", features = ["macros"] }
+icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["zerovec"] }
 yoke = { version = "0.6", path = "../../utils/yoke" }
-zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
-tinystr = { version = "0.6", path = "../../utils/tinystr", features = ["zerovec"] }
+tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["zerovec"] }
 
 [dev-dependencies]
 icu_testdata = { path = "../testdata", default-features = false, features = ["buffer"] }
-icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["macros", "deserialize_json"] }
+icu_provider = { version = "1.0.0", path = "../core", features = ["macros", "deserialize_json"] }
 icu_provider_fs = { path = "../fs" }
 writeable = { path = "../../utils/writeable" }
 

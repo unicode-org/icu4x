@@ -31,13 +31,15 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         .map(|s| s.parse().expect("Failed to parse locale"))
         .unwrap_or_else(|| locale!("en"));
 
-    let user_name = args.get(2).cloned().unwrap_or_else(|| "John".to_string());
+    let user_name = args.as_slice().get(2).map(String::as_str).unwrap_or("John");
 
     let email_count: usize = args
         .get(3)
-        .unwrap_or(&"5".to_string())
-        .parse()
-        .expect("Could not parse unread email count as unsigned integer.");
+        .map(|s| {
+            s.parse()
+                .expect("Could not parse unread email count as unsigned integer.")
+        })
+        .unwrap_or(5);
 
     print(format!("\nTextual User Interface Example ({})", locale));
     print("===================================");
@@ -51,7 +53,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create TypedDateTimeFormatter.");
-        let today_date = DateTime::new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
+        let today_date = DateTime::try_new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
         let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
 
         let formatted_dt = dtf.format(&today_date, &today_tz);

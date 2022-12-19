@@ -1,0 +1,39 @@
+{
+  "relatives": {
+    "0": "овог сата"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "пре  ч.",
+      "index": 7
+    },
+    "two": null,
+    "few": {
+      "pattern": "пре  ч.",
+      "index": 7
+    },
+    "many": null,
+    "other": {
+      "pattern": "пре  ч.",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "за  ч.",
+      "index": 5
+    },
+    "two": null,
+    "few": {
+      "pattern": "за  ч.",
+      "index": 5
+    },
+    "many": null,
+    "other": {
+      "pattern": "за  ч.",
+      "index": 5
+    }
+  }
+}

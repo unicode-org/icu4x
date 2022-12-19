@@ -8,6 +8,7 @@ use icu_locid::subtags_language as language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
+use std::borrow::Cow;
 
 fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     selff: &crate::DatagenProvider,
@@ -57,7 +58,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
             lazy_static! {
                 // Starts with i or (hi but not hia/hie)
-                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new("i|hi([^ae]|$)").expect("Valid regex");
+                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed("i|hi([^ae]|$)")).expect("Valid regex");
             }
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
@@ -68,7 +69,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             lazy_static! {
                 // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                 // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))").expect("Valid regex");
+                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))")).expect("Valid regex");
             }
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
@@ -80,7 +81,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     if langid.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
-        let non_hebrew = StringMatcher::new(&format!(
+        let non_hebrew = StringMatcher::new(Cow::Owned(format!(
             "[^{}]",
             icu_properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
@@ -91,7 +92,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
                 .iter_ranges()
                 .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                 .fold(String::new(), |a, b| a + &b)
-        ))
+        )))
         .expect("valid regex");
 
         // Add dashes between ו and non-Hebrew characters
@@ -141,7 +142,7 @@ implement!(UnitListV1Marker);
 
 #[cfg(test)]
 mod tests {
-    use icu_list::{ListFormatter, ListStyle};
+    use icu_list::{ListFormatter, ListLength};
     use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
@@ -150,7 +151,7 @@ mod tests {
             let f = ListFormatter::$type(
                 &crate::DatagenProvider::for_test(),
                 &locale!($locale).into(),
-                ListStyle::Wide
+                ListLength::Wide
             ).unwrap();
             $(
                 assert_writeable_eq!(f.format($input.iter()), $output);
@@ -160,14 +161,18 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        test!("fr", try_new_or_unstable, (["A", "B"], "A ou B"),);
+        test!(
+            "fr",
+            try_new_or_with_length_unstable,
+            (["A", "B"], "A ou B"),
+        );
     }
 
     #[test]
     fn test_spanish() {
         test!(
             "es",
-            try_new_and_unstable,
+            try_new_and_with_length_unstable,
             (["x", "Mallorca"], "x y Mallorca"),
             (["x", "Ibiza"], "x e Ibiza"),
             (["x", "Hidalgo"], "x e Hidalgo"),
@@ -176,7 +181,7 @@ mod tests {
 
         test!(
             "es",
-            try_new_or_unstable,
+            try_new_or_with_length_unstable,
             (["x", "Ibiza"], "x o Ibiza"),
             (["x", "Okinawa"], "x u Okinawa"),
             (["x", "8 más"], "x u 8 más"),
@@ -193,14 +198,18 @@ mod tests {
             (["x", "11.000,92"], "x u 11.000,92"),
         );
 
-        test!("es-AR", try_new_and_unstable, (["x", "Ibiza"], "x e Ibiza"),);
+        test!(
+            "es-AR",
+            try_new_and_with_length_unstable,
+            (["x", "Ibiza"], "x e Ibiza"),
+        );
     }
 
     #[test]
     fn test_hebrew() {
         test!(
             "he",
-            try_new_and_unstable,
+            try_new_and_with_length_unstable,
             (["x", "יפו"], "x ויפו"),
             (["x", "Ibiza"], "x ו-Ibiza"),
         );

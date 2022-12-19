@@ -41,19 +41,17 @@ where
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
     payload: Box<dyn ExportableYoke + Sync>,
-    marker: Box<dyn Bake + Sync>,
 }
 
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
-    M: DataMarker + Default + Bake + 'static + Sync,
+    M: DataMarker,
     M::Yokeable: Sync,
     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Bake + serde::Serialize,
 {
     fn upcast(other: DataPayload<M>) -> DataPayload<ExportMarker> {
         DataPayload::from_owned(ExportBox {
             payload: Box::new(other.yoke),
-            marker: Box::new(M::default()),
         })
     }
 }
@@ -90,8 +88,8 @@ impl DataPayload<ExportMarker> {
             .serialize_yoke(&mut <dyn erased_serde::Serializer>::erase(serializer))
     }
 
-    /// Serializes this [`DataPayload`]'s value and marker type into [`TokenStream`]s
-    /// using their [`Bake`] implementations.
+    /// Serializes this [`DataPayload`]'s value into a [`TokenStream`]
+    /// using its [`Bake`] implementations.
     ///
     /// # Examples
     ///
@@ -108,7 +106,7 @@ impl DataPayload<ExportMarker> {
     /// let export: DataPayload<ExportMarker> = UpcastDataPayload::upcast(payload);
     ///
     /// let env = databake::CrateEnv::default();
-    /// let (tokens, marker) = export.tokenize(&env);
+    /// let tokens = export.tokenize(&env);
     /// assert_eq!(
     ///     quote! {
     ///         ::icu_provider::hello_world::HelloWorldV1 {
@@ -119,23 +117,14 @@ impl DataPayload<ExportMarker> {
     ///     tokens.to_string()
     /// );
     /// assert_eq!(
-    ///     quote! { ::icu_provider::hello_world::HelloWorldV1Marker }.to_string(),
-    ///     marker.to_string()
-    /// );
-    /// assert_eq!(
     ///     env.into_iter().collect::<BTreeSet<_>>(),
     ///     ["icu_provider", "alloc"]
     ///         .into_iter()
     ///         .collect::<BTreeSet<_>>()
     /// );
     /// ```
-    pub fn tokenize(&self, env: &CrateEnv) -> (TokenStream, TokenStream) {
-        (
-            self.get().payload.bake_yoke(env),
-            // This is a bit naughty, we need the marker's type, but we're actually
-            // baking its value. This works as long as all markers are unit structs.
-            self.get().marker.bake(env),
-        )
+    pub fn tokenize(&self, env: &CrateEnv) -> TokenStream {
+        self.get().payload.bake_yoke(env)
     }
 }
 

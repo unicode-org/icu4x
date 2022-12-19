@@ -49,7 +49,7 @@ where
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
-///     BazV1Marker = "demo/baz@1",
+///     BazV1Marker = "demo/baz@1"
 /// )]
 /// pub struct FooV1<'data> {
 ///     message: Cow<'data, str>,
@@ -57,10 +57,7 @@ where
 ///
 /// icu_provider::impl_casting_upcast!(
 ///     FooV1Marker,
-///     [
-///         BarV1Marker,
-///         BazV1Marker,
-///     ]
+///     [BarV1Marker, BazV1Marker,]
 /// );
 /// ```
 ///

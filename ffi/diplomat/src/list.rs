@@ -11,7 +11,7 @@ pub mod ffi {
     use alloc::string::String;
     use alloc::vec::Vec;
     use diplomat_runtime::{DiplomatResult, DiplomatWriteable};
-    use icu_list::{ListFormatter, ListStyle};
+    use icu_list::{ListFormatter, ListLength};
     use writeable::Writeable;
 
     /// A list of strings
@@ -46,9 +46,9 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::rust_link(icu::list::ListStyle, Enum)]
-    #[diplomat::enum_convert(ListStyle, needs_wildcard)]
-    pub enum ICU4XListStyle {
+    #[diplomat::rust_link(icu::list::ListLength, Enum)]
+    #[diplomat::enum_convert(ListLength, needs_wildcard)]
+    pub enum ICU4XListLength {
         Wide,
         Short,
         Narrow,
@@ -59,40 +59,49 @@ pub mod ffi {
 
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_and_unstable, FnInStruct)]
-        pub fn create_and_with_style(
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_and_with_length_unstable,
+            FnInStruct
+        )]
+        pub fn create_and_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            style: ICU4XListStyle,
+            length: ICU4XListLength,
         ) -> DiplomatResult<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            ListFormatter::try_new_and_unstable(&provider.0, &locale, style.into())
+            ListFormatter::try_new_and_with_length_unstable(&provider.0, &locale, length.into())
                 .map(|o| Box::new(ICU4XListFormatter(o)))
                 .map_err(Into::into)
                 .into()
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_or_unstable, FnInStruct)]
-        pub fn create_or_with_style(
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_or_with_length_unstable,
+            FnInStruct
+        )]
+        pub fn create_or_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            style: ICU4XListStyle,
+            length: ICU4XListLength,
         ) -> DiplomatResult<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            ListFormatter::try_new_or_unstable(&provider.0, &locale, style.into())
+            ListFormatter::try_new_or_with_length_unstable(&provider.0, &locale, length.into())
                 .map(|o| Box::new(ICU4XListFormatter(o)))
                 .map_err(Into::into)
                 .into()
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_unit_unstable, FnInStruct)]
-        pub fn create_unit_with_style(
+        #[diplomat::rust_link(
+            icu::normalizer::ListFormatter::try_new_unit_with_length_unstable,
+            FnInStruct
+        )]
+        pub fn create_unit_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            style: ICU4XListStyle,
+            length: ICU4XListLength,
         ) -> DiplomatResult<Box<ICU4XListFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
-            ListFormatter::try_new_unit_unstable(&provider.0, &locale, style.into())
+            ListFormatter::try_new_unit_with_length_unstable(&provider.0, &locale, length.into())
                 .map(|o| Box::new(ICU4XListFormatter(o)))
                 .map_err(Into::into)
                 .into()

@@ -59,11 +59,12 @@ use super::*;
 ///     strings: VarZeroVec::from(&strings),
 /// };
 ///
-/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Data =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.strings.get(2), Some("文"));
 /// assert_eq!(deserialized.strings, &*strings);
@@ -98,10 +99,11 @@ use super::*;
 ///     vecs: VarZeroVec::from(numbers),
 /// };
 ///
-/// let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&data).expect("Serialization should be successful");
 ///
-/// let deserialized: Data =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Data = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.vecs[0].get(1).unwrap(), 25);
 /// assert_eq!(deserialized.vecs[1], *numbers[1]);
@@ -153,8 +155,8 @@ pub enum VarZeroVec<'a, T: ?Sized, F = Index16> {
     /// use zerovec::VarZeroVec;
     ///
     /// let bytes = &[
-    ///     4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 6, 0, 119, 207, 137, 230, 150, 135,
-    ///     240, 145, 132, 131,
+    ///     4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 6, 0, 119, 207, 137, 230, 150, 135, 240,
+    ///     145, 132, 131,
     /// ];
     ///
     /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();

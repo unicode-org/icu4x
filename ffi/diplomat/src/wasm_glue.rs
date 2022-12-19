@@ -15,9 +15,9 @@ impl log::Log for ConsoleLogger {
 
     fn log(&self, record: &Record) {
         if record.level() <= Level::Warn {
-            console_warn(format!("[{}] {}", record.level(), record.args()).as_str()).unwrap();
+            console_warn(format!("[{}] {}", record.level(), record.args()).as_str());
         } else {
-            console_log(format!("[{}] {}", record.level(), record.args()).as_str()).unwrap();
+            console_log(format!("[{}] {}", record.level(), record.args()).as_str());
         }
     }
 

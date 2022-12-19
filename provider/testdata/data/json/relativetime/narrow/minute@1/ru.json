@@ -1,0 +1,45 @@
+{
+  "relatives": {
+    "0": "в эту минуту"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "- мин",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "- мин",
+      "index": 1
+    },
+    "many": {
+      "pattern": "- мин",
+      "index": 1
+    },
+    "other": {
+      "pattern": "- мин",
+      "index": 1
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "+ мин",
+      "index": 1
+    },
+    "two": null,
+    "few": {
+      "pattern": "+ мин",
+      "index": 1
+    },
+    "many": {
+      "pattern": "+ мин",
+      "index": 1
+    },
+    "other": {
+      "pattern": "+ мин",
+      "index": 1
+    }
+  }
+}

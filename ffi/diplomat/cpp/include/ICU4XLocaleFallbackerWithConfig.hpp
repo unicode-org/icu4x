@@ -35,6 +35,8 @@ class ICU4XLocaleFallbackerWithConfig {
    * Creates an iterator from a locale with each step of fallback.
    * 
    * See the [Rust documentation for `fallback_for`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackerWithConfig.html#method.fallback_for) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
    */
   ICU4XLocaleFallbackIterator fallback_for_locale(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleFallbackerWithConfig* AsFFI() const { return this->inner.get(); }

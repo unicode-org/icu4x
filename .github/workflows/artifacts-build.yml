@@ -26,8 +26,7 @@
 name: Artifacts Build
 
 on:
-  push:
-    branches-ignore: ["main"]
+  push
 
 jobs:
   credentials:
@@ -74,6 +73,53 @@ jobs:
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
         echo "::endgroup::"
 
+  ffi-docs:
+    name: "FFI Preview"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Install Python
+      uses: actions/setup-python@v1
+    - name: Install Sphinx
+      uses: BSFishy/pip-action@v1
+      with:
+        packages: |
+          sphinx
+          sphinx-rtd-theme
+    - name: Build CPP docs
+      run: |
+        cd ffi/diplomat/cpp/docs
+        make html
+        cd ../../../..
+    - name: Build JS docs
+      run: |
+        cd ffi/diplomat/js/docs
+        make html
+        cd ../../../..
+    - name: Upload docs to Google Cloud Storage
+      run: |
+        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
+        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "::group::📖 CPP Docs Preview"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
+        echo "::endgroup::"
+
+        echo "::group::📖 JS Docs Preview"
+        echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
+        echo "::endgroup::"
+
   webpack:
     name: WASM Demo
     needs: credentials
@@ -84,15 +130,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
-    - name: Install prerequisites for wasm build
-      run: |
-        rustup toolchain list
-        rustup toolchain install nightly-2022-04-05
-        rustup component add --toolchain nightly-2022-04-05 rust-src
-
     - name: Authenticate to Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2
       with:
@@ -100,43 +137,33 @@ jobs:
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Get cargo-make version
-      id: cargo-make-version
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Init
+      # Note: --foreground-scripts makes npm forward the output of build.sh
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
-      shell: bash
-
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-
-    - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+        cd ffi/diplomat/js/examples/wasm-demo
+        npm ci --foreground-scripts
 
     - name: Run Webpack
-      uses: actions-rs/cargo@v1
-      with:
-        command: make
-        args: diplomat-build-webpack-demo
+      run: |
+        cd ffi/diplomat/js/examples/wasm-demo
+        npm run build
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/diplomat/wasm/wasm-demo/index.html ffi/diplomat/wasm/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/wasm/wasm-demo/dist/index.js
+        cp ffi/diplomat/js/examples/wasm-demo/index.html ffi/diplomat/js/examples/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/js/examples/wasm-demo/dist/index.js
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
-        # gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
-        gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+        # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -146,14 +173,14 @@ jobs:
 
     #   TODO(qnnokabayashi): This was my attempt to get it to copy the HTML to
     #     the `gh-pages` branch. As of 8/1/2022, idea is that
-    #     `ffi/diplomat/wasm/wasm-demo/index.html` contains the structure for
+    #     `index.html` contains the structure for
     #     the demo. It needs to call into the Webpacked JavaScript. When testing
-    #     locally, this content is in `ffi/diplomat/wasm/wasm-demo/dist/`, but
+    #     locally, this content is in `dist/`, but
     #     when deployed, it lives in Google Cloud Storage. But we don't want to
     #     be editing this arbitrarily complex HTML file in CI. The solution was
     #     to have it call a very simple `index.js` file which modifies the HTML
     #     and tells it where to get the script from. Locally, this lives next to
-    #     `index.html` at `ffi/diplomat/wasm/wasm-demo/index.js`, and contains
+    #     `index.html` at `index.js`, and contains
     #     the following:
     #       ```js
     #       const gcs = document.createElement('script');
@@ -171,7 +198,7 @@ jobs:
     #     
     # - name: Store index.html
     #   run: |
-    #     cp ffi/diplomat/wasm/wasm-demo/index.html /tmp/wasm-demo-index.html
+    #     cp index.html /tmp/wasm-demo-index.html
     # - name: Checkout gh-pages
     #   uses: actions/checkout@v2
     #   with:

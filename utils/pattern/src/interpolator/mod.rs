@@ -66,7 +66,9 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 ///
 /// # Examples
 /// ```
-/// use icu_pattern::{InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern};
+/// use icu_pattern::{
+///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
+/// };
 /// use std::convert::TryInto;
 ///
 /// #[derive(Debug, PartialEq)]
@@ -89,7 +91,9 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 ///
 /// let mut result = vec![];
 ///
-/// while let Some(element) = interpolator.try_next().expect("Failed to advance iterator") {
+/// while let Some(element) =
+///     interpolator.try_next().expect("Failed to advance iterator")
+/// {
 ///     result.push(element);
 /// }
 ///
@@ -184,7 +188,8 @@ where
     /// .try_into()
     /// .unwrap();
     /// let replacements = vec![vec![Element::Token]];
-    /// let mut interpolator = Interpolator::<Vec<Vec<_>>, Element>::new(&pattern, &replacements);
+    /// let mut interpolator =
+    ///     Interpolator::<Vec<Vec<_>>, Element>::new(&pattern, &replacements);
     /// ```
     pub fn new(tokens: &'i [PatternToken<'p, R::Key>], replacements: &'i R) -> Self {
         Self {
@@ -200,7 +205,9 @@ where
     ///
     /// # Examples
     /// ```
-    /// use icu_pattern::{InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern};
+    /// use icu_pattern::{
+    ///     InterpolatedKind, Interpolator, Parser, ParserOptions, Pattern,
+    /// };
     /// use std::convert::TryInto;
     ///
     /// #[derive(Debug, PartialEq)]
@@ -360,7 +367,12 @@ mod tests {
             let replacements: std::collections::HashMap<String, Vec<Element>> = sample
                 .1
                 .iter()
-                .map(|(k, v)| (k.to_string(), v.iter().map(|&t| Element::from(t)).collect()))
+                .map(|(k, v)| {
+                    (
+                        (*k).to_owned(),
+                        v.iter().map(|&t| Element::from(t)).collect(),
+                    )
+                })
                 .collect();
 
             let interpolated_pattern = pattern

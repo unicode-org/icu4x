@@ -12,7 +12,7 @@ ICU4X is being built from the start with several key design constraints:
 1. Small, modular, fast, low-memory code.
 2. Pluggable locale data.
 3. Availability and ease of use in multiple programming languages.
-4. Written by i18n experts to encourage best practices.
+4. Written by internationalization experts to encourage best practices.
 
 Above all, ICU4X code will produce correct results for all languages and locales. No language or locale should be at a structural disadvantage.
 
@@ -64,7 +64,7 @@ ICU4X will have an independent code base from ICU, and will operate independentl
 
 ### Is ICU4X going to replace ICU?
 
-ICU4X is a new library to fill the growing need for on-device i18n across a variety of client-side platforms, including IoT, mobile, and web environments.  We hope ICU4X will eventually replace client-side solutions such as Closure i18n (goog.i18n) and Dart Intl.  [ICU4C] and [ICU4J] will continue to be the gold standard for internationalization on servers and higher-resource environments.
+ICU4X is a new library to fill the growing need for on-device internationalization across a variety of client-side platforms, including IoT, mobile, and web environments.  We hope ICU4X will eventually replace client-side solutions such as Closure i18n (goog.i18n) and Dart Intl.  [ICU4C] and [ICU4J] will continue to be the gold standard for internationalization on servers and higher-resource environments.
 
 ### Why make a new project instead of improving ICU?
 
@@ -90,7 +90,7 @@ A transpiler can be written in any language, but Lisp has a history of being use
 
 ### Won't this increase the maintenance burden?
 
-I18n engineers currently need to maintain several half-baked client-side i18n solutions including Closure i18n and Dart Intl.  We hope ICU4X will be able to eventually replace those libraries, and it will also allow us to fulfill the needs of new clients that we are currently unable to support.
+Internationalization engineers currently need to maintain several half-baked client-side internationalization solutions including Closure i18n and Dart Intl.  We hope ICU4X will be able to eventually replace those libraries, and it will also allow us to fulfill the needs of new clients that we are currently unable to support.
 
 ### Will ICU4C, ICU4J, and ICU4X share any code?
 

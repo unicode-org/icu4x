@@ -351,13 +351,13 @@ mod test {
         let months = months::SymbolsV1::Other(months.iter().copied().collect());
 
         let weekdays = weekdays::SymbolsV1([
-            Cow::Owned("Monday".to_string()),
-            Cow::Owned("Tuesday".to_string()),
-            Cow::Owned("Wednesday".to_string()),
-            Cow::Owned("Thursday".to_string()),
-            Cow::Owned("Friday".to_string()),
-            Cow::Owned("Saturday".to_string()),
-            Cow::Owned("Sunday".to_string()),
+            Cow::Borrowed("Monday"),
+            Cow::Borrowed("Tuesday"),
+            Cow::Borrowed("Wednesday"),
+            Cow::Borrowed("Thursday"),
+            Cow::Borrowed("Friday"),
+            Cow::Borrowed("Saturday"),
+            Cow::Borrowed("Sunday"),
         ]);
 
         bincode::serialize(&DateSymbolsV1 {
@@ -400,9 +400,9 @@ mod test {
 
     fn serialize_time() -> Vec<u8> {
         let day_periods = day_periods::SymbolsV1 {
-            am: Cow::Owned("am".to_string()),
-            pm: Cow::Owned("pm".to_string()),
-            noon: Some(Cow::Owned("noon".to_string())),
+            am: Cow::Borrowed("am"),
+            pm: Cow::Borrowed("pm"),
+            noon: Some(Cow::Borrowed("noon")),
             midnight: None,
         };
 

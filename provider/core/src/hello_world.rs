@@ -61,14 +61,15 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
-///     .load(DataRequest {
-///         locale: &locale!("de").into(),
-///         metadata: Default::default(),
-///     })
-///     .expect("Loading should succeed")
-///     .take_payload()
-///     .expect("Data should be present");
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> =
+///     HelloWorldProvider
+///         .load(DataRequest {
+///             locale: &locale!("de").into(),
+///             metadata: Default::default(),
+///         })
+///         .expect("Loading should succeed")
+///         .take_payload()
+///         .expect("Data should be present");
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
@@ -176,7 +177,9 @@ impl BufferProvider for HelloWorldJsonProvider {
         buffer.push_str("\"}");
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_rc_buffer(buffer.as_bytes().into())),
+            payload: Some(DataPayload::from_owned_buffer(
+                buffer.into_bytes().into_boxed_slice(),
+            )),
         })
     }
 }
@@ -188,13 +191,13 @@ impl BufferProvider for HelloWorldJsonProvider {
 /// # Examples
 ///
 /// ```
-/// use icu_provider::hello_world::{HelloWorldProvider, HelloWorldFormatter};
-/// use writeable::assert_writeable_eq;
 /// use icu_locid::locale;
+/// use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
+/// use writeable::assert_writeable_eq;
 ///
 /// let fmt = HelloWorldFormatter::try_new_unstable(
 ///     &HelloWorldProvider,
-///     &locale!("eo").into()
+///     &locale!("eo").into(),
 /// )
 /// .expect("locale exists");
 ///
@@ -262,6 +265,8 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
         self.data.message.writeable_length_hint()
     }
 }
+
+writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 
 #[cfg(feature = "datagen")]
 impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {

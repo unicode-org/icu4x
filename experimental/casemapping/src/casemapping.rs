@@ -30,6 +30,8 @@ pub struct CaseMapping {
 
 impl CaseMapping {
     /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`].
+    ///
+    /// TODO before stabilitzation: make this return a crate-scoped error.
     pub fn try_new<P>(provider: &P) -> Result<CaseMapping, DataError>
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
@@ -38,6 +40,8 @@ impl CaseMapping {
     }
 
     /// A constructor which takes a [`DataProvider`] and creates a [`CaseMapping`] for the given locale.
+    ///
+    /// TODO before stabilitzation: make this return a crate-scoped error.
     pub fn try_new_with_locale<P>(provider: &P, locale: &Locale) -> Result<CaseMapping, DataError>
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,

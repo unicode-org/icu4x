@@ -20,19 +20,21 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::unicode::Value;
+/// use icu::locid::{
+///     extensions::unicode::Value, extensions_unicode_value as value,
+/// };
+/// use writeable::assert_writeable_eq;
 ///
-/// let value1: Value = "gregory".parse().expect("Failed to parse a Value.");
-/// let value2: Value = "islamic-civil".parse().expect("Failed to parse a Value.");
-/// let value3: Value = "true".parse().expect("Failed to parse a Value.");
+/// assert_writeable_eq!(value!("gregory"), "gregory");
+/// assert_writeable_eq!(
+///     "islamic-civil".parse::<Value>().unwrap(),
+///     "islamic-civil"
+/// );
 ///
-/// assert_eq!(&value1.to_string(), "gregory");
-/// assert_eq!(&value2.to_string(), "islamic-civil");
-///
-/// // The value "true" is special-cased to an empty value
-/// assert_eq!(&value3.to_string(), "");
+/// // The value "true" has the special, empty string representation
+/// assert_eq!(value!("true").to_string(), "");
 /// ```
-#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
@@ -47,11 +49,9 @@ impl Value {
     /// ```
     /// use icu::locid::extensions::unicode::Value;
     ///
-    /// let value = Value::from_bytes(b"buddhist").expect("Parsing failed.");
-    ///
-    /// assert_eq!(&value.to_string(), "buddhist");
+    /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
-    pub fn from_bytes(input: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
         let mut v = ShortVec::new();
 
         if !input.is_empty() {
@@ -148,11 +148,11 @@ impl FromStr for Value {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
-impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
+impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 
 /// A macro allowing for compile-time construction of valid Unicode [`Value`] subtag.
 ///
@@ -162,7 +162,9 @@ impl_writeable_for_tinystr_list!(Value, "", "islamic", "civil");
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+/// use icu::locid::{
+///     extensions_unicode_key as key, extensions_unicode_value as value,
+/// };
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///

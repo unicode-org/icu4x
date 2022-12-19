@@ -13,7 +13,7 @@ pub mod ffi {
     use icu_locid::Locale;
     use writeable::Writeable;
 
-    use crate::collator::ffi::ICU4XOrdering;
+    use crate::common::ffi::ICU4XOrdering;
 
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
@@ -22,11 +22,11 @@ pub mod ffi {
 
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
-        #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::rust_link(icu::locid::Locale::from_str, FnInStruct, hidden)]
         pub fn create_from_string(name: &str) -> DiplomatResult<Box<ICU4XLocale>, ICU4XError> {
             let name = name.as_bytes(); // #2520
-            Locale::from_bytes(name)
+            Locale::try_from_bytes(name)
                 .map_err(ICU4XError::from)
                 .map(|l| Box::new(ICU4XLocale(l)))
                 .into()
@@ -76,7 +76,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let bytes = bytes.as_bytes(); // #2520
-            Key::from_bytes(bytes)
+            Key::try_from_bytes(bytes)
                 .map_err(ICU4XError::from)
                 .and_then(|key| {
                     self.0
@@ -113,14 +113,14 @@ pub mod ffi {
         }
 
         /// Set the language part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
         pub fn set_language(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             let bytes = bytes.as_bytes(); // #2520
             if bytes.is_empty() {
                 self.0.id.language = Language::UND;
                 return Ok(()).into();
             }
-            match Language::from_bytes(bytes) {
+            match Language::try_from_bytes(bytes) {
                 Ok(language) => {
                     self.0.id.language = language;
                     Ok(())
@@ -147,14 +147,14 @@ pub mod ffi {
         }
 
         /// Set the region part of the [`ICU4XLocale`].
-        #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
         pub fn set_region(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             let bytes = bytes.as_bytes(); // #2520
             if bytes.is_empty() {
                 self.0.id.region = None;
                 return Ok(()).into();
             }
-            match Region::from_bytes(bytes) {
+            match Region::try_from_bytes(bytes) {
                 Ok(region) => {
                     self.0.id.region = Some(region);
                     Ok(())
@@ -181,14 +181,14 @@ pub mod ffi {
         }
 
         /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
-        #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
         pub fn set_script(&mut self, bytes: &str) -> DiplomatResult<(), ICU4XError> {
             let bytes = bytes.as_bytes(); // #2520
             if bytes.is_empty() {
                 self.0.id.script = None;
                 return Ok(()).into();
             }
-            match Script::from_bytes(bytes) {
+            match Script::try_from_bytes(bytes) {
                 Ok(script) => {
                     self.0.id.script = Some(script);
                     Ok(())

@@ -32,14 +32,15 @@ pub(crate) struct BakedDataExporter {
     pretty: bool,
     insert_feature_gates: bool,
     use_separate_crates: bool,
-    // Temporary storage for put_payload: key -> (marker path, bake -> [locale])
-    data: Mutex<HashMap<DataKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
+    // Temporary storage for put_payload: key -> (bake -> [locale])
+    data: Mutex<HashMap<DataKey, HashMap<SyncTokenStream, Vec<String>>>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
-    /// Triples of the KeyedDataMarker, the path to the DATA slice, and the feature that includes it.
-    /// This is populated by `put_payload` and consumed by `flush` which writes the implementations.
-    marker_data_feature: Mutex<Vec<(SyncTokenStream, SyncTokenStream, SyncTokenStream)>>,
+    /// Triples of the data marker, the path to the DATA slice (if there's data), and the feature
+    /// that includes it. This is populated by `flush` and consumed by `close` which writes the
+    /// implementations.
+    marker_data_feature: Mutex<Vec<(SyncTokenStream, Option<SyncTokenStream>, SyncTokenStream)>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
 }
@@ -135,13 +136,12 @@ impl DataExporter for BakedDataExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         self.dependencies.insert("litemap");
-        let (payload, marker_type) = payload.tokenize(&self.dependencies);
+        let payload = payload.tokenize(&self.dependencies);
         self.data
             .lock()
             .expect("poison")
             .entry(key)
-            .or_insert_with(|| (marker_type.to_string(), Default::default()))
-            .1
+            .or_default()
             .entry(payload.to_string())
             .or_default()
             .push(locale.to_string());
@@ -149,127 +149,128 @@ impl DataExporter for BakedDataExporter {
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        let (marker, raw) = self
-            .data
-            .lock()
-            .expect("poison")
-            .remove(&key)
-            .ok_or_else(|| DataError::custom("No data").with_key(key))?;
-        let mut statics = Vec::new();
-        let mut all_locales = Vec::new();
-
-        for (payload_bake_string, mut locales) in raw {
-            locales.sort();
-            let ident_string = locales
-                .iter()
-                .map(|locales| {
-                    let mut string = locales.replace('-', "_");
-                    string.make_ascii_uppercase();
-                    string
-                })
-                .reduce(|mut a, b| {
-                    // Cap identifier length at around 35
-                    if a.len() < 35 {
-                        a.push('_');
-                        a.push_str(&b);
-                    }
-                    a
-                })
+        let marker =
+            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
                 .unwrap();
-            all_locales.extend(locales.into_iter().map(|l| (l, ident_string.clone())));
-            statics.push((ident_string, payload_bake_string));
-        }
 
-        statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-
-        let statics = statics
-            .into_iter()
-            .map(|(ident_string, payload_bake_string)| {
-                let ident = ident_string.parse::<TokenStream>().unwrap();
-                let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                quote! { static #ident: &DataStruct = &#payload_bake; }
-            });
-
-        all_locales.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-        let data = all_locales.into_iter().map(|(locale, ident_string)| {
-            let ident = ident_string.parse::<TokenStream>().unwrap();
-            quote! { (#locale, #ident) }
-        });
-
-        // Replace non-ident-allowed tokens. This can still fail if a segment starts with
-        // a token that is not allowed in an initial position.
-        let module_path = syn::parse_str::<syn::Path>(
-            &key.path()
-                .to_ascii_lowercase()
-                .replace('@', "_v")
-                .replace('/', "::")
-                .replace('[', "_")
-                .replace('-', "_")
-                .replace(']', ""),
-        )
-        .map_err(|_| {
-            DataError::custom("Key component is not a valid Rust identifier").with_key(key)
-        })?;
-
-        let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
-
-        #[allow(unused_mut)]
-        let mut feature = if self.insert_feature_gates {
+        let feature = if self.insert_feature_gates {
             let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            if !feature.starts_with("icu_provider") {
+            #[allow(unused_mut)]
+            let mut feature = if !feature.starts_with("icu_provider") {
                 quote! { #![cfg(feature = #feature)] }
             } else {
                 quote!()
+            };
+            #[cfg(feature = "experimental")]
+            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+                feature = quote! { #![cfg(feature = "icu_datetime_experimental")] }
             }
+            feature
         } else {
             quote!()
         };
 
-        #[allow(unused_mut)]
-        let mut struct_type = quote! { <#marker as ::icu_provider::DataMarker>::Yokeable };
+        let data = if let Some(raw) = self.data.lock().expect("poison").remove(&key) {
+            let mut statics = Vec::new();
+            let mut all_locales = Vec::new();
 
-        #[cfg(feature = "experimental")]
-        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
-            struct_type = quote! {
-                [(
-                    &'static [::icu_datetime::fields::Field],
-                    ::icu_datetime::pattern::runtime::PatternPlurals<'static>
-                )]
-            };
-            feature = quote! { #![cfg(feature = "icu_datetime_experimental")] }
-        }
-
-        let mut path = PathBuf::new();
-        let mut supers = quote!();
-        for level in &module_path.segments {
-            let mut map = self.mod_files.lock().expect("poison");
-            if !map.contains_key(&path) {
-                map.insert(path.clone(), Vec::new());
+            for (payload_bake_string, mut locales) in raw {
+                locales.sort();
+                let ident_string = locales
+                    .iter()
+                    .map(|locales| {
+                        let mut string = locales.replace('-', "_");
+                        string.make_ascii_uppercase();
+                        string
+                    })
+                    .reduce(|mut a, b| {
+                        // Cap identifier length at around 35
+                        if a.len() < 35 {
+                            a.push('_');
+                            a.push_str(&b);
+                        }
+                        a
+                    })
+                    .unwrap();
+                all_locales.extend(locales.into_iter().map(|l| (l, ident_string.clone())));
+                statics.push((ident_string, payload_bake_string));
             }
-            map.get_mut(&path).unwrap().push(level.ident.to_string());
-            drop(map);
-            path = path.join(level.ident.to_string());
-            supers = quote! { super:: #supers };
-        }
 
-        self.write_to_file(
-            &path,
-            quote! {
-                #feature
+            statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
-                type DataStruct = #struct_type;
+            let statics = statics
+                .into_iter()
+                .map(|(ident_string, payload_bake_string)| {
+                    let ident = ident_string.parse::<TokenStream>().unwrap();
+                    let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
+                    quote! { static #ident: &DataStruct = &#payload_bake; }
+                });
 
-                pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-                    litemap::LiteMap::from_sorted_store_unchecked(&[#(#data),*]);
+            all_locales.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+            let data = all_locales.into_iter().map(|(locale, ident_string)| {
+                let ident = ident_string.parse::<TokenStream>().unwrap();
+                quote! { (#locale, #ident) }
+            });
 
-                #(#statics)*
-            },
-        )
-        .map_err(|e| e.with_path_context(&path))?;
+            // Replace non-ident-allowed tokens. This can still fail if a segment starts with
+            // a token that is not allowed in an initial position.
+            let module_path = syn::parse_str::<syn::Path>(
+                &key.path()
+                    .to_ascii_lowercase()
+                    .replace('@', "_v")
+                    .replace('/', "::"),
+            )
+            .map_err(|_| {
+                DataError::custom("Key component is not a valid Rust identifier").with_key(key)
+            })?;
+
+            #[allow(unused_mut)]
+            let mut struct_type = quote! { <#marker as ::icu_provider::DataMarker>::Yokeable };
+
+            #[cfg(feature = "experimental")]
+            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+                struct_type = quote! {
+                    [(
+                        &'static [::icu_datetime::fields::Field],
+                        ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                    )]
+                };
+            }
+
+            let mut path = PathBuf::new();
+            for level in &module_path.segments {
+                self.mod_files
+                    .lock()
+                    .expect("poison")
+                    .entry(path.clone())
+                    .or_default()
+                    .push(level.ident.to_string());
+                path = path.join(level.ident.to_string());
+            }
+
+            self.write_to_file(
+                &path,
+                quote! {
+                    #feature
+
+                    type DataStruct = #struct_type;
+
+                    pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+                        litemap::LiteMap::from_sorted_store_unchecked(&[#(#data),*]);
+
+                    #(#statics)*
+                },
+            )
+            .map_err(|e| e.with_path_context(&path))?;
+
+            Some(quote!(#module_path).to_string())
+        } else {
+            None
+        };
 
         self.marker_data_feature.lock().expect("poison").push((
             quote!(#marker).to_string(),
-            quote!(#module_path).to_string(),
+            data,
             feature.to_string().replacen("# ! [", "# [", 1),
         ));
         Ok(())
@@ -298,7 +299,7 @@ impl DataExporter for BakedDataExporter {
 
         let mods = mod_files
             .remove(&PathBuf::new())
-            .expect("root exists")
+            .unwrap_or_default()
             .into_iter()
             .dedup()
             .map(|p| p.parse::<TokenStream>().unwrap());
@@ -312,7 +313,7 @@ impl DataExporter for BakedDataExporter {
             .map(|(marker_str, data_str, feature_str)| {
                 (
                     marker_str.parse::<TokenStream>().unwrap(),
-                    data_str.parse::<TokenStream>().unwrap(),
+                    data_str.map(|d| d.parse::<TokenStream>().unwrap()),
                     feature_str.parse::<TokenStream>().unwrap(),
                     marker_str
                         .split(' ')
@@ -326,21 +327,35 @@ impl DataExporter for BakedDataExporter {
             .collect::<Vec<_>>();
 
         let resource_impls = marker_data_feature_ident.iter().map(|(marker, data, feature, _)| {
-            quote! {
-                #feature
-                impl DataProvider<#marker> for BakedDataProvider {
-                    fn load(
-                        &self,
-                        req: DataRequest,
-                    ) -> Result<DataResponse<#marker>, DataError> {
-                        Ok(DataResponse {
-                            metadata: Default::default(),
-                            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                                *#data::DATA
-                                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(#marker::KEY, req))?
-                            ))),
-                        })
+            if let Some(data) = data {
+                quote! {
+                    #feature
+                    impl DataProvider<#marker> for BakedDataProvider {
+                        fn load(
+                            &self,
+                            req: DataRequest,
+                        ) -> Result<DataResponse<#marker>, DataError> {
+                            Ok(DataResponse {
+                                metadata: Default::default(),
+                                payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                                    *#data::DATA
+                                        .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                        .ok_or_else(|| DataErrorKind::MissingLocale.with_req(#marker::KEY, req))?
+                                ))),
+                            })
+                        }
+                    }
+                }
+            } else {
+                quote! {
+                    #feature
+                    impl DataProvider<#marker> for BakedDataProvider {
+                        fn load(
+                            &self,
+                            req: DataRequest,
+                        ) -> Result<DataResponse<#marker>, DataError> {
+                            Err(DataErrorKind::MissingLocale.with_req(#marker::KEY, req))
+                        }
                     }
                 }
             }
@@ -373,30 +388,45 @@ impl DataExporter for BakedDataExporter {
                 }
             });
 
-        let any_cases = marker_data_feature_ident.iter().map(|(marker, data, feature, ident)| {
-            // TODO(#1678): Remove the special case
-            if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
-                quote! {
-                    #feature
-                    #ident => {
-                        #data::DATA
-                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                            .map(|&data| AnyPayload::from_rcwrap_payload::<#marker>(
-                                icu_provider::RcWrap::from(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)))))
+        let any_cases = marker_data_feature_ident
+            .iter()
+            .map(|(marker, data, feature, ident)| {
+                if let Some(data) = data {
+                    // TODO(#1678): Remove the special case
+                    if marker.to_string()
+                        == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker"
+                    {
+                        quote! {
+                            #feature
+                            #ident => {
+                                #data::DATA
+                                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                    .copied()
+                                    .map(zerofrom::ZeroFrom::zero_from)
+                                    .map(DataPayload::<#marker>::from_owned)
+                                    .map(DataPayload::wrap_into_any_payload)
+                                    .ok_or(DataErrorKind::MissingLocale)
+                            }
+                        }
+                    } else {
+                        quote! {
+                            #feature
+                            #ident => {
+                                #data::DATA
+                                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                    .copied()
+                                    .map(AnyPayload::from_static_ref)
+                                    .ok_or(DataErrorKind::MissingLocale)
+                            }
+                        }
+                    }
+                } else {
+                    quote! {
+                        #feature
+                        #ident => Err(DataErrorKind::MissingLocale),
                     }
                 }
-            } else {
-                quote!{
-                    #feature
-                    #ident => {
-                        #data::DATA
-                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                            .copied()
-                            .map(AnyPayload::from_static_ref)
-                    }
-                }
-            }
-        });
+            });
 
         self.write_to_file(
             PathBuf::from("any"),
@@ -404,11 +434,14 @@ impl DataExporter for BakedDataExporter {
                 impl AnyProvider for BakedDataProvider {
                     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                         #(#any_consts)*
-                        Ok(AnyResponse {
-                            payload: Some(match key.hashed() {
-                                #(#any_cases)*
-                                _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
-                            }).ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?,
+                        #[allow(clippy::match_single_binding)]
+                        match key.hashed() {
+                            #(#any_cases)*
+                            _ => Err(DataErrorKind::MissingDataKey),
+                        }
+                        .map_err(|e| e.with_req(key, req))
+                        .map(|payload| AnyResponse {
+                            payload: Some(payload),
                             metadata: Default::default(),
                         })
                     }

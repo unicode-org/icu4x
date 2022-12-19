@@ -42,6 +42,7 @@ for a small set of locales.
 use icu::calendar::DateTime;
 use icu::datetime::{options::length, DateTimeFormatter};
 use icu::locid::locale;
+use writeable::assert_writeable_eq;
 
 let options = length::Bag::from_date_time_style(
     length::Date::Long,
@@ -56,14 +57,16 @@ let dtf = DateTimeFormatter::try_new_unstable(
 )
 .expect("Failed to create DateTimeFormatter instance.");
 
-let date = DateTime::new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
+let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0)
+    .expect("Failed to parse date.");
 let date = date.to_any();
 
 let formatted_date = dtf.format(&date).expect("Formatting failed");
-assert_eq!(
-    formatted_date.to_string(),
-    "12 de septiembre de 2020, 12:35:00"
-);
+assert_writeable_eq!(formatted_date, "12 de septiembre de 2020, 12:35:00");
+
+let formatted_date_string =
+    dtf.format_to_string(&date).expect("Formatting failed");
+assert_eq!(formatted_date_string, "12 de septiembre de 2020, 12:35:00");
 ```
 
 ## Features

@@ -35,7 +35,7 @@ class ICU4XLocale {
   /**
    * Construct an [`ICU4XLocale`] from an locale identifier.
    * 
-   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
 
@@ -110,7 +110,7 @@ class ICU4XLocale {
   /**
    * Set the language part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_language(const std::string_view bytes);
 
@@ -131,7 +131,7 @@ class ICU4XLocale {
   /**
    * Set the region part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_region(const std::string_view bytes);
 
@@ -152,7 +152,7 @@ class ICU4XLocale {
   /**
    * Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
    * 
-   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_script(const std::string_view bytes);
 

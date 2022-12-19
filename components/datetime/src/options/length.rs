@@ -56,7 +56,10 @@ use serde::{Deserialize, Serialize};
 /// use icu::datetime::options::length;
 /// use icu::datetime::DateTimeFormatterOptions;
 ///
-/// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+/// let bag = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Short,
+/// );
 ///
 /// let options = DateTimeFormatterOptions::Length(bag);
 /// ```

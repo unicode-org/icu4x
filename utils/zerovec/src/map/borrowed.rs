@@ -24,13 +24,14 @@ pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 ///
 /// // Example byte buffer representing the map { 1: "one" }
 /// let BINCODE_BYTES: &[u8; 29] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 111,
-///     110, 101,
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+///     0, 0, 111, 110, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap requires no heap allocations.
 /// let zero_map: ZeroMapBorrowed<u32, str> =
-///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
+///     bincode::deserialize(BINCODE_BYTES)
+///         .expect("Should deserialize successfully");
 /// assert_eq!(zero_map.get(&1), Some("one"));
 /// ```
 ///
@@ -162,11 +163,6 @@ where
     /// let borrowed = map.as_borrowed();
     /// assert_eq!(borrowed.get(&1), Some("one"));
     /// assert_eq!(borrowed.get(&3), None);
-    ///
-    /// let borrow = borrowed.get(&1);
-    /// drop(borrowed);
-    /// // still exists after the ZeroMapBorrowed has been dropped
-    /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get(&self, key: &K) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search(key).ok()?;
@@ -189,11 +185,6 @@ where
     /// let borrowed = map.as_borrowed();
     /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&1)), Some("one"));
     /// assert_eq!(borrowed.get_by(|probe| probe.cmp(&3)), None);
-    ///
-    /// let borrow = borrowed.get_by(|probe| probe.cmp(&1));
-    /// drop(borrowed);
-    /// // still exists after the ZeroMapBorrowed has been dropped
-    /// assert_eq!(borrow, Some("one"));
     /// ```
     pub fn get_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<&'a V::GetType> {
         let index = self.keys.zvl_binary_search_by(predicate).ok()?;
@@ -210,8 +201,8 @@ where
     /// map.insert(&1, "one");
     /// map.insert(&2, "two");
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.contains_key(&1), true);
-    /// assert_eq!(borrowed.contains_key(&3), false);
+    /// assert!(borrowed.contains_key(&1));
+    /// assert!(!borrowed.contains_key(&3));
     /// ```
     pub fn contains_key(&self, key: &K) -> bool {
         self.keys.zvl_binary_search(key).is_ok()

@@ -13,8 +13,7 @@
 //! ```
 //! use fixed_decimal::FixedDecimal;
 //!
-//! let dec = FixedDecimal::from(250)
-//!     .multiplied_pow10(-2);
+//! let dec = FixedDecimal::from(250).multiplied_pow10(-2);
 //! assert_eq!("2.50", format!("{}", dec));
 //!
 //! #[derive(Debug, PartialEq)]
@@ -52,17 +51,23 @@
     )
 )]
 
+mod compact;
 mod decimal;
+mod integer;
 mod ops;
+mod scientific;
 mod uint_iterator;
 
 #[cfg(feature = "ryu")]
 pub use decimal::DoublePrecision;
 
+pub use compact::CompactDecimal;
 pub use decimal::FixedDecimal;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
+pub use integer::FixedInteger;
+pub use scientific::ScientificDecimal;
 
 #[derive(Display, Debug, PartialEq)]
 #[non_exhaustive]
@@ -70,6 +75,9 @@ pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
     /// magnitude of the most significant digit is core::i16::MAX, and the lowest magnitude of the
     /// least significant digit is core::i16::MIN.
+    ///
+    /// This error is also returned when constructing a FixedInteger from a FixedDecimal with a
+    /// fractional part.
     ///
     /// # Examples
     ///

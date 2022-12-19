@@ -73,11 +73,12 @@
 //!     chars: ZeroVec::alloc_from_slice(&['ö', '冇', 'म']),
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
-//! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
+//! let bincode_bytes =
+//!     bincode::serialize(&data).expect("Serialization should be successful");
 //! assert_eq!(bincode_bytes.len(), 67);
 //!
-//! let deserialized: DataStruct =
-//!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+//! let deserialized: DataStruct = bincode::deserialize(&bincode_bytes)
+//!     .expect("Deserialization should be successful");
 //! assert_eq!(deserialized.nums.first(), Some(211));
 //! assert_eq!(deserialized.chars.get(1), Some('冇'));
 //! assert_eq!(deserialized.strs.get(1), Some("world"));
@@ -271,6 +272,8 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2dBorrowed;
 
     pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+
+    pub use crate::map2d::ZeroMap2dCursor;
 }
 
 pub mod vecs {
@@ -338,7 +341,16 @@ pub mod vecs {
 /// use zerovec::ZeroVec;
 ///
 /// #[zerovec::make_ule(DateULE)]
-/// #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+/// #[derive(
+///     Copy,
+///     Clone,
+///     PartialEq,
+///     Eq,
+///     Ord,
+///     PartialOrd,
+///     serde::Serialize,
+///     serde::Deserialize,
+/// )]
 /// struct Date {
 ///     y: u64,
 ///     m: u8,
@@ -371,11 +383,12 @@ pub mod vecs {
 ///     ]),
 /// };
 ///
-/// let bincode_bytes = bincode::serialize(&dates).expect("Serialization should be successful");
+/// let bincode_bytes =
+///     bincode::serialize(&dates).expect("Serialization should be successful");
 ///
 /// // Will deserialize without allocations
-/// let deserialized: Dates =
-///     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
+/// let deserialized: Dates = bincode::deserialize(&bincode_bytes)
+///     .expect("Deserialization should be successful");
 ///
 /// assert_eq!(deserialized.dates.get(1).unwrap().y, 1970);
 /// assert_eq!(deserialized.dates.get(2).unwrap().d, 13);
@@ -386,8 +399,9 @@ pub use zerovec_derive::make_ule;
 /// Generate a corresponding [`VarULE`] type and the relevant [`EncodeAsVarULE`]/[`zerofrom::ZeroFrom`]
 /// implementations for this type
 ///
-/// This can be attached to structs containing only [`AsULE`] types with the last field being [`Cow<'a, str>`](alloc::borrow::Cow),
-/// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`].
+/// This can be attached to structs containing only [`AsULE`] types with the last fields being
+/// [`Cow<'a, str>`](alloc::borrow::Cow), [`ZeroSlice`], or [`VarZeroSlice`]. If there is more than one such field, it will be represented
+/// using [`MultiFieldsULE`](crate::ule::MultiFieldsULE) and getters will be generated.
 ///
 /// The type must be [`PartialEq`] and [`Eq`].
 ///

@@ -31,11 +31,11 @@ pub mod ffi {
     impl ICU4XPluralCategory {
         /// Construct from a string in the format
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
-        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_string, FnInEnum)]
-        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_bytes, FnInEnum)]
-        pub fn create_from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
+        #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
+        #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
+        pub fn get_for_cldr_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
             let s = s.as_bytes(); // #2520
-            PluralCategory::from_tr35_bytes(s)
+            PluralCategory::get_for_cldr_bytes(s)
                 .map(Into::into)
                 .ok_or(())
                 .into()
@@ -80,15 +80,8 @@ pub mod ffi {
 
         /// Get the category for a given number represented as operands
         #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
-        pub fn category_for(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
-            let res = self.0.category_for(PluralOperands {
-                i: op.i,
-                v: op.v,
-                w: op.w,
-                f: op.f,
-                t: op.t,
-                c: op.c,
-            });
+        pub fn category_for(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
+            let res = self.0.category_for(op.0);
 
             res.into()
         }
@@ -121,34 +114,22 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralOperands`.
+    #[diplomat::opaque]
     #[diplomat::rust_link(icu::plurals::PluralOperands, Struct)]
-    pub struct ICU4XPluralOperands {
-        pub i: u64,
-        pub v: usize,
-        pub w: usize,
-        pub f: u64,
-        pub t: u64,
-        pub c: usize,
-    }
+    pub struct ICU4XPluralOperands(pub icu_plurals::PluralOperands);
 
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create_from_string(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
+        pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XPluralOperands>, ICU4XError> {
             let s = s.as_bytes(); // #2520
             FixedDecimal::try_from(s)
                 .as_ref()
                 .map(PluralOperands::from)
-                .map(|ops| ICU4XPluralOperands {
-                    i: ops.i,
-                    v: ops.v,
-                    w: ops.w,
-                    f: ops.f,
-                    t: ops.t,
-                    c: ops.c,
-                })
+                .map(ICU4XPluralOperands)
                 // XXX should this have its own errors?
-                .map_err(|_| ICU4XError::PluralParserError)
+                .map_err(|_| ICU4XError::PluralsParserError)
+                .map(Box::new)
                 .into()
         }
     }

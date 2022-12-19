@@ -13,7 +13,9 @@ use crate::Script;
 #[cfg(feature = "std")]
 impl std::error::Error for PropertiesError {}
 
-/// An error related to loading or accessing Unicode Properties.
+/// A list of error outcomes for various operations in the `icu_properties` crate.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum PropertiesError {

@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "prošle godine",
+    "0": "ove godine",
+    "1": "sledeće godine"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  godine",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  godine",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  godina",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  godinu",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  godine",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  godina",
+      "index": 3
+    }
+  }
+}

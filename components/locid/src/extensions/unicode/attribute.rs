@@ -15,7 +15,8 @@ impl_tinystr_subtag!(
     /// use icu::locid::extensions::unicode::Attribute;
     /// use icu::locid::extensions_unicode_attribute as attribute;
     ///
-    /// let attr: Attribute = "buddhist".parse().expect("Failed to parse an Attribute.");
+    /// let attr: Attribute =
+    ///     "buddhist".parse().expect("Failed to parse an Attribute.");
     ///
     /// assert_eq!(attr, attribute!("buddhist"));
     /// ```

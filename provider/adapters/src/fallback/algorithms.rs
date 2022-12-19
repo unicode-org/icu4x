@@ -207,6 +207,7 @@ mod tests {
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
+    use writeable::Writeable;
 
     struct TestCase {
         input: &'static str,
@@ -355,6 +356,25 @@ mod tests {
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
         TestCase {
+            input: "zh-CN",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            // Note: "zh-Hans" is not reachable because it is the default script for "zh".
+            // The fallback algorithm does not visit the language-script bundle when the
+            // script is the default for the language
+            expected_language_chain: &["zh-CN", "zh"],
+            expected_region_chain: &["zh-CN", "und-CN"],
+        },
+        TestCase {
+            input: "zh-TW",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
+            expected_region_chain: &["zh-TW", "und-TW"],
+        },
+        TestCase {
             input: "yue-HK",
             requires_data: true,
             extension_key: None,
@@ -396,10 +416,10 @@ mod tests {
                 };
                 let locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
                 let mut it = key_fallbacker.fallback_for(locale);
-                for expected in expected_chain {
+                for &expected in expected_chain {
                     assert_eq!(
                         expected,
-                        &it.get().to_string(),
+                        &*it.get().write_to_string(),
                         "{:?} ({:?})",
                         cas.input,
                         priority
@@ -408,7 +428,7 @@ mod tests {
                 }
                 assert_eq!(
                     "und",
-                    it.get().to_string(),
+                    &*it.get().write_to_string(),
                     "{:?} ({:?})",
                     cas.input,
                     priority

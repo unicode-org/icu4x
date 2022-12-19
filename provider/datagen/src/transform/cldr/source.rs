@@ -70,6 +70,14 @@ impl CldrCache {
         CldrDirNoLang(&self.cache, "cldr-bcp47/bcp47".to_string())
     }
 
+    #[cfg(feature = "experimental")]
+    pub fn displaynames(&self) -> CldrDirLang<'_> {
+        CldrDirLang(
+            &self.cache,
+            format!("cldr-localenames-{}/main", self.locale_subset),
+        )
+    }
+
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.cache,

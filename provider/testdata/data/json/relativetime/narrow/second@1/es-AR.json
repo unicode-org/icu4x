@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "ahora"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "hace  seg.",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "hace  seg.",
+      "index": 5
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dentro de  seg.",
+      "index": 10
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dentro de  seg.",
+      "index": 10
+    }
+  }
+}

@@ -273,16 +273,16 @@ macro_rules! impl_tinystr_subtag {
             /// ```
             #[doc = concat!("use icu_locid::", stringify!($($full_name)::+), ";")]
             ///
-            #[doc = concat!("assert!(", stringify!($name), "::from_bytes(b", stringify!($good_example), ").is_ok());")]
-            #[doc = concat!("assert!(", stringify!($name), "::from_bytes(b", stringify!($bad_example), ").is_err());")]
+            #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($good_example), ").is_ok());")]
+            #[doc = concat!("assert!(", stringify!($name), "::try_from_bytes(b", stringify!($bad_example), ").is_err());")]
             /// ```
-            pub const fn from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParserError> {
-                Self::from_bytes_manual_slice(v, 0, v.len())
+            pub const fn try_from_bytes(v: &[u8]) -> Result<Self, crate::parser::errors::ParserError> {
+                Self::try_from_bytes_manual_slice(v, 0, v.len())
             }
 
-            /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes),
+            /// Equivalent to [`try_from_bytes(bytes[start..end])`](Self::try_from_bytes),
             /// but callable in a `const` context (which range indexing is not).
-            pub const fn from_bytes_manual_slice(
+            pub const fn try_from_bytes_manual_slice(
                 v: &[u8],
                 start: usize,
                 end: usize,
@@ -301,7 +301,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc = concat!("Safely creates a [`", stringify!($name), "`] from its raw format")]
-            /// as returned by [`Self::into_raw`]. Unlike [`Self::from_bytes`],
+            /// as returned by [`Self::into_raw`]. Unlike [`Self::try_from_bytes`],
             /// this constructor only takes normalized values.
             pub const fn try_from_raw(
                 v: [u8; $len_end],
@@ -318,7 +318,7 @@ macro_rules! impl_tinystr_subtag {
             }
 
             #[doc = concat!("Unsafely creates a [`", stringify!($name), "`] from its raw format")]
-            /// as returned by [`Self::into_raw`]. Unlike [`Self::from_bytes`],
+            /// as returned by [`Self::into_raw`]. Unlike [`Self::try_from_bytes`],
             /// this constructor only takes normalized values.
             ///
             /// # Safety
@@ -351,7 +351,7 @@ macro_rules! impl_tinystr_subtag {
             /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
             /// is `self.as_str().as_bytes()`.
             #[inline]
-            pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
+            pub fn strict_cmp(self, other: &[u8]) -> core::cmp::Ordering {
                 self.as_str().as_bytes().cmp(other)
             }
 
@@ -361,7 +361,7 @@ macro_rules! impl_tinystr_subtag {
             /// BCP-47 string and then performed a structural comparison.
             ///
             #[inline]
-            pub fn normalizing_eq(&self, other: &str) -> bool {
+            pub fn normalizing_eq(self, other: &str) -> bool {
                 self.as_str().eq_ignore_ascii_case(other)
             }
         }
@@ -370,7 +370,7 @@ macro_rules! impl_tinystr_subtag {
             type Err = crate::parser::errors::ParserError;
 
             fn from_str(source: &str) -> Result<Self, Self::Err> {
-                Self::from_bytes(source.as_bytes())
+                Self::try_from_bytes(source.as_bytes())
             }
         }
 
@@ -387,12 +387,17 @@ macro_rules! impl_tinystr_subtag {
         }
 
         impl writeable::Writeable for $name {
+            #[inline]
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 sink.write_str(self.as_str())
             }
             #[inline]
             fn writeable_length_hint(&self) -> writeable::LengthHint {
                 writeable::LengthHint::exact(self.0.len())
+            }
+            #[inline]
+            fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+                alloc::borrow::Cow::Borrowed(self.0.as_str())
             }
         }
 
@@ -411,8 +416,8 @@ macro_rules! impl_tinystr_subtag {
         /// ```
         ///
         /// Invalid input is a compile failure:
-        /// ```compile_fail
-        #[doc = concat!("icu_locid::", stringify!($macro_name), "!(", stringify!($bad_example) ,"),")]
+        /// ```compile_fail,E0080
+        #[doc = concat!("icu_locid::", stringify!($macro_name), "!(", stringify!($bad_example) ,");")]
         /// ```
         ///
         #[doc = concat!("[`", stringify!($name), "`]: crate::", stringify!($($full_name)::+))]
@@ -421,7 +426,7 @@ macro_rules! impl_tinystr_subtag {
             ($string:literal) => {{
                 use $crate::$($full_name)::+;
                 const R: $name =
-                    match $name::from_bytes($string.as_bytes()) {
+                    match $name::try_from_bytes($string.as_bytes()) {
                         Ok(r) => r,
                         #[allow(clippy::panic)] // const context
                         _ => panic!(concat!("Invalid ", stringify!($name), ": ", $string)),
@@ -441,19 +446,19 @@ macro_rules! impl_tinystr_subtag {
 
         #[test]
         fn test_construction() {
-            let maybe = $name::from_bytes($good_example.as_bytes());
+            let maybe = $name::try_from_bytes($good_example.as_bytes());
             assert!(maybe.is_ok());
             assert_eq!(maybe, $name::try_from_raw(maybe.unwrap().into_raw()));
             assert_eq!(maybe.unwrap().as_str(), $good_example);
             $(
-                let maybe = $name::from_bytes($more_good_examples.as_bytes());
+                let maybe = $name::try_from_bytes($more_good_examples.as_bytes());
                 assert!(maybe.is_ok());
                 assert_eq!(maybe, $name::try_from_raw(maybe.unwrap().into_raw()));
                 assert_eq!(maybe.unwrap().as_str(), $more_good_examples);
             )*
-            assert!($name::from_bytes($bad_example.as_bytes()).is_err());
+            assert!($name::try_from_bytes($bad_example.as_bytes()).is_err());
             $(
-                assert!($name::from_bytes($more_bad_examples.as_bytes()).is_err());
+                assert!($name::try_from_bytes($more_bad_examples.as_bytes()).is_err());
             )*
         }
 
@@ -546,7 +551,7 @@ macro_rules! impl_tinystr_subtag {
 }
 
 macro_rules! impl_writeable_for_each_subtag_str_no_test {
-    ($type:tt) => {
+    ($type:tt $(, $self:ident, $borrow_cond:expr => $borrow:expr)?) => {
         impl writeable::Writeable for $type {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
@@ -576,6 +581,20 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
                 .expect("infallible");
                 result
             }
+
+            $(
+                fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+                    #[allow(clippy::unwrap_used)] // impl_writeable_for_subtag_list's $borrow uses unwrap
+                    let $self = self;
+                    if $borrow_cond {
+                        $borrow
+                    } else {
+                        let mut output = alloc::string::String::with_capacity(self.writeable_length_hint().capacity());
+                        let _ = self.write_to(&mut output);
+                        alloc::borrow::Cow::Owned(output)
+                    }
+                }
+            )?
         }
 
         writeable::impl_display_with_writeable!($type);
@@ -584,34 +603,13 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
 
 macro_rules! impl_writeable_for_subtag_list {
     ($type:tt, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type);
+        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => alloc::borrow::Cow::Borrowed(selff.0.as_slice().get(0).unwrap().as_str()));
 
         #[test]
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
                 &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
-                $sample1,
-            );
-            writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(alloc::vec![
-                    $sample1.parse().unwrap(),
-                    $sample2.parse().unwrap()
-                ]),
-                core::concat!($sample1, "-", $sample2),
-            );
-        }
-    };
-}
-
-macro_rules! impl_writeable_for_tinystr_list {
-    ($type:tt, $if_empty:literal, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type);
-
-        #[test]
-        fn test_writeable() {
-            writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(vec![$sample1.parse().unwrap()]),
                 $sample1,
             );
             writeable::assert_writeable_eq!(

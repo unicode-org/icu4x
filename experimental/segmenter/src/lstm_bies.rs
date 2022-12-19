@@ -2,18 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper;
-use crate::provider::LstmDataV1Marker;
-use alloc::string::{String, ToString};
+use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use alloc::string::String;
+use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use zerovec::ule::AsULE;
-
-#[cfg(feature = "lstm-grapheme")]
-use unicode_segmentation::UnicodeSegmentation;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
@@ -26,23 +25,28 @@ pub struct Lstm<'l> {
     mat7: Array1<f32>,
     mat8: Array2<f32>,
     mat9: Array1<f32>,
+    grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    hunits: usize,
+    backward_hunits: usize,
 }
 
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, Error> {
+    pub fn try_new(
+        data: &'l DataPayload<LstmDataV1Marker>,
+        grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    ) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
 
-        #[cfg(feature = "lstm-grapheme")]
         if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
         {
             return Err(Error::Syntax);
         }
 
-        #[cfg(not(feature = "lstm-grapheme"))]
-        if !data.get().model.contains("_codepoints_") {
+        if data.get().model.contains("_graphclust_") && grapheme.is_none() {
+            // grapheme cluster model requires grapheme cluster data.
             return Err(Error::Syntax);
         }
 
@@ -55,8 +59,9 @@ impl<'l> Lstm<'l> {
         let mat7 = data.get().mat7.as_ndarray1()?;
         let mat8 = data.get().mat8.as_ndarray2()?;
         let mat9 = data.get().mat9.as_ndarray1()?;
-        let embedd_dim = mat1.shape()[1];
-        let hunits = mat3.shape()[0];
+        let embedd_dim = *mat1.shape().get(1).ok_or(Error::DimensionMismatch)?;
+        let hunits = *mat3.shape().get(0).ok_or(Error::DimensionMismatch)?;
+        let backward_hunits = *mat6.shape().get(0).ok_or(Error::DimensionMismatch)?;
         if mat2.shape() != [embedd_dim, 4 * hunits]
             || mat3.shape() != [hunits, 4 * hunits]
             || mat4.shape() != [4 * hunits]
@@ -79,6 +84,13 @@ impl<'l> Lstm<'l> {
             mat7,
             mat8,
             mat9,
+            grapheme: if data.get().model.contains("_codepoints_") {
+                None
+            } else {
+                grapheme
+            },
+            hunits,
+            backward_hunits,
         })
     }
 
@@ -112,6 +124,7 @@ impl<'l> Lstm<'l> {
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
+    #[allow(clippy::too_many_arguments)]
     fn compute_hc(
         &self,
         x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
@@ -120,10 +133,10 @@ impl<'l> Lstm<'l> {
         warr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
         uarr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
         barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
         let s_t = x_t.dot(&warr) + h_tm1.dot(&uarr) + barr;
-        let hunits = uarr.shape()[0];
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
@@ -139,31 +152,30 @@ impl<'l> Lstm<'l> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
-        // TODO: Avoid allocating a string for each code point
-        let input_seq: Vec<i16> = if self.data.get().model.contains("_codepoints_") {
+        let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
+            GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
+                .collect::<Vec<usize>>()
+                .windows(2)
+                .map(|chunk| {
+                    self.return_id(
+                        input
+                            .get(*chunk.get(0).unwrap_or(&0)..*chunk.get(1).unwrap_or(&input.len()))
+                            .unwrap_or(input),
+                    )
+                })
+                .collect()
+        } else {
             input
                 .chars()
                 .map(|c| self.return_id(&c.to_string()))
                 .collect()
-        } else {
-            #[cfg(feature = "lstm-grapheme")]
-            {
-                UnicodeSegmentation::graphemes(input, true)
-                    .map(|s| self.return_id(s))
-                    .collect()
-            }
-
-            #[cfg(not(feature = "lstm-grapheme"))]
-            {
-                panic!("Unreachable")
-            }
         };
 
         // x_data is the data ready to be feed into the model
         let input_seq_len = input_seq.len();
 
         // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.mat3.shape()[0];
+        let hunits = self.hunits;
         // Forward LSTM
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
@@ -177,6 +189,7 @@ impl<'l> Lstm<'l> {
                 self.mat2.view(),
                 self.mat3.view(),
                 self.mat4.view(),
+                hunits,
             );
             h_fw = new_h;
             c_fw = new_c;
@@ -196,6 +209,7 @@ impl<'l> Lstm<'l> {
                 self.mat5.view(),
                 self.mat6.view(),
                 self.mat7.view(),
+                self.backward_hunits,
             );
             h_bw = new_h;
             c_bw = new_c;
@@ -205,14 +219,15 @@ impl<'l> Lstm<'l> {
         // Combining forward and backward LSTMs using the dense time-distributed layer
         let timew = self.mat8.view();
         let timeb = self.mat9.view();
-        let mut bies = String::from("");
+        let mut bies = String::new();
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
             let curr_est = concat_lstm.dot(&timew) + timeb;
             let probs = math_helper::softmax(curr_est);
-            bies.push(self.compute_bies(probs).unwrap());
+            // We use `unwrap_or` to fall back and prevent panics.
+            bies.push(self.compute_bies(probs).unwrap_or('s'));
         }
         bies
     }
@@ -221,6 +236,8 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::provider::GraphemeClusterBreakDataV1Marker;
+    use icu_provider::prelude::*;
     use serde::{Deserialize, Serialize};
     use std::fs::File;
     use std::io::BufReader;
@@ -253,13 +270,12 @@ mod tests {
     }
 
     fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
-        DataPayload::<LstmDataV1Marker>::try_from_rc_buffer_badly(
+        DataPayload::from_owned_buffer(
             std::fs::read(filename)
                 .expect("File can read to end")
-                .into(),
-            |bytes| serde_json::from_slice(bytes),
+                .into_boxed_slice(),
         )
-        .expect("JSON syntax error")
+        .map_project(|bytes, _| serde_json::from_slice(bytes).expect("JSON syntax error"))
     }
 
     fn load_test_text(filename: &str) -> TestTextData {
@@ -269,15 +285,20 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "dic entries of graphclust data aren't sorted"]
-    #[cfg(feature = "lstm-grapheme")]
     fn test_model_loading() {
-        let filename = "tests/testdata/Thai_graphclust_exclusive_model4_heavy/weights.json";
+        let filename =
+            "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
         let lstm_data = load_lstm_data(filename);
-        let lstm = Lstm::try_new(&lstm_data).unwrap();
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let lstm = Lstm::try_new(&lstm_data, Some(grapheme.get())).expect("Test data is invalid");
         assert_eq!(
             lstm.get_model_name(),
-            String::from("Thai_graphclust_exclusive_model4_heavy")
+            "Thai_graphclust_exclusive_model4_heavy"
         );
     }
 
@@ -289,7 +310,7 @@ mod tests {
         model_filename.push_str(embedding);
         model_filename.push_str("_exclusive_model4_heavy/weights.json");
         let lstm_data = load_lstm_data(&model_filename);
-        let lstm = Lstm::try_new(&lstm_data).unwrap();
+        let lstm = Lstm::try_new(&lstm_data, None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();

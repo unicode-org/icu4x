@@ -16,7 +16,7 @@ int main() {
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).ok().value();
     ICU4XPluralRules pr = ICU4XPluralRules::create_cardinal(dp, locale).ok().value();
 
-    ICU4XPluralOperands op = { .i = 3 };
+    ICU4XPluralOperands op = ICU4XPluralOperands::create_from_string("3").ok().value();
     ICU4XPluralCategory cat = pr.category_for(op);
 
     std::cout << "Category is " << static_cast<int32_t>(cat)

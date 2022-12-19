@@ -142,7 +142,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("icu4x/2022-08-17/71.x", icu_testdata::versions::icu_tag());
+    /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
     #[allow(clippy::unwrap_used)] // documented
     pub fn icu_tag() -> String {

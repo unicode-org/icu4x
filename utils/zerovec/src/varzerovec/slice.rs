@@ -29,8 +29,13 @@ use core::ops::Range;
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
 /// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
 ///
-/// This type can be nested within itself to allow for multi-level nested `Vec`s, for
-/// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
+/// This type can be nested within itself to allow for multi-level nested `Vec`s.
+///
+/// # Examples
+///
+/// ## Nested Slices
+///
+/// The following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`
 ///
 /// ```rust
 /// use zerovec::ule::*;
@@ -70,6 +75,25 @@ use core::ops::Range;
 /// let vzv_from_bytes: VarZeroVec<VarZeroSlice<VarZeroSlice<str>>> =
 ///     VarZeroVec::parse_byte_slice(bytes).unwrap();
 /// assert_eq!(vzv_from_bytes, vzv_all);
+/// ```
+///
+/// ## Iterate over Windows
+///
+/// Although [`VarZeroSlice`] does not itself have a `.windows` iterator like
+/// [core::slice::Windows], this behavior can be easily modeled using an iterator:
+///
+/// ```
+/// use zerovec::VarZeroVec;
+///
+/// let vzv = VarZeroVec::<str>::from(&["a", "b", "c", "d"]);
+/// # let mut pairs: Vec<(&str, &str)> = Vec::new();
+///
+/// let mut it = vzv.iter().peekable();
+/// while let (Some(x), Some(y)) = (it.next(), it.peek()) {
+///     // Evaluate (x, y) here.
+/// #   pairs.push((x, y));
+/// }
+/// # assert_eq!(pairs, &[("a", "b"), ("b", "c"), ("c", "d")]);
 /// ```
 //
 // safety invariant: The slice MUST be one which parses to
@@ -407,19 +431,40 @@ where
     /// let vec = VarZeroVec::<str>::from(&strings);
     ///
     /// // Same behavior as binary_search when the range covers the whole slice:
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..7), Some(Ok(3)));
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 0..7), Some(Err(4)));
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("g"), 0..7),
+    ///     Some(Ok(3))
+    /// );
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("h"), 0..7),
+    ///     Some(Err(4))
+    /// );
     ///
     /// // Will not look outside of the range:
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 0..1), Some(Err(1)));
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 6..7), Some(Err(0)));
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("g"), 0..1),
+    ///     Some(Err(1))
+    /// );
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("g"), 6..7),
+    ///     Some(Err(0))
+    /// );
     ///
     /// // Will return indices relative to the start of the range:
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("g"), 1..6), Some(Ok(2)));
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("h"), 1..6), Some(Err(3)));
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("g"), 1..6),
+    ///     Some(Ok(2))
+    /// );
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("h"), 1..6),
+    ///     Some(Err(3))
+    /// );
     ///
     /// // Will return None if the range is out of bounds:
-    /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 100..200), None);
+    /// assert_eq!(
+    ///     vec.binary_search_in_range_by(|v| v.cmp("x"), 100..200),
+    ///     None
+    /// );
     /// assert_eq!(vec.binary_search_in_range_by(|v| v.cmp("x"), 0..200), None);
     /// # Ok::<(), ZeroVecError>(())
     /// ```

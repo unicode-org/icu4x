@@ -5,9 +5,9 @@
 [package]
 name = "icu_collections"
 description = "Collection of API for use in ICU libraries."
-version = "1.0.0-beta1"
+version = "1.0.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -35,7 +35,7 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
-zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }

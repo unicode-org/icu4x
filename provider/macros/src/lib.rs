@@ -56,7 +56,12 @@ mod tests;
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
-///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region", extension_key = "ca")
+///     marker(
+///         BazV1Marker,
+///         "demo/baz@1",
+///         fallback_by = "region",
+///         extension_key = "ca"
+///     )
 /// )]
 /// pub struct FooV1<'data> {
 ///     message: Cow<'data, str>,
@@ -70,10 +75,7 @@ mod tests;
 ///     BarV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Language
 /// );
-/// assert_eq!(
-///     BarV1Marker::KEY.metadata().extension_key,
-///     None
-/// );
+/// assert_eq!(BarV1Marker::KEY.metadata().extension_key, None);
 ///
 /// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
 /// assert_eq!(
@@ -127,7 +129,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         .find(|a| a.path.is_ident("databake"))
         .map(|a| {
             quote! {
-                #[derive(Default, databake::Bake)]
+                #[derive(databake::Bake)]
                 #a
             }
         })

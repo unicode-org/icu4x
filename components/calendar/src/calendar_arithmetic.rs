@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError};
+use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit};
 use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
@@ -205,25 +205,25 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self, DateTimeError> {
+    ) -> Result<Self, CalendarError> {
         let month = if let Some(ordinal) = ordinal_solar_month_from_code(month_code) {
             ordinal
         } else {
-            return Err(DateTimeError::UnknownMonthCode(
+            return Err(CalendarError::UnknownMonthCode(
                 month_code.0,
                 cal.debug_name(),
             ));
         };
 
         if month > C::months_for_every_year(year) {
-            return Err(DateTimeError::UnknownMonthCode(
+            return Err(CalendarError::UnknownMonthCode(
                 month_code.0,
                 cal.debug_name(),
             ));
         }
 
         if day > C::month_days(year, month) {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
 
         Ok(Self::new(year, month, day))

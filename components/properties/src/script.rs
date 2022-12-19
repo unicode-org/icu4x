@@ -306,7 +306,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert_ne!(swe.get_script_val(0xFDF2), Script::Syriac);
     /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
     /// ```
-    pub fn get_script_val(&self, code_point: u32) -> Script {
+    pub fn get_script_val(self, code_point: u32) -> Script {
         let sc_with_ext = self.data.trie.get32(code_point);
 
         if sc_with_ext.is_other() {
@@ -331,7 +331,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     // This private helper method exists to prevent code duplication in callers like
     // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
     fn get_scx_val_using_trie_val(
-        &self,
+        self,
         sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
     ) -> &'a ZeroSlice<Script> {
         let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
@@ -401,7 +401,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet<'a> {
+    pub fn get_script_extensions_val(self, code_point: u32) -> ScriptExtensionsSet<'a> {
         let sc_with_ext_ule = self.data.trie.get32_ule(code_point);
 
         ScriptExtensionsSet {
@@ -449,7 +449,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert!(!swe.has_script(0xFDF2, Script::Syriac));
     /// assert!(swe.has_script(0xFDF2, Script::Thaana));
     /// ```
-    pub fn has_script(&self, code_point: u32, script: Script) -> bool {
+    pub fn has_script(self, code_point: u32, script: Script) -> bool {
         let sc_with_ext_ule = if let Some(scwe_ule) = self.data.trie.get32_ule(code_point) {
             scwe_ule
         } else {
@@ -510,9 +510,9 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// );
     /// ```
     pub fn get_script_extensions_ranges(
-        &self,
+        self,
         script: Script,
-    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.data
             .trie
             .iter_ranges()
@@ -557,13 +557,18 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// assert!(syriac.contains32(0x1DFA)); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains32(0x1DFB)); // COMBINING DELETION MARK
     /// ```
-    pub fn get_script_extensions_set(&self, script: Script) -> CodePointInversionList {
+    pub fn get_script_extensions_set(self, script: Script) -> CodePointInversionList<'a> {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
 /// Returns a [`ScriptWithExtensionsPropertyV1`] struct that represents the data for the Script
 /// and Script_Extensions properties.
+///
+/// [📚 Help choosing a constructor](icu_provider::constructors)
+/// <div class="stab unstable">
+/// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+/// </div>
 ///
 /// # Examples
 ///

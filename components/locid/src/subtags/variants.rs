@@ -16,12 +16,9 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::{Variant, Variants};
+/// use icu::locid::{subtags::Variants, subtags_variant as variant};
 ///
-/// let variant1: Variant = "posix".parse().expect("Failed to parse a variant subtag.");
-///
-/// let variant2: Variant = "macos".parse().expect("Failed to parse a variant subtag.");
-/// let mut v = vec![variant1, variant2];
+/// let mut v = vec![variant!("posix"), variant!("macos")];
 /// v.sort();
 /// v.dedup();
 ///
@@ -51,10 +48,9 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
+    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
     ///
-    /// let variant: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variants = Variants::from_variant(variant);
+    /// let variants = Variants::from_variant(variant!("posix"));
     /// ```
     #[inline]
     pub const fn from_variant(variant: Variant) -> Self {
@@ -68,11 +64,9 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
+    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
     ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
+    /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
     /// v.dedup();
     ///
@@ -93,11 +87,9 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variant, Variants};
+    /// use icu::locid::{subtags::Variants, subtags_variant as variant};
     ///
-    /// let variant1: Variant = "posix".parse().expect("Parsing failed.");
-    /// let variant2: Variant = "macos".parse().expect("Parsing failed.");
-    /// let mut v = vec![variant1, variant2];
+    /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
     /// v.dedup();
     ///
@@ -107,7 +99,7 @@ impl Variants {
     ///
     /// variants.clear();
     ///
-    /// assert_eq!(variants.to_string(), "");
+    /// assert_eq!(variants, Variants::default());
     /// ```
     pub fn clear(&mut self) -> Self {
         core::mem::take(self)

@@ -1,0 +1,27 @@
+{
+  "relatives": {
+    "0": "ขณะนี้"
+  },
+  "past": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " วินาทีที่แล้ว",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": null,
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "ใน  วินาที",
+      "index": 7
+    }
+  }
+}

@@ -46,27 +46,27 @@ impl GmtOffset {
     }
 
     /// Returns the raw offset value in seconds.
-    pub fn offset_seconds(&self) -> i32 {
+    pub fn offset_seconds(self) -> i32 {
         self.0
     }
 
     /// Returns `true` if the [`GmtOffset`] is positive, otherwise `false`.
-    pub fn is_positive(&self) -> bool {
+    pub fn is_positive(self) -> bool {
         self.0 >= 0
     }
 
     /// Returns `true` if the [`GmtOffset`] is zero, otherwise `false`.
-    pub fn is_zero(&self) -> bool {
+    pub fn is_zero(self) -> bool {
         self.0 == 0
     }
 
     /// Returns `true` if the [`GmtOffset`] has non-zero minutes, otherwise `false`.
-    pub fn has_minutes(&self) -> bool {
+    pub fn has_minutes(self) -> bool {
         self.0 % 3600 / 60 > 0
     }
 
     /// Returns `true` if the [`GmtOffset`] has non-zero seconds, otherwise `false`.
-    pub fn has_seconds(&self) -> bool {
+    pub fn has_seconds(self) -> bool {
         self.0 % 3600 % 60 > 0
     }
 }
@@ -88,10 +88,14 @@ impl FromStr for GmtOffset {
     /// ```
     /// use icu_timezone::GmtOffset;
     ///
-    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
-    /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");
-    /// let offset2: GmtOffset = "-0930".parse().expect("Failed to parse a GMT offset.");
-    /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
+    /// let offset0: GmtOffset =
+    ///     "Z".parse().expect("Failed to parse a GMT offset.");
+    /// let offset1: GmtOffset =
+    ///     "-09".parse().expect("Failed to parse a GMT offset.");
+    /// let offset2: GmtOffset =
+    ///     "-0930".parse().expect("Failed to parse a GMT offset.");
+    /// let offset3: GmtOffset =
+    ///     "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let mut chars = input.chars();

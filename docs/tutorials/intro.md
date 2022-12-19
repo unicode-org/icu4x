@@ -4,61 +4,48 @@
 
 The library provides a layer of APIs for all software to enable internationalization capabilities.
 
-To use `ICU4X` in the Rust ecosystem one can either add dependencies on selected components, or add a dependency on the meta-crate `icu` which brings a reasonable selection of components in the most user-friendly configuration of features.
+To use `ICU4X` in the Rust ecosystem one can either add dependencies on selected components, or add a dependency on the meta-crate `icu` which brings the full selection of components in the most user-friendly configuration of features.
 
-In this tutorial we are going to start with the meta-crate and then introduce a customization.
+In this tutorial we are going to build up to writing an app that uses the `icu::datetime` component to format a date and time, covering various topics in the process.
 
 # 1. Requirements
 
-For this tutorial we assume the user has basic Rust knowledge. If acquiring it is necessary, [Rust Book](https://doc.rust-lang.org/book/) provides an excellent introduction.
-We also assume that the user is familiar with a terminal and have `git`, `rust` and `cargo` installed.
+For this tutorial we assume the user has basic Rust knowledge. If acquiring it is necessary, the [Rust Book](https://doc.rust-lang.org/book/) provides an excellent introduction.
+We also assume that the user is familiar with a terminal and have `rust` and `cargo` installed.
 
 To verify that, open a terminal and check that the results are similar to:
 
-```
-user@host:~/projects/icu$ git --version
-git version 2.31.1
-user@host:~/projects/icu$ cargo --version
-cargo 1.51.0 (43b129a20 2021-03-16)
+```console
+$ cargo --version
+cargo 1.64.0 (387270bc7 2022-09-16)
 ```
 
-In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu/`. The `~` in the path indicates the relative location of the user home directory.
-Please create the directory structure necessary.
+# 2. Creating an app with ICU4X as a dependency
 
-# 2. Creating MyApp
+Use `cargo` to initialize a binary application:
 
-To initialize a binary application, navigate to the root directory of our project and initialize a new binary app called `myapp`:
-
-```
-cd ~/projects/icu
-cargo init --bin myapp
+```console
+cargo new --bin myapp
+cd myapp
 ```
 
-The result is a new directory `~/projects/icu/myapp` with a file `./src/main.rs` which is the main file for our application.
+Then add a dependency on `ICU4X`'s main crate, `icu`:
 
-# 3. Vendoring in ICU4X
-
-`ICU4X`'s main meta package is called `icu`, so to start using it, all one has to do it edit their `~/projects/icu/myapp/Cargo.toml`, locate the `[dependencies]` section and add:
-
-```toml
-[dependencies]
-icu = "0.6"
+```console
+$ cargo add icu
 ```
 
-After saving the changes, calling `cargo check` should vendor in `ICU4X` dependency.
-
-# 4. Accessing components
+# 3. Locales
 
 `ICU4X` comes with a variety of components allowing to manage various facets of software internationalization.
-Most of those features depend on the selection of a `Language Identifier` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrylic script) or `es-AR` (Argentinian Spanish).
 
-`LanguageIdentifier` is a low level struct which is commonly used to represent user selection, available localization data and management between them.
+Most of those features depend on the selection of a `Locale` which is a particular combination of language, script, region with optional variants. An examples of such locales are `en-US` (American English), `sr-Cyrl` (Serbian with Cyrillic script) or `ar-EG-u-nu-latn` (Egyptian Arabic with ASCII numerals).
 
-In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added dependency on `icu`, we can refer to it via `icu::locid`.
+In `ICU4X` `Locale` is a part of the `locid` component. If the user needs just this one feature, they can use `icu_locid` crate as a dependency, but since here we already added a dependency on `icu`, we can refer to it via `icu::locid`.
 
-Let's update our application to use it.
+Let's use this in our application.
 
-Open `~/projects/icu/myapp/src/main.rs` and edit it to:
+Open `src/main.rs` and edit it to:
 
 ```rust
 use icu::locid::Locale;
@@ -67,189 +54,117 @@ fn main() {
     let loc: Locale = "ES-AR".parse()
         .expect("Failed to parse locale.");
 
-    if loc.id.language == "es" {
-        println!("¡Hola amigo!");
+    if loc.id.language.as_str() == "es" {
+        println!("¡Hola!");
     }
 
     println!("You are using: {}", loc);
 }
 ```
-*Notice:* `ICU4X` canonicalized the locales's syntax which uses lowercase letter for the language portion.
 
-After saving it, call `cargo run` in `~/projects/icu/myapp` and it should display:
+After saving it, call `cargo run` and it should display:
 
-```
-¡Hola amigo!
+```text
+¡Hola!
 You are using: es-AR
 ```
 
-Congratulations! `ICU4X` has been used to semantically operate on a locale and the first string is now displayed only if the user is using a locale with Spanish `language` part!
+*Notice:* Here, `ICU4X` canonicalized the locales's syntax which uses lowercase letters for the language portion.
+
+Congratulations! `ICU4X` has been used to semantically operate on a locale!
 
 ## Convenience macro
 
-The scenario of working with statically declared Locales and their subtags is common.
-It's a bit unergonomic to have to perform the parsing of them at runtime and handle a parser error in such case.
+The scenario of working with statically declared `Locale`s is common.
+
+It's a bit unergonomic to have to parse them at runtime and handle a parser error in such case.
 
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locid::locale;
+use icu::locid::{Locale, locale};
+
+const LOCALE: Locale = locale!("ES-AR");
 
 fn main() {
-    let loc = locale!("ES-AR");
-
-    if loc.id.language == "es" {
+    if LOCALE.id.language.as_str() == "es" {
         println!("¡Hola amigo!");
     }
 
-    println!("You are using: {}", loc);
+    println!("You are using: {}", LOCALE);
 }
 ```
 
-In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and try to call `cargo check`.
+In this case, the parsing is performed at compilation time, so we don't need to handle an error case. Try passing an malformed identifier, like "foo-bar" and call `cargo check`.
 
-*Notice:* The compile time macros `langid!`, and `locale!` don't support variants or extension tags, as storing these requires allocation. If you have such a tag you need to use runtime parsing.
+*Notice:* `locale!` does not support variants or extension tags (e.g. `u-nu-latn`), as storing these requires allocation. If you have such a tag you need to use runtime parsing.
 
 Next, let's add some more complex functionality.
 
-# 5. Data Management
+# 4. Basic Data Management
 
-While language identifier API is purely algorithmic, many internationalization APIs use data to perform operations. The most common data set used in Unicode Internationalization is called `CLDR` - `Common Locale Data Repository`.
+While the locale API is purely algorithmic, many internationalization APIs require more complex data to work. Data management is a complex and non-trivial area which often requires customizations for particular environments and integrations into a project's ecosystem.
 
-Data management is a complex and non-trivial area which often requires customizations for particular environments and integrations into projects ecosystem.
+The way `ICU4X` handles data is one of its novelties, aimed at making the data management more flexible and enabling better integration in asynchronous environments.
 
-The way `ICU4X` plugs into that dataset is one of its novelties aiming at making the data management more flexible and enable better integration in asynchronous environments.
-
-In result, compared to most internationalization solutions, working with `ICU4X` and data is a bit more explicit. `ICU4X` provides a trait called `DataProvider` and a number of concrete APIs that implement that trait for different scenarios.
+As a result, compared to most internationalization solutions, working with data in `ICU4X` is a bit more explicit. `ICU4X` provides a trait called `DataProvider` (as well as `BufferProvider` and `AnyProvider`) and a number of concrete APIs that implement these traits for different scenarios.
 Users are also free to design their own providers that best fit into their ecosystem requirements.
 
-In this tutorial we are going to use ICU4X's "test" data provider and then move on to a synchronous file-system data provider which uses ICU4X format JSON resource files.
+`BufferProvider` and `AnyProvider` abstract over different ways the data may be loaded: `BufferProvider` abstracts over data providers that deserialize data, whereas `AnyProvider` abstracts over data providers that can provide concrete Rust objects.
 
-## Test data
+# 5. Using an ICU4X component
 
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate custom data, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
+We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains both a `BufferProvider` (`icu_testdata::buffer()`), and an `AnyProvider` (`icu_testdata::any()`). The latter requires fewer features, so we will be using that.
 
+First, we need to add the crate to our `Cargo.toml`:
 
-## Using test data
-
-First, we need to register our choice of the provider in `~/projects/icu/myapp/Cargo.toml`:
-
-```
-[dependencies]
-icu = "1"
-icu_testdata = "1"
+```console
+$ cargo add icu_testdata
 ```
 
-and then we can use it in our code:
+We can then use it in our code to format a date:
 
 ```rust
-fn main() {
-    let _provider = icu_testdata::unstable();
-}
-```
-
-While this app doesn't do anything on its own yet, we now have a loaded data provider, and can use it to format a date:
-
-```rust
-use icu::locid::locale;
+use icu::locid::{Locale, locale};
 use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
+use icu::datetime::{DateTimeFormatter, options::length};
+
+const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
-    let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+    let provider = icu_testdata::any();
+
+    let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
+
+    let dtf = DateTimeFormatter::try_new_with_any_provider(&provider, &LOCALE.into(), options.into())
+        .expect("Failed to initialize DateTimeFormatter");
+
+    let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
         .expect("Failed to create a datetime.");
 
-    let options = length::Bag {
-        time: Some(length::Time::Medium),
-        date: Some(length::Date::Long),
-        ..Default::default()
-    }.into();
+    // DateTimeFormatter works with data from any calendar, we need to cast to DateTime<AnyCalendar>
+    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
+    let date = date.to_any();
 
-    let dtf = DateTimeFormat::try_new_unstable(&icu_testdata::unstable(), &locale!("ja").into(), &options)
-        .expect("Failed to initialize DateTimeFormat");
-
-    let formatted_date = dtf.format(&date);
+    let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 
     println!("📅: {}", formatted_date);
 }
 ```
-*Notice:* Before proceeding, update your path to the ICU4X data directory.
 
 If all went well, running the app with `cargo run` should display:
 
-```
-📅: 2020年10月14日 13:21:00
+```text
+📅: 2020年10月14日 13:21:28
 ```
 
 Here's an internationalized date!
 
-*Notice:* Default `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`. Our example is also using `json` resource format. Generate the data in `postcard` (and use `BlobDataProvider`) for better performance.
-
-## Using data from the filesystem
-
-If you have ICU4X data on the file system in a JSON format, it can be loaded via `FsDataProvider`:
-
-```toml
-[dependencies]
-icu = "0.6"
-icu_provider_fs = {version = "1.0.0-beta1" , features = ["deserialize_json"]}
-```
-
-```rs
-use icu_provider_fs::FsDataProvider;
-
-fn main() {
-    let _provider = FsDataProvider::try_new("/path/to/data")
-       .expect("Failed to initialize Data Provider.");
-}
-```
-
-The ICU4X repository has test data checked in tree in `provider/testdata/data`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata` is simply loading this data.
-
-## Generating data
-
-For production usage, it is better to generate your own data that is filtered to suit your needs.
-
-We're going to use [JSON CLDR](https://github.com/unicode-cldr/cldr-json) as our source data. JSON CLDR is an export of [CLDR data](http://cldr.unicode.org/index/downloads) into JSON maintained by Unicode.
-
-We are also going to use Unicode property data shipped as a zip file in the ICU4C release.
-
-The `datagen` component has a binary application which will fetch the CLDR data and generate ICU4X data out of it.
-
-```
-git clone https://github.com/unicode-org/icu4x
-cd icu4x
-git checkout icu@0.6.0
-cargo run --bin icu4x-datagen --features bin -- \
-    --cldr-tag 41.0.0 \
-    --icuexport-tag release-71-1 \
-    --out ~/projects/icu/icu4x-data \
-    --all-keys --all-locales
-```
-
-The last command is a bit dense, so let's dissect it.
-
-* First, we call `cargo run` which runs a binary in the crate
-* We tell it that the binary is named `icu4x-datagen`
-* Then we use `--` to separate arguments to `cargo` from arguments to our app
-* Then we pass `--cldr-tag` which informs the program which CLDR version to use
-* Then we pass `--icuexport-tag` which informs the program which ICU-exported data version to use
-* Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
-* Finally, we set `--all-keys` which specify that we want to export all keys available
-
-After that step, it should be possible to navigate to `~/projects/icu/icu4x-data` and there should be a `manifest.json` file, and directories with data.
-
-*Notice:* In this tutorial we export data as compact `JSON` which provides decent performance and readable data files. There are other formats and options for formatting of the data available. Please consult `cargo run --bin icu4x-datagen -- --help` for details.
-*Notice:* In particular, in production, the `postcard` format will yield better performance results.
-*Notice:* For offline or unconventional use, the user can also pass `--cldr-root` to a local clone of the CLDR repository instead of `--cldr-tag`.
-
+*Notice:* By default, `cargo run` builds and runs a `debug` mode of the binary. If you want to evaluate performance, memory or size of this example, use `cargo run --release`.
 
 # 6. Summary
 
-This concludes this introduction tutorial.
+This concludes this introduction tutorial. With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just the start. 
+Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just a start.
-
-The scope of internationalization domain is broad and there are many components with non-trivial interactions between them.
-
-As the feature set of `ICU4X` grows, more and more user interface concepts will become available for internationalization, and more features for fine tuning how the operations are performed will become available.
+Next, learn how to [generate optimized data for your binary](data_management.md), or continue exploring by reading [the docs](https://icu4x.unicode.org/doc/icu/).

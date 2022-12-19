@@ -4,10 +4,9 @@
 
 use crate::complex::*;
 use crate::indices::*;
-use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
-
+use crate::SegmenterError;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -146,78 +145,101 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with default options:
 ///
 /// ```rust
-/// use icu_segmenter::LineBreakSegmenter;
+/// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
 ///
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
-/// use icu_segmenter::{LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule};
+/// use icu_segmenter::{
+///     LineBreakOptions, LineBreakRule, LineSegmenter, WordBreakRule,
+/// };
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.line_break_rule = LineBreakRule::Strict;
 /// options.word_break_rule = WordBreakRule::BreakAll;
 /// options.ja_zh = false;
-/// let segmenter =
-///     LineBreakSegmenter::try_new_with_options(&icu_testdata::unstable(), options).expect("Data exists");
+/// let segmenter = LineSegmenter::try_new_with_options_unstable(
+///     &icu_testdata::unstable(),
+///     options,
+/// )
+/// .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
 /// Segment a Latin1 byte string:
 ///
 /// ```rust
-/// use icu_segmenter::LineBreakSegmenter;
+/// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+/// let segmenter =
+///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
-/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
-pub struct LineBreakSegmenter {
+pub struct LineSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
+    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
 
-impl LineBreakSegmenter {
-    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
+impl LineSegmenter {
+    /// Construct a [`LineSegmenter`] with default [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
     {
-        Self::try_new_with_options(provider, Default::default())
+        Self::try_new_with_options_unstable(provider, Default::default())
     }
 
-    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
+    /// Construct a [`LineSegmenter`] with default [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        Self::try_new_with_options(provider, Default::default())
+        Self::try_new_with_options_unstable(provider, Default::default())
     }
 
-    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
+
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
-    pub fn try_new_with_options<D>(
+    pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, SegmenterError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let burmese = Self::load_lstm(provider, locale!("my")).ok();
         let khmer = Self::load_lstm(provider, locale!("km")).ok();
@@ -234,21 +256,24 @@ impl LineBreakSegmenter {
                 lao,
                 thai,
             },
+            grapheme,
         })
     }
 
-    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
-    pub fn try_new_with_options<D>(
+    pub fn try_new_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
-    ) -> Result<Self, DataError>
+    ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let khmer = Self::load_dictionary(provider, locale!("km")).ok();
         let lao = Self::load_dictionary(provider, locale!("lo")).ok();
@@ -266,8 +291,20 @@ impl LineBreakSegmenter {
                 cj: None,
             },
             lstm: LstmPayloads::default(),
+            grapheme,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: LineBreakOptions,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_with_options_unstable,
+            try_new_with_options_with_any_provider,
+            try_new_with_options_with_buffer_provider
+        ]
+    );
 
     #[cfg(not(feature = "lstm"))]
     fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
@@ -306,6 +343,7 @@ impl LineBreakSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -324,6 +362,7 @@ impl LineBreakSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -337,6 +376,7 @@ impl LineBreakSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.get(),
         }
     }
 
@@ -351,6 +391,7 @@ impl LineBreakSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
+            grapheme: self.grapheme.get(),
         }
     }
 }
@@ -538,7 +579,6 @@ fn use_complex_breaking_utf32(property_table: &RuleBreakPropertyTable<'_>, codep
     );
 
     line_break_property == SA
-        && matches!(get_language(codepoint), Language::Thai | Language::Burmese)
 }
 
 /*
@@ -575,11 +615,11 @@ pub trait LineBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the examples in [`LineBreakSegmenter`] for its usages.
+/// see the examples in [`LineSegmenter`] for its usages.
 ///
 /// Lifetimes:
 ///
-/// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
+/// - `'l` = lifetime of the [`LineSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
 ///
 /// <div class="stab unstable">
@@ -597,6 +637,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
     lstm: &'l LstmPayloads,
+    grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -608,17 +649,16 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         // If we have break point cache by previous run, return this result
-        if !self.result_cache.is_empty() {
+        if let Some(&first_pos) = self.result_cache.first() {
             let mut i = 0;
             loop {
-                if i == *self.result_cache.first().unwrap() {
+                if i == first_pos {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
-                    return Some(self.current_pos_data.unwrap().0);
+                    return self.get_current_position();
                 }
                 i += Y::get_current_position_character_len(self);
-                self.current_pos_data = self.iter.next();
-                if self.current_pos_data.is_none() {
-                    // Reach EOF
+                self.advance_iter();
+                if self.is_eof() {
                     self.result_cache.clear();
                     return Some(self.len);
                 }
@@ -626,14 +666,19 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
         }
 
         loop {
-            let mut left_prop = self.get_linebreak_property();
-            let left_codepoint = self.current_pos_data;
-            self.current_pos_data = self.iter.next();
-            if self.current_pos_data.is_none() {
-                // EOF
+            debug_assert!(!self.is_eof());
+            let left_codepoint = self.get_current_codepoint()?;
+            let mut left_prop = self.get_linebreak_property(left_codepoint);
+            self.advance_iter();
+
+            // Initializing right_codepoint can be simplified with a let-else statement in Rust 1.65.
+            // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+            let right_codepoint = if let Some(right_codepoint) = self.get_current_codepoint() {
+                right_codepoint
+            } else {
                 return Some(self.len);
-            }
-            let right_prop = self.get_linebreak_property();
+            };
+            let right_prop = self.get_linebreak_property(right_codepoint);
 
             // CSS word-break property handling
             match self.options.word_break_rule {
@@ -656,35 +701,35 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // CSS line-break property handling
             match self.options.line_break_rule {
                 LineBreakRule::Normal => {
-                    if self.is_break_by_normal() {
-                        return Some(self.current_pos_data.unwrap().0);
+                    if self.is_break_by_normal(right_codepoint) {
+                        return self.get_current_position();
                     }
                 }
                 LineBreakRule::Loose => {
                     if let Some(breakable) = is_break_utf32_by_loose(
-                        self.current_pos_data.unwrap().1.into(),
+                        right_codepoint.into(),
                         left_prop,
                         right_prop,
                         self.options.ja_zh,
                     ) {
                         if breakable {
-                            return Some(self.current_pos_data.unwrap().0);
+                            return self.get_current_position();
                         }
                         continue;
                     }
                 }
                 LineBreakRule::Anywhere => {
-                    return Some(self.current_pos_data.unwrap().0);
+                    return self.get_current_position();
                 }
                 _ => (),
             };
 
             // UAX14 doesn't have Thai etc, so use another way.
             if self.options.word_break_rule != WordBreakRule::BreakAll
-                && Y::use_complex_breaking(self, left_codepoint.unwrap().1)
-                && Y::use_complex_breaking(self, self.current_pos_data.unwrap().1)
+                && Y::use_complex_breaking(self, left_codepoint)
+                && Y::use_complex_breaking(self, right_codepoint)
             {
-                let result = Y::handle_complex_language(self, left_codepoint.unwrap().1);
+                let result = Y::handle_complex_language(self, left_codepoint);
                 if result.is_some() {
                     return result;
                 }
@@ -698,21 +743,25 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 let mut previous_pos_data = self.current_pos_data;
 
                 loop {
-                    self.current_pos_data = self.iter.next();
-                    if self.current_pos_data.is_none() {
+                    self.advance_iter();
+
+                    // Initializing prop can be simplified with a let-else statement in Rust 1.65.
+                    // https://blog.rust-lang.org/2022/11/03/Rust-1.65.0.html#let-else-statements
+                    let prop = if let Some(prop) = self.get_current_linebreak_property() {
+                        prop
+                    } else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         let break_state = self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property);
                         if break_state == NOT_MATCH_RULE {
                             self.iter = previous_iter;
                             self.current_pos_data = previous_pos_data;
-                            return Some(previous_pos_data.unwrap().0);
+                            return self.get_current_position();
                         }
                         // EOF
                         return Some(self.len);
-                    }
+                    };
 
-                    let prop = self.get_linebreak_property();
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state < 0 {
                         break;
@@ -727,36 +776,57 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 if break_state == NOT_MATCH_RULE {
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
-                    return Some(previous_pos_data.unwrap().0);
+                    return self.get_current_position();
                 }
-                return Some(self.current_pos_data.unwrap().0);
+                return self.get_current_position();
             }
 
             if self.is_break_from_table(left_prop, right_prop) {
-                return Some(self.current_pos_data.unwrap().0);
+                return self.get_current_position();
             }
         }
     }
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
+    fn advance_iter(&mut self) {
+        self.current_pos_data = self.iter.next();
+    }
+
+    fn is_eof(&self) -> bool {
+        self.current_pos_data.is_none()
+    }
+
     #[inline]
     fn check_eof(&mut self) -> bool {
-        if self.current_pos_data.is_none() {
-            self.current_pos_data = self.iter.next();
-            if self.current_pos_data.is_none() {
+        if self.is_eof() {
+            self.advance_iter();
+            if self.is_eof() {
                 return true;
             }
         }
         false
     }
 
-    fn get_linebreak_property(&self) -> u8 {
-        Y::get_linebreak_property_with_rule(self, self.current_pos_data.unwrap().1)
+    fn get_current_position(&self) -> Option<usize> {
+        self.current_pos_data.map(|(pos, _)| pos)
     }
 
-    fn is_break_by_normal(&self) -> bool {
-        is_break_utf32_by_normal(self.current_pos_data.unwrap().1.into(), self.options.ja_zh)
+    fn get_current_codepoint(&self) -> Option<Y::CharType> {
+        self.current_pos_data.map(|(_, codepoint)| codepoint)
+    }
+
+    fn get_linebreak_property(&self, codepoint: Y::CharType) -> u8 {
+        Y::get_linebreak_property_with_rule(self, codepoint)
+    }
+
+    fn get_current_linebreak_property(&self) -> Option<u8> {
+        self.get_current_codepoint()
+            .map(|c| self.get_linebreak_property(c))
+    }
+
+    fn is_break_by_normal(&self, codepoint: Y::CharType) -> bool {
+        is_break_utf32_by_normal(codepoint.into(), self.options.ja_zh)
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {
@@ -799,7 +869,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.current_pos_data.unwrap().1.len_utf8()
+        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -830,7 +900,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.current_pos_data.unwrap().1.len_utf8()
+        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
     fn handle_complex_language(
@@ -854,12 +924,15 @@ where
     let mut s = String::new();
     s.push(left_codepoint);
     loop {
-        s.push(iter.current_pos_data.unwrap().1);
-        iter.current_pos_data = iter.iter.next();
-        if iter.current_pos_data.is_none() {
-            break;
-        }
-        if !T::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
+        debug_assert!(!iter.is_eof());
+        s.push(iter.get_current_codepoint()?);
+        iter.advance_iter();
+        if let Some(current_codepoint) = iter.get_current_codepoint() {
+            if !T::use_complex_breaking(iter, current_codepoint) {
+                break;
+            }
+        } else {
+            // EOF
             break;
         }
     }
@@ -867,17 +940,23 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
+    let breaks = complex_language_segment_str(
+        Some(iter.dictionary),
+        Some(iter.lstm),
+        Some(iter.grapheme),
+        &s,
+    );
     iter.result_cache = breaks;
-    let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+    let mut i = iter.get_current_codepoint()?.len_utf8();
+    let first_pos = *iter.result_cache.first()?;
     loop {
-        if i == *iter.result_cache.first().unwrap() {
+        if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-            return Some(iter.current_pos_data.unwrap().0);
+            return iter.get_current_position();
         }
-        iter.current_pos_data = iter.iter.next();
-        if iter.current_pos_data.is_none() {
+        iter.advance_iter();
+        if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
         }
@@ -901,14 +980,14 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     }
 
     fn get_current_position_character_len(_: &LineBreakIterator<Self>) -> usize {
-        panic!("not reachable");
+        unreachable!()
     }
 
     fn handle_complex_language(
         _: &mut LineBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
-        panic!("not reachable");
+        unreachable!()
     }
 }
 
@@ -933,11 +1012,10 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
     }
 
     fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        let ch = iterator.current_pos_data.unwrap().1;
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
+        match iterator.get_current_codepoint() {
+            None => 0,
+            Some(ch) if ch >= 0x10000 => 2,
+            _ => 1,
         }
     }
 
@@ -950,12 +1028,15 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         let start_point = iterator.current_pos_data;
         let mut s = vec![left_codepoint as u16];
         loop {
-            s.push(iterator.current_pos_data.unwrap().1 as u16);
-            iterator.current_pos_data = iterator.iter.next();
-            if iterator.current_pos_data.is_none() {
-                break;
-            }
-            if !Self::use_complex_breaking(iterator, iterator.current_pos_data.unwrap().1) {
+            debug_assert!(!iterator.is_eof());
+            s.push(iterator.get_current_codepoint()? as u16);
+            iterator.advance_iter();
+            if let Some(current_codepoint) = iterator.get_current_codepoint() {
+                if !Self::use_complex_breaking(iterator, current_codepoint) {
+                    break;
+                }
+            } else {
+                // EOF
                 break;
             }
         }
@@ -963,12 +1044,18 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary, iterator.lstm, &s);
+        let breaks = complex_language_segment_utf16(
+            Some(iterator.dictionary),
+            Some(iterator.lstm),
+            Some(iterator.grapheme),
+            &s,
+        );
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
+        let first_pos = *iterator.result_cache.first()?;
         loop {
-            if i == *iterator.result_cache.first().unwrap() {
+            if i == first_pos {
                 // Re-calculate breaking offset
                 iterator.result_cache = iterator
                     .result_cache
@@ -976,10 +1063,10 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
                     .skip(1)
                     .map(|r| r - i)
                     .collect();
-                return Some(iterator.current_pos_data.unwrap().0);
+                return iterator.get_current_position();
             }
-            iterator.current_pos_data = iterator.iter.next();
-            if iterator.current_pos_data.is_none() {
+            iterator.advance_iter();
+            if iterator.is_eof() {
                 iterator.result_cache.clear();
                 return Some(iterator.len);
             }
@@ -1142,7 +1229,7 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter = LineBreakSegmenter::try_new(&icu_testdata::buffer().as_deserializing())
+        let segmenter = LineSegmenter::try_new_unstable(&icu_testdata::buffer().as_deserializing())
             .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");

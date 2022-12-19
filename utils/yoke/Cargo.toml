@@ -4,7 +4,7 @@
 
 [package]
 name = "yoke"
-version = "0.6.1"
+version = "0.6.2"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
@@ -23,7 +23,7 @@ include = [
 
 [features]
 derive = ["yoke-derive", "zerofrom/derive"]
-alloc = ["stable_deref_trait/alloc", "serde/alloc", "zerofrom/alloc"]
+alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]
 default = ["alloc", "zerofrom"]
 
 [package.metadata.docs.rs]

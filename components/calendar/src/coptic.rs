@@ -8,12 +8,12 @@
 //! use icu::calendar::{coptic::Coptic, Date, DateTime};
 //!
 //! // `Date` type
-//! let date_iso = Date::new_iso_date(1970, 1, 2)
+//! let date_iso = Date::try_new_iso_date(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
 //! // `DateTime` type
-//! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
+//! let datetime_iso = DateTime::try_new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
 //! let datetime_coptic = DateTime::new_from_iso(datetime_iso, Coptic);
 //!
@@ -33,9 +33,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::helpers::quotient;
 use crate::iso::Iso;
 use crate::julian::Julian;
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -100,19 +101,19 @@ impl Calendar for Coptic {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
+    ) -> Result<Self::DateInner, CalendarError> {
         let year = if era.0 == tinystr!(16, "ad") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             year
         } else if era.0 == tinystr!(16, "bd") {
             if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
+                return Err(CalendarError::OutOfRange);
             }
             1 - year
         } else {
-            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+            return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(CopticDateInner)
@@ -203,7 +204,7 @@ impl Coptic {
     fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> i32 {
         COPTIC_EPOCH - 1
             + 365 * (date.year - 1)
-            + (date.year / 4)
+            + quotient(date.year, 4)
             + 30 * (date.month as i32 - 1)
             + date.day as i32
     }
@@ -219,12 +220,12 @@ impl Coptic {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
-        let year = (4 * (date - COPTIC_EPOCH) + 1463) / 1461;
-        let month = ((date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1) as u8; // <= 12 < u8::MAX
+        let year = quotient(4 * (date - COPTIC_EPOCH) + 1463, 1461);
+        let month = (quotient(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
         let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
         #[allow(clippy::unwrap_used)] // day and month have the correct bounds
-        *Date::new_coptic_date(year, month, day).unwrap().inner()
+        *Date::try_new_coptic_date(year, month, day).unwrap().inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
@@ -244,14 +245,18 @@ impl Date<Coptic> {
     /// ```rust
     /// use icu::calendar::Date;
     ///
-    /// let date_coptic =
-    ///     Date::new_coptic_date(1686, 5, 6).expect("Failed to initialize Coptic Date instance.");
+    /// let date_coptic = Date::try_new_coptic_date(1686, 5, 6)
+    ///     .expect("Failed to initialize Coptic Date instance.");
     ///
     /// assert_eq!(date_coptic.year().number, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```
-    pub fn new_coptic_date(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, DateTimeError> {
+    pub fn try_new_coptic_date(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<Coptic>, CalendarError> {
         let inner = ArithmeticDate {
             year,
             month,
@@ -261,7 +266,7 @@ impl Date<Coptic> {
 
         let bound = inner.days_in_month();
         if day > bound {
-            return Err(DateTimeError::OutOfRange);
+            return Err(CalendarError::OutOfRange);
         }
 
         Ok(Date::from_raw(CopticDateInner(inner), Coptic))
@@ -276,8 +281,9 @@ impl DateTime<Coptic> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_coptic = DateTime::new_coptic_datetime(1686, 5, 6, 13, 1, 0)
-    ///     .expect("Failed to initialize Coptic DateTime instance.");
+    /// let datetime_coptic =
+    ///     DateTime::try_new_coptic_datetime(1686, 5, 6, 13, 1, 0)
+    ///         .expect("Failed to initialize Coptic DateTime instance.");
     ///
     /// assert_eq!(datetime_coptic.date.year().number, 1686);
     /// assert_eq!(datetime_coptic.date.month().ordinal, 5);
@@ -286,16 +292,16 @@ impl DateTime<Coptic> {
     /// assert_eq!(datetime_coptic.time.minute.number(), 1);
     /// assert_eq!(datetime_coptic.time.second.number(), 0);
     /// ```
-    pub fn new_coptic_datetime(
+    pub fn try_new_coptic_datetime(
         year: i32,
         month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Coptic>, DateTimeError> {
+    ) -> Result<DateTime<Coptic>, CalendarError> {
         Ok(DateTime {
-            date: Date::new_coptic_date(year, month, day)?,
+            date: Date::try_new_coptic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -314,5 +320,18 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
             number: 1 - year,
             related_iso: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_coptic_regression() {
+        // https://github.com/unicode-org/icu4x/issues/2254
+        let iso_date = Date::try_new_iso_date(-100, 3, 3).unwrap();
+        let coptic = iso_date.to_calendar(Coptic);
+        let recovered_iso = coptic.to_iso();
+        assert_eq!(iso_date, recovered_iso);
     }
 }

@@ -88,7 +88,7 @@ fn test_fixture(fixture_name: &str) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Ok(kind) = AnyCalendarKind::from_locale(&locale) {
+            if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
@@ -234,13 +234,13 @@ fn assert_fixture_element<A>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_unstable(
+            let tf = TimeFormatter::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.time.unwrap(),
@@ -250,7 +250,7 @@ fn assert_fixture_element<A>(
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.date.unwrap(),
@@ -259,7 +259,7 @@ fn assert_fixture_element<A>(
 
             assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_unstable(
+            let tf = TimeFormatter::try_new_with_length_unstable(
                 &icu_testdata::unstable(),
                 &locale.into(),
                 bag.time.unwrap(),
@@ -531,7 +531,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Default::default(),
     )
     .unwrap();
-    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?".to_string());
+    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?");
 }
 
 #[test]
@@ -825,7 +825,7 @@ fn test_vertical_fallback_disabled() {
 
     // This should work for length bag. It doesn't currently work for components bag.
     assert_writeable_eq!(
-        dtf.format(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
+        dtf.format(&DateTime::try_new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
         "mardi 5 avril 2022 à 12:33",
     );
 }

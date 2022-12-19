@@ -4,10 +4,10 @@
 
 [package]
 name = "litemap"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
-edition = "2018"
+edition = "2021"
 license = "Unicode-DFS-2016"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
@@ -38,7 +38,7 @@ rkyv = { version = "0.7", features = ["validation"] }
 bytecheck = "0.6"
 bincode = "1"
 postcard = { version = "1.0.0", features = ["use-std"] }
-icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
+icu_locid = { version = "1.0.0", path = "../../components/locid" }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 

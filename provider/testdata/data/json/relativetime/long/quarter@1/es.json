@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "el trimestre pasado",
+    "0": "este trimestre",
+    "1": "el próximo trimestre"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "hace  trimestre",
+      "index": 5
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "hace  trimestres",
+      "index": 5
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "dentro de  trimestre",
+      "index": 10
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "dentro de  trimestres",
+      "index": 10
+    }
+  }
+}

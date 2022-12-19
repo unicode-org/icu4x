@@ -30,10 +30,12 @@ programmer to pick the calendar at compile time.
 ```rust
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{
-    options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
+    options::length, DateTimeFormatter, DateTimeFormatterOptions,
+    TypedDateTimeFormatter,
 };
 use icu::locid::{locale, Locale};
 use std::str::FromStr;
+use writeable::assert_writeable_eq;
 
 // See the next code example for a more ergonomic example with .into().
 let options =
@@ -59,15 +61,23 @@ let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
 )
 .expect("Failed to create TypedDateTimeFormatter instance.");
 
-let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+let typed_date =
+    DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 // prefer using ISO dates with DateTimeFormatter
 let date = typed_date.to_iso().to_any();
 
 let formatted_date = dtf.format(&date).expect("Calendars should match");
 let typed_formatted_date = typed_dtf.format(&typed_date);
 
-assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
-assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
+assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
+assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
+
+let formatted_date_string =
+    dtf.format_to_string(&date).expect("Calendars should match");
+let typed_formatted_date_string = typed_dtf.format_to_string(&typed_date);
+
+assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
+assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
 ```
 
 The options can be created more ergonomically using the `Into` trait to automatically

@@ -10,10 +10,10 @@ use crate::parser::{
 };
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
-use alloc::string::ToString;
 use core::cmp::Ordering;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
+use writeable::Writeable;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -28,20 +28,21 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::unicode::{Key, Value};
-/// use icu::locid::{Locale, subtags::*};
+/// use icu_locid::{
+///     extensions_unicode_key as key, extensions_unicode_value as value,
+///     locale, subtags_language as language, subtags_region as region,
+/// };
 ///
-/// let loc: Locale = "en-US-u-ca-buddhist".parse().expect("Failed to parse.");
+/// let loc = locale!("en-US-u-ca-buddhist");
 ///
-/// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
+/// assert_eq!(loc.id.language, language!("en"));
 /// assert_eq!(loc.id.script, None);
-/// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
+/// assert_eq!(loc.id.region, Some(region!("US")));
 /// assert_eq!(loc.id.variants.len(), 0);
-/// assert_eq!(loc.to_string(), "en-US-u-ca-buddhist");
-///
-/// let key: Key = "ca".parse().expect("Parsing key failed.");
-/// let value: Value = "buddhist".parse().expect("Parsing value failed.");
-/// assert_eq!(loc.extensions.unicode.keywords.get(&key), Some(&value));
+/// assert_eq!(
+///     loc.extensions.unicode.keywords.get(&key!("ca")),
+///     Some(&value!("buddhist"))
+/// );
 /// ```
 ///
 /// # Parsing
@@ -61,7 +62,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{Locale, subtags::*};
+/// use icu::locid::{subtags::*, Locale};
 ///
 /// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
 ///     .parse()
@@ -70,7 +71,10 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(loc.id.language, "en".parse::<Language>().unwrap());
 /// assert_eq!(loc.id.script, "Latn".parse::<Script>().ok());
 /// assert_eq!(loc.id.region, "US".parse::<Region>().ok());
-/// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
+/// assert_eq!(
+///     loc.id.variants.get(0),
+///     "valencia".parse::<Variant>().ok().as_ref()
+/// );
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 #[derive(Default, PartialEq, Eq, Clone, Hash)]
@@ -84,6 +88,8 @@ pub struct Locale {
 
 #[test]
 fn test_sizes() {
+    // Remove when we upgrade to a compiler where the new sizes are default
+    let forced_nightly = std::env::var("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_ok();
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
     assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
@@ -96,12 +102,21 @@ fn test_sizes() {
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
     assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 48);
+    assert_eq!(
+        core::mem::size_of::<extensions::unicode::Keywords>(),
+        if forced_nightly { 40 } else { 48 }
+    );
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
     assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 192);
+    assert_eq!(
+        core::mem::size_of::<extensions::Extensions>(),
+        if forced_nightly { 184 } else { 192 }
+    );
 
-    assert_eq!(core::mem::size_of::<Locale>(), 240);
+    assert_eq!(
+        core::mem::size_of::<Locale>(),
+        if forced_nightly { 232 } else { 240 }
+    );
 }
 
 impl Locale {
@@ -113,11 +128,9 @@ impl Locale {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let loc = Locale::from_bytes("en-US-u-hc-h12".as_bytes()).expect("Parsing failed.");
-    ///
-    /// assert_eq!(loc.to_string(), "en-US-u-hc-h12");
+    /// Locale::try_from_bytes(b"en-US-u-hc-h12").unwrap();
     /// ```
-    pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
+    pub fn try_from_bytes(v: &[u8]) -> Result<Self, ParserError> {
         parse_locale(v)
     }
 
@@ -129,7 +142,6 @@ impl Locale {
     /// use icu::locid::Locale;
     ///
     /// assert_eq!(Locale::default(), Locale::UND);
-    /// assert_eq!("und", Locale::UND.to_string());
     /// ```
     pub const UND: Self = Self {
         id: LanguageIdentifier::UND,
@@ -147,13 +159,13 @@ impl Locale {
     /// use icu::locid::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12"),
-    ///     Ok("pl-Latn-PL-u-hc-h12".to_string())
+    ///     Locale::canonicalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
     pub fn canonicalize<S: AsRef<[u8]>>(input: S) -> Result<String, ParserError> {
-        let locale = Self::from_bytes(input.as_ref())?;
-        Ok(locale.to_string())
+        let locale = Self::try_from_bytes(input.as_ref())?;
+        Ok(locale.write_to_string().into_owned())
     }
 
     /// Compare this [`Locale`] with BCP-47 bytes.
@@ -185,7 +197,6 @@ impl Locale {
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
     ///     let a_loc = a.parse::<Locale>().unwrap();
-    ///     assert_eq!(a, a_loc.to_string());
     ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
     ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
@@ -207,7 +218,8 @@ impl Locale {
     /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
-    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    /// let subtags: &[&[u8]] =
+    ///     &[b"ca", b"ES", b"valencia", b"u", b"ca", b"hebrew"];
     ///
     /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
     /// assert_eq!(
@@ -276,7 +288,7 @@ impl Locale {
             ($T:ty, $iter:ident, $expected:expr) => {
                 $iter
                     .next()
-                    .map(|b| <$T>::from_bytes(b) == Ok($expected))
+                    .map(|b| <$T>::try_from_bytes(b) == Ok($expected))
                     .unwrap_or(false)
             };
         }
@@ -317,7 +329,7 @@ impl Locale {
 
     #[doc(hidden)]
     #[allow(clippy::type_complexity)]
-    pub const fn from_bytes_with_single_variant_single_keyword_unicode_extension(
+    pub const fn try_from_bytes_with_single_variant_single_keyword_unicode_extension(
         v: &[u8],
     ) -> Result<
         (
@@ -349,7 +361,7 @@ impl FromStr for Locale {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        Self::from_bytes(source.as_bytes())
+        Self::try_from_bytes(source.as_bytes())
     }
 }
 
@@ -386,7 +398,7 @@ impl core::fmt::Debug for Locale {
     }
 }
 
-impl_writeable_for_each_subtag_str_no_test!(Locale);
+impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_empty() => selff.id.write_to_string());
 
 #[test]
 fn test_writeable() {
@@ -421,14 +433,10 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_language as language;
 /// use icu::locid::Locale;
+/// use icu::locid::{locale, subtags_language as language};
 ///
-/// let language = language!("en");
-/// let loc = Locale::from(language);
-///
-/// assert_eq!(loc.id.language, language);
-/// assert_eq!(loc.to_string(), "en");
+/// assert_eq!(Locale::from(language!("en")), locale!("en"));
 /// ```
 impl From<subtags::Language> for Locale {
     fn from(language: subtags::Language) -> Self {
@@ -442,14 +450,10 @@ impl From<subtags::Language> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_script as script;
 /// use icu::locid::Locale;
+/// use icu::locid::{locale, subtags_script as script};
 ///
-/// let script = script!("latn");
-/// let loc = Locale::from(Some(script));
-///
-/// assert_eq!(loc.id.script.unwrap(), script);
-/// assert_eq!(loc.to_string(), "und-Latn");
+/// assert_eq!(Locale::from(Some(script!("latn"))), locale!("und-Latn"));
 /// ```
 impl From<Option<subtags::Script>> for Locale {
     fn from(script: Option<subtags::Script>) -> Self {
@@ -463,14 +467,10 @@ impl From<Option<subtags::Script>> for Locale {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags_region as region;
 /// use icu::locid::Locale;
+/// use icu::locid::{locale, subtags_region as region};
 ///
-/// let region = region!("US");
-/// let loc = Locale::from(Some(region));
-///
-/// assert_eq!(loc.id.region.unwrap(), region);
-/// assert_eq!(loc.to_string(), "und-US");
+/// assert_eq!(Locale::from(Some(region!("US"))), locale!("und-US"));
 /// ```
 impl From<Option<subtags::Region>> for Locale {
     fn from(region: Option<subtags::Region>) -> Self {
@@ -485,18 +485,19 @@ impl From<Option<subtags::Region>> for Locale {
 ///
 /// ```
 /// use icu::locid::Locale;
-/// use icu::locid::{subtags_language as language, subtags_region as region, subtags_script as script};
+/// use icu::locid::{
+///     locale, subtags_language as language, subtags_region as region,
+///     subtags_script as script,
+/// };
 ///
-/// let lang = language!("en");
-/// let script = script!("Latn");
-/// let region = region!("US");
-/// let loc = Locale::from((lang, Some(script), Some(region)));
-///
-/// assert_eq!(loc.id.language, lang);
-/// assert_eq!(loc.id.script.unwrap(), script);
-/// assert_eq!(loc.id.region.unwrap(), region);
-/// assert_eq!(loc.id.variants.len(), 0);
-/// assert_eq!(loc.to_string(), "en-Latn-US");
+/// assert_eq!(
+///     Locale::from((
+///         language!("en"),
+///         Some(script!("Latn")),
+///         Some(region!("US"))
+///     )),
+///     locale!("en-Latn-US")
+/// );
 /// ```
 impl
     From<(
