@@ -268,7 +268,7 @@ impl CompactDecimalFormatter {
                     value: Cow::Owned(CompactDecimal::noncompact(unrounded)),
                 };
             }
-            significand = unrounded.clone().multiplied_pow10(-i16::from(exponent));
+            significand = unrounded.multiplied_pow10(-i16::from(exponent));
             // TODO(egg): Discuss correctness.
             round(&mut significand);
         }
@@ -355,7 +355,7 @@ impl CompactDecimalFormatter {
             return Err(CompactDecimalError::Exponent {
                 actual: value.exponent(),
                 expected: i16::from(expected_exponent),
-                log10_type: log10_type,
+                log10_type,
             });
         }
 

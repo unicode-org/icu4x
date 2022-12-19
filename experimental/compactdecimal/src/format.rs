@@ -50,7 +50,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                 _ => {
                     let i = usize::from(chosen_pattern.index);
                     sink.write_str(
-                        &chosen_pattern
+                        chosen_pattern
                             .literal_text
                             .get(..i)
                             .ok_or(core::fmt::Error)?,
@@ -60,7 +60,7 @@ impl<'l> Writeable for FormattedCompactDecimal<'l> {
                         .format(self.value.significand())
                         .write_to(sink)?;
                     sink.write_str(
-                        &chosen_pattern
+                        chosen_pattern
                             .literal_text
                             .get(i..)
                             .ok_or(core::fmt::Error)?,
