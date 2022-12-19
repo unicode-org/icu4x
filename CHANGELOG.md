@@ -1,5 +1,10 @@
 # Changelog
 
+## Bug fixes in 1.0.x
+
+### icu_collator 1.0.1
+
+- Made case level setting actually take effect (#2892)
 
 ## icu4x 1.0 (Sept 27, 2022)
 
