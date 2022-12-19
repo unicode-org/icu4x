@@ -307,7 +307,7 @@ impl CompactDecimalFormatter {
     /// # use writeable::assert_writeable_eq;
     /// # use std::str::FromStr;
     /// use fixed_decimal::CompactDecimal;
-    /// 
+    ///
     /// # let short_french = CompactDecimalFormatter::try_new_short_unstable(
     /// #    &icu_testdata::unstable(),
     /// #    &locale!("fr").into(),
