@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671218355979,
+  "lastUpdate": 1671470541955,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32488,6 +32488,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4288293,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango Cheran",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2989ddb0e60d56fe5b8d1c75b279dc42598084f4",
+          "message": "Update version of CLDR data to 42.0.0 (#2874)",
+          "timestamp": "2022-12-19T17:19:31Z",
+          "tree_id": "ad6b79a5d0122354075c96a5f879a247c13d08d4",
+          "url": "https://github.com/unicode-org/icu4x/commit/2989ddb0e60d56fe5b8d1c75b279dc42598084f4"
+        },
+        "date": 1671470457240,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
             "unit": "bytes",
             "biggerIsBetter": false
           }
