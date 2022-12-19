@@ -236,16 +236,20 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(feature = "serde")]
     use crate::provider::GraphemeClusterBreakDataV1Marker;
+    #[cfg(feature = "serde")]
     use icu_provider::prelude::*;
-    use serde::{Deserialize, Serialize};
+    #[cfg(feature = "serde")]
     use std::fs::File;
+    #[cfg(feature = "serde")]
     use std::io::BufReader;
 
     /// `TestCase` is a struct used to store a single test case.
     /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
     /// sequence representing the true segmentation.
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct TestCase {
         pub unseg: String,
         pub expected_bies: String,
@@ -253,7 +257,8 @@ mod tests {
     }
 
     /// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug)]
+    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct TestTextData {
         pub testcases: Vec<TestCase>,
     }
@@ -264,11 +269,13 @@ mod tests {
     }
 
     impl TestText {
+        #[cfg(feature = "serde")]
         pub fn new(data: TestTextData) -> Self {
             Self { data }
         }
     }
 
+    #[cfg(feature = "serde")]
     fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
         DataPayload::from_owned_buffer(
             std::fs::read(filename)
@@ -278,6 +285,7 @@ mod tests {
         .map_project(|bytes, _| serde_json::from_slice(bytes).expect("JSON syntax error"))
     }
 
+    #[cfg(feature = "serde")]
     fn load_test_text(filename: &str) -> TestTextData {
         let file = File::open(filename).expect("File should be present");
         let reader = BufReader::new(file);
@@ -285,6 +293,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_model_loading() {
         let filename =
             "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
@@ -303,6 +312,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn segment_file_by_lstm() {
         // Choosing the embedding system. It can be "graphclust" or "codepoints".
         let embedding: &str = "codepoints";
