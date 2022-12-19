@@ -46,7 +46,7 @@ impl CompactDecimal {
     /// # use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     /// #
-    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().significand(), FixedDecimal::from_str("+1.20").unwrap());
+    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().significand(), &FixedDecimal::from_str("+1.20").unwrap());
     /// ```
     pub fn significand(&self) -> &FixedDecimal {
         &self.significand
