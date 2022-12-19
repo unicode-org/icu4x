@@ -322,6 +322,22 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                 );
             }
         }
+        if !patterns
+            .iter()
+            .tuple_windows()
+            .all(|((_, low), (_, high))| {
+                low.get(&Count::Other).map(|p| p.exponent)
+                    <= high.get(&Count::Other).map(|p| p.exponent)
+            })
+        {
+            Err(format!(
+                "Compact decimal exponents should be nondecreasing: {:?}",
+                patterns
+                    .iter()
+                    .map(|(_, plural_map)| plural_map.get(&Count::Other).map(|p| p.exponent))
+                    .collect::<Vec<_>>(),
+            ))?;
+        }
         // Deduplicate sequences of types that have the same plural map (up to =1), keeping the lowest type.
         // The pattern 0 for type 1 is implicit.
         let deduplicated_patterns = patterns

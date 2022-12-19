@@ -30,8 +30,6 @@ use crate::{
 /// use icu_compactdecimal::CompactDecimalFormatter;
 /// use icu_locid::locale;
 /// use writeable::assert_writeable_eq;
-/// use std::str::FromStr;
-/// use fixed_decimal::CompactDecimal;
 ///
 /// let short_french = CompactDecimalFormatter::try_new_short_unstable(
 ///    &icu_testdata::unstable(),
@@ -200,11 +198,9 @@ impl CompactDecimalFormatter {
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted.
     /// ```
-    /// # use fixed_decimal::CompactDecimal;
     /// # use icu_compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;
     /// # use writeable::assert_writeable_eq;
-    /// # use std::str::FromStr;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short_unstable(
     /// #    &icu_testdata::unstable(),
@@ -219,11 +215,9 @@ impl CompactDecimalFormatter {
     /// The result is the nearest such compact number, with halfway cases-
     /// rounded towards the number with an even least significant digit.
     /// ```
-    /// # use fixed_decimal::CompactDecimal;
     /// # use icu_compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;
     /// # use writeable::assert_writeable_eq;
-    /// # use std::str::FromStr;
     /// #
     /// # let short_english = CompactDecimalFormatter::try_new_short_unstable(
     /// #    &icu_testdata::unstable(),
@@ -236,44 +230,30 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format(1950), "2K");
     /// ```
     pub fn format(&self, value: i64) -> FormattedCompactDecimal<'_> {
-        fn round(significand: &mut FixedDecimal) {
-            if significand.nonzero_magnitude_start() == 0 {
-                significand.half_even(-1);
-            } else {
-                significand.half_even(0);
-            }
-        }
-
         let unrounded = FixedDecimal::from(value);
         let log10_type = unrounded.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
-        if exponent == 0 {
-            return FormattedCompactDecimal {
-                formatter: self,
-                plural_map,
-                value: Cow::Owned(CompactDecimal::noncompact(unrounded)),
-            };
+        let mut significand = unrounded.multiplied_pow10(-i16::from(exponent));
+        if significand.nonzero_magnitude_start() == 0 {
+            significand.half_even(-1);
+        } else {
+            significand.half_even(0);
         }
-        let mut significand = unrounded.clone().multiplied_pow10(-i16::from(exponent));
-        round(&mut significand);
         let rounded_magnitude = significand.nonzero_magnitude_start() + i16::from(exponent);
         if rounded_magnitude > log10_type {
             // We got bumped up a magnitude by rounding.
+            // This means that `significand` is a power of 10.
+            let old_exponent = exponent;
             // NOTE(egg): We could inline `plural_map_and_exponent_for_magnitude`
             // to avoid iterating twice (we only need to look at the next key),
             // but this obscures the logic and the map is tiny.
             (plural_map, exponent) = self.plural_map_and_exponent_for_magnitude(rounded_magnitude);
-            // TODO(egg): Discuss awkwardness.
-            if exponent == 0 {
-                return FormattedCompactDecimal {
-                    formatter: self,
-                    plural_map,
-                    value: Cow::Owned(CompactDecimal::noncompact(unrounded)),
-                };
-            }
-            significand = unrounded.multiplied_pow10(-i16::from(exponent));
-            // TODO(egg): Discuss correctness.
-            round(&mut significand);
+            significand =
+                significand.multiplied_pow10(i16::from(old_exponent) - i16::from(exponent));
+            // There is no need to perform any rounding: `significand`, being
+            // a power of 10, is as round as it gets, and since `exponent` can
+            // only have become larger, it is already the correct rounding of
+            // `unrounded` to the precision we want to show.
         }
         significand.trim_end();
         FormattedCompactDecimal {
@@ -377,6 +357,27 @@ impl CompactDecimalFormatter {
 
     /// Returns the compact decimal exponent that should be used for a number of
     /// the given magnitude when using this formatter.
+    ///
+    /// # Examples
+    /// ```
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    ///
+    /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
+    ///     .map(|locale| {
+    ///         CompactDecimalFormatter::try_new_long_unstable(
+    ///             &icu_testdata::unstable(),
+    ///             &locale.into(),
+    ///         )
+    ///         .unwrap()
+    ///     });
+    /// /// French uses millions.
+    /// assert_eq!(long_french.compact_exponent_for_magnitude(6), 6);
+    /// /// Bangla uses lakhs.
+    /// assert_eq!(long_bangla.compact_exponent_for_magnitude(6), 5);
+    /// /// Japanese uses myriads.
+    /// assert_eq!(long_japanese.compact_exponent_for_magnitude(6), 4);
+    /// ```
     pub fn compact_exponent_for_magnitude(&self, magnitude: i16) -> u8 {
         let (_, exponent) = self.plural_map_and_exponent_for_magnitude(magnitude);
         exponent
