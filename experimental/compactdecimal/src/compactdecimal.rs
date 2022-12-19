@@ -238,9 +238,13 @@ impl CompactDecimalFormatter {
         let log10_type = unrounded.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
         let mut significand = unrounded.multiplied_pow10(-i16::from(exponent));
+        // If we have just one digit before the decimal point…
         if significand.nonzero_magnitude_start() == 0 {
+            // …round to one fractional digit…
             significand.half_even(-1);
         } else {
+            // …otherwise, we have at least 2 digits before the decimal point,
+            // so round to eliminate the fractional part.
             significand.half_even(0);
         }
         let rounded_magnitude = significand.nonzero_magnitude_start() + i16::from(exponent);
