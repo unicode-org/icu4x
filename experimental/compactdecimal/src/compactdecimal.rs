@@ -196,7 +196,8 @@ impl CompactDecimalFormatter {
     /// precision settings.
     ///
     /// The result may have a fractional digit only if it is compact and its
-    /// significand is less than 10. Trailing fractional 0s are omitted.
+    /// significand is less than 10. Trailing fractional 0s are omitted, and
+    /// a sign is shown only for negative values.
     /// ```
     /// # use icu_compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;
@@ -206,11 +207,13 @@ impl CompactDecimalFormatter {
     /// #    &icu_testdata::unstable(),
     /// #    &locale!("en").into()
     /// # ).unwrap();
+    /// assert_writeable_eq!(short_english.format(0), "0");
     /// assert_writeable_eq!(short_english.format(2), "2");
     /// assert_writeable_eq!(short_english.format(843), "843");
     /// assert_writeable_eq!(short_english.format(2207), "2.2K");
     /// assert_writeable_eq!(short_english.format(15_127), "15K");
     /// assert_writeable_eq!(short_english.format(3_010_349), "3M");
+    /// assert_writeable_eq!(short_english.format(-13_132), "-13K");
     /// ```
     /// The result is the nearest such compact number, with halfway cases-
     /// rounded towards the number with an even least significant digit.
@@ -228,6 +231,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format(1650), "1.6K");
     /// assert_writeable_eq!(short_english.format(1750), "1.8K");
     /// assert_writeable_eq!(short_english.format(1950), "2K");
+    /// assert_writeable_eq!(short_english.format(-1_172_700), "-1.2M");
     /// ```
     pub fn format(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = FixedDecimal::from(value);
@@ -306,15 +310,15 @@ impl CompactDecimalFormatter {
     /// #     });
     /// #
     /// let about_a_million = CompactDecimal::from_str("1.20c6").unwrap();
-    /// let three_million = CompactDecimal::from_str("3c6").unwrap();
+    /// let three_million = CompactDecimal::from_str("+3c6").unwrap();
     /// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
     /// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,20 M");
     /// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,20 million");
     ///
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
-    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_million).unwrap(), "3 M");
-    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_million).unwrap(), "3 millions");
+    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_million).unwrap(), "+3 M");
+    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_million).unwrap(), "+3 millions");
     ///
     /// assert_writeable_eq!(long_bangla.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
     ///
