@@ -13,7 +13,7 @@
         },
         "output": {
             "values": {
-                "en": "0:25 AM"
+                "en": "0:25\u202fAM"
             }
         }
     },
@@ -31,7 +31,7 @@
         },
         "output": {
             "values": {
-                "en": "12:25 AM"
+                "en": "12:25\u202fAM"
             }
         }
     },
@@ -157,7 +157,7 @@
         },
         "output": {
             "values": {
-                "en": "0 AM"
+                "en": "0\u202fAM"
             }
         }
     },
@@ -174,7 +174,7 @@
         },
         "output": {
             "values": {
-                "en": "12 AM"
+                "en": "12\u202fAM"
             }
         }
     },

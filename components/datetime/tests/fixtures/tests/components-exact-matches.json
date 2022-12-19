@@ -323,7 +323,7 @@
         },
         "output": {
             "values": {
-                "en": "Tue 8:25 AM"
+                "en": "Tue 8:25\u202fAM"
             }
         }
     },
@@ -343,7 +343,7 @@
         },
         "output": {
             "values": {
-                "en": "Tue 8:25:07 AM"
+                "en": "Tue 8:25:07\u202fAM"
             }
         }
     },
@@ -399,7 +399,7 @@
         },
         "output": {
             "values": {
-                "en": "8 AM"
+                "en": "8\u202fAM"
             }
         }
     },
@@ -417,7 +417,7 @@
         },
         "output": {
             "values": {
-                "en": "8:25 AM"
+                "en": "8:25\u202fAM"
             }
         }
     },
@@ -436,7 +436,7 @@
         },
         "output": {
             "values": {
-                "en": "8:25:07 AM"
+                "en": "8:25:07\u202fAM"
             }
         }
     },

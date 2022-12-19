@@ -20,6 +20,13 @@
         "index": 0,
         "literal_text": "兆"
       }
+    },
+    "16": {
+      "Other": {
+        "exponent": 16,
+        "index": 0,
+        "literal_text": "京"
+      }
     }
   }
 }

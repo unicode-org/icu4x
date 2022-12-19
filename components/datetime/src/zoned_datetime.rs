@@ -71,7 +71,7 @@ use crate::{
 ///
 /// let formatted_date = zdtf.format(&datetime, &time_zone);
 ///
-/// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+/// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
@@ -118,7 +118,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
-    ///     "August 2022 at 01:02 GMT",
+    ///     "August 2022, 01:02 GMT",
     /// );
     /// ```
     ///
@@ -205,7 +205,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
-    ///     "Aug 31, 2022, 1:02:03 AM GMT",
+    ///     "Aug 31, 2022, 1:02:03 AM GMT",
     /// );
     /// ```
     ///
@@ -291,7 +291,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
-    /// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+    /// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format<'l>(
@@ -332,7 +332,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_string = zdtf.format_to_string(&datetime, &time_zone);
     ///
-    /// assert_eq!(formatted_string, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
+    /// assert_eq!(formatted_string, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format_to_string(

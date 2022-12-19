@@ -367,7 +367,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) araw ang nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" araw ang nakalipas"),
             index: 0u8,
         }),
         two: None,
@@ -388,7 +388,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) araw"),
+            pattern: alloc::borrow::Cow::Borrowed("sa  araw"),
             index: 3u8,
         },
     },

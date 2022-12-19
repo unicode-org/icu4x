@@ -9,7 +9,7 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": " (na) araw ang nakalipas",
+      "pattern": " araw ang nakalipas",
       "index": 0
     },
     "two": null,
@@ -30,7 +30,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) araw",
+      "pattern": "sa  araw",
       "index": 3
     }
   }

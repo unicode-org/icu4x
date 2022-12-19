@@ -12,7 +12,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) oras nakalipas",
+      "pattern": " oras ang nakalipas",
       "index": 0
     }
   },
@@ -26,7 +26,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) oras",
+      "pattern": "sa  oras",
       "index": 3
     }
   }

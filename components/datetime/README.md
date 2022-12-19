@@ -69,15 +69,15 @@ let date = typed_date.to_iso().to_any();
 let formatted_date = dtf.format(&date).expect("Calendars should match");
 let typed_formatted_date = typed_dtf.format(&typed_date);
 
-assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
-assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
+assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34 PM");
+assert_writeable_eq!(typed_formatted_date, "Sep 12, 2020, 12:34 PM");
 
 let formatted_date_string =
     dtf.format_to_string(&date).expect("Calendars should match");
 let typed_formatted_date_string = typed_dtf.format_to_string(&typed_date);
 
-assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
-assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
+assert_eq!(formatted_date_string, "Sep 12, 2020, 12:34 PM");
+assert_eq!(typed_formatted_date_string, "Sep 12, 2020, 12:34 PM");
 ```
 
 The options can be created more ergonomically using the `Into` trait to automatically

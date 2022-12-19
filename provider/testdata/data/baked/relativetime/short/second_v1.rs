@@ -360,7 +360,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) seg. nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" seg. ang nakalipas"),
             index: 0u8,
         },
     },
@@ -374,7 +374,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) seg."),
+            pattern: alloc::borrow::Cow::Borrowed("sa  seg."),
             index: 3u8,
         },
     },

@@ -206,17 +206,18 @@ static JA: &DataStruct = &::icu_compactdecimal::provider::CompactDecimalPatternD
     patterns: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[4u8, 8u8, 12u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[4u8, 8u8, 12u8, 16u8]) },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8,
+                    1u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8,
                 ])
             },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[5u8, 5u8, 5u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[5u8, 5u8, 5u8, 5u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 4u8, 0u8, 228u8, 184u8,
-                    135u8, 8u8, 0u8, 229u8, 132u8, 132u8, 12u8, 0u8, 229u8, 133u8, 134u8,
+                    4u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 15u8, 0u8, 4u8, 0u8, 228u8,
+                    184u8, 135u8, 8u8, 0u8, 229u8, 132u8, 132u8, 12u8, 0u8, 229u8, 133u8, 134u8,
+                    16u8, 0u8, 228u8, 186u8, 172u8,
                 ])
             },
         )

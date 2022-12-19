@@ -36,7 +36,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("und-CH", UND_AD_UND_AN_UND_AT_UND_AX_UND_BE_UND_BG),
         ("und-CL", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
         ("und-CM", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
-        ("und-CN", UND_AG_UND_AS_UND_BD_UND_BR_UND_BS_UND_BT),
+        ("und-CN", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
         ("und-CO", UND_AG_UND_AS_UND_BD_UND_BR_UND_BS_UND_BT),
         ("und-CR", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
         ("und-CY", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),

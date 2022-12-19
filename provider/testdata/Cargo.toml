@@ -141,7 +141,7 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-cldr_json_gitref = "41.0.0"
+cldr_json_gitref = "42.0.0"
 
 icuexportdata_glob = [
     "collation/implicithan/bn_standard_data.toml",
