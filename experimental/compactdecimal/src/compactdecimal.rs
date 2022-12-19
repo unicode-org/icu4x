@@ -55,6 +55,9 @@ use crate::{
 /// assert_writeable_eq!(long_japanese.format(3535_7670), "3536万");
 /// /// So are the digits:
 /// assert_writeable_eq!(long_bangla.format(3_53_57_670), "৩.৫ কোটি");
+///
+/// /// The output does not always contain digits:
+/// assert_writeable_eq!(long_french.format(1000), "mille");
 /// ```
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
@@ -285,7 +288,8 @@ impl CompactDecimalFormatter {
 
     /// Formats a [`CompactDecimal`] object according to locale data.
     ///
-    /// This is an advanced API; prefer using [`format()`] in simple cases.
+    /// This is an advanced API; prefer using [`Self::format()`] in simple
+    /// cases.
     ///
     /// Since the caller specifies the exact digits that are displayed, this
     /// allows for arbitrarily complex rounding rules.
@@ -295,7 +299,7 @@ impl CompactDecimalFormatter {
     /// millions are requested, or vice versa, this function returns an error.
     ///
     /// The given [`CompactDecimal`] should be constructed using
-    /// [`compact_exponent_for_magnitude`] on the same
+    /// [`Self::compact_exponent_for_magnitude()`] on the same
     /// [`CompactDecimalFormatter`] object.
     /// Specifically, `formatter.format_compact_decimal(n)` requires that `n.exponent()`
     /// be equal to `formatter.compact_exponent_for_magnitude(n.significand().nonzero_magnitude_start() + n.exponent())`.
@@ -342,6 +346,11 @@ impl CompactDecimalFormatter {
     ///     long_french.format_compact_decimal(&ten_lakhs).err().unwrap().to_string(),
     ///     "Expected compact exponent 6 for 10^6, got 5",
     /// );
+    ///
+    /// /// Some patterns omit the digits; in those cases, the output does not
+    /// /// contain the sequence of digits specified by the CompactDecimal.
+    /// let a_thousand = CompactDecimal::from_str("1c3").unwrap();
+    /// assert_writeable_eq!(long_french.format_compact_decimal(&a_thousand).unwrap(), "mille");
     /// ```
     pub fn format_compact_decimal<'l>(
         &'l self,
