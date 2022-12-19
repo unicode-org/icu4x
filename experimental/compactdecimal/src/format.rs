@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::borrow::Cow;
 use fixed_decimal::{CompactDecimal, FixedDecimal};
 use writeable::Writeable;
 use zerovec::maps::ZeroMap2dCursor;
@@ -13,7 +14,7 @@ use crate::provider::{Count, PatternULE};
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 pub struct FormattedCompactDecimal<'l> {
     pub(crate) formatter: &'l CompactDecimalFormatter,
-    pub(crate) value: &'l CompactDecimal,
+    pub(crate) value: Cow<'l, CompactDecimal>,
     pub(crate) plural_map: Option<ZeroMap2dCursor<'l, 'l, i8, Count, PatternULE>>,
 }
 

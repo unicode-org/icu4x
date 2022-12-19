@@ -26,6 +26,20 @@ pub struct CompactDecimal {
 }
 
 impl CompactDecimal {
+    pub fn noncompact(significand: FixedDecimal) -> Self {
+        Self {
+            significand,
+            exponent: 0,
+        }
+    }
+
+    pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
+        Self {
+            significand,
+            exponent: exponent.into(),
+        }
+    }
+
     /// Returns a reference to the significand of `self`.
     /// ```
     /// # use fixed_decimal::CompactDecimal;
@@ -36,6 +50,18 @@ impl CompactDecimal {
     /// ```
     pub fn significand(&self) -> &FixedDecimal {
         &self.significand
+    }
+
+    /// Returns the significand of `self`.
+    /// ```
+    /// # use fixed_decimal::CompactDecimal;
+    /// # use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    /// #
+    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().into_significand(), FixedDecimal::from_str("+1.20").unwrap());
+    /// ```
+    pub fn into_significand(self) -> FixedDecimal {
+        self.significand
     }
 
     /// Returns the exponent of `self`.
