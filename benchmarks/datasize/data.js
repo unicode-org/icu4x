@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671530643762,
+  "lastUpdate": 1671554047089,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32543,6 +32543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/43195100333bfc5ba9751b381b2854d505ea2cfe"
         },
         "date": 1671530557329,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a61a16aaabd567b0b5a3cca2b434b33ed12d62b3",
+          "message": "The actual formatting part of compact decimal formatting (#2898)",
+          "timestamp": "2022-12-20T17:31:43+01:00",
+          "tree_id": "c854ec6d3eed24314086b15f1f3607e46ef453a2",
+          "url": "https://github.com/unicode-org/icu4x/commit/a61a16aaabd567b0b5a3cca2b434b33ed12d62b3"
+        },
+        "date": 1671553978490,
         "tool": "ndjson",
         "benches": [
           {
