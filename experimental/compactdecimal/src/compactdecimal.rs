@@ -276,7 +276,7 @@ impl CompactDecimalFormatter {
 
     /// Formats a [`CompactDecimal`] object according to locale data.
     ///
-    /// This is an advanced API; prefer using [`Self::format()`] in simple
+    /// This is an advanced API; prefer using [`Self::format_i64()`] in simple
     /// cases.
     ///
     /// Since the caller specifies the exact digits that are displayed, this
