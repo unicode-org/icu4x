@@ -13,12 +13,12 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         &include!("es.rs.data"),
         &include!("fil.rs.data"),
         &include!("fr.rs.data"),
-        &include!("ja|th|und.rs.data"),
+        &include!("ja+th+und.rs.data"),
         &include!("ru.rs.data"),
         &include!("sr.rs.data"),
-        &include!("ja|th|und.rs.data"),
+        &include!("ja+th+und.rs.data"),
         &include!("tr.rs.data"),
-        &include!("ja|th|und.rs.data"),
+        &include!("ja+th+und.rs.data"),
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()

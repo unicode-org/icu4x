@@ -7,18 +7,18 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "ar", "bn", "en", "es", "fil", "fr", "ja", "ru", "sr", "th", "tr", "und",
     ];
     static DATA: [&DataStruct; 12usize] = [
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
         &include!("bn.rs.data"),
         &include!("en.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("fil|fr.rs.data"),
-        &include!("fil|fr.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
-        &include!("ar|es|ja|ru|sr|th|tr|und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("fil+fr.rs.data"),
+        &include!("fil+fr.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
+        &include!("ar+es+ja+ru+sr+th+tr+und.rs.data"),
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()

@@ -186,7 +186,7 @@ You can also make the `BakedDataProvider` implement the `AnyProvider` trait, so 
 
 ```rust,compile_fail
 include!("../my-data-mod/mod.rs");
-include!("../my-data-mod/any.rs");
+implement_any_provider!(BakedDataProvider);
 let _any_provider = BakedDataProvider;
 ```
 

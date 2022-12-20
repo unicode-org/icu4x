@@ -5,12 +5,12 @@ type DataStruct =
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 7usize] = ["bn", "es", "es-u-co-trad", "ja", "th", "tr", "und"];
     static DATA: [&DataStruct; 7usize] = [
-        &include!("bn|ja.rs.data"),
-        &include!("es|es-u-co-trad|tr.rs.data"),
-        &include!("es|es-u-co-trad|tr.rs.data"),
-        &include!("bn|ja.rs.data"),
+        &include!("bn+ja.rs.data"),
+        &include!("es+es-u-co-trad+tr.rs.data"),
+        &include!("es+es-u-co-trad+tr.rs.data"),
+        &include!("bn+ja.rs.data"),
         &include!("th.rs.data"),
-        &include!("es|es-u-co-trad|tr.rs.data"),
+        &include!("es+es-u-co-trad+tr.rs.data"),
         &include!("und.rs.data"),
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())

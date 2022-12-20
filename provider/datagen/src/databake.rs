@@ -205,13 +205,8 @@ impl DataExporter for BakedDataExporter {
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
                 .unwrap();
 
-        let is_datetime_skeletons = marker
-            .segments
-            .iter()
-            .next_back()
-            .unwrap()
-            .ident
-            == "DateSkeletonPatternsV1Marker";
+        let is_datetime_skeletons =
+            marker.segments.iter().next_back().unwrap().ident == "DateSkeletonPatternsV1Marker";
 
         let feature = if !self.insert_feature_gates {
             quote!()
@@ -274,7 +269,7 @@ impl DataExporter for BakedDataExporter {
             let file_name = locales[1..].iter().fold(locales[0].to_owned(), |mut a, b| {
                 // Cap file name length at around 35
                 if a.len() < 35 {
-                    a.push('|');
+                    a.push('+');
                     a.push_str(b);
                 }
                 a
@@ -340,7 +335,7 @@ impl DataExporter for BakedDataExporter {
                             .binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
                             .ok()
                             .map(|i| unsafe {
-                                // Safe because KEYS and DATA have the same length 
+                                // Safe because KEYS and DATA have the same length
                                 *DATA.get_unchecked(i)
                             })
                     }
