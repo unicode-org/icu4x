@@ -47,15 +47,15 @@ use crate::{
 ///
 /// /// Supports short and long notations:
 /// # // The following line contains U+00A0 NO-BREAK SPACE.
-/// assert_writeable_eq!(short_french.format(35_357_670), "35 M");
-/// assert_writeable_eq!(long_french.format(35_357_670), "35 millions");
+/// assert_writeable_eq!(short_french.format_i64(35_357_670), "35 M");
+/// assert_writeable_eq!(long_french.format_i64(35_357_670), "35 millions");
 /// /// The powers of ten used are locale-dependent:
-/// assert_writeable_eq!(long_japanese.format(3535_7670), "3536万");
+/// assert_writeable_eq!(long_japanese.format_i64(3535_7670), "3536万");
 /// /// So are the digits:
-/// assert_writeable_eq!(long_bangla.format(3_53_57_670), "৩.৫ কোটি");
+/// assert_writeable_eq!(long_bangla.format_i64(3_53_57_670), "৩.৫ কোটি");
 ///
 /// /// The output does not always contain digits:
-/// assert_writeable_eq!(long_french.format(1000), "mille");
+/// assert_writeable_eq!(long_french.format_i64(1000), "mille");
 /// ```
 pub struct CompactDecimalFormatter {
     pub(crate) plural_rules: PluralRules,
@@ -207,13 +207,13 @@ impl CompactDecimalFormatter {
     /// #    &icu_testdata::unstable(),
     /// #    &locale!("en").into()
     /// # ).unwrap();
-    /// assert_writeable_eq!(short_english.format(0), "0");
-    /// assert_writeable_eq!(short_english.format(2), "2");
-    /// assert_writeable_eq!(short_english.format(843), "843");
-    /// assert_writeable_eq!(short_english.format(2207), "2.2K");
-    /// assert_writeable_eq!(short_english.format(15_127), "15K");
-    /// assert_writeable_eq!(short_english.format(3_010_349), "3M");
-    /// assert_writeable_eq!(short_english.format(-13_132), "-13K");
+    /// assert_writeable_eq!(short_english.format_i64(0), "0");
+    /// assert_writeable_eq!(short_english.format_i64(2), "2");
+    /// assert_writeable_eq!(short_english.format_i64(843), "843");
+    /// assert_writeable_eq!(short_english.format_i64(2207), "2.2K");
+    /// assert_writeable_eq!(short_english.format_i64(15_127), "15K");
+    /// assert_writeable_eq!(short_english.format_i64(3_010_349), "3M");
+    /// assert_writeable_eq!(short_english.format_i64(-13_132), "-13K");
     /// ```
     /// The result is the nearest such compact number, with halfway cases-
     /// rounded towards the number with an even least significant digit.
@@ -226,12 +226,12 @@ impl CompactDecimalFormatter {
     /// #    &icu_testdata::unstable(),
     /// #    &locale!("en").into(),
     /// # ).unwrap();
-    /// assert_writeable_eq!(short_english.format(999_499), "999K");
-    /// assert_writeable_eq!(short_english.format(999_500), "1M");
-    /// assert_writeable_eq!(short_english.format(1650), "1.6K");
-    /// assert_writeable_eq!(short_english.format(1750), "1.8K");
-    /// assert_writeable_eq!(short_english.format(1950), "2K");
-    /// assert_writeable_eq!(short_english.format(-1_172_700), "-1.2M");
+    /// assert_writeable_eq!(short_english.format_i64(999_499), "999K");
+    /// assert_writeable_eq!(short_english.format_i64(999_500), "1M");
+    /// assert_writeable_eq!(short_english.format_i64(1650), "1.6K");
+    /// assert_writeable_eq!(short_english.format_i64(1750), "1.8K");
+    /// assert_writeable_eq!(short_english.format_i64(1950), "2K");
+    /// assert_writeable_eq!(short_english.format_i64(-1_172_700), "-1.2M");
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = FixedDecimal::from(value);
