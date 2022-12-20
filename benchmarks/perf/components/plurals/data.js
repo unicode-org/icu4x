@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671554871719,
+  "lastUpdate": 1671559948245,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -125237,6 +125237,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2744,
             "range": "± 14",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96240fa11701e2397ff6e5a4446bba23104d385b",
+          "message": "Bump minimatch from 3.0.4 to 3.1.2 in /ffi/diplomat/js/examples/node (#2844)\n\nBumps [minimatch](https://github.com/isaacs/minimatch) from 3.0.4 to 3.1.2.\r\n- [Release notes](https://github.com/isaacs/minimatch/releases)\r\n- [Commits](https://github.com/isaacs/minimatch/compare/v3.0.4...v3.1.2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: minimatch\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-12-20T18:55:27+01:00",
+          "tree_id": "7b161375b80849a116ad39651fe14071bed6b286",
+          "url": "https://github.com/unicode-org/icu4x/commit/96240fa11701e2397ff6e5a4446bba23104d385b"
+        },
+        "date": 1671559876151,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 971,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 13,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 20,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 800,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 16,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 18,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 20,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 23,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 28,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 30,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 31,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 154,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 156,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 142,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5165,
+            "range": "± 536",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 1648,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 15834,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 3349,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2737,
+            "range": "± 11",
             "unit": "ns/iter"
           }
         ]
