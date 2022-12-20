@@ -1,0 +1,216 @@
+::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                #[allow(unused_unsafe)]
+                ::zerovec::ZeroMap::from_parts_unchecked(
+                    unsafe {
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            77u8, 48u8, 49u8, 0u8, 77u8, 48u8, 50u8, 0u8, 77u8, 48u8, 51u8,
+                            0u8, 77u8, 48u8, 52u8, 0u8, 77u8, 48u8, 53u8, 0u8, 77u8, 48u8,
+                            54u8, 0u8, 77u8, 48u8, 55u8, 0u8, 77u8, 48u8, 56u8, 0u8, 77u8,
+                            48u8, 57u8, 0u8, 77u8, 49u8, 48u8, 0u8, 77u8, 49u8, 49u8, 0u8,
+                            77u8, 49u8, 50u8, 0u8, 77u8, 49u8, 51u8, 0u8,
+                        ])
+                    },
+                    unsafe {
+                        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                            13u8, 0u8, 0u8, 0u8, 0u8, 0u8, 16u8, 0u8, 28u8, 0u8, 38u8, 0u8,
+                            50u8, 0u8, 56u8, 0u8, 68u8, 0u8, 82u8, 0u8, 94u8, 0u8, 106u8, 0u8,
+                            114u8, 0u8, 124u8, 0u8, 136u8, 0u8, 208u8, 188u8, 208u8, 181u8,
+                            209u8, 129u8, 208u8, 186u8, 208u8, 181u8, 209u8, 128u8, 208u8,
+                            181u8, 208u8, 188u8, 209u8, 130u8, 208u8, 181u8, 208u8, 186u8,
+                            208u8, 181u8, 208u8, 188u8, 209u8, 130u8, 209u8, 133u8, 208u8,
+                            181u8, 208u8, 180u8, 208u8, 176u8, 209u8, 128u8, 209u8, 130u8,
+                            208u8, 176u8, 209u8, 133u8, 209u8, 129u8, 208u8, 176u8, 209u8,
+                            129u8, 209u8, 130u8, 208u8, 181u8, 209u8, 128u8, 209u8, 143u8,
+                            208u8, 186u8, 208u8, 176u8, 209u8, 130u8, 208u8, 184u8, 209u8,
+                            130u8, 208u8, 188u8, 208u8, 176u8, 208u8, 179u8, 208u8, 176u8,
+                            208u8, 177u8, 208u8, 184u8, 209u8, 130u8, 208u8, 188u8, 208u8,
+                            184u8, 208u8, 176u8, 208u8, 183u8, 208u8, 184u8, 209u8, 143u8,
+                            208u8, 179u8, 208u8, 181u8, 208u8, 189u8, 208u8, 177u8, 208u8,
+                            190u8, 209u8, 130u8, 209u8, 129u8, 209u8, 141u8, 208u8, 189u8,
+                            209u8, 141u8, 209u8, 133u8, 208u8, 176u8, 208u8, 188u8, 208u8,
+                            187u8, 209u8, 141u8, 208u8, 189u8, 208u8, 176u8, 209u8, 133u8,
+                            208u8, 176u8, 209u8, 129u8, 209u8, 141u8, 209u8, 141u8, 208u8,
+                            191u8, 208u8, 176u8, 208u8, 179u8, 208u8, 190u8, 208u8, 188u8,
+                            208u8, 181u8, 208u8, 189u8,
+                        ])
+                    },
+                )
+            }),
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                #[allow(unused_unsafe)]
+                ::zerovec::ZeroMap::from_parts_unchecked(
+                    unsafe {
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            77u8, 48u8, 49u8, 0u8, 77u8, 48u8, 50u8, 0u8, 77u8, 48u8, 51u8,
+                            0u8, 77u8, 48u8, 52u8, 0u8, 77u8, 48u8, 53u8, 0u8, 77u8, 48u8,
+                            54u8, 0u8, 77u8, 48u8, 55u8, 0u8, 77u8, 48u8, 56u8, 0u8, 77u8,
+                            48u8, 57u8, 0u8, 77u8, 49u8, 48u8, 0u8, 77u8, 49u8, 49u8, 0u8,
+                            77u8, 49u8, 50u8, 0u8, 77u8, 49u8, 51u8, 0u8,
+                        ])
+                    },
+                    unsafe {
+                        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                            13u8, 0u8, 0u8, 0u8, 0u8, 0u8, 1u8, 0u8, 2u8, 0u8, 3u8, 0u8, 4u8,
+                            0u8, 5u8, 0u8, 6u8, 0u8, 7u8, 0u8, 8u8, 0u8, 9u8, 0u8, 11u8, 0u8,
+                            13u8, 0u8, 15u8, 0u8, 49u8, 50u8, 51u8, 52u8, 53u8, 54u8, 55u8,
+                            56u8, 57u8, 49u8, 48u8, 49u8, 49u8, 49u8, 50u8, 49u8, 51u8,
+                        ])
+                    },
+                )
+            }),
+            short: None,
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::Other(unsafe {
+                #[allow(unused_unsafe)]
+                ::zerovec::ZeroMap::from_parts_unchecked(
+                    unsafe {
+                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                            77u8, 48u8, 49u8, 0u8, 77u8, 48u8, 50u8, 0u8, 77u8, 48u8, 51u8,
+                            0u8, 77u8, 48u8, 52u8, 0u8, 77u8, 48u8, 53u8, 0u8, 77u8, 48u8,
+                            54u8, 0u8, 77u8, 48u8, 55u8, 0u8, 77u8, 48u8, 56u8, 0u8, 77u8,
+                            48u8, 57u8, 0u8, 77u8, 49u8, 48u8, 0u8, 77u8, 49u8, 49u8, 0u8,
+                            77u8, 49u8, 50u8, 0u8, 77u8, 49u8, 51u8, 0u8,
+                        ])
+                    },
+                    unsafe {
+                        ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                            13u8, 0u8, 0u8, 0u8, 0u8, 0u8, 16u8, 0u8, 28u8, 0u8, 38u8, 0u8,
+                            50u8, 0u8, 56u8, 0u8, 68u8, 0u8, 82u8, 0u8, 94u8, 0u8, 106u8, 0u8,
+                            114u8, 0u8, 124u8, 0u8, 136u8, 0u8, 208u8, 188u8, 208u8, 181u8,
+                            209u8, 129u8, 208u8, 186u8, 208u8, 181u8, 209u8, 128u8, 208u8,
+                            181u8, 208u8, 188u8, 209u8, 130u8, 208u8, 181u8, 208u8, 186u8,
+                            208u8, 181u8, 208u8, 188u8, 209u8, 130u8, 209u8, 133u8, 208u8,
+                            181u8, 208u8, 180u8, 208u8, 176u8, 209u8, 128u8, 209u8, 130u8,
+                            208u8, 176u8, 209u8, 133u8, 209u8, 129u8, 208u8, 176u8, 209u8,
+                            129u8, 209u8, 130u8, 208u8, 181u8, 209u8, 128u8, 209u8, 143u8,
+                            208u8, 186u8, 208u8, 176u8, 209u8, 130u8, 208u8, 184u8, 209u8,
+                            130u8, 208u8, 188u8, 208u8, 176u8, 208u8, 179u8, 208u8, 176u8,
+                            208u8, 177u8, 208u8, 184u8, 209u8, 130u8, 208u8, 188u8, 208u8,
+                            184u8, 208u8, 176u8, 208u8, 183u8, 208u8, 184u8, 209u8, 143u8,
+                            208u8, 179u8, 208u8, 181u8, 208u8, 189u8, 208u8, 177u8, 208u8,
+                            190u8, 209u8, 130u8, 209u8, 129u8, 209u8, 141u8, 208u8, 189u8,
+                            209u8, 141u8, 209u8, 133u8, 208u8, 176u8, 208u8, 188u8, 208u8,
+                            187u8, 209u8, 141u8, 208u8, 189u8, 208u8, 176u8, 209u8, 133u8,
+                            208u8, 176u8, 209u8, 129u8, 209u8, 141u8, 209u8, 141u8, 208u8,
+                            191u8, 208u8, 176u8, 208u8, 179u8, 208u8, 190u8, 208u8, 188u8,
+                            208u8, 181u8, 208u8, 189u8,
+                        ])
+                    },
+                )
+            }),
+        },
+        stand_alone: None,
+    },
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("вс"),
+                alloc::borrow::Cow::Borrowed("пн"),
+                alloc::borrow::Cow::Borrowed("вт"),
+                alloc::borrow::Cow::Borrowed("ср"),
+                alloc::borrow::Cow::Borrowed("чт"),
+                alloc::borrow::Cow::Borrowed("пт"),
+                alloc::borrow::Cow::Borrowed("сб"),
+            ]),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("В"),
+                alloc::borrow::Cow::Borrowed("П"),
+                alloc::borrow::Cow::Borrowed("В"),
+                alloc::borrow::Cow::Borrowed("С"),
+                alloc::borrow::Cow::Borrowed("Ч"),
+                alloc::borrow::Cow::Borrowed("П"),
+                alloc::borrow::Cow::Borrowed("С"),
+            ]),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("вс"),
+                alloc::borrow::Cow::Borrowed("пн"),
+                alloc::borrow::Cow::Borrowed("вт"),
+                alloc::borrow::Cow::Borrowed("ср"),
+                alloc::borrow::Cow::Borrowed("чт"),
+                alloc::borrow::Cow::Borrowed("пт"),
+                alloc::borrow::Cow::Borrowed("сб"),
+            ])),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("воскресенье"),
+                alloc::borrow::Cow::Borrowed("понедельник"),
+                alloc::borrow::Cow::Borrowed("вторник"),
+                alloc::borrow::Cow::Borrowed("среда"),
+                alloc::borrow::Cow::Borrowed("четверг"),
+                alloc::borrow::Cow::Borrowed("пятница"),
+                alloc::borrow::Cow::Borrowed("суббота"),
+            ]),
+        },
+        stand_alone: None,
+    },
+    eras: ::icu_datetime::provider::calendar::Eras {
+        names: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 105u8, 110u8, 99u8,
+                        97u8, 114u8, 109u8, 117u8, 110u8, 100u8, 105u8, 112u8, 114u8, 101u8,
+                        45u8, 105u8, 110u8, 99u8, 97u8, 114u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 38u8, 0u8, 42u8, 0u8, 208u8, 180u8,
+                        208u8, 190u8, 32u8, 208u8, 178u8, 208u8, 190u8, 208u8, 191u8, 208u8,
+                        187u8, 208u8, 190u8, 209u8, 137u8, 208u8, 181u8, 208u8, 189u8, 208u8,
+                        184u8, 209u8, 143u8, 32u8, 208u8, 165u8, 209u8, 128u8, 208u8, 184u8,
+                        209u8, 129u8, 209u8, 130u8, 208u8, 176u8, 69u8, 82u8, 65u8, 48u8,
+                        208u8, 190u8, 209u8, 130u8, 32u8, 208u8, 178u8, 208u8, 190u8, 208u8,
+                        191u8, 208u8, 187u8, 208u8, 190u8, 209u8, 137u8, 208u8, 181u8, 208u8,
+                        189u8, 208u8, 184u8, 209u8, 143u8, 32u8, 208u8, 165u8, 209u8, 128u8,
+                        208u8, 184u8, 209u8, 129u8, 209u8, 130u8, 208u8, 176u8,
+                    ])
+                },
+            )
+        },
+        abbr: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 105u8, 110u8, 99u8,
+                        97u8, 114u8, 109u8, 117u8, 110u8, 100u8, 105u8, 112u8, 114u8, 101u8,
+                        45u8, 105u8, 110u8, 99u8, 97u8, 114u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 17u8, 0u8, 21u8, 0u8, 208u8, 180u8,
+                        208u8, 190u8, 32u8, 208u8, 165u8, 209u8, 128u8, 208u8, 184u8, 209u8,
+                        129u8, 209u8, 130u8, 208u8, 176u8, 69u8, 82u8, 65u8, 48u8, 208u8,
+                        190u8, 209u8, 130u8, 32u8, 208u8, 165u8, 209u8, 128u8, 208u8, 184u8,
+                        209u8, 129u8, 209u8, 130u8, 208u8, 176u8,
+                    ])
+                },
+            )
+        },
+        narrow: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 105u8, 110u8, 99u8,
+                        97u8, 114u8, 109u8, 117u8, 110u8, 100u8, 105u8, 112u8, 114u8, 101u8,
+                        45u8, 105u8, 110u8, 99u8, 97u8, 114u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 17u8, 0u8, 21u8, 0u8, 208u8, 180u8,
+                        208u8, 190u8, 32u8, 208u8, 165u8, 209u8, 128u8, 208u8, 184u8, 209u8,
+                        129u8, 209u8, 130u8, 208u8, 176u8, 69u8, 82u8, 65u8, 48u8, 208u8,
+                        190u8, 209u8, 130u8, 32u8, 208u8, 165u8, 209u8, 128u8, 208u8, 184u8,
+                        209u8, 129u8, 209u8, 130u8, 208u8, 176u8,
+                    ])
+                },
+            )
+        },
+    },
+}

@@ -98,6 +98,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![allow(unused_imports)] // too many feature combinations too keep track of
 
 extern crate alloc;
 
@@ -164,6 +165,7 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
+#[cfg(any(feature = "all_features_hack", not(feature = "bin")))] // allow regenerating testdata even if databake doesn't compile
 pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -180,6 +182,7 @@ pub fn unstable_no_fallback() -> UnstableDataProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
+#[cfg(any(feature = "all_features_hack", not(feature = "bin")))] // allow regenerating testdata even if databake doesn't compile
 pub fn any() -> impl AnyProvider {
     // The baked data is valid.
     #[allow(clippy::unwrap_used)]
@@ -187,6 +190,7 @@ pub fn any() -> impl AnyProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
+#[cfg(any(feature = "all_features_hack", not(feature = "bin")))] // allow regenerating testdata even if databake doesn't compile
 pub fn any_no_fallback() -> impl AnyProvider {
     UnstableDataProvider
 }
@@ -217,9 +221,12 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 }
 
 #[doc(hidden)]
-pub use baked::BakedDataProvider as UnstableDataProvider;
+#[non_exhaustive]
+pub struct UnstableDataProvider;
 
+#[cfg(any(feature = "all_features_hack", not(feature = "bin")))] // allow regenerating testdata even if databake doesn't compile
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
+    implement_baked_provider!(super::UnstableDataProvider);
+    implement_any_provider!(super::UnstableDataProvider);
 }

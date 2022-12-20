@@ -1,0 +1,60 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[255u8, 0u8, 1u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 26u8, 0u8, 46u8, 0u8, 208u8, 178u8, 32u8,
+                    208u8, 191u8, 209u8, 128u8, 208u8, 190u8, 209u8, 136u8, 208u8, 187u8,
+                    208u8, 190u8, 208u8, 188u8, 32u8, 208u8, 179u8, 208u8, 190u8, 208u8, 180u8,
+                    209u8, 131u8, 208u8, 178u8, 32u8, 209u8, 141u8, 209u8, 130u8, 208u8, 190u8,
+                    208u8, 188u8, 32u8, 208u8, 179u8, 208u8, 190u8, 208u8, 180u8, 209u8, 131u8,
+                    208u8, 178u8, 32u8, 209u8, 129u8, 208u8, 187u8, 208u8, 181u8, 208u8, 180u8,
+                    209u8, 131u8, 209u8, 142u8, 209u8, 137u8, 208u8, 181u8, 208u8, 188u8, 32u8,
+                    208u8, 179u8, 208u8, 190u8, 208u8, 180u8, 209u8, 131u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" год назад"),
+            index: 0u8,
+        }),
+        two: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" года назад"),
+            index: 0u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" лет назад"),
+            index: 0u8,
+        }),
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" года назад"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  год"),
+            index: 11u8,
+        }),
+        two: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  года"),
+            index: 11u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  лет"),
+            index: 11u8,
+        }),
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  года"),
+            index: 11u8,
+        },
+    },
+}

@@ -1,0 +1,39 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[0u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 130u8, 224u8, 184u8, 147u8,
+                    224u8, 184u8, 176u8, 224u8, 184u8, 153u8, 224u8, 184u8, 181u8, 224u8,
+                    185u8, 137u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(
+                " ว\u{e34}นาท\u{e35}ท\u{e35}\u{e48}ผ\u{e48}านมา",
+            ),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("ในอ\u{e35}ก  ว\u{e34}นาท\u{e35}"),
+            index: 16u8,
+        },
+    },
+}
