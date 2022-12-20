@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671554682786,
+  "lastUpdate": 1671559823722,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -87155,6 +87155,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5080,
             "range": "± 520",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "96240fa11701e2397ff6e5a4446bba23104d385b",
+          "message": "Bump minimatch from 3.0.4 to 3.1.2 in /ffi/diplomat/js/examples/node (#2844)\n\nBumps [minimatch](https://github.com/isaacs/minimatch) from 3.0.4 to 3.1.2.\r\n- [Release notes](https://github.com/isaacs/minimatch/releases)\r\n- [Commits](https://github.com/isaacs/minimatch/compare/v3.0.4...v3.1.2)\r\n\r\n---\r\nupdated-dependencies:\r\n- dependency-name: minimatch\r\n  dependency-type: indirect\r\n...\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\n\r\nSigned-off-by: dependabot[bot] <support@github.com>\r\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2022-12-20T18:55:27+01:00",
+          "tree_id": "7b161375b80849a116ad39651fe14071bed6b286",
+          "url": "https://github.com/unicode-org/icu4x/commit/96240fa11701e2397ff6e5a4446bba23104d385b"
+        },
+        "date": 1671559738883,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 76855,
+            "range": "± 901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 124022,
+            "range": "± 2304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 71373,
+            "range": "± 1057",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 80610,
+            "range": "± 2467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75898,
+            "range": "± 3740",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 83262,
+            "range": "± 2187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 79264,
+            "range": "± 2445",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 119382,
+            "range": "± 3162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 136439,
+            "range": "± 2582",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 127044,
+            "range": "± 2084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 139740,
+            "range": "± 2056",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 137509,
+            "range": "± 2388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6277,
+            "range": "± 93",
             "unit": "ns/iter"
           }
         ]
