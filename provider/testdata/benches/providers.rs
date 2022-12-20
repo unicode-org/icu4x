@@ -18,7 +18,7 @@ static POSTCARD_BYTES: &[u8] = include_bytes!(concat!(
 
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
+    implement_any_provider!(BakedDataProvider);
 }
 
 #[inline(never)]
