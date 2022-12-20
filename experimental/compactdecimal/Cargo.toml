@@ -34,7 +34,7 @@ fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_compactdecimal"] }
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
 
 [features]
