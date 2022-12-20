@@ -19,6 +19,10 @@ pub enum ParseError {
     DateSeparator,
     TimeSeparator,
     DecimalSeparator,
+    TimeZone,
+    TimeZonePart,
+    TimeNumOffset,
+    TimeZoneName,
 }
 
 // An enum for date time separator.
@@ -60,7 +64,7 @@ impl DecimalSeparator {
 /// The structure contains all the information needed for IXDTF. Now it only supports date and time
 /// fields.
 #[non_exhaustive]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ParsedDateTime {
     pub year: Option<i32>,
     pub month: Option<u8>,
@@ -69,6 +73,7 @@ pub struct ParsedDateTime {
     pub minute: Option<u8>,
     pub second: Option<u8>,
     pub nano_second: Option<i32>,
+    pub time_zone: Option<Vec<u8>>,
 }
 
 /// [`DateTimeParser`] is the parser to parse IXDTF bytes.
@@ -89,6 +94,208 @@ impl<'a> DateTimeParser<'a> {
     /// Create a new instance of [`DateTimeParser`].
     pub fn new(bytes: &'a [u8]) -> DateTimeParser {
         return DateTimeParser { bytes };
+    }
+
+    fn is_lcalpha(letter: u8) -> bool {
+        return (b'a'..=b'z').contains(&letter);
+    }
+
+    fn is_ucalpha(letter: u8) -> bool {
+        return (b'A'..=b'Z').contains(&letter);
+    }
+
+    fn is_alpha(letter: u8) -> bool {
+        return Self::is_lcalpha(letter) || Self::is_ucalpha(letter);
+    }
+
+    fn is_digit(letter: u8) -> bool {
+        return (b'0'..=b'9').contains(&letter);
+    }
+
+    fn is_critical_flag(letter: u8) -> bool {
+        return letter == b'!';
+    }
+
+    fn is_time_zone_initial(letter: u8) -> bool {
+        return Self::is_alpha(letter) || letter == b'.' || letter == b'_';
+    }
+
+    fn is_time_zone_char(letter: u8) -> bool {
+        return Self::is_time_zone_initial(letter)
+            || Self::is_digit(letter)
+            || letter == b'-'
+            || letter == b'+';
+    }
+
+    fn parse_time_zone_part(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
+        let mut time_zone_part = Vec::new();
+        if let Some((first, remains)) = self.bytes.split_first() {
+            if Self::is_time_zone_initial(*first) {
+                time_zone_part.push(*first);
+                let mut cnt = 0;
+                let mut mut_inner_remains = remains;
+                while cnt < 13 {
+                    if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                        if Self::is_time_zone_char(*inner_first) {
+                            time_zone_part.push(*inner_first);
+                            mut_inner_remains = inner_remains;
+                            cnt += 1;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                if (time_zone_part.len() == 1 && time_zone_part.get(0) == Some(&b'.'))
+                    || (time_zone_part.len() == 2
+                        && time_zone_part.get(0) == Some(&b'.')
+                        && time_zone_part.get(1) == Some(&b'.'))
+                {
+                    return Err(ParseError::TimeZonePart);
+                }
+                self.bytes = mut_inner_remains;
+                return Ok(Some(time_zone_part));
+            } else {
+                return Err(ParseError::TimeZonePart);
+            }
+        } else {
+            return Err(ParseError::TimeZonePart);
+        }
+    }
+
+    fn parse_time_numoffset(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
+        let mut time_numoffset = Vec::new();
+        if let Some((first, remains)) = self.bytes.split_first() {
+            if first == &b'+' || first == &b'-' {
+                time_numoffset.push(*first);
+                let mut hour: u8 = 0;
+                let mut minute: u8 = 0;
+                let mut cnt = 0;
+                let mut mut_inner_remains = remains;
+                while cnt < 2 {
+                    if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                            hour = hour * 10 + *inner_first - b'0';
+                            time_numoffset.push(*inner_first);
+                            mut_inner_remains = inner_remains;
+                        } else {
+                            return Err(ParseError::TimeNumOffset);
+                        }
+                    } else {
+                        return Err(ParseError::TimeNumOffset);
+                    }
+                    cnt += 1;
+                }
+                if !(0..=23).contains(&hour) {
+                    return Err(ParseError::TimeNumOffset);
+                }
+                if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                    if inner_first >= &b':' {
+                        time_numoffset.push(*inner_first);
+                        mut_inner_remains = inner_remains;
+                    } else {
+                        return Err(ParseError::TimeNumOffset);
+                    }
+                } else {
+                    return Err(ParseError::TimeNumOffset);
+                }
+                cnt = 0;
+                while cnt < 2 {
+                    if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                            minute = minute * 10 + *inner_first - b'0';
+                            time_numoffset.push(*inner_first);
+                            mut_inner_remains = inner_remains;
+                        } else {
+                            return Err(ParseError::TimeNumOffset);
+                        }
+                    } else {
+                        return Err(ParseError::TimeNumOffset);
+                    }
+                    cnt += 1;
+                }
+                if !(0..=59).contains(&minute) {
+                    return Err(ParseError::TimeNumOffset);
+                }
+                self.bytes = mut_inner_remains;
+                return Ok(Some(time_numoffset));
+            } else {
+                return Err(ParseError::TimeNumOffset);
+            }
+        } else {
+            return Ok(None);
+        }
+    }
+
+    fn parse_time_zone_name(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
+        let mut time_zone_name = Vec::new();
+        let time_zone_part_result = self.parse_time_zone_part();
+        if let Ok(Some(time_zone_part)) = time_zone_part_result {
+            time_zone_name.append(&mut time_zone_part.to_vec());
+        } else {
+            return Err(ParseError::TimeZoneName);
+        }
+        loop {
+            if let Some((first, remains)) = self.bytes.split_first() {
+                if first == &b'/' {
+                    time_zone_name.push(*first);
+                    self.bytes = remains;
+                    let time_zone_part_next_result = self.parse_time_zone_part();
+                    if let Ok(Some(time_zone_part)) = time_zone_part_next_result {
+                        time_zone_name.append(&mut time_zone_part.to_vec());
+                    } else {
+                        return Err(ParseError::TimeZoneName);
+                    }
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return Ok(Some(time_zone_name));
+    }
+
+    fn parse_time_zone(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
+        if let Some((first, remains)) = self.bytes.split_first() {
+            if first == &b'[' {
+                let mut mut_inner_remains = remains;
+                if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                    if inner_first == &b'!' {
+                        mut_inner_remains = remains
+                    }
+                }
+                self.bytes = mut_inner_remains;
+                let mut time_zone_result;
+                if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                    if inner_first == &b'+' || inner_first == &b'-' {
+                        time_zone_result = self.parse_time_numoffset();
+                    } else {
+                        time_zone_result = self.parse_time_zone_name();
+                    }
+                } else {
+                    return Err(ParseError::TimeZone);
+                }
+                if time_zone_result.is_err() {
+                    return time_zone_result;
+                }
+                if let Some((inner_first, inner_remains)) = self.bytes.split_first() {
+                    if inner_first == &b']' {
+                        self.bytes = inner_remains;
+                    } else {
+                        return Err(ParseError::TimeZone);
+                    }
+                } else {
+                    return Err(ParseError::TimeZone);
+                }
+                return time_zone_result;
+            } else {
+                return Err(ParseError::TimeZone);
+            }
+        } else {
+            return Ok(None);
+        }
     }
 
     fn parse_date_extended_year(&mut self) -> Result<Option<i32>, ParseError> {
@@ -330,6 +537,7 @@ impl<'a> DateTimeParser<'a> {
             minute: None,
             second: None,
             nano_second: None,
+            time_zone: None,
         };
         if self.bytes.is_empty() {
             return Ok(result);
@@ -444,6 +652,10 @@ impl<'a> DateTimeParser<'a> {
                 }
             }
         }
+        result.time_zone = match self.parse_time_zone() {
+            Ok(time_zone) => time_zone,
+            Err(e) => return Err(e),
+        };
         if !self.bytes.is_empty() {
             return Err(ParseError::DateUnexpectedEnd);
         }
@@ -457,6 +669,40 @@ mod test {
 
     #[test]
     fn test_correct_datetime() {
+        let dt = "2022-11-08[+05:12]".as_bytes();
+        let parsed = DateTimeParser::new(dt).parse();
+        assert_eq!(
+            parsed,
+            Ok(ParsedDateTime {
+                year: Some(2022),
+                month: Some(11),
+                day: Some(8),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None,
+                time_zone: Some(vec![43, 48, 53, 58, 49, 50]),
+            })
+        );
+
+        let dt = "2022-11-08[America/Chicago]".as_bytes();
+        let parsed = DateTimeParser::new(dt).parse();
+        assert_eq!(
+            parsed,
+            Ok(ParsedDateTime {
+                year: Some(2022),
+                month: Some(11),
+                day: Some(8),
+                hour: None,
+                minute: None,
+                second: None,
+                nano_second: None,
+                time_zone: Some(vec![
+                    65, 109, 101, 114, 105, 99, 97, 47, 67, 104, 105, 99, 97, 103, 111
+                ]),
+            })
+        );
+
         let dt = "2022-11-08".as_bytes();
         let parsed = DateTimeParser::new(dt).parse();
         assert_eq!(
@@ -469,6 +715,7 @@ mod test {
                 minute: None,
                 second: None,
                 nano_second: None,
+                time_zone: None,
             })
         );
 
@@ -484,6 +731,7 @@ mod test {
                 minute: None,
                 second: None,
                 nano_second: None,
+                time_zone: None,
             })
         );
 
@@ -499,6 +747,7 @@ mod test {
                 minute: None,
                 second: None,
                 nano_second: None,
+                time_zone: None,
             })
         );
 
@@ -514,6 +763,7 @@ mod test {
                 minute: Some(34),
                 second: None,
                 nano_second: None,
+                time_zone: None,
             })
         );
 
@@ -529,6 +779,7 @@ mod test {
                 minute: Some(34),
                 second: Some(22),
                 nano_second: None,
+                time_zone: None,
             })
         );
 
@@ -544,6 +795,7 @@ mod test {
                 minute: Some(34),
                 second: Some(22),
                 nano_second: Some(0),
+                time_zone: None,
             })
         );
 
@@ -559,6 +811,7 @@ mod test {
                 minute: Some(34),
                 second: Some(22),
                 nano_second: Some(0),
+                time_zone: None,
             })
         );
     }
@@ -587,7 +840,7 @@ mod test {
 
         let dt = "2022-06-05e".as_bytes();
         let parsed = DateTimeParser::new(dt).parse();
-        assert_eq!(parsed, Err(ParseError::DateUnexpectedEnd));
+        assert_eq!(parsed, Err(ParseError::TimeZone));
     }
 
     #[test]
@@ -614,6 +867,6 @@ mod test {
 
         let dt = "2022-06-05 03:42:22;000".as_bytes();
         let parsed = DateTimeParser::new(dt).parse();
-        assert_eq!(parsed, Err(ParseError::DateUnexpectedEnd));
+        assert_eq!(parsed, Err(ParseError::TimeZone));
     }
 }
