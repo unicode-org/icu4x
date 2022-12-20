@@ -233,7 +233,7 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format(1950), "2K");
     /// assert_writeable_eq!(short_english.format(-1_172_700), "-1.2M");
     /// ```
-    pub fn format(&self, value: i64) -> FormattedCompactDecimal<'_> {
+    pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = FixedDecimal::from(value);
         let log10_type = unrounded.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
