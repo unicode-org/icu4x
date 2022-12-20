@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
