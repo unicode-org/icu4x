@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671471193315,
+  "lastUpdate": 1671531227353,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61589,6 +61589,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "43195100333bfc5ba9751b381b2854d505ea2cfe",
+          "message": "Increment the version number of icu_collator to 1.0.1 (#2901)\n\nIncrement the version number of icu_collator to 1.0.1\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-12-20T12:01:12+02:00",
+          "tree_id": "e1731041a3812653f9a3baa6960ec9582281a095",
+          "url": "https://github.com/unicode-org/icu4x/commit/43195100333bfc5ba9751b381b2854d505ea2cfe"
+        },
+        "date": 1671531154771,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116276,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23047,
+            "range": "± 151",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63057,
+            "range": "± 442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 190,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
