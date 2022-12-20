@@ -26,13 +26,7 @@ pub struct CompactDecimal {
 }
 
 impl CompactDecimal {
-    pub fn noncompact(significand: FixedDecimal) -> Self {
-        Self {
-            significand,
-            exponent: 0,
-        }
-    }
-
+    /// Constructs a [`CompactDecimal`] from its significand and exponent.
     pub fn from_significand_and_exponent(significand: FixedDecimal, exponent: u8) -> Self {
         Self {
             significand,
