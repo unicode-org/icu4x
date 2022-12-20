@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671470541955,
+  "lastUpdate": 1671530643762,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32513,6 +32513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2989ddb0e60d56fe5b8d1c75b279dc42598084f4"
         },
         "date": 1671470457240,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "43195100333bfc5ba9751b381b2854d505ea2cfe",
+          "message": "Increment the version number of icu_collator to 1.0.1 (#2901)\n\nIncrement the version number of icu_collator to 1.0.1\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-12-20T12:01:12+02:00",
+          "tree_id": "e1731041a3812653f9a3baa6960ec9582281a095",
+          "url": "https://github.com/unicode-org/icu4x/commit/43195100333bfc5ba9751b381b2854d505ea2cfe"
+        },
+        "date": 1671530557329,
         "tool": "ndjson",
         "benches": [
           {
