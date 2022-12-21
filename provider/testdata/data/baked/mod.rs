@@ -536,14 +536,14 @@ impl DataProvider<::icu_displaynames::provider::LanguageDisplayNamesV1Marker> fo
     }
 }
 #[cfg(feature = "icu_displaynames")]
-impl DataProvider<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::TerritoryDisplayNamesV1Marker>, DataError> {
+impl DataProvider<::icu_displaynames::provider::RegionDisplayNamesV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::RegionDisplayNamesV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *displaynames::territories_v1::DATA
+                *displaynames::regions_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::TerritoryDisplayNamesV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY, req))?,
             ))),
         })
     }

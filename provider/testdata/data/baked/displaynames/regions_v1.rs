@@ -1,6 +1,6 @@
 // @generated
 #![cfg(feature = "icu_displaynames")]
-type DataStruct = < :: icu_displaynames :: provider :: TerritoryDisplayNamesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_displaynames :: provider :: RegionDisplayNamesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG),
@@ -23,7 +23,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static AR_AR_EG: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -684,7 +684,7 @@ static AR_AR_EG: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNa
         )
     },
 };
-static BN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static BN: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1709,7 +1709,7 @@ static BN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static CCP: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static CCP: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -2955,7 +2955,7 @@ static CCP: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1
         )
     },
 };
-static EN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static EN: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -3353,7 +3353,7 @@ static EN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static EN_001_EN_ZA: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static EN_001_EN_ZA: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -3750,7 +3750,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu_displaynames::provider::TerritoryDispl
         )
     },
 };
-static ES: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static ES: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4164,7 +4164,7 @@ static ES: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static ES_AR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static ES_AR: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4574,7 +4574,7 @@ static ES_AR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNames
         )
     },
 };
-static FIL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static FIL: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4976,7 +4976,7 @@ static FIL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1
         )
     },
 };
-static FR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static FR: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -5412,7 +5412,7 @@ static FR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static JA: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static JA: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -6002,7 +6002,7 @@ static JA: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static RU: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static RU: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -6687,7 +6687,7 @@ static RU: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static SR_LATN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static SR_LATN: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -7108,7 +7108,7 @@ static SR_LATN: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNam
         )
     },
 };
-static SR_SR_CYRL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static SR_SR_CYRL: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -7814,7 +7814,7 @@ static SR_SR_CYRL: &DataStruct = &::icu_displaynames::provider::TerritoryDisplay
         )
     },
 };
-static TH: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static TH: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -8803,7 +8803,7 @@ static TH: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static TR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static TR: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -9213,7 +9213,7 @@ static TR: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 
         )
     },
 };
-static UND: &DataStruct = &::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+static UND: &DataStruct = &::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

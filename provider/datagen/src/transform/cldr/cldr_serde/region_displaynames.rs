@@ -12,14 +12,15 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Territories {
-    pub territories: HashMap<String, String>,
+pub struct Regions {
+    #[serde(rename = "territories")]
+    pub regions: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct LangDisplayNames {
     #[serde(rename = "localeDisplayNames")]
-    pub localedisplaynames: Territories,
+    pub localedisplaynames: Regions,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

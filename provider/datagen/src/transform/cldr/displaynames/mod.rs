@@ -3,4 +3,4 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod language;
-pub mod territory;
+pub mod region;
