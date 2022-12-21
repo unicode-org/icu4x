@@ -1888,7 +1888,6 @@ dependencies = [
  "ndarray",
  "num-traits",
  "serde",
- "serde-json-core",
  "serde_json",
  "utf8_iter",
  "zerovec",
