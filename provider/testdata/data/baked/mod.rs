@@ -28,7 +28,7 @@ use ::icu_provider::prelude::*;
 /// include!("/path/to/generated/mod.rs");
 /// impl_data_provider(MyDataProvider);
 /// ```
-#[allow(unused_macro)]
+#[allow(unused_macros)]
 macro_rules! impl_data_provider {
     ($ provider : path) => {
         #[cfg(feature = "icu_calendar")]
@@ -2210,7 +2210,7 @@ macro_rules! impl_data_provider {
 /// include!("/path/to/generated/mod.rs");
 /// impl_any_provider(MyAnyProvider);
 /// ```
-#[allow(unused_macro)]
+#[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : path) => {
         impl AnyProvider for $provider {

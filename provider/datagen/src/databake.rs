@@ -452,7 +452,7 @@ impl DataExporter for BakedDataExporter {
                 #(
                     mod #mods;
                 )*
-                
+
                 use ::icu_provider::prelude::*;
 
                 /// Implement [`DataProvider<M>`] on the given struct using the data
@@ -461,7 +461,7 @@ impl DataExporter for BakedDataExporter {
                 ///
                 /// This macro can only be called from its definition-site, i.e. right
                 /// after `include!`-ing the generated module.
-                /// 
+                ///
                 /// ```compile_fail
                 /// struct MyDataProvider;
                 /// include!("/path/to/generated/mod.rs");
