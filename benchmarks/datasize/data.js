@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671654767023,
+  "lastUpdate": 1671664654391,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32693,6 +32693,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b74aafdaecd4053f95ba294361dabe7b2a942cc5"
         },
         "date": 1671654685972,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "599f71506dfce4385a48982a625291d0ffdf51ba",
+          "message": "Fix some typos (#2910)",
+          "timestamp": "2022-12-21T23:15:03Z",
+          "tree_id": "9ae9add7d7d507133a1afed5b4774814fd9b6cc3",
+          "url": "https://github.com/unicode-org/icu4x/commit/599f71506dfce4385a48982a625291d0ffdf51ba"
+        },
+        "date": 1671664573266,
         "tool": "ndjson",
         "benches": [
           {
