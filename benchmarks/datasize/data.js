@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671651688636,
+  "lastUpdate": 1671654767023,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32663,6 +32663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/22866d3c4057dfb0f47eed05c1b76ec8fcd78a86"
         },
         "date": 1671651615814,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b74aafdaecd4053f95ba294361dabe7b2a942cc5",
+          "message": "Databake improvements (#2906)",
+          "timestamp": "2022-12-21T21:30:11+01:00",
+          "tree_id": "d61f8a4c81ac0ac01c5ebc3901ea219749cd4178",
+          "url": "https://github.com/unicode-org/icu4x/commit/b74aafdaecd4053f95ba294361dabe7b2a942cc5"
+        },
+        "date": 1671654685972,
         "tool": "ndjson",
         "benches": [
           {
