@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671647936441,
+  "lastUpdate": 1671652290861,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61828,6 +61828,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "22866d3c4057dfb0f47eed05c1b76ec8fcd78a86",
+          "message": "Remove serde dependency from segmenter with lstm feature. (#2904)",
+          "timestamp": "2022-12-21T11:39:01-08:00",
+          "tree_id": "8562c282f6b240d9504c620288162b27b82df616",
+          "url": "https://github.com/unicode-org/icu4x/commit/22866d3c4057dfb0f47eed05c1b76ec8fcd78a86"
+        },
+        "date": 1671652217969,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116501,
+            "range": "± 442",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23001,
+            "range": "± 119",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63138,
+            "range": "± 522",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
             "range": "± 0",
             "unit": "ns/iter"
           }
