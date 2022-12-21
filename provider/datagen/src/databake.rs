@@ -506,6 +506,17 @@ impl DataExporter for BakedDataExporter {
                         }
                     }
                 }
+
+                struct BakedDataProvider;
+                impl_data_provider!(BakedDataProvider);
+            },
+            false,
+        )?;
+
+        self.write_to_file(
+            PathBuf::from("any"),
+            quote! {
+                impl_any_provider!(BakedDataProvider);
             },
             false,
         )?;

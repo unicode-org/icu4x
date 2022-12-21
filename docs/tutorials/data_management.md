@@ -187,7 +187,7 @@ With this provider, we can use the `unstable` constructors. These are only guara
 You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
 
 ```rust,compile_fail
-implement_any_provider!(MyProvider);
+impl_any_provider!(MyProvider);
 ```
 
 ## `dir` and `FsDataProvider`
