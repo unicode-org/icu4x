@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671559807498,
+  "lastUpdate": 1671647936441,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -61769,6 +61769,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 85,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40e68fb8fe176c9432761e5fa0ae2aaac068bf3f",
+          "message": "Rename Territory -> Region for Displayname component (#2895)\n\n* Rename Territory -> Region for Displayname component\r\n\r\n* Removing stale files\r\n\r\n* Resolving merge conflicts",
+          "timestamp": "2022-12-21T10:26:18-08:00",
+          "tree_id": "7f47d303c47eb64f3c6bd9db46e3f8d5dfd3cf55",
+          "url": "https://github.com/unicode-org/icu4x/commit/40e68fb8fe176c9432761e5fa0ae2aaac068bf3f"
+        },
+        "date": 1671647856532,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100346,
+            "range": "± 509",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20552,
+            "range": "± 291",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66876,
+            "range": "± 254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 174,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
