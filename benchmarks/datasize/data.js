@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671647327297,
+  "lastUpdate": 1671651688636,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32633,6 +32633,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/40e68fb8fe176c9432761e5fa0ae2aaac068bf3f"
         },
         "date": 1671647253809,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "22866d3c4057dfb0f47eed05c1b76ec8fcd78a86",
+          "message": "Remove serde dependency from segmenter with lstm feature. (#2904)",
+          "timestamp": "2022-12-21T11:39:01-08:00",
+          "tree_id": "8562c282f6b240d9504c620288162b27b82df616",
+          "url": "https://github.com/unicode-org/icu4x/commit/22866d3c4057dfb0f47eed05c1b76ec8fcd78a86"
+        },
+        "date": 1671651615814,
         "tool": "ndjson",
         "benches": [
           {
