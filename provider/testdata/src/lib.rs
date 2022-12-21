@@ -227,6 +227,6 @@ pub struct UnstableDataProvider;
 #[cfg(any(feature = "all_features_hack", not(feature = "bin")))] // allow regenerating testdata even if databake doesn't compile
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
-    implement_baked_provider!(super::UnstableDataProvider);
-    implement_any_provider!(super::UnstableDataProvider);
+    impl_data_provider!(super::UnstableDataProvider);
+    impl_any_provider!(super::UnstableDataProvider);
 }

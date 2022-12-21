@@ -1,4 +1,4 @@
-[
+&[
     (
         &[
             ::icu_datetime::fields::Field {
@@ -271,8 +271,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8,
+                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 0u8, 5u8, 0u8, 0u8, 32u8,
+                        128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -305,7 +305,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -344,8 +344,8 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 5u8,
+                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 0u8, 5u8, 0u8, 0u8, 32u8,
+                        128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -584,8 +584,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 32u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,

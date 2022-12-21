@@ -1,4 +1,4 @@
-[
+&[
     (
         &[
             ::icu_datetime::fields::Field {
@@ -16,7 +16,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -52,8 +52,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -83,45 +83,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
-                    ])
-                },
-                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-            },
-        ),
-    ),
-    (
-        &[
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Era,
-                length: ::icu_datetime::fields::FieldLength::One,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Year(
-                    ::icu_datetime::fields::Year::Calendar,
-                ),
-                length: ::icu_datetime::fields::FieldLength::One,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Month(
-                    ::icu_datetime::fields::Month::Format,
-                ),
-                length: ::icu_datetime::fields::FieldLength::Abbreviated,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Day(
-                    ::icu_datetime::fields::Day::DayOfMonth,
-                ),
-                length: ::icu_datetime::fields::FieldLength::One,
-            },
-        ],
-        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
-            ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
+                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -152,20 +115,14 @@
                 ),
                 length: ::icu_datetime::fields::FieldLength::One,
             },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Weekday(
-                    ::icu_datetime::fields::Weekday::Format,
-                ),
-                length: ::icu_datetime::fields::FieldLength::One,
-            },
         ],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
+                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                        128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -200,16 +157,16 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Weekday(
                     ::icu_datetime::fields::Weekday::Format,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
         ],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8,
-                        0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -227,25 +184,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                    ])
-                },
-                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-            },
-        ),
-    ),
-    (
-        &[::icu_datetime::fields::Field {
-            symbol: ::icu_datetime::fields::FieldSymbol::Year(
-                ::icu_datetime::fields::Year::Calendar,
-            ),
-            length: ::icu_datetime::fields::FieldLength::Wide,
-        }],
-        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
-            ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -258,7 +197,7 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -271,8 +210,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 0u8, 5u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -285,7 +224,7 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -304,8 +243,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -318,7 +257,7 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -343,9 +282,9 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 0u8, 5u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8,
+                        0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -358,7 +297,66 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Year(
+                    ::icu_datetime::fields::Year::Calendar,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Day(
+                    ::icu_datetime::fields::Day::DayOfMonth,
+                ),
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Year(
+                    ::icu_datetime::fields::Year::Calendar,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -371,8 +369,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -385,7 +382,7 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -404,8 +401,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
+                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -418,7 +415,7 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Month(
@@ -443,9 +440,9 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -457,24 +454,12 @@
             ::icu_datetime::fields::Field {
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
-                ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Month(
-                    ::icu_datetime::fields::Month::Format,
-                ),
-                length: ::icu_datetime::fields::FieldLength::Abbreviated,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Day(
-                    ::icu_datetime::fields::Day::DayOfMonth,
                 ),
                 length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Weekday(
-                    ::icu_datetime::fields::Weekday::Format,
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
                 ),
                 length: ::icu_datetime::fields::FieldLength::Wide,
             },
@@ -483,9 +468,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8,
-                        0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -498,21 +481,23 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Year(
                     ::icu_datetime::fields::Year::Calendar,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
             ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Month(
-                    ::icu_datetime::fields::Month::Format,
+                symbol: ::icu_datetime::fields::FieldSymbol::Week(
+                    ::icu_datetime::fields::Week::WeekOfYear,
                 ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::One,
             },
         ],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8,
+                        128u8, 48u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 0u8, 4u8, 65u8, 0u8,
+                        4u8, 53u8, 0u8, 4u8, 52u8, 0u8, 4u8, 60u8, 0u8, 4u8, 56u8, 0u8, 4u8,
+                        70u8, 0u8, 4u8, 48u8, 0u8, 0u8, 32u8, 0u8, 4u8, 67u8, 0u8, 0u8, 32u8,
+                        128u8, 17u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -552,7 +537,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8,
+                        0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -585,7 +571,33 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Day(
+                    ::icu_datetime::fields::Day::DayOfMonth,
+                ),
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -625,7 +637,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -657,8 +669,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 3u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 46u8,
+                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -677,21 +689,43 @@
                 symbol: ::icu_datetime::fields::FieldSymbol::Day(
                     ::icu_datetime::fields::Day::DayOfMonth,
                 ),
-                length: ::icu_datetime::fields::FieldLength::One,
-            },
-            ::icu_datetime::fields::Field {
-                symbol: ::icu_datetime::fields::FieldSymbol::Weekday(
-                    ::icu_datetime::fields::Weekday::Format,
-                ),
-                length: ::icu_datetime::fields::FieldLength::Wide,
+                length: ::icu_datetime::fields::FieldLength::TwoDigit,
             },
         ],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8,
-                        0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
+                        128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 3u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::Wide,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Week(
+                    ::icu_datetime::fields::Week::WeekOfMonth,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 49u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 0u8, 4u8, 65u8, 0u8,
+                        4u8, 53u8, 0u8, 4u8, 52u8, 0u8, 4u8, 60u8, 0u8, 4u8, 56u8, 0u8, 4u8,
+                        70u8, 0u8, 4u8, 48u8, 0u8, 0u8, 32u8, 0u8, 4u8, 67u8, 0u8, 0u8, 32u8,
+                        128u8, 32u8, 4u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -717,7 +751,40 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Month(
+                    ::icu_datetime::fields::Month::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::Wide,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Day(
+                    ::icu_datetime::fields::Day::DayOfMonth,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Weekday(
+                    ::icu_datetime::fields::Weekday::Format,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -757,7 +824,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -773,7 +840,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 82u8, 3u8]) },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 80u8, 1u8]) },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
         ),
@@ -802,7 +869,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -839,7 +906,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -926,7 +993,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -950,7 +1017,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -982,10 +1049,79 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Hour(
+                    ::icu_datetime::fields::Hour::H12,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Minute,
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Second(
+                    ::icu_datetime::fields::Second::Second,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::TimeZone(
+                    ::icu_datetime::fields::TimeZone::LowerV,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Hour(
+                    ::icu_datetime::fields::Hour::H12,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Minute,
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::TimeZone(
+                    ::icu_datetime::fields::TimeZone::LowerV,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
+                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
         ),
     ),
@@ -1057,6 +1193,74 @@
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Hour(
+                    ::icu_datetime::fields::Hour::H23,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Minute,
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Second(
+                    ::icu_datetime::fields::Second::Second,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::TimeZone(
+                    ::icu_datetime::fields::TimeZone::LowerV,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
+                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
+            },
+        ),
+    ),
+    (
+        &[
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Hour(
+                    ::icu_datetime::fields::Hour::H23,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::Minute,
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+            ::icu_datetime::fields::Field {
+                symbol: ::icu_datetime::fields::FieldSymbol::TimeZone(
+                    ::icu_datetime::fields::TimeZone::LowerV,
+                ),
+                length: ::icu_datetime::fields::FieldLength::One,
+            },
+        ],
+        ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
+            ::icu_datetime::pattern::runtime::Pattern {
+                items: unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
+                    ])
+                },
+                time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
         ),
     ),

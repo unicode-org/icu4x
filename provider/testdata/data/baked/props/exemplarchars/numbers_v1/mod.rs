@@ -7,27 +7,15 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr", "und",
     ];
     static DATA: [&DataStruct; 19usize] = [
-        &include!("ar+ar-EG.rs.data"),
-        &include!("ar+ar-EG.rs.data"),
-        &include!("bn.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("en-ZA+ru.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("fr.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("en-ZA+ru.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
-        &include!("ccp+en+en-001+es+es-AR+fil+ja+sr+sr-Cyrl.rs.data"),
+        &AR, &AR, &BN, &CCP, &CCP, &CCP, &EN_ZA, &CCP, &CCP, &CCP, &FR, &CCP, &EN_ZA, &CCP, &CCP,
+        &CCP, &CCP, &CCP, &CCP,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()
         .map(|i| unsafe { *DATA.get_unchecked(i) })
 }
+static AR: DataStruct = include!("ar.rs.data");
+static BN: DataStruct = include!("bn.rs.data");
+static CCP: DataStruct = include!("ccp.rs.data");
+static EN_ZA: DataStruct = include!("en-ZA.rs.data");
+static FR: DataStruct = include!("fr.rs.data");

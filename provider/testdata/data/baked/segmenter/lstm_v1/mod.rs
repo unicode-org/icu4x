@@ -3,8 +3,8 @@
 type DataStruct =
     <::icu_segmenter::provider::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
-    static DATA: &DataStruct = &include!("th.rs.data");
     icu_provider::DataLocale::from(icu_locid::locale!("th"))
         .eq(locale)
-        .then(|| DATA)
+        .then(|| &TH)
 }
+static TH: DataStruct = include!("th.rs.data");

@@ -246,7 +246,7 @@ impl DataExporter for BakedDataExporter {
 
         let struct_type = if is_datetime_skeletons {
             quote! {
-                [(
+                &'static [(
                     &'static [::icu_datetime::fields::Field],
                     ::icu_datetime::pattern::runtime::PatternPlurals<'static>
                 )]
@@ -256,6 +256,7 @@ impl DataExporter for BakedDataExporter {
         };
 
         let mut map = BTreeMap::new();
+        let mut statics = BTreeMap::new();
 
         let raw = self
             .data
@@ -264,34 +265,23 @@ impl DataExporter for BakedDataExporter {
             .remove(&key)
             .unwrap_or_default();
 
-        for (payload_bake_string, mut locales) in raw {
-            locales.sort(); // stability
-            let file_name = locales[1..].iter().fold(locales[0].to_owned(), |mut a, b| {
-                // Cap file name length at around 35
-                if a.len() < 35 {
-                    a.push('+');
-                    a.push_str(b);
-                }
-                a
-            });
+        for (payload_bake_string, locales) in raw {
+            let file_name = locales.iter().min().unwrap();
+            let ident =
+                syn::parse_str::<syn::Ident>(&file_name.to_ascii_uppercase().replace('-', "_"))
+                    .unwrap();
             self.write_to_file(
-                &path.join(&file_name),
+                &path.join(file_name),
                 payload_bake_string.parse().unwrap(),
                 true,
             )?;
-            map.extend(
-                locales
-                    .into_iter()
-                    .map(|l| (l, format!("{file_name}.rs.data"))),
-            );
+            let file_name = format!("{file_name}.rs.data");
+            let statik = quote! { static #ident: DataStruct = include!(#file_name); };
+            statics.insert(file_name, statik);
+            map.extend(locales.into_iter().map(|l| (l, ident.clone())));
         }
 
-        let values = map
-            .values()
-            .map(|file_name| quote!(&include!(#file_name)))
-            .collect::<Vec<_>>();
-
-        let keys = map.into_keys().collect::<Vec<_>>();
+        let (keys, values): (Vec<_>, Vec<_>) = map.into_iter().unzip();
 
         let lookup = match keys.len() {
             0 => {
@@ -320,8 +310,8 @@ impl DataExporter for BakedDataExporter {
                 };
                 quote! {
                     pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
-                        static DATA: &DataStruct = #(#values)*;
-                        #cmp.then(|| DATA)
+                        // This repetition is a singleton
+                        #cmp.then(|| #(&#values)*)
                     }
                 }
             }
@@ -329,7 +319,7 @@ impl DataExporter for BakedDataExporter {
                 quote! {
                     pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
                         static KEYS: [&str; #n] = [#(#keys),*];
-                        static DATA: [&DataStruct; #n] = [#(#values),*];
+                        static DATA: [&DataStruct; #n] = [#(&#values),*];
 
                         KEYS
                             .binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
@@ -343,6 +333,8 @@ impl DataExporter for BakedDataExporter {
             }
         };
 
+        let statics = statics.values();
+
         self.write_to_file(
             &path.join("mod"),
             quote! {
@@ -351,6 +343,8 @@ impl DataExporter for BakedDataExporter {
                 type DataStruct = #struct_type;
 
                 #lookup
+
+                #(#statics)*
             },
             false,
         )?;
@@ -366,7 +360,7 @@ impl DataExporter for BakedDataExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         // These are BTreeMaps keyed on the marker to keep the output sorted and stable
-        let mut resource_impls = BTreeMap::new();
+        let mut data_impls = BTreeMap::new();
         let mut any_consts = BTreeMap::new();
         let mut any_cases = BTreeMap::new();
 
@@ -379,7 +373,7 @@ impl DataExporter for BakedDataExporter {
             let marker = data.marker.parse::<TokenStream>().unwrap();
             let lookup_ident = data.lookup_ident.parse::<TokenStream>().unwrap();
 
-            resource_impls.insert(data.marker.clone(),
+            data_impls.insert(data.marker.clone(),
                 quote! {
                     #feature
                     impl DataProvider<#marker> for $provider {
@@ -448,7 +442,7 @@ impl DataExporter for BakedDataExporter {
             .into_iter()
             .map(|p| p.parse::<TokenStream>().unwrap());
 
-        let resource_impls = resource_impls.values();
+        let data_impls = data_impls.values();
         let any_consts = any_consts.values();
         let any_cases = any_cases.values();
 
@@ -458,26 +452,42 @@ impl DataExporter for BakedDataExporter {
                 #(
                     mod #mods;
                 )*
-
-                /// This data provider was programmatically generated by [`icu_datagen`](
-                /// https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/enum.Out.html#variant.Module).
-                #[non_exhaustive]
-                pub struct BakedDataProvider;
+                
                 use ::icu_provider::prelude::*;
 
-                /// Uses baked data to implement DataProvider<M> on the given struct.
+                /// Implement [`DataProvider<M>`] on the given struct using the data
+                /// hardcoded in this module. This allows the struct to be used with
+                /// `icu`'s `_unstable` constructors.
+                ///
                 /// This macro can only be called from its definition-site, i.e. right
-                /// after `include!`-ing the baked file.
-                macro_rules! implement_baked_provider {
+                /// after `include!`-ing the generated module.
+                /// 
+                /// ```compile_fail
+                /// struct MyDataProvider;
+                /// include!("/path/to/generated/mod.rs");
+                /// impl_data_provider(MyDataProvider);
+                /// ```
+                #[allow(unused_macros)]
+                macro_rules! impl_data_provider {
                     ($provider:path) => {
-                        #(#resource_impls)*
+                        #(#data_impls)*
                     }
                 }
 
-                /// Uses baked data to implement AnyProvider on the given struct.
+                /// Implement [`AnyProvider`] on the given struct using the data
+                /// hardcoded in this module. This allows the struct to be used with
+                /// `icu`'s `_any` constructors.
+                ///
                 /// This macro can only be called from its definition-site, i.e. right
-                /// after `include!`-ing the baked file.
-                macro_rules! implement_any_provider {
+                /// after `include!`-ing the generated module.
+                /// 
+                /// ```compile_fail
+                /// struct MyAnyProvider;
+                /// include!("/path/to/generated/mod.rs");
+                /// impl_any_provider(MyAnyProvider);
+                /// ```
+                #[allow(unused_macros)]
+                macro_rules! impl_any_provider {
                     ($provider:path) => {
                         impl AnyProvider for $provider {
                             fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
@@ -496,8 +506,6 @@ impl DataExporter for BakedDataExporter {
                         }
                     }
                 }
-
-                implement_baked_provider!(BakedDataProvider);
             },
             false,
         )?;

@@ -7,27 +7,25 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr", "und",
     ];
     static DATA: [&DataStruct; 19usize] = [
-        &include!("ar+ar-EG.rs.data"),
-        &include!("ar+ar-EG.rs.data"),
-        &include!("bn.rs.data"),
-        &include!("ccp.rs.data"),
-        &include!("en.rs.data"),
-        &include!("en-001+en-ZA.rs.data"),
-        &include!("en-001+en-ZA.rs.data"),
-        &include!("es+es-AR.rs.data"),
-        &include!("es+es-AR.rs.data"),
-        &include!("fil.rs.data"),
-        &include!("fr.rs.data"),
-        &include!("ja.rs.data"),
-        &include!("ru.rs.data"),
-        &include!("sr+sr-Cyrl.rs.data"),
-        &include!("sr+sr-Cyrl.rs.data"),
-        &include!("sr-Latn.rs.data"),
-        &include!("th.rs.data"),
-        &include!("tr.rs.data"),
-        &include!("und.rs.data"),
+        &AR, &AR, &BN, &CCP, &EN, &EN_001, &EN_001, &ES, &ES, &FIL, &FR, &JA, &RU, &SR, &SR,
+        &SR_LATN, &TH, &TR, &UND,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()
         .map(|i| unsafe { *DATA.get_unchecked(i) })
 }
+static AR: DataStruct = include!("ar.rs.data");
+static BN: DataStruct = include!("bn.rs.data");
+static CCP: DataStruct = include!("ccp.rs.data");
+static EN_001: DataStruct = include!("en-001.rs.data");
+static EN: DataStruct = include!("en.rs.data");
+static ES: DataStruct = include!("es.rs.data");
+static FIL: DataStruct = include!("fil.rs.data");
+static FR: DataStruct = include!("fr.rs.data");
+static JA: DataStruct = include!("ja.rs.data");
+static RU: DataStruct = include!("ru.rs.data");
+static SR_LATN: DataStruct = include!("sr-Latn.rs.data");
+static SR: DataStruct = include!("sr.rs.data");
+static TH: DataStruct = include!("th.rs.data");
+static TR: DataStruct = include!("tr.rs.data");
+static UND: DataStruct = include!("und.rs.data");

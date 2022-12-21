@@ -240,7 +240,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        Self::try_new_with_provider(l, opts, &crate::BakedDataProvider)
+        Self::try_new_with_provider(l, opts, &crate::GlobalDataProvider)
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result

@@ -1,4 +1,4 @@
-[
+&[
     (
         &[
             ::icu_datetime::fields::Field {
@@ -52,9 +52,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
-                        0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8,
+                        128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -164,9 +163,9 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -228,8 +227,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -261,9 +260,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
-                        0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8,
+                        128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -301,9 +299,9 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 32u8, 15u8,
-                        0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8, 0u8, 47u8,
+                        128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -401,9 +399,9 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -470,7 +468,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
+                        128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -502,8 +500,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8, 0u8, 47u8,
+                        128u8, 32u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -575,8 +573,8 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 32u8, 3u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -642,7 +640,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -687,7 +685,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -724,7 +722,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -811,7 +809,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -835,7 +833,7 @@
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -867,7 +865,7 @@
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,

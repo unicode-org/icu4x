@@ -30,32 +30,43 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "und",
     ];
     static DATA: [&DataStruct; 24usize] = [
-        &include!("ar+ar-EG.rs.data"),
-        &include!("ar+ar-EG.rs.data"),
-        &include!("ar-EG-u-nu-latn+ar-u-nu-latn.rs.data"),
-        &include!("ar-EG-u-nu-latn+ar-u-nu-latn.rs.data"),
-        &include!("bn.rs.data"),
-        &include!("bn-u-nu-latn+ccp-u-nu-latn.rs.data"),
-        &include!("ccp.rs.data"),
-        &include!("bn-u-nu-latn+ccp-u-nu-latn.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
-        &include!("en-ZA+ru.rs.data"),
-        &include!("es.rs.data"),
-        &include!("es-AR+sr+sr-Cyrl+sr-Latn+tr.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
-        &include!("fr.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
-        &include!("en-ZA+ru.rs.data"),
-        &include!("es-AR+sr+sr-Cyrl+sr-Latn+tr.rs.data"),
-        &include!("es-AR+sr+sr-Cyrl+sr-Latn+tr.rs.data"),
-        &include!("es-AR+sr+sr-Cyrl+sr-Latn+tr.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
-        &include!("th-u-nu-thai.rs.data"),
-        &include!("es-AR+sr+sr-Cyrl+sr-Latn+tr.rs.data"),
-        &include!("en+en-001+fil+ja+th+und.rs.data"),
+        &AR,
+        &AR,
+        &AR_EG_U_NU_LATN,
+        &AR_EG_U_NU_LATN,
+        &BN,
+        &BN_U_NU_LATN,
+        &CCP,
+        &BN_U_NU_LATN,
+        &EN,
+        &EN,
+        &EN_ZA,
+        &ES,
+        &ES_AR,
+        &EN,
+        &FR,
+        &EN,
+        &EN_ZA,
+        &ES_AR,
+        &ES_AR,
+        &ES_AR,
+        &EN,
+        &TH_U_NU_THAI,
+        &ES_AR,
+        &EN,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()
         .map(|i| unsafe { *DATA.get_unchecked(i) })
 }
+static AR_EG_U_NU_LATN: DataStruct = include!("ar-EG-u-nu-latn.rs.data");
+static AR: DataStruct = include!("ar.rs.data");
+static BN_U_NU_LATN: DataStruct = include!("bn-u-nu-latn.rs.data");
+static BN: DataStruct = include!("bn.rs.data");
+static CCP: DataStruct = include!("ccp.rs.data");
+static EN_ZA: DataStruct = include!("en-ZA.rs.data");
+static EN: DataStruct = include!("en.rs.data");
+static ES_AR: DataStruct = include!("es-AR.rs.data");
+static ES: DataStruct = include!("es.rs.data");
+static FR: DataStruct = include!("fr.rs.data");
+static TH_U_NU_THAI: DataStruct = include!("th-u-nu-thai.rs.data");

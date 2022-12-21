@@ -7,27 +7,19 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr", "und",
     ];
     static DATA: [&DataStruct; 19usize] = [
-        &include!("ar+ar-EG+bn+ccp.rs.data"),
-        &include!("ar+ar-EG+bn+ccp.rs.data"),
-        &include!("ar+ar-EG+bn+ccp.rs.data"),
-        &include!("ar+ar-EG+bn+ccp.rs.data"),
-        &include!("en+en-001+fil.rs.data"),
-        &include!("en+en-001+fil.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("es.rs.data"),
-        &include!("es-AR.rs.data"),
-        &include!("en+en-001+fil.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("ja.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("en-ZA+fr+ru+sr+sr-Cyrl+sr-Latn.rs.data"),
-        &include!("th.rs.data"),
-        &include!("tr.rs.data"),
-        &include!("und.rs.data"),
+        &AR, &AR, &AR, &AR, &EN, &EN, &EN_ZA, &ES, &ES_AR, &EN, &EN_ZA, &JA, &EN_ZA, &EN_ZA,
+        &EN_ZA, &EN_ZA, &TH, &TR, &UND,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()
         .map(|i| unsafe { *DATA.get_unchecked(i) })
 }
+static AR: DataStruct = include!("ar.rs.data");
+static EN_ZA: DataStruct = include!("en-ZA.rs.data");
+static EN: DataStruct = include!("en.rs.data");
+static ES_AR: DataStruct = include!("es-AR.rs.data");
+static ES: DataStruct = include!("es.rs.data");
+static JA: DataStruct = include!("ja.rs.data");
+static TH: DataStruct = include!("th.rs.data");
+static TR: DataStruct = include!("tr.rs.data");
+static UND: DataStruct = include!("und.rs.data");
