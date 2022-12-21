@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671559823722,
+  "lastUpdate": 1671648047404,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -87257,6 +87257,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6277,
             "range": "± 93",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40e68fb8fe176c9432761e5fa0ae2aaac068bf3f",
+          "message": "Rename Territory -> Region for Displayname component (#2895)\n\n* Rename Territory -> Region for Displayname component\r\n\r\n* Removing stale files\r\n\r\n* Resolving merge conflicts",
+          "timestamp": "2022-12-21T10:26:18-08:00",
+          "tree_id": "7f47d303c47eb64f3c6bd9db46e3f8d5dfd3cf55",
+          "url": "https://github.com/unicode-org/icu4x/commit/40e68fb8fe176c9432761e5fa0ae2aaac068bf3f"
+        },
+        "date": 1671647957538,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 79686,
+            "range": "± 3694",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 139504,
+            "range": "± 5224",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 76766,
+            "range": "± 4790",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 90949,
+            "range": "± 5253",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 85175,
+            "range": "± 6269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 94187,
+            "range": "± 5693",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 92927,
+            "range": "± 6236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 140055,
+            "range": "± 10965",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 157001,
+            "range": "± 4959",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 144509,
+            "range": "± 3930",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 159699,
+            "range": "± 9730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 156971,
+            "range": "± 7308",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6297,
+            "range": "± 375",
             "unit": "ns/iter"
           }
         ]
