@@ -2,14 +2,14 @@
   "day_periods": {
     "format": {
       "abbreviated": {
-        "am": "a. m.",
-        "pm": "p. m.",
+        "am": "a. m.",
+        "pm": "p. m.",
         "noon": "mediodía",
         "midnight": null
       },
       "narrow": {
-        "am": "a. m.",
-        "pm": "p. m.",
+        "am": "a. m.",
+        "pm": "p. m.",
         "noon": "del mediodía",
         "midnight": null
       },
@@ -24,8 +24,8 @@
     "stand_alone": {
       "abbreviated": null,
       "narrow": {
-        "am": "a. m.",
-        "pm": "p. m.",
+        "am": "a. m.",
+        "pm": "p. m.",
         "noon": "m.",
         "midnight": null
       },

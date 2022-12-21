@@ -1,5 +1,9 @@
 fixed_decimal::CompactDecimal#Struct
+fixed_decimal::CompactDecimal::exponent#FnInStruct
+fixed_decimal::CompactDecimal::from_significand_and_exponent#FnInStruct
 fixed_decimal::CompactDecimal::from_str#FnInStruct
+fixed_decimal::CompactDecimal::into_significand#FnInStruct
+fixed_decimal::CompactDecimal::significand#FnInStruct
 fixed_decimal::CompactDecimal::write_to#FnInStruct
 fixed_decimal::FixedInteger#Struct
 fixed_decimal::FixedInteger::from_str#FnInStruct

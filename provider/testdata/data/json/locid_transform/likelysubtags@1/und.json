@@ -312,6 +312,13 @@
     ],
     [
       [
+        "oc",
+        "ES"
+      ],
+      "Latn"
+    ],
+    [
+      [
         "pa",
         "PK"
       ],
@@ -647,6 +654,10 @@
       "Latn",
       "ZZ"
     ],
+    "ajt": [
+      "Arab",
+      "TN"
+    ],
     "ak": [
       "Latn",
       "GH"
@@ -705,7 +716,7 @@
     ],
     "ann": [
       "Latn",
-      "ZZ"
+      "NG"
     ],
     "any": [
       "Latn",
@@ -4371,6 +4382,10 @@
       "Latn",
       "ZZ"
     ],
+    "pis": [
+      "Latn",
+      "SB"
+    ],
     "pka": [
       "Brah",
       "IN"
@@ -4803,6 +4818,10 @@
       "Latn",
       "SE"
     ],
+    "smd": [
+      "Latn",
+      "AO"
+    ],
     "smj": [
       "Latn",
       "SE"
@@ -4826,6 +4845,10 @@
     "sn": [
       "Latn",
       "ZW"
+    ],
+    "snb": [
+      "Latn",
+      "MY"
     ],
     "snc": [
       "Latn",
@@ -5222,6 +5245,10 @@
     "tog": [
       "Latn",
       "MW"
+    ],
+    "tok": [
+      "Latn",
+      "001"
     ],
     "toq": [
       "Latn",

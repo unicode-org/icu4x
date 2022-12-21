@@ -681,8 +681,8 @@ static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 0u8, 32u8,
-                        15u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8,
+                        47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -849,7 +849,7 @@ static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -882,7 +882,7 @@ static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8,
+                        32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -1622,8 +1622,8 @@ static AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 0u8, 32u8,
-                        15u8, 128u8, 16u8, 1u8,
+                        32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8,
+                        47u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -1842,7 +1842,7 @@ static AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8,
+                        128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -1875,7 +1875,7 @@ static AR_EG_U_CA_GREGORY_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 47u8, 0u8, 32u8, 15u8, 128u8, 32u8, 1u8,
+                        32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -3665,8 +3665,8 @@ static BN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8, 0u8, 45u8, 128u8,
-                        32u8, 2u8, 0u8, 0u8, 45u8, 128u8, 16u8, 1u8,
+                        128u8, 64u8, 2u8, 0u8, 0u8, 45u8, 128u8, 32u8, 2u8, 0u8, 0u8, 45u8, 128u8,
+                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -7784,8 +7784,8 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -7821,9 +7821,9 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8,
-                        32u8, 128u8, 96u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -7853,8 +7853,8 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -7890,8 +7890,8 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -7907,7 +7907,7 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -7931,7 +7931,7 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -7963,7 +7963,7 @@ static EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -8117,7 +8117,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -8804,7 +8804,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -8841,8 +8841,8 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -8926,7 +8926,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -8950,7 +8950,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -8982,7 +8982,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -9019,8 +9019,8 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -9050,7 +9050,7 @@ static EN_001_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -9905,7 +9905,7 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -9942,8 +9942,8 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -10027,7 +10027,7 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -10051,7 +10051,7 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -10083,7 +10083,7 @@ static EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -10237,7 +10237,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -10899,7 +10899,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -10936,8 +10936,8 @@ static EN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -11021,7 +11021,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -11045,7 +11045,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -11077,7 +11077,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -11114,8 +11114,8 @@ static EN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -11145,7 +11145,7 @@ static EN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -11999,8 +11999,8 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -12036,9 +12036,9 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8,
-                        32u8, 128u8, 96u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -12068,8 +12068,8 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -12105,8 +12105,8 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -12122,7 +12122,7 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -12146,7 +12146,7 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -12178,7 +12178,7 @@ static EN_ZA_U_CA_BUDDHIST_EN_ZA_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -12332,7 +12332,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -13019,7 +13019,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -13056,8 +13056,8 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -13141,7 +13141,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -13165,7 +13165,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -13197,7 +13197,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -13234,8 +13234,8 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -13265,7 +13265,7 @@ static EN_ZA_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -14093,7 +14093,7 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                         4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
                         128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
@@ -14390,7 +14390,7 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -14427,8 +14427,8 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -14512,7 +14512,7 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -14536,7 +14536,7 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -14568,7 +14568,7 @@ static ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -15714,7 +15714,7 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -15751,8 +15751,8 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8,
-                        32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8,
+                        47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -15836,7 +15836,7 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -15860,7 +15860,7 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -15929,8 +15929,8 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -15967,7 +15967,7 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 0u8,
                         0u8, 40u8, 128u8, 163u8, 4u8, 0u8, 0u8, 41u8,
                     ])
                 },
@@ -15998,7 +15998,7 @@ static ES_AR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -16719,7 +16719,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
                         32u8, 128u8, 0u8, 1u8,
                     ])
@@ -16820,7 +16820,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
                         0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                         4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
                         128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
@@ -17115,7 +17115,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -17152,8 +17152,8 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -17237,7 +17237,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -17261,7 +17261,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -17293,7 +17293,7 @@ static ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -18411,7 +18411,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -18448,8 +18448,8 @@ static ES_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8,
-                        32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8,
+                        47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -18533,7 +18533,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -18557,7 +18557,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -18589,7 +18589,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -18626,8 +18626,8 @@ static ES_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -18664,7 +18664,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 0u8,
                         0u8, 40u8, 128u8, 163u8, 4u8, 0u8, 0u8, 41u8,
                     ])
                 },
@@ -18695,7 +18695,7 @@ static ES_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -19648,7 +19648,7 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -19685,8 +19685,8 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -19770,7 +19770,7 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -19794,7 +19794,7 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -19826,7 +19826,7 @@ static FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -19943,7 +19943,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -19980,7 +19980,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -20741,7 +20741,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -20778,8 +20778,8 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -20863,7 +20863,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -20887,7 +20887,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -20919,7 +20919,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -20956,8 +20956,8 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -20987,7 +20987,7 @@ static FIL_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -21842,7 +21842,7 @@ static FR_U_CA_BUDDHIST: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -21879,8 +21879,8 @@ static FR_U_CA_BUDDHIST: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -21964,7 +21964,7 @@ static FR_U_CA_BUDDHIST: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -21988,7 +21988,7 @@ static FR_U_CA_BUDDHIST: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -22020,7 +22020,7 @@ static FR_U_CA_BUDDHIST: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -22806,7 +22806,7 @@ static FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC_FR_U_CA_INDIAN: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -22843,8 +22843,8 @@ static FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC_FR_U_CA_INDIAN: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -22928,7 +22928,7 @@ static FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC_FR_U_CA_INDIAN: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -22952,7 +22952,7 @@ static FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC_FR_U_CA_INDIAN: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -22984,7 +22984,7 @@ static FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC_FR_U_CA_INDIAN: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -23800,7 +23800,7 @@ static FR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -23837,8 +23837,8 @@ static FR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -23922,7 +23922,7 @@ static FR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -23946,7 +23946,7 @@ static FR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -23978,7 +23978,7 @@ static FR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -24015,8 +24015,8 @@ static FR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -24046,7 +24046,7 @@ static FR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -24905,7 +24905,7 @@ static FR_U_CA_JAPANESE_FR_U_CA_JAPANEXT: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -24942,8 +24942,8 @@ static FR_U_CA_JAPANESE_FR_U_CA_JAPANEXT: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -25027,7 +25027,7 @@ static FR_U_CA_JAPANESE_FR_U_CA_JAPANEXT: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -25051,7 +25051,7 @@ static FR_U_CA_JAPANESE_FR_U_CA_JAPANEXT: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -25083,7 +25083,7 @@ static FR_U_CA_JAPANESE_FR_U_CA_JAPANEXT: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -30187,8 +30187,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8,
-                        32u8, 128u8, 0u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8,
+                        0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -30255,7 +30255,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
@@ -30293,7 +30293,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                        16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                         128u8, 0u8, 1u8,
                     ])
                 },
@@ -30337,8 +30337,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8,
+                        47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -30356,8 +30356,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8,
-                        32u8, 128u8, 0u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8,
+                        0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -30375,8 +30375,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8,
-                        32u8, 128u8, 0u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8,
+                        0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -30502,7 +30502,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
@@ -30536,7 +30536,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                        16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                         128u8, 0u8, 1u8,
                     ])
                 },
@@ -30576,8 +30576,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8,
+                        47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -30603,7 +30603,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
@@ -30861,7 +30861,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 82u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -30898,8 +30898,8 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 82u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8,
-                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8,
-                        32u8, 128u8, 96u8, 1u8,
+                        0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8,
+                        47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -30983,7 +30983,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -31007,7 +31007,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -31039,7 +31039,7 @@ static RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -31156,8 +31156,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8,
-                        32u8, 128u8, 0u8, 1u8,
+                        128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8,
+                        0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -31224,7 +31224,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
@@ -31262,7 +31262,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                        16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                         128u8, 0u8, 1u8,
                     ])
                 },
@@ -31306,8 +31306,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
+                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8,
+                        47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -31419,8 +31419,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 82u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8,
-                        0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
+                        0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 32u8,
+                        47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -31472,7 +31472,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8,
                     ])
                 },
@@ -31506,7 +31506,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
+                        16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -31545,8 +31545,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
+                        0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8,
+                        47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -31572,7 +31572,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 33u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                        128u8, 33u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                         4u8, 51u8, 0u8, 0u8, 46u8,
                     ])
                 },
@@ -31913,7 +31913,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -31950,8 +31950,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -32035,7 +32035,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -32059,7 +32059,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -32091,7 +32091,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -32128,8 +32128,8 @@ static RU_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -32159,7 +32159,7 @@ static RU_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -33161,7 +33161,7 @@ static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -33198,8 +33198,8 @@ static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -33283,7 +33283,7 @@ static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -33307,7 +33307,7 @@ static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -33339,7 +33339,7 @@ static SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -33648,7 +33648,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8,
+                        0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -33680,8 +33681,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -33720,8 +33721,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        46u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8,
+                        32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -33974,7 +33975,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8,
+                        0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -34007,7 +34009,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -34305,7 +34307,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -34342,8 +34344,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -34427,7 +34429,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -34451,7 +34453,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -34483,7 +34485,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -34520,8 +34522,8 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -34551,7 +34553,7 @@ static SR_CYRL_U_CA_GREGORY_SR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -34929,7 +34931,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8,
+                        0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -34961,8 +34964,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -35001,8 +35004,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8, 0u8, 0u8,
-                        46u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8,
+                        32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -35255,7 +35258,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
+                        128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8,
+                        0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -35288,7 +35292,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8,
-                        0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
+                        0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -35586,7 +35590,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -35623,8 +35627,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8,
+                        96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -35708,7 +35712,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -35732,7 +35736,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -35764,7 +35768,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -35801,8 +35805,8 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -35832,7 +35836,7 @@ static SR_LATN_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
@@ -36055,7 +36059,7 @@ static TH_U_CA_BUDDHIST: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                        16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
+                        0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -38710,8 +38714,7 @@ static TH_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        16u8, 1u8,
+                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -38744,7 +38747,7 @@ static TH_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
-                        0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -38783,8 +38786,7 @@ static TH_U_CA_GREGORY: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8,
-                        1u8,
+                        32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -38824,7 +38826,7 @@ static TH_U_CA_GREGORY: &DataStruct = &[
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8,
                         0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
-                        32u8, 128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
+                        32u8, 128u8, 16u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
@@ -41508,8 +41510,8 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8,
+                        113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -41545,9 +41547,9 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8,
-                        1u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8,
+                        113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
+                        144u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -41631,7 +41633,7 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -41655,7 +41657,7 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
                         128u8, 96u8, 1u8,
                     ])
                 },
@@ -41687,7 +41689,7 @@ static TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC: &DataStruct = &[
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
                         128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8,
+                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -42588,7 +42590,7 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8,
                         113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
                     ])
                 },
@@ -42625,7 +42627,7 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8,
+                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8,
                         113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8,
                         144u8, 2u8,
                     ])
@@ -42711,7 +42713,7 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8,
+                        128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8, 113u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
@@ -42735,8 +42737,8 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8,
+                        128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
+                        128u8, 128u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
@@ -42766,8 +42768,8 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
+                        128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
+                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -42803,9 +42805,9 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8, 128u8,
-                        163u8, 1u8,
+                        128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
+                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 0u8, 32u8,
+                        128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
@@ -42835,8 +42837,8 @@ static TR_U_CA_GREGORY: &DataStruct = &[
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 96u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8,
-                        128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
+                        128u8, 96u8, 1u8, 0u8, 32u8, 47u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
+                        128u8, 128u8, 2u8, 0u8, 0u8, 32u8, 128u8, 163u8, 1u8,
                     ])
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,

@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "th"
       },
@@ -224,9 +224,9 @@
               "format": {
                 "abbreviated": {
                   "midnight": "เที่ยงคืน",
-                  "am": "ก่อนเที่ยง",
+                  "am": "AM",
                   "noon": "เที่ยง",
-                  "pm": "หลังเที่ยง",
+                  "pm": "PM",
                   "morning1": "ในตอนเช้า",
                   "afternoon1": "ในตอนบ่าย",
                   "afternoon2": "บ่าย",
@@ -1256,6 +1256,14 @@
                   "M": "MMMM – MMMM G y",
                   "y": "MMMM G y – MMMM y"
                 }
+              }
+            },
+            "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} เวลา {0}",
+                "long": "{1} เวลา {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
               }
             }
           }

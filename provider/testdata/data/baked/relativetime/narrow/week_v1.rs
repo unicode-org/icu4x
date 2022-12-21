@@ -211,28 +211,28 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" wk. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("w ago"),
             index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" wk. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("w ago"),
             index: 0u8,
         },
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  wk."),
+            pattern: alloc::borrow::Cow::Borrowed("in w"),
             index: 3u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  wk."),
+            pattern: alloc::borrow::Cow::Borrowed("in w"),
             index: 3u8,
         },
     },
@@ -394,7 +394,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) linggo ang nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" linggo ang nakalipas"),
             index: 0u8,
         },
     },
@@ -408,7 +408,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) linggo"),
+            pattern: alloc::borrow::Cow::Borrowed("sa  linggo"),
             index: 3u8,
         },
     },

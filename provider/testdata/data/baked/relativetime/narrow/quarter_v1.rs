@@ -219,28 +219,28 @@ static EN: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternDataV
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" qtr. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("q ago"),
             index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" qtrs. ago"),
+            pattern: alloc::borrow::Cow::Borrowed("q ago"),
             index: 0u8,
         },
     },
     future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  qtr."),
+            pattern: alloc::borrow::Cow::Borrowed("in q"),
             index: 3u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("in  qtrs."),
+            pattern: alloc::borrow::Cow::Borrowed("in q"),
             index: 3u8,
         },
     },
@@ -361,7 +361,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" (na) quarter ang nakalipas"),
+            pattern: alloc::borrow::Cow::Borrowed(" quarter ang nakalipas"),
             index: 0u8,
         },
     },
@@ -375,7 +375,7 @@ static FIL: &DataStruct = &::icu_relativetime::provider::RelativeTimePatternData
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed("sa  (na) quarter"),
+            pattern: alloc::borrow::Cow::Borrowed("sa  quarter"),
             index: 3u8,
         },
     },

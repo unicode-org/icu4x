@@ -121,7 +121,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("41.0.0", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
     #[allow(clippy::unwrap_used)] // documented
     pub fn cldr_tag() -> String {

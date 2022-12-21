@@ -195,15 +195,15 @@ static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}"),
                 alloc::borrow::Cow::Borrowed("ফেব"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
-                alloc::borrow::Cow::Borrowed("এপ\u{9cd}রিল"),
+                alloc::borrow::Cow::Borrowed("এপ\u{9cd}রি"),
                 alloc::borrow::Cow::Borrowed("মে"),
                 alloc::borrow::Cow::Borrowed("জ\u{9c1}ন"),
-                alloc::borrow::Cow::Borrowed("জ\u{9c1}ল\u{9be}ই"),
-                alloc::borrow::Cow::Borrowed("আগস\u{9cd}ট"),
-                alloc::borrow::Cow::Borrowed("সেপ\u{9cd}টেম\u{9cd}বর"),
-                alloc::borrow::Cow::Borrowed("অক\u{9cd}টোবর"),
-                alloc::borrow::Cow::Borrowed("নভেম\u{9cd}বর"),
-                alloc::borrow::Cow::Borrowed("ডিসেম\u{9cd}বর"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ল"),
+                alloc::borrow::Cow::Borrowed("আগ"),
+                alloc::borrow::Cow::Borrowed("সেপ"),
+                alloc::borrow::Cow::Borrowed("অক\u{9cd}টো"),
+                alloc::borrow::Cow::Borrowed("নভে"),
+                alloc::borrow::Cow::Borrowed("ডিসে"),
             ]),
             narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("জ\u{9be}"),
@@ -239,8 +239,8 @@ static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: Some(
                     ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
-                        alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}য\u{9bc}\u{9be}রী"),
-                        alloc::borrow::Cow::Borrowed("ফেব\u{9cd}র\u{9c1}য\u{9bc}\u{9be}রী"),
+                        alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}"),
+                        alloc::borrow::Cow::Borrowed("ফেব"),
                         alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
                         alloc::borrow::Cow::Borrowed("এপ\u{9cd}রিল"),
                         alloc::borrow::Cow::Borrowed("মে"),
@@ -1233,11 +1233,11 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 16u8, 0u8, 21u8, 0u8,
-                        26u8, 0u8, 32u8, 0u8, 97u8, 46u8, 32u8, 67u8, 46u8, 100u8, 46u8, 32u8,
-                        67u8, 46u8, 72u8, 101u8, 105u8, 115u8, 101u8, 105u8, 77u8, 101u8, 105u8,
-                        106u8, 105u8, 82u8, 101u8, 105u8, 119u8, 97u8, 83u8, 104u8, 197u8, 141u8,
-                        119u8, 97u8, 84u8, 97u8, 105u8, 115u8, 104u8, 197u8, 141u8,
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 8u8, 0u8, 14u8, 0u8, 19u8, 0u8,
+                        24u8, 0u8, 30u8, 0u8, 97u8, 46u8, 67u8, 46u8, 100u8, 46u8, 67u8, 46u8,
+                        72u8, 101u8, 105u8, 115u8, 101u8, 105u8, 77u8, 101u8, 105u8, 106u8, 105u8,
+                        82u8, 101u8, 105u8, 119u8, 97u8, 83u8, 104u8, 197u8, 141u8, 119u8, 97u8,
+                        84u8, 97u8, 105u8, 115u8, 104u8, 197u8, 141u8,
                     ])
                 },
             )
@@ -1256,9 +1256,9 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 11u8, 0u8, 12u8, 0u8,
-                        13u8, 0u8, 14u8, 0u8, 97u8, 46u8, 32u8, 67u8, 46u8, 100u8, 46u8, 32u8,
-                        67u8, 46u8, 72u8, 77u8, 82u8, 83u8, 84u8,
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 8u8, 0u8, 9u8, 0u8, 10u8, 0u8,
+                        11u8, 0u8, 12u8, 0u8, 97u8, 46u8, 67u8, 46u8, 100u8, 46u8, 67u8, 46u8,
+                        72u8, 77u8, 82u8, 83u8, 84u8,
                     ])
                 },
             )

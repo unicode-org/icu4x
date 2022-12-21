@@ -21,6 +21,7 @@ members = [
     "components/timezone",
     "experimental/bies",
     "experimental/casemapping",
+    "experimental/compactdecimal",
     "experimental/displaynames",
     "experimental/ixdtf",
     "experimental/relativetime",

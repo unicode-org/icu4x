@@ -141,7 +141,7 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-cldr_json_gitref = "41.0.0"
+cldr_json_gitref = "42.0.0"
 
 icuexportdata_glob = [
     "collation/implicithan/bn_standard_data.toml",
@@ -325,6 +325,7 @@ zerovec = { version = "0.9", path = "../../utils/zerovec" }
 icu_calendar = { version = "1.0.0", path = "../../components/calendar", default-features = false, optional = true }
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_collator = { version = "1.0.0", path = "../../components/collator", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_datetime = { version = "1.0.0", path = "../../components/datetime", default-features = false, optional = true }
 icu_decimal = { version = "1.0.0", path = "../../components/decimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }

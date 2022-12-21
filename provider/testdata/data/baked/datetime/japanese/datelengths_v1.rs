@@ -7,12 +7,12 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("ar-EG", AR_AR_EG),
         ("bn", BN_CCP),
         ("ccp", BN_CCP),
-        ("en", EN_EN_001_EN_ZA),
-        ("en-001", EN_EN_001_EN_ZA),
-        ("en-ZA", EN_EN_001_EN_ZA),
+        ("en", EN_EN_001_EN_ZA_FIL),
+        ("en-001", EN_EN_001_EN_ZA_FIL),
+        ("en-ZA", EN_EN_001_EN_ZA_FIL),
         ("es", ES),
         ("es-AR", ES_AR),
-        ("fil", FIL),
+        ("fil", EN_EN_001_EN_ZA_FIL),
         ("fr", FR),
         ("ja", JA),
         ("ru", RU),
@@ -67,32 +67,28 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
         medium: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
         short: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
@@ -169,7 +165,7 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
         },
     },
 };
-static EN_EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
+static EN_EN_001_EN_ZA_FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
@@ -213,16 +209,14 @@ static EN_EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateL
         full: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
         long: ::icu_datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
-                    32u8, 128u8, 0u8, 0u8,
+                    128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
@@ -388,79 +382,6 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
-                    32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8,
-                    0u8, 32u8, 128u8, 0u8, 1u8,
-                ])
-            },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-        },
-        long: ::icu_datetime::pattern::runtime::Pattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
-                    32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ])
-            },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-        },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
-                    32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                ])
-            },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-        },
-        short: ::icu_datetime::pattern::runtime::Pattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
-                    16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                ])
-            },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
-        },
-    },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
-                    110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ])
-            },
-        },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
-                    110u8, 0u8, 0u8, 103u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ])
-            },
-        },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ])
-            },
-        },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
-            items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
-                ])
-            },
-        },
-    },
-};
 static FR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
     date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
@@ -607,7 +528,7 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
-                    32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 0u8,
+                    32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 32u8, 47u8, 0u8,
                     4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
@@ -617,7 +538,7 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
-                    16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                    16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                     128u8, 0u8, 1u8,
                 ])
             },
@@ -627,7 +548,7 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
-                    16u8, 1u8, 0u8, 0u8, 32u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
+                    16u8, 1u8, 0u8, 32u8, 47u8, 0u8, 4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8,
                     128u8, 0u8, 1u8,
                 ])
             },

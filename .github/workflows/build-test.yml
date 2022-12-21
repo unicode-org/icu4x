@@ -268,14 +268,14 @@ jobs:
       with:
         path: data/source
         # cache key includes CLDR data version + ICU (icuexportdata) data version
-        key: source-data/cldr-41/icuexport_release-72-1
+        key: source-data/cldr-42/icuexport_release-72-1
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
       with: 
         repository: "unicode-org/cldr-json"
-        tag: "41.0.0"
-        fileName: "cldr-41.0.0-json-full.zip"
+        tag: "42.0.0"
+        fileName: "cldr-42.0.0-json-full.zip"
         out-file-path: "data/source/"
     - name: Download ICU source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
@@ -295,7 +295,7 @@ jobs:
         args: > 
           -p icu_datagen --features bin --release --
           --icuexport-root data/source/icuexportdata_release-72-1.zip
-          --cldr-root data/source/cldr-41.0.0-json-full.zip
+          --cldr-root data/source/cldr-42.0.0-json-full.zip
           --all-locales
           --all-keys
           --format blob

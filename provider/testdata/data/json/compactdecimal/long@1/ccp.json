@@ -1,0 +1,32 @@
+{
+  "patterns": {
+    "3": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": "K"
+      }
+    },
+    "6": {
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": "M"
+      }
+    },
+    "9": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": "G"
+      }
+    },
+    "12": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": "T"
+      }
+    }
+  }
+}

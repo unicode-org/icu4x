@@ -2,8 +2,8 @@
   "day_periods": {
     "format": {
       "abbreviated": {
-        "am": "ก่อนเที่ยง",
-        "pm": "หลังเที่ยง",
+        "am": "AM",
+        "pm": "PM",
         "noon": "เที่ยง",
         "midnight": "เที่ยงคืน"
       },
@@ -22,7 +22,12 @@
       }
     },
     "stand_alone": {
-      "abbreviated": null,
+      "abbreviated": {
+        "am": "ก่อนเที่ยง",
+        "pm": "หลังเที่ยง",
+        "noon": "เที่ยง",
+        "midnight": "เที่ยงคืน"
+      },
       "narrow": {
         "am": "ก่อนเที่ยง",
         "pm": "หลังเที่ยง",

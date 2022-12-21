@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "es",
         "territory": "AR"
@@ -227,6 +227,7 @@
           "NR": "Nauru",
           "NU": "Niue",
           "NZ": "Nueva Zelanda",
+          "NZ-alt-variant": "Aotearoa (Nueva Zelanda)",
           "OM": "Omán",
           "PA": "Panamá",
           "PE": "Perú",
@@ -286,6 +287,7 @@
           "TN": "Túnez",
           "TO": "Tonga",
           "TR": "Turquía",
+          "TR-alt-variant": "Türkiye",
           "TT": "Trinidad y Tobago",
           "TV": "Tuvalu",
           "TW": "Taiwán",
