@@ -1,0 +1,32 @@
+::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
+    defaults: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[105u8, 110u8, 100u8, 105u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 83u8, 84u8,
+                ])
+            },
+        )
+    },
+    overrides: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    117u8, 116u8, 99u8, 0u8, 0u8, 0u8, 0u8, 0u8,
+                ])
+            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                ])
+            },
+        )
+    },
+}

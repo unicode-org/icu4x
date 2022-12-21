@@ -133,9 +133,9 @@ Rebuilding the application and rerunning datagen awards us with a 3KB data blob,
 
 So far we've used `--format blob` and `BlobDataProvider`. This is useful if we want to ship code and data separately, but there are other options.
 
-## `mod` and `BakedDataProvider`
+## `mod` and baked data
 
-The `mod` format will generate a Rust module that defines a data provider. This format naturally has no deserialization overhead, and allows for compile-time optimizations (data slicing isn't really necessary, as the compiler will do it for us), but cannot be dynamically loaded at runtime.
+The `mod` format will generate a Rust module that contains all the required data directly as Rust code. This format naturally has no deserialization overhead, and allows for compile-time optimizations (data slicing isn't really necessary, as the compiler will do it for us), but cannot be dynamically loaded at runtime.
 
 Let's give it a try:
 
@@ -154,17 +154,19 @@ $ cargo add zerovec
 We can then use the data by directly including the source with the `include!` macro.
 
 ```rust,compile_fail
-extern crate alloc; // required as BakedDataProvider is written for #[no_std]
+extern crate alloc; // required as my-data-mod is written for #[no_std]
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja");
 
-include!("../my-data-mod/mod.rs"); // defines BakedDataProvider
+struct UnstableProvider;
+include!("../my-data-mod/mod.rs");
+impl_data_provider!(UnstableProvider);
 
 fn main() {
-    let unstable_provider = BakedDataProvider;
+    let unstable_provider = UnstableProvider;
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -180,14 +182,12 @@ fn main() {
 }
 ```
 
-With this provider, we can use the `unstable` constructors. These are only guaranteed to work if the `BakedDataProvider` was generated with the same version of ICU4X that you are building with, but if you build the data as part of your a build pipeline, that shouldn't be a problem.
+With this provider, we can use the `unstable` constructors. These are only guaranteed to work if the data was generated with the same version of ICU4X that you are building with, but if you build the data as part of your a build pipeline, that shouldn't be a problem.
 
-You can also make the `BakedDataProvider` implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
+You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
 
 ```rust,compile_fail
-include!("../my-data-mod/mod.rs");
-include!("../my-data-mod/any.rs");
-let _any_provider = BakedDataProvider;
+impl_any_provider!(MyProvider);
 ```
 
 ## `dir` and `FsDataProvider`

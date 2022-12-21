@@ -88,7 +88,7 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
             }
         });
         databake::quote! {
-            [#(#vals),*]
+            &[#(#vals),*]
         }
     }
 }
@@ -110,7 +110,8 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     }
 }
 
-type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
+type BakedDateSkeletonPatternsV1 =
+    &'static [(&'static [crate::fields::Field], PatternPlurals<'static>)];
 
 impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
     fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {

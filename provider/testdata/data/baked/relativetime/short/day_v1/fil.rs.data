@@ -1,0 +1,46 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 21u8, 0u8, 28u8, 0u8, 40u8, 0u8, 45u8, 0u8,
+                    65u8, 114u8, 97u8, 119u8, 32u8, 98u8, 97u8, 103u8, 111u8, 32u8, 97u8,
+                    110u8, 103u8, 32u8, 107u8, 97u8, 104u8, 97u8, 112u8, 111u8, 110u8, 107u8,
+                    97u8, 104u8, 97u8, 112u8, 111u8, 110u8, 110u8, 103u8, 97u8, 121u8, 111u8,
+                    110u8, 103u8, 32u8, 97u8, 114u8, 97u8, 119u8, 98u8, 117u8, 107u8, 97u8,
+                    115u8, 83u8, 97u8, 109u8, 97u8, 107u8, 97u8, 108u8, 97u8, 119u8, 97u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" araw ang nakalipas"),
+            index: 0u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" (na) araw ang nakalipas"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  (na) araw"),
+            index: 3u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  araw"),
+            index: 3u8,
+        },
+    },
+}
