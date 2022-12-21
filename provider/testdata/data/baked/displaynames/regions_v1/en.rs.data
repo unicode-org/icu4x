@@ -1,4 +1,4 @@
-::icu_displaynames::provider::TerritoryDisplayNamesV1 {
+::icu_displaynames::provider::RegionDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
