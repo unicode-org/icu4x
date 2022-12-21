@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671559081197,
+  "lastUpdate": 1671647327297,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32603,6 +32603,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/96240fa11701e2397ff6e5a4446bba23104d385b"
         },
         "date": 1671559000056,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "40e68fb8fe176c9432761e5fa0ae2aaac068bf3f",
+          "message": "Rename Territory -> Region for Displayname component (#2895)\n\n* Rename Territory -> Region for Displayname component\r\n\r\n* Removing stale files\r\n\r\n* Resolving merge conflicts",
+          "timestamp": "2022-12-21T10:26:18-08:00",
+          "tree_id": "7f47d303c47eb64f3c6bd9db46e3f8d5dfd3cf55",
+          "url": "https://github.com/unicode-org/icu4x/commit/40e68fb8fe176c9432761e5fa0ae2aaac068bf3f"
+        },
+        "date": 1671647253809,
         "tool": "ndjson",
         "benches": [
           {
