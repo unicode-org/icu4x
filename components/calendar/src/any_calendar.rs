@@ -722,9 +722,9 @@ impl AnyCalendarKind {
             if lang == language!("th") {
                 Self::Buddhist
             // Other known fallback routes for currently-unsupported calendars
-            // } else if lang == langugage!("sa") {
+            // } else if lang == language!("sa") {
             //     Self::IslamicUmalqura
-            // } else if lang == language!("af") || lang == langugage!("ir") {
+            // } else if lang == language!("af") || lang == language!("ir") {
             //     Self::Persian
             } else {
                 Self::Gregorian
