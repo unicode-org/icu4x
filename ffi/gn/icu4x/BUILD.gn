@@ -627,7 +627,6 @@ rust_library("icu_segmenter-v0_7_0") {
   deps += [ ":icu_collections-v1_0_0" ]
   deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
-  deps += [ ":serde_json-v1_0_69" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerovec-v0_9_1" ]
 
@@ -664,25 +663,6 @@ rust_library("icu_timezone-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=314451d4936520e9",
     "-Cextra-filename=-314451d4936520e9",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("itoa-v0_4_8") {
-  crate_name = "itoa"
-  crate_root = "//ffi/gn/vendor/itoa/src/lib.rs"
-  output_name = "itoa-9e27afdde10ba0b5"
-
-  deps = []
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2015",
-    "-Cmetadata=9e27afdde10ba0b5",
-    "-Cextra-filename=-9e27afdde10ba0b5",
   ]
 
   visibility = [ ":*" ]
@@ -923,29 +903,6 @@ rust_proc_macro("serde_derive-v1_0_130") {
     "--cfg=feature=\"default\"",
     "--cfg=underscore_consts",
     "--cfg=ptr_addr_of",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("serde_json-v1_0_69") {
-  crate_name = "serde_json"
-  crate_root = "//ffi/gn/vendor/serde_json/src/lib.rs"
-  output_name = "serde_json-3a9f5b638834f68f"
-
-  deps = []
-  deps += [ ":itoa-v0_4_8" ]
-  deps += [ ":ryu-v1_0_5" ]
-  deps += [ ":serde-v1_0_130" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=3a9f5b638834f68f",
-    "-Cextra-filename=-3a9f5b638834f68f",
-    "--cfg=feature=\"alloc\"",
   ]
 
   visibility = [ ":*" ]
