@@ -40,7 +40,7 @@
 //! on the Basic Multilingual Plane. Notably, in this case, the collator makes use of the
 //! knowledge that the second character of such a decomposition is a non-starter. Therefore,
 //! decomposition into two starters is handled by generic fallback path that looks the
-//! decomposion from an array by offset and length instead of baking a BMP starter pair directly
+//! decomposition from an array by offset and length instead of baking a BMP starter pair directly
 //! into a trie value.
 //!
 //! The decompositions into non-starters are hard-coded. At present in Unicode, these appear
@@ -135,7 +135,7 @@ const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
 const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
 
 /// Magic marker trie value for characters whose decomposition
-/// starts with a non-starter. The actual decompostion is
+/// starts with a non-starter. The actual decomposition is
 /// hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
