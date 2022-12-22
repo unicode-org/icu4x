@@ -52,7 +52,7 @@ deserialize_bincode_1 = ["serde", "bincode", "std"]
 deserialize_postcard_1 = ["serde", "postcard"]
 
 # Dependencies for running data generation
-datagen = ["dhat", "serde", "erased-serde", "databake", "std", "serde_json", "sync", "yoke/serde"]
+datagen = ["dhat", "serde", "erased-serde", "databake", "std", "serde_json", "sync", "tzif", "yoke/serde"]
 
 [dependencies]
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
@@ -76,6 +76,7 @@ postcard = { version = "1.0.0", default-features = false, optional = true }
 dhat = { version = "0.3.0", optional = true }
 erased-serde = { version = "0.3", optional = true, default-features = false, features = ["alloc"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
+tzif = { version = "0.2.0", optional = true }
 
 [dev-dependencies]
 serde_json = "1.0"

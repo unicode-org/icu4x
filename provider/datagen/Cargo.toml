@@ -80,10 +80,12 @@ proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.5", path = "../../utils/writeable" }
+tzif = "0.2.0"
 zip = "0.6"
 cached-path = "0.5"
 lazy_static = "1"
 rust-format = { version = "0.3.4", features = ["token_stream"] }
+walkdir = "2.3.2"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
