@@ -127,12 +127,7 @@ pub struct TimeZoneTransitionRuleV1 {
 /// A map from TZID to its transition rules.
 /// See [`TimeZoneTransitionRuleV1`] for more info.
 #[icu_provider::data_struct(TimeZoneTransitionRulesV1Marker = "tzdb/transition_rules@1")]
-#[derive(
-    Debug, // This file is part of ICU4X. For terms of use, please see the file
-    // called LICENSE at the top level of the ICU4X source tree
-    // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-    PartialEq,
-)]
+#[derive(Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),

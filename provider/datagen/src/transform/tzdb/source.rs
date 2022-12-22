@@ -51,7 +51,7 @@ impl TzdbPaths {
             .flatten()
             .filter(|entry| entry.file_type().is_file())
             .map(|file| file.into_path())
-            .collect::<Vec<_>>()
+            .collect()
     }
 }
 

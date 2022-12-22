@@ -26,7 +26,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
         icu_provider::DataResponse<TimeZoneHistoricTransitionsV1Marker>,
         icu_provider::DataError,
     > {
-        let tzdb_cache = self.source.tzdb()?;
+        let tzdb_paths = self.source.tzdb()?;
         let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
             .source
             .cldr()?
@@ -36,7 +36,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
         let bcp47_tzids =
             compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
 
-        let tzif_data = tzdb_cache.tzif().read_and_parse()?;
+        let tzif_data = tzdb_paths.tzif().read_and_parse()?;
 
         let raw_transitions = bcp47_tzids
             .into_iter()
@@ -94,7 +94,7 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
         _req: DataRequest,
     ) -> Result<icu_provider::DataResponse<TimeZoneTransitionRulesV1Marker>, icu_provider::DataError>
     {
-        let tzdb_cache = self.source.tzdb()?;
+        let tzdb_paths = self.source.tzdb()?;
         let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
             .source
             .cldr()?
@@ -104,7 +104,7 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
         let bcp47_tzids =
             compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
 
-        let tzif_data = tzdb_cache.tzif().read_and_parse()?;
+        let tzif_data = tzdb_paths.tzif().read_and_parse()?;
 
         let raw_rules = bcp47_tzids
             .into_iter()
