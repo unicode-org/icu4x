@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671664654391,
+  "lastUpdate": 1671746054325,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32723,6 +32723,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/599f71506dfce4385a48982a625291d0ffdf51ba"
         },
         "date": 1671664573266,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "600f67033c0f0913e9248c526f9b9a6f9259cf50",
+          "message": "Update triaging.md",
+          "timestamp": "2022-12-22T13:51:46-08:00",
+          "tree_id": "1deab9e96c0571e0b6edde1b79f46f7885192174",
+          "url": "https://github.com/unicode-org/icu4x/commit/600f67033c0f0913e9248c526f9b9a6f9259cf50"
+        },
+        "date": 1671745979542,
         "tool": "ndjson",
         "benches": [
           {
