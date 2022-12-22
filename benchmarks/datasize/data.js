@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671747660982,
+  "lastUpdate": 1671752643714,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32818,6 +32818,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4288214,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c571063d90ac785d2aee60322a53c80b4ebb9587",
+          "message": "Update version of Language CLDR data to 42.0.0 (#2912)",
+          "timestamp": "2022-12-22T15:41:27-08:00",
+          "tree_id": "b5b95106cab8faac21bc8ff674fbf41b31d4a74c",
+          "url": "https://github.com/unicode-org/icu4x/commit/c571063d90ac785d2aee60322a53c80b4ebb9587"
+        },
+        "date": 1671752562863,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
             "unit": "bytes",
             "biggerIsBetter": false
           }
