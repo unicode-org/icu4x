@@ -4,12 +4,18 @@
 
 //! Custom Serialize and Deserialize implementations for TZDB types.
 
+#[cfg(feature = "datagen")]
+use ::serde::{Serialize, Serializer};
+
 #[cfg(feature = "serde")]
-use {
-    super::{ule::LocalTimeRecordULE, ule::TransitionDateULE, LocalTimeRecordV1, TransitionDateV1},
-    serde::{Deserialize, Deserializer, Serialize, Serializer},
-    zerovec::ule::AsULE,
-};
+use super::ule::{LocalTimeRecordULE, TransitionDateULE};
+#[cfg(feature = "serde")]
+use ::serde::{Deserialize, Deserializer};
+
+#[cfg(any(feature = "datagen", feature = "serde"))]
+use super::{LocalTimeRecordV1, TransitionDateV1};
+#[cfg(any(feature = "datagen", feature = "serde"))]
+use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
 /// A visitor struct for serde custom deserialization of a [LocalTimeRecordV1].
@@ -19,7 +25,7 @@ pub struct LocalTimeRecordVisitor;
 impl<'de> serde::de::Visitor<'de> for LocalTimeRecordVisitor {
     type Value = LocalTimeRecordV1;
 
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         formatter.write_str("a LocalTimeRecordV1")
     }
 
@@ -72,7 +78,7 @@ pub struct TransitionDateVisitor;
 impl<'de> serde::de::Visitor<'de> for TransitionDateVisitor {
     type Value = TransitionDateV1;
 
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         formatter.write_str("a TransitionDateV1")
     }
 
