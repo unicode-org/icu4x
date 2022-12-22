@@ -210,6 +210,7 @@ registry!(
     TimeSymbolsV1Marker,
     TimeZoneFormatsV1Marker,
     TimeZoneHistoricTransitionsV1Marker,
+    TimeZoneTransitionRulesV1Marker,
     UnifiedIdeographV1Marker,
     UnitListV1Marker,
     UppercaseV1Marker,

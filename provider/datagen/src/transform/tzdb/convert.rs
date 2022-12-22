@@ -4,8 +4,26 @@
 
 use std::collections::BTreeMap;
 
-use icu_datetime::provider::tzdb::LocalTimeRecordV1;
-use tzif::data::tzif::{TzifData, UtLocalIndicator};
+use icu_datetime::provider::tzdb::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
+use tzif::data::{
+    posix::{TransitionDate, TransitionDay},
+    tzif::{TzifData, UtLocalIndicator},
+};
+
+fn create_transition_day_v1(day: TransitionDay) -> TransitionDayV1 {
+    match day {
+        TransitionDay::NoLeap(value) => TransitionDayV1::NoLeap(value),
+        TransitionDay::WithLeap(value) => TransitionDayV1::WithLeap(value),
+        TransitionDay::Mwd(m, w, d) => TransitionDayV1::Mwd(m as u8, w as u8, d as u8),
+    }
+}
+
+pub(super) fn create_transition_date_v1(date: TransitionDate) -> TransitionDateV1 {
+    TransitionDateV1 {
+        day_of_year: create_transition_day_v1(date.day),
+        time_of_day: date.time.0 as i32,
+    }
+}
 
 pub(super) fn create_time_zone_transition_list_v1(
     tzif_data: &TzifData,

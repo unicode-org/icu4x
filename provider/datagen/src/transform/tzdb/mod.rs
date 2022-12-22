@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::transform::cldr::cldr_serde::time_zones as cldr_time_zones;
+use crate::transform::cldr::time_zones::compute_bcp47_tzids_hashmap;
 use icu_datetime::provider::tzdb::{
-    TimeZoneHistoricTransitionsV1, TimeZoneHistoricTransitionsV1Marker,
+    TimeZoneHistoricTransitionsV1, TimeZoneHistoricTransitionsV1Marker, TimeZoneTransitionRuleV1,
+    TimeZoneTransitionRulesV1, TimeZoneTransitionRulesV1Marker,
 };
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataPayload, DataProvider, DataRequest, DataResponse,
@@ -11,9 +14,6 @@ use icu_provider::{
 };
 use itertools::Itertools;
 use zerovec::ZeroVec;
-
-use crate::transform::cldr::cldr_serde::time_zones as cldr_time_zones;
-use crate::transform::cldr::time_zones::compute_bcp47_tzids_hashmap;
 
 mod convert;
 pub(crate) mod source;
@@ -88,11 +88,81 @@ impl IterableDataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::Datage
     }
 }
 
+impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<icu_provider::DataResponse<TimeZoneTransitionRulesV1Marker>, icu_provider::DataError>
+    {
+        let tzdb_cache = self.source.tzdb()?;
+        let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
+            .source
+            .cldr()?
+            .bcp47()
+            .read_and_parse("timezone.json")?;
+
+        let bcp47_tzids =
+            compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
+
+        let tzif_data = tzdb_cache.tzif().read_and_parse()?;
+
+        let raw_rules = bcp47_tzids
+            .into_iter()
+            .filter_map(|(tzid, bcp47_tzid)| {
+                tzif_data
+                    .iter()
+                    .find_map(|(tzif_tzid, data)| (&tzid == tzif_tzid).then(|| data))
+                    .map(|data| (bcp47_tzid, data))
+            })
+            .sorted_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid.cmp(rhs_tzid))
+            // If we are generating data from IANA files that were generated with backward-compatible aliases
+            // there may be duplicate data for each BCP47 TZID, so we need to ensure we only take the data once.
+            .dedup_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid == rhs_tzid)
+            .filter_map(|(bcp47_tzid, data)| {
+                data.footer.as_ref().map(|tz_string| {
+                    (
+                        bcp47_tzid,
+                        TimeZoneTransitionRuleV1 {
+                            std_offset: tz_string.std_info.offset.0 as i32,
+                            dst_offset: tz_string
+                                .dst_info
+                                .as_ref()
+                                .map(|info| info.variant_info.offset.0 as i32),
+                            dst_start: tz_string
+                                .dst_info
+                                .as_ref()
+                                .map(|info| convert::create_transition_date_v1(info.start_date)),
+                            dst_end: tz_string
+                                .dst_info
+                                .as_ref()
+                                .map(|info| convert::create_transition_date_v1(info.end_date)),
+                        },
+                    )
+                })
+            });
+
+        let rules_v1 = TimeZoneTransitionRulesV1 {
+            transition_rules: raw_rules.collect(),
+        };
+
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(rules_v1)),
+        })
+    }
+}
+
+impl IterableDataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<icu_provider::DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::DatagenProvider;
-    use icu_datetime::provider::tzdb::LocalTimeRecordV1;
+    use icu_datetime::provider::tzdb::{LocalTimeRecordV1, TransitionDayV1};
     use icu_timezone::TimeZoneBcp47Id;
     use tinystr::TinyAsciiStr;
     use zerovec::ule::AsULE;
@@ -172,6 +242,67 @@ mod tests {
                     expected,
                     "Given {tzid:?} and {timestamp}, expected the following record {expected:?}, but found {record:?}",
                 );
+            }
+        }
+    }
+
+    #[test]
+    fn load_tzif_transition_rules() {
+        let provider = DatagenProvider::for_test();
+        let payload: DataPayload<TimeZoneTransitionRulesV1Marker> = provider
+            .load(DataRequest::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let data = payload.get();
+        assert!(
+            !data.transition_rules.is_empty(),
+            "Transition rules data should contain at least one rule"
+        );
+        for (_, &rule_ule) in data.transition_rules.iter() {
+            let rule = TimeZoneTransitionRuleV1::from_unaligned(rule_ule);
+            if let Some(value) = rule.dst_offset {
+                assert!(
+                    -90_000 < value && value < 90_000,
+                    "The TransitionRule DST offset should be between -90000 seconds and 90000 seconds, but it is {}",
+                    value
+                );
+            }
+            if let Some(date) = rule.dst_start {
+                assert!(
+                    -601200 <= date.time_of_day && date.time_of_day <= 601200,
+                    "The time of day should be between [-601200, 601200] seconds, but it is {}",
+                    date.time_of_day
+                );
+                match date.day_of_year {
+                    TransitionDayV1::NoLeap(day) => assert!(
+                        (1..=365).contains(&day),
+                        "The NoLeap transition day should be between [1, 365], but it is {}",
+                        day
+                    ),
+                    TransitionDayV1::WithLeap(day) => assert!(
+                        day <= 365,
+                        "The WithLeap transition day should be between [0, 365], but it is {}",
+                        day
+                    ),
+                    TransitionDayV1::Mwd(m, w, d) => {
+                        assert!(
+                            (1..=12).contains(&m),
+                            "The Mwd month value should be between [1, 12], but it is {}",
+                            m
+                        );
+                        assert!(
+                            (1..=5).contains(&w),
+                            "The Mwd wonth value should be between [1,  5], but it is {}",
+                            w
+                        );
+                        assert!(
+                            (0..=6).contains(&d),
+                            "The Mwd donth value should be between [0, 6], but it is {}",
+                            d
+                        );
+                    }
+                }
             }
         }
     }
