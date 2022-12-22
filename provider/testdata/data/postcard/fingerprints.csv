@@ -1553,3 +1553,5 @@ time_zone/specific_short@1, sr-Latn, 119B, 25ac9f26a0cc20ac07a7fe32542fca7e2deda
 time_zone/specific_short@1, th, 31B, 58df760c686d7179a07c630a823ace19b8f5689bb320ca698fc3455eca2c0206
 time_zone/specific_short@1, tr, 31B, 58df760c686d7179a07c630a823ace19b8f5689bb320ca698fc3455eca2c0206
 time_zone/specific_short@1, und, 31B, 58df760c686d7179a07c630a823ace19b8f5689bb320ca698fc3455eca2c0206
+tzdb/historic_transitions@1, und, 146271B, c8ada095490ccdd8aa45d0cc0281fc22d107d588bf5b935a2b9b908c20ec0fa4
+tzdb/transition_rules@1, und, 10637B, 8d46b3165e47e098baf16a3a16d211458740d5e1fad38e7ca24f23f0d599e00a
