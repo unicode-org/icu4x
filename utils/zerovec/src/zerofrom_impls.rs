@@ -4,7 +4,7 @@
 
 use crate::map::ZeroMapKV;
 use crate::ule::*;
-use crate::vecs::{FlexZeroSlice, FlexZeroVec};
+use crate::vecs::{FlexZeroSlice, FlexZeroVec, Index32};
 use crate::{VarZeroSlice, VarZeroVec, ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec};
 use zerofrom::ZeroFrom;
 
@@ -75,6 +75,26 @@ where
 {
     #[inline]
     fn zero_from(other: &'zf VarZeroVec<'_, T>) -> Self {
+        other.as_slice().into()
+    }
+}
+
+impl<'zf, T> ZeroFrom<'zf, VarZeroSlice<T, Index32>> for VarZeroVec<'zf, T, Index32>
+where
+    T: 'static + VarULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf VarZeroSlice<T, Index32>) -> Self {
+        other.into()
+    }
+}
+
+impl<'zf, T> ZeroFrom<'zf, VarZeroVec<'_, T, Index32>> for VarZeroVec<'zf, T, Index32>
+where
+    T: 'static + VarULE + ?Sized,
+{
+    #[inline]
+    fn zero_from(other: &'zf VarZeroVec<'_, T, Index32>) -> Self {
         other.as_slice().into()
     }
 }
