@@ -14,7 +14,7 @@ ICU4X uses GitHub for tracking feature requests and work items.  The following q
 - All *closed* issues should have a resolution, linked pull request, or the **T-task**, **question**, **invalid**, or **duplicate** label.
     - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-as-designed+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AR-fixed-elsewhere+-label%3Aquestion+-label%3Ainvalid+-label%3AT-task+-label%3Aduplicate)
 - If an issue is open and not labeled **backlog**, the issue should be actionable. Open issues should be assigned to a milestone.
-    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog+-label%3Adiscuss)
+    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Adiscuss+-label%3Adiscuss-priority+-label%3Aneeds-approval+)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and remain open.  The backlog should be checked periodically for issues that should be re-prioritized.
     - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A%22Backlog+%E2%9F%A8P4%E2%9F%A9%22)
 
