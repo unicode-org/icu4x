@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671665299707,
+  "lastUpdate": 1671746710401,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62009,6 +62009,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "600f67033c0f0913e9248c526f9b9a6f9259cf50",
+          "message": "Update triaging.md",
+          "timestamp": "2022-12-22T13:51:46-08:00",
+          "tree_id": "1deab9e96c0571e0b6edde1b79f46f7885192174",
+          "url": "https://github.com/unicode-org/icu4x/commit/600f67033c0f0913e9248c526f9b9a6f9259cf50"
+        },
+        "date": 1671746628343,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107951,
+            "range": "± 5681",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22117,
+            "range": "± 700",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 61160,
+            "range": "± 2879",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 199,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 88,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 77,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
