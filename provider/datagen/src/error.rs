@@ -10,6 +10,9 @@ pub(crate) const MISSING_CLDR_ERROR: DataError =
 pub(crate) const MISSING_ICUEXPORT_ERROR: DataError =
     DataErrorKind::MissingSourceData.with_str_context("icuexport");
 
+pub(crate) const MISSING_TZDB_ERROR: DataError =
+    DataErrorKind::MissingSourceData.with_str_context("tzdb");
+
 /// Identifies errors that are due to missing CLDR data.
 ///
 /// See [`datagen`](crate::datagen).
@@ -24,6 +27,14 @@ pub fn is_missing_cldr_error(mut e: DataError) -> bool {
 pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
     e.key = None;
     e == MISSING_ICUEXPORT_ERROR
+}
+
+/// Identifies errors that are due to missing TZDB data.
+///
+/// See [`datagen`](crate::datagen).
+pub fn is_missing_tzdb_error(mut e: DataError) -> bool {
+    e.key = None;
+    e == MISSING_TZDB_ERROR
 }
 
 pub(crate) fn data_error_from_toml(other: toml::de::Error) -> DataError {

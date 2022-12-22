@@ -121,7 +121,7 @@ impl DatagenProvider {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
                 source: SourceData::for_test(),
-            };
+           };
         }
         TEST_PROVIDER.clone()
     }

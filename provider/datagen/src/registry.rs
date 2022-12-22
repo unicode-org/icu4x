@@ -8,6 +8,7 @@ use icu_calendar::provider::*;
 use icu_collator::provider::*;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::provider::time_zones::*;
+use icu_datetime::provider::tzdb::*;
 use icu_decimal::provider::*;
 use icu_list::provider::*;
 use icu_locid_transform::provider::*;
@@ -208,6 +209,7 @@ registry!(
     TimeLengthsV1Marker,
     TimeSymbolsV1Marker,
     TimeZoneFormatsV1Marker,
+    TimeZoneHistoricTransitionsV1Marker,
     UnifiedIdeographV1Marker,
     UnitListV1Marker,
     UppercaseV1Marker,

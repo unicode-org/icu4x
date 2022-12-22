@@ -6,6 +6,7 @@
 
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
+use crate::transform::tzdb::source::TzdbPaths;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
@@ -25,6 +26,7 @@ use zip::ZipArchive;
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
+    tzdb_paths: Option<Arc<TzdbPaths>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
@@ -40,6 +42,7 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
+            tzdb_paths: None,
             segmenter_paths: Arc::new(SerdeCache::new(
                 AbstractFs::new(&segmenter_path).expect("valid dir"),
             )),
@@ -67,6 +70,8 @@ impl SourceData {
                 icu_testdata::paths::cldr_json_root(),
                 CldrLocaleSubset::Full,
             )
+            .expect("testdata is valid")
+            .with_tzdb(icu_testdata::paths::tzdb_root())
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .expect("testdata is valid")
@@ -97,6 +102,16 @@ impl SourceData {
         })
     }
 
+    /// Adds TZDB data to this `DataSource`. The root should point to the directory
+    /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
+    /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
+    pub fn with_tzdb(self, root: PathBuf) -> Result<Self, DataError> {
+        Ok(Self {
+            tzdb_paths: Some(Arc::new(TzdbPaths::new(root))),
+            ..self
+        })
+    }
+
     /// Adds ICU export data to this `DataSource`. The path should point to a local
     /// `icuexportdata_uprops_full.zip` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
@@ -113,7 +128,7 @@ impl SourceData {
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
     pub fn with_cldr_for_tag(
         self,
-        tag: &str,
+        tag: &str,tzdb-datagen
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -192,10 +207,16 @@ impl SourceData {
     }
 
     /// Paths to CLDR source data.
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
+    pub(crate) fn cldr(&self) -> Result<&CldrCache, Dtzdb-datagenataError> {
         self.cldr_paths
             .as_deref()
             .ok_or(crate::error::MISSING_CLDR_ERROR)
+    }
+
+    pub(crate) fn tzdb(&self) -> Result<&TzdbPaths, DataError> {
+        self.tzdb_paths
+            .as_deref()
+            .ok_or(crate::error::MISSING_TZDB_ERROR)
     }
 
     /// Path to Unicode Properties source data.
@@ -282,7 +303,7 @@ impl Debug for SerdeCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SerdeCache")
             .field("root", &self.root)
-            // skip formatting the cache
+            // skip formatting the ctzdb-datagenache
             .finish()
     }
 }
@@ -336,7 +357,7 @@ impl SerdeCache {
     }
 
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
-        self.root.list(path)
+        self.root.list(pathtzdb-datagen)
     }
 }
 

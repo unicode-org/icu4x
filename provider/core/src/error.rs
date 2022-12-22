@@ -265,3 +265,12 @@ impl From<std::io::Error> for DataError {
         DataErrorKind::Io(e.kind()).into_error()
     }
 }
+
+#[cfg(feature = "datagen")]
+impl From<tzif::error::Error> for DataError {
+    fn from(_e: tzif::error::Error) -> Self {
+        #[cfg(feature = "log_error_context")]
+        log::warn!("Tzdb error: {}", _e);
+        DataErrorKind::Custom.into_error()
+    }
+}

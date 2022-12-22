@@ -83,6 +83,15 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("TZDB_ROOT")
+                .long("tzdb-root")
+                .value_name("PATH")
+                .help(
+                    "Path to a local directory contining TZif files"
+                )
+                .takes_value(true),
+        )
+        .arg(
             Arg::with_name("ICUEXPORT_TAG")
                 .long("icuexport-tag")
                 .value_name("TAG")
@@ -294,6 +303,10 @@ fn main() -> eyre::Result<()> {
             source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, cldr_locales)?;
     } else if let Some(tag) = matches.value_of("CLDR_TAG") {
         source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
+    }
+
+    if let Some(path) = matches.value_of("TZDB_ROOT") {
+        source_data = source_data.with_tzdb(PathBuf::from(path))?;
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {

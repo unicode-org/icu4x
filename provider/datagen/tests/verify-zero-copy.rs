@@ -52,6 +52,8 @@ fn main() {
                 CldrLocaleSubset::Full,
             )
             .unwrap()
+            .with_tzdb(icu_testdata::paths::tzdb_root())
+            .unwrap()
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .unwrap(),
     }

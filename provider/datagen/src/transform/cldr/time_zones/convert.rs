@@ -42,7 +42,8 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-fn compute_bcp47_tzids_hashmap(
+/// Creates a many-to-one mapping from TZIDs to their corresponding [`TimeZoneBcp47Ids`](TimeZoneBcp47Id).
+pub(crate) fn compute_bcp47_tzids_hashmap(
     bcp47_tzids_resource: &HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> HashMap<String, TimeZoneBcp47Id> {
     let mut bcp47_tzids = HashMap::new();
