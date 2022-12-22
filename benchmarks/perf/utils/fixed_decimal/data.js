@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671748278207,
+  "lastUpdate": 1671753257715,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62176,6 +62176,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 189,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c571063d90ac785d2aee60322a53c80b4ebb9587",
+          "message": "Update version of Language CLDR data to 42.0.0 (#2912)",
+          "timestamp": "2022-12-22T15:41:27-08:00",
+          "tree_id": "b5b95106cab8faac21bc8ff674fbf41b31d4a74c",
+          "url": "https://github.com/unicode-org/icu4x/commit/c571063d90ac785d2aee60322a53c80b4ebb9587"
+        },
+        "date": 1671753185679,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116265,
+            "range": "± 330",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23142,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63134,
+            "range": "± 506",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
             "range": "± 0",
             "unit": "ns/iter"
           },
