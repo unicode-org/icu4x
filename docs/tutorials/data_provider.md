@@ -114,21 +114,21 @@ where
             // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
             let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.locale));
-            if let Some(any_resp) = cache.get(&borrowed_cache_key) {
+            if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
-                return any_resp.clone_downcast();
+                return any_res.clone_downcast();
             }
         }
         // Release the lock to invoke the inner provider
-        let computed_resp: DataResponse<M> = self.provider.load(req)?;
-        let computed_any_resp: AnyResponse = computed_resp.wrap_into_any_response();
+        let computed_res: DataResponse<M> = self.provider.load(req)?;
+        let computed_any_res: AnyResponse = computed_res.wrap_into_any_response();
         {
             // Second lock: cache storage
             let mut cache = self.cache.lock().unwrap();
             let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
-            let any_resp = cache.get_or_insert(owned_cache_key, || computed_any_resp);
-            return any_resp.clone_downcast();
+            let any_res = cache.get_or_insert(owned_cache_key, || computed_any_res);
+            return any_res.clone_downcast();
         }
     }
 }
