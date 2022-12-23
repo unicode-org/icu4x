@@ -188,31 +188,32 @@ assert_eq!(provider.cache.lock().unwrap().len(), 2);
 
 ICU4X's explicit data pipeline allows for specific data entries to be overwritten in order to customize the output or comply with policy.
 
-The following example illustrates how to overwrite the display name of a region.
+The following example illustrates how to overwrite the decimal separators for a region.
 
 ```rust
-use icu_displaynames::DisplayNames;
-use icu_displaynames::DisplayNamesOptions;
+use icu::decimal::FixedDecimalFormatter;
 use icu_provider::prelude::*;
 use icu::locid::locale;
-use icu::locid::subtags_language as language;
+use icu::locid::subtags_region as region;
+use std::borrow::Cow;
 use tinystr::tinystr;
 
-pub struct CustomRegionNamesProvider<P>(P);
+pub struct CustomDecimalSymbolsProvider<P>(P);
 
-impl<P> AnyProvider for CustomRegionNamesProvider<P>
+impl<P> AnyProvider for CustomDecimalSymbolsProvider<P>
 where
     P: AnyProvider
 {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        use icu_displaynames::provider::RegionDisplayNamesV1Marker;
+        use icu::decimal::provider::DecimalSymbolsV1Marker;
         let mut any_res = self.0.load_any(key, req)?;
-        if key == RegionDisplayNamesV1Marker::KEY && req.locale.language() == language!("en") {
-            let mut res: DataResponse<RegionDisplayNamesV1Marker> = any_res.downcast()?;
+        if key == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
+            let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
             if let Some(payload) = &mut res.payload.as_mut() {
                 payload.with_mut(|data| {
-                    // Change the abbreviation from "US" to "USA" in English
-                    data.short_names.insert(&tinystr!(3, "US"), "USA");
+                    // Change the grouping separators for all Swiss locales to ',' and '.'
+                    data.grouping_separator = Cow::Borrowed(".");
+                    data.decimal_separator = Cow::Borrowed(",");
                 });
             }
             any_res = res.wrap_into_any_response();
@@ -221,15 +222,13 @@ where
     }
 }
 
-let provider = CustomRegionNamesProvider(icu_testdata::any());
-let mut options = DisplayNamesOptions::default();
-options.style = icu_displaynames::Style::Short;
-let names = DisplayNames::try_new_region_with_any_provider(
+let provider = CustomDecimalSymbolsProvider(icu_testdata::any());
+let formatter = FixedDecimalFormatter::try_new_with_any_provider(
     &provider,
-    &locale!("en-GB").into(),
-    options,
+    &locale!("de-CH").into(),
+    Default::default(),
 )
 .unwrap();
 
-assert_eq!(names.of("US"), Some("USA"));
+assert_eq!(formatter.format_to_string(&100007i64.into()), "100.007");
 ```

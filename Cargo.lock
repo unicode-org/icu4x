@@ -1976,7 +1976,6 @@ dependencies = [
  "embed-doc-image",
  "icu",
  "icu_datagen",
- "icu_displaynames",
  "icu_provider",
  "icu_provider_blob",
  "icu_provider_fs",
