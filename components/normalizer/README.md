@@ -9,8 +9,8 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally
 and iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
-UTF-16 is a step that doesn’t leak into the normalizer internals. UTF errors are treated as
-U+FFFD.
+UTF-16 is a step that doesn’t leak into the normalizer internals. Ill-formed byte sequences are
+treated as U+FFFD.
 
 The normalizer data layout is not based on the ICU4C design at all. Instead, the normalization
 data layout is a clean-slate design optimized for the concept of fusing the NFD decomposition
