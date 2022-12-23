@@ -186,4 +186,50 @@ assert_eq!(provider.cache.lock().unwrap().len(), 2);
 
 ## Overwriting Specific Data Items
 
+ICU4X's explicit data pipeline allows for specific data entries to be overwritten in order to customize the output or comply with policy.
 
+The following example illustrates how to overwrite the display name of a region.
+
+```rust
+use icu_displaynames::DisplayNames;
+use icu_displaynames::DisplayNamesOptions;
+use icu_provider::prelude::*;
+use icu::locid::locale;
+use icu::locid::subtags_language as language;
+use tinystr::tinystr;
+
+pub struct CustomRegionNamesProvider<P>(P);
+
+impl<P> AnyProvider for CustomRegionNamesProvider<P>
+where
+    P: AnyProvider
+{
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        use icu_displaynames::provider::RegionDisplayNamesV1Marker;
+        let mut any_res = self.0.load_any(key, req)?;
+        if key == RegionDisplayNamesV1Marker::KEY && req.locale.language() == language!("en") {
+            let mut res: DataResponse<RegionDisplayNamesV1Marker> = any_res.downcast()?;
+            if let Some(payload) = &mut res.payload.as_mut() {
+                payload.with_mut(|data| {
+                    // Change the abbreviation from "US" to "USA" in English
+                    data.short_names.insert(&tinystr!(3, "US"), "USA");
+                });
+            }
+            any_res = res.wrap_into_any_response();
+        }
+        Ok(any_res)
+    }
+}
+
+let provider = CustomRegionNamesProvider(icu_testdata::any());
+let mut options = DisplayNamesOptions::default();
+options.style = icu_displaynames::Style::Short;
+let names = DisplayNames::try_new_region_with_any_provider(
+    &provider,
+    &locale!("en-GB").into(),
+    options,
+)
+.unwrap();
+
+assert_eq!(names.of("US"), Some("USA"));
+```
