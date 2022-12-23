@@ -117,7 +117,7 @@ where
             if let Some(any_res) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
-                return any_res.clone_downcast();
+                return any_res.downcast_cloned();
             }
         }
         // Release the lock to invoke the inner provider
@@ -128,7 +128,7 @@ where
         self.cache.lock()
             .unwrap()
             .get_or_insert(owned_cache_key, || comp_any_res)
-            .clone_downcast()
+            .downcast_cloned()
     }
 }
 
@@ -183,3 +183,7 @@ assert_eq!(
 // Still only two items in the cache, since we re-requested "ja" data:
 assert_eq!(provider.cache.lock().unwrap().len(), 2);
 ```
+
+## Overwriting Specific Data Items
+
+

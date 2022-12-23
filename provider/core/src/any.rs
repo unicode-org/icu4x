@@ -116,7 +116,7 @@ impl AnyPayload {
     }
 
     /// Clones and then transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
-    pub fn clone_downcast<M>(&self) -> Result<DataPayload<M>, DataError>
+    pub fn downcast_cloned<M>(&self) -> Result<DataPayload<M>, DataError>
     where
         M: DataMarker + 'static,
         // For the StructRef case:
@@ -259,7 +259,7 @@ impl AnyResponse {
     }
 
     /// Clones and then transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
-    pub fn clone_downcast<M>(&self) -> Result<DataResponse<M>, DataError>
+    pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
     where
         M: DataMarker + 'static,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
@@ -271,7 +271,7 @@ impl AnyResponse {
             payload: self
                 .payload
                 .as_ref()
-                .map(|p| p.clone_downcast())
+                .map(|p| p.downcast_cloned())
                 .transpose()?,
         })
     }
