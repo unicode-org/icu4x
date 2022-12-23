@@ -73,12 +73,12 @@ impl ListFormatter {
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting.
-    /// 
+    ///
     /// The [`Writeable`] is annotated with [`parts::ELEMENT`] for input elements,
     /// and [`parts::LITERAL`] for list literals.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use icu::list::*;
     /// # use icu::locid::locale;
@@ -125,7 +125,7 @@ pub mod parts {
     use writeable::Part;
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is an element.
-    /// 
+    ///
     /// * `category`: `"list"`
     /// * `value`: `"element"`
     pub const ELEMENT: Part = Part {
@@ -135,7 +135,7 @@ pub mod parts {
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
-    /// 
+    ///
     /// * `category`: `"list"`
     /// * `value`: `"literal"`
     pub const LITERAL: Part = Part {
