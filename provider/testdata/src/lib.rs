@@ -115,16 +115,11 @@ pub mod versions {
     ///
     /// Enabled with the "metadata" feature.
     ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
-    ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn cldr_tag() -> String {
         crate::metadata::load().cldr_json_gitref
     }
@@ -133,16 +128,11 @@ pub mod versions {
     ///
     /// Enabled with the "metadata" feature.
     ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
-    ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn icu_tag() -> String {
         crate::metadata::load().icuexportdata_gitref
     }

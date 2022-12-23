@@ -49,6 +49,7 @@ impl SourceMetadata {
 }
 
 pub fn load() -> SourceMetadata {
+    #[allow(clippy::unwrap_used)] // the TOML source is a constant
     toml::from_str(SOURCES_TOML).unwrap()
 }
 
