@@ -9,7 +9,6 @@ use crate::provider::RegionDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 use tinystr::TinyAsciiStr;
-use tinystr::TinyStrError;
 
 /// Lookup of the terrritory display names by region code.
 ///
@@ -30,7 +29,7 @@ use tinystr::TinyStrError;
 /// .expect("Data should load successfully");
 ///
 /// let region_code = "AE";
-/// assert_eq!(display_name.of(&region_code), Ok("United Arab Emirates"));
+/// assert_eq!(display_name.of(&region_code), Some("United Arab Emirates"));
 /// ```
 pub struct DisplayNames {
     options: DisplayNamesOptions,
@@ -80,7 +79,7 @@ impl DisplayNames {
                     _ => data.names.get(&key),
                 }
             }
-            Err(err) => None,
+            Err(_) => None,
         }
     }
 }
