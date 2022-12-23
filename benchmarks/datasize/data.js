@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671752643714,
+  "lastUpdate": 1671831753260,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32843,6 +32843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c571063d90ac785d2aee60322a53c80b4ebb9587"
         },
         "date": 1671752562863,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "620560f85515ca89f1cea0cd4d304af5b96affc3",
+          "message": "Minor cleanups (#2921)",
+          "timestamp": "2022-12-23T13:40:01-08:00",
+          "tree_id": "41df29b77d253c8fc961870081c38df2ce5cb7c8",
+          "url": "https://github.com/unicode-org/icu4x/commit/620560f85515ca89f1cea0cd4d304af5b96affc3"
+        },
+        "date": 1671831671855,
         "tool": "ndjson",
         "benches": [
           {
