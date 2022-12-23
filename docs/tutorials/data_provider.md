@@ -76,15 +76,28 @@ use icu_provider::hello_world::HelloWorldFormatter;
 use icu_provider::prelude::*;
 use icu::locid::locale;
 use lru::LruCache;
+use std::borrow::{Borrow, Cow};
 use std::convert::TryInto;
 use std::sync::Mutex;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct CacheKey<'a>(CacheKeyInner<'a>);
+
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct CacheKeyInner<'a>(DataKey, Cow<'a, DataLocale>);
+
 pub struct LruDataCache<P> {
-    cache: Mutex<LruCache<(DataKey, DataLocale), AnyResponse>>,
+    cache: Mutex<LruCache<CacheKey<'static>, AnyResponse>>,
     provider: P,
+}
+
+impl<'a> Borrow<CacheKeyInner<'a>> for lru::KeyRef<CacheKey<'static>> {
+    fn borrow(&self) -> &CacheKeyInner<'a> {
+        &Borrow::<CacheKey<'static>>::borrow(self).0
+    }
 }
 
 impl<M, P> DataProvider<M> for LruDataCache<P>
@@ -96,12 +109,10 @@ where
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        // Note: Cloning a DataLocale is usually cheap, but it may be more efficient to avoid
-        // the clone if your cache architecture allows for it
-        let cache_key = (M::KEY, req.locale.clone());
         {
             let mut cache = self.cache.lock().unwrap();
-            if let Some(any_resp) = cache.get(&cache_key) {
+            let lookup_cache_key = CacheKeyInner(M::KEY, Cow::Borrowed(req.locale));
+            if let Some(any_resp) = cache.get(&lookup_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
                 return any_resp.clone_downcast();
@@ -111,7 +122,8 @@ where
         let computed_any_resp: AnyResponse = computed_resp.wrap_into_any_response();
         {
             let mut cache = self.cache.lock().unwrap();
-            let any_resp = cache.get_or_insert(cache_key, || computed_any_resp);
+            let owned_cache_key = CacheKey(CacheKeyInner(M::KEY, Cow::Owned(req.locale.clone())));
+            let any_resp = cache.get_or_insert(owned_cache_key, || computed_any_resp);
             return any_resp.clone_downcast();
         }
     }
