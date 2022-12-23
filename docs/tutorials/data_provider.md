@@ -118,7 +118,7 @@ where
             }
         }
         // Release the lock to invoke the inner provider
-        let response: DataResponse<M> = self.provider.load(req)?;
+        let response = self.provider.load(req)?;
         let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
         // Second lock: cache storage
         self.cache.lock()
@@ -207,9 +207,8 @@ where
             let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
             if let Some(payload) = &mut res.payload.as_mut() {
                 payload.with_mut(|data| {
-                    // Change the decimal separators for all Swiss locales to '.' and ','
-                    data.grouping_separator = Cow::Borrowed(".");
-                    data.decimal_separator = Cow::Borrowed(",");
+                    // Change the grouping separator for all Swiss locales to '🐮'
+                    data.grouping_separator = Cow::Borrowed("🐮");
                 });
             }
             any_res = res.wrap_into_any_response();
@@ -226,5 +225,5 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 )
 .unwrap();
 
-assert_eq!(formatter.format_to_string(&100007i64.into()), "100.007");
+assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
