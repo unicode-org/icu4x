@@ -84,15 +84,23 @@
 //!   this feature may not be production-ready and could change at any time.
 //!
 //! The following Cargo features are only available on the individual crates, but not on this meta-crate:
+//!
 //! - `datagen`: Whether to implement `serde::Serialize` and functionality that is only required during data generation.
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
 //!
-//! [^1]: If using blob data, you need to enable one of the deserialization Cargo features on the `icu_provider` crate;
-//!       see [`BufferProvider`](icu_provider::BufferProvider) for details.
+//! There are additional features that, when enabled on specific crates, enable functionality across ICU4X:
+//!
+//! - `icu_provider/sync`: makes [`DataPayload`] implement `Send + Sync`, which in turn
+//!   makes most ICU4X objects also implement `Send + Sync`.
+//! - `icu_provider/deserialize_*`: enables ICU4X buffer providers to read various different
+//!   serialization formats. See [`BufferProvider`](icu_provider::BufferProvider) for details.
+//!
+//! [^1]: If using blob data, you need to enable one of the deserialization Cargo features on the `icu_provider` crate, as noted above.
 //!
 //!
-//! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
+//! [`DataProvider`]: icu_provider::DataProvider
+//! [`DataPayload`]: icu_provider::DataPayload
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_testdata`]: ../icu_testdata/index.html
