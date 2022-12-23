@@ -11,6 +11,7 @@ The most basic Cargo.toml to get you off the ground is the following:
 name = "demo"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 icu = "1.0"
@@ -30,6 +31,7 @@ If you wish to use an experimental feature, such as `icu_segmenter`, set up your
 name = "demo"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 icu = { version = "1.0", features = ["experimental"] }
@@ -49,6 +51,7 @@ If you wish to generate your own data in blob format and pass it into ICU4X, ena
 name = "demo"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 icu = { version = "1.0", features = ["serde"] }
@@ -68,6 +71,7 @@ If you wish to bake in data auto-generated in your build.rs, you need to add add
 name = "demo"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 icu = "1.0"
