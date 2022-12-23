@@ -10,14 +10,14 @@
 
     .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path)
 
-        Constructs an ``FsDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_fs`` feature. Not supported in WASM.
+        Constructs an ``FsDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_fs`` Cargo feature. Not supported in WASM.
 
         See the `Rust documentation for FsDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
 
     .. cpp:function:: static ICU4XDataProvider create_test()
 
-        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` feature.
+        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` Cargo feature.
 
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 

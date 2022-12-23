@@ -11,13 +11,13 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
+//! * [`buffer`], [`buffer_no_fallback`] (`buffer` Cargo feature)
 //!
 //!
-//! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
-//! such as the CLDR Gitref  and the list of included locales.
+//! Additionally, the `metadata` Cargo feature exposes the [`metadata`] module which contains
+//! information such as the CLDR Gitref  and the list of included locales.
 //!
-//! # `bin` feature
+//! # `bin` Cargo feature
 //!
 //! ## Downloading fresh CLDR data
 //!
@@ -113,7 +113,7 @@ pub mod versions {
 
     /// Gets the CLDR tag used as the test data source (for formatters, likely subtags, ...)
     ///
-    /// Enabled with the "metadata" feature.
+    /// Enabled with the "metadata" Cargo feature.
     ///
     /// # Panics
     ///
@@ -134,7 +134,7 @@ pub mod versions {
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
     ///
-    /// Enabled with the "metadata" feature.
+    /// Enabled with the "metadata" Cargo feature.
     ///
     /// # Panics
     ///

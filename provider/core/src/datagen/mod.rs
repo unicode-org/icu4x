@@ -6,7 +6,7 @@
 //! via the `icu_datagen` reference crate. End users should not need to consume anything in
 //! this module as a library unless defining new types that integrate with `icu_datagen`.
 //!
-//! This module can be enabled with the `datagen` feature on `icu_provider`.
+//! This module can be enabled with the `datagen` Cargo feature on `icu_provider`.
 
 mod data_conversion;
 mod heap_measure;

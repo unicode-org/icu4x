@@ -1991,7 +1991,7 @@ impl FixedDecimal {
     /// implementations may yield higher performance; for more details, see
     /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
-    /// This function can be made available with the `"ryu"` feature.
+    /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};

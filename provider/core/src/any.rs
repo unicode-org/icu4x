@@ -18,7 +18,7 @@ use alloc::rc::Rc as SelectedRc;
 use alloc::sync::Arc as SelectedRc;
 
 /// A trait that allows to specify `Send + Sync` bounds that are only required when
-/// the `sync` feature is enabled. Without the feature, this is an empty bound.
+/// the `sync` Cargo feature is enabled. Without the Cargo feature, this is an empty bound.
 #[cfg(feature = "sync")]
 pub trait MaybeSendSync: Send + Sync {}
 #[cfg(feature = "sync")]

@@ -21,7 +21,11 @@ impl DataMarker for BufferMarker {
 ///
 /// Generally, these bytes are expected to be deserializable with Serde. To get an object
 /// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
-/// enabling at least one of the Serde features.
+/// enabling at least one of the deserialization Cargo features:
+///
+/// - `deserialize_json`
+/// - `deserialize_postcard_1`
+/// - `deserialize_bincode_1`
 ///
 /// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
 ///

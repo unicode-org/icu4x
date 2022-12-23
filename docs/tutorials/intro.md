@@ -112,7 +112,7 @@ Users are also free to design their own providers that best fit into their ecosy
 
 # 5. Using an ICU4X component
 
-We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains a `BufferProvider` (`icu_testdata::buffer()`), an `AnyProvider` (`icu_testdata::any()`), and a `BakedProvider` (`icu_testdata::unstable()`). The latter two require fewer features, so we will be using those.
+We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains a `BufferProvider` (`icu_testdata::buffer()`), an `AnyProvider` (`icu_testdata::any()`), and a `BakedProvider` (`icu_testdata::unstable()`). The latter two require fewer Cargo features, so we will be using those.
 
 First, we need to add the crate to our `Cargo.toml`:
 

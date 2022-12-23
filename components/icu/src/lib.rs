@@ -73,23 +73,23 @@
 //!
 //! # Features
 //!
-//! ICU4X components share a set of common features that control whether core pieces of
+//! ICU4X components share a set of common Cargo features that control whether core pieces of
 //! functionality are compiled. These features are:
 //!
-//! - `std`: Whether to include `std` support. Without this feature, `icu` is `#[no_std]`-compatible
+//! - `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible
 //! - `serde`: Whether to include `serde::Deserialize` implementations for data structs, such as [`SymbolsV1`],
 //!   and `serde::{Serialize, Deserialize}` implementations for core library types, such as [`Locale`]. These are
 //!   required with `serde`-backed providers like [`BlobDataProvider`][^1].
 //! - `experimental`: Whether to enable experimental preview features. Modules enabled with
 //!   this feature may not be production-ready and could change at any time.
 //!
-//! The following features are only available on the individual crates, but not on this meta-crate:
+//! The following Cargo features are only available on the individual crates, but not on this meta-crate:
 //! - `datagen`: Whether to implement `serde::Serialize` and functionality that is only required during data generation.
 //! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
 //!   when running `cargo bench`.
 //!
-//! [^1]: [`FsDataProvider`] also requires the `serde_human` feature if JSON is used, as that data is less
-//!       preprocessed.
+//! [^1]: If using blob data, you need to enable one of the deserialization Cargo features on the `icu_provider` crate;
+//!       see [`BufferProvider`](icu_provider::BufferProvider) for details.
 //!
 //!
 //! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html

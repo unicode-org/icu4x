@@ -39,7 +39,7 @@ This will generate a `my_data_blob.postcard` file containing the serialized data
 
 Once we have generated some data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.
 
-This provider performs deserialization, so it's a `BufferProvider`. This means that the feature `"serde"` needs to be enabled on `icu`.
+This provider performs deserialization, so it's a `BufferProvider`. This means that the Cargo feature `"serde"` needs to be enabled on `icu`.
 
 Let's update our `Cargo.toml`:
 
@@ -200,9 +200,9 @@ Let's give it a try:
 $ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
 ```
 
-This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the feature for the chosen syntax on the `icu_provider` crate.
+This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the Cargo feature for the chosen syntax on the `icu_provider` crate.
 
-Same as `BlobDataProvider`, this also a buffer provider, so you will need to activate `icu`'s `serde` feature and use the `with_buffer_provider` constructors.
+Same as `BlobDataProvider`, this also a buffer provider, so you will need to activate `icu`'s `serde` Cargo feature and use the `with_buffer_provider` constructors.
 
 ```console
 $ cargo add icu --features serde

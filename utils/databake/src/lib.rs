@@ -21,7 +21,8 @@
 //! ```
 //!
 //! # Derive
-//! `Bake` can be automatically derived if the `derive` feature is enabled.
+//!
+//! `Bake` can be automatically derived if the `derive` Cargo feature is enabled.
 //!
 //! ```
 //! use databake::*;
