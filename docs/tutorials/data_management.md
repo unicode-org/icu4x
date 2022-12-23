@@ -184,7 +184,7 @@ fn main() {
 
 With this provider, we can use the `unstable` constructors. These are only guaranteed to work if the data was generated with the same version of ICU4X that you are building with, but if you build the data as part of your a build pipeline, that shouldn't be a problem.
 
-You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, and it doesn't perform automatic data slicing, but, as the name suggests, it is stable across (minor) releases.
+You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, and it doesn't allow for automatic data slicing, but, as the name suggests, it is stable across (minor) releases.
 
 ```rust,compile_fail
 impl_any_provider!(MyProvider);
