@@ -64,7 +64,12 @@ impl AdditiveIdentity {
 
 ## Caching Data Provider
 
-It is not generally required to implement a cache, especially if using the BakedDataProvider. However, if you wish to implement a cache in your data pipeline, you can do so like this:
+ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and:
+
+1. A less-efficient data provider is being used, such as JSON
+2. Lookups make heavy use of vertical fallback
+
+The following example illustrates an LRU cache on top of a BufferProvider that saves deserialized data payloads as type-erased objects and then checks for a cache hit before calling the inner provider.
 
 ```rust
 use icu_provider::hello_world::HelloWorldFormatter;
@@ -77,12 +82,12 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
-pub struct MyLruDataCache<P> {
+pub struct LruDataCache<P> {
     cache: Mutex<LruCache<(DataKey, DataLocale), AnyResponse>>,
     provider: P,
 }
 
-impl<M, P> DataProvider<M> for MyLruDataCache<P>
+impl<M, P> DataProvider<M> for LruDataCache<P>
 where
     M: KeyedDataMarker + 'static,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
@@ -91,10 +96,14 @@ where
     P: DataProvider<M>,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        // Note: Cloning a DataLocale is usually cheap, but it may be more efficient to avoid
+        // the clone if your cache architecture allows for it
         let cache_key = (M::KEY, req.locale.clone());
         {
             let mut cache = self.cache.lock().unwrap();
             if let Some(any_resp) = cache.get(&cache_key) {
+                // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
+                // convert the short-lived cache object into one we can return.
                 return any_resp.clone_downcast();
             }
         }
@@ -111,7 +120,7 @@ where
 // Usage example:
 let provider = icu_testdata::buffer();
 let lru_capacity = 100usize.try_into().unwrap();
-let provider = MyLruDataCache {
+let provider = LruDataCache {
     cache: Mutex::new(LruCache::new(lru_capacity)),
     provider: provider.as_deserializing(),
 };
@@ -121,6 +130,7 @@ assert_eq!(provider.cache.lock().unwrap().len(), 0);
 
 assert_eq!(
     "こんにちは世界",
+    // Note: It is necessary to use `try_new_unstable` with LruDataCache.
     HelloWorldFormatter::try_new_unstable(
         &provider,
         &locale!("ja").into()
