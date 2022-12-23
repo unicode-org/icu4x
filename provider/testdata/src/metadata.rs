@@ -2,35 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use cargo_metadata::{self, camino::Utf8PathBuf, MetadataCommand};
 use displaydoc::Display;
 use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
 
+static SOURCES_TOML: &str = include_str!("../sources.toml");
+
 #[derive(Display, Debug)]
 #[non_exhaustive]
 pub enum Error {
-    #[displaydoc("Cargo Error: {0}")]
-    Cargo(cargo_metadata::Error),
     #[displaydoc("Serde Error: {0}")]
-    SerdeJson(serde_json::Error),
-    #[displaydoc("Package not found")]
-    PackageNotFound,
-    #[displaydoc("package.metadata.icu4x_testdata not found")]
-    MetadataNotFound,
+    SerdeToml(toml::de::Error),
 }
 
 impl std::error::Error for Error {}
 
-impl From<cargo_metadata::Error> for Error {
-    fn from(e: cargo_metadata::Error) -> Self {
-        Error::Cargo(e)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(e: serde_json::Error) -> Self {
-        Error::SerdeJson(e)
+impl From<toml::de::Error> for Error {
+    fn from(e: toml::de::Error) -> Self {
+        Error::SerdeToml(e)
     }
 }
 
@@ -77,35 +66,13 @@ impl PackageMetadata {
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct PackageInfo {
-    pub target_directory: Utf8PathBuf,
     pub package_metadata: PackageMetadata,
 }
 
 pub fn load() -> Result<PackageInfo, Error> {
-    let metadata = MetadataCommand::new().exec()?;
-
-    let target_directory = metadata.target_directory;
-
-    let mut icu_testdata_pkg = metadata
-        .packages
-        // into_iter() rather than iter() to take ownership of the result
-        .into_iter()
-        .find(|x| x.name == env!("CARGO_PKG_NAME"))
-        .ok_or(Error::PackageNotFound)?;
-
-    let package_metadata: PackageMetadata = serde_json::from_value(
-        icu_testdata_pkg
-            .metadata
-            // Use mut functions so that we can call .take() at the end
-            .as_object_mut()
-            .ok_or(Error::MetadataNotFound)?
-            .get_mut("icu4x_testdata")
-            .ok_or(Error::MetadataNotFound)?
-            .take(),
-    )?;
+    let package_metadata: PackageMetadata = toml::from_str(SOURCES_TOML).unwrap();
 
     Ok(PackageInfo {
-        target_directory,
         package_metadata,
     })
 }
