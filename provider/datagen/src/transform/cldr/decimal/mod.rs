@@ -9,8 +9,6 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-use super::cldr_serde::numbers::DecimalFormat;
-
 #[cfg(feature = "experimental")]
 mod compact;
 #[cfg(feature = "experimental")]
