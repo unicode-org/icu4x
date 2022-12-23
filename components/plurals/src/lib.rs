@@ -19,7 +19,7 @@
 //!
 //! Unicode defines [Language Plural Rules] as a mechanism to codify those
 //! variants and provides data and algorithms to calculate
-//! appropriate [Plural Category].
+//! appropriate [`PluralCategory`].
 //!
 //! # Examples
 //!

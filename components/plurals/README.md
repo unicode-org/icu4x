@@ -17,7 +17,7 @@ while the latter is used for all other values of the variable.
 
 Unicode defines [Language Plural Rules] as a mechanism to codify those
 variants and provides data and algorithms to calculate
-appropriate [Plural Category].
+appropriate [`PluralCategory`].
 
 ## Examples
 
