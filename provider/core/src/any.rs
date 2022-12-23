@@ -268,7 +268,11 @@ impl AnyResponse {
     {
         Ok(DataResponse {
             metadata: self.metadata.clone(),
-            payload: self.payload.as_ref().map(|p| p.clone_downcast()).transpose()?,
+            payload: self
+                .payload
+                .as_ref()
+                .map(|p| p.clone_downcast())
+                .transpose()?,
         })
     }
 }
