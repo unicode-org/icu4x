@@ -84,3 +84,27 @@ icu_provider = "1.0"
 In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; you will get a compiler error if you don't specify enough keys.
 
 [« Fully Working Example »](./cargo_tests/baked)
+
+## Cargo.toml with Thread Safety (Lazy Static)
+
+If you wish to share ICU4X objects between threads, you must enable the `"sync"` Cargo feature of the `icu_provider` crate, as follows:
+
+```toml
+[package]
+name = "demo"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+icu = "1.0"
+icu_testdata = "1.0"
+icu_provider = { version = "1.0", features = ["sync"] }
+lazy_static = "1.4"
+```
+
+You can now, for example, persist a particular ICU4X object in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
+
+[« Fully Working Example »](./cargo_tests/lazy_static)

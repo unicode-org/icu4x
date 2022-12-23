@@ -63,6 +63,7 @@ exclude = [
     "docs/tutorials/cargo_tests/baked",
     "docs/tutorials/cargo_tests/buffer",
     "docs/tutorials/cargo_tests/experimental",
+    "docs/tutorials/cargo_tests/lazy_static",
     "docs/tutorials/cargo_tests/testdata",
     # This crate uses datagen which requires downloading ZIP files during build,
     # so we don't want to build it as part of the workspace.
