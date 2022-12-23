@@ -40,16 +40,6 @@ class ICU4XLocale {
   static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
 
   /**
-   * Construct an [`ICU4XLocale`] for the English language.
-   */
-  static ICU4XLocale create_en();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the Bangla language.
-   */
-  static ICU4XLocale create_bn();
-
-  /**
    * Construct a default undefined [`ICU4XLocale`] "und".
    * 
    * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
@@ -221,12 +211,6 @@ inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create_from_string
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
-}
-inline ICU4XLocale ICU4XLocale::create_en() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en());
-}
-inline ICU4XLocale ICU4XLocale::create_bn() {
-  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 inline ICU4XLocale ICU4XLocale::create_und() {
   return ICU4XLocale(capi::ICU4XLocale_create_und());

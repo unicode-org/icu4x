@@ -8,7 +8,11 @@
 #include <stdio.h>
 
 int main() {
-    ICU4XLocale* locale = ICU4XLocale_create_bn();
+    ICU4XLocale* locale = ICU4XLocale_create_und();
+    if (!ICU4XLocale_set_language(locale, "bn", 2).is_ok) {
+        printf("Failed to create ICU4XLocale\n");
+        return 1;
+    }
     diplomat_result_box_ICU4XDataProvider_ICU4XError provider_result = ICU4XDataProvider_create_from_byte_slice(DECIMAL_BN_EN_POSTCARD, DECIMAL_BN_EN_POSTCARD_LEN);
     if (!provider_result.is_ok) {
         printf("Failed to create ICU4XDataProvider\n");

@@ -15,16 +15,6 @@
         See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
-    .. cpp:function:: static ICU4XLocale create_en()
-
-        Construct an :cpp:class:`ICU4XLocale` for the English language.
-
-
-    .. cpp:function:: static ICU4XLocale create_bn()
-
-        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
-
-
     .. cpp:function:: static ICU4XLocale create_und()
 
         Construct a default undefined :cpp:class:`ICU4XLocale` "und".

@@ -21,18 +21,6 @@ export class ICU4XLocale {
 
   /**
 
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the English language.
-   */
-  static create_en(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the Bangla language.
-   */
-  static create_bn(): ICU4XLocale;
-
-  /**
-
    * Construct a default undefined {@link ICU4XLocale `ICU4XLocale`} "und".
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND Rust documentation for `UND`} for more information.

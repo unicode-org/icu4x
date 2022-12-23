@@ -37,14 +37,6 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
-  static create_en() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
-  }
-
-  static create_bn() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
-  }
-
   static create_und() {
     return new ICU4XLocale(wasm.ICU4XLocale_create_und(), true, []);
   }

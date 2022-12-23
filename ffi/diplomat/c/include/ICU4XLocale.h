@@ -24,10 +24,6 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocale_ICU4XError ICU4XLocale_create_from_string(const char* name_data, size_t name_len);
 
-ICU4XLocale* ICU4XLocale_create_en();
-
-ICU4XLocale* ICU4XLocale_create_bn();
-
 ICU4XLocale* ICU4XLocale_create_und();
 
 ICU4XLocale* ICU4XLocale_clone(const ICU4XLocale* self);
