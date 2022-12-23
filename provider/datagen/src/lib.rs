@@ -43,9 +43,9 @@
 //! ```bash
 //! $ cargo install icu_datagen --features bin,experimental
 //! ```
-//! 
+//!
 //! Once the tool is installed, you can invoke it like this:
-//! 
+//!
 //! ```bash
 //! $ icu4x-datagen \
 //! >    --all-keys \
