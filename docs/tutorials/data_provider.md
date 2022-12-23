@@ -121,15 +121,14 @@ where
             }
         }
         // Release the lock to invoke the inner provider
-        let computed_res: DataResponse<M> = self.provider.load(req)?;
-        let computed_any_res: AnyResponse = computed_res.wrap_into_any_response();
-        {
-            // Second lock: cache storage
-            let mut cache = self.cache.lock().unwrap();
-            let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
-            let any_res = cache.get_or_insert(owned_cache_key, || computed_any_res);
-            return any_res.clone_downcast();
-        }
+        let comp_res: DataResponse<M> = self.provider.load(req)?;
+        let comp_any_res: AnyResponse = comp_res.wrap_into_any_response();
+        let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
+        // Second lock: cache storage
+        self.cache.lock()
+            .unwrap()
+            .get_or_insert(owned_cache_key, || comp_any_res)
+            .clone_downcast()
     }
 }
 
