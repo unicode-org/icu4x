@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-blob --format blob --all-keys --all-locales
+$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my_data_blob.postcard --format blob --all-keys --all-locales
 ```
 
 Let's dissect this invocation:
@@ -33,7 +33,7 @@ Let's dissect this invocation:
 * `--format` sets the format of the output (we'll discuss formats later)
 * `--all-keys` `--all-locales` specifies that we want to include all data for all locales
 
-This will generate a `my-data-blob` file containing the serialized data.
+This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
 
 # 3. Using the generated data
 
@@ -59,7 +59,7 @@ use icu_provider_blob::BlobDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    let blob = std::fs::read("my-data-blob").expect("Failed to read file");
+    let blob = std::fs::read("my_data_blob.postcard").expect("Failed to read file");
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("Failed to initialize Data Provider.");
@@ -86,7 +86,7 @@ fn main() {
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we included `--all-keys` `--all-locales`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --overwrite --cldr-tag latest --icuexport-tag latest --out my-data-blob --format blob --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --overwrite --cldr-tag latest --icuexport-tag latest --out my_data_blob.postcard --format blob --keys-for-bin target/debug/myapp --locales ja
 ```
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
@@ -127,7 +127,7 @@ This has two advantages: it reduces our code size, as `DateTimeFormatter` includ
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
-Rebuilding the application and rerunning datagen awards us with a 3KB data blob, which only contains 7 data keys!
+Rebuilding the application and rerunning datagen rewards us with a 3KB data blob, which only contains 7 data keys!
 
 # 5. Other formats
 
@@ -184,7 +184,7 @@ fn main() {
 
 With this provider, we can use the `unstable` constructors. These are only guaranteed to work if the data was generated with the same version of ICU4X that you are building with, but if you build the data as part of your a build pipeline, that shouldn't be a problem.
 
-You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, but, as the name suggests, stable across (minor) releases.
+You can also implement the `AnyProvider` trait, so that it can be used with `_with_any_provider` constructors. Using these constructors is slightly less performant than the `unstable` ones, and it doesn't perform automatic data slicing, but, as the name suggests, it is stable across (minor) releases.
 
 ```rust,compile_fail
 impl_any_provider!(MyProvider);
