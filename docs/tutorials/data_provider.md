@@ -118,12 +118,12 @@ where
             }
         }
         // Release the lock to invoke the inner provider
-        let computed_res: DataResponse<M> = self.provider.load(req)?;
+        let response: DataResponse<M> = self.provider.load(req)?;
         let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
         // Second lock: cache storage
         self.cache.lock()
             .unwrap()
-            .get_or_insert(owned_cache_key, || computed_res.wrap_into_any_response())
+            .get_or_insert(owned_cache_key, || response.wrap_into_any_response())
             .downcast_cloned()
     }
 }
