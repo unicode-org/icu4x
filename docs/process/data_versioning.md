@@ -22,8 +22,10 @@ The following are goals that ICU4X's data versioning system should achieve:
 
 1. Older code should be able to read newer data files.
     - For example, an app that is a few years old should be able to consume an ICU4X data file built with the latest features and CLDR version.
+    - Old code should continue to work with its existing functionality, but it doesn't need to automatically support newer features.
 2. Newer code should be able to read older data files.
     - For example, an operating system service that is a few years old should be able to provide data to apps built with newer ICU4X.
+    - New code should perform best-effort behavior when presented with old data that doesn't support newer features.
 3. In order to avoid breaking changes, newer component code should compile against older data provider code.
     - For example, ICU4X should be able to be updated within the same major version number without breaking custom data provider code that was written previously.
 4. In order to reduce bloat, code and data that is required for compatibility purposes should have a timeline for sunset and removal.
@@ -45,7 +47,7 @@ Use cases where _replacement_ may be warranted include:
 
 1. A new data struct reduces data size or code size relative to the old data struct.
 2. Data in the old data struct is obsolete and being replaced by a smaller data struct.
-3. ICU4X is undergoing a major version number change.
+3. ICU4X is undergoing a major version number change, approximately once every 1-3 years.
 
 ### III. Data File Versioning
 
@@ -60,6 +62,8 @@ The following strategy should be employed:
     3. Use the Default impl for the new data struct
 
 In addition, new data structs should only be added in minor releases, not patch releases.
+
+*Note:* It is always valid to generate data for a specific version of ICU4X if backwards compatibility is not needed in a particular environment.
 
 #### Data File Visualization
 
@@ -80,18 +84,24 @@ We can visualize this model as follows:
 - ☑️ = supported in compatibility constructors
 - ❌ = not supported
 
-#### Blob Version versus Data Struct Version
+### IV. Aspects of Data File Versioning
 
-Adding older data structs to a newer data file is easy. How do we handle cases where we want to change the top-level blob layout? There are two cases here:
+There are several aspects of a data file that could undergo version updates:
 
-1. New binary format (e.g. Postcard 2.0)
-2. New blob layout (e.g. change ZeroMap to ZeroHashMap)
+1. New data structs
+2. Additional variants added to existing data structs (example: `PropertyCodePointSetV1`)
+3. New blob layout (example: changing `ZeroMap` to `ZeroHashMap` in `BlobSchema`)
+4. New binary format (example: Postcard 2.0)
 
-In case 1, the new binary format should be added as a new syntax feature, parallel to the `postcard_1`, `bincode_1`, and `json` features.
+**Case 1:** Older data structs can be carried alongside newer data structs in order to create a data file compatible across versions.
 
-In case 2, the `BlobSchema` will need to gain a new variant. When building data files with compatibility for older code versions, it will need to use a `BlobSchema` variant that is supported by all code versions that are intended to be supported.
+**Case 2:** Depending on the minimum version specified in datagen, the newest backwards-compatible variant can be generated in the output data.
 
-### IV. Constructor Versioning
+**Case 3:** `BlobSchema` can gain a new variant, and then we follow the same rules as in Case 2 to choose the appropriate variant in datagen.
+
+**Case 4:** The new binary format should be added as a new syntax feature, parallel to the `postcard_1`, `bincode_1`, and `json` features.
+
+### V. Constructor Versioning
 
 *Also see: [icu_provider::constructors](https://icu4x.unicode.org/doc/icu_provider/constructors/index.html)*
 
@@ -101,3 +111,5 @@ All ICU4X functions that take a data provider should expose three signatures:
 - `*_with_any_provider` and `*_with_buffer_provider` are _compatibility constructors_ supporting the current data version and all data versions from the current major release.
 
 Note that the compatibility constructors may require additional code in order to map from older to newer data structs, as described in the previous section.
+
+It's possible that additional compatibility constructors may be added in the future based on user needs.
