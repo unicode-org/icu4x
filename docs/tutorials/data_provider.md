@@ -207,7 +207,7 @@ where
             let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
             if let Some(payload) = &mut res.payload.as_mut() {
                 payload.with_mut(|data| {
-                    // Change the grouping separators for all Swiss locales to ',' and '.'
+                    // Change the decimal separators for all Swiss locales to '.' and ','
                     data.grouping_separator = Cow::Borrowed(".");
                     data.decimal_separator = Cow::Borrowed(",");
                 });
