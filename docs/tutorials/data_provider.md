@@ -84,19 +84,20 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKey<'a>(CacheKeyInner<'a>);
+struct CacheKeyWrap(CacheKey<'static>);
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKeyInner<'a>(DataKey, Cow<'a, DataLocale>);
+struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
 
 pub struct LruDataCache<P> {
-    cache: Mutex<LruCache<CacheKey<'static>, AnyResponse>>,
+    cache: Mutex<LruCache<CacheKeyWrap, AnyResponse>>,
     provider: P,
 }
 
-impl<'a> Borrow<CacheKeyInner<'a>> for lru::KeyRef<CacheKey<'static>> {
-    fn borrow(&self) -> &CacheKeyInner<'a> {
-        &Borrow::<CacheKey<'static>>::borrow(self).0
+// This impl enables a borrowed DataLocale to be used during cache retrieval.
+impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
+    fn borrow(&self) -> &CacheKey<'a> {
+        &Borrow::<CacheKeyWrap>::borrow(self).0
     }
 }
 
@@ -110,19 +111,22 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         {
+            // First lock: cache retrieval
             let mut cache = self.cache.lock().unwrap();
-            let lookup_cache_key = CacheKeyInner(M::KEY, Cow::Borrowed(req.locale));
-            if let Some(any_resp) = cache.get(&lookup_cache_key) {
+            let borrowed_cache_key = CacheKey(M::KEY, Cow::Borrowed(req.locale));
+            if let Some(any_resp) = cache.get(&borrowed_cache_key) {
                 // Note: Cloning a DataPayload is usually cheap, and it is necessary in order to
                 // convert the short-lived cache object into one we can return.
                 return any_resp.clone_downcast();
             }
         }
+        // Release the lock to invoke the inner provider
         let computed_resp: DataResponse<M> = self.provider.load(req)?;
         let computed_any_resp: AnyResponse = computed_resp.wrap_into_any_response();
         {
+            // Second lock: cache storage
             let mut cache = self.cache.lock().unwrap();
-            let owned_cache_key = CacheKey(CacheKeyInner(M::KEY, Cow::Owned(req.locale.clone())));
+            let owned_cache_key = CacheKeyWrap(CacheKey(M::KEY, Cow::Owned(req.locale.clone())));
             let any_resp = cache.get_or_insert(owned_cache_key, || computed_any_resp);
             return any_resp.clone_downcast();
         }
