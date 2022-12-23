@@ -67,18 +67,18 @@ In addition, new data structs should only be added in minor releases, not patch 
 
 #### Data File Visualization
 
-We can visualize this model as follows:
+We can visualize this model as follows, with `icu4x-datagen` evaluated at various ICU4X versions and with differing amounts of backwards compatibility:
 
 | Code Versions Supported | 1.0 | 1.1 | 1.2 | 2.0 | 2.1 | 2.2 |
 |---|---|---|---|---|---|---|
-| Data @ 1.0 | ✔️ | ☑️ | ☑️ | ❌ | ❌ | ❌ |
-| Data @ 1.2 | ❌ | ❌ | ✔️ | ❌ | ❌ | ❌ |
-| Data @ 1.2 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ❌ | ❌ | ❌ |
-| Data @ 2.0 | ❌ | ❌ | ❌ | ✔️ | ☑️ | ☑️ |
-| Data @ 2.0 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ✔️ | ☑️ | ☑️ |
-| Data @ 2.2 | ❌ | ❌ | ❌ | ❌ | ❌ | ✔️ |
-| Data @ 2.2 w/ 2.0 compat | ❌ | ❌ | ❌ | ✔️ | ✔️ | ✔️ |
-| Data @ 2.2 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Datagen @ 1.0 | ✔️ | ☑️ | ☑️ | ❌ | ❌ | ❌ |
+| Datagen @ 1.2 | ❌ | ❌ | ✔️ | ❌ | ❌ | ❌ |
+| Datagen @ 1.2 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ❌ | ❌ | ❌ |
+| Datagen @ 2.0 | ❌ | ❌ | ❌ | ✔️ | ☑️ | ☑️ |
+| Datagen @ 2.0 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ✔️ | ☑️ | ☑️ |
+| Datagen @ 2.2 | ❌ | ❌ | ❌ | ❌ | ❌ | ✔️ |
+| Datagen @ 2.2 w/ 2.0 compat | ❌ | ❌ | ❌ | ✔️ | ✔️ | ✔️ |
+| Datagen @ 2.2 w/ 1.0 compat | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 
 - ✔️ = supported in all constructors
 - ☑️ = supported in compatibility constructors
