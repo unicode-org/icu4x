@@ -64,10 +64,7 @@ impl AdditiveIdentity {
 
 ## Caching Data Provider
 
-ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and:
-
-1. A less-efficient data provider is being used, such as JSON
-2. Lookups make heavy use of vertical fallback
+ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.
 
 The following example illustrates an LRU cache on top of a BufferProvider that saves deserialized data payloads as type-erased objects and then checks for a cache hit before calling the inner provider.
 
