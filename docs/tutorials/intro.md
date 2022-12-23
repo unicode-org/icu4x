@@ -167,4 +167,4 @@ Here's an internationalized date!
 This concludes this introduction tutorial. With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just the start. 
 Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-Next, learn how to [generate optimized data for your binary](data_management.md), or continue exploring by reading [the docs](https://icu4x.unicode.org/doc/icu/).
+Next, learn how to [generate optimized data for your binary](data_management.md) or [configure your Cargo.toml file](cargo.md), or continue exploring by reading [the docs](https://icu4x.unicode.org/doc/icu/).

@@ -1,0 +1,2 @@
+# These demos should always build with the freshest dependencies
+Cargo.lock

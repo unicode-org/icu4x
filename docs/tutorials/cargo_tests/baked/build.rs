@@ -1,0 +1,22 @@
+use icu::locid::langid;
+use icu_datagen::CldrLocaleSubset;
+use icu_datagen::SourceData;
+use icu_provider::marker::KeyedDataMarker;
+use std::path::PathBuf;
+
+fn main() {
+    icu_datagen::datagen(
+        Some(&[langid!("ru")]),
+        &[icu::plurals::provider::CardinalV1Marker::KEY],
+        &SourceData::default()
+            .with_cldr_for_tag("42.0.0", CldrLocaleSubset::Modern)
+            .expect("Source data should download successfully"),
+        vec![icu_datagen::Out::Module {
+            mod_directory: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("baked_data"),
+            pretty: true,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+        }],
+    )
+    .expect("Datagen should be successful");
+}

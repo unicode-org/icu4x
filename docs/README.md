@@ -9,10 +9,10 @@ navigation.  The Summary of each page is its first paragraph.
 
 List of tutorials on how to use ICU4X.
 
+User-facing tutorials are listed in [index.md](tutorials/index.md). The following list are additional contributor-focused tutorials.
+
 Document | Summary
 ---------|---------
-[intro.md](tutorials/intro.md) | Introduction tutorial to ICU4X for users
-[data_provider.md](tutorials/data_provider.md) | Tutorial on using Data Provider in a component
 [markdown_tips.md](tutorials/markdown_tips.md) | According to bylaws.md, designs should make their way to GitHub Markdown files somewhat early in the process. However, since Markdown is not a WYSIWYG platform like Google Docs, it takes a bit of time before you become accustomed to the practice. This document contains tips on the workflow.
 [writing_a_new_data_struct.md](tutorials/writing_a_new_data_struct.md) | Tutorial for ICU4X contributors on how to add locale data to the data provider pipeline.
 
