@@ -17,7 +17,7 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v2
+      - uses:                   actions/checkout@v3
 
       # TODO(#315) Re-include caching that also includes the Rust version in the cache key
 
