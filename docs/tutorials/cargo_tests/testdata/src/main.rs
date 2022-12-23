@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This is a demo project using test data.
+//! 
+//! For more information, see the tutorial [cargo.md](../../cargo.md).
+
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 
