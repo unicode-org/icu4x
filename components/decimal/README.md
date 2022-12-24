@@ -13,6 +13,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ### Format a number with Bengali digits
 
 ```rust
+use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
@@ -24,7 +25,7 @@ let fdf = FixedDecimalFormatter::try_new_unstable(
 )
 .expect("Data should load successfully");
 
-let fixed_decimal = 1000007.into();
+let fixed_decimal = FixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ```
@@ -55,6 +56,7 @@ Numbering systems specified in the `-u-nu` subtag will be followed as long as th
 symbols for that numbering system.
 
 ```rust
+use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::assert_writeable_eq;
@@ -66,7 +68,7 @@ let fdf = FixedDecimalFormatter::try_new_unstable(
 )
 .expect("Data should load successfully");
 
-let fixed_decimal = 1000007.into();
+let fixed_decimal = FixedDecimal::from(1000007);
 
 assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
