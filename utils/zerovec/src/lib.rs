@@ -215,6 +215,8 @@ extern crate alloc;
 
 mod error;
 mod flexzerovec;
+#[cfg(feature = "hashmap")]
+mod hashmap;
 mod map;
 mod map2d;
 #[cfg(test)]
@@ -231,9 +233,9 @@ mod yoke_impls;
 mod zerofrom_impls;
 
 pub use crate::error::ZeroVecError;
-pub use crate::map::map::ZeroMap;
 #[cfg(feature = "hashmap")]
-pub use crate::map::ZeroHashMapStatic;
+pub use crate::hashmap::ZeroHashMapStatic;
+pub use crate::map::map::ZeroMap;
 pub use crate::map2d::map::ZeroMap2d;
 pub use crate::varzerovec::{slice::VarZeroSlice, vec::VarZeroVec};
 pub use crate::zerovec::{ZeroSlice, ZeroVec};

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
+use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::borrow::Borrow;
 use alloc::vec;
@@ -171,6 +171,7 @@ impl<'a> HashIndex<'a> {
         K: Hash,
     {
         let (g, f0, f1) = compute_hash(k, self.displacements.len());
+        #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();
         Some(compute_displacement(
             (f0, f1),
@@ -230,7 +231,7 @@ where
     /// use zerovec::ZeroHashMapStatic;
     ///
     /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
-    /// let hashmap: ZeroHashMapStatic<i32, str> = ZeroHashMapStatic::from_exact_iter(kv.into_iter());
+    /// let hashmap: ZeroHashMapStatic<i32, str> = ZeroHashMapStatic::build_from_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
