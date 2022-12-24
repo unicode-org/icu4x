@@ -7,7 +7,7 @@
 //! Exemplars are characters used by a language, separated into different sets.
 //! The sets are: main, auxiliary, punctuation, numbers, and index.
 //!
-//! The sets define, according to typical usage in the langauge,
+//! The sets define, according to typical usage in the language,
 //! which characters occur in which contexts with which frequency.
 //! For more information, see the documentation in the
 //! [Exemplars section in Unicode Technical Standard #35](https://unicode.org/reports/tr35/tr35-general.html#Exemplars)

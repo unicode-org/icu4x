@@ -1451,7 +1451,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1551,6 +1551,7 @@ dependencies = [
  "quote",
  "rayon",
  "reqwest",
+ "rust-format",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1888,7 +1889,6 @@ dependencies = [
  "ndarray",
  "num-traits",
  "serde",
- "serde-json-core",
  "serde_json",
  "utf8_iter",
  "zerovec",
@@ -1910,6 +1910,7 @@ dependencies = [
  "icu_casemapping",
  "icu_collator",
  "icu_collections",
+ "icu_compactdecimal",
  "icu_datagen",
  "icu_datetime",
  "icu_decimal",
@@ -2316,7 +2317,6 @@ dependencies = [
  "num-integer",
  "num-traits",
  "rawpointer",
- "serde",
 ]
 
 [[package]]
@@ -2885,6 +2885,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "rust-format"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60e7c00b6c3bf5e38a880eec01d7e829d12ca682079f8238a464def3c4b31627"
+dependencies = [
+ "proc-macro2",
 ]
 
 [[package]]

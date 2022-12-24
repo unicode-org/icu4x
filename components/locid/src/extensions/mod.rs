@@ -102,11 +102,11 @@ impl ExtensionType {
 #[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
 #[non_exhaustive]
 pub struct Extensions {
-    /// A representation of the data for a Unicode extension, when present in the locale identifer.
+    /// A representation of the data for a Unicode extension, when present in the locale identifier.
     pub unicode: Unicode,
-    /// A representation of the data for a transform extension, when present in the locale identifer.
+    /// A representation of the data for a transform extension, when present in the locale identifier.
     pub transform: Transform,
-    /// A representation of the data for a private-use extension, when present in the locale identifer.
+    /// A representation of the data for a private-use extension, when present in the locale identifier.
     pub private: Private,
     /// A sequence of any other extensions that are present in the locale identifier but are not formally
     /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],

@@ -3,7 +3,7 @@
     "es": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "es"
       },
@@ -738,7 +738,7 @@
                 "exemplarCity": "Ceuta"
               },
               "Conakry": {
-                "exemplarCity": "Conakry"
+                "exemplarCity": "Conakri"
               },
               "Dakar": {
                 "exemplarCity": "Dakar"
@@ -965,7 +965,7 @@
                 "exemplarCity": "Katmandú"
               },
               "Khandyga": {
-                "exemplarCity": "Khandyga"
+                "exemplarCity": "Khandiga"
               },
               "Krasnoyarsk": {
                 "exemplarCity": "Krasnoyarsk"

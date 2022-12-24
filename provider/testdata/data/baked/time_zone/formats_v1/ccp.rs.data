@@ -1,0 +1,40 @@
+::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
+    hour_format: (
+        alloc::borrow::Cow::Borrowed("+HH:mm"),
+        alloc::borrow::Cow::Borrowed("-HH:mm"),
+    ),
+    gmt_format: alloc::borrow::Cow::Borrowed("GMT {0}"),
+    gmt_zero_format: alloc::borrow::Cow::Borrowed("GMT"),
+    region_format: alloc::borrow::Cow::Borrowed("{0} 𑄃\u{11127}𑄇\u{11134}𑄖\u{11127}"),
+    region_format_variants: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
+                    110u8, 100u8, 97u8, 114u8, 100u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 0u8, 123u8, 48u8, 125u8, 32u8, 240u8,
+                    145u8, 132u8, 152u8, 240u8, 145u8, 132u8, 168u8, 240u8, 145u8, 132u8,
+                    157u8, 240u8, 145u8, 132u8, 170u8, 240u8, 145u8, 132u8, 140u8, 240u8,
+                    145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 142u8, 240u8, 145u8, 132u8,
+                    179u8, 240u8, 145u8, 132u8, 160u8, 32u8, 240u8, 145u8, 132u8, 131u8, 240u8,
+                    145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8,
+                    180u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8, 132u8, 167u8, 240u8,
+                    145u8, 132u8, 150u8, 240u8, 145u8, 132u8, 180u8, 123u8, 48u8, 125u8, 32u8,
+                    240u8, 145u8, 132u8, 159u8, 240u8, 145u8, 132u8, 154u8, 240u8, 145u8,
+                    132u8, 167u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 180u8, 32u8,
+                    240u8, 145u8, 132u8, 131u8, 240u8, 145u8, 132u8, 167u8, 240u8, 145u8,
+                    132u8, 135u8, 240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 150u8,
+                    240u8, 145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8,
+                    132u8, 180u8,
+                ])
+            },
+        )
+    },
+    fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
+}

@@ -1,0 +1,39 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 9u8, 0u8, 15u8, 0u8, 21u8, 0u8, 27u8, 0u8,
+                    228u8, 184u8, 128u8, 230u8, 152u8, 168u8, 230u8, 151u8, 165u8, 230u8,
+                    152u8, 168u8, 230u8, 151u8, 165u8, 228u8, 187u8, 138u8, 230u8, 151u8,
+                    165u8, 230u8, 152u8, 142u8, 230u8, 151u8, 165u8, 230u8, 152u8, 142u8,
+                    229u8, 190u8, 140u8, 230u8, 151u8, 165u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 日前"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 日後"),
+            index: 0u8,
+        },
+    },
+}

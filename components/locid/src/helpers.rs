@@ -115,7 +115,7 @@ impl<T> ShortVec<T> {
                     #[allow(clippy::unwrap_used)]
                     // we know that the vec has exactly one element left
                     1 => (ShortVec::Single(v.pop().unwrap()), removed_item),
-                    // v has atleast 2 elements, create a Multi variant
+                    // v has at least 2 elements, create a Multi variant
                     _ => (ShortVec::Multi(v), removed_item),
                 }
             }

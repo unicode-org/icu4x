@@ -27,8 +27,8 @@
 //!
 //! The normalizer operates on a lazy iterator over Unicode scalar values (Rust `char`) internally
 //! and iterating over guaranteed-valid UTF-8, potentially-invalid UTF-8, and potentially-invalid
-//! UTF-16 is a step that doesn’t leak into the normalizer internals. UTF errors are treated as
-//! U+FFFD.
+//! UTF-16 is a step that doesn’t leak into the normalizer internals. Ill-formed byte sequences are
+//! treated as U+FFFD.
 //!
 //! The normalizer data layout is not based on the ICU4C design at all. Instead, the normalization
 //! data layout is a clean-slate design optimized for the concept of fusing the NFD decomposition
@@ -40,7 +40,7 @@
 //! on the Basic Multilingual Plane. Notably, in this case, the collator makes use of the
 //! knowledge that the second character of such a decomposition is a non-starter. Therefore,
 //! decomposition into two starters is handled by generic fallback path that looks the
-//! decomposion from an array by offset and length instead of baking a BMP starter pair directly
+//! decomposition from an array by offset and length instead of baking a BMP starter pair directly
 //! into a trie value.
 //!
 //! The decompositions into non-starters are hard-coded. At present in Unicode, these appear
@@ -135,7 +135,7 @@ const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
 const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
 
 /// Magic marker trie value for characters whose decomposition
-/// starts with a non-starter. The actual decompostion is
+/// starts with a non-starter. The actual decomposition is
 /// hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
@@ -1485,8 +1485,8 @@ macro_rules! normalizer_methods {
 
         /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         pub fn normalize_utf8(&self, text: &[u8]) -> String {
             let mut ret = String::new();
             ret.reserve(text.len());
@@ -1496,8 +1496,8 @@ macro_rules! normalizer_methods {
 
         /// Check if a slice of potentially-invalid UTF-8 is normalized.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard before checking.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard before checking.
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
             let mut sink = IsNormalizedSinkUtf8::new(text);
             if self.normalize_utf8_to(text, &mut sink).is_err() {
@@ -1798,8 +1798,8 @@ impl DecomposingNormalizer {
     decomposing_normalize_to!(
         /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         ,
         normalize_utf8_to,
         core::fmt::Write,
@@ -2229,8 +2229,8 @@ impl ComposingNormalizer {
     composing_normalize_to!(
         /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
         ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
+        /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
+        /// according to the WHATWG Encoding Standard.
         ,
         normalize_utf8_to,
         core::fmt::Write,

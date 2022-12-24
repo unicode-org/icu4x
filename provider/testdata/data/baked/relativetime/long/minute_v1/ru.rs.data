@@ -1,0 +1,55 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[0u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 178u8, 32u8, 209u8, 141u8, 209u8,
+                    130u8, 209u8, 131u8, 32u8, 208u8, 188u8, 208u8, 184u8, 208u8, 189u8, 209u8,
+                    131u8, 209u8, 130u8, 209u8, 131u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" минуту назад"),
+            index: 0u8,
+        }),
+        two: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" минуты назад"),
+            index: 0u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" минут назад"),
+            index: 0u8,
+        }),
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" минуты назад"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  минуту"),
+            index: 11u8,
+        }),
+        two: None,
+        few: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  минуты"),
+            index: 11u8,
+        }),
+        many: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  минут"),
+            index: 11u8,
+        }),
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("через  минуты"),
+            index: 11u8,
+        },
+    },
+}

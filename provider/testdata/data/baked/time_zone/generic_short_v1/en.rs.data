@@ -1,0 +1,37 @@
+::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1 {
+    defaults: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    97u8, 108u8, 97u8, 115u8, 97u8, 109u8, 99u8, 101u8, 97u8, 109u8, 101u8,
+                    97u8, 97u8, 109u8, 109u8, 111u8, 97u8, 109u8, 112u8, 97u8, 97u8, 116u8,
+                    108u8, 97u8, 104u8, 97u8, 97u8, 108u8, 109u8, 103u8, 109u8, 116u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    8u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 7u8, 0u8, 9u8, 0u8, 11u8,
+                    0u8, 13u8, 0u8, 16u8, 0u8, 65u8, 75u8, 84u8, 67u8, 84u8, 69u8, 84u8, 77u8,
+                    84u8, 80u8, 84u8, 65u8, 84u8, 72u8, 65u8, 84u8, 71u8, 77u8, 84u8,
+                ])
+            },
+        )
+    },
+    overrides: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    117u8, 115u8, 104u8, 110u8, 108u8, 0u8, 0u8, 0u8, 117u8, 116u8, 99u8, 0u8,
+                    0u8, 0u8, 0u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 72u8, 83u8, 84u8, 85u8, 84u8, 67u8,
+                ])
+            },
+        )
+    },
+}

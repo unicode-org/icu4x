@@ -12,7 +12,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_plurals::PluralCategory;
+use icu_provider::{yoke, zerofrom, DataMarker};
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.
@@ -89,6 +90,20 @@ pub enum Count {
     // algorithm does not allow such a thing to arise.
 }
 
+impl From<PluralCategory> for Count {
+    fn from(other: PluralCategory) -> Self {
+        use PluralCategory::*;
+        match other {
+            Zero => Count::Zero,
+            One => Count::One,
+            Two => Count::Two,
+            Few => Count::Few,
+            Many => Count::Many,
+            Other => Count::Other,
+        }
+    }
+}
+
 /// A compact decimal pattern, representing some literal text with an optional
 /// placeholder, and the power of 10 expressed by the text.
 #[derive(
@@ -124,4 +139,9 @@ pub struct Pattern<'data> {
     /// The underlying CLDR pattern with the placeholder removed, e.g.,
     /// " M" for the pattern "000 M"
     pub literal_text: Cow<'data, str>,
+}
+pub(crate) struct ErasedCompactDecimalFormatDataV1Marker;
+
+impl DataMarker for ErasedCompactDecimalFormatDataV1Marker {
+    type Yokeable = CompactDecimalPatternDataV1<'static>;
 }

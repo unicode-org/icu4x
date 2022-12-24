@@ -255,6 +255,15 @@ mod tests {
                         exponent: 12,
                         literal_text: Cow::Borrowed("兆")
                     }
+                ),
+                (
+                    16,
+                    Count::Other,
+                    Pattern {
+                        index: 0,
+                        exponent: 16,
+                        literal_text: Cow::Borrowed("京")
+                    }
                 )
             ]
         );

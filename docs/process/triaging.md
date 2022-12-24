@@ -4,19 +4,19 @@ Issue Triaging
 ICU4X uses GitHub for tracking feature requests and work items.  The following queries omit issues having the **discuss** label.
 
 - All *open* issues should have a type label.
-    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AT-bug+-label%3AT-core+-label%3AT-docs-tests+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3Aduplicate+-label%3Adiscuss)
+    - [Query: issues needing a type](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AT-bug+-label%3AT-core+-label%3AT-docs-tests+-label%3AT-enhancement+-label%3Ainvalid+-label%3Aquestion+-label%3AT-task+-label%3AT-techdebt+-label%3Aduplicate+-label%3Adiscuss+-label%3Adiscuss-priority+-label%3Aneeds-approval)
 - All valid issues should have a component label.
-    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-data+-label%3AC-datetime+-label%3AC-locale+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-segmentation+-label%3AC-test-infra+-label%3AC-unicode+-label%3Ainvalid+-label%3Aduplicate)
+    - [Query: issues needing a component](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+-label%3AC-bidi+-label%3AC-calendar+-label%3AC-collator+-label%3AC-data-infra+-label%3AC-datetime+-label%3AC-ffi-infra+-label%3AC-list+-label%3AC-locale+-label%3AC-message+-label%3AC-meta+-label%3AC-numbers+-label%3AC-pluralrules+-label%3AC-process+-label%3AC-segmentation+-label%3AC-test-infra+-label%3AC-time-zone+-label%3AC-unicode+-label%3AC-zerovec+-label%3Ainvalid+-label%3Aduplicate+-label%3Aquestion)
 - All *open* issues should have a size label.
     - [Query: issues needing a size](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3AS-tiny+-label%3AS-small+-label%3AS-medium+-label%3AS-large+-label%3AS-epic+-label%3Aquestion+-label%3Adiscuss+)
 - All *open* issues should have an assignee or the **help wanted** label.
-    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+-label%3Adiscuss+no%3Aassignee)
+    - [Query: open issues needing assignee or help wanted](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aopen+-label%3A%22help+wanted%22+-label%3Adiscuss+-label%3Adiscuss-priority+-label%3Aneeds-approval+no%3Aassignee+)
 - All *closed* issues should have a resolution, linked pull request, or the **T-task**, **question**, **invalid**, or **duplicate** label.
     - [Query: closed issues needing resolution or linked PR](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+is%3Aclosed+-linked%3Apr+-label%3AR-as-designed+-label%3AR-duplicate+-label%3AR-needs-more-info+-label%3AR-obsolete+-label%3AR-out-of-scope+-label%3AR-fixed-elsewhere+-label%3Aquestion+-label%3Ainvalid+-label%3AT-task+-label%3Aduplicate)
 - If an issue is open and not labeled **backlog**, the issue should be actionable. Open issues should be assigned to a milestone.
-    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Abacklog+-label%3Adiscuss)
+    - [Query: open issues neeting a milestone](https://github.com/unicode-org/icu4x/issues?q=is%3Aopen+is%3Aissue+no%3Amilestone+-label%3Adiscuss+-label%3Adiscuss-priority+-label%3Aneeds-approval+)
 - If an issue is unresolved but lower-priority or not immediately actionable, it should get the **backlog** label and remain open.  The backlog should be checked periodically for issues that should be re-prioritized.
-    - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+label%3Abacklog+sort%3Aupdated-desc+)
+    - [Query: most recently updated backlog issues](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A%22Backlog+%E2%9F%A8P4%E2%9F%A9%22)
 
 ## Fields
 

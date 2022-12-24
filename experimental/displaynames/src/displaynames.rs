@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Displaynames component.
 
 use crate::options::*;
-use crate::provider::TerritoryDisplayNamesV1Marker;
+use crate::provider::RegionDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 use tinystr::TinyAsciiStr;
@@ -34,7 +34,7 @@ use tinystr::TinyStrError;
 /// ```
 pub struct DisplayNames {
     options: DisplayNamesOptions,
-    data: DataPayload<TerritoryDisplayNamesV1Marker>,
+    data: DataPayload<RegionDisplayNamesV1Marker>,
 }
 
 impl DisplayNames {
@@ -44,7 +44,7 @@ impl DisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_region_unstable<D: DataProvider<TerritoryDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_region_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,

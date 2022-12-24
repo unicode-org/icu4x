@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::decimal::DecimalFormat;
+use crate::transform::cldr::cldr_serde::numbers::DecimalFormat;
 use icu_compactdecimal::provider::CompactDecimalPatternDataV1;
 use icu_compactdecimal::provider::*;
 use itertools::Itertools;
@@ -321,6 +321,22 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
                     },
                 );
             }
+        }
+        if !patterns
+            .iter()
+            .tuple_windows()
+            .all(|((_, low), (_, high))| {
+                low.get(&Count::Other).map(|p| p.exponent)
+                    <= high.get(&Count::Other).map(|p| p.exponent)
+            })
+        {
+            Err(format!(
+                "Compact decimal exponents should be nondecreasing: {:?}",
+                patterns
+                    .iter()
+                    .map(|(_, plural_map)| plural_map.get(&Count::Other).map(|p| p.exponent))
+                    .collect::<Vec<_>>(),
+            ))?;
         }
         // Deduplicate sequences of types that have the same plural map (up to =1), keeping the lowest type.
         // The pattern 0 for type 1 is implicit.

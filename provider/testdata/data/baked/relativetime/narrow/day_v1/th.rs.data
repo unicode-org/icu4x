@@ -1,0 +1,48 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 33u8, 0u8, 57u8, 0u8, 75u8, 0u8, 99u8, 0u8,
+                    224u8, 185u8, 128u8, 224u8, 184u8, 161u8, 224u8, 184u8, 183u8, 224u8,
+                    185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8, 167u8, 224u8, 184u8,
+                    178u8, 224u8, 184u8, 153u8, 224u8, 184u8, 139u8, 224u8, 184u8, 183u8,
+                    224u8, 184u8, 153u8, 224u8, 185u8, 128u8, 224u8, 184u8, 161u8, 224u8,
+                    184u8, 183u8, 224u8, 185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8,
+                    167u8, 224u8, 184u8, 178u8, 224u8, 184u8, 153u8, 224u8, 184u8, 167u8,
+                    224u8, 184u8, 177u8, 224u8, 184u8, 153u8, 224u8, 184u8, 153u8, 224u8,
+                    184u8, 181u8, 224u8, 185u8, 137u8, 224u8, 184u8, 158u8, 224u8, 184u8,
+                    163u8, 224u8, 184u8, 184u8, 224u8, 185u8, 136u8, 224u8, 184u8, 135u8,
+                    224u8, 184u8, 153u8, 224u8, 184u8, 181u8, 224u8, 185u8, 137u8, 224u8,
+                    184u8, 161u8, 224u8, 184u8, 176u8, 224u8, 184u8, 163u8, 224u8, 184u8,
+                    183u8, 224u8, 184u8, 153u8, 224u8, 184u8, 153u8, 224u8, 184u8, 181u8,
+                    224u8, 185u8, 137u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" ว\u{e31}นท\u{e35}\u{e48}แล\u{e49}ว"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: None,
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("ใน  ว\u{e31}น"),
+            index: 7u8,
+        },
+    },
+}

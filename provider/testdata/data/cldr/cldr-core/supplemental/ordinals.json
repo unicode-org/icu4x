@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "41"
+      "_cldrVersion": "42"
     },
     "plurals-type-ordinal": {
       "af": {
@@ -23,6 +23,9 @@
         "pluralRule-count-few": "n = 4 @integer 4",
         "pluralRule-count-many": "n = 6 @integer 6",
         "pluralRule-count-other": " @integer 0, 11~25, 100, 1000, 10000, 100000, 1000000, …"
+      },
+      "ast": {
+        "pluralRule-count-other": " @integer 0~15, 100, 1000, 10000, 100000, 1000000, …"
       },
       "az": {
         "pluralRule-count-one": "i % 10 = 1,2,5,7,8 or i % 100 = 20,50,70,80 @integer 1, 2, 5, 7, 8, 11, 12, 15, 17, 18, 20~22, 25, 101, 1001, …",
@@ -362,6 +365,10 @@
       },
       "uz": {
         "pluralRule-count-other": " @integer 0~15, 100, 1000, 10000, 100000, 1000000, …"
+      },
+      "vec": {
+        "pluralRule-count-many": "n = 11,8,80,800 @integer 8, 11, 80, 800",
+        "pluralRule-count-other": " @integer 0~7, 9, 10, 12~17, 100, 1000, 10000, 100000, 1000000, …"
       },
       "vi": {
         "pluralRule-count-one": "n = 1 @integer 1",

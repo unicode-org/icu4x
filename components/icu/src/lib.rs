@@ -78,7 +78,7 @@
 //!
 //! - `std`: Whether to include `std` support. Without this feature, `icu` is `#[no_std]`-compatible
 //! - `serde`: Whether to include `serde::Deserialize` implementations for data structs, such as [`SymbolsV1`],
-//!   and `serde::{Serialize, Deserialize}` implementations for core libary types, such as [`Locale`]. These are
+//!   and `serde::{Serialize, Deserialize}` implementations for core library types, such as [`Locale`]. These are
 //!   required with `serde`-backed providers like [`BlobDataProvider`][^1].
 //! - `experimental`: Whether to enable experimental preview features. Modules enabled with
 //!   this feature may not be production-ready and could change at any time.

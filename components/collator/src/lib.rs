@@ -269,7 +269,7 @@
 //! ## Numeric
 //!
 //! When set to `true` (on), any sequence of decimal
-//! digits is sorted at a primary level accoding to the
+//! digits is sorted at a primary level according to the
 //! numeric value.
 //!
 //! ```

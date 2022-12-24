@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "fil"
       },
@@ -226,6 +226,7 @@
           "NR": "Nauru",
           "NU": "Niue",
           "NZ": "New Zealand",
+          "NZ-alt-variant": "Aotearoa New Zealand",
           "OM": "Oman",
           "PA": "Panama",
           "PE": "Peru",
@@ -285,6 +286,7 @@
           "TN": "Tunisia",
           "TO": "Tonga",
           "TR": "Turkey",
+          "TR-alt-variant": "Türkiye",
           "TT": "Trinidad & Tobago",
           "TV": "Tuvalu",
           "TW": "Taiwan",

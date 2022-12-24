@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "th"
       },
@@ -224,9 +224,9 @@
               "format": {
                 "abbreviated": {
                   "midnight": "เที่ยงคืน",
-                  "am": "ก่อนเที่ยง",
+                  "am": "AM",
                   "noon": "เที่ยง",
-                  "pm": "หลังเที่ยง",
+                  "pm": "PM",
                   "morning1": "ในตอนเช้า",
                   "afternoon1": "ในตอนบ่าย",
                   "afternoon2": "บ่าย",
@@ -397,10 +397,10 @@
                 "yMMMd": "d MMM y",
                 "yMMMEd": "E d MMM y",
                 "yMMMEEEEd": "EEEEที่ d MMM y",
-                "yMMMM": "MMMM G y",
-                "yMMMMd": "d MMMM G y",
-                "yMMMMEd": "E d MMMM G y",
-                "yMMMMEEEEd": "EEEEที่ d MMMM G y",
+                "yMMMM": "MMMM y",
+                "yMMMMd": "d MMMM y",
+                "yMMMMEd": "E d MMMM y",
+                "yMMMMEEEEd": "EEEEที่ d MMMM y",
                 "yQQQ": "QQQ y",
                 "yQQQQ": "QQQQ G y",
                 "yw-count-other": "สัปดาห์ที่ w ของปี Y"
@@ -569,20 +569,28 @@
                   "y": "MMMM y – MMMM y"
                 },
                 "yMMMMd": {
-                  "d": "d–d MMMM G y",
-                  "M": "d MMMM – d MMMM G y",
-                  "y": "d MMMM G y – d MMMM G y"
+                  "d": "d–d MMMM y",
+                  "M": "d MMMM – d MMMM y",
+                  "y": "d MMMM y – d MMMM y"
                 },
                 "yMMMMEd": {
-                  "d": "E d – E d MMMM G y",
-                  "M": "E d MMMM – E d MMMM G y",
-                  "y": "E d MMMM G y – E d MMMM G y"
+                  "d": "E d – E d MMMM y",
+                  "M": "E d MMMM – E d MMMM y",
+                  "y": "E d MMMM y – E d MMMM y"
                 },
                 "yMMMMEEEEd": {
                   "d": "EEEEที่ d – EEEEที่ d MMMM G y",
                   "M": "EEEEที่ d MMMM – EEEEที่ d MMMM G y",
                   "y": "EEEEที่ d MMMM G y – EEEEที่ d MMMM y"
                 }
+              }
+            },
+            "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} เวลา {0}",
+                "long": "{1} เวลา {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
               }
             }
           }

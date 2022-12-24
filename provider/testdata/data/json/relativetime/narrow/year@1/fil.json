@@ -14,7 +14,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) taon ang nakalipas",
+      "pattern": " taon ang nakalipas",
       "index": 0
     }
   },
@@ -28,7 +28,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) taon",
+      "pattern": "sa  taon",
       "index": 3
     }
   }
