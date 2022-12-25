@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671874066037,
+  "lastUpdate": 1671986901906,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62362,6 +62362,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ac150ebaf85c86b76c903468e6f09aae7892e24f",
+          "message": "[locid] Reject duplicated extensions (#2893)\n\n* Reject error cases for Language Identifier\r\n\r\n* Reject duplicated extensions",
+          "timestamp": "2022-12-25T17:36:09+01:00",
+          "tree_id": "72f6551e08411eef35f84bff7608013074b0a124",
+          "url": "https://github.com/unicode-org/icu4x/commit/ac150ebaf85c86b76c903468e6f09aae7892e24f"
+        },
+        "date": 1671986820562,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100855,
+            "range": "± 391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20472,
+            "range": "± 197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66874,
+            "range": "± 261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 174,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 68,
             "range": "± 0",
             "unit": "ns/iter"
           },
