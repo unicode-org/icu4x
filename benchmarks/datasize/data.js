@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1671873482144,
+  "lastUpdate": 1671986305866,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32903,6 +32903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fb42c33dc03b02ff592767afc77462be65c84915"
         },
         "date": 1671873393115,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ac150ebaf85c86b76c903468e6f09aae7892e24f",
+          "message": "[locid] Reject duplicated extensions (#2893)\n\n* Reject error cases for Language Identifier\r\n\r\n* Reject duplicated extensions",
+          "timestamp": "2022-12-25T17:36:09+01:00",
+          "tree_id": "72f6551e08411eef35f84bff7608013074b0a124",
+          "url": "https://github.com/unicode-org/icu4x/commit/ac150ebaf85c86b76c903468e6f09aae7892e24f"
+        },
+        "date": 1671986232013,
         "tool": "ndjson",
         "benches": [
           {
