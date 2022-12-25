@@ -12,7 +12,7 @@ use crate::{subtags, Locale};
 use super::parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter;
 
 pub fn parse_locale(t: &[u8]) -> Result<Locale, ParserError> {
-    let mut iter = SubtagIterator::try_new(t)?;
+    let mut iter = SubtagIterator::new(t);
 
     let id = parse_language_identifier_from_iter(&mut iter, ParserMode::Locale)?;
     let extensions = if iter.peek().is_some() {
@@ -37,11 +37,6 @@ pub const fn parse_locale_with_single_variant_single_keyword_unicode_keyword_ext
     ),
     ParserError,
 > {
-    let iter = match SubtagIterator::try_new(t) {
-        Ok(iter) => iter,
-        Err(err) => {
-            return Err(err);
-        }
-    };
+    let iter = SubtagIterator::new(t);
     parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(iter, mode)
 }

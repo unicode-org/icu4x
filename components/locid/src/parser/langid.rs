@@ -103,7 +103,7 @@ pub fn parse_language_identifier(
     t: &[u8],
     mode: ParserMode,
 ) -> Result<LanguageIdentifier, ParserError> {
-    let mut iter = SubtagIterator::try_new(t)?;
+    let mut iter = SubtagIterator::new(t);
     parse_language_identifier_from_iter(&mut iter, mode)
 }
 
@@ -270,12 +270,7 @@ pub const fn parse_language_identifier_with_single_variant(
     ),
     ParserError,
 > {
-    let iter = match SubtagIterator::try_new(t) {
-        Ok(iter) => iter,
-        Err(err) => {
-            return Err(err);
-        }
-    };
+    let iter = SubtagIterator::new(t);
     match parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(iter, mode) {
         Ok((l, s, r, v, _)) => Ok((l, s, r, v)),
         Err(e) => Err(e),

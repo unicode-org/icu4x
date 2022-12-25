@@ -244,7 +244,6 @@ impl Extensions {
                         return Err(ParserError::InvalidExtension);
                     }
                 }
-                None => {}
                 _ => return Err(ParserError::InvalidExtension),
             }
         }

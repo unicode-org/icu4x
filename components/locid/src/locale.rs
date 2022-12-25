@@ -292,11 +292,7 @@ impl Locale {
             };
         }
 
-        let mut iter = if let Ok(iter) = SubtagIterator::try_new(other.as_bytes()) {
-            iter
-        } else {
-            return false;
-        };
+        let mut iter = SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }
