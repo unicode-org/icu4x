@@ -29,7 +29,7 @@ jobs:
           echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
         shell: bash
       - name: Attempt to load cached grcov
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: grcov-cache
         with:
           path: |
