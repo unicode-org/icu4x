@@ -15,7 +15,7 @@ use core::{mem, ptr};
 use yoke::*;
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T> {
     type Output = ZeroVec<'a, T>;
     #[inline]
@@ -43,7 +43,7 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 }
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
     type Output = VarZeroVec<'a, T>;
     #[inline]
@@ -71,7 +71,7 @@ unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'stati
 }
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 unsafe impl<'a> Yokeable<'a> for FlexZeroVec<'static> {
     type Output = FlexZeroVec<'a>;
     #[inline]
@@ -98,7 +98,7 @@ unsafe impl<'a> Yokeable<'a> for FlexZeroVec<'static> {
     }
 }
 
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
 where
@@ -144,7 +144,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
@@ -190,7 +190,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2d<'static, K0, K1, V>
 where
@@ -238,7 +238,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `yoke` feature of the `zerovec` crate
+/// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
 #[allow(clippy::transmute_ptr_to_ptr)]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2dBorrowed<'static, K0, K1, V>
 where

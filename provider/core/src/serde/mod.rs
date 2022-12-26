@@ -94,7 +94,7 @@ impl DataPayload<BufferMarker> {
     ///
     /// # Examples
     ///
-    /// Requires the `deserialize_json` feature:
+    /// Requires the `deserialize_json` Cargo feature:
     ///
     /// ```
     /// use icu_provider::buf::BufferFormat;

@@ -19,7 +19,7 @@ use yoke::*;
 ///
 /// # `Sync + Send`
 ///
-/// This provider uses reference counting internally. When the `sync` feature on the [`icu_provider`]
+/// This provider uses reference counting internally. When the `sync` Cargo feature on the [`icu_provider`]
 /// crate is enabled, it uses [`Arc`](alloc::sync::Arc) instead of [`Rc`](alloc::rc::Rc), making
 /// it `Sync + Send`.
 ///

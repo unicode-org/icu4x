@@ -34,7 +34,7 @@ class ICU4XDataProvider {
 
   /**
    * Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-   * Requires the `provider_fs` feature.
+   * Requires the `provider_fs` Cargo feature.
    * Not supported in WASM.
    * 
    * See the [Rust documentation for `FsDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more information.
@@ -43,7 +43,7 @@ class ICU4XDataProvider {
 
   /**
    * Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-   * Requires the `provider_test` feature.
+   * Requires the `provider_test` Cargo feature.
    * 
    * See the [Rust documentation for `icu_testdata`](https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html) for more information.
    */
