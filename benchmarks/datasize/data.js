@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672015506362,
+  "lastUpdate": 1672038939652,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -32993,6 +32993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e5922a846d0a7d6f793266a8f892434b8bb61fd0"
         },
         "date": 1672015417869,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92e5d5970d8db1559ede339860e6887bf9e6559e",
+          "message": "DisplayNames fixes (#2918)\n\n* DisplayNames fixes\r\n\r\n* Cleanups",
+          "timestamp": "2022-12-25T23:13:09-08:00",
+          "tree_id": "342da5e2000391c64f08653897d22b493aee4a12",
+          "url": "https://github.com/unicode-org/icu4x/commit/92e5d5970d8db1559ede339860e6887bf9e6559e"
+        },
+        "date": 1672038856555,
         "tool": "ndjson",
         "benches": [
           {
