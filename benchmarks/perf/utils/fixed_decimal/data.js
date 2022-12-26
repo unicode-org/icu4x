@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672015091794,
+  "lastUpdate": 1672016092824,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62489,6 +62489,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 77,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5922a846d0a7d6f793266a8f892434b8bb61fd0",
+          "message": "Use \"Cargo feature\" language everywhere and other tutorial tweaks (#2922)\n\nThey are \"Cargo\" features, not \"Rust\" features or any other name:\r\n\r\nhttps://doc.rust-lang.org/cargo/reference/features.html",
+          "timestamp": "2022-12-25T18:42:23-06:00",
+          "tree_id": "c70d484fe47f9b92406628c692737d5d56ec811d",
+          "url": "https://github.com/unicode-org/icu4x/commit/e5922a846d0a7d6f793266a8f892434b8bb61fd0"
+        },
+        "date": 1672016012221,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 110406,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20565,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68176,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 176,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
