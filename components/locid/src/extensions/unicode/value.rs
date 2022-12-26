@@ -55,7 +55,7 @@ impl Value {
         let mut v = ShortVec::new();
 
         if !input.is_empty() {
-            for subtag in SubtagIterator::try_new(input)? {
+            for subtag in SubtagIterator::new(input) {
                 let val = Self::subtag_from_bytes(subtag)?;
                 if let Some(val) = val {
                     v.push(val);

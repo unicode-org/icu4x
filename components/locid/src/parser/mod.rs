@@ -67,16 +67,18 @@ pub struct SubtagIterator<'a> {
 }
 
 impl<'a> SubtagIterator<'a> {
-    pub const fn try_new(slice: &'a [u8]) -> Result<Self, ParserError> {
-        // This returns early for slices like `"-en"` or `"-"`
-        if slice.is_empty() || is_separator(slice, 0) {
-            return Err(ParserError::InvalidLanguage);
-        }
-        Ok(Self {
+    pub const fn new(slice: &'a [u8]) -> Self {
+        let subtag = if slice.is_empty() || is_separator(slice, 0) {
+            // This returns (0, 0) which returns Some(b"") for slices like `"-en"` or `"-"`
+            (0, 0)
+        } else {
+            get_current_subtag(slice, 0)
+        };
+        Self {
             slice,
             done: false,
-            subtag: get_current_subtag(slice, 0),
-        })
+            subtag,
+        }
     }
 
     pub const fn next_manual(mut self) -> (Self, Option<(usize, usize)>) {
@@ -127,7 +129,7 @@ mod test {
     #[test]
     fn subtag_iterator_peek_test() {
         let slice = "de_at-u-ca-foobar";
-        let mut si = SubtagIterator::try_new(slice.as_bytes()).unwrap();
+        let mut si = SubtagIterator::new(slice.as_bytes());
 
         assert_eq!(si.peek().map(slice_to_str), Some("de"));
         assert_eq!(si.peek().map(slice_to_str), Some("de"));
@@ -141,35 +143,43 @@ mod test {
     #[test]
     fn subtag_iterator_test() {
         let slice = "";
-        let si = SubtagIterator::try_new(slice.as_bytes());
-        assert!(si.is_err());
+        let mut si = SubtagIterator::new(slice.as_bytes());
+        assert_eq!(si.next().map(slice_to_str), Some(""));
 
         let slice = "-";
-        let si = SubtagIterator::try_new(slice.as_bytes());
-        assert!(si.is_err());
+        let mut si = SubtagIterator::new(slice.as_bytes());
+        assert_eq!(si.next().map(slice_to_str), Some(""));
 
         let slice = "-en";
-        let si = SubtagIterator::try_new(slice.as_bytes());
-        assert!(si.is_err());
+        let mut si = SubtagIterator::new(slice.as_bytes());
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next().map(slice_to_str), Some("en"));
+        assert_eq!(si.next(), None);
 
         let slice = "en";
-        let si = SubtagIterator::try_new(slice.as_bytes()).unwrap();
+        let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(si.map(slice_to_str).collect::<Vec<_>>(), vec!["en",]);
 
         let slice = "en-";
-        let si = SubtagIterator::try_new(slice.as_bytes()).unwrap();
+        let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(si.map(slice_to_str).collect::<Vec<_>>(), vec!["en", "",]);
 
         let slice = "--";
-        let si = SubtagIterator::try_new(slice.as_bytes());
-        assert!(si.is_err());
+        let mut si = SubtagIterator::new(slice.as_bytes());
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next(), None);
 
         let slice = "-en-";
-        let si = SubtagIterator::try_new(slice.as_bytes());
-        assert!(si.is_err());
+        let mut si = SubtagIterator::new(slice.as_bytes());
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next().map(slice_to_str), Some("en"));
+        assert_eq!(si.next().map(slice_to_str), Some(""));
+        assert_eq!(si.next(), None);
 
         let slice = "de_at-u-ca-foobar";
-        let si = SubtagIterator::try_new(slice.as_bytes()).unwrap();
+        let si = SubtagIterator::new(slice.as_bytes());
         assert_eq!(
             si.map(slice_to_str).collect::<Vec<_>>(),
             vec!["de", "at", "u", "ca", "foobar",]

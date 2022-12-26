@@ -48,7 +48,7 @@ impl Value {
         let mut v = vec![];
         let mut has_value = false;
 
-        for subtag in SubtagIterator::try_new(input)? {
+        for subtag in SubtagIterator::new(input) {
             if !Self::is_type_subtag(subtag) {
                 return Err(ParserError::InvalidExtension);
             }
