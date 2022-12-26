@@ -28,7 +28,7 @@ fn main() {
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
-        serializer: Box::new(syntax::Postcard::default()),
+        serializer: Box::<syntax::Postcard>::default(),
         overwrite: true,
         fingerprint: true,
     };

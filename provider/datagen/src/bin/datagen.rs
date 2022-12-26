@@ -333,10 +333,10 @@ fn main() -> eyre::Result<()> {
                     .map(PathBuf::from)
                     .unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 serializer: match matches.value_of("SYNTAX") {
-                    Some("bincode") => Box::new(syntax::Bincode::default()),
-                    Some("postcard") => Box::new(syntax::Postcard::default()),
+                    Some("bincode") => Box::<syntax::Bincode>::default(),
+                    Some("postcard") => Box::<syntax::Postcard>::default(),
                     _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
-                    _ => Box::new(syntax::Json::default()),
+                    _ => Box::<syntax::Json>::default(),
                 },
                 overwrite: matches.is_present("OVERWRITE"),
                 fingerprint: matches.is_present("FINGERPRINT"),

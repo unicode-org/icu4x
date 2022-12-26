@@ -1621,7 +1621,7 @@ impl DecomposingNormalizer {
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped as u16,
+            composition_passthrough_bound: composition_capped,
         })
     }
 
@@ -1707,7 +1707,7 @@ impl DecomposingNormalizer {
             tables,
             supplementary_tables: Some(supplementary_tables),
             decomposition_passthrough_bound: decomposition_capped as u8,
-            composition_passthrough_bound: composition_capped as u16,
+            composition_passthrough_bound: composition_capped,
         })
     }
 

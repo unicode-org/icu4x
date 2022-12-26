@@ -19,12 +19,12 @@ fn check_with_options(
 
     let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf8, result, "{}", s);
+    assert_eq!(expect_utf8, result, "{s}");
 
     let s_utf16: Vec<u16> = s.encode_utf16().collect();
     let iter = segmenter.segment_utf16(&s_utf16);
     let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf16, result, "{}", s);
+    assert_eq!(expect_utf16, result, "{s}");
 }
 
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {

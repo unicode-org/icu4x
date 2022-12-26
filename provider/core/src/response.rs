@@ -86,7 +86,7 @@ pub struct Cart(SelectedRc<Box<[u8]>>);
 impl Deref for Cart {
     type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
-        &*self.0
+        &self.0
     }
 }
 // Safe because both Rc and Arc are StableDeref, and our impl delegates.
@@ -101,7 +101,7 @@ impl Cart {
         for<'a> Y: Yokeable<'a>,
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
@@ -631,5 +631,5 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
 }

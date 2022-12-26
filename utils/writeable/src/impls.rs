@@ -176,7 +176,7 @@ impl Writeable for String {
     }
 }
 
-impl<'a, T: Writeable + ?Sized> Writeable for &T {
+impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         (*self).write_to(sink)

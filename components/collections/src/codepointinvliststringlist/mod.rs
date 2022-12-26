@@ -231,7 +231,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 
         // Ensure that `strings` is deduplicated. Check for any duplicates first.
         let is_deduped = strings.windows(2).all(|adjacents| {
-            if let (Some(s1), Some(s2)) = (adjacents.get(0), adjacents.get(1)) {
+            if let (Some(s1), Some(s2)) = (adjacents.first(), adjacents.get(1)) {
                 s1 != s2
             } else {
                 false

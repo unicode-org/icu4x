@@ -156,11 +156,11 @@ fn test_scientific_syntax_error() {
     for cas in &cases {
         match ScientificDecimal::from_str(cas.input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(cas.input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }

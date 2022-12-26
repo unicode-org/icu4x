@@ -354,7 +354,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         match *self {
-            VarZeroVec::Owned(ref owned) => &**owned,
+            VarZeroVec::Owned(ref owned) => owned,
             VarZeroVec::Borrowed(b) => b,
         }
     }
