@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672039544273,
+  "lastUpdate": 1672051895338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62603,6 +62603,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/write_to/908070605040302010",
             "value": 67,
             "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6814087b8ee3cf5239e0adfa24b65ebd491be509",
+          "message": "Update actions/cache in GitHub Actions workflows to v3 (#2927)",
+          "timestamp": "2022-12-26T11:38:48+01:00",
+          "tree_id": "730db93e3f787765daa05bcc5b4b58e052e2fdeb",
+          "url": "https://github.com/unicode-org/icu4x/commit/6814087b8ee3cf5239e0adfa24b65ebd491be509"
+        },
+        "date": 1672051814579,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101865,
+            "range": "± 798",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20624,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66735,
+            "range": "± 368",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
             "unit": "ns/iter"
           },
           {
