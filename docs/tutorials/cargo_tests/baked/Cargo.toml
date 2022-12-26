@@ -8,15 +8,19 @@ version = "0.1.0"
 edition = "2021"
 publish = false
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+##########################################
+# PLEASE KEEP THIS IN SYNC WITH cargo.md #
+##########################################
 icu = "1.0"
 icu_provider = "1.0"
 litemap = "0.6"
 zerovec = "0.9"
 
 [build-dependencies]
+##########################################
+# PLEASE KEEP THIS IN SYNC WITH cargo.md #
+##########################################
 icu = "1.0"
 icu_datagen = "1.0"
 icu_provider = "1.0"
