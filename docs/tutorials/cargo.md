@@ -64,7 +64,9 @@ To generate your blob data, first run `cargo build` before you run `icu4x-datage
 
 ## Cargo.toml with Baked Provider
 
-If you wish to bake in data auto-generated in your build.rs, you need to add additional dependencies as follows:
+It is possible to auto-generate baked data in your build.rs. Use caution with this approach since it will make your build.rs file access the network and therefore be potentially non-deterministic; do not do this if you plan to have other people depending on your crate!
+
+If you wish to proceed, you need to add additional dependencies as follows:
 
 ```toml
 [package]
