@@ -157,13 +157,12 @@ impl<'l> Lstm<'l> {
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
-                    self.return_id(
-                        input
-                            .get(
-                                *chunk.first().unwrap_or(&0)..*chunk.get(1).unwrap_or(&input.len()),
-                            )
-                            .unwrap_or(input),
-                    )
+                    let range = if let [first, second, ..] = chunk {
+                        *first..*second
+                    } else {
+                        unreachable!()
+                    };
+                    self.return_id(input.get(range).unwrap_or(input))
                 })
                 .collect()
         } else {

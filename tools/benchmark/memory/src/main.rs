@@ -181,13 +181,14 @@ fn main() {
         let (package_name, example) = {
             // Split up the "package_name/example" string.
             let parts: Vec<&str> = package_example.split('/').collect();
-            if parts.len() != 2 {
+            if let &[first, second] = &parts[..] {
+                (first, second)
+            } else {
                 eprintln!(
                     "An example is expected take the form package_name/example: {package_example:?}"
                 );
                 process::exit(1);
             }
-            (*parts.first().unwrap(), *parts.get(1).unwrap())
         };
 
         let package = match metadata
