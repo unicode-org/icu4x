@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672051302456,
+  "lastUpdate": 1672175254453,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33083,6 +33083,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b9a0221c397c5d8f714656ffe777fb8f81ceabcc"
         },
         "date": 1672051228051,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b34786e8a9b08462d6c4cf6be133946ab4c42a1",
+          "message": "Update actions/upload-artifact in GitHub Actions workflows to v3 (#2934)",
+          "timestamp": "2022-12-27T21:05:00Z",
+          "tree_id": "17c4a5c1d1b67c359586b9aba2c0281e71367b84",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b34786e8a9b08462d6c4cf6be133946ab4c42a1"
+        },
+        "date": 1672175169722,
         "tool": "ndjson",
         "benches": [
           {
