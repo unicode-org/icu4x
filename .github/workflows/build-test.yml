@@ -1214,7 +1214,7 @@ jobs:
     - name: Upload doc data (merge to main only)
       # Only for PRs that merge into the ICU4X mainline.
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: target/doc/**
         name: doc
