@@ -34,7 +34,7 @@
 //!
 //! # Cargo features
 //!
-//! This crate has five optional features:
+//! This crate has several optional Cargo features:
 //!  -  `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
 //!  -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
 //!              in situations involving a lot of zero-copy deserialization.

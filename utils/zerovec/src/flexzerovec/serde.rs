@@ -42,7 +42,7 @@ impl<'de> Visitor<'de> for FlexZeroVecVisitor {
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a> Deserialize<'de> for FlexZeroVec<'a>
 where
     'de: 'a,
@@ -60,7 +60,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a> Deserialize<'de> for &'a FlexZeroSlice
 where
     'de: 'a,
@@ -87,7 +87,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl Serialize for FlexZeroVec<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -105,7 +105,7 @@ impl Serialize for FlexZeroVec<'_> {
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl Serialize for FlexZeroSlice {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

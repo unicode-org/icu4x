@@ -883,7 +883,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// // Now erased1 and erased2 have the same type!
     /// ```
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_rc_cart(self) -> Yoke<Y, ErasedRcCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -929,7 +929,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     /// // Now erased1 and erased2 have the same type!
     /// ```
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_arc_cart(self) -> Yoke<Y, ErasedArcCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -975,7 +975,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     /// // Now erased1 and erased2 have the same type!
     /// ```
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     pub fn erase_box_cart(self) -> Yoke<Y, ErasedBoxCart> {
         unsafe {
             // safe because the cart is preserved, just
@@ -990,7 +990,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Helper function allowing one to wrap the cart type `C` in a `Box<T>`.
     /// Can be paired with [`Yoke::erase_box_cart()`]
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         unsafe {
@@ -1002,7 +1002,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Can be paired with [`Yoke::erase_rc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
         unsafe {
@@ -1014,7 +1014,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Can be paired with [`Yoke::erase_arc_cart()`], or generally used
     /// to make the [`Yoke`] cloneable.
     ///
-    /// Available with the `"alloc"` feature enabled.
+    /// Available with the `"alloc"` Cargo feature enabled.
     #[inline]
     pub fn wrap_cart_in_arc(self) -> Yoke<Y, Arc<C>> {
         unsafe {

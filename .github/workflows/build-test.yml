@@ -59,7 +59,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -104,7 +104,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -147,7 +147,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -200,7 +200,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -240,7 +240,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -263,7 +263,7 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached CLDR source data
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: source-data-cache
       with:
         path: data/source
@@ -320,7 +320,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -388,7 +388,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -421,7 +421,7 @@ jobs:
         echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
       shell: bash
     - name: Attempt to load cached Diplomat
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: diplomat-cache
       with:
         path: |
@@ -468,7 +468,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -534,7 +534,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -575,7 +575,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -627,7 +627,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -671,7 +671,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -698,7 +698,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-readme
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-readme-cache
       with:
         path: |
@@ -777,7 +777,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -924,7 +924,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -1036,7 +1036,7 @@ jobs:
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
     - name: Attempt to load cached cargo-make
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: cargo-make-cache
       with:
         path: |
@@ -1076,7 +1076,7 @@ jobs:
         npm install -g wasm-opt
     
     - name: Attempt to load cached twiggy
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: twiggy-cache
       with:
         path: |

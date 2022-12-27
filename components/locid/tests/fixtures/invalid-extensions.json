@@ -108,5 +108,45 @@
       "error": "InvalidExtension",
       "text": "Invalid subtag"
     }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-u-ca-"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-u-ca-gregory-"
+    },
+    "output": {
+      "error": "InvalidExtension",
+      "text": "Invalid subtag"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-u-ca-gregory-u-hc-hc24"
+    },
+    "output": {
+      "error": "DuplicatedExtension",
+      "text": "Duplicated extension"
+    }
+  },
+  {
+    "input": {
+      "type": "Locale",
+      "identifier": "de-l-foo-l-bar"
+    },
+    "output": {
+      "error": "DuplicatedExtension",
+      "text": "Duplicated extension"
+    }
   }
 ]
