@@ -35,6 +35,23 @@ Let's dissect this invocation:
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
 
+## Should you check in data to your repository?
+
+You can check in the generated data to your version control system, or you can add it to a build script. There are pros and cons of both approaches.
+
+You should check in the generated data if:
+
+1. You want fully reproducible builds
+2. You don't want any non-determinism
+3. You want to reduce build-time dependencies
+
+You should generate it automatically at build time if:
+
+1. You want to automatically download the latest CLDR/Unicode data
+2. It is difficult to add large files to your VCS
+
+If you check in the generated data, it is recommended that you configure a job in continuous integration that verifies that the data in your repository reflects the latest CLDR/Unicode releases; otherwise, your app may drift out of date.
+
 # 3. Using the generated data
 
 Once we have generated some data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.

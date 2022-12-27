@@ -60,13 +60,13 @@ icu_provider_blob = "1.0"
 
 To generate your blob data, first run `cargo build` before you run `icu4x-datagen`.
 
+For more information on building ICU4X data, including whether to check in the postcard file to your repository, see [data_management.md](./data_management.md).
+
 [« Fully Working Example »](./cargo_tests/buffer)
 
-## Cargo.toml with Baked Provider
+## Cargo.toml with Baked Provider and build.rs
 
-It is possible to auto-generate baked data in your build.rs. Use caution with this approach since it will make your build.rs file access the network and therefore be potentially non-deterministic; do not do this if you plan to have other people depending on your crate!
-
-If you wish to proceed, you need to add additional dependencies as follows:
+If you wish to use baked data for ICU4X, add some additional dependencies as follows:
 
 ```toml
 [package]
@@ -77,17 +77,20 @@ publish = false
 
 [dependencies]
 icu = "1.0"
-icu_provider = "1.0"
-litemap = "0.6"
-zerovec = "0.9"
+icu_provider = "1.0" # for databake
+litemap = "0.6" # for databake
+zerovec = "0.9" # for databake
 
+# for build.rs:
 [build-dependencies]
 icu = "1.0"
 icu_datagen = "1.0"
 icu_provider = "1.0"
 ```
 
-In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; you will get a compiler error if you don't specify enough keys.
+This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
+
+Use caution with the build.rs approach since it will make your build.rs file access the network and therefore be potentially non-deterministic. As an alternative, you can remove the `build-dependencies` section and invoke `icu4x-datagen` manually. See [data_management.md](./data_management.md) for more information.
 
 [« Fully Working Example »](./cargo_tests/baked)
 

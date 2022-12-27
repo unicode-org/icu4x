@@ -13,7 +13,8 @@ fn main() {
         Some(&[langid!("ru")]),
         &[icu::plurals::provider::CardinalV1Marker::KEY],
         &SourceData::default()
-            .with_cldr_for_tag("42.0.0", CldrLocaleSubset::Modern)
+            // Note: We use "latest" to stay fresh with the latest CLDR data.
+            .with_cldr_for_tag("latest", CldrLocaleSubset::Modern)
             .expect("Source data should download successfully"),
         vec![icu_datagen::Out::Module {
             mod_directory: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("baked_data"),
