@@ -124,10 +124,13 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         // `FieldTy<'static>: Yokeable<FieldTy<'a>>`
                         if has_lt {
                             let fty_a = replace_lifetime(&f.ty, custom_lt("'a"));
-                            yoke_bounds
-                                .push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_a>));
+                            yoke_bounds.push(
+                                parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_a>),
+                            );
                         } else {
-                            yoke_bounds.push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_static>));
+                            yoke_bounds.push(
+                                parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_static>),
+                            );
                         }
                     }
                     if has_ty || has_lt {
