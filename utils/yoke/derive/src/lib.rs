@@ -114,7 +114,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                 vi.construct(|f, i| {
                     let binding = format!("__binding_{}", i);
                     let field = Ident::new(&binding, Span::call_site());
-                    let fty = replace_lifetime(&f.ty, static_lt());
+                    let fty_static = replace_lifetime(&f.ty, static_lt());
 
                     let (has_ty, has_lt) = visitor::check_type_for_parameters(&f.ty, &generics_env);
                     if has_ty {
@@ -123,11 +123,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         // to `FieldTy: Yokeable` that need to be satisfied. We get them to be satisfied by requiring
                         // `FieldTy<'static>: Yokeable<FieldTy<'a>>`
                         if has_lt {
-                            let a_ty = replace_lifetime(&f.ty, custom_lt("'a"));
+                            let fty_a = replace_lifetime(&f.ty, custom_lt("'a"));
                             yoke_bounds
-                                .push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #a_ty>));
+                                .push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_a>));
                         } else {
-                            yoke_bounds.push(parse_quote!(#fty: yoke::Yokeable<'a, Output = #fty>));
+                            yoke_bounds.push(parse_quote!(#fty_static: yoke::Yokeable<'a, Output = #fty_static>));
                         }
                     }
                     if has_ty || has_lt {
@@ -135,7 +135,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                         // that the lifetimes are covariant, since this requirement
                         // must already be true for the type that implements transform_owned().
                         quote! {
-                            <#fty as yoke::Yokeable<'a>>::transform_owned(#field)
+                            <#fty_static as yoke::Yokeable<'a>>::transform_owned(#field)
                         }
                     } else {
                         // No nested lifetimes, so nothing to be done
