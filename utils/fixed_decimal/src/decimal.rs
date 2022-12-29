@@ -1798,7 +1798,9 @@ impl TryFrom<&[u8]> for FixedDecimal {
                 }
                 dot_index = i;
                 has_dot = true;
-                if i == 0 || i == no_sign_str.len() - 1 {
+                // We do support omitting the leading zero,
+                // but not trailing decimal points
+                if i == no_sign_str.len() - 1 {
                     return Err(Error::Syntax);
                 }
             } else if *c == b'e' || *c == b'E' {
@@ -1847,7 +1849,11 @@ impl TryFrom<&[u8]> for FixedDecimal {
         }
 
         // Computing DecimalFixed.upper_magnitude
-        let temp_upper_magnitude = dot_index - 1;
+        // We support strings like `0.x` and `.x`. The upper magnitude
+        // is always one less than the position of the dot, except in the case where
+        // the 0 is omitted; when dot_index = 0. We use saturating_sub to set
+        // magnitude to 0 in that case.
+        let temp_upper_magnitude = dot_index.saturating_sub(1);
         if temp_upper_magnitude > i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -2475,6 +2481,23 @@ fn test_from_str() {
             input_str: "-00.0",
             output_str: None,
             magnitudes: [1, 0, 0, -1],
+        },
+
+        // no leading 0 parsing
+        TestCase {
+            input_str: ".0123400",
+            output_str: Some("0.0123400"),
+            magnitudes: [0, -2, -5, -7],
+        },
+        TestCase {
+            input_str: ".000000001",
+            output_str: Some("0.000000001"),
+            magnitudes: [0, -9, -9, -9],
+        },
+        TestCase {
+            input_str: "-.123400",
+            output_str: Some("-0.123400"),
+            magnitudes: [0, -1, -4, -6],
         },
     ];
     for cas in &cases {
