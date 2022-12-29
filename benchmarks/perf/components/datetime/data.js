@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672175870170,
+  "lastUpdate": 1672301143344,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -88991,6 +88991,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4978,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e42488426493b4cdd57824e190fab52bedcffee",
+          "message": "Add prove_covariance_manually guard for CoerceUnsized (#2936)\n\n* Add prove_covariance_manually guard for CoerceUnsized\n\n* better name ftys\n\n* fmt",
+          "timestamp": "2022-12-28T23:51:49-08:00",
+          "tree_id": "7ae9930ff38c254ffb45a21f746b222392d86400",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e42488426493b4cdd57824e190fab52bedcffee"
+        },
+        "date": 1672301050759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 84321,
+            "range": "± 2123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 136959,
+            "range": "± 723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 79131,
+            "range": "± 150",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 89894,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 85007,
+            "range": "± 201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 93126,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 89385,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 132358,
+            "range": "± 123",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 147836,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 137333,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 152168,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 148283,
+            "range": "± 342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6663,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
