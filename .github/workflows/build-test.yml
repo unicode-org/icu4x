@@ -1248,7 +1248,7 @@ jobs:
 
     # Doc-GH-Pages job > Download docs files from previous jobs into folder of files to copy to remote repo
     - name: Download previous content destined for GH pages
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: doc
         name: doc
