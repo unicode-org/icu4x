@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672340854302,
+  "lastUpdate": 1672341164734,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62909,6 +62909,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 99,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "670e4d8be31bb77c88744616ec6963c4c0fe51e3",
+          "message": "Update actions/download-artifact in GitHub Actions workflows to v3 (#2938)",
+          "timestamp": "2022-12-29T10:59:17-08:00",
+          "tree_id": "07ac5bd9827684437bef1faa38437a2cee0d9205",
+          "url": "https://github.com/unicode-org/icu4x/commit/670e4d8be31bb77c88744616ec6963c4c0fe51e3"
+        },
+        "date": 1672341075030,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119070,
+            "range": "± 5727",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24298,
+            "range": "± 833",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68312,
+            "range": "± 2464",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 211,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 97,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 84,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
