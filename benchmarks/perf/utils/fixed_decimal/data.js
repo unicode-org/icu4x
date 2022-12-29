@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672341306651,
+  "lastUpdate": 1672350807293,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -63011,6 +63011,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 66901,
             "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c06df74ba8058870625c0a8c021da05c0ba63f5",
+          "message": "Update peaceiris/actions-gh-pages in GitHub Actions workflow to v3.9.0 (#2940)",
+          "timestamp": "2022-12-29T21:41:08Z",
+          "tree_id": "64887bf510349483cbaf247b4ce41c089f303b9e",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c06df74ba8058870625c0a8c021da05c0ba63f5"
+        },
+        "date": 1672350724670,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100510,
+            "range": "± 488",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20613,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66768,
+            "range": "± 389",
             "unit": "ns/iter"
           },
           {
