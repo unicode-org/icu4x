@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672341188147,
+  "lastUpdate": 1672341409449,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40055,6 +40055,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 53191383,
             "range": "± 2498301",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c085ddc7d9ad34fb8658df148a4dc749f2e605d1",
+          "message": "Update robinraju/release-downloader in GitHub Actions workflows to v1.7 (#2939)",
+          "timestamp": "2022-12-29T11:00:30-08:00",
+          "tree_id": "89c142ed4c43f414c3c51a926af6842e7fbe738c",
+          "url": "https://github.com/unicode-org/icu4x/commit/c085ddc7d9ad34fb8658df148a4dc749f2e605d1"
+        },
+        "date": 1672341322765,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 574,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 423,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 485,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 524,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 786,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 848,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 417,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 501,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 519,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 515,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 849,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 45548866,
+            "range": "± 1856371",
             "unit": "ns/iter"
           },
           {
