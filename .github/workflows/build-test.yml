@@ -271,7 +271,7 @@ jobs:
         key: source-data/cldr-42/icuexport_release-72-1
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
-      uses: robinraju/release-downloader@v1.3
+      uses: robinraju/release-downloader@v1.7
       with: 
         repository: "unicode-org/cldr-json"
         tag: "42.0.0"
@@ -279,7 +279,7 @@ jobs:
         out-file-path: "data/source/"
     - name: Download ICU source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
-      uses: robinraju/release-downloader@v1.3
+      uses: robinraju/release-downloader@v1.7
       with: 
         repository: "unicode-org/icu"
         tag: "release-72-1"
