@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672341209949,
+  "lastUpdate": 1672341320743,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -89297,6 +89297,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6638,
             "range": "± 267",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c085ddc7d9ad34fb8658df148a4dc749f2e605d1",
+          "message": "Update robinraju/release-downloader in GitHub Actions workflows to v1.7 (#2939)",
+          "timestamp": "2022-12-29T11:00:30-08:00",
+          "tree_id": "89c142ed4c43f414c3c51a926af6842e7fbe738c",
+          "url": "https://github.com/unicode-org/icu4x/commit/c085ddc7d9ad34fb8658df148a4dc749f2e605d1"
+        },
+        "date": 1672341246089,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 67316,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 109348,
+            "range": "± 290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 63332,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 73619,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 67444,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 74479,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 73367,
+            "range": "± 223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 106273,
+            "range": "± 495",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 121008,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109694,
+            "range": "± 155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 122115,
+            "range": "± 113",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 121227,
+            "range": "± 483",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5306,
+            "range": "± 48",
             "unit": "ns/iter"
           }
         ]
