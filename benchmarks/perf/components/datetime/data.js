@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672341320743,
+  "lastUpdate": 1672350880594,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -89399,6 +89399,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5306,
             "range": "± 48",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c06df74ba8058870625c0a8c021da05c0ba63f5",
+          "message": "Update peaceiris/actions-gh-pages in GitHub Actions workflow to v3.9.0 (#2940)",
+          "timestamp": "2022-12-29T21:41:08Z",
+          "tree_id": "64887bf510349483cbaf247b4ce41c089f303b9e",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c06df74ba8058870625c0a8c021da05c0ba63f5"
+        },
+        "date": 1672350791302,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 80823,
+            "range": "± 3000",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 131297,
+            "range": "± 1449",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 75355,
+            "range": "± 918",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 86299,
+            "range": "± 572",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 80961,
+            "range": "± 671",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 89806,
+            "range": "± 574",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 86108,
+            "range": "± 648",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 127016,
+            "range": "± 986",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 142438,
+            "range": "± 1027",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 131363,
+            "range": "± 948",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 146449,
+            "range": "± 1000",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 142385,
+            "range": "± 1202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6368,
+            "range": "± 110",
             "unit": "ns/iter"
           }
         ]
