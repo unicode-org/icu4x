@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672301034683,
+  "lastUpdate": 1672340854302,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62849,6 +62849,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 84,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eec073c09be13ab6ae927edb1395ca8e1780b3f6",
+          "message": "Update actions/checkout in GitHub Actions workflows to v3 (#2915)",
+          "timestamp": "2022-12-29T10:54:44-08:00",
+          "tree_id": "c2d964790b631fa1ad9496e01524e21373b6ac08",
+          "url": "https://github.com/unicode-org/icu4x/commit/eec073c09be13ab6ae927edb1395ca8e1780b3f6"
+        },
+        "date": 1672340766489,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 139626,
+            "range": "± 344",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27455,
+            "range": "± 236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 74619,
+            "range": "± 679",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 227,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
