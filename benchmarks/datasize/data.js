@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672340520526,
+  "lastUpdate": 1672340586446,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33203,6 +33203,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/670e4d8be31bb77c88744616ec6963c4c0fe51e3"
         },
         "date": 1672340431060,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c085ddc7d9ad34fb8658df148a4dc749f2e605d1",
+          "message": "Update robinraju/release-downloader in GitHub Actions workflows to v1.7 (#2939)",
+          "timestamp": "2022-12-29T11:00:30-08:00",
+          "tree_id": "89c142ed4c43f414c3c51a926af6842e7fbe738c",
+          "url": "https://github.com/unicode-org/icu4x/commit/c085ddc7d9ad34fb8658df148a4dc749f2e605d1"
+        },
+        "date": 1672340504807,
         "tool": "ndjson",
         "benches": [
           {
