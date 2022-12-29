@@ -2482,7 +2482,6 @@ fn test_from_str() {
             output_str: None,
             magnitudes: [1, 0, 0, -1],
         },
-
         // no leading 0 parsing
         TestCase {
             input_str: ".0123400",
