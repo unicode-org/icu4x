@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672340586446,
+  "lastUpdate": 1672350215044,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33233,6 +33233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c085ddc7d9ad34fb8658df148a4dc749f2e605d1"
         },
         "date": 1672340504807,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c06df74ba8058870625c0a8c021da05c0ba63f5",
+          "message": "Update peaceiris/actions-gh-pages in GitHub Actions workflow to v3.9.0 (#2940)",
+          "timestamp": "2022-12-29T21:41:08Z",
+          "tree_id": "64887bf510349483cbaf247b4ce41c089f303b9e",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c06df74ba8058870625c0a8c021da05c0ba63f5"
+        },
+        "date": 1672350133925,
         "tool": "ndjson",
         "benches": [
           {
