@@ -2726,16 +2726,8 @@ fn test_syntax_error() {
             expected_err: Some(Error::Syntax),
         },
         TestCase {
-            input_str: "-.00123400",
-            expected_err: Some(Error::Syntax),
-        },
-        TestCase {
             input_str: "-0.00123400",
             expected_err: None,
-        },
-        TestCase {
-            input_str: ".00123400",
-            expected_err: Some(Error::Syntax),
         },
         TestCase {
             input_str: "00123400.",
