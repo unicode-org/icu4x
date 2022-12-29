@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672175254453,
+  "lastUpdate": 1672300450358,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33113,6 +33113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1b34786e8a9b08462d6c4cf6be133946ab4c42a1"
         },
         "date": 1672175169722,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7e42488426493b4cdd57824e190fab52bedcffee",
+          "message": "Add prove_covariance_manually guard for CoerceUnsized (#2936)\n\n* Add prove_covariance_manually guard for CoerceUnsized\n\n* better name ftys\n\n* fmt",
+          "timestamp": "2022-12-28T23:51:49-08:00",
+          "tree_id": "7ae9930ff38c254ffb45a21f746b222392d86400",
+          "url": "https://github.com/unicode-org/icu4x/commit/7e42488426493b4cdd57824e190fab52bedcffee"
+        },
+        "date": 1672300374848,
         "tool": "ndjson",
         "benches": [
           {
