@@ -830,7 +830,7 @@ jobs:
 
     - name: Store benchmark result & create dashboard (unmerged PR only)
       if: github.event_name == 'pull_request'
-      uses: rhysd/github-action-benchmark@v1.8.1
+      uses: rhysd/github-action-benchmark@v1.15.0
       with:
         name: Rust Benchmark
         tool: 'cargo'
@@ -850,7 +850,7 @@ jobs:
     - name: Store benchmark result & create dashboard (merge to main only)
       # only merges to main (implies PR is finished and approved by this point)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      uses: rhysd/github-action-benchmark@v1.8.1
+      uses: rhysd/github-action-benchmark@v1.15.0
       with:
         name: Rust Benchmark
         tool: 'cargo'
