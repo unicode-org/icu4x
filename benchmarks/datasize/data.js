@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672378892186,
+  "lastUpdate": 1672429083644,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33293,6 +33293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cfe1f7138da5ece82a69e63c35dd73e2213bc659"
         },
         "date": 1672378817134,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "366f31a5954f29a347f5e0db4ba876c97907c759",
+          "message": "Update rhysd/github-action-benchmark in GHA workflows to v1.15.0 (#2941)",
+          "timestamp": "2022-12-30T19:35:55Z",
+          "tree_id": "c6d08de774a8b0751e47af75cb859f7e97340a19",
+          "url": "https://github.com/unicode-org/icu4x/commit/366f31a5954f29a347f5e0db4ba876c97907c759"
+        },
+        "date": 1672429014091,
         "tool": "ndjson",
         "benches": [
           {
