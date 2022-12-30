@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672350807293,
+  "lastUpdate": 1672379584830,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -63089,6 +63089,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 72,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfe1f7138da5ece82a69e63c35dd73e2213bc659",
+          "message": "Treat strings starting with a decimal point as valid in FixedDecimal::from_str() (#2937)\n\n* Add ability for test_from_str to have non roundtripping tests\n\n* Add ability to parse numbers without a leading 0\n\n* fix test\n\n* fmt",
+          "timestamp": "2022-12-29T21:39:13-08:00",
+          "tree_id": "bfea1e089f28f5eb958adcfdaddb1bbeb0015928",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfe1f7138da5ece82a69e63c35dd73e2213bc659"
+        },
+        "date": 1672379493183,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119379,
+            "range": "± 5433",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24182,
+            "range": "± 1458",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68070,
+            "range": "± 2627",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 217,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 98,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
