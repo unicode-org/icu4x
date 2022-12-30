@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672350880594,
+  "lastUpdate": 1672379546611,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -89501,6 +89501,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6368,
             "range": "± 110",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfe1f7138da5ece82a69e63c35dd73e2213bc659",
+          "message": "Treat strings starting with a decimal point as valid in FixedDecimal::from_str() (#2937)\n\n* Add ability for test_from_str to have non roundtripping tests\n\n* Add ability to parse numbers without a leading 0\n\n* fix test\n\n* fmt",
+          "timestamp": "2022-12-29T21:39:13-08:00",
+          "tree_id": "bfea1e089f28f5eb958adcfdaddb1bbeb0015928",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfe1f7138da5ece82a69e63c35dd73e2213bc659"
+        },
+        "date": 1672379464924,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 67485,
+            "range": "± 175",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 112968,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 62381,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 71266,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 67476,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 74342,
+            "range": "± 188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 71526,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 109598,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 122470,
+            "range": "± 706",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 113071,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 125757,
+            "range": "± 1505",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 122941,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5033,
+            "range": "± 246",
             "unit": "ns/iter"
           }
         ]
