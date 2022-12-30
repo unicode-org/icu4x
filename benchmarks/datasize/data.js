@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672350215044,
+  "lastUpdate": 1672378892186,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33263,6 +33263,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4c06df74ba8058870625c0a8c021da05c0ba63f5"
         },
         "date": 1672350133925,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cfe1f7138da5ece82a69e63c35dd73e2213bc659",
+          "message": "Treat strings starting with a decimal point as valid in FixedDecimal::from_str() (#2937)\n\n* Add ability for test_from_str to have non roundtripping tests\n\n* Add ability to parse numbers without a leading 0\n\n* fix test\n\n* fmt",
+          "timestamp": "2022-12-29T21:39:13-08:00",
+          "tree_id": "bfea1e089f28f5eb958adcfdaddb1bbeb0015928",
+          "url": "https://github.com/unicode-org/icu4x/commit/cfe1f7138da5ece82a69e63c35dd73e2213bc659"
+        },
+        "date": 1672378817134,
         "tool": "ndjson",
         "benches": [
           {
