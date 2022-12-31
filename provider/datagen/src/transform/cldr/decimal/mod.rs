@@ -13,7 +13,7 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use tinystr::TinyAsciiStr;
 
-mod decimal_pattern;
+pub mod decimal_pattern;
 
 impl crate::DatagenProvider {
     /// Returns the digits for the given numbering system name.

@@ -1,10 +1,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::LanguageIdentifier;
+use icu_normalizer::DecomposingNormalizer;
 use icu_provider::DataProvider;
 use tinystr::TinyStr8;
 
 use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::decimal::decimal_pattern::DecimalPattern;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableDataProvider;
@@ -12,6 +14,7 @@ use icu_provider::prelude::*;
 use icu_singlenumberformatter::provider::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
+use std::str::FromStr;
 use tinystr::tinystr;
 use tinystr::TinyAsciiStr;
 
@@ -81,6 +84,9 @@ fn extract_currency_essential<'data>(
         .currency_formats
         .get(&tinystr!(8, "latn"))
         .ok_or_else(|| DataError::custom("Could not find the standard pattern"))?;
+
+    // let pattern = DecimalPattern::from_str(&currency_formats.standard);
+    // pattern?.positive;
 
     let result = CurrencyEssentialV1 {
         symbol: symbol,

@@ -18,6 +18,7 @@ use tinystr::TinyAsciiStr;
 pub struct CurrencyPatterns {
     // /// Map from plural category to the corresponding long pattern
     // pub symbols: HashMap<TinyStr8, String>,
+
     pub symbol: String,
 
     #[serde(rename = "symbol-alt-narrow")]
