@@ -80,7 +80,7 @@ impl CustomTimeZone {
         }
     }
 
-    /// Parse a [`CustomTimeZone`] by parsing GmtOffset UTF-8 string. See also [`GmtOffset`].
+    /// Parse a [`CustomTimeZone`] from a UTF-8 string representing a GMT Offset. See also [`GmtOffset`].
     ///
     ///
     /// # Examples
