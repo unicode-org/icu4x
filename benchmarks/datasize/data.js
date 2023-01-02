@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672429083644,
+  "lastUpdate": 1672625191192,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33323,6 +33323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/366f31a5954f29a347f5e0db4ba876c97907c759"
         },
         "date": 1672429014091,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d686c87ad094f9750f5cf6e42e2287076e590de9",
+          "message": "Update codecov/codecov-action in GitHub Actions workflow to v3 (#2944)",
+          "timestamp": "2023-01-01T18:03:48-08:00",
+          "tree_id": "e20e432c43ef65192f761240518ec43e9e299f6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d686c87ad094f9750f5cf6e42e2287076e590de9"
+        },
+        "date": 1672625101771,
         "tool": "ndjson",
         "benches": [
           {
