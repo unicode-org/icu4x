@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672429693219,
+  "lastUpdate": 1672625856959,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -63263,6 +63263,120 @@ window.BENCHMARK_DATA = {
             "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
             "value": 110485,
             "range": "± 2267",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "striezel-dev@web.de",
+            "name": "Dirk Stolle",
+            "username": "striezel"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d686c87ad094f9750f5cf6e42e2287076e590de9",
+          "message": "Update codecov/codecov-action in GitHub Actions workflow to v3 (#2944)",
+          "timestamp": "2023-01-01T18:03:48-08:00",
+          "tree_id": "e20e432c43ef65192f761240518ec43e9e299f6d",
+          "url": "https://github.com/unicode-org/icu4x/commit/d686c87ad094f9750f5cf6e42e2287076e590de9"
+        },
+        "date": 1672625769918,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 137975,
+            "range": "± 2673",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26890,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 74280,
+            "range": "± 1197",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/22.50",
+            "value": 54,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/22.50",
+            "value": 37,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 93,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0012.3400",
+            "value": 58,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00.0012216734340",
+            "value": 122,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00002342561123400.0",
+            "value": 135,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/-00123400",
+            "value": 55,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/922337203685477580898230948203840239384.9823094820384023938423424",
+            "value": 508,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0.000000001",
+            "value": 60,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
+            "value": 206165,
+            "range": "± 6459",
             "unit": "ns/iter"
           }
         ]
