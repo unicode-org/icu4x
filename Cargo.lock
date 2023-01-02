@@ -1674,7 +1674,7 @@ dependencies = [
  "syn",
  "tinystr 0.7.0",
  "toml",
- "tzif 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tzif 0.2.0",
  "walkdir",
  "writeable",
  "zerovec",

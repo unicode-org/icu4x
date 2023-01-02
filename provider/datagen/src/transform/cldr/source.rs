@@ -108,8 +108,10 @@ impl<'a> CldrDirLang<'a> {
     }
 
     pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
-        Ok(self.0.list(&self.1)?.into_iter().map(|path| {
-            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap()
-        }))
+        Ok(self
+            .0
+            .list(&self.1)?
+            .into_iter()
+            .map(|file_name| LanguageIdentifier::from_str(&file_name).unwrap()))
     }
 }

@@ -80,7 +80,7 @@ proc-macro2 = "1.0"
 crlify = { version = "1", path = "../../utils/crlify"}
 syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.5", path = "../../utils/writeable" }
-tzif = "0.2.0"
+tzif = { version = "0.2.0", path = "../../utils/tzif" }
 zip = "0.6"
 cached-path = "0.5"
 lazy_static = "1"

@@ -41,12 +41,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
 
         let raw_transitions = bcp47_tzids
             .into_iter()
-            .filter_map(|(tzid, bcp47_tzid)| {
-                tzif_data
-                    .iter()
-                    .find_map(|(tzif_tzid, data)| (&tzid == tzif_tzid).then(|| data))
-                    .map(|data| (bcp47_tzid, data))
-            })
+            .filter_map(|(tzid, bcp47_tzid)| tzif_data.get(&tzid).map(|data| (bcp47_tzid, data)))
             .sorted_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid.cmp(rhs_tzid))
             // If we are generating data from IANA files that were generated with backward-compatible aliases
             // there may be duplicate data for each BCP47 TZID, so we need to ensure we only take the data once.
@@ -109,12 +104,7 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
 
         let raw_rules = bcp47_tzids
             .into_iter()
-            .filter_map(|(tzid, bcp47_tzid)| {
-                tzif_data
-                    .iter()
-                    .find_map(|(tzif_tzid, data)| (&tzid == tzif_tzid).then(|| data))
-                    .map(|data| (bcp47_tzid, data))
-            })
+            .filter_map(|(tzid, bcp47_tzid)| tzif_data.get(&tzid).map(|data| (bcp47_tzid, data)))
             .sorted_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid.cmp(rhs_tzid))
             // If we are generating data from IANA files that were generated with backward-compatible aliases
             // there may be duplicate data for each BCP47 TZID, so we need to ensure we only take the data once.

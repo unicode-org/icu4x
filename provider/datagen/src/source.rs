@@ -362,11 +362,12 @@ impl SerdeCache {
         })
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
-        self.root.list(pathtzdb-datagen)
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
+        self.root.list(path, false)
     }
 }
 
+#[derive(Debug)]
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
@@ -379,7 +380,7 @@ impl Debug for AbstractFs {
 }
 
 impl AbstractFs {
-    fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
+    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
         if std::fs::metadata(root.as_ref())
             .map_err(|e| DataError::from(e).with_path_context(root.as_ref()))?
             .is_dir()
@@ -429,8 +430,7 @@ impl AbstractFs {
         }
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
-        self.init()?;
+    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -457,14 +457,39 @@ impl AbstractFs {
         }
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
-        self.init()?;
+    pub fn list(
+        &self,
+        path: &str,
+        recursive: bool,
+    ) -> Result<impl Iterator<Item = String>, DataError> {
         Ok(match self {
-            Self::Fs(root) => std::fs::read_dir(&root.join(path))
-                .map_err(|e| DataError::from(e).with_display_context(path))?
-                .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
-                .collect::<Result<HashSet<_>, DataError>>()
-                .map(HashSet::into_iter)?,
+            Self::Fs(root) => {
+                let path = root.join(path);
+                if recursive {
+                    walkdir::WalkDir::new(&path)
+                        .follow_links(true)
+                        .into_iter()
+                        .flatten()
+                        .filter(|entry| entry.file_type().is_file())
+                        .map(|file| {
+                            file.into_path()
+                                .strip_prefix(&path)
+                                .unwrap()
+                                .to_string_lossy()
+                                .into_owned()
+                        })
+                        .collect::<HashSet<_>>()
+                        .into_iter()
+                } else {
+                    std::fs::read_dir(&path)
+                        .map_err(|e| DataError::from(e).with_display_context(&path.display()))?
+                        .map(|e| -> Result<_, DataError> {
+                            Ok(e?.file_name().to_string_lossy().into_owned())
+                        })
+                        .collect::<Result<HashSet<_>, DataError>>()
+                        .map(HashSet::into_iter)?
+                }
+            }
             Self::Zip(zip) => zip
                 .read()
                 .expect("poison")
@@ -473,8 +498,14 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(PathBuf::from)
+                .filter_map(|suffix| {
+                    if recursive {
+                        Some(suffix)
+                    } else {
+                        suffix.split('/').find(|s| !s.is_empty())
+                    }
+                })
+                .map(ToOwned::to_owned)
                 .collect::<HashSet<_>>()
                 .into_iter(),
         })
