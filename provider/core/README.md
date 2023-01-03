@@ -92,7 +92,7 @@ structs to borrow zero-copy data.
 
 ### Data generation API
 
-*This functionality is enabled with the "datagen" feature*
+*This functionality is enabled with the "datagen" Cargo feature*
 
 The [`datagen`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
 data generation implementation.

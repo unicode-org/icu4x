@@ -407,7 +407,7 @@ impl AnyCalendar {
     ///
     /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
     ///
-    /// This needs the `"serde"` feature to be enabled to be used
+    /// This needs the `"serde"` Cargo feature to be enabled to be used
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,
@@ -722,9 +722,9 @@ impl AnyCalendarKind {
             if lang == language!("th") {
                 Self::Buddhist
             // Other known fallback routes for currently-unsupported calendars
-            // } else if lang == langugage!("sa") {
+            // } else if lang == language!("sa") {
             //     Self::IslamicUmalqura
-            // } else if lang == language!("af") || lang == langugage!("ir") {
+            // } else if lang == language!("af") || lang == language!("ir") {
             //     Self::Persian
             } else {
                 Self::Gregorian

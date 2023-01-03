@@ -5,28 +5,28 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": " min. ago",
+      "pattern": "m ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": " min. ago",
+      "pattern": "m ago",
       "index": 0
     }
   },
   "future": {
     "zero": null,
     "one": {
-      "pattern": "in  min.",
+      "pattern": "in m",
       "index": 3
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": "in  min.",
+      "pattern": "in m",
       "index": 3
     }
   }

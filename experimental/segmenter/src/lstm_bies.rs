@@ -238,14 +238,14 @@ mod tests {
     use super::*;
     use crate::provider::GraphemeClusterBreakDataV1Marker;
     use icu_provider::prelude::*;
-    use serde::{Deserialize, Serialize};
+    use serde::Deserialize;
     use std::fs::File;
     use std::io::BufReader;
 
     /// `TestCase` is a struct used to store a single test case.
     /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
     /// sequence representing the true segmentation.
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug, Deserialize)]
     pub struct TestCase {
         pub unseg: String,
         pub expected_bies: String,
@@ -253,7 +253,7 @@ mod tests {
     }
 
     /// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
-    #[derive(PartialEq, Debug, Serialize, Deserialize)]
+    #[derive(PartialEq, Debug, Deserialize)]
     pub struct TestTextData {
         pub testcases: Vec<TestCase>,
     }

@@ -39,7 +39,8 @@ const POSTCARD: [u8; 176] = [
     105, 110, 101, 115, 101,
 ];
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate() {
     let map = build_litemap(false);

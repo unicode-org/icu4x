@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom, DataKeyMetadata};
+use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
@@ -39,7 +39,7 @@ impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
     const KEY: icu_provider::DataKey = icu_provider::data_key!(
         "datetime/skeletons@1",
-        DataKeyMetadata::construct_internal(
+        icu_provider::DataKeyMetadata::construct_internal(
             icu_provider::FallbackPriority::Language,
             Some(icu_locid::extensions_unicode_key!("ca")),
             None
@@ -88,7 +88,7 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
             }
         });
         databake::quote! {
-            [#(#vals),*]
+            &[#(#vals),*]
         }
     }
 }
@@ -110,7 +110,8 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     }
 }
 
-type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
+type BakedDateSkeletonPatternsV1 =
+    &'static [(&'static [crate::fields::Field], PatternPlurals<'static>)];
 
 impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
     fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {

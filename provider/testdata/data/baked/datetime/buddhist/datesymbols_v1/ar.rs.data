@@ -1,0 +1,141 @@
+::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("يناير"),
+                alloc::borrow::Cow::Borrowed("فبراير"),
+                alloc::borrow::Cow::Borrowed("مارس"),
+                alloc::borrow::Cow::Borrowed("أبريل"),
+                alloc::borrow::Cow::Borrowed("مايو"),
+                alloc::borrow::Cow::Borrowed("يونيو"),
+                alloc::borrow::Cow::Borrowed("يوليو"),
+                alloc::borrow::Cow::Borrowed("أغسطس"),
+                alloc::borrow::Cow::Borrowed("سبتمبر"),
+                alloc::borrow::Cow::Borrowed("أكتوبر"),
+                alloc::borrow::Cow::Borrowed("نوفمبر"),
+                alloc::borrow::Cow::Borrowed("ديسمبر"),
+            ]),
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("ي"),
+                alloc::borrow::Cow::Borrowed("ف"),
+                alloc::borrow::Cow::Borrowed("م"),
+                alloc::borrow::Cow::Borrowed("أ"),
+                alloc::borrow::Cow::Borrowed("و"),
+                alloc::borrow::Cow::Borrowed("ن"),
+                alloc::borrow::Cow::Borrowed("ل"),
+                alloc::borrow::Cow::Borrowed("غ"),
+                alloc::borrow::Cow::Borrowed("س"),
+                alloc::borrow::Cow::Borrowed("ك"),
+                alloc::borrow::Cow::Borrowed("ب"),
+                alloc::borrow::Cow::Borrowed("د"),
+            ]),
+            short: None,
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("يناير"),
+                alloc::borrow::Cow::Borrowed("فبراير"),
+                alloc::borrow::Cow::Borrowed("مارس"),
+                alloc::borrow::Cow::Borrowed("أبريل"),
+                alloc::borrow::Cow::Borrowed("مايو"),
+                alloc::borrow::Cow::Borrowed("يونيو"),
+                alloc::borrow::Cow::Borrowed("يوليو"),
+                alloc::borrow::Cow::Borrowed("أغسطس"),
+                alloc::borrow::Cow::Borrowed("سبتمبر"),
+                alloc::borrow::Cow::Borrowed("أكتوبر"),
+                alloc::borrow::Cow::Borrowed("نوفمبر"),
+                alloc::borrow::Cow::Borrowed("ديسمبر"),
+            ]),
+        },
+        stand_alone: None,
+    },
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("الأحد"),
+                alloc::borrow::Cow::Borrowed("الاثنين"),
+                alloc::borrow::Cow::Borrowed("الثلاثاء"),
+                alloc::borrow::Cow::Borrowed("الأربعاء"),
+                alloc::borrow::Cow::Borrowed("الخميس"),
+                alloc::borrow::Cow::Borrowed("الجمعة"),
+                alloc::borrow::Cow::Borrowed("السبت"),
+            ]),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("ح"),
+                alloc::borrow::Cow::Borrowed("ن"),
+                alloc::borrow::Cow::Borrowed("ث"),
+                alloc::borrow::Cow::Borrowed("ر"),
+                alloc::borrow::Cow::Borrowed("خ"),
+                alloc::borrow::Cow::Borrowed("ج"),
+                alloc::borrow::Cow::Borrowed("س"),
+            ]),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("أحد"),
+                alloc::borrow::Cow::Borrowed("إثنين"),
+                alloc::borrow::Cow::Borrowed("ثلاثاء"),
+                alloc::borrow::Cow::Borrowed("أربعاء"),
+                alloc::borrow::Cow::Borrowed("خميس"),
+                alloc::borrow::Cow::Borrowed("جمعة"),
+                alloc::borrow::Cow::Borrowed("سبت"),
+            ])),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("الأحد"),
+                alloc::borrow::Cow::Borrowed("الاثنين"),
+                alloc::borrow::Cow::Borrowed("الثلاثاء"),
+                alloc::borrow::Cow::Borrowed("الأربعاء"),
+                alloc::borrow::Cow::Borrowed("الخميس"),
+                alloc::borrow::Cow::Borrowed("الجمعة"),
+                alloc::borrow::Cow::Borrowed("السبت"),
+            ]),
+        },
+        stand_alone: None,
+    },
+    eras: ::icu_datetime::provider::calendar::Eras {
+        names: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 98u8, 101u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 216u8, 167u8, 217u8, 132u8, 216u8, 170u8,
+                        217u8, 130u8, 217u8, 136u8, 217u8, 138u8, 217u8, 133u8, 32u8, 216u8,
+                        167u8, 217u8, 132u8, 216u8, 168u8, 217u8, 136u8, 216u8, 176u8, 217u8,
+                        138u8,
+                    ])
+                },
+            )
+        },
+        abbr: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 98u8, 101u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 66u8, 69u8,
+                    ])
+                },
+            )
+        },
+        narrow: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 98u8, 101u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 66u8, 69u8,
+                    ])
+                },
+            )
+        },
+    },
+}

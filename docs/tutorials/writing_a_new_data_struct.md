@@ -143,9 +143,9 @@ use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 #[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
-feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_decimal::provider),
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {

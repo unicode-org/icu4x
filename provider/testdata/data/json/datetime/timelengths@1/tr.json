@@ -1,9 +1,9 @@
 {
   "time_h11_h12": {
-    "full": "a h:mm:ss v",
-    "long": "a h:mm:ss v",
-    "medium": "a h:mm:ss",
-    "short": "a h:mm"
+    "full": "a h:mm:ss v",
+    "long": "a h:mm:ss v",
+    "medium": "a h:mm:ss",
+    "short": "a h:mm"
   },
   "time_h23_h24": {
     "full": "HH:mm:ss zzzz",

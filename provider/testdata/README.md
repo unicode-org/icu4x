@@ -9,13 +9,13 @@ The crate exposes three kinds of providers, corresponding to the three types of 
 in ICU:
 * [`unstable`], [`unstable_no_fallback`]
 * [`any`], [`any_no_fallback`]
-* [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
+* [`buffer`], [`buffer_no_fallback`] (`buffer` Cargo feature)
 
 
-Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
-such as the CLDR Gitref  and the list of included locales.
+Additionally, the `metadata` Cargo feature exposes the [`metadata`] module which contains
+information such as the CLDR Gitref  and the list of included locales.
 
-## `bin` feature
+## `bin` Cargo feature
 
 ### Downloading fresh CLDR data
 

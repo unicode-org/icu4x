@@ -1,8 +1,8 @@
 {
   "date": {
-    "full": "EEEE, d MMMM y г. G",
-    "long": "d MMMM y г. G",
-    "medium": "d MMM y г. G",
+    "full": "EEEE, d MMMM y г. G",
+    "long": "d MMMM y г. G",
+    "medium": "d MMM y г. G",
     "short": "dd.MM.y G"
   },
   "length_combinations": {

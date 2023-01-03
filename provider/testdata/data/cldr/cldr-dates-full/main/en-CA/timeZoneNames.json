@@ -3,7 +3,7 @@
     "en-CA": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "en",
         "territory": "CA"
@@ -1341,7 +1341,7 @@
                 }
               },
               "Unknown": {
-                "exemplarCity": "Unknown City"
+                "exemplarCity": "unknown city"
               }
             }
           },
@@ -1864,6 +1864,9 @@
             "Gulf": {
               "long": {
                 "standard": "Gulf Standard Time"
+              },
+              "short": {
+                "standard": "N/A"
               }
             },
             "Guyana": {

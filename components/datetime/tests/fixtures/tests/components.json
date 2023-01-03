@@ -17,16 +17,16 @@
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020 Anno Domini at 08:25:07",
-                "en-u-ca-buddhist": "Tuesday, January 21, 2563 BE at 08:25:07",
-                "en-u-ca-japanese": "Tuesday, January 21, 2 Reiwa at 08:25:07",
+                "en": "Tuesday, January 21, 2020 Anno Domini, 08:25:07",
+                "en-u-ca-buddhist": "Tuesday, January 21, 2563 BE, 08:25:07",
+                "en-u-ca-japanese": "Tuesday, January 21, 2 Reiwa, 08:25:07",
                 "ja-u-ca-japanese": "令和2年1月21日火曜日 8:25:07",
-                "en-u-ca-coptic": "Tuesday, Toba 12, 1736 ERA1 at 08:25:07",
-                "fr-u-ca-coptic": "mardi 12 toubah 1736 après Dioclétien à 08:25:07",
-                "en-u-ca-indian": "Tuesday, Magha 01, 1941 Saka at 08:25:07",
-                "en-u-ca-ethiopic": "Tuesday, Ter 12, 2012 ERA0 at 08:25:07",
-                "fr-u-ca-ethiopic": "mardi 12 ter 2012 avant l’Incarnation à 08:25:07",
-                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 à 08:25:07"
+                "en-u-ca-coptic": "Tuesday, Toba 12, 1736 ERA1, 08:25:07",
+                "fr-u-ca-coptic": "mardi 12 toubah 1736 après Dioclétien 08:25:07",
+                "en-u-ca-indian": "Tuesday, Magha 01, 1941 Saka, 08:25:07",
+                "en-u-ca-ethiopic": "Tuesday, Ter 12, 2012 ERA0, 08:25:07",
+                "fr-u-ca-ethiopic": "mardi 12 ter 2012 avant l’Incarnation 08:25:07",
+                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 08:25:07"
             }
         }
     },

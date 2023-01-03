@@ -12,7 +12,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) seg. nakalipas",
+      "pattern": " seg. ang nakalipas",
       "index": 0
     }
   },
@@ -26,7 +26,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) seg.",
+      "pattern": "sa  seg.",
       "index": 3
     }
   }

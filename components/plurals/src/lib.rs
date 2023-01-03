@@ -7,7 +7,7 @@
 //! This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! For example in English language, when constructing a message
+//! For example in English, when constructing a message
 //! such as `{ num } items`, the user has to prepare
 //! two variants of the message:
 //!
@@ -17,9 +17,9 @@
 //! The former variant is used when the placeholder variable has value `1`,
 //! while the latter is used for all other values of the variable.
 //!
-//! Unicode defines [`Language Plural Rules`] as a mechanism to codify those
+//! Unicode defines [Language Plural Rules] as a mechanism to codify those
 //! variants and provides data and algorithms to calculate
-//! appropriate [`Plural Category`].
+//! appropriate [`PluralCategory`].
 //!
 //! # Examples
 //!
@@ -40,30 +40,26 @@
 //! ## Plural Rules
 //!
 //! The crate provides the main struct [`PluralRules`] which handles selection
-//! of the correct [`Plural Category`] for a given language and [`Plural Type`].
+//! of the correct [`PluralCategory`] for a given language and [`PluralRuleType`].
 //!
 //! ## Plural Category
 //!
-//! Every number in every language belongs to a certain [`Plural Category`].
-//! For example, Polish language uses four:
+//! Every number in every language belongs to a certain [`PluralCategory`].
+//! For example, the Polish language uses four:
 //!
 //! * [`One`](PluralCategory::One): `1 miesiąc`
 //! * [`Few`](PluralCategory::Few): `2 miesiące`
 //! * [`Many`](PluralCategory::Many): `5 miesięcy`
 //! * [`Other`](PluralCategory::Other): `1.5 miesiąca`
 //!
-//! ## Plural Rule Type
+//! ## `PluralRuleType`
 //!
 //! Plural rules depend on the use case. This crate supports two types of plural rules:
 //!
 //! * [`Cardinal`](PluralRuleType::Cardinal): `3 doors`, `1 month`, `10 dollars`
 //! * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 //!
-//! [`ICU4X`]: ../icu/index.html
-//! [`Plural Type`]: PluralRuleType
-//! [`Plural Category`]: PluralCategory
-//! [`Language Plural Rules`]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
-//! [`CLDR`]: http://cldr.unicode.org/
+//! [Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -249,11 +245,11 @@ impl PluralCategory {
         .copied()
     }
 
-    /// Returns the PluralCategory coresponding to given TR35 string.
+    /// Returns the PluralCategory corresponding to given TR35 string.
     pub fn get_for_cldr_string(category: &str) -> Option<PluralCategory> {
         Self::get_for_cldr_bytes(category.as_bytes())
     }
-    /// Returns the PluralCategory coresponding to given TR35 string as bytes
+    /// Returns the PluralCategory corresponding to given TR35 string as bytes
     pub fn get_for_cldr_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
             b"zero" => Some(PluralCategory::Zero),

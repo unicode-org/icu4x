@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "ar",
         "territory": "EG"
@@ -329,10 +329,10 @@
               "short": "ahmm"
             },
             "dateTimeFormats": {
-              "full": "{1} في {0}",
-              "long": "{1} في {0}",
-              "medium": "{1} في {0}",
-              "short": "{1} في {0}",
+              "full": "{1}، {0}",
+              "long": "{1}، {0}",
+              "medium": "{1}، {0}",
+              "short": "{1}, {0}",
               "availableFormats": {
                 "Bh": "h B",
                 "Bhm": "h:mm B",
@@ -358,8 +358,8 @@
                 "hms": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
                 "M": "L",
-                "Md": "d/‏M",
-                "MEd": "E، d/‏M",
+                "Md": "d‏/M",
+                "MEd": "E، d‏/M",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
                 "MMMEd": "E، d MMM",
@@ -369,7 +369,7 @@
                 "yyyy": "y G",
                 "yyyyM": "M‏/y G",
                 "yyyyMd": "d‏/M‏/y G",
-                "yyyyMEd": "E، d/‏M/‏y G",
+                "yyyyMEd": "E، d‏/M‏/y G",
                 "yyyyMMM": "MMM y G",
                 "yyyyMMMd": "d MMM y G",
                 "yyyyMMMEd": "E، d MMM y G",
@@ -478,12 +478,12 @@
                   "M": "M–M"
                 },
                 "Md": {
-                  "d": "d-M – d-M",
-                  "M": "d-M – d-M"
+                  "d": "d‏/M – d‏/M",
+                  "M": "d‏/M – d‏/M"
                 },
                 "MEd": {
-                  "d": "E، d/‏M –‏ E، d/‏M",
-                  "M": "E، d/‏M – E، d/‏M"
+                  "d": "E، d‏/M – E، d‏/M",
+                  "M": "E، d‏/M – E، d‏/M"
                 },
                 "MMM": {
                   "M": "MMM–MMM"
@@ -534,6 +534,14 @@
                   "M": "MMMM – MMMM y G",
                   "y": "MMMM y – MMMM y G"
                 }
+              }
+            },
+            "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} في {0}",
+                "long": "{1} في {0}",
+                "medium": "{1}، {0}",
+                "short": "{1}, {0}"
               }
             }
           }

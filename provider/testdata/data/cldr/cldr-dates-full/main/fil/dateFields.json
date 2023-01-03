@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "fil"
       },
@@ -25,11 +25,11 @@
             "relative-type-1": "susunod na taon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} taon",
-              "relativeTimePattern-count-other": "sa {0} (na) taon"
+              "relativeTimePattern-count-other": "sa {0} taon"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} taon ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) taon ang nakalipas"
+              "relativeTimePattern-count-other": "{0} taon ang nakalipas"
             }
           },
           "year-short": {
@@ -39,11 +39,11 @@
             "relative-type-1": "susunod na taon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} taon",
-              "relativeTimePattern-count-other": "sa {0} (na) taon"
+              "relativeTimePattern-count-other": "sa {0} taon"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} taon ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) taon ang nakalipas"
+              "relativeTimePattern-count-other": "{0} taon ang nakalipas"
             }
           },
           "year-narrow": {
@@ -53,11 +53,11 @@
             "relative-type-1": "susunod na taon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} taon",
-              "relativeTimePattern-count-other": "sa {0} (na) taon"
+              "relativeTimePattern-count-other": "sa {0} taon"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} taon ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) taon ang nakalipas"
+              "relativeTimePattern-count-other": "{0} taon ang nakalipas"
             }
           },
           "quarter": {
@@ -67,11 +67,11 @@
             "relative-type-1": "susunod na quarter",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} quarter",
-              "relativeTimePattern-count-other": "sa {0} (na) quarter"
+              "relativeTimePattern-count-other": "sa {0} quarter"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} quarter ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) quarter ang nakalipas"
+              "relativeTimePattern-count-other": "{0} quarter ang nakalipas"
             }
           },
           "quarter-short": {
@@ -80,12 +80,12 @@
             "relative-type-0": "ngayong quarter",
             "relative-type-1": "susunod na quarter",
             "relativeTime-type-future": {
-              "relativeTimePattern-count-one": "sa {0} (na) quarter",
-              "relativeTimePattern-count-other": "sa {0} (na) quarter"
+              "relativeTimePattern-count-one": "sa {0} quarter",
+              "relativeTimePattern-count-other": "sa {0} quarter"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} quarter ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) quarter ang nakalipas"
+              "relativeTimePattern-count-other": "{0} quarter ang nakalipas"
             }
           },
           "quarter-narrow": {
@@ -95,11 +95,11 @@
             "relative-type-1": "susunod na quarter",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} quarter",
-              "relativeTimePattern-count-other": "sa {0} (na) quarter"
+              "relativeTimePattern-count-other": "sa {0} quarter"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} quarter ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) quarter ang nakalipas"
+              "relativeTimePattern-count-other": "{0} quarter ang nakalipas"
             }
           },
           "month": {
@@ -109,11 +109,11 @@
             "relative-type-1": "susunod na buwan",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} buwan",
-              "relativeTimePattern-count-other": "sa {0} (na) buwan"
+              "relativeTimePattern-count-other": "sa {0} buwan"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} buwan ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) buwan ang nakalipas"
+              "relativeTimePattern-count-other": "{0} buwan ang nakalipas"
             }
           },
           "month-short": {
@@ -123,11 +123,11 @@
             "relative-type-1": "susunod na buwan",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} buwan",
-              "relativeTimePattern-count-other": "sa {0} (na) buwan"
+              "relativeTimePattern-count-other": "sa {0} buwan"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} buwan ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) buwan ang nakalipas"
+              "relativeTimePattern-count-other": "{0} buwan ang nakalipas"
             }
           },
           "month-narrow": {
@@ -137,11 +137,11 @@
             "relative-type-1": "susunod na buwan",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} buwan",
-              "relativeTimePattern-count-other": "sa {0} (na) buwan"
+              "relativeTimePattern-count-other": "sa {0} buwan"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} buwan ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) buwan ang nakalipas"
+              "relativeTimePattern-count-other": "{0} buwan ang nakalipas"
             }
           },
           "week": {
@@ -151,11 +151,11 @@
             "relative-type-1": "susunod na linggo",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} linggo",
-              "relativeTimePattern-count-other": "sa {0} (na) linggo"
+              "relativeTimePattern-count-other": "sa {0} linggo"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} linggo ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) linggo ang nakalipas"
+              "relativeTimePattern-count-other": "{0} linggo ang nakalipas"
             },
             "relativePeriod": "linggo ng {0}"
           },
@@ -166,7 +166,7 @@
             "relative-type-1": "susunod na linggo",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} linggo",
-              "relativeTimePattern-count-other": "sa {0} (na) linggo"
+              "relativeTimePattern-count-other": "sa {0} linggo"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} linggo ang nakalipas",
@@ -181,11 +181,11 @@
             "relative-type-1": "susunod na linggo",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} linggo",
-              "relativeTimePattern-count-other": "sa {0} (na) linggo"
+              "relativeTimePattern-count-other": "sa {0} linggo"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} linggo ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) linggo ang nakalipas"
+              "relativeTimePattern-count-other": "{0} linggo ang nakalipas"
             },
             "relativePeriod": "linggo ng {0}"
           },
@@ -207,11 +207,11 @@
             "relative-type-2": "Samakalawa",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} araw",
-              "relativeTimePattern-count-other": "sa {0} (na) araw"
+              "relativeTimePattern-count-other": "sa {0} araw"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} araw ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) araw ang nakalipas"
+              "relativeTimePattern-count-other": "{0} araw ang nakalipas"
             }
           },
           "day-short": {
@@ -223,10 +223,10 @@
             "relative-type-2": "Samakalawa",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} (na) araw",
-              "relativeTimePattern-count-other": "sa {0} (na) araw"
+              "relativeTimePattern-count-other": "sa {0} araw"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} (na) araw ang nakalipas",
+              "relativeTimePattern-count-one": "{0} araw ang nakalipas",
               "relativeTimePattern-count-other": "{0} (na) araw ang nakalipas"
             }
           },
@@ -239,11 +239,11 @@
             "relative-type-2": "Samakalawa",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} araw",
-              "relativeTimePattern-count-other": "sa {0} (na) araw"
+              "relativeTimePattern-count-other": "sa {0} araw"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} araw ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) araw ang nakalipas"
+              "relativeTimePattern-count-other": "{0} araw ang nakalipas"
             }
           },
           "dayOfYear": {
@@ -279,7 +279,7 @@
             "relative-type-1": "susunod na Linggo",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} Linggo",
-              "relativeTimePattern-count-other": "sa {0} (na) Linggo"
+              "relativeTimePattern-count-other": "sa {0} Linggo"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} Linggo ang nakalipas",
@@ -560,11 +560,11 @@
             "relative-type-0": "ngayong oras",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} oras",
-              "relativeTimePattern-count-other": "sa {0} (na) oras"
+              "relativeTimePattern-count-other": "sa {0} oras"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} oras ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) oras ang nakalipas"
+              "relativeTimePattern-count-other": "{0} oras ang nakalipas"
             }
           },
           "hour-short": {
@@ -576,7 +576,7 @@
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} oras ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) oras ang nakalipas"
+              "relativeTimePattern-count-other": "{0} oras ang nakalipas"
             }
           },
           "hour-narrow": {
@@ -584,11 +584,11 @@
             "relative-type-0": "ngayong oras",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} oras",
-              "relativeTimePattern-count-other": "sa {0} (na) oras"
+              "relativeTimePattern-count-other": "sa {0} oras"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} oras ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) oras nakalipas"
+              "relativeTimePattern-count-other": "{0} oras ang nakalipas"
             }
           },
           "minute": {
@@ -596,11 +596,11 @@
             "relative-type-0": "sa minutong ito",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} minuto",
-              "relativeTimePattern-count-other": "sa {0} (na) minuto"
+              "relativeTimePattern-count-other": "sa {0} minuto"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} minuto ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) minuto ang nakalipas"
+              "relativeTimePattern-count-other": "{0} minuto ang nakalipas"
             }
           },
           "minute-short": {
@@ -608,11 +608,11 @@
             "relative-type-0": "sa minutong ito",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} min.",
-              "relativeTimePattern-count-other": "sa {0} (na) min."
+              "relativeTimePattern-count-other": "sa {0} min."
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} min. ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) min. ang nakalipas"
+              "relativeTimePattern-count-other": "{0} min. ang nakalipas"
             }
           },
           "minute-narrow": {
@@ -620,11 +620,11 @@
             "relative-type-0": "sa minutong ito",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} min.",
-              "relativeTimePattern-count-other": "sa {0} (na) min."
+              "relativeTimePattern-count-other": "sa {0} min."
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} min. ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) min. ang nakalipas"
+              "relativeTimePattern-count-other": "{0} min. ang nakalipas"
             }
           },
           "second": {
@@ -632,11 +632,11 @@
             "relative-type-0": "ngayon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} segundo",
-              "relativeTimePattern-count-other": "sa {0} (na) segundo"
+              "relativeTimePattern-count-other": "sa {0} segundo"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} segundo ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) segundo ang nakalipas"
+              "relativeTimePattern-count-other": "{0} segundo ang nakalipas"
             }
           },
           "second-short": {
@@ -644,11 +644,11 @@
             "relative-type-0": "ngayon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} seg.",
-              "relativeTimePattern-count-other": "sa {0} (na) seg."
+              "relativeTimePattern-count-other": "sa {0} seg."
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} seg. ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) seg. nakalipas"
+              "relativeTimePattern-count-other": "{0} seg. ang nakalipas"
             }
           },
           "second-narrow": {
@@ -656,11 +656,11 @@
             "relative-type-0": "ngayon",
             "relativeTime-type-future": {
               "relativeTimePattern-count-one": "sa {0} seg.",
-              "relativeTimePattern-count-other": "sa {0} (na) seg."
+              "relativeTimePattern-count-other": "sa {0} seg."
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "{0} seg. ang nakalipas",
-              "relativeTimePattern-count-other": "{0} (na) seg. nakalipas"
+              "relativeTimePattern-count-other": "{0} seg. ang nakalipas"
             }
           },
           "zone": {

@@ -14,7 +14,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) linggo ang nakalipas",
+      "pattern": " linggo ang nakalipas",
       "index": 0
     }
   },
@@ -28,7 +28,7 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": "sa  (na) linggo",
+      "pattern": "sa  linggo",
       "index": 3
     }
   }

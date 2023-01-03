@@ -10,14 +10,14 @@
 
     .. js:function:: create_fs(path)
 
-        Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_fs`` feature. Not supported in WASM.
+        Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_fs`` Cargo feature. Not supported in WASM.
 
         See the `Rust documentation for FsDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
 
     .. js:function:: create_test()
 
-        Constructs a testdata provider and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_test`` feature.
+        Constructs a testdata provider and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_test`` Cargo feature.
 
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 

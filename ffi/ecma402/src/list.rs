@@ -20,7 +20,7 @@ impl ecma402_traits::listformat::Format for ListFormat {
         L: Locale,
         Self: Sized,
     {
-        Self::try_new_with_provider(l, opts, &crate::BakedDataProvider)
+        Self::try_new_with_provider(l, opts, &crate::GlobalDataProvider)
     }
 
     fn format<I, L, W>(&self, list: L, writer: &mut W) -> fmt::Result

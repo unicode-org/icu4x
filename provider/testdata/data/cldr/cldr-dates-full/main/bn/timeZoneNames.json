@@ -3,7 +3,7 @@
     "bn": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "bn"
       },
@@ -19,7 +19,7 @@
           "zone": {
             "America": {
               "Adak": {
-                "exemplarCity": "আডাক"
+                "exemplarCity": "আডক"
               },
               "Anchorage": {
                 "exemplarCity": "এনকোরেজ"
@@ -66,7 +66,7 @@
                 "exemplarCity": "বাহিয়া"
               },
               "Bahia_Banderas": {
-                "exemplarCity": "বাহিয়া বানড্রাস"
+                "exemplarCity": "বাহিয়া বান্দেরাস"
               },
               "Barbados": {
                 "exemplarCity": "বার্বাডোজ"
@@ -372,7 +372,7 @@
                 "exemplarCity": "পোর্তো ভেল্‌হো"
               },
               "Puerto_Rico": {
-                "exemplarCity": "পুয়েরতো রিকো"
+                "exemplarCity": "পুয়ের্তো রিকো"
               },
               "Punta_Arenas": {
                 "exemplarCity": "পুন্টা আরেনাস"
@@ -381,7 +381,7 @@
                 "exemplarCity": "রেইনি রিভার"
               },
               "Rankin_Inlet": {
-                "exemplarCity": "র‌্যাঙ্কিন ইনলেট"
+                "exemplarCity": "র‍্যাঙ্কিন ইনলেট"
               },
               "Recife": {
                 "exemplarCity": "রেসিফে"
@@ -411,7 +411,7 @@
                 "exemplarCity": "সাও পাউলো"
               },
               "Scoresbysund": {
-                "exemplarCity": "ইটকুয়োরটুরমিট"
+                "exemplarCity": "ইট্টকুয়োরটুরমিট"
               },
               "Sitka": {
                 "exemplarCity": "শিটকা"
@@ -1223,7 +1223,7 @@
                 "exemplarCity": "জনস্টন"
               },
               "Kanton": {
-                "exemplarCity": "Kanton"
+                "exemplarCity": "ক্যান্টন"
               },
               "Kiritimati": {
                 "exemplarCity": "কিরিতিমাতি"
@@ -1393,9 +1393,9 @@
             },
             "Amazon": {
               "long": {
-                "generic": "অ্যামাজন সময়",
+                "generic": "আমাজন সময়",
                 "standard": "আমাজন মানক সময়",
-                "daylight": "অ্যামাজন গ্রীষ্মকালীন সময়"
+                "daylight": "আমাজন গ্রীষ্মকালীন সময়"
               }
             },
             "America_Central": {
@@ -1747,7 +1747,7 @@
             },
             "Hawaii_Aleutian": {
               "long": {
-                "generic": "হাওয়াই অ্যালিউটিয়ান সময়",
+                "generic": "হাওয়াই-আলেউত সময়",
                 "standard": "হাওয়াই-আলেউত মানক সময়",
                 "daylight": "হাওয়াই-আলেউত দিবালোক সময়"
               }
