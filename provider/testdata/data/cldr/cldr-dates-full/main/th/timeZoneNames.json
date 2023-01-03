@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "th"
       },
@@ -473,7 +473,7 @@
             },
             "Atlantic": {
               "Azores": {
-                "exemplarCity": "อาซอเรส"
+                "exemplarCity": "อะโซร์ส"
               },
               "Bermuda": {
                 "exemplarCity": "เบอร์มิวดา"
@@ -1223,7 +1223,7 @@
                 "exemplarCity": "จอห์นสตัน"
               },
               "Kanton": {
-                "exemplarCity": "Kanton"
+                "exemplarCity": "แคนทอน"
               },
               "Kiritimati": {
                 "exemplarCity": "คิริทิมาตี"

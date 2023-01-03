@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "41"
+      "_cldrVersion": "42"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -2574,7 +2574,8 @@
             "Amman": [
               {
                 "usesMetazone": {
-                  "_mzone": "Europe_Eastern"
+                  "_mzone": "Europe_Eastern",
+                  "_to": "2022-10-27 22:00"
                 }
               }
             ],
@@ -2806,7 +2807,8 @@
             "Damascus": [
               {
                 "usesMetazone": {
-                  "_mzone": "Europe_Eastern"
+                  "_mzone": "Europe_Eastern",
+                  "_to": "2022-10-27 21:00"
                 }
               }
             ],
@@ -4239,20 +4241,13 @@
               {
                 "usesMetazone": {
                   "_mzone": "Moscow",
-                  "_to": "1990-06-30 23:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Central",
-                  "_from": "1990-06-30 23:00",
-                  "_to": "1991-03-31 02:00"
+                  "_to": "1990-06-30 22:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Europe_Eastern",
-                  "_from": "1991-03-31 02:00"
+                  "_from": "1990-06-30 22:00"
                 }
               }
             ],
@@ -4330,13 +4325,13 @@
               {
                 "usesMetazone": {
                   "_mzone": "Moscow",
-                  "_to": "1991-03-30 23:00"
+                  "_to": "1990-06-30 22:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Europe_Eastern",
-                  "_from": "1991-03-30 23:00"
+                  "_from": "1990-06-30 22:00"
                 }
               }
             ],
@@ -6004,22 +5999,8 @@
         {
           "mapZone": {
             "_other": "Europe_Eastern",
-            "_type": "Asia/Amman",
-            "_territory": "JO"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Europe_Eastern",
             "_type": "Asia/Beirut",
             "_territory": "LB"
-          }
-        },
-        {
-          "mapZone": {
-            "_other": "Europe_Eastern",
-            "_type": "Asia/Damascus",
-            "_territory": "SY"
           }
         },
         {
@@ -7683,6 +7664,10 @@
         },
         "yeka": {
           "_longId": "Yekaterinburg",
+          "_since": "40"
+        },
+        "yuko": {
+          "_longId": "Yukon",
           "_since": "40"
         }
       }

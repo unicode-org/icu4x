@@ -11,6 +11,7 @@
 
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
@@ -19,7 +20,7 @@ use zerovec::ZeroMap;
 // become inaccessible).
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
-#[icu_provider::data_struct(TerritoryDisplayNamesV1Marker = "displaynames/territories@1")]
+#[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -28,12 +29,28 @@ type UnvalidatedRegion = TinyAsciiStr<3>;
     databake(path = icu_displaynames::provider),
 )]
 #[yoke(prove_covariance_manually)]
-/// TerritoryDisplayNames provides mapping between a region code and locale display name.
-pub struct TerritoryDisplayNamesV1<'data> {
+/// RegionDisplayNames provides mapping between a region code and locale display name.
+pub struct RegionDisplayNamesV1<'data> {
     /// Mapping for region to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedRegion, str>,
     /// Mapping for region to locale display short name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
+}
+
+#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// LanguageDisplayNames provides mapping between a language code and it's display name.
+pub struct LanguageDisplayNamesV1<'data> {
+    /// Mapping for langage to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
 }

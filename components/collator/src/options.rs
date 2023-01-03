@@ -247,7 +247,7 @@ pub enum CaseLevel {
     On = 1,
 }
 
-/// When set to `On`, any sequence of decimal digits is sorted at a primary level accoding to the numeric value.
+/// When set to `On`, any sequence of decimal digits is sorted at a primary level according to the numeric value.
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 #[repr(u8)]
 #[non_exhaustive]
@@ -316,7 +316,7 @@ pub enum BackwardSecondLevel {
 /// ## Numeric
 ///
 /// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
-/// digits (General_Category = Nd) is sorted at a primary level accoding to the
+/// digits (General_Category = Nd) is sorted at a primary level according to the
 /// numeric value. The default is `false` (off).
 ///
 /// # Unsupported BCP47 options
@@ -510,7 +510,7 @@ impl CollatorOptionsBitField {
         if let Some(case_level) = case_level {
             self.0 |= CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;
             if case_level {
-                self.0 |= CollatorOptionsBitField::ALTERNATE_HANDLING_MASK;
+                self.0 |= CollatorOptionsBitField::CASE_LEVEL_MASK;
             }
         } else {
             self.0 &= !CollatorOptionsBitField::EXPLICIT_CASE_LEVEL_MASK;

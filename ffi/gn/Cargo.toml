@@ -53,9 +53,5 @@ rustflags = ["--cfg=ops_bound", "--cfg=core_reverse", "--cfg=de_boxed_c_str", "-
 [gn.package.serde_derive."1.0.130"]
 rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
 
-# TODO: Determine the correct rustflags for serde_json
-[gn.package.serde_json."1.0.69"]
-rustflags = []
-
 [gn.package.syn."1.0.81"]
 rustflags = []

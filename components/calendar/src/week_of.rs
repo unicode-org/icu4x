@@ -177,7 +177,7 @@ enum RelativeWeek {
 
 /// Information about a year or month.
 struct UnitInfo {
-    /// The weekday of ths year/month's first day.
+    /// The weekday of this year/month's first day.
     first_day: IsoWeekday,
     /// The number of days in this year/month.
     duration_days: u16,
@@ -265,7 +265,7 @@ pub struct WeekOf {
 ///
 /// # Arguments
 ///  - calendar: Calendar information used to compute the week number.
-///  - num_days_in_previous_unit: The number of days in the preceeding month/year.
+///  - num_days_in_previous_unit: The number of days in the preceding month/year.
 ///  - num_days_in_unit: The number of days in the month/year.
 ///  - day: 1-based day of month/year.
 ///  - week_day: The weekday of `day`..
@@ -305,7 +305,7 @@ pub fn week_of(
     }
 }
 
-/// Computes & returns the week of given month or year accoding to a calendar with min_week_days = 1.
+/// Computes & returns the week of given month or year according to a calendar with min_week_days = 1.
 ///
 /// # Arguments
 ///  - first_weekday: The first day of a week.

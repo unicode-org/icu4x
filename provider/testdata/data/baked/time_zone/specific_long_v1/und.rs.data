@@ -1,0 +1,20 @@
+::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
+    defaults: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[]) },
+        )
+    },
+    overrides: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[]) },
+        )
+    },
+}

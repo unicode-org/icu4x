@@ -54,7 +54,7 @@
 //! 2. [`FsDataProvider`]
 //! 3. [`ForkByKeyProvider`] between any of the above
 //!
-//! Please note that you must enable the `"serde"` feature on each crate in which you use the
+//! Please note that you must enable the `"serde"` Cargo feature on each crate in which you use the
 //! `*_with_buffer_provider` constructor.
 //!
 //! # Data Versioning Policy
@@ -78,8 +78,8 @@
 //! Over FFI, there is only one data provider type: [`ICU4XDataProvider`]. Internally, it is an
 //! `enum` between `dyn `[`AnyProvider`] and `dyn `[`BufferProvider`].
 //!
-//! To control for code size, there are two features, `any_provider` and `buffer_provider`, that
-//! enable the corresponding items in the enum.
+//! To control for code size, there are two Cargo features, `any_provider` and `buffer_provider`,
+//! that enable the corresponding items in the enum.
 //!
 //! In Rust ICU4X, a similar buffer/any enum approach was not taken because:
 //!

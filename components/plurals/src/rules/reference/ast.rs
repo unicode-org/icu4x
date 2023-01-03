@@ -194,7 +194,7 @@ pub struct AndCondition(pub Vec<Relation>);
 #[derive(Debug, Clone, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Relation {
-    /// The plural operand variable that optionally includes an applicaiton of modulo arithmetic.
+    /// The plural operand variable that optionally includes an application of modulo arithmetic.
     pub expression: Expression,
     /// The operator (equals, not equals) indicating whether the resolved expression value
     /// at runtime should match the set of possible values in `range_list`. Note: `Operator::Eq`

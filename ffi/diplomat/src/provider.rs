@@ -65,7 +65,7 @@ pub mod ffi {
 
     impl ICU4XDataProvider {
         /// Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-        /// Requires the `provider_fs` feature.
+        /// Requires the `provider_fs` Cargo feature.
         /// Not supported in WASM.
         #[diplomat::rust_link(icu_provider_fs::FsDataProvider, Struct)]
         #[allow(unused_variables)] // conditional on features
@@ -95,7 +95,7 @@ pub mod ffi {
         }
 
         /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-        /// Requires the `provider_test` feature.
+        /// Requires the `provider_test` Cargo feature.
         #[diplomat::rust_link(icu_testdata, Mod)]
         pub fn create_test() -> Box<ICU4XDataProvider> {
             #[cfg(not(feature = "provider_test"))]

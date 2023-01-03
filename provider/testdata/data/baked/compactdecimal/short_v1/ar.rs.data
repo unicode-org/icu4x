@@ -1,0 +1,30 @@
+::icu_compactdecimal::provider::CompactDecimalPatternDataV1 {
+    patterns: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[3u8, 4u8, 6u8, 9u8, 12u8]) },
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                    2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8,
+                    0u8, 6u8, 0u8, 0u8, 0u8,
+                ])
+            },
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(&[3u8, 5u8, 5u8, 5u8, 5u8, 5u8])
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 12u8, 0u8, 22u8, 0u8, 32u8, 0u8, 46u8, 0u8,
+                    60u8, 0u8, 3u8, 0u8, 194u8, 160u8, 216u8, 162u8, 217u8, 132u8, 216u8,
+                    167u8, 217u8, 129u8, 3u8, 0u8, 194u8, 160u8, 216u8, 163u8, 217u8, 132u8,
+                    217u8, 129u8, 3u8, 0u8, 194u8, 160u8, 216u8, 163u8, 217u8, 132u8, 217u8,
+                    129u8, 6u8, 0u8, 194u8, 160u8, 217u8, 133u8, 217u8, 132u8, 217u8, 138u8,
+                    217u8, 136u8, 217u8, 134u8, 9u8, 0u8, 194u8, 160u8, 217u8, 133u8, 217u8,
+                    132u8, 217u8, 138u8, 216u8, 167u8, 216u8, 177u8, 12u8, 0u8, 194u8, 160u8,
+                    216u8, 170u8, 216u8, 177u8, 217u8, 132u8, 217u8, 138u8, 217u8, 136u8,
+                    217u8, 134u8,
+                ])
+            },
+        )
+    },
+}

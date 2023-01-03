@@ -60,7 +60,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a, T, F> Deserialize<'de> for VarZeroVec<'a, T, F>
 where
     T: VarULE + ?Sized,
@@ -81,7 +81,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 impl<'de, 'a, T, F> Deserialize<'de> for &'a VarZeroSlice<T, F>
 where
     T: VarULE + ?Sized,
@@ -111,7 +111,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 #[cfg(feature = "serde")]
 impl<T, F> Serialize for VarZeroVec<'_, T, F>
 where
@@ -134,7 +134,7 @@ where
     }
 }
 
-/// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
 #[cfg(feature = "serde")]
 impl<T, F> Serialize for VarZeroSlice<T, F>
 where

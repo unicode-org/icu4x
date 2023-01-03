@@ -3,7 +3,7 @@
     "ru": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "ru"
       },
@@ -155,7 +155,9 @@
             }
           },
           "standard": "#,##0.00 ¤",
+          "standard-noCurrency": "#,##0.00",
           "accounting": "#,##0.00 ¤",
+          "accounting-noCurrency": "#,##0.00",
           "short": {
             "standard": {
               "1000-count-one": "0 тыс'.' ¤",
@@ -208,6 +210,7 @@
               "100000000000000-count-other": "000 трлн ¤"
             }
           },
+          "currencyPatternAppendISO": "{0} ¤¤",
           "unitPattern-count-one": "{0} {1}",
           "unitPattern-count-few": "{0} {1}",
           "unitPattern-count-many": "{0} {1}",

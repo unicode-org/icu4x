@@ -1,0 +1,52 @@
+{
+  "patterns": {
+    "3": {
+      "One": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " libo"
+      },
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " na libo"
+      }
+    },
+    "6": {
+      "One": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " milyon"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " na milyon"
+      }
+    },
+    "9": {
+      "One": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " bilyon"
+      },
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " na bilyon"
+      }
+    },
+    "12": {
+      "One": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " trilyon"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " na trilyon"
+      }
+    }
+  }
+}

@@ -7,10 +7,10 @@
     "afwe": "Oras sa Kanlurang Africa",
     "alas": "Oras sa Alaska",
     "amaz": "Oras sa Amazon",
-    "amce": "Sentral na Oras",
-    "amea": "Eastern Time",
-    "ammo": "Oras sa Bundok",
-    "ampa": "Oras sa Pasipiko",
+    "amce": "Sentral na Oras sa North America",
+    "amea": "Oras sa Silangan ng Hilagang Amerika",
+    "ammo": "Oras sa Bundok sa Hilagang Amerika",
+    "ampa": "Oras sa Pasipiko sa HIlagang Amerika",
     "anad": "Oras sa Anadyr",
     "apia": "Oras sa Apia",
     "arab": "Oras sa Arabia",
@@ -148,7 +148,7 @@
     "wall": "Oras sa Wallis & Futuna",
     "yaku": "Oras sa Yakutsk",
     "yeka": "Oras sa Yekaterinburg",
-    "yuko": "Yukon Time"
+    "yuko": "Oras sa Yukon"
   },
   "overrides": {
     "utc": "Coordinated Universal Time"
