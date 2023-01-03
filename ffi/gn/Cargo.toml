@@ -55,3 +55,6 @@ rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
 
 [gn.package.syn."1.0.81"]
 rustflags = []
+
+[gn.package.icu_capi."1.0.0"]
+rustflags = []

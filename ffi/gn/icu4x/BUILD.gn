@@ -254,6 +254,7 @@ rust_library("icu_capi-v1_0_0") {
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":unicode-bidi-v0_3_8" ]
   deps += [ ":writeable-v0_5_0" ]
+  deps += [ ":zerovec-v0_9_1" ]
   if (current_cpu == "wasm32") {
     deps += [ ":log-v0_4_14" ]
   }

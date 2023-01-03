@@ -46,6 +46,16 @@ export class ICU4XDataProvider {
 
   /**
 
+   * Constructs a {@link ICU4XDataProvider `ICU4XDataProvider`} containing baked data.
+
+   * When compiling the Rust library, set the `ICU4X_FFI_BAKED_ROOT` environment variable to the baked data folder.
+
+   * If no data is supplied, this behaves like an empty provider.
+   */
+  static create_baked(): ICU4XDataProvider;
+
+  /**
+
    * Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider `other`.
 
    * This takes ownership of the `other` provider, leaving an empty provider in its place.

@@ -66,6 +66,16 @@ class ICU4XDataProvider {
   static ICU4XDataProvider create_empty();
 
   /**
+   * Constructs a [`ICU4XDataProvider`] containing baked data.
+   * 
+   * When compiling the Rust library, set the `ICU4X_FFI_BAKED_ROOT`
+   * environment variable to the baked data folder.
+   * 
+   * If no data is supplied, this behaves like an empty provider.
+   */
+  static ICU4XDataProvider create_baked();
+
+  /**
    * Creates a provider that tries the current provider and then, if the current provider
    * doesn't support the data key, another provider `other`.
    * 
@@ -142,6 +152,9 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
 }
 inline ICU4XDataProvider ICU4XDataProvider::create_empty() {
   return ICU4XDataProvider(capi::ICU4XDataProvider_create_empty());
+}
+inline ICU4XDataProvider ICU4XDataProvider::create_baked() {
+  return ICU4XDataProvider(capi::ICU4XDataProvider_create_baked());
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_key(ICU4XDataProvider& other) {
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_key(this->inner.get(), other.AsFFIMut());

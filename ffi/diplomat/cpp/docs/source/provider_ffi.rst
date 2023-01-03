@@ -38,6 +38,15 @@
         See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XDataProvider create_baked()
+
+        Constructs a :cpp:class:`ICU4XDataProvider` containing baked data.
+
+        When compiling the Rust library, set the ``ICU4X_FFI_BAKED_ROOT`` environment variable to the baked data folder.
+
+        If no data is supplied, this behaves like an empty provider.
+
+
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> fork_by_key(ICU4XDataProvider& other)
 
         Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider ``other``.

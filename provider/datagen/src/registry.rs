@@ -26,11 +26,11 @@ use icu_compactdecimal::provider::*;
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
 use icu_relativetime::provider::*;
-#[cfg(feature = "experimental")]
+#[cfg(feature = "icu_segmenter")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
-    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
+    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ } #[cfg(feature = "icu_segmenter")] { $($seg_marker:ident,)+ }) => {
         /// List of all supported keys
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
@@ -42,6 +42,10 @@ macro_rules! registry {
                     #[cfg(feature = "experimental")]
                     <$exp_marker>::KEY,
                 )+
+                $(
+                    #[cfg(feature = "icu_segmenter")]
+                    <$seg_marker>::KEY,
+                )+
             ]
         }
 
@@ -52,10 +56,21 @@ macro_rules! registry {
                 HelloWorldV1Marker,
                 $($marker,)+
                 $($exp_marker,)+
+                $($seg_marker,)+
             ]
         );
 
-        #[cfg(not(feature = "experimental"))]
+        #[cfg(all(feature = "icu_segmenter", not(feature = "experimental")))]
+        icu_provider::make_exportable_provider!(
+            crate::DatagenProvider,
+            [
+                HelloWorldV1Marker,
+                $($marker,)+
+                $($seg_marker,)+
+            ]
+        );
+
+        #[cfg(all(not(feature = "icu_segmenter"), not(feature = "experimental")))]
         icu_provider::make_exportable_provider!(
             crate::DatagenProvider,
             [
@@ -80,6 +95,12 @@ macro_rules! registry {
                 #[cfg(feature = "experimental")]
                 if key == $exp_marker::KEY {
                     return $exp_marker.bake(env);
+                }
+            )+
+            $(
+                #[cfg(feature = "icu_segmenter")]
+                if key == $seg_marker::KEY {
+                    return $seg_marker.bake(env);
                 }
             )+
             unreachable!("unregistered marker")
@@ -225,12 +246,6 @@ registry!(
         DateSkeletonPatternsV1Marker,
         RegionDisplayNamesV1Marker,
         LanguageDisplayNamesV1Marker,
-        GraphemeClusterBreakDataV1Marker,
-        LineBreakDataV1Marker,
-        LstmDataV1Marker,
-        SentenceBreakDataV1Marker,
-        UCharDictionaryBreakDataV1Marker,
-        WordBreakDataV1Marker,
         LongSecondRelativeTimeFormatDataV1Marker,
         ShortSecondRelativeTimeFormatDataV1Marker,
         NarrowSecondRelativeTimeFormatDataV1Marker,
@@ -258,6 +273,16 @@ registry!(
         LongCompactDecimalFormatDataV1Marker,
         ShortCompactDecimalFormatDataV1Marker,
     }
+    #[cfg(feature = "icu_segmenter")]
+    {
+        GraphemeClusterBreakDataV1Marker,
+        LineBreakDataV1Marker,
+        LstmDataV1Marker,
+        SentenceBreakDataV1Marker,
+        UCharDictionaryBreakDataV1Marker,
+        WordBreakDataV1Marker,
+    }
+
 );
 
 #[test]

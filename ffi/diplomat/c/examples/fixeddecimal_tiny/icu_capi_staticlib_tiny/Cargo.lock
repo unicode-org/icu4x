@@ -9,19 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "cobs"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
-
-[[package]]
-name = "deduplicating_array"
-version = "0.1.3"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "diplomat"
 version = "0.4.2"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
@@ -94,7 +81,6 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "serde",
  "tinystr",
  "writeable",
  "zerovec",
@@ -120,15 +106,13 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_provider_adapters",
- "icu_provider_blob",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
  "log",
- "serde",
  "tinystr",
  "unicode-bidi",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -141,7 +125,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -149,7 +133,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
@@ -162,7 +145,6 @@ name = "icu_collections"
 version = "1.0.0"
 dependencies = [
  "displaydoc",
- "serde",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -182,7 +164,6 @@ dependencies = [
  "icu_provider",
  "icu_timezone",
  "litemap",
- "serde",
  "smallvec",
  "tinystr",
  "writeable",
@@ -197,7 +178,6 @@ dependencies = [
  "fixed_decimal",
  "icu_locid",
  "icu_provider",
- "serde",
  "writeable",
 ]
 
@@ -205,12 +185,10 @@ dependencies = [
 name = "icu_list"
 version = "1.0.0"
 dependencies = [
- "deduplicating_array",
  "displaydoc",
  "icu_locid",
  "icu_provider",
  "regex-automata",
- "serde",
  "writeable",
  "zerovec",
 ]
@@ -221,7 +199,6 @@ version = "1.0.0"
 dependencies = [
  "displaydoc",
  "litemap",
- "serde",
  "tinystr",
  "writeable",
  "zerovec",
@@ -234,7 +211,6 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "serde",
  "tinystr",
  "zerovec",
 ]
@@ -247,7 +223,6 @@ dependencies = [
  "icu_collections",
  "icu_properties",
  "icu_provider",
- "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
@@ -264,7 +239,6 @@ dependencies = [
  "fixed_decimal",
  "icu_locid",
  "icu_provider",
- "serde",
  "zerovec",
 ]
 
@@ -275,7 +249,6 @@ dependencies = [
  "displaydoc",
  "icu_collections",
  "icu_provider",
- "serde",
  "unicode-bidi",
  "zerovec",
 ]
@@ -287,8 +260,6 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider_macros",
- "postcard",
- "serde",
  "stable_deref_trait",
  "writeable",
  "yoke",
@@ -302,20 +273,7 @@ version = "1.0.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
- "serde",
  "tinystr",
- "yoke",
- "zerovec",
-]
-
-[[package]]
-name = "icu_provider_blob"
-version = "1.0.0"
-dependencies = [
- "icu_provider",
- "postcard",
- "serde",
- "writeable",
  "yoke",
  "zerovec",
 ]
@@ -337,35 +295,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "serde",
- "serde_json",
  "utf8_iter",
- "zerovec",
-]
-
-[[package]]
-name = "icu_testdata"
-version = "1.0.0"
-dependencies = [
- "icu_calendar",
- "icu_collator",
- "icu_collections",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_provider_blob",
- "icu_segmenter",
- "icu_timezone",
- "lazy_static",
- "litemap",
- "tinystr",
  "zerovec",
 ]
 
@@ -377,25 +307,15 @@ dependencies = [
  "icu_calendar",
  "icu_locid",
  "icu_provider",
- "serde",
  "tinystr",
  "zerovec",
 ]
-
-[[package]]
-name = "itoa"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
 
 [[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
-dependencies = [
- "spin",
-]
 
 [[package]]
 name = "libc"
@@ -406,9 +326,6 @@ checksum = "5916d2ae698f6de9bfb891ad7a8d65c09d232dc58cc4ac433c7da3b2fd84bc2b"
 [[package]]
 name = "litemap"
 version = "0.6.0"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "log"
@@ -424,16 +341,6 @@ name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
-
-[[package]]
-name = "postcard"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c2b180dc0bade59f03fd005cb967d3f1e5f69b13922dad0cd6e047cb8af2363"
-dependencies = [
- "cobs",
- "serde",
-]
 
 [[package]]
 name = "proc-macro2"
@@ -489,30 +396,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_json"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e466864e431129c7e0d3476b92f20458e5879919a0596c6472738d9fa2d342f8"
-dependencies = [
- "itoa",
- "ryu",
- "serde",
-]
-
-[[package]]
 name = "smallvec"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "spin"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
 
 [[package]]
 name = "stable_deref_trait"
@@ -564,7 +451,6 @@ name = "tinystr"
 version = "0.7.0"
 dependencies = [
  "displaydoc",
- "serde",
  "zerovec",
 ]
 
@@ -649,7 +535,6 @@ dependencies = [
 name = "zerovec"
 version = "0.9.1"
 dependencies = [
- "serde",
  "yoke",
  "zerofrom",
  "zerovec-derive",

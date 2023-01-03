@@ -30,6 +30,8 @@ diplomat_result_box_ICU4XDataProvider_ICU4XError ICU4XDataProvider_create_from_b
 
 ICU4XDataProvider* ICU4XDataProvider_create_empty();
 
+ICU4XDataProvider* ICU4XDataProvider_create_baked();
+
 diplomat_result_void_ICU4XError ICU4XDataProvider_fork_by_key(ICU4XDataProvider* self, ICU4XDataProvider* other);
 
 diplomat_result_void_ICU4XError ICU4XDataProvider_fork_by_locale(ICU4XDataProvider* self, ICU4XDataProvider* other);

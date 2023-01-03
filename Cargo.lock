@@ -1414,6 +1414,7 @@ dependencies = [
  "tinystr 0.7.0",
  "unicode-bidi",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
@@ -1937,12 +1938,10 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "lazy_static",
- "litemap",
  "log",
  "reqwest",
  "serde",
  "simple_logger",
- "tinystr 0.7.0",
  "tokio",
  "toml",
  "writeable",

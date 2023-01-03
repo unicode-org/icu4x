@@ -40,6 +40,15 @@
         See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 
 
+    .. js:function:: create_baked()
+
+        Constructs a :js:class:`ICU4XDataProvider` containing baked data.
+
+        When compiling the Rust library, set the ``ICU4X_FFI_BAKED_ROOT`` environment variable to the baked data folder.
+
+        If no data is supplied, this behaves like an empty provider.
+
+
     .. js:function:: fork_by_key(other)
 
         Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider ``other``.

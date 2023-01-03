@@ -17,14 +17,14 @@ $(ALL_RUST):
 $(ALL_HEADERS):
 
 ../../../../../target/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features provider_test
+	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features provider_test,any_provider
 	mv ../../../../../target/debug/libicu_capi_staticlib.a ../../../../../target/debug/libicu_capi_staticlib_test.a
 
 a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
 
 ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	RUSTFLAGS="-Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+	RUSTFLAGS="-Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test,any_provider --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 	mv ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a
 
 web-version.html: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp

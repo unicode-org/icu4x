@@ -64,6 +64,10 @@ export class ICU4XDataProvider {
     return new ICU4XDataProvider(wasm.ICU4XDataProvider_create_empty(), true, []);
   }
 
+  static create_baked() {
+    return new ICU4XDataProvider(wasm.ICU4XDataProvider_create_baked(), true, []);
+  }
+
   fork_by_key(arg_other) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

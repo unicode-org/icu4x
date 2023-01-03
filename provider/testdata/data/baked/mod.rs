@@ -2197,6 +2197,105 @@ macro_rules! impl_data_provider {
             }
         }
     };
+    ($ provider : path , COMPLETE) => {
+        impl_data_provider!($provider);
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::AlnumV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlnumV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::AlnumV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::BlankV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BlankV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::BlankV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::CaseSensitiveV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CaseSensitiveV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::CaseSensitiveV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::ChangesWhenCasemappedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasemappedV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::FullCompositionExclusionV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::FullCompositionExclusionV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::FullCompositionExclusionV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::GraphV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphemeLinkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeLinkV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::GraphemeLinkV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::HyphenV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HyphenV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::HyphenV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfcInertV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::NfcInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfdInertV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::NfdInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfkcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkcInertV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::NfkcInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfkdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkdInertV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::NfkdInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::PrependedConcatenationMarkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrependedConcatenationMarkV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::PrintV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrintV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::PrintV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::SegmentStarterV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SegmentStarterV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::SegmentStarterV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::XdigitV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XdigitV1Marker>, DataError> {
+                Err(DataErrorKind::MissingDataKey.with_req(::icu_properties::provider::XdigitV1Marker::KEY, req))
+            }
+        }
+    };
 }
 /// Implement [`AnyProvider`] on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
@@ -2921,5 +3020,6 @@ macro_rules! impl_any_provider {
         }
     };
 }
+#[allow(dead_code)]
 struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

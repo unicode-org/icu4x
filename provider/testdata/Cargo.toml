@@ -67,8 +67,6 @@ writeable = { version = "0.5", path = "../../utils/writeable", optional = true }
 # databake deps
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
 icu_collections = { version = "1.0.0", path = "../../components/collections" }
-litemap = { version = "0.6", path = "../../utils/litemap", default-features = false }
-tinystr = { version = "0.7", path = "../../utils/tinystr" }
 zerovec = { version = "0.9", path = "../../utils/zerovec" }
 
 # databake options

@@ -36,20 +36,10 @@ pub(crate) struct BakedDataExporter {
     data: Mutex<HashMap<DataKey, HashMap<SyncTokenStream, Vec<String>>>>,
     // All mod.rs files in the module tree. These can only be written after the last flush.
     mod_files: Mutex<HashMap<PathBuf, BTreeSet<String>>>,
-    /// Information to generate implementations. This is populated by `flush` and consumed by `close`.
-    impl_data: Mutex<Vec<ImplData>>,
+    /// Identifiers of the lookup functions for each key. This is populated by `flush` and consumed by `close`.
+    lookup_idents: Mutex<HashMap<SyncTokenStream, SyncTokenStream>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
-}
-
-/// Data required to write the implementations
-struct ImplData {
-    /// The marker of the key
-    marker: SyncTokenStream,
-    /// The path to the lookup function for this marker
-    lookup_ident: SyncTokenStream,
-    /// The feature gate for the marker
-    feature: SyncTokenStream,
 }
 
 impl BakedDataExporter {
@@ -71,7 +61,7 @@ impl BakedDataExporter {
             use_separate_crates,
             data: Default::default(),
             mod_files: Default::default(),
-            impl_data: Default::default(),
+            lookup_idents: Default::default(),
             dependencies: Default::default(),
         })
     }
@@ -183,6 +173,30 @@ impl BakedDataExporter {
             })?;
         Ok(())
     }
+
+    fn feature_gate(&self, marker: &SyncTokenStream, internal: bool) -> TokenStream {
+        let feature = if !self.insert_feature_gates {
+            return quote!();
+        } else if marker.contains("DateSkeletonPatternsV1Marker") {
+            "icu_datetime_experimental"
+        } else {
+            let feature = marker
+                .split(" :: ")
+                .next()
+                .unwrap()
+                .strip_prefix(":: ")
+                .unwrap();
+            if feature.starts_with("icu_provider") {
+                return quote!();
+            }
+            feature
+        };
+        if internal {
+            quote!(#![cfg(feature = #feature)])
+        } else {
+            quote!(#[cfg(feature = #feature)])
+        }
+    }
 }
 
 impl DataExporter for BakedDataExporter {
@@ -205,25 +219,8 @@ impl DataExporter for BakedDataExporter {
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        let marker =
-            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
-                .unwrap();
-
-        let is_datetime_skeletons =
-            marker.segments.iter().next_back().unwrap().ident == "DateSkeletonPatternsV1Marker";
-
-        let feature = if !self.insert_feature_gates {
-            quote!()
-        } else if is_datetime_skeletons {
-            quote! { #![cfg(feature = "icu_datetime_experimental")] }
-        } else {
-            let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            if !feature.starts_with("icu_provider") {
-                quote! { #![cfg(feature = #feature)] }
-            } else {
-                quote!()
-            }
-        };
+        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
+        let feature = self.feature_gate(&marker.to_string(), true);
 
         // Replace non-ident-allowed tokens. This can still fail if a segment starts with
         // a token that is not allowed in an initial position.
@@ -248,7 +245,7 @@ impl DataExporter for BakedDataExporter {
             path = path.join(level.ident.to_string());
         }
 
-        let struct_type = if is_datetime_skeletons {
+        let struct_type = if marker.to_string().contains("DateSkeletonPatternsV1Marker") {
             quote! {
                 &'static [(
                     &'static [::icu_datetime::fields::Field],
@@ -353,11 +350,10 @@ impl DataExporter for BakedDataExporter {
             false,
         )?;
 
-        self.impl_data.lock().expect("poison").push(ImplData {
-            marker: quote!(#marker).to_string(),
-            lookup_ident: quote!(#module_path :: lookup).to_string(),
-            feature: feature.to_string().replacen("# ! [", "# [", 1),
-        });
+        self.lookup_idents.lock().expect("poison").insert(
+            quote!(#marker).to_string(),
+            quote!(#module_path :: lookup).to_string(),
+        );
 
         Ok(())
     }
@@ -365,77 +361,103 @@ impl DataExporter for BakedDataExporter {
     fn close(&mut self) -> Result<(), DataError> {
         // These are BTreeMaps keyed on the marker to keep the output sorted and stable
         let mut data_impls = BTreeMap::new();
+        let mut non_requested_data_impls = BTreeMap::new();
         let mut any_consts = BTreeMap::new();
         let mut any_cases = BTreeMap::new();
 
-        for data in move_out!(self.impl_data)
-            .into_inner()
-            .expect("poison")
+        let mut lookup_idents = move_out!(self.lookup_idents).into_inner().expect("poison");
+
+        for marker in crate::registry::all_keys()
             .into_iter()
+            // HelloWorld is the only key not returned by all_keys
+            .chain(std::iter::once(
+                icu_provider::hello_world::HelloWorldV1Marker::KEY,
+            ))
+            .map(|k| crate::registry::key_to_marker_bake(k, &self.dependencies))
         {
-            let feature = data.feature.parse::<TokenStream>().unwrap();
-            let marker = data.marker.parse::<TokenStream>().unwrap();
-            let lookup_ident = data.lookup_ident.parse::<TokenStream>().unwrap();
+            let marker_str = marker.to_string();
+            let feature = self.feature_gate(&marker_str, false);
 
-            data_impls.insert(data.marker.clone(),
-                quote! {
-                    #feature
-                    impl DataProvider<#marker> for $provider {
-                        fn load(
-                            &self,
-                            req: DataRequest,
-                        ) -> Result<DataResponse<#marker>, DataError> {
-                            #lookup_ident(&req.locale)
-                                .map(zerofrom::ZeroFrom::zero_from)
-                                .map(DataPayload::from_owned)
-                                .map(|payload| {
-                                    DataResponse {
-                                        metadata: Default::default(),
-                                        payload: Some(payload),
-                                    }
-                                })
-                                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(#marker::KEY, req))
-                        }
-                    }
-                });
+            if let Some(lookup_ident) = lookup_idents.remove(&marker_str) {
+                let lookup_ident = lookup_ident.parse::<TokenStream>().unwrap();
 
-            let hash_ident = data
-                .marker
-                .split(' ')
-                .next_back()
-                .unwrap()
-                .to_ascii_uppercase()
-                .parse::<TokenStream>()
-                .unwrap();
-            any_consts.insert(
-                data.marker.clone(),
-                quote! {
-                    #feature
-                    const #hash_ident: ::icu_provider::DataKeyHash = #marker::KEY.hashed();
-                },
-            );
-            any_cases.insert(
-                data.marker.clone(),
-                if data.marker
-                    == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker"
-                {
+                data_impls.insert(marker_str.clone(),
                     quote! {
                         #feature
-                        #hash_ident => {
-                            #lookup_ident(&req.locale)
-                                .map(zerofrom::ZeroFrom::zero_from)
-                                .map(DataPayload::<#marker>::from_owned)
-                                .map(DataPayload::wrap_into_any_payload)
+                        impl DataProvider<#marker> for $provider {
+                            fn load(
+                                &self,
+                                req: DataRequest,
+                            ) -> Result<DataResponse<#marker>, DataError> {
+                                #lookup_ident(&req.locale)
+                                    .map(zerofrom::ZeroFrom::zero_from)
+                                    .map(DataPayload::from_owned)
+                                    .map(|payload| {
+                                        DataResponse {
+                                            metadata: Default::default(),
+                                            payload: Some(payload),
+                                        }
+                                    })
+                                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(#marker::KEY, req))
+                            }
                         }
-                    }
-                } else {
+                    });
+
+                let hash_ident = marker_str
+                    .split(' ')
+                    .next_back()
+                    .unwrap()
+                    .to_ascii_uppercase()
+                    .parse::<TokenStream>()
+                    .unwrap();
+
+                any_consts.insert(
+                    marker_str.clone(),
                     quote! {
                         #feature
-                        #hash_ident => #lookup_ident(&req.locale).map(AnyPayload::from_static_ref),
-                    }
-                },
-            );
+                        const #hash_ident: ::icu_provider::DataKeyHash = #marker::KEY.hashed();
+                    },
+                );
+                any_cases.insert(
+                    marker_str.clone(),
+                    if marker_str
+                        == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker"
+                    {
+                        quote! {
+                            #feature
+                            #hash_ident => {
+                                #lookup_ident(&req.locale)
+                                    .map(zerofrom::ZeroFrom::zero_from)
+                                    .map(DataPayload::<#marker>::from_owned)
+                                    .map(DataPayload::wrap_into_any_payload)
+                            }
+                        }
+                    } else {
+                        quote! {
+                            #feature
+                            #hash_ident => #lookup_ident(&req.locale).map(AnyPayload::from_static_ref),
+                        }
+                    },
+                );
+            } else {
+                non_requested_data_impls.insert(
+                    marker_str.clone(),
+                    quote! {
+                        #feature
+                        impl DataProvider<#marker> for $provider {
+                            fn load(
+                                &self,
+                                req: DataRequest,
+                            ) -> Result<DataResponse<#marker>, DataError> {
+                                    Err(DataErrorKind::MissingDataKey.with_req(#marker::KEY, req))
+                            }
+                        }
+                    },
+                );
+            }
         }
+
+        assert!(lookup_idents.is_empty());
 
         let any_code = if any_cases.is_empty() {
             quote! {
@@ -468,6 +490,7 @@ impl DataExporter for BakedDataExporter {
             .map(|p| p.parse::<TokenStream>().unwrap());
 
         let data_impls = data_impls.values();
+        let non_requested_data_impls = non_requested_data_impls.values();
 
         self.write_to_file(
             PathBuf::from("mod"),
@@ -494,7 +517,11 @@ impl DataExporter for BakedDataExporter {
                 macro_rules! impl_data_provider {
                     ($provider:path) => {
                         #(#data_impls)*
-                    }
+                    };
+                    ($provider:path, COMPLETE) => {
+                        impl_data_provider!($provider);
+                        #(#non_requested_data_impls)*
+                    };
                 }
 
                 /// Implement [`AnyProvider`] on the given struct using the data
@@ -520,6 +547,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
 
+                #[allow(dead_code)]
                 struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },
