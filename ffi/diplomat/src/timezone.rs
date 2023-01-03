@@ -29,7 +29,9 @@ pub mod ffi {
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_bytes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_bytes, FnInStruct, hidden)]
         pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
             let bytes = s.as_bytes();
             CustomTimeZone::try_from_bytes(bytes)
