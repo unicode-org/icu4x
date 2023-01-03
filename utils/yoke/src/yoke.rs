@@ -8,6 +8,7 @@ use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
 use crate::IsCovariant;
 use crate::Yokeable;
+use core::cell::Cell;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
@@ -18,6 +19,20 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
+
+
+/// Makes wrapper types invariant over all lifetimes in T
+struct InvariantMarker<T>(PhantomData<Cell<T>>);
+impl<T> Default for InvariantMarker<T> {
+    fn default() -> Self {
+        InvariantMarker(PhantomData)
+    }
+}
+/// Annoyingly, there is no invariant wrapper in Rust that is Sync,
+/// doesn't have its own lifetimes, and is available in `core`.
+/// We have to make our own by wrapping a Cell in a type that opts in to Sync.
+unsafe impl<T> Sync for InvariantMarker<T> {}
+
 
 /// A Cow-like borrowed object "yoked" to its backing data.
 ///
@@ -81,6 +96,8 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
+    #[allow(unused)]
+    marker: InvariantMarker<C>,
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
@@ -116,12 +133,18 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     /// ```
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where
+        // safety note: This works by enforcing that the *only* place the return value of F
+        // can borrow from is the cart, since `F` must be valid for all lifetimes `'de`
+        //
+        // safety note 2: this is partially a lie due to the implied bound `C: 'de`,
+        // See the safety docs at the bottom of this file for more information
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     {
         let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -138,6 +161,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         Ok(Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
+            marker: InvariantMarker::default(),
         })
     }
 
@@ -269,6 +293,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
     ///   returned cart type `C`.
+    /// - Lifetimes inside C must not be lengthened, even if they are themselves contravariant.
+    ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8),
+    ///   even though that is typically safe.
     ///
     /// Typically, this means implementing `f` as something which _wraps_ the inner cart type `C`.
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
@@ -279,6 +306,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: self.yokeable,
             cart: f(self.cart),
+            marker: InvariantMarker::default()
         }
     }
 
@@ -406,7 +434,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self { yokeable, cart: () }
+        Self { yokeable, cart: (), marker: InvariantMarker::default() }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, ()>`
@@ -448,6 +476,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         Self {
             yokeable,
             cart: None,
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -506,6 +535,7 @@ where
         Yoke {
             yokeable: unsafe { Y::make(this_hack.clone().0) },
             cart: self.cart.clone(),
+            marker: InvariantMarker::default(),
         }
     }
 }
@@ -625,6 +655,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -646,6 +677,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -723,6 +755,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
+            marker: InvariantMarker::default(),
         })
     }
 
@@ -744,6 +777,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
+            marker: InvariantMarker::default(),
         })
     }
     /// This is similar to [`Yoke::map_project`], but it works around older versions
@@ -767,6 +801,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -792,6 +827,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -817,6 +853,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
+            marker: InvariantMarker::default(),
         })
     }
 
@@ -843,6 +880,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
+            marker: InvariantMarker::default(),
         })
     }
 }
