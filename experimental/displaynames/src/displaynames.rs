@@ -9,7 +9,6 @@ use crate::provider::RegionDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 use tinystr::TinyAsciiStr;
-use tinystr::TinyStrError;
 
 /// Lookup of the terrritory display names by region code.
 ///
@@ -30,7 +29,7 @@ use tinystr::TinyStrError;
 /// .expect("Data should load successfully");
 ///
 /// let region_code = "AE";
-/// assert_eq!(display_name.of(&region_code), Ok("United Arab Emirates"));
+/// assert_eq!(display_name.of(&region_code), Some("United Arab Emirates"));
 /// ```
 pub struct DisplayNames {
     options: DisplayNamesOptions,
@@ -58,19 +57,29 @@ impl DisplayNames {
         Ok(Self { options, data })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        functions: [
+            Self::try_new_region_unstable,
+            try_new_region_with_any_provider,
+            try_new_region_with_buffer_provider
+        ]
+    );
+
     /// Returns the display name of the region for a given string.
     /// This function is locale-sensitive.
-    pub fn of(&self, region_code: &str) -> Result<&str, TinyStrError> {
+    pub fn of(&self, region_code: &str) -> Option<&str> {
         match <TinyAsciiStr<3>>::from_str(region_code) {
             Ok(key) => {
                 let data = self.data.get();
-                let display_name_result = match self.options.style {
+                match self.options.style {
                     Style::Short => data.short_names.get(&key),
                     _ => data.names.get(&key),
-                };
-                Ok(display_name_result.unwrap())
+                }
             }
-            Err(err) => Err(err),
+            Err(_) => None,
         }
     }
 }

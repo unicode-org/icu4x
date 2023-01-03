@@ -407,7 +407,7 @@ impl AnyCalendar {
     ///
     /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
     ///
-    /// This needs the `"serde"` feature to be enabled to be used
+    /// This needs the `"serde"` Cargo feature to be enabled to be used
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
         provider: &P,

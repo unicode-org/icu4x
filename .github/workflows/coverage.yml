@@ -17,7 +17,7 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v2
+      - uses:                   actions/checkout@v3
 
       # TODO(#315) Re-include caching that also includes the Rust version in the cache key
 
@@ -29,7 +29,7 @@ jobs:
           echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
         shell: bash
       - name: Attempt to load cached grcov
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: grcov-cache
         with:
           path: |
@@ -68,7 +68,7 @@ jobs:
           path-to-lcov:         ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
-        uses:                   codecov/codecov-action@v1
+        uses:                   codecov/codecov-action@v3
         with:
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true

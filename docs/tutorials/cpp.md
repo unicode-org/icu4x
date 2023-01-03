@@ -4,7 +4,7 @@ ICU4X's core functionality is completely available from C++, with headers genera
 
 Generated headers can be found under [`ffi/diplomat/cpp/include`], with Sphinx docs at [`ffi/diplomat/cpp/docs`]. The port is header-only; no additional C++ translation units need to be compiled to use ICU4X from C++.
 
-Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate ([crates.io][staticlib-crates], [source][staticlib-source]) with the `cpp_default` feature, and link the resultant static library to their C++ application. This crate builds on the `icu_capi` crate: a `no_std` crate containing all of the relevant [Diplomat]-generated `extern "C"` declarations.
+Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate ([crates.io][staticlib-crates], [source][staticlib-source]) with the `cpp_default` Cargo feature, and link the resultant static library to their C++ application. This crate builds on the `icu_capi` crate: a `no_std` crate containing all of the relevant [Diplomat]-generated `extern "C"` declarations.
 
 Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
 
@@ -16,7 +16,7 @@ _We are still working on improving the user experience of using ICU4X from other
     - You can use `cargo clone icu_capi_staticlib@1.0.0` to do this (`cargo install cargo-clone` if the command is not installed)
 - Inside the crate you can use `cargo build` to build the library
     - Be sure to pass `--release` to get an optimized build
-    - Specify features with `--features ...`:
+    - Specify Cargo features with `--features ...`:
         - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
         - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
         - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate.

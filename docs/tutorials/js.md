@@ -8,7 +8,7 @@ _We are still working on improving the user experience of using ICU4X from other
 
 # Building the package
 
-The example package contains test data, which is why it's not released on NPM. You will need to build the package yourself to select the desired Rust features.
+The example package contains test data, which is why it's not released on NPM. You will need to build the package yourself to select the desired Cargo features.
 
 See [`ffi/diplomat/js/examples/node/package.json`] for inspiration.
 

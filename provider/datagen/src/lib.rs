@@ -30,9 +30,23 @@
 //! ```
 //!
 //! ## Command line
-//! The command line interface can be installed with the `bin` feature.
+//!
+//! The command line interface can be installed with the `bin` Cargo feature.
+//!
 //! ```bash
 //! $ cargo install icu_datagen --features bin
+//! ```
+//!
+//! If you need to export keys for experimental components,
+//! enable the `experimental` Cargo feature:
+//!
+//! ```bash
+//! $ cargo install icu_datagen --features bin,experimental
+//! ```
+//!
+//! Once the tool is installed, you can invoke it like this:
+//!
+//! ```bash
 //! $ icu4x-datagen \
 //! >    --all-keys \
 //! >    --locales de en-AU \

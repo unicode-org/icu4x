@@ -76,7 +76,8 @@ const POSTCARD_ZEROHASHMAP: [u8; 412] = [
     115, 101,
 ];
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate() {
     let map = build_zeromap(false);
@@ -84,18 +85,11 @@ fn generate() {
     println!("{:?}", buf);
 }
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate_hashmap() {
     let map = build_hashmap(false);
-    let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
-}
-
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
-#[allow(dead_code)]
-fn generate_zerohashmap() {
-    let map = build_zerohashmap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
     println!("{:?}", buf);
 }
