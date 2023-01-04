@@ -8,7 +8,6 @@ use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
 use crate::IsCovariant;
 use crate::Yokeable;
-use core::cell::Cell;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use stable_deref_trait::StableDeref;
@@ -84,7 +83,7 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     cart: C,
     // See the safety docs for attach_to_cart at the bottom of this file for more information
     #[allow(unused)]
-    marker: InvariantMarker<C>,
+    marker: PhantomData<fn(C) -> C>,
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
@@ -131,7 +130,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -148,7 +147,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         Ok(Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         })
     }
 
@@ -293,7 +292,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: self.yokeable,
             cart: f(self.cart),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -424,7 +423,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
         Self {
             yokeable,
             cart: (),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -467,7 +466,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         Self {
             yokeable,
             cart: None,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -526,7 +525,7 @@ where
         Yoke {
             yokeable: unsafe { Y::make(this_hack.clone().0) },
             cart: self.cart.clone(),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 }
@@ -646,7 +645,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -668,7 +667,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -746,7 +745,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         })
     }
 
@@ -768,7 +767,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         })
     }
     /// This is similar to [`Yoke::map_project`], but it works around older versions
@@ -792,7 +791,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -818,7 +817,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         }
     }
 
@@ -844,7 +843,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         })
     }
 
@@ -871,7 +870,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: InvariantMarker::default(),
+            marker: PhantomData,
         })
     }
 }
@@ -1184,7 +1183,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
 /// the output yokeable can _only_ have borrowed data flow in to it from the input. All paths of unsoundness require the
 /// unification of an existential and universal lifetime, which isn't possible.
-const _projecttest: () = ();
+const _: () = ();
 
 /// # Safety docs for attach_to_cart()'s signature
 ///
@@ -1322,16 +1321,4 @@ const _projecttest: () = ();
 ///     println!("post-drop: {reference}");
 /// }
 /// ```
-const _attachtest: () = ();
-
-/// Makes wrapper types invariant over all lifetimes in T
-struct InvariantMarker<T>(PhantomData<Cell<T>>);
-impl<T> Default for InvariantMarker<T> {
-    fn default() -> Self {
-        InvariantMarker(PhantomData)
-    }
-}
-/// Annoyingly, there is no invariant wrapper in Rust that is Sync,
-/// doesn't have its own lifetimes, and is available in `core`.
-/// We have to make our own by wrapping a Cell in a type that opts in to Sync.
-unsafe impl<T> Sync for InvariantMarker<T> {}
+const _: () = ();
