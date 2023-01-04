@@ -18,8 +18,8 @@ impl Default for GmtOffset {
     }
 }
 
-fn try_get_time_component(chars: &[u8; 2]) -> Option<i32> {
-    let &[tens, ones] = chars;
+fn try_get_time_component(chars: [u8; 2]) -> Option<i32> {
+    let [tens, ones] = chars;
     Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
 }
 
@@ -75,20 +75,30 @@ impl GmtOffset {
     /// assert_eq!(offset_err0, TimeZoneError::InvalidOffset);
     /// assert_eq!(offset_err1, TimeZoneError::InvalidOffset);
     /// ```
-    pub fn try_from_bytes(chars: &[u8]) -> Result<Self, TimeZoneError> {
-        let mut it = chars.iter();
-        let offset_sign = match it.next() {
-            Some(b'+') => 1,
-            Some(b'-') => -1,
-            Some(b'Z') => return Ok(Self(0)),
+    pub fn try_from_bytes(input: &[u8]) -> Result<Self, TimeZoneError> {
+        let mut chars = input;
+        let offset_sign = match chars {
+            [b'+', rest @ ..] => {
+                chars = rest;
+                1
+            }
+            [b'-', rest @ ..] => {
+                chars = rest;
+                -1
+            }
+            // Unicode minus ("\u{2212}" == [226, 136, 146])
+            [226, 136, 146, rest @ ..] => {
+                chars = rest;
+                -1
+            }
+            [b'Z'] => return Ok(Self(0)), // this is actually a bug fix, before it accepted "Zanything"
             _ => return Err(TimeZoneError::InvalidOffset),
         };
 
-        let chars = it.as_slice();
         let seconds = match chars {
             /* ±hh */
             &[h1, h2] => {
-                let hour = try_get_time_component(&[h1, h2]).ok_or(TimeZoneError::InvalidOffset)?;
+                let hour = try_get_time_component([h1, h2]).ok_or(TimeZoneError::InvalidOffset)?;
                 if hour > 24 {
                     return Err(TimeZoneError::InvalidOffset);
                 }
@@ -96,12 +106,12 @@ impl GmtOffset {
             }
             /* ±hhmm, ±hh:mm */
             &[h1, h2, m1, m2] | &[h1, h2, b':', m1, m2] => {
-                let hour = try_get_time_component(&[h1, h2]).ok_or(TimeZoneError::InvalidOffset)?;
+                let hour = try_get_time_component([h1, h2]).ok_or(TimeZoneError::InvalidOffset)?;
                 if hour > 24 {
                     return Err(TimeZoneError::InvalidOffset);
                 }
                 let minute =
-                    try_get_time_component(&[m1, m2]).ok_or(TimeZoneError::InvalidOffset)?;
+                    try_get_time_component([m1, m2]).ok_or(TimeZoneError::InvalidOffset)?;
                 if minute > 60 {
                     return Err(TimeZoneError::InvalidOffset);
                 }
