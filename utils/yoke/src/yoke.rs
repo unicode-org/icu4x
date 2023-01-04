@@ -123,7 +123,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         // safety note: This works by enforcing that the *only* place the return value of F
         // can borrow from is the cart, since `F` must be valid for all lifetimes `'de`
         //
-        // safety note 2: this is partially a lie due to the implied bound `C: 'de`,
+        // safety note 2: this is partially a lie due to the implied bound `C::Target: 'de`,
         // See the safety docs at the bottom of this file for more information
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
     {
