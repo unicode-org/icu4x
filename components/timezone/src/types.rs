@@ -18,8 +18,7 @@ impl Default for GmtOffset {
     }
 }
 
-fn try_get_time_component(chars: [u8; 2]) -> Option<i32> {
-    let [tens, ones] = chars;
+fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
     Some(((tens as char).to_digit(10)? * 10 + (ones as char).to_digit(10)?) as i32)
 }
 
@@ -91,7 +90,7 @@ impl GmtOffset {
                 chars = rest;
                 -1
             }
-            [b'Z'] => return Ok(Self(0)), // this is actually a bug fix, before it accepted "Zanything"
+            [b'Z'] => return Ok(Self(0)),
             _ => return Err(TimeZoneError::InvalidOffset),
         };
 
