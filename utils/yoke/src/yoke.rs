@@ -82,6 +82,8 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     yokeable: Y,
     cart: C,
     // See the safety docs for attach_to_cart at the bottom of this file for more information
+    // This marker forces Yoke to be invariant over all lifetimes in C (fn args are contravariant,
+    // fn return types are covariant, both at once gets us invariance)
     #[allow(unused)]
     marker: PhantomData<fn(C) -> C>,
 }
