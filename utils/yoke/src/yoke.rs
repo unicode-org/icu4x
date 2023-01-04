@@ -20,20 +20,6 @@ use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
 
-
-/// Makes wrapper types invariant over all lifetimes in T
-struct InvariantMarker<T>(PhantomData<Cell<T>>);
-impl<T> Default for InvariantMarker<T> {
-    fn default() -> Self {
-        InvariantMarker(PhantomData)
-    }
-}
-/// Annoyingly, there is no invariant wrapper in Rust that is Sync,
-/// doesn't have its own lifetimes, and is available in `core`.
-/// We have to make our own by wrapping a Cell in a type that opts in to Sync.
-unsafe impl<T> Sync for InvariantMarker<T> {}
-
-
 /// A Cow-like borrowed object "yoked" to its backing data.
 ///
 /// This allows things like zero copy deserialized data to carry around
@@ -96,6 +82,7 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
+    // See the safety docs for attach_to_cart at the bottom of this file for more information
     #[allow(unused)]
     marker: InvariantMarker<C>,
 }
@@ -306,7 +293,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: self.yokeable,
             cart: f(self.cart),
-            marker: InvariantMarker::default()
+            marker: InvariantMarker::default(),
         }
     }
 
@@ -434,7 +421,11 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self { yokeable, cart: (), marker: InvariantMarker::default() }
+        Self {
+            yokeable,
+            cart: (),
+            marker: InvariantMarker::default(),
+        }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, ()>`
@@ -1091,7 +1082,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-/// Safety docs for project()
+/// # Safety docs for project()
 ///
 /// (Docs are on a private const to allow the use of compile_fail doctests)
 ///
@@ -1193,4 +1184,154 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// Essentially, safety is achieved by using `for<'a> fn(...)` with `'a` used in both `Yokeable`s to ensure that
 /// the output yokeable can _only_ have borrowed data flow in to it from the input. All paths of unsoundness require the
 /// unification of an existential and universal lifetime, which isn't possible.
-const _: () = ();
+const _projecttest: () = ();
+
+/// # Safety docs for attach_to_cart()'s signature
+///
+/// The `attach_to_cart()` family of methods get by by using the following bound:
+///
+/// ```rust,ignore
+/// F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output
+/// ```
+///
+/// to enforce that the yoking closure produces a yokeable that is *only* allowed to borrow from the cart.
+/// A way to be sure of this is as follows: imagine if `F` *did* borrow data of lifetime `'a` and stuff it in
+/// its output. Then that lifetime `'a` would have to live at least as long as `'de` *for all `'de`*.
+/// The only lifetime that satisfies that is `'static` (since at least one of the potential `'de`s is `'static`),
+/// and we're fine with that.
+///
+/// ## Implied bounds and variance
+///
+/// Okay, now forget everything I just said. It's a convenient analysis, but it's not actually what's happening,
+/// due to implied bounds.
+///
+/// One thing to remember is that we are okay with the cart itself borrowing from places,
+/// e.g. `&[u8]` is a valid cart, as is `Box<&[u8]>`. `C` is not `'static`, and neither is `C::Target`.
+///
+/// (I'm going to use `CT` in prose to refer to `C::Target` here, since almost everything here has to do
+/// with C::Target and not C itself.)
+///
+/// Unfortunately, there's a sneaky additional bound inside `F`. The signature of `F` is *actually*
+///
+/// ```rust,ignore
+/// F: for<'de> where<C::Target: 'de> FnOnce(&'de C::Target) -> <Y as Yokeable<'de>>::Output
+/// ```
+///
+/// using made-up "where clause inside HRTB" syntax to represent a type that can be represented inside the compiler
+/// and type system but not in Rust code. The `CT: 'de` bond comes from the `&'de C::Target`: any time you
+/// write `&'a T`, an implied bound of `T: 'a` materializes and is stored alongside it, since references cannot refer
+/// to data that itself refers to data of shorter lifetimes. If a reference is valid, its referent must be valid for
+/// the duration of the reference's lifetime, so every reference *inside* its referent must also be valid, giving us `T: 'a`.
+/// This kind of constraint is often called a "well formedness" constraint: `&'a T` is not "well formed" without that
+/// bound, and rustc is being helpful by giving it to us for free.
+///
+/// Unfortunately, this messes with our universal quantification. The `for<'de>` is no longer "For all lifetimes `'de`",
+/// it is "for all lifetimes `'de` *where `CT: 'de`*". And if `CT` borrows from somewhere (with lifetime `'ct`), then we get a
+/// `'ct: 'de` bound, and `'de` candidates that live longer than `'ct` won't actually be considered.
+/// The neat little logic at the beginning stops working.
+///
+/// `attach_to_cart()` will instead enforce that the produced yokeable *either* borrows from the cart (fine), or from
+/// data that has a lifetime that is at least `'ct`. Which means that `attach_to_cart()` will allow us to borrow locals
+/// provided they live at least as long as `'ct`.
+///
+/// Is this a problem?
+///
+/// This is totally fine if CT's lifetime is covariant: if C is something like `Box<&'ct [u8]>`, even if our
+/// yoked object borrows from locals outliving `'ct`, our Yoke can't outlive that
+/// lifetime `'ct` anyway (since it's a part of the cart type), so we're fine.
+///
+/// However it's completely broken for contravariant carts (e.g. `Box<fn(&'ct u8)>`). In that case
+/// we still get `'ct: 'de`, and we still end up being able to
+/// borrow from locals that outlive `'ct`. However, our Yoke _can_ outlive
+/// that lifetime, because Yoke shares its variance over `'ct`
+/// with the cart type, and the cart type is contravariant over `'ct`.
+/// So the Yoke can be upcast to having a longer lifetime than `'ct`, and *that* Yoke
+/// can outlive `'ct`.
+///
+/// We fix this by just not allowing yoke to ever be upcast over lifetimes contained in the cart
+/// by forcing them to be invariant. This is unfortunate but ultimately fine.
+///
+/// An alternate fix would be to force `C::Target: 'static` in `attach_to_cart()`, which would make it work
+/// for fewer types, but would also allow Yoke to continue to be covariant over cart lifetimes if necessary.
+///
+/// See https://github.com/unicode-org/icu4x/issues/2926
+/// See also https://github.com/rust-lang/rust/issues/106431 for potentially fixing this upstream by
+/// changing how the bound works.
+///
+/// # Tests
+///
+/// Here's a broken `attach_to_cart()` that attempts to borrow from a local:
+///
+/// ```rust,compile_fail
+/// use yoke::{Yoke, Yokeable};
+///
+/// let cart = vec![1, 2, 3, 4].into_boxed_slice();
+/// let local = vec![4, 5, 6, 7];
+/// let yoke: Yoke<&[u8], Box<[u8]>> = Yoke::attach_to_cart(cart, |_| &*local);
+/// ```
+///
+/// Fails as expected.
+///
+/// Here's an `attach_to_cart()` that is successfully able to borrow from a longer-lived local due to
+/// the cart being covariant:
+///
+/// ```rust
+/// use yoke::{Yoke, Yokeable};
+/// // longer lived
+/// let local = vec![4, 5, 6, 7];
+///
+/// let backing = vec![1, 2, 3, 4];
+/// let cart = Box::new(&*backing);
+///
+/// let yoke: Yoke<&[u8], Box<&[u8]>> = Yoke::attach_to_cart(cart, |_| &*local);
+/// println!("{:?}", yoke.get());
+/// ```
+///
+/// Finally, here's an `attach_to_cart()` that successfully borrows from a longer lived local
+/// in the case of a contravariant lifetime.
+///
+/// ```rust
+/// use yoke::Yoke;
+///
+/// type Contra<'a> = fn(&'a ());
+///
+/// fn main() {
+///     let local = String::from("Hello World!");
+///     let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
+///     println!("{:?}", yoke.get());
+/// }
+/// ```
+///
+/// However, it cannot be transformed to cause unsoundness (testcase from #2926)
+///
+/// ```rust, compile_fail
+/// use yoke::Yoke;
+///
+/// type Contra<'a> = fn(&'a ());
+///
+/// fn main() {
+///     let local = String::from("Hello World!");
+///     let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
+///     println!("{:?}", yoke.get());
+///     let yoke_longer: Yoke<&'static str, Box<Contra<'static>>> = yoke;
+///     let leaked: &'static Yoke<&'static str, Box<Contra<'static>>> = Box::leak(Box::new(yoke_longer));
+///     let reference: &'static str = leaked.get();
+///
+///     println!("pre-drop: {reference}");
+///     drop(local);
+///     println!("post-drop: {reference}");
+/// }
+/// ```
+const _attachtest: () = ();
+
+/// Makes wrapper types invariant over all lifetimes in T
+struct InvariantMarker<T>(PhantomData<Cell<T>>);
+impl<T> Default for InvariantMarker<T> {
+    fn default() -> Self {
+        InvariantMarker(PhantomData)
+    }
+}
+/// Annoyingly, there is no invariant wrapper in Rust that is Sync,
+/// doesn't have its own lifetimes, and is available in `core`.
+/// We have to make our own by wrapping a Cell in a type that opts in to Sync.
+unsafe impl<T> Sync for InvariantMarker<T> {}
