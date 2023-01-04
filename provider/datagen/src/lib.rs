@@ -48,7 +48,6 @@
 //!
 //! ```bash
 //! $ icu4x-datagen \
-//! >    --all-keys \
 //! >    --locales de en-AU \
 //! >    --format blob \
 //! >    --out data.postcard
@@ -80,6 +79,7 @@ mod testutil;
 mod transform;
 
 pub use error::*;
+use icu_provider_adapters::empty::EmptyDataProvider;
 pub use registry::all_keys;
 pub use source::*;
 
@@ -256,6 +256,8 @@ pub enum Out {
         insert_feature_gates: bool,
         /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
+        /// Whether to overwrite existing data
+        overwrite: bool,
     },
 }
 
@@ -305,12 +307,14 @@ pub fn datagen(
                     pretty,
                     insert_feature_gates,
                     use_separate_crates,
+                    overwrite,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
                     use_separate_crates,
-                )),
+                    overwrite,
+                )?),
             })
         })
         .collect::<Result<Vec<_>, DataError>>()?;
@@ -319,13 +323,17 @@ pub fn datagen(
         source: source.clone(),
     });
 
-    if let Some(locales) = locales {
-        let locales = locales.to_vec();
-        provider = Box::new(
-            provider
-                .filterable("icu4x-datagen locales")
-                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        );
+    match locales {
+        Some(&[]) => provider = Box::new(EmptyDataProvider::default()),
+        Some(locales) => {
+            let locales = locales.to_vec();
+            provider = Box::new(
+                provider
+                    .filterable("icu4x-datagen locales")
+                    .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
+            );
+        }
+        _ => {}
     }
 
     keys.into_par_iter().try_for_each(|&key| {

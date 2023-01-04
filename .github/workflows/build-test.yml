@@ -296,10 +296,7 @@ jobs:
           -p icu_datagen --features bin --release --
           --icuexport-root data/source/icuexportdata_release-72-1.zip
           --cldr-root data/source/cldr-42.0.0-json-full.zip
-          --all-locales
-          --all-keys
           --format blob
-          --syntax postcard
           --out data/full.postcard
 
   # FFI job - runs all "cargo make" FFI tests

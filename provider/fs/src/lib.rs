@@ -66,9 +66,8 @@
 //!   --bin icu4x-datagen \
 //!   --                  \
 //!   --cldr-tag 41.0.0   \
+//!   --format dir        \
 //!   --out ./icu4x-data  \
-//!   --all-keys          \
-//!   --all-locales
 //! ```
 //!
 //! To export `bincode` format, use
@@ -78,10 +77,9 @@
 //!   --bin icu4x-datagen \
 //!   --                  \
 //!   --cldr-tag 41.0.0   \
+//!   --format dir        \
+//!   --syntax bincode    \
 //!   --out ./icu4x-data  \
-//!   --all-keys          \
-//!   --all-locales       \
-//!   -s bincode
 //! ```
 //!
 //! *Notice:* In order to use `bincode` encoded data in production, [`icu_provider`](crate) has to be

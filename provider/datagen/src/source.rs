@@ -13,6 +13,7 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use std::io::Cursor;
 use std::io::Read;
+use std::ops::Deref;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -39,10 +40,12 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(&segmenter_path).expect("valid dir")),
-            segmenter_lstm_paths: Arc::new(
-                SerdeCache::new(segmenter_path.join("lstm")).expect("valid dir"),
-            ),
+            segmenter_paths: Arc::new(SerdeCache::new(
+                AbstractFs::new(&segmenter_path).expect("valid dir"),
+            )),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(
+                AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
+            )),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: vec![],
@@ -72,7 +75,10 @@ impl SourceData {
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::new(root, locale_subset)?)),
+            cldr_paths: Some(Arc::new(CldrCache {
+                cache: SerdeCache::new(AbstractFs::new(root)?),
+                locale_subset,
+            })),
             ..self
         })
     }
@@ -82,7 +88,7 @@ impl SourceData {
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(root)?)),
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
             ..self
         })
     }
@@ -94,14 +100,17 @@ impl SourceData {
         tag: &str,
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
-        self.with_cldr(
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build().and_then(|cache| cache
-                .cached_path(
-                    &format!(
-                        "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                        tag, tag, locale_subset))).map_err(|e| DataError::custom("Download").with_display_context(&e))?,
-            locale_subset
-            )
+        let resource = format!(
+            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+            tag, tag, locale_subset
+        );
+        Ok(Self {
+            cldr_paths: Some(Arc::new(CldrCache {
+                cache: SerdeCache::new(AbstractFs::new_lazy(Box::new(move || download(&resource)))),
+                locale_subset,
+            })),
+            ..self
+        })
     }
 
     /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
@@ -110,44 +119,55 @@ impl SourceData {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
         }
-        self.with_icuexport(
-            cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build().and_then(|cache| cache
-                .cached_path(
-                    &format!("https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip", tag, tag.replace('/', "-"))
-            )).map_err(|e| DataError::custom("Download").with_display_context(&e))?)
+        let resource = format!(
+            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            tag,
+            tag.replace('/', "-")
+        );
+        Ok(Self {
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_lazy(Box::new(
+                move || download(&resource),
+            ))))),
+            ..self
+        })
     }
 
     /// Adds CLDR data to this `DataSource`. This data will be downloaded from the `latest` GitHub tag.
     pub fn with_cldr_latest(self, locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
-        let response = reqwest::blocking::Client::new()
-            .head("https://github.com/unicode-org/cldr-json/releases/latest")
-            .send()
-            .map_err(|e| DataError::custom("reqwest error").with_display_context(&e))?;
-        self.with_cldr_for_tag(
-            response
-                .url()
-                .path()
-                .split('/')
-                .next_back()
-                .expect("split is non-empty"),
-            locale_subset,
-        )
+        let path = Box::new(move || {
+            let tag = follow_redirect_and_get_last_element(
+                "https://github.com/unicode-org/cldr-json/releases/latest",
+            )?;
+            download(&format!(
+                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                tag, tag, locale_subset
+            ))
+        });
+        Ok(Self {
+            cldr_paths: Some(Arc::new(CldrCache {
+                cache: SerdeCache::new(AbstractFs::new_lazy(path)),
+                locale_subset,
+            })),
+            ..self
+        })
     }
 
     /// Adds ICU export data to this `DataSource`. This data will be downloaded from the `latest` GitHub tag.
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
-        let response = reqwest::blocking::Client::new()
-            .head("https://github.com/unicode-org/icu/releases/latest")
-            .send()
-            .map_err(|e| DataError::custom("reqwest error").with_display_context(&e))?;
-        self.with_icuexport_for_tag(
-            response
-                .url()
-                .path()
-                .split('/')
-                .next_back()
-                .expect("split is non-empty"),
-        )
+        let path = Box::new(move || {
+            let tag = follow_redirect_and_get_last_element(
+                "https://github.com/unicode-org/icu/releases/latest",
+            )?;
+            download(&format!(
+                "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+                tag,
+                tag.replace('/', "-")
+            ))
+        });
+        Ok(Self {
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_lazy(path)))),
+            ..self
+        })
     }
 
     /// Set this to use tries optimized for speed instead of data size
@@ -211,6 +231,30 @@ impl SourceData {
     }
 }
 
+fn follow_redirect_and_get_last_element(redirector: &str) -> Result<String, DataError> {
+    let response = reqwest::blocking::Client::new()
+        .head(redirector)
+        .send()
+        .map_err(|e| DataError::custom("reqwest error").with_display_context(&e))?;
+    Ok(response
+        .url()
+        .path()
+        .split('/')
+        .next_back()
+        .expect("split is non-empty")
+        .to_string())
+}
+
+fn download(resource: &str) -> Result<PathBuf, DataError> {
+    cached_path::CacheBuilder::new()
+        .freshness_lifetime(u64::MAX)
+        .progress_bar(None)
+        .build()
+        .unwrap()
+        .cached_path(resource)
+        .map_err(|e| DataError::custom("Download").with_display_context(&e))
+}
+
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum IcuTrieType {
     Fast,
@@ -272,11 +316,11 @@ impl Debug for SerdeCache {
 }
 
 impl SerdeCache {
-    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
-        Ok(Self {
-            root: AbstractFs::new(root)?,
+    pub fn new(root: AbstractFs) -> Self {
+        Self {
+            root,
             cache: FrozenMap::new(),
-        })
+        }
     }
 
     fn read_and_parse<S>(
@@ -324,10 +368,18 @@ impl SerdeCache {
     }
 }
 
-#[derive(Debug)]
-enum AbstractFs {
+type LazyPath = Box<dyn Fn() -> Result<PathBuf, DataError> + 'static + Sync + Send>;
+type Zip = ZipArchive<Cursor<Vec<u8>>>;
+
+pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(RwLock<ZipArchive<Cursor<Vec<u8>>>>),
+    Zip(RwLock<Result<Zip, LazyPath>>),
+}
+
+impl Debug for AbstractFs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("AbstractFs").finish()
+    }
 }
 
 impl AbstractFs {
@@ -338,14 +390,42 @@ impl AbstractFs {
         {
             Ok(Self::Fs(root.as_ref().to_path_buf()))
         } else {
-            Ok(Self::Zip(RwLock::new(
-                ZipArchive::new(Cursor::new(std::fs::read(&root)?))
-                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?,
-            )))
+            Ok(Self::Zip(RwLock::new(Ok(ZipArchive::new(Cursor::new(
+                std::fs::read(&root)?,
+            ))
+            .map_err(|e| {
+                DataError::custom("Zip").with_display_context(&e)
+            })?))))
+        }
+    }
+
+    fn new_lazy(path: LazyPath) -> Self {
+        Self::Zip(RwLock::new(Err(path)))
+    }
+
+    fn init(&self) -> Result<(), DataError> {
+        match self {
+            Self::Zip(lock) => {
+                if lock.read().expect("poison").is_ok() {
+                    return Ok(());
+                }
+                let mut lock = lock.write().expect("poison");
+                let init = if let Err(init) = lock.deref() {
+                    init
+                } else {
+                    return Ok(());
+                };
+                let root = init()?;
+                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(&root)?))
+                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
+                Ok(())
+            }
+            _ => Ok(()),
         }
     }
 
     fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+        self.init()?;
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -357,6 +437,9 @@ impl AbstractFs {
                 let mut buf = Vec::new();
                 zip.write()
                     .expect("poison")
+                    .as_mut()
+                    .ok()
+                    .unwrap() // init called
                     .by_name(path)
                     .map_err(|e| {
                         DataError::custom("Zip")
@@ -370,6 +453,7 @@ impl AbstractFs {
     }
 
     fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+        self.init()?;
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(&root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
@@ -379,6 +463,9 @@ impl AbstractFs {
             Self::Zip(zip) => zip
                 .read()
                 .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))

@@ -58,9 +58,18 @@ impl BakedDataExporter {
         pretty: bool,
         insert_feature_gates: bool,
         use_separate_crates: bool,
-    ) -> Self {
-        let _ = std::fs::remove_dir_all(&mod_directory);
-        Self {
+        overwrite: bool,
+    ) -> Result<Self, DataError> {
+        if mod_directory.exists() {
+            if overwrite {
+                std::fs::remove_dir_all(&mod_directory)
+            } else {
+                std::fs::remove_dir(&mod_directory)
+            }
+            .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+        }
+
+        Ok(Self {
             mod_directory,
             pretty,
             insert_feature_gates: insert_feature_gates && use_separate_crates,
@@ -69,7 +78,7 @@ impl BakedDataExporter {
             mod_files: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
-        }
+        })
     }
 
     fn write_to_file<P: AsRef<std::path::Path>>(
