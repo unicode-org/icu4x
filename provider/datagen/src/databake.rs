@@ -443,7 +443,7 @@ impl DataExporter for BakedDataExporter {
         }
 
         let any_code = if any_cases.is_empty() {
-            quote!{
+            quote! {
                 Err(DataErrorKind::MissingDataKey.with_req(key, req))
             }
         } else {
