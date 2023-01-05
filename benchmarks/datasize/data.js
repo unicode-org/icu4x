@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672947888165,
+  "lastUpdate": 1672948241237,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33443,6 +33443,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc553debe5ace69b3a1681c889518d68943b3c33"
         },
         "date": 1672947791546,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b5c52112bd7819d399516bbfed4f6b67361ad94d",
+          "message": "Bengali -> Bangla (#2952)",
+          "timestamp": "2023-01-05T20:42:35+01:00",
+          "tree_id": "580730522981087934639c18b85c4ab646478668",
+          "url": "https://github.com/unicode-org/icu4x/commit/b5c52112bd7819d399516bbfed4f6b67361ad94d"
+        },
+        "date": 1672948161098,
         "tool": "ndjson",
         "benches": [
           {
