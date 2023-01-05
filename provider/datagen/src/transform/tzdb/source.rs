@@ -39,7 +39,11 @@ impl TzdbPaths {
             .map(|path| {
                 tzif::parse_tzif_file(self.0.join(&path))
                     .map(|data| (tzid_from_path(&path), data))
-                    .map_err(|e| DataError::from(e).with_path_context(&path))
+                    .map_err(|e| {
+                        DataError::custom("Tzdb error")
+                            .with_display_context(&e)
+                            .with_path_context(&path)
+                    })
             })
             .collect()
     }
