@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672625191192,
+  "lastUpdate": 1672915956555,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33353,6 +33353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d686c87ad094f9750f5cf6e42e2287076e590de9"
         },
         "date": 1672625101771,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "659aa81282b96b9c1c351b22c7e4478128b93267",
+          "message": "Fix bug in simple_week_of() around unit size (#2951)",
+          "timestamp": "2023-01-05T11:49:46+01:00",
+          "tree_id": "584e80e145038df78716310997a925c01b76853e",
+          "url": "https://github.com/unicode-org/icu4x/commit/659aa81282b96b9c1c351b22c7e4478128b93267"
+        },
+        "date": 1672915866488,
         "tool": "ndjson",
         "benches": [
           {
