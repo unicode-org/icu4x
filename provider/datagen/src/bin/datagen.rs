@@ -244,8 +244,11 @@ fn main() -> eyre::Result<()> {
     let selected_locales = matches
         .values_of("LOCALES")
         .map(|ls| {
-            ls.map(|s| s.parse::<LanguageIdentifier>().with_context(|| s.to_string()))
-                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
+            ls.map(|s| {
+                s.parse::<LanguageIdentifier>()
+                    .with_context(|| s.to_string())
+            })
+            .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
         })
         .transpose()?;
 
