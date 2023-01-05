@@ -624,7 +624,7 @@ fn test_region_fallback() {
 fn test_reordering() {
     let locale: Locale = langid!("bn").into();
 
-    // অ is Bengali
+    // অ is Bangla
     // ऄ is Devanagari
 
     {

@@ -10,7 +10,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 
 ## Examples
 
-### Format a number with Bengali digits
+### Format a number with Bangla digits
 
 ```rust
 use fixed_decimal::FixedDecimal;
