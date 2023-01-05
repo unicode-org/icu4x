@@ -150,7 +150,7 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .help(
                     "Include this resource key in the output. Accepts multiple arguments. \
-                     Omit this option to include all keys. Set to 'none' for no keys.",
+                    Set to 'all' for all keys, or 'none' for no keys.",
                 ),
         )
         .arg(
@@ -174,7 +174,8 @@ fn main() -> eyre::Result<()> {
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
-                .arg("KEYS_FOR_BIN"),
+                .arg("KEYS_FOR_BIN")
+                .required(true),
         )
         .arg(
             Arg::with_name("LOCALES")
@@ -182,9 +183,10 @@ fn main() -> eyre::Result<()> {
                 .long("locales")
                 .multiple(true)
                 .takes_value(true)
+                .required(true)
                 .help(
                     "Include this locale in the output. Accepts multiple arguments. \
-                    Omit this option to include all locales. Set to 'none' for no locales.",
+                    Set to 'all' for all locales, or 'none' for no locales.",
                 ),
         )
         .arg(
@@ -195,7 +197,7 @@ fn main() -> eyre::Result<()> {
                     "Path to output directory or file. Must be empty or non-existent, unless \
                     --overwrite is present, in which case the directory is deleted first. \
                     For --format=blob, omit this option to dump to stdout. \
-                    For --format={dir,mod} defaults to 'data'.",
+                    For --format={dir,mod} defaults to 'icu4x_data'.",
                 )
                 .takes_value(true),
         )
@@ -222,10 +224,13 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let selected_locales = if matches.is_present("LOCALES") {
+    let selected_locales = {
         let locales = matches.values_of("LOCALES").unwrap();
-        if locales.len() == 1 && matches.value_of("LOCALES") == Some("none") {
-            Some(vec![])
+        if locales.len() == 1 {
+            match matches.value_of("LOCALES") {
+                Some("all") => None,
+                Some("none") => Some(vec![]),
+            }
         } else {
             Some(
                 locales
@@ -233,16 +238,13 @@ fn main() -> eyre::Result<()> {
                     .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
             )
         }
-    } else {
-        None
     };
 
     let selected_keys = if let Some(paths) = matches.values_of("KEYS") {
-        let keys = paths.collect::<Vec<_>>();
-        if keys == ["none"] {
-            vec![]
-        } else {
-            icu_datagen::keys(&keys)
+        match paths.collect::<Vec<_>>() {
+            ["none"] => vec![],
+            ["all"] => icu_datagen::all_keys(),
+            keys => icu_datagen::keys(&keys),
         }
     } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
         icu_datagen::keys_from_file(key_file_path)
@@ -251,7 +253,7 @@ fn main() -> eyre::Result<()> {
         icu_datagen::keys_from_bin(bin_path)
             .with_context(|| bin_path.to_string_lossy().into_owned())?
     } else {
-        icu_datagen::all_keys()
+        unreachable!("required group")
     };
 
     if selected_keys.is_empty() {
@@ -300,7 +302,7 @@ fn main() -> eyre::Result<()> {
             output_path: matches
                 .value_of_os("OUTPUT")
                 .map(PathBuf::from)
-                .unwrap_or_else(|| PathBuf::from("data")),
+                .unwrap_or_else(|| PathBuf::from("icu4x_data")),
             serializer: match matches.value_of("SYNTAX") {
                 Some("bincode") => Box::new(bincode::Serializer::default()),
                 Some("postcard") => Box::new(postcard::Serializer::default()),
@@ -322,16 +324,24 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
-        "mod" => icu_datagen::Out::Module {
-            mod_directory: matches
+        "mod" => {
+            let mod_directory = matches
                 .value_of_os("OUTPUT")
                 .map(PathBuf::from)
-                .unwrap_or_else(|| PathBuf::from("data")),
-            pretty: matches.is_present("PRETTY"),
-            insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-            use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
-            overwrite: matches.is_present("OVERWRITE"),
-        },
+                .unwrap_or_else(|| PathBuf::from("icu4x_data"));
+
+            if mod_directory.exists() && overwrite {
+                std::fs::remove_dir_all(&mod_directory)
+                    .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+            }
+
+            icu_datagen::Out::Module {
+                mod_directory,
+                pretty: matches.is_present("PRETTY"),
+                insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
+                use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
+            }
+        }
         _ => unreachable!(),
     };
 

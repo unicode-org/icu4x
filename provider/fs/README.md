@@ -51,37 +51,27 @@ The exact form of the directory structure may change over time. ICU4X uses metad
 `ICU4X` data can be stored in different formats. At the moment there are:
 
 * JSON - Textual format, easy to read
+* Postcard - Binary, small `#[no_std]` resource format
 * Bincode - Binary, fast resource format
 
 The directory passed to the [`FsDataProvider`] constructor may contain either of them.
 
 ## Exporting data
 
-To generate the data required for [`FsDataProvider`], run the following from the top level:
+To generate the data required for [`FsDataProvider`], run the following:
 
-```
-cargo run             \
-  --bin icu4x-datagen \
-  --                  \
-  --cldr-tag 41.0.0   \
-  --format dir        \
-  --out ./icu4x-data  \
+```bash
+icu4x-datagen --keys all --locales all --format dir
 ```
 
-To export `bincode` format, use
+To export `postcard` format, use
 
-```
-cargo run             \
-  --bin icu4x-datagen \
-  --                  \
-  --cldr-tag 41.0.0   \
-  --format dir        \
-  --syntax bincode    \
-  --out ./icu4x-data  \
+```bash
+icu4x-datagen --keys all --locales all --format dir --syntax postcard
 ```
 
-*Notice:* In order to use `bincode` encoded data in production, [`icu_provider`](crate) has to be
-added with `deserialize_bincode_1` Cargo feature.
+*Notice:* In order to use encoded data in production, [`icu_provider`](crate) has to be
+added with `deserialize_{bincode_1, json, postcard_1}` Cargo feature.
 
 [`ICU4X`]: ../icu/index.html
 

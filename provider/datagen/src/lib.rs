@@ -48,6 +48,7 @@
 //!
 //! ```bash
 //! $ icu4x-datagen \
+//! >    --keys all \
 //! >    --locales de en-AU \
 //! >    --format blob \
 //! >    --out data.postcard
@@ -256,8 +257,6 @@ pub enum Out {
         insert_feature_gates: bool,
         /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
-        /// Whether to overwrite existing data
-        overwrite: bool,
     },
 }
 
@@ -307,13 +306,11 @@ pub fn datagen(
                     pretty,
                     insert_feature_gates,
                     use_separate_crates,
-                    overwrite,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
                     use_separate_crates,
-                    overwrite,
                 )?),
             })
         })

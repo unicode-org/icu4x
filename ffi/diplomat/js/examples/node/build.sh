@@ -26,6 +26,8 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SI
 if ! test -f "full-data-cached.postcard"; then
     # Regen all data
     cargo run -p icu_datagen --features=bin,experimental -- \
+        --locales all \
+        --keys all \
         --cldr-tag 42.0.0 \
         --icuexport-tag release-72-1 \
         --format blob \

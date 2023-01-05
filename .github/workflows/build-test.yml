@@ -296,6 +296,8 @@ jobs:
           -p icu_datagen --features bin --release --
           --icuexport-root data/source/icuexportdata_release-72-1.zip
           --cldr-root data/source/cldr-42.0.0-json-full.zip
+          --keys all
+          --locales all
           --format blob
           --out data/full.postcard
 

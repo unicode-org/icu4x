@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --format blob --out my_data_blob.postcard
+$ icu4x-datagen --keys all --locales all --format blob --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
@@ -78,13 +78,12 @@ fn main() {
 
 # 4. Data slicing
 
-You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as by default all keys and for all locales are included. However, our binary only uses date formatting data in Japanese. There's room for optimization:
-
+You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all` and `--locales all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 ```console
-$ icu4x-datagen --format blob --out my_data_blob.postcard --overwrite --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
 
-The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale, which we can supply with the `--locales` argument. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
+The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
 But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 21 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
@@ -135,7 +134,7 @@ The `mod` format will generate a Rust module that contains all the required data
 Let's give it a try:
 
 ```console
-$ icu4x-datagen --format mod --out my-data-mod --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format mod --out my-data-mod
 ```
 
 The output might tell you additional crates that need to be installed. Don't worry, these are transitive dependencies already anyway, but are required directly now to construct our data:
@@ -192,7 +191,7 @@ The `dir` format will generate a directory tree of data files in JSON (although 
 Let's give it a try:
 
 ```console
-$ icu4x-datagen --format dir --out my-data-dir --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format dir --out my-data-dir
 ```
 
 This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the Cargo feature for the chosen syntax on the `icu_provider` crate.
