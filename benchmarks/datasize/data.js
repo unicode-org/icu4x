@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672930429837,
+  "lastUpdate": 1672947888165,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33413,6 +33413,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/93c9f1ea9ebdb8911e434ea7d660352484479373"
         },
         "date": 1672930346276,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "297343+erickguan@users.noreply.github.com",
+            "name": "Erick Guan",
+            "username": "erickguan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc553debe5ace69b3a1681c889518d68943b3c33",
+          "message": "Adds a bytes parsing API for GMTOffset for CustomTimeZone and FFI (#2943)",
+          "timestamp": "2023-01-05T20:41:30+01:00",
+          "tree_id": "286229b13fa4c194597701328a265d8fd95303eb",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc553debe5ace69b3a1681c889518d68943b3c33"
+        },
+        "date": 1672947791546,
         "tool": "ndjson",
         "benches": [
           {
