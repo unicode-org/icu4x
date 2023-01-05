@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672952272396,
+  "lastUpdate": 1672955415011,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -90521,6 +90521,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5359,
             "range": "± 17",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da0b424084bb8801f218f15e6357fb729bd411c0",
+          "message": "Adding LruDataCache and overlay examples (#2914)",
+          "timestamp": "2023-01-05T12:57:33-08:00",
+          "tree_id": "5012275045bf484ae31bb8ef0c1bd1b720a55b5a",
+          "url": "https://github.com/unicode-org/icu4x/commit/da0b424084bb8801f218f15e6357fb729bd411c0"
+        },
+        "date": 1672955338553,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 67700,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 110275,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 63438,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 72211,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 67752,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 75479,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 72041,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 105689,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 119625,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 110480,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 123151,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 119198,
+            "range": "± 512",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5313,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
