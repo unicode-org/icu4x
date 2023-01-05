@@ -15,7 +15,6 @@
 //! ```no_run
 //! use icu_datagen::*;
 //! use std::fs::File;
-//! use std::path::PathBuf;
 //!
 //! fn main() {
 //!     icu_datagen::datagen(
