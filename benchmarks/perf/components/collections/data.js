@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672951963752,
+  "lastUpdate": 1672952227649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41375,6 +41375,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54841648,
             "range": "± 713271",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dda57531367e343ae702f8ddd11d745cba48c706",
+          "message": "Move testdata metadata to its own file statically linked at compile time (#2920)",
+          "timestamp": "2023-01-05T12:32:25-08:00",
+          "tree_id": "714099459f7a1afab3bc22a41e49550b6580974c",
+          "url": "https://github.com/unicode-org/icu4x/commit/dda57531367e343ae702f8ddd11d745cba48c706"
+        },
+        "date": 1672952144666,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 471,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 327,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 319,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 359,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 636,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 644,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 328,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 320,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 359,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 425,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 620,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 54949926,
+            "range": "± 829302",
             "unit": "ns/iter"
           },
           {
