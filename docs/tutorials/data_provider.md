@@ -80,16 +80,20 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 
-#[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKeyWrap(CacheKey<'static>);
-
-#[derive(Debug, PartialEq, Eq, Hash)]
-struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
-
+/// A data provider that caches response payloads in an LRU cache.
 pub struct LruDataCache<P> {
     cache: Mutex<LruCache<CacheKeyWrap, AnyResponse>>,
     provider: P,
 }
+
+/// Key for the cache: DataKey and DataLocale. The DataLocale is in a Cow
+/// so that it can be borrowed during lookup.
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct CacheKey<'a>(DataKey, Cow<'a, DataLocale>);
+
+/// Wrapper over a fully owned CacheKey, required for key borrowing.
+#[derive(Debug, PartialEq, Eq, Hash)]
+struct CacheKeyWrap(CacheKey<'static>);
 
 // This impl enables a borrowed DataLocale to be used during cache retrieval.
 impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
