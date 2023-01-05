@@ -26,7 +26,7 @@ impl GmtOffset {
     /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
     /// overflows or underflows.
     pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, TimeZoneError> {
-        // Valid range is from GMT-12 to GMT+14 in seconds.
+        // Valid range is +-24:59:59
         if seconds.unsigned_abs() >= 25 * 60 * 60 {
             Err(TimeZoneError::OffsetOutOfBounds)
         } else {
@@ -94,7 +94,7 @@ impl GmtOffset {
         };
 
         let hours = match chars {
-            &[h1, h2] => try_get_time_component([h1, h2]),
+            &[h1, h2, ..] => try_get_time_component([h1, h2]),
             _ => None,
         }
         .ok_or(TimeZoneError::InvalidOffset)?;
