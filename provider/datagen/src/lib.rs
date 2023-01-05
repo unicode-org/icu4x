@@ -13,7 +13,6 @@
 //! ## `build.rs`
 //!
 //! ```no_run
-//! use icu::locid::langid;
 //! use icu_datagen::*;
 //! use std::fs::File;
 //! use std::path::PathBuf;
@@ -21,7 +20,7 @@
 //! fn main() {
 //!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
-//!         &icu_datagen::keys(&["list/and@1"]),
+//!         &[icu::list::provider::AndListV1Marker::KEY],
 //!         &SourceData::default(),
 //!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
 //!     )
@@ -83,6 +82,16 @@ pub use error::*;
 pub use registry::all_keys;
 pub use source::*;
 
+pub use icu_locid::langid;
+pub use icu_provider::KeyedDataMarker;
+
+/// [Out::Fs] serialization formats.
+pub mod syntax {
+    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
+}
+
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -96,7 +105,7 @@ use std::path::{Path, PathBuf};
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
-pub struct DatagenProvider {
+pub(crate) struct DatagenProvider {
     /// The underlying raw data
     pub source: SourceData,
 }
@@ -235,7 +244,7 @@ pub enum Out {
     Fs {
         /// The root path.
         output_path: PathBuf,
-        /// The serialization format. See [icu_provider_fs::export::serializers].
+        /// The serialization format. See [syntax].
         serializer: Box<dyn serializers::AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,

@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::*;
-use icu_provider::KeyedDataMarker;
-use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
@@ -44,14 +42,14 @@ fn main() {
 
     let json_out = Out::Fs {
         output_path: paths::data_root().join("json"),
-        serializer: Box::new(json::Serializer::pretty()),
+        serializer: Box::new(syntax::Json::pretty()),
         overwrite: true,
         fingerprint: true,
     };
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
-        serializer: Box::new(postcard::Serializer::default()),
+        serializer: Box::new(syntax::Postcard::default()),
         overwrite: true,
         fingerprint: true,
     };
