@@ -5,18 +5,13 @@
 use crate::{ule::VarULE, VarZeroSlice, VarZeroVec};
 use databake::*;
 
-use super::Index32;
+use super::VarZeroVecFormat;
 
-impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
-    fn bake(&self, env: &CrateEnv) -> TokenStream {
-        env.insert("zerovec");
-        let bytes = self.as_bytes();
-        // Safe because self.as_bytes is a safe input
-        quote! { unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
-    }
-}
-
-impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T, Index32> {
+impl<T, Index> Bake for VarZeroVec<'_, T, Index>
+where
+    T: VarULE + ?Sized,
+    Index: VarZeroVecFormat,
+{
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         let bytes = self.as_bytes();
