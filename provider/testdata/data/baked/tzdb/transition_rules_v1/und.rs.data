@@ -1,4 +1,4 @@
-::icu_datetime::provider::tzdb::TimeZoneTransitionRulesV1 {
+::icu_datetime_experimental::provider::tzdb::TimeZoneTransitionRulesV1 {
     transition_rules: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

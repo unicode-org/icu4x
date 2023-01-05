@@ -4,6 +4,7 @@
 
 use crate::transform::cldr::cldr_serde::time_zones as cldr_time_zones;
 use crate::transform::cldr::time_zones::compute_bcp47_tzids_hashmap;
+#[cfg(feature = "experimental")]
 use icu_datetime::provider::tzdb::{
     TimeZoneHistoricTransitionsV1, TimeZoneHistoricTransitionsV1Marker, TimeZoneTransitionRuleV1,
     TimeZoneTransitionRulesV1, TimeZoneTransitionRulesV1Marker,

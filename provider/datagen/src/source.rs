@@ -6,7 +6,6 @@
 
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
-use crate::transform::tzdb::source::TzdbPaths;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
@@ -21,11 +20,15 @@ use std::sync::Arc;
 use std::sync::RwLock;
 use zip::ZipArchive;
 
+#[cfg(feature = "experimental")]
+use crate::transform::tzdb::source::TzdbPaths;
+
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
+    #[cfg(feature = "experimental")]
     tzdb_paths: Option<Arc<TzdbPaths>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_paths: Arc<SerdeCache>,
@@ -42,6 +45,7 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
+            #[cfg(feature = "experimental")]
             tzdb_paths: None,
             segmenter_paths: Arc::new(SerdeCache::new(
                 AbstractFs::new(&segmenter_path).expect("valid dir"),
@@ -105,9 +109,10 @@ impl SourceData {
     /// Adds TZDB data to this `DataSource`. The root should point to the directory
     /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    pub fn with_tzdb(self, root: PathBuf) -> Result<Self, DataError> {
+    pub fn with_tzdb(self, _root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
-            tzdb_paths: Some(Arc::new(TzdbPaths::new(root))),
+            #[cfg(feature = "experimental")]
+            tzdb_paths: Some(Arc::new(TzdbPaths::new(_root))),
             ..self
         })
     }
@@ -213,6 +218,7 @@ impl SourceData {
             .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
+    #[cfg(feature = "experimental")]
     pub(crate) fn tzdb(&self) -> Result<&TzdbPaths, DataError> {
         self.tzdb_paths
             .as_deref()

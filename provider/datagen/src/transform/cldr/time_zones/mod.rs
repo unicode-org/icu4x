@@ -15,6 +15,7 @@ use icu_timezone::provider::*;
 use std::collections::HashMap;
 
 /// Re-export for use in TZDB provider.
+#[cfg(feature = "experimental")]
 pub(crate) use convert::compute_bcp47_tzids_hashmap;
 
 mod convert;

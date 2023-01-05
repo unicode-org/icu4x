@@ -527,9 +527,12 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY, req))
             }
         }
-        #[cfg(feature = "icu_datetime")]
-        impl DataProvider<::icu_datetime::provider::tzdb::TimeZoneHistoricTransitionsV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::tzdb::TimeZoneHistoricTransitionsV1Marker>, DataError> {
+        #[cfg(feature = "icu_datetime_experimental")]
+        impl DataProvider<::icu_datetime_experimental::provider::tzdb::TimeZoneHistoricTransitionsV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_datetime_experimental::provider::tzdb::TimeZoneHistoricTransitionsV1Marker>, DataError> {
                 tzdb::historic_transitions_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -538,13 +541,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::tzdb::TimeZoneHistoricTransitionsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(
+                            ::icu_datetime_experimental::provider::tzdb::TimeZoneHistoricTransitionsV1Marker::KEY,
+                            req,
+                        )
                     })
             }
         }
-        #[cfg(feature = "icu_datetime")]
-        impl DataProvider<::icu_datetime::provider::tzdb::TimeZoneTransitionRulesV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::tzdb::TimeZoneTransitionRulesV1Marker>, DataError> {
+        #[cfg(feature = "icu_datetime_experimental")]
+        impl DataProvider<::icu_datetime_experimental::provider::tzdb::TimeZoneTransitionRulesV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_datetime_experimental::provider::tzdb::TimeZoneTransitionRulesV1Marker>, DataError> {
                 tzdb::transition_rules_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
@@ -552,7 +561,12 @@ macro_rules! impl_data_provider {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::tzdb::TimeZoneTransitionRulesV1Marker::KEY, req))
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(
+                            ::icu_datetime_experimental::provider::tzdb::TimeZoneTransitionRulesV1Marker::KEY,
+                            req,
+                        )
+                    })
             }
         }
         #[cfg(feature = "icu_decimal")]
@@ -2339,12 +2353,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_datetime")]
                 const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
-                #[cfg(feature = "icu_datetime")]
+                #[cfg(feature = "icu_datetime_experimental")]
                 const TIMEZONEHISTORICTRANSITIONSV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::tzdb::TimeZoneHistoricTransitionsV1Marker::KEY.hashed();
-                #[cfg(feature = "icu_datetime")]
+                    ::icu_datetime_experimental::provider::tzdb::TimeZoneHistoricTransitionsV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_datetime_experimental")]
                 const TIMEZONETRANSITIONRULESV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_datetime::provider::tzdb::TimeZoneTransitionRulesV1Marker::KEY.hashed();
+                    ::icu_datetime_experimental::provider::tzdb::TimeZoneTransitionRulesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_decimal")]
                 const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
@@ -2705,9 +2719,9 @@ macro_rules! impl_any_provider {
                     METAZONESPECIFICNAMESSHORTV1MARKER => time_zone::specific_short_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_datetime")]
                     TIMEZONEFORMATSV1MARKER => time_zone::formats_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_datetime")]
+                    #[cfg(feature = "icu_datetime_experimental")]
                     TIMEZONEHISTORICTRANSITIONSV1MARKER => tzdb::historic_transitions_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_datetime")]
+                    #[cfg(feature = "icu_datetime_experimental")]
                     TIMEZONETRANSITIONRULESV1MARKER => tzdb::transition_rules_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_decimal")]
                     DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
