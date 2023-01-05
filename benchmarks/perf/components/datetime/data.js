@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672931117491,
+  "lastUpdate": 1672948723288,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -90011,6 +90011,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6324,
             "range": "± 191",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "297343+erickguan@users.noreply.github.com",
+            "name": "Erick Guan",
+            "username": "erickguan"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc553debe5ace69b3a1681c889518d68943b3c33",
+          "message": "Adds a bytes parsing API for GMTOffset for CustomTimeZone and FFI (#2943)",
+          "timestamp": "2023-01-05T20:41:30+01:00",
+          "tree_id": "286229b13fa4c194597701328a265d8fd95303eb",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc553debe5ace69b3a1681c889518d68943b3c33"
+        },
+        "date": 1672948628558,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96137,
+            "range": "± 6249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 160716,
+            "range": "± 9779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 94505,
+            "range": "± 6935",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 109232,
+            "range": "± 6112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95870,
+            "range": "± 5164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 105871,
+            "range": "± 5769",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 104667,
+            "range": "± 5583",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 151278,
+            "range": "± 10935",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 171008,
+            "range": "± 9152",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 162225,
+            "range": "± 25443",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 180522,
+            "range": "± 10570",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 170655,
+            "range": "± 10143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6807,
+            "range": "± 302",
             "unit": "ns/iter"
           }
         ]
