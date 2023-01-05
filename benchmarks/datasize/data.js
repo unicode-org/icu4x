@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672950792932,
+  "lastUpdate": 1672951491155,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33533,6 +33533,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/36ab7ef0e70e75fa7c4d4e66ddd97591c3e8b18b"
         },
         "date": 1672950702099,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dda57531367e343ae702f8ddd11d745cba48c706",
+          "message": "Move testdata metadata to its own file statically linked at compile time (#2920)",
+          "timestamp": "2023-01-05T12:32:25-08:00",
+          "tree_id": "714099459f7a1afab3bc22a41e49550b6580974c",
+          "url": "https://github.com/unicode-org/icu4x/commit/dda57531367e343ae702f8ddd11d745cba48c706"
+        },
+        "date": 1672951408317,
         "tool": "ndjson",
         "benches": [
           {
