@@ -74,8 +74,7 @@ impl GmtOffset {
     /// assert_eq!(offset_err0, TimeZoneError::InvalidOffset);
     /// assert_eq!(offset_err1, TimeZoneError::InvalidOffset);
     /// ```
-    pub fn try_from_bytes(input: &[u8]) -> Result<Self, TimeZoneError> {
-        let mut chars = input;
+    pub fn try_from_bytes(mut chars: &[u8]) -> Result<Self, TimeZoneError> {
         let offset_sign = match chars {
             [b'+', rest @ ..] => {
                 chars = rest;
