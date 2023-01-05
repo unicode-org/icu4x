@@ -224,24 +224,18 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let selected_locales = {
-        let locales = matches.values_of("LOCALES").unwrap();
-        if locales.len() == 1 {
-            match matches.value_of("LOCALES") {
-                Some("all") => None,
-                Some("none") => Some(vec![]),
-            }
-        } else {
-            Some(
-                locales
-                    .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-                    .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
-            )
-        }
+    let selected_locales = match matches.values_of("LOCALES").unwrap().collect::<Vec<_>>().as_slice() {
+        ["all"] => None,
+        ["none"] => Some(vec![]),
+        locales => Some(
+            locales.iter()
+                .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
+        ),
     };
 
     let selected_keys = if let Some(paths) = matches.values_of("KEYS") {
-        match paths.collect::<Vec<_>>() {
+        match paths.collect::<Vec<_>>().as_slice() {
             ["none"] => vec![],
             ["all"] => icu_datagen::all_keys(),
             keys => icu_datagen::keys(&keys),
@@ -330,9 +324,9 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| PathBuf::from("icu4x_data"));
 
-            if mod_directory.exists() && overwrite {
+            if mod_directory.exists() && matches.is_present("OVERWRITE") {
                 std::fs::remove_dir_all(&mod_directory)
-                    .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+                    .with_context(|| mod_directory.to_string_lossy().into_owned())?;
             }
 
             icu_datagen::Out::Module {
