@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672948241237,
+  "lastUpdate": 1672949846675,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33473,6 +33473,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b5c52112bd7819d399516bbfed4f6b67361ad94d"
         },
         "date": 1672948161098,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fd558c6d420621e5edb79bea1a00573d58184b6e",
+          "message": "Disable binsize CI temporarily (#2954)",
+          "timestamp": "2023-01-05T21:14:51+01:00",
+          "tree_id": "2e34303e443e56312c61a87cbac7433dfa971043",
+          "url": "https://github.com/unicode-org/icu4x/commit/fd558c6d420621e5edb79bea1a00573d58184b6e"
+        },
+        "date": 1672949763188,
         "tool": "ndjson",
         "benches": [
           {
