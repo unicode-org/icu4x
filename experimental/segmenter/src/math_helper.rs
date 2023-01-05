@@ -34,12 +34,12 @@ pub fn max_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> usize {
     ind
 }
 
-/// `tanh_arr1` computes elementwise sigmoid funciton for elements of a 1d array
+/// `tanh_arr1` computes elementwise sigmoid function for elements of a 1d array
 pub fn sigmoid_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
     arr.map(|v| sigmoid(*v))
 }
 
-/// `tanh_arr1` computes elementwise tanh funciton for elements of a 1d array
+/// `tanh_arr1` computes elementwise tanh function for elements of a 1d array
 pub fn tanh_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
     arr.map(|v| v.tanh())
 }

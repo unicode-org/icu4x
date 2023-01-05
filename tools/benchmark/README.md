@@ -39,7 +39,7 @@ official support.
 
 ## Valgrind / Callgrind
 
-ICU4X examples are also intrumented to produce Callgrind artifacts demonstrating the call graph and instruction reads.
+ICU4X examples are also instrumented to produce Callgrind artifacts demonstrating the call graph and instruction reads.
 
 To generate callgrind artifacts for all examples, run from the root directory:
 

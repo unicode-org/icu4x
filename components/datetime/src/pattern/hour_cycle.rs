@@ -121,7 +121,7 @@ pub(crate) fn naively_apply_preferences(
     pattern: &mut runtime::Pattern,
     preferences: &Option<preferences::Bag>,
 ) {
-    // If there is a preference overiding the hour cycle, apply it now.
+    // If there is a preference overriding the hour cycle, apply it now.
     if let Some(preferences::Bag {
         hour_cycle: Some(hour_cycle),
     }) = preferences

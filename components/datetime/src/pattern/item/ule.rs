@@ -7,7 +7,7 @@ use crate::fields;
 use core::convert::TryFrom;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
-/// `PatternItemULE` is a type optimized for efficent storing and
+/// `PatternItemULE` is a type optimized for efficient storing and
 /// deserialization of `TypedDateTimeFormatter` `PatternItem` elements using
 /// `ZeroVec` model.
 ///
@@ -60,7 +60,7 @@ pub struct PatternItemULE([u8; 3]);
 
 impl PatternItemULE {
     /// Given the first byte of the three-byte array that `PatternItemULE` encodes,
-    /// the method determins whether the discriminant in
+    /// the method determines whether the discriminant in
     /// the byte indicates that the array encodes the `PatternItem::Field`
     /// or `PatternItem::Literal` variant of the `PatternItem`.
     ///
@@ -142,7 +142,7 @@ impl AsULE for PatternItem {
     }
 }
 
-/// `GenericPatternItemULE` is a type optimized for efficent storing and
+/// `GenericPatternItemULE` is a type optimized for efficient storing and
 /// deserialization of `TypedDateTimeFormatter` `GenericPatternItem` elements using
 /// the `ZeroVec` model.
 ///
@@ -195,7 +195,7 @@ pub struct GenericPatternItemULE([u8; 3]);
 
 impl GenericPatternItemULE {
     /// Given the first byte of the three-byte array that `GenericPatternItemULE` encodes,
-    /// the method determins whether the discriminant in
+    /// the method determines whether the discriminant in
     /// the byte indicates that the array encodes the `GenericPatternItem::Field`
     /// or `GenericPatternItem::Literal` variant of the `GenericPatternItem`.
     ///
