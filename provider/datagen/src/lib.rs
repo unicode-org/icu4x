@@ -316,22 +316,19 @@ pub fn datagen(
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    let mut provider: Box<dyn ExportableProvider> = Box::new(DatagenProvider {
-        source: source.clone(),
-    });
-
-    match locales {
-        Some(&[]) => provider = Box::new(EmptyDataProvider::default()),
-        Some(locales) => {
-            let locales = locales.to_vec();
-            provider = Box::new(
-                provider
-                    .filterable("icu4x-datagen locales")
-                    .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-            );
-        }
-        _ => {}
-    }
+    let provider: Box<dyn ExportableProvider> = match locales {
+        Some(&[]) => Box::new(EmptyDataProvider::default()),
+        Some(locales) => Box::new(
+            DatagenProvider {
+                source: source.clone(),
+            }
+            .filterable("icu4x-datagen locales")
+            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
+        ),
+        None => Box::new(DatagenProvider {
+            source: source.clone(),
+        }),
+    };
 
     keys.into_par_iter().try_for_each(|&key| {
         log::info!("Writing key: {}", key);
