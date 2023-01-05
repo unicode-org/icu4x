@@ -40,7 +40,7 @@ fn main() {
         .unwrap()
         .with_icuexport(paths::icuexport_toml_root())
         .unwrap();
-    let locales = metadata::load().unwrap().package_metadata.locales;
+    let locales = metadata::load().locales;
 
     let json_out = Out::Fs {
         output_path: paths::data_root().join("json"),
