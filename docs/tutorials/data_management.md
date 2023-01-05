@@ -41,9 +41,8 @@ You can check in the generated data to your version control system, or you can a
 
 You should check in the generated data if:
 
-1. You want fully reproducible builds
-2. You don't want any non-determinism
-3. You want to reduce build-time dependencies
+1. You want fully reproducible, deterministic builds
+2. You want to reduce build-time dependencies
 
 You should generate it automatically at build time if:
 
