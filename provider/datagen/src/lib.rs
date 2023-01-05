@@ -105,7 +105,8 @@ use std::path::{Path, PathBuf};
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
-pub(crate) struct DatagenProvider {
+#[doc(hidden)]
+struct DatagenProvider {
     /// The underlying raw data
     pub source: SourceData,
 }
