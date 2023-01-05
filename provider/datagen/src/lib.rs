@@ -82,7 +82,7 @@ pub use error::*;
 pub use registry::all_keys;
 pub use source::*;
 
-pub use icu_locid::langid;
+pub use icu_locid::{langid, LanguageIdentifier};
 pub use icu_provider::KeyedDataMarker;
 
 /// [Out::Fs] serialization formats.
@@ -92,11 +92,10 @@ pub mod syntax {
     pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
 }
 
-use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::filter::Filterable;
-use icu_provider_fs::export::serializers;
+use icu_provider_fs::export::serializers::AbstractSerializer;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
@@ -246,7 +245,7 @@ pub enum Out {
         /// The root path.
         output_path: PathBuf,
         /// The serialization format. See [syntax].
-        serializer: Box<dyn serializers::AbstractSerializer + Sync>,
+        serializer: Box<dyn AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
         /// Whether to create a fingerprint file with SHA2 hashes
