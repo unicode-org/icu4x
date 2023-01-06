@@ -35,7 +35,7 @@ if ! test -f "icu4x_data.postcard"; then
     cargo run --manifest-path ../../provider/datagen/Cargo.toml \
         --features=bin,experimental -- \
         --keys-for-bin icu_capi.wasm \
-        --locales all
+        --locales all \
         --format blob \
         --out ./icu4x_data.postcard
 fi
