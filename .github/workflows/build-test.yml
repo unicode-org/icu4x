@@ -255,6 +255,7 @@ jobs:
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
+        key: download-cache
         path: /tmp/icu4x
 
     # Actual job
@@ -325,6 +326,7 @@ jobs:
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
+        key: download-cache
         path: /tmp/icu4x
 
     # Actual job
