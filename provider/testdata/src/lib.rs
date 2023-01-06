@@ -133,7 +133,7 @@ pub mod versions {
     /// ```
     /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
-    pub fn icu_tag() -> String {
+    pub fn icu_tag() -> alloc::string::String {
         crate::metadata::load().icuexportdata_gitref
     }
 }
