@@ -121,19 +121,14 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
                     .map(|c| {
                         let mut iter = std::iter::once(c).decompose_vietnamese_tones(true);
                         if let Some(base) = iter.next() {
-                            if let Some(tone) = iter.next() {
-                                Some((base, tone))
-                            } else {
-                                None
-                            }
+                            iter.next().map(|tone| (base, tone))
                         } else {
                             None
                         }
                     })
-                    .filter(Option::is_some)
-                    .map(Option::unwrap)
+                    .flatten()
                     .collect();
-                assert!(result.len() > 0);
+                assert!(!result.is_empty());
                 result
             },
         },
