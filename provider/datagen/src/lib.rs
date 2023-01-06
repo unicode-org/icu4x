@@ -130,7 +130,7 @@ impl AnyProvider for DatagenProvider {
 /// # use icu_provider::KeyedDataMarker;
 /// assert_eq!(
 ///     icu_datagen::key("list/and@1"),
-///     Some(icu::list::provider::AndListV1Marker::KEY,
+///     Some(icu::list::provider::AndListV1Marker::KEY),
 /// );
 /// ```
 pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {

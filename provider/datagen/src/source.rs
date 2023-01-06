@@ -101,6 +101,8 @@ impl SourceData {
 
     /// Adds CLDR data to this `DataSource`. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
+    ///
+    /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
@@ -120,6 +122,8 @@ impl SourceData {
 
     /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
+    /// 
+    /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
