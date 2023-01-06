@@ -5,7 +5,7 @@ This document tracks the crates that already exist in the ecosystem that cover f
 
 Where multiple maintainers are listed, the first name is the primary maintainer: e.g. Manish is a member of the Servo org but does not primarily maintain some of these crates.
 
-| **API**                 | **Rust Eqivalent**                                             | **Maintainer**      | **CLDR-Aware**   | **Action** | **Notes**                                                          |
+| **API**                 | **Rust Equivalent**                                            | **Maintainer**      | **CLDR-Aware**   | **Action** | **Notes**                                                          |
 |-------------------------|----------------------------------------------------------------|---------------------|------------------|------------|--------------------------------------------------------------------|
 | `icu::DateTimeFormat`   | [unic-datetime](https://github.com/zbraniecki/unic-datetime)   | Zibi                | Yes              | Import     |                                                                    |
 |                         | [rust_icu_udat](https://crates.io/crates/rust_icu_udat)        | filmil, kpozin      | Yes              | Uncertain  | Rust wrapper around ICU4C                                          |

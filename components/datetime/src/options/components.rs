@@ -551,7 +551,7 @@ pub enum TimeZoneName {
     // UTS-35 fields: O, OOOO
     // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
     // Per UTS-35: Short localized GMT format (e.g., GMT-8)
-    // This enum variant is combining the two types of fields, as the CLDR specifices the preferred
+    // This enum variant is combining the two types of fields, as the CLDR specifies the preferred
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13

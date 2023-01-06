@@ -1021,10 +1021,7 @@ dependencies = [
  "ecma402_traits",
  "icu",
  "icu_datagen",
- "icu_list",
- "icu_plurals",
  "icu_provider",
- "litemap",
  "writeable",
  "zerovec",
 ]
@@ -1354,7 +1351,6 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "serde_json",
  "utf8_iter",
  "zerovec",
 ]

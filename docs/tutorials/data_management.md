@@ -4,7 +4,7 @@ Unless you're happy shipping your app with the ~10 locales supported by `icu_tes
 
 This tutorial introduces data providers beyond `icu_testdata`, as well as the `icu_datagen` tool.
 
-# 1. Prerequesites
+# 1. Prerequisites
 
 This tutorial assumes you have finished the [introductory tutorial](intro.md) and continues where that tutorial left off. In particular, you should still have the latest version of code for `myapp`.
 

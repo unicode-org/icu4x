@@ -4,13 +4,9 @@
 
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
-
-use icu_datagen::*;
-use icu_locid::LanguageIdentifier;
-use icu_provider_fs::export::serializers::{bincode, json, postcard};
+use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
-use std::str::FromStr;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -255,7 +251,10 @@ fn main() -> eyre::Result<()> {
             locales => Some(
                 locales
                     .iter()
-                    .map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
+                    .map(|s| {
+                        s.parse::<LanguageIdentifier>()
+                            .with_context(|| s.to_string())
+                    })
                     .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
             ),
         }
@@ -333,10 +332,10 @@ fn main() -> eyre::Result<()> {
                     .map(PathBuf::from)
                     .unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 serializer: match matches.value_of("SYNTAX") {
-                    Some("bincode") => Box::new(bincode::Serializer::default()),
-                    Some("postcard") => Box::new(postcard::Serializer::default()),
-                    _ if matches.is_present("PRETTY") => Box::new(json::Serializer::pretty()),
-                    _ => Box::new(json::Serializer::default()),
+                    Some("bincode") => Box::new(syntax::Bincode::default()),
+                    Some("postcard") => Box::new(syntax::Postcard::default()),
+                    _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
+                    _ => Box::new(syntax::Json::default()),
                 },
                 overwrite: matches.is_present("OVERWRITE"),
                 fingerprint: matches.is_present("FINGERPRINT"),

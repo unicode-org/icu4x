@@ -71,7 +71,7 @@ pub struct TimeSymbolsV1<'data> {
     pub day_periods: day_periods::ContextsV1<'data>,
 }
 
-/// String data for the name, abbrevation, and narrow form of a date's era.
+/// String data for the name, abbreviation, and narrow form of a date's era.
 ///
 /// Keys of the map represent era codes, and the values are the display names.
 ///

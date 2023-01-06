@@ -307,6 +307,10 @@ pub fn week_of(
 
 /// Computes & returns the week of given month or year according to a calendar with min_week_days = 1.
 ///
+/// Does not know anything about the unit size (month or year), and will just assume the date falls
+/// within whatever unit that is being considered. In other words, this function returns strictly increasing
+/// values as `day` increases, unlike [`week_of()`] which is cyclic.
+///
 /// # Arguments
 ///  - first_weekday: The first day of a week.
 ///  - day: 1-based day of the month or year.
@@ -320,10 +324,10 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
     #[allow(clippy::unwrap_used)] // week_of should can't fail with MIN_UNIT_DAYS
     week_of(
         &calendar,
-        // The duration of the current and previous unit does not influence the result if min_week_days = 1
+        // The duration of the previous unit does not influence the result if min_week_days = 1
         // so we only need to use a valid value.
         MIN_UNIT_DAYS,
-        MIN_UNIT_DAYS,
+        u16::MAX,
         day,
         week_day,
     )
@@ -597,9 +601,8 @@ fn test_simple_week_of() {
     );
 
     // The 1st is a Monday and the week starts on Sundays.
-    // TODO(#2461): Enable this test
-    // assert_eq!(
-    //     simple_week_of(IsoWeekday::Sunday, 26, IsoWeekday::Friday),
-    //     4
-    // );
+    assert_eq!(
+        simple_week_of(IsoWeekday::Sunday, 26, IsoWeekday::Friday),
+        4
+    );
 }

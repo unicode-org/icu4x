@@ -28,13 +28,12 @@ static DEFAULT_REMOVED_COLLATIONS: &[&str] = &["big5han", "gb2312"];
 mod test;
 
 /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
-fn has_legacy_swedish_variants(
-    icuexport: &crate::SerdeCache,
-    collation_han_database: crate::CollationHanDatabase,
-) -> Result<bool, DataError> {
-    icuexport
-        .list(&format!("collation/{}", collation_han_database))
+fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
+    source
+        .icuexport()
+        .and_then(|i| i.list(&format!("collation/{}", source.collation_han_database())))
         .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
+        .unwrap_or(false)
 }
 
 fn locale_to_file_name(locale: &DataLocale, has_legacy_swedish_variants: bool) -> String {
@@ -133,15 +132,13 @@ macro_rules! collation_provider {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let has_legacy_swedish_variants =
-                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
                             self.source.collation_han_database(),
-                            locale_to_file_name(&req.locale, has_legacy_swedish_variants),
+                            locale_to_file_name(&req.locale, has_legacy_swedish_variants(&self.source)),
                             $suffix
                         ))
                         .map_err(|e| match e.kind {
@@ -164,8 +161,6 @@ macro_rules! collation_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    let has_legacy_swedish_variants =
-                        has_legacy_swedish_variants(self.source.icuexport()?, self.source.collation_han_database())?;
                     Ok(self
                         .source
                         .icuexport()?
@@ -182,7 +177,7 @@ macro_rules! collation_provider {
                                 .strip_suffix($suffix)
                                 .map(ToString::to_string)
                         })
-                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants))
+                        .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants(&self.source)))
                         .filter(|locale| {
                             locale
                                 .extensions
