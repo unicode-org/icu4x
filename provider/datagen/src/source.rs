@@ -122,7 +122,7 @@ impl SourceData {
 
     /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
-    /// 
+    ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
