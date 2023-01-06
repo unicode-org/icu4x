@@ -133,7 +133,7 @@ Given the one centralized data cache explained above, it is possible to architec
 
 Note that it is a *design goal* of ICU4X that clients should not need to create any other caches. There should be no reason to store a formatter object for longer than the time it takes to render the component.
 
-We have experience from ICU4C that there are two main reasons that object creation can be slow: (1) locale data lookup, including language negotiation + fallbacks, and (2) massaging of that locale data into a useful runtime form. ICU4X solves (1) by splitting the locale data provider into its own explicit component that caches data after language negotation and fallbacking is completed; see "Explicit Data Caching". ICU4X solves (2) by having an ICU4X data model that requires as little processing of data at runtime as possible; see "Pre-Processing of Data".
+We have experience from ICU4C that there are two main reasons that object creation can be slow: (1) locale data lookup, including language negotiation + fallbacks, and (2) massaging of that locale data into a useful runtime form. ICU4X solves (1) by splitting the locale data provider into its own explicit component that caches data after language negotiation and fallbacking is completed; see "Explicit Data Caching". ICU4X solves (2) by having an ICU4X data model that requires as little processing of data at runtime as possible; see "Pre-Processing of Data".
 
 ### Request Variables
 
