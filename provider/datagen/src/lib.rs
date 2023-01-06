@@ -13,15 +13,13 @@
 //! ## `build.rs`
 //!
 //! ```no_run
-//! use icu::locid::langid;
-//! use icu_datagen::*;
+//! use icu_datagen::prelude::*;
 //! use std::fs::File;
-//! use std::path::PathBuf;
 //!
 //! fn main() {
 //!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
-//!         &icu_datagen::keys(&["list/and@1"]),
+//!         &[icu::list::provider::AndListV1Marker::KEY],
 //!         &SourceData::default(),
 //!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
 //!     )
@@ -79,15 +77,29 @@ mod source;
 mod testutil;
 mod transform;
 
-pub use error::*;
+pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 pub use registry::all_keys;
-pub use source::*;
+pub use source::{CldrLocaleSubset, CollationHanDatabase, SourceData};
+
+/// [Out::Fs] serialization formats.
+pub mod syntax {
+    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
+}
+
+/// A prelude for using the datagen API
+pub mod prelude {
+    pub use super::{syntax, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
+    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_provider::KeyedDataMarker;
+}
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::filter::Filterable;
-use icu_provider_fs::export::serializers;
+use icu_provider_fs::export::serializers::AbstractSerializer;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
@@ -235,8 +247,8 @@ pub enum Out {
     Fs {
         /// The root path.
         output_path: PathBuf,
-        /// The serialization format. See [icu_provider_fs::export::serializers].
-        serializer: Box<dyn serializers::AbstractSerializer + Sync>,
+        /// The serialization format. See [syntax].
+        serializer: Box<dyn AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
         /// Whether to create a fingerprint file with SHA2 hashes
