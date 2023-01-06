@@ -34,6 +34,7 @@ if ! test -f "icu4x_data.postcard"; then
     # Regen all data
     cargo run --manifest-path ../../provider/datagen/Cargo.toml \
         --features=bin,experimental -- \
+        --keys all \
         --locales all
         --keys-for-bin icu_capi.wasm \
         --cldr-tag 41.0.0 \
