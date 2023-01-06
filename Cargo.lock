@@ -1930,9 +1930,7 @@ dependencies = [
  "icu_timezone",
  "lazy_static",
  "litemap",
- "serde",
  "tinystr 0.7.0",
- "toml",
  "zerovec",
 ]
 
@@ -1949,10 +1947,8 @@ dependencies = [
  "icu_testdata",
  "log",
  "reqwest",
- "serde",
  "simple_logger",
  "tokio",
- "toml",
  "zip 0.6.2",
 ]
 
