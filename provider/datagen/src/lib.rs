@@ -108,7 +108,6 @@ use std::path::{Path, PathBuf};
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
-#[doc(hidden)] // still under semver as it was visible in 1.0
 pub struct DatagenProvider {
     /// The underlying raw data
     pub source: SourceData,
