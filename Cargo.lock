@@ -1190,6 +1190,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hashbrown"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
+dependencies = [
+ "ahash",
+]
+
+[[package]]
 name = "heapless"
 version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1934,10 +1943,10 @@ dependencies = [
  "log",
  "reqwest",
  "serde",
- "serde_json",
  "simple_logger",
  "tinystr 0.7.0",
  "tokio",
+ "toml",
  "writeable",
  "zerovec",
  "zip 0.6.2",
@@ -1974,6 +1983,7 @@ dependencies = [
  "icu_testdata",
  "itertools",
  "litemap",
+ "lru",
  "serde",
  "serde-aux",
  "tinystr 0.7.0",
@@ -2011,7 +2021,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc633605454125dec4b66843673f01c7df2b89479b32e0ed634e43a91cff62a5"
 dependencies = [
  "autocfg",
- "hashbrown",
+ "hashbrown 0.11.2",
  "serde",
 ]
 
@@ -2180,6 +2190,15 @@ checksum = "c0fbfc88337168279f2e9ae06e157cfed4efd3316e14dc96ed074d4f2e6c5952"
 dependencies = [
  "quote",
  "syn",
+]
+
+[[package]]
+name = "lru"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6e8aaa3f231bb4bd57b84b2d5dc3ae7f350265df8aa96492e0bc394a1571909"
+dependencies = [
+ "hashbrown 0.12.3",
 ]
 
 [[package]]
@@ -2399,7 +2418,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40bec70ba014595f99f7aa110b84331ffe1ee9aece7fe6f387cc7e3ecda4d456"
 dependencies = [
  "crc32fast",
- "hashbrown",
+ "hashbrown 0.11.2",
  "indexmap",
  "memchr",
 ]
@@ -2870,7 +2889,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e419b2e30d088b21c4bf3072561535305df8066e89937ad05fc205b99874c23c"
 dependencies = [
  "bytecheck",
- "hashbrown",
+ "hashbrown 0.11.2",
  "ptr_meta",
  "rend",
  "rkyv_derive",

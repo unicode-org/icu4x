@@ -1022,6 +1022,8 @@ jobs:
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
   binsize:
+    # TODO(https://github.com/unicode-org/icu4x/issues/2953): Fix this
+    if: false
     strategy:
       fail-fast: false
       matrix:

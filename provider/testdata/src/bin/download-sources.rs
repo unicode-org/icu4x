@@ -188,7 +188,7 @@ async fn main() -> eyre::Result<()> {
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
 
-    let metadata = icu_testdata::metadata::load()?;
+    let metadata = icu_testdata::metadata::load();
     log::debug!("Package metadata: {:?}", metadata);
 
     let client = reqwest::ClientBuilder::new()
@@ -201,7 +201,7 @@ async fn main() -> eyre::Result<()> {
 
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: &metadata.package_metadata.cldr_json_gitref,
+        tag: &metadata.cldr_json_gitref,
         root_dir: output_path.clone().join("cldr"),
         client: client.clone(),
     };
@@ -214,7 +214,7 @@ async fn main() -> eyre::Result<()> {
             )
         })?;
 
-    let all_paths = metadata.package_metadata.get_all_cldr_paths();
+    let all_paths = metadata.get_all_cldr_paths();
     stream::iter(all_paths)
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {
@@ -225,7 +225,7 @@ async fn main() -> eyre::Result<()> {
 
     let icued_downloader = IcuExportDataDownloader {
         repo_owner_and_name: "unicode-org/icu",
-        tag: &metadata.package_metadata.icuexportdata_gitref,
+        tag: &metadata.icuexportdata_gitref,
         root_dir: output_path.clone().join("icuexport"),
     };
     fs::remove_dir_all(&icued_downloader.root_dir)
@@ -239,7 +239,7 @@ async fn main() -> eyre::Result<()> {
 
     let mut icued_unzipper = icued_downloader.download(&client).await?;
 
-    let all_paths = metadata.package_metadata.get_all_icuexportdata_paths();
+    let all_paths = metadata.get_all_icuexportdata_paths();
     for path in all_paths {
         log::info!("Unzipping: {}", path);
         icued_unzipper.unzip(&path).await?;
