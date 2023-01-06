@@ -115,42 +115,26 @@ pub mod versions {
     ///
     /// Enabled with the "metadata" Cargo feature.
     ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
-    ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn cldr_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .cldr_json_gitref
+        crate::metadata::load().cldr_json_gitref
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
     ///
     /// Enabled with the "metadata" Cargo feature.
     ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
-    ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn icu_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .icuexportdata_gitref
+        crate::metadata::load().icuexportdata_gitref
     }
 }
 

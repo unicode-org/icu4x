@@ -322,7 +322,7 @@ pub enum BackwardSecondLevel {
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
-/// by the locale of the collation. `kr` is probihibited by ECMA 402.
+/// by the locale of the collation. `kr` is prohibited by ECMA 402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
 /// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA 402.
