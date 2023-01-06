@@ -74,7 +74,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Actual job
     - name: Check
@@ -111,7 +111,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Actual job
     - name: Run `cargo make ci-job-test`
@@ -147,7 +147,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job specific dependencies
     - name: Install rustfmt
@@ -194,7 +194,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Actual job
     - name: Run `cargo make ci-job-test-docs`
@@ -227,7 +227,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Actual job
     - name: Run datagen
@@ -274,7 +274,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Load cortex target for no_std build.
@@ -336,7 +336,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Load nightly for rustdoc-json
@@ -409,7 +409,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Load wasi for gn.
@@ -469,7 +469,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Actual job
     - name: Build All Feature Permutations
@@ -504,7 +504,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Install emsdk
@@ -550,7 +550,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Install rustfmt
@@ -588,7 +588,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Get cargo-readme version
@@ -695,7 +695,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     ## Actual job ##
 
@@ -829,7 +829,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
@@ -937,7 +937,7 @@ jobs:
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-make
-        version: 0.31.1
+        version: latest
 
     # Job-specific dependencies
     - name: Install prerequisites for wasm build
