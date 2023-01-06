@@ -5,7 +5,7 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_datagen::*;
+use icu_datagen::prelude::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;

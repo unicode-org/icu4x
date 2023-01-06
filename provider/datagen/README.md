@@ -10,7 +10,7 @@ command-line utility.
 ### `build.rs`
 
 ```rust
-use icu_datagen::*;
+use icu_datagen::prelude::*;
 use std::fs::File;
 
 fn main() {

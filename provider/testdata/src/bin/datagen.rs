@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::*;
+use icu_datagen::prelude::*;
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
