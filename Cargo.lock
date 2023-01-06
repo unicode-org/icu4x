@@ -693,6 +693,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "detone"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7104c193859c8141dcbb2008bd3d93e581d0fa7bb47b0d9f5e15c89d1b55514"
+
+[[package]]
 name = "dhat"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1727,6 +1733,7 @@ dependencies = [
  "atoi",
  "criterion",
  "databake",
+ "detone",
  "displaydoc",
  "icu_collections",
  "icu_properties",
