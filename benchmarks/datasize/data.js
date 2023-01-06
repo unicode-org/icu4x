@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672968079338,
+  "lastUpdate": 1672970891572,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33623,6 +33623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d290e203f14e2d76c3fa1764cbddf5815b6ad256"
         },
         "date": 1672967987594,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e792aac2de417cb7974db6f7c94fbc134fa46079",
+          "message": "Improve comments on borrow types in LRU example (#2959)",
+          "timestamp": "2023-01-05T17:49:08-08:00",
+          "tree_id": "fb2ae78b037d370f427231a2e38be457fac4ebb8",
+          "url": "https://github.com/unicode-org/icu4x/commit/e792aac2de417cb7974db6f7c94fbc134fa46079"
+        },
+        "date": 1672970801117,
         "tool": "ndjson",
         "benches": [
           {
