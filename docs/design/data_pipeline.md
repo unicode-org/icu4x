@@ -3,6 +3,8 @@ ICU4X Locale Data Pipeline
 
 One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application.  This document explains how that goal can be achieved.
 
+_Note: The exact language and implementation choices outlined in this doc have changed since this doc was written, but the high-level architecture remains the same._
+
 ## Definitions
 
 The following terms are used throughout this document.
