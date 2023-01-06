@@ -28,7 +28,6 @@ if ! test -f "full-data-cached.postcard"; then
     cargo run -p icu_datagen --features=bin,experimental -- \
         --keys all \
         --locales all \
-        --keys all \
         --cldr-tag 42.0.0 \
         --icuexport-tag release-72-1 \
         --format blob \
