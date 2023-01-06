@@ -22,6 +22,7 @@ description = "Rebuild ICU4X testdata and ensure that the working copy is clean"
 category = "ICU4X Data"
 dependencies = [
     "testdata",
+    "testdata-hello-world",
 ]
 script_runner = "@duckscript"
 script = '''
@@ -39,6 +40,79 @@ if greater_than ${output_length} 0
 end
 '''
 
+[tasks.testdata-hello-world-json]
+description = "Build the Hello World JSON tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=all",
+    "--out=provider/fs/tests/data/json",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-bincode]
+description = "Build the Hello World bincode tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--syntax=bincode",
+    "--keys=core/helloworld@1",
+    "--locales=all",
+    "--out=provider/fs/tests/data/bincode",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-postcard]
+description = "Build the Hello World postcard tree."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--syntax=postcard",
+    "--keys=core/helloworld@1",
+    "--locales=all",
+    "--out=provider/fs/tests/data/postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world-blob]
+description = "Build the Hello World postcard testdata file."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--format=blob",
+    "--keys=core/helloworld@1",
+    "--locales=all",
+    "--out=provider/blob/tests/data/hello_world.postcard",
+    "--overwrite",
+]
+
+[tasks.testdata-hello-world]
+description = "Build all three the Hello World outputs."
+category = "ICU4X Data"
+dependencies = [
+    "testdata-hello-world-json",
+    "testdata-hello-world-bincode",
+    "testdata-hello-world-postcard",
+    "testdata-hello-world-blob",
+]
+
 ###### END CI TASKS
 
 
@@ -52,7 +126,11 @@ args = [
     "icu_datagen",
     "--features=bin",
     "--",
+    "--cldr-tag=latest",
+    "--icuexport-tag=latest",
     "--format=blob",
+    "--keys=all",
+    "--locales=all",
     "--out=/dev/null",
     "--overwrite",
 ]
@@ -69,3 +147,40 @@ args = [
     "-v",
 ]
 
+[tasks.hello-world-lang-de]
+description = "Build Hello World data for 'de'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=de",
+    "--out=provider/adapters/tests/data/langtest/de",
+    "--overwrite",
+]
+
+[tasks.hello-world-lang-ro]
+description = "Build Hello World data for 'ro'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=ro",
+    "--out=provider/adapters/tests/data/langtest/ro",
+    "--overwrite",
+]
+
+[tasks.hello-world-lang-all]
+description = "Build all Hello World languages."
+category = "ICU4X Data"
+dependencies = [
+    "hello-world-lang-de",
+    "hello-world-lang-ro",
+]

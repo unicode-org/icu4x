@@ -54,6 +54,12 @@ impl Default for SourceData {
 }
 
 impl SourceData {
+    /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
+
+    /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-72-1";
+
     #[cfg(test)]
     pub fn for_test() -> Self {
         Self::default()
@@ -100,13 +106,12 @@ impl SourceData {
         tag: &str,
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
-        let resource = format!(
-            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-            tag, tag, locale_subset
-        );
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new_lazy(Box::new(move || download(&resource)))),
+                cache: SerdeCache::new(AbstractFs::new_from_url(format!(
+                    "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
+                    tag, tag, locale_subset
+                ))),
                 locale_subset,
             })),
             ..self
@@ -119,55 +124,34 @@ impl SourceData {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
         }
-        let resource = format!(
-            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-            tag,
-            tag.replace('/', "-")
-        );
         Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_lazy(Box::new(
-                move || download(&resource),
-            ))))),
+            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
+                format!(
+                    "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+                    tag,
+                    tag.replace('/', "-")
+                ),
+            )))),
             ..self
         })
     }
 
-    /// Adds CLDR data to this `DataSource`. This data will be downloaded from the `latest` GitHub tag.
+    #[deprecated(
+        since = "1.1.0",
+        note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
+    )]
+    /// Deprecated
     pub fn with_cldr_latest(self, locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
-        let path = Box::new(move || {
-            let tag = follow_redirect_and_get_last_element(
-                "https://github.com/unicode-org/cldr-json/releases/latest",
-            )?;
-            download(&format!(
-                "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                tag, tag, locale_subset
-            ))
-        });
-        Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new_lazy(path)),
-                locale_subset,
-            })),
-            ..self
-        })
+        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, locale_subset)
     }
 
-    /// Adds ICU export data to this `DataSource`. This data will be downloaded from the `latest` GitHub tag.
+    #[deprecated(
+        since = "1.1.0",
+        note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
+    )]
+    /// Deprecated
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
-        let path = Box::new(move || {
-            let tag = follow_redirect_and_get_last_element(
-                "https://github.com/unicode-org/icu/releases/latest",
-            )?;
-            download(&format!(
-                "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-                tag,
-                tag.replace('/', "-")
-            ))
-        });
-        Ok(Self {
-            icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_lazy(path)))),
-            ..self
-        })
+        self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
     }
 
     /// Set this to use tries optimized for speed instead of data size
@@ -229,30 +213,6 @@ impl SourceData {
     pub(crate) fn collations(&self) -> &[String] {
         &self.collations
     }
-}
-
-fn follow_redirect_and_get_last_element(redirector: &str) -> Result<String, DataError> {
-    let response = reqwest::blocking::Client::new()
-        .head(redirector)
-        .send()
-        .map_err(|e| DataError::custom("reqwest error").with_display_context(&e))?;
-    Ok(response
-        .url()
-        .path()
-        .split('/')
-        .next_back()
-        .expect("split is non-empty")
-        .to_string())
-}
-
-fn download(resource: &str) -> Result<PathBuf, DataError> {
-    cached_path::CacheBuilder::new()
-        .freshness_lifetime(u64::MAX)
-        .progress_bar(None)
-        .build()
-        .unwrap()
-        .cached_path(resource)
-        .map_err(|e| DataError::custom("Download").with_display_context(&e))
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -368,12 +328,9 @@ impl SerdeCache {
     }
 }
 
-type LazyPath = Box<dyn Fn() -> Result<PathBuf, DataError> + 'static + Sync + Send>;
-type Zip = ZipArchive<Cursor<Vec<u8>>>;
-
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(RwLock<Result<Zip, LazyPath>>),
+    Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
 }
 
 impl Debug for AbstractFs {
@@ -399,7 +356,7 @@ impl AbstractFs {
         }
     }
 
-    fn new_lazy(path: LazyPath) -> Self {
+    fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
     }
 
@@ -410,12 +367,21 @@ impl AbstractFs {
                     return Ok(());
                 }
                 let mut lock = lock.write().expect("poison");
-                let init = if let Err(init) = lock.deref() {
-                    init
+                let resource = if let Err(resource) = lock.deref() {
+                    resource
                 } else {
                     return Ok(());
                 };
-                let root = init()?;
+                lazy_static::lazy_static! {
+                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                        .freshness_lifetime(u64::MAX)
+                        .progress_bar(None)
+                        .build()
+                        .unwrap();
+                }
+                let root = CACHE
+                    .cached_path(resource)
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
                 *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(&root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())

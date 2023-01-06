@@ -4,7 +4,7 @@
 
 use icu_datagen::*;
 use icu_provider::KeyedDataMarker;
-use icu_provider_fs::export::serializers::{bincode, json, postcard};
+use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
 
@@ -60,12 +60,13 @@ fn main() {
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
 
+    let _ = std::fs::remove_dir_all(paths::data_root().join("baked"));
+
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked"),
         pretty: true,
         insert_feature_gates: true,
         use_separate_crates: true,
-        overwrite: true,
     };
 
     icu_datagen::datagen(
@@ -81,35 +82,4 @@ fn main() {
         vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();
-
-    icu_datagen::datagen(
-        None,
-        &[icu_provider::hello_world::HelloWorldV1Marker::KEY],
-        &source_data,
-        vec![
-            Out::Fs {
-                output_path: paths::data_root().join("../../fs/tests/data/json"),
-                serializer: Box::new(json::Serializer::default()),
-                overwrite: true,
-                fingerprint: false,
-            },
-            Out::Fs {
-                output_path: paths::data_root().join("../../fs/tests/data/bincode"),
-                serializer: Box::new(bincode::Serializer::default()),
-                overwrite: true,
-                fingerprint: false,
-            },
-            Out::Fs {
-                output_path: paths::data_root().join("../../fs/tests/data/postcard"),
-                serializer: Box::new(postcard::Serializer::default()),
-                overwrite: true,
-                fingerprint: false,
-            },
-            Out::Blob(Box::new(
-                File::create(paths::data_root().join("../../blob/tests/data/hello_world.postcard"))
-                    .unwrap(),
-            )),
-        ],
-    )
-    .unwrap()
 }

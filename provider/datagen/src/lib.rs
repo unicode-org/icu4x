@@ -121,11 +121,38 @@ impl AnyProvider for DatagenProvider {
     }
 }
 
+/// Parses a human-readable key identifier into a [`DataKey`].
+///
+//  Supports the hello world key
+//
+/// # Example
+/// ```
+/// # use icu_provider::KeyedDataMarker;
+/// assert_eq!(
+///     icu_datagen::key("list/and@1"),
+///     Some(icu::list::provider::AndListV1Marker::KEY,
+/// );
+/// ```
+pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
+    lazy_static::lazy_static! {
+        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys()
+                    .into_iter()
+                    .chain(std::iter::once(
+                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
+                    ))
+                    .map(|k| (k.path().get(), k))
+                    .collect();
+    }
+    LOOKUP.get(string.as_ref()).copied()
+}
+
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
 ///
+//  Supports the hello world key
+//
 /// # Example
 /// ```
 /// # use icu_provider::KeyedDataMarker;
@@ -138,11 +165,7 @@ impl AnyProvider for DatagenProvider {
 /// );
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
-    let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
-    all_keys()
-        .into_iter()
-        .filter(|k| keys.contains(&*k.path()))
-        .collect()
+    strings.iter().map(AsRef::as_ref).filter_map(key).collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
@@ -150,6 +173,8 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 ///
 /// Unknown key names are ignored.
 ///
+//  Supports the hello world key
+//
 /// # Example
 ///
 /// #### keys.txt
@@ -186,6 +211,8 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 ///
 /// Unknown key names are ignored.
 ///
+//  Supports the hello world key
+//
 /// # Example
 ///
 /// #### build.rs
@@ -331,7 +358,6 @@ pub fn datagen(
     };
 
     keys.into_par_iter().try_for_each(|&key| {
-        log::info!("Writing key: {}", key);
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
@@ -350,6 +376,7 @@ pub fn datagen(
             })
         });
 
+        log::info!("Writing key: {}", key);
         for e in &exporters {
             e.flush(key).map_err(|e| e.with_key(key))?;
         }

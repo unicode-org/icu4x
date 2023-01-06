@@ -32,6 +32,7 @@ use icu_segmenter::provider::*;
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
         /// List of all supported keys
+        // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             vec![
                 $(
