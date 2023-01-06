@@ -47,10 +47,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=all",
+    "--format=dir",
     "--out=provider/fs/tests/data/json",
     "--overwrite",
 ]
@@ -62,11 +63,12 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--syntax=bincode",
     "--keys=core/helloworld@1",
     "--locales=all",
+    "--format=dir",
+    "--syntax=bincode",
     "--out=provider/fs/tests/data/bincode",
     "--overwrite",
 ]
@@ -78,11 +80,12 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--syntax=postcard",
     "--keys=core/helloworld@1",
     "--locales=all",
+    "--format=dir",
+    "--syntax=postcard",
     "--out=provider/fs/tests/data/postcard",
     "--overwrite",
 ]
@@ -94,11 +97,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--format=blob",
     "--keys=core/helloworld@1",
     "--locales=all",
+    "--format=blob",
     "--out=provider/blob/tests/data/hello_world.postcard",
     "--overwrite",
 ]
@@ -126,11 +129,9 @@ args = [
     "icu_datagen",
     "--features=bin",
     "--",
-    "--cldr-tag=latest",
-    "--icuexport-tag=latest",
-    "--format=blob",
     "--keys=all",
     "--locales=all",
+    "--format=blob",
     "--out=/dev/null",
     "--overwrite",
 ]
@@ -154,10 +155,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=de",
+    "--format=dir",
     "--out=provider/adapters/tests/data/langtest/de",
     "--overwrite",
 ]
@@ -169,10 +171,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=ro",
+    "--format=dir",
     "--out=provider/adapters/tests/data/langtest/ro",
     "--overwrite",
 ]
