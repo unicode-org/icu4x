@@ -402,8 +402,8 @@ fn test_keys() {
         ]),
         vec![
             icu_list::provider::AndListV1Marker::KEY,
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
         ]
     );
 }
