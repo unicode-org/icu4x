@@ -44,25 +44,9 @@ icu_provider_adapters = { version = "1.0.0", path = "../adapters" }
 icu_provider_blob = { version = "1.0.0", path = "../blob", optional = true }
 lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
-# bin feature
-bytes = {version = "1.1.0", optional = true }
-clap = { version = "2.33", optional = true }
-eyre = { version = "0.6", optional = true }
-futures = { version = "0.3", optional = true }
-icu_provider_fs = { version = "1.0.0", path = "../fs", optional = true }
-icu_datagen = { version = "1.0.0", path = "../datagen", features = ["experimental"], optional = true }
-log = { version = "0.4", optional = true }
-reqwest = { version = "0.11", features = ["stream"], optional = true }
-simple_logger = { version = "1.12", optional = true, default-features = false }
-tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"], optional = true }
-zip = { version = "0.6.2", optional = true }
-
 # metadata feature
-cargo_metadata = { version = "0.13", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 toml = { version = "0.5", optional = true, default-features = false }
-displaydoc = { version = "0.2.3", default-features = false, optional = true }
-writeable = { version = "0.5", path = "../../utils/writeable", optional = true }
 
 # databake deps
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
@@ -79,12 +63,12 @@ icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdeci
 icu_datetime = { version = "1.0.0", path = "../../components/datetime", default-features = false, optional = true }
 icu_decimal = { version = "1.0.0", path = "../../components/decimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
-icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 icu_list = { version = "1.0.0", path = "../../components/list", default-features = false, optional = true }
 icu_locid_transform = { version = "1.0.0", path = "../../components/locid_transform", default-features = false, optional = true }
 icu_normalizer = { version = "1.0.0", path = "../../components/normalizer", default-features = false, optional = true }
 icu_plurals = { version = "1.0.0", path = "../../components/plurals", default-features = false, optional = true }
 icu_properties = { version = "1.0.0", path = "../../components/properties", default-features = false, optional = true }
+icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
 icu_timezone = { version = "1.0.0", path = "../../components/timezone", default-features = false, optional = true }
 
@@ -110,42 +94,15 @@ icu_datetime_experimental = [
 ]
 buffer = ["icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "lazy_static"]
 std = []
-bin = [
-    "bytes",
-    "clap",
-    "eyre",
-    "simple_logger",
-    "log",
-    "reqwest",
-    "tokio",
-    "futures",
-    "std",
-    "metadata",
-    "icu_datagen",
-    "icu_provider_fs",
-    "zip",
-]
 # Enables programmatic access to the sources.toml file
 # If you want this to be made public stable, file an issue on the ICU4X repository.
 metadata = [
     "icu_locid/serde",
     "toml",
     "serde",
-    "displaydoc",
-    "writeable",
-    "std"
 ]
-all_features_hack = []
-
-[[bin]]
-name = "icu4x-testdata-download-sources"
-path = "src/bin/download-sources.rs"
-required-features = ["bin"]
-
-[[bin]]
-name = "icu4x-testdata-datagen"
-path = "src/bin/datagen.rs"
-required-features = ["bin"]
+internal_all_features_hack = []
+internal_ignore_baked = []
 
 [[bench]]
 name = "providers"

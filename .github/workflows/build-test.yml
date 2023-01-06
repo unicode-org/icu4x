@@ -170,11 +170,11 @@ jobs:
     # Job specific dependencies
     - name: Install rustfmt
       run: rustup component add rustfmt
-    - name: Build icu4x-testdata-datagen
+    - name: Build make-testdata
       uses: actions-rs/cargo@v1.0.1
       with:
         command: build
-        args: --bin=icu4x-testdata-datagen --features=bin
+        args: --bin=make-testdata
     - name: Build icu4x-datagen
       uses: actions-rs/cargo@v1.0.1
       with:

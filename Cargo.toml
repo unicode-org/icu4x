@@ -41,6 +41,7 @@ members = [
     "provider/fs",
     "provider/macros",
     "provider/testdata",
+    "provider/testdata/scripts",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/benchmark/binsize",

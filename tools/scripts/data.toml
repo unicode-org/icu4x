@@ -12,9 +12,7 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-testdata-datagen",
-    "--no-default-features",
-    "--features=bin",
+    "--bin=make-testdata",
 ]
 
 [tasks.testdata-check]

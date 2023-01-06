@@ -1907,20 +1907,13 @@ dependencies = [
 name = "icu_testdata"
 version = "1.0.0"
 dependencies = [
- "bytes",
- "cargo_metadata",
- "clap",
  "criterion",
- "displaydoc",
- "eyre",
- "futures",
  "icu",
  "icu_calendar",
  "icu_casemapping",
  "icu_collator",
  "icu_collections",
  "icu_compactdecimal",
- "icu_datagen",
  "icu_datetime",
  "icu_decimal",
  "icu_displaynames",
@@ -1933,21 +1926,34 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_provider_blob",
- "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
  "lazy_static",
  "litemap",
+ "serde",
+ "tinystr 0.7.0",
+ "toml",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_testdata_scripts"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "clap",
+ "eyre",
+ "futures",
+ "icu_datagen",
+ "icu_provider",
+ "icu_testdata",
  "log",
  "reqwest",
  "serde",
  "simple_logger",
- "tinystr 0.7.0",
  "tokio",
  "toml",
- "writeable",
- "zerovec",
  "zip 0.6.2",
 ]
 
