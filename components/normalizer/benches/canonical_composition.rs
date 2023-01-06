@@ -171,7 +171,6 @@ fn decompose_data(nfc: &str) -> Vec<(char, char)> {
                 None
             }
         })
-        .filter(Option::is_some)
-        .map(Option::unwrap)
+        .flatten()
         .collect()
 }
