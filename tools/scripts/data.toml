@@ -122,9 +122,9 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "-p",
-    "icu_datagen",
+    "-bin=icu4x-datagen",
     "--features=bin",
+    "--release",
     "--",
     "--cldr-tag=latest",
     "--icuexport-tag=latest",

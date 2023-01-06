@@ -25,7 +25,7 @@ RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SI
 # Cache postcard data so as not to regen whenever blowing away `lib/`
 if ! test -f "full-data-cached.postcard"; then
     # Regen all data
-    cargo run -p icu_datagen --features=bin,experimental -- \
+    cargo run --bin icu4x-datagen --features=bin,experimental --release -- \
         --all-locales \
         --all-keys \
         --cldr-tag 42.0.0 \
