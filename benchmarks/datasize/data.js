@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672953397662,
+  "lastUpdate": 1672968079338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33593,6 +33593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/da0b424084bb8801f218f15e6357fb729bd411c0"
         },
         "date": 1672953307273,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d290e203f14e2d76c3fa1764cbddf5815b6ad256",
+          "message": "Make metacrate features more specific (#2932)",
+          "timestamp": "2023-01-05T17:17:11-08:00",
+          "tree_id": "ba9d59ca7ed05437929857efa250d62c3dc969f0",
+          "url": "https://github.com/unicode-org/icu4x/commit/d290e203f14e2d76c3fa1764cbddf5815b6ad256"
+        },
+        "date": 1672967987594,
         "tool": "ndjson",
         "benches": [
           {
