@@ -5,8 +5,8 @@
 use criterion::{BenchmarkId, Criterion};
 use detone::IterDecomposeVietnamese;
 
-use icu_normalizer::ComposingNormalizer;
 use icu_normalizer::properties::{CanonicalComposition, CanonicalDecomposition, Decomposed};
+use icu_normalizer::ComposingNormalizer;
 
 struct BenchDataContent {
     pub file_name: String,
