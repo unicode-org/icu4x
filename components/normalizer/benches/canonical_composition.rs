@@ -118,7 +118,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
                 let result: Vec<(char, char)> = nfc_normalizer
                     .normalize(include_str!("./data/udhr_vie.txt"))
                     .chars()
-                    .map(|c| {
+                    .filter_map(|c| {
                         let mut iter = std::iter::once(c).decompose_vietnamese_tones(true);
                         if let Some(base) = iter.next() {
                             iter.next().map(|tone| (base, tone))
@@ -126,7 +126,6 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
                             None
                         }
                     })
-                    .flatten()
                     .collect();
                 assert!(!result.is_empty());
                 result
@@ -164,13 +163,12 @@ fn decompose_data(nfc: &str) -> Vec<(char, char)> {
     let decomposer = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     nfc.chars()
         .map(|c| decomposer.decompose(c))
-        .map(|decomposed| {
+        .filter_map(|decomposed| {
             if let Decomposed::Expansion(a, b) = decomposed {
                 Some((a, b))
             } else {
                 None
             }
         })
-        .flatten()
         .collect()
 }
