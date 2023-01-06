@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1672970018256,
+  "lastUpdate": 1672971235418,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -90725,6 +90725,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 7013,
             "range": "± 387",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e792aac2de417cb7974db6f7c94fbc134fa46079",
+          "message": "Improve comments on borrow types in LRU example (#2959)",
+          "timestamp": "2023-01-05T17:49:08-08:00",
+          "tree_id": "fb2ae78b037d370f427231a2e38be457fac4ebb8",
+          "url": "https://github.com/unicode-org/icu4x/commit/e792aac2de417cb7974db6f7c94fbc134fa46079"
+        },
+        "date": 1672971143492,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94663,
+            "range": "± 3468",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 161668,
+            "range": "± 4236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 91667,
+            "range": "± 2958",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 105862,
+            "range": "± 3562",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95574,
+            "range": "± 5244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 108492,
+            "range": "± 4273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 103446,
+            "range": "± 3549",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 157395,
+            "range": "± 8105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 175335,
+            "range": "± 7978",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 159743,
+            "range": "± 5518",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 179630,
+            "range": "± 6482",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 172385,
+            "range": "± 4603",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6672,
+            "range": "± 318",
             "unit": "ns/iter"
           }
         ]
