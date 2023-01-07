@@ -20,7 +20,7 @@ impl<'a> TzifDir<'a> {
             .map(|path| -> Result<_, DataError> {
                 let buf = self.0 .0.read_to_buf(&format!("tzif/{path}"))?;
                 let data = tzif::parse_tzif(&buf).map_err(|e| {
-                    DataError::custom("TZIF")
+                    DataError::custom("TZif parse")
                         .with_display_context(&e)
                         .with_path_context(&path)
                 })?;
@@ -40,23 +40,5 @@ impl TzdbPaths {
 
     pub(crate) fn tzif(&self) -> TzifDir<'_> {
         TzifDir(self)
-    }
-
-    pub(crate) fn read_and_parse_tzifs(
-        &self,
-        path: &str,
-    ) -> Result<Vec<(String, TzifData)>, DataError> {
-        self.transitive_file_list(path)
-            .into_iter()
-            .map(|path| {
-                tzif::parse_tzif_file(self.0.join(&path))
-                    .map(|data| (tzid_from_path(&path), data))
-                    .map_err(|e| {
-                        DataError::custom("Tzdb error")
-                            .with_display_context(&e)
-                            .with_path_context(&path)
-                    })
-            })
-            .collect()
     }
 }

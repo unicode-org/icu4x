@@ -112,7 +112,7 @@ impl SourceData {
     pub fn with_tzdb(self, _root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             #[cfg(feature = "experimental")]
-            tzdb_paths: Some(Arc::new(TzdbPaths::new(_root))),
+            tzdb_paths: Some(Arc::new(TzdbPaths::new(_root)?)),
             ..self
         })
     }

@@ -1674,7 +1674,7 @@ dependencies = [
  "syn",
  "tinystr 0.7.0",
  "toml",
- "tzif 0.2.0",
+ "tzif 0.2.1",
  "walkdir",
  "writeable",
  "zerovec",
@@ -1907,7 +1907,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
- "tzif 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tzif 0.2.0",
  "writeable",
  "yoke",
  "zerofrom",
@@ -3848,18 +3848,18 @@ checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
 [[package]]
 name = "tzif"
 version = "0.2.0"
-dependencies = [
- "combine",
- "walkdir",
-]
-
-[[package]]
-name = "tzif"
-version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7786fa5f760cbe41595be57a6cd515382a3c9c517106d9c60b6514ec7dc89e9e"
 dependencies = [
  "combine",
+]
+
+[[package]]
+name = "tzif"
+version = "0.2.1"
+dependencies = [
+ "combine",
+ "walkdir",
 ]
 
 [[package]]
