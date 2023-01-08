@@ -183,7 +183,7 @@ impl<'a> HashIndex<'a> {
 }
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct ZeroHashMapStatic<'a, K, V>
+pub struct ZeroHashMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
@@ -194,7 +194,7 @@ where
     values: V::Container,
 }
 
-impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
+impl<'a, K, V> ZeroHashMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
@@ -208,7 +208,7 @@ where
     }
 }
 
-impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
+impl<'a, K, V> ZeroHashMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
     V: ZeroMapKV<'a> + ?Sized,
@@ -225,14 +225,14 @@ where
         }
     }
 
-    /// Build a [`ZeroHashMapStatic`] from an iterator returning (K, V) tuples.
+    /// Build a [`ZeroHashMap`] from an iterator returning (K, V) tuples.
     ///
     /// # Example
     /// ```
-    /// use zerovec::ZeroHashMapStatic;
+    /// use zerovec::ZeroHashMap;
     ///
     /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
-    /// let hashmap: ZeroHashMapStatic<i32, str> = ZeroHashMapStatic::build_from_iter(kv.into_iter());
+    /// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::build_from_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
@@ -277,8 +277,8 @@ mod tests {
         let seed = u64::from_le_bytes(*b"testseed");
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
-        let hashmap: ZeroHashMapStatic<u64, u64> =
-            ZeroHashMapStatic::build_from_iter(kv.iter().map(|e| (&e.0, &e.1)));
+        let hashmap: ZeroHashMap<u64, u64> =
+            ZeroHashMap::build_from_iter(kv.iter().map(|e| (&e.0, &e.1)));
         for (k, v) in kv {
             assert_eq!(
                 hashmap.get(&k).copied().map(<u64 as AsULE>::from_unaligned),

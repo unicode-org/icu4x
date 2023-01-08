@@ -8,7 +8,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use zerovec::maps::ZeroMapKV;
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
-use zerovec::{ZeroHashMapStatic, ZeroMap};
+use zerovec::{ZeroHashMap, ZeroMap};
 
 const DATA: [(&str, &str); 16] = [
     ("ar", "Arabic"),
@@ -274,7 +274,7 @@ fn bench_zerohashmap(c: &mut Criterion) {
     bench_zerohashmap_lookup_large(c);
 }
 
-fn build_zerohashmap(large: bool) -> ZeroHashMapStatic<'static, Index32Str, Index32Str> {
+fn build_zerohashmap(large: bool) -> ZeroHashMap<'static, Index32Str, Index32Str> {
     let mut kv = match large {
         true => Vec::with_capacity(8192 * DATA.len()),
         false => Vec::with_capacity(DATA.len()),
@@ -290,11 +290,11 @@ fn build_zerohashmap(large: bool) -> ZeroHashMapStatic<'static, Index32Str, Inde
         }
     }
 
-    ZeroHashMapStatic::build_from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
+    ZeroHashMap::build_from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
 }
 
 fn bench_zerohashmap_lookup(c: &mut Criterion) {
-    let zero_hashmap: ZeroHashMapStatic<Index32Str, Index32Str> =
+    let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> =
         postcard::from_bytes(black_box(&POSTCARD_ZEROHASHMAP)).unwrap();
 
     c.bench_function("zerohashmap/lookup/small", |b| {
@@ -313,8 +313,7 @@ fn bench_zerohashmap_lookup(c: &mut Criterion) {
 
 fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
     let buf = read_large_zerohashmap_postcard_bytes();
-    let zero_hashmap: ZeroHashMapStatic<Index32Str, Index32Str> =
-        postcard::from_bytes(&buf).unwrap();
+    let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
 
     c.bench_function("zerohashmap/lookup/large", |b| {
         b.iter(|| {
