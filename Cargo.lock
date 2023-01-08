@@ -3371,6 +3371,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "t1ha"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa44aa51ae1a544e2c35a38831ba54ae40591f21384816f531b84f3e984b9ccc"
+dependencies = [
+ "cfg-if 0.1.10",
+ "lazy_static",
+ "num-traits",
+ "rustc_version 0.2.3",
+]
+
+[[package]]
 name = "tar"
 version = "0.4.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4217,15 +4229,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "wyhash"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baf6e163c25e3fac820b4b453185ea2dea3b6a3e0a721d4d23d75bd33734c295"
-dependencies = [
- "rand_core",
-]
-
-[[package]]
 name = "xattr"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4292,7 +4295,7 @@ dependencies = [
  "rand_pcg",
  "serde",
  "serde_json",
- "wyhash",
+ "t1ha",
  "yoke",
  "zerofrom",
  "zerovec-derive",
