@@ -75,14 +75,22 @@ impl SourceData {
     /// Adds CLDR data to this `DataSource`. The root should point to a local
     /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
+    ///
+    /// The `_locale_subset` variable is ignored.
     pub fn with_cldr(
         self,
         root: PathBuf,
-        locale_subset: CldrLocaleSubset,
+        _locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
+        let root = AbstractFs::new(root)?;
+        let locale_subset = if root.list("cldr-misc-full").is_ok() {
+            CldrLocaleSubset::Full
+        } else {
+            CldrLocaleSubset::Modern
+        };
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new(root)?),
+                cache: SerdeCache::new(root),
                 locale_subset,
             })),
             ..self

@@ -136,10 +136,8 @@ fn main() -> eyre::Result<()> {
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
-                .takes_value(true)
-                .possible_value("full")
-                .possible_value("modern")
-                .help("CLDR JSON locale subset; defaults to 'full'")
+                .hidden(true)
+                .help("Deprecated, use --locales full or --locales modern")
                 .takes_value(true),
         )
         .arg(
@@ -193,14 +191,14 @@ fn main() -> eyre::Result<()> {
                 .required_unless("ALL_LOCALES")
                 .help(
                     "Include this locale in the output. Accepts multiple arguments. \
-                    Set to 'all' for all locales, or 'none' for no locales.",
+                    Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales.",
                 ),
         )
         .arg(
             Arg::with_name("ALL_LOCALES")
                 .long("all-locales")
                 .hidden(true)
-                .help("Deprecated: alias for --locales all"),
+                .help("Deprecated: alias for --locales full"),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -237,6 +235,8 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
+    let mut cldr_locales = CldrLocaleSubset::Full;
+
     let selected_locales = if matches.is_present("ALL_LOCALES") {
         None
     } else {
@@ -246,7 +246,11 @@ fn main() -> eyre::Result<()> {
             .collect::<Vec<_>>()
             .as_slice()
         {
-            ["all"] => None,
+            ["full"] => None,
+            ["modern"] => {
+                cldr_locales = CldrLocaleSubset::Modern;
+                None
+            }
             ["none"] => Some(vec![]),
             locales => Some(
                 locales
@@ -282,14 +286,9 @@ fn main() -> eyre::Result<()> {
         log::warn!("No keys selected");
     }
 
-    let cldr_locales = match matches.value_of("CLDR_LOCALE_SUBSET") {
-        Some("modern") => icu_datagen::CldrLocaleSubset::Modern,
-        _ => icu_datagen::CldrLocaleSubset::Full,
-    };
-
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
+        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Full)?;
     } else if Some("latest") == matches.value_of("CLDR_TAG") {
         source_data =
             source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, cldr_locales)?;

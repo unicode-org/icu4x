@@ -63,13 +63,13 @@
 //! To generate the data required for [`FsDataProvider`], run the following:
 //!
 //! ```bash
-//! icu4x-datagen --keys all --locales all --format dir
+//! icu4x-datagen --keys all --locales full --format dir
 //! ```
 //!
 //! To export `postcard` format, use
 //!
 //! ```bash
-//! icu4x-datagen --keys all --locales all --format dir --syntax postcard
+//! icu4x-datagen --keys all --locales full --format dir --syntax postcard
 //! ```
 //!
 //! *Notice:* In order to use encoded data in production, [`icu_provider`](crate) has to be

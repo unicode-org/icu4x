@@ -27,7 +27,7 @@ if ! test -f "full-data-cached.postcard"; then
     # Regen all data
     cargo run -p icu_datagen --features=bin,experimental -- \
         --keys all \
-        --locales all \
+        --locales full \
         --format blob \
         --out ./full-data-cached.postcard
 fi

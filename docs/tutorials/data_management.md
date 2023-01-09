@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --keys all --locales all --format blob --out my_data_blob.postcard
+$ icu4x-datagen --keys all --locales full --format blob --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
@@ -78,7 +78,7 @@ fn main() {
 
 # 4. Data slicing
 
-You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all` and `--locales all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
+You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all` and `--locales full`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 ```console
 $ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
