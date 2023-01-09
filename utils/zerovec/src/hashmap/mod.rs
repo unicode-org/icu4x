@@ -10,11 +10,14 @@ use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 use t1ha::T1haHasher;
 
+// Const seed to be used with [`T1haHasher::with_seed`].
 const SEED: u64 = 0xaabbccdd;
-// Split the 64bit hash into (g, f0, f1)
-// g == highest 16 bits of h
-// f0 == middle 24 bits of h
-// f1 == lowest 24 bits of h
+
+/// Split the 64bit hash into (g, f0, f1).
+/// g denotes the highest 16bits of the hash modulo m, and is referred to as first level hash.
+/// (f0, f1) denotes the middle, and lower 24bits of the hash respectively.
+/// (f0, f1) are used to distribute the keys with same g, into distinct slots.
+/// m is the length of the container.
 #[inline]
 const fn split_hash64(hash: u64, m: u32) -> (usize, u32, u32) {
     (
@@ -24,14 +27,14 @@ const fn split_hash64(hash: u64, m: u32) -> (usize, u32, u32) {
     )
 }
 
-// Compute (f0 + f1 * d0 + d1) % m
-// where
-// f0, f1 are 24 bits
+/// Calculate the displacement using (f0, f1), (d0, d1) in modulo m.
+/// The displacement function is (f0 + f1 * d0 + d1) mod m.
 #[inline]
 fn compute_displacement(f: (u32, u32), d: (u32, u32), m: u32) -> usize {
     (f.1.wrapping_mul(d.0).wrapping_add(f.0).wrapping_add(d.1) % m) as usize
 }
 
+/// Compute hash using [`T1haHasher`] with modulo [`m`] and split using [`split_hash64`].
 #[inline]
 fn compute_hash<K: Hash>(k: &K, m: usize) -> (usize, u32, u32) {
     let mut hasher = T1haHasher::with_seed(SEED);
@@ -39,15 +42,32 @@ fn compute_hash<K: Hash>(k: &K, m: usize) -> (usize, u32, u32) {
     split_hash64(hasher.finish(), m as u32)
 }
 
+/// Denotes an index that maps each of the keys into a distinct slot.
+/// A two-level hashing scheme is used to construct this index.
 #[derive(Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 struct HashIndex<'a> {
+    /// Array of (d0, d1) which splits the keys with same first level hash into distinct
+    /// slots.
+    /// The ith index of the array splits the keys with first level hash i.
+    /// If no key with first level hash is found in the original keys, (0, 0) is used as an empty
+    /// placeholder.
     #[cfg_attr(feature = "serde", serde(borrow))]
     displacements: ZeroVec<'a, (u32, u32)>,
 }
 
 impl<'a> HashIndex<'a> {
-    /// Build the hashIndex and permute keys, values according to the hash.
+    /// Build a [`HashIndex`] from keys and values.
+    /// A mutable keys, values container is required, as the containers are permuted according
+    /// to the generated perfect hash.
+    /// The steps are to build are.
+    /// 1. Compute hash and split into (g, f0, f1).
+    /// 2. Bucket and sort the split hash on g in descending order.
+    /// 3. In decreasing order of bucket size, try until a (d0, d1) is found that splits the keys
+    ///    in the bucket into distinct slots.
+    /// 4. Mark the slots for current bucket as occupied and store the reverse mapping.
+    /// 5. Repeat untill all the keys have been assigned distinct slots.
+    /// 6. Permute the keys, values according to the reverse mapping.
     #[inline]
     #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // proper documentation at each occurence
     pub fn build_from_kv_containers<'b, K, V>(
@@ -122,6 +142,9 @@ impl<'a> HashIndex<'a> {
 
             'd0: for d0 in 0..len as u32 {
                 'd1: for d1 in 0..len as u32 {
+                    if (d0, d1) == (0, 0) {
+                        continue;
+                    }
                     current_displacements.clear();
                     generation += 1;
 
@@ -135,7 +158,6 @@ impl<'a> HashIndex<'a> {
                             continue 'd1;
                         }
                         assignments[displacement_idx] = generation;
-
                         current_displacements.push(displacement_idx);
                     }
 
@@ -166,14 +188,19 @@ impl<'a> HashIndex<'a> {
         }
     }
 
+    /// Given a [`key`] return the probable index of the key or [`None`] if the key is guaranteed to be absent.
+    /// Another check to determine if the key matches the one at the probable index is required.
     #[inline]
-    pub fn index<K>(&self, k: &K) -> Option<usize>
+    pub fn index<K>(&self, key: &K) -> Option<usize>
     where
         K: Hash,
     {
-        let (g, f0, f1) = compute_hash(k, self.displacements.len());
+        let (g, f0, f1) = compute_hash(key, self.displacements.len());
         #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();
+        if (d0, d1) == (0, 0) {
+            return None;
+        }
         Some(compute_displacement(
             (f0, f1),
             (d0, d1),
@@ -182,6 +209,18 @@ impl<'a> HashIndex<'a> {
     }
 }
 
+/// A perfect zerohashmap built using [`HashIndex`] optimized for lookups over immutable keys.
+///
+/// # Examples
+/// ```
+/// use zerovec::ZeroHashMap;
+///
+/// let kv = vec![(0, "a"), (1, "b"), (2, "c")];
+/// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::build_from_iter(kv.into_iter());
+/// assert_eq!(hashmap.get(&0), Some("a"));
+/// assert_eq!(hashmap.get(&2), Some("c"));
+/// assert_eq!(hashmap.get(&4), None);
+/// ```
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ZeroHashMap<'a, K, V>
 where
@@ -199,10 +238,12 @@ where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
+    /// The number of elements in the [`ZeroHashMap`].
     pub fn len(&self) -> usize {
         self.values.zvl_len()
     }
 
+    /// Whether the [`ZeroHashMap`] is empty
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
@@ -213,6 +254,20 @@ where
     K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
     V: ZeroMapKV<'a> + ?Sized,
 {
+    /// Get the value corresponding to `key`.
+    /// If absent `None` is returned.
+    ///
+    /// # Example
+    /// ```
+    /// use zerovec::ZeroHashMap;
+    ///
+    /// let hashmap: ZeroHashMap<str, str> =
+    ///     ZeroHashMap::build_from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
+    ///
+    /// assert_eq!(hashmap.get("a"), Some("A"));
+    /// assert_eq!(hashmap.get("z"), Some("Z"));
+    /// assert_eq!(hashmap.get("0"), None);
+    /// ```
     #[inline]
     pub fn get<'b>(&'b self, key: &'b K) -> Option<&'b V::GetType> {
         let i = self.index.index(&key)?;
