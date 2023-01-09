@@ -10,7 +10,7 @@ use tzif::data::{
     tzif::{TzifData, UtLocalIndicator},
 };
 
-fn create_transition_day_v1(day: TransitionDay) -> TransitionDayV1 {
+fn create_transition_day(day: TransitionDay) -> TransitionDayV1 {
     match day {
         TransitionDay::NoLeap(value) => TransitionDayV1::NoLeap(value),
         TransitionDay::WithLeap(value) => TransitionDayV1::WithLeap(value),
@@ -18,16 +18,16 @@ fn create_transition_day_v1(day: TransitionDay) -> TransitionDayV1 {
     }
 }
 
-pub(super) fn create_transition_date_v1(date: TransitionDate) -> TransitionDateV1 {
+pub(super) fn create_transition_date(date: TransitionDate) -> TransitionDateV1 {
     TransitionDateV1 {
-        day_of_year: create_transition_day_v1(date.day),
+        day_of_year: create_transition_day(date.day),
         time_of_day: date.time.0 as i32,
     }
 }
 
-pub(super) fn create_time_zone_transition_list_v1(
+pub(super) fn try_create_time_zone_transition_list(
     tzif_data: &TzifData,
-) -> BTreeMap<LocalTimeRecordV1, Vec<i64>> {
+) -> Result<BTreeMap<LocalTimeRecordV1, Vec<i64>>, icu_provider::DataError> {
     let data_block = tzif_data
         .data_block2
         .as_ref()
@@ -39,11 +39,23 @@ pub(super) fn create_time_zone_transition_list_v1(
 
     let mut transition_list: BTreeMap<LocalTimeRecordV1, Vec<i64>> = BTreeMap::new();
 
+    if transition_times.len() != transition_types.len() {
+        return Err(icu_provider::DataError::custom(
+            "TZif transition_times and transition_types must have the same length",
+        ));
+    }
+
     for (&transition_time, &transition_type) in transition_times.iter().zip(transition_types) {
         let local_time_record = LocalTimeRecordV1 {
             offset: local_time_records[transition_type].utoff.0 as i32,
             is_dst: local_time_records[transition_type].is_dst,
         };
+        // We want all of the values to be in local time.
+        // According to the TZif spec, if there are no UT/local indicators, then every time
+        // is assumed to be in local time. However, if there are UT/local indicators,
+        // and the type is UT (rather than Local), then we need to convert it to local time
+        // by applying the `utoff` value.
+        // https://datatracker.ietf.org/doc/rfc8536/
         let local_time = if !ut_local_indicators.is_empty()
             && matches!(ut_local_indicators[transition_type], UtLocalIndicator::Ut)
         {
@@ -59,5 +71,5 @@ pub(super) fn create_time_zone_transition_list_v1(
         }
     }
 
-    transition_list
+    Ok(transition_list)
 }

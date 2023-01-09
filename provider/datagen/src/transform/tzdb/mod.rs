@@ -47,15 +47,21 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
             // there may be duplicate data for each BCP47 TZID, so we need to ensure we only take the data once.
             .dedup_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid == rhs_tzid)
             .flat_map(|(bcp47_tzid, data)| {
-                let list = convert::create_time_zone_transition_list_v1(data);
-                std::iter::repeat(bcp47_tzid)
-                    .zip(list.into_iter())
-                    .map(|(a, (b, c))| {
-                        let zv = ZeroVec::alloc_from_slice(&c);
-                        (a, b, zv)
-                    })
+                match convert::try_create_time_zone_transition_list(data) {
+                    Ok(list) => std::iter::repeat(bcp47_tzid)
+                        .zip(list)
+                        .map(|(bcp47_tzid, (local_time_record, transition_times))| {
+                            Ok((
+                                bcp47_tzid,
+                                local_time_record,
+                                ZeroVec::alloc_from_slice(&transition_times),
+                            ))
+                        })
+                        .collect(),
+                    Err(e) => vec![Err(e)],
+                }
             })
-            .collect::<Vec<_>>();
+            .collect::<Result<Vec<_>, _>>()?;
 
         let transitions_v1 = TimeZoneHistoricTransitionsV1 {
             historic_transitions_indices: raw_transitions
@@ -122,11 +128,11 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
                             dst_start: tz_string
                                 .dst_info
                                 .as_ref()
-                                .map(|info| convert::create_transition_date_v1(info.start_date)),
+                                .map(|info| convert::create_transition_date(info.start_date)),
                             dst_end: tz_string
                                 .dst_info
                                 .as_ref()
-                                .map(|info| convert::create_transition_date_v1(info.end_date)),
+                                .map(|info| convert::create_transition_date(info.end_date)),
                         },
                     )
                 })
