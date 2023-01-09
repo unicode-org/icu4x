@@ -110,3 +110,103 @@
 
         See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
 
+
+    .. js:function:: create_ar()
+
+        Construct an :js:class:`ICU4XLocale` for the ``ar`` locale.
+
+
+    .. js:function:: create_bn()
+
+        Construct an :js:class:`ICU4XLocale` for the ``bn`` locale.
+
+
+    .. js:function:: create_de()
+
+        Construct an :js:class:`ICU4XLocale` for the ``de`` locale.
+
+
+    .. js:function:: create_en()
+
+        Construct an :js:class:`ICU4XLocale` for the ``en`` locale.
+
+
+    .. js:function:: create_en_gb()
+
+        Construct an :js:class:`ICU4XLocale` for the ``en-GB`` locale.
+
+
+    .. js:function:: create_es()
+
+        Construct an :js:class:`ICU4XLocale` for the ``es`` locale.
+
+
+    .. js:function:: create_es_419()
+
+        Construct an :js:class:`ICU4XLocale` for the ``es-419`` locale.
+
+
+    .. js:function:: create_fr()
+
+        Construct an :js:class:`ICU4XLocale` for the ``fr`` locale.
+
+
+    .. js:function:: create_hi()
+
+        Construct an :js:class:`ICU4XLocale` for the ``hi`` locale.
+
+
+    .. js:function:: create_id()
+
+        Construct an :js:class:`ICU4XLocale` for the ``id`` locale.
+
+
+    .. js:function:: create_ja()
+
+        Construct an :js:class:`ICU4XLocale` for the ``ja`` locale.
+
+
+    .. js:function:: create_ko()
+
+        Construct an :js:class:`ICU4XLocale` for the ``ko`` locale.
+
+
+    .. js:function:: create_pt()
+
+        Construct an :js:class:`ICU4XLocale` for the ``pt`` locale.
+
+
+    .. js:function:: create_ru()
+
+        Construct an :js:class:`ICU4XLocale` for the ``ru`` locale.
+
+
+    .. js:function:: create_th()
+
+        Construct an :js:class:`ICU4XLocale` for the ``th`` locale.
+
+
+    .. js:function:: create_tr()
+
+        Construct an :js:class:`ICU4XLocale` for the ``tr`` locale.
+
+
+    .. js:function:: create_ur()
+
+        Construct an :js:class:`ICU4XLocale` for the ``ur`` locale.
+
+
+    .. js:function:: create_vi()
+
+        Construct an :js:class:`ICU4XLocale` for the ``vi`` locale.
+
+
+    .. js:function:: create_zh()
+
+        Construct an :js:class:`ICU4XLocale` for the ``zh`` locale.
+
+
+    .. js:function:: create_zh_hant()
+
+        Construct an :js:class:`ICU4XLocale` for the ``zh-Hant`` locale.
+

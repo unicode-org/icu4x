@@ -51,6 +51,46 @@ diplomat_result_void_ICU4XError ICU4XLocale_to_string(const ICU4XLocale* self, D
 bool ICU4XLocale_normalizing_eq(const ICU4XLocale* self, const char* other_data, size_t other_len);
 
 ICU4XOrdering ICU4XLocale_strict_cmp(const ICU4XLocale* self, const char* other_data, size_t other_len);
+
+ICU4XLocale* ICU4XLocale_create_ar();
+
+ICU4XLocale* ICU4XLocale_create_bn();
+
+ICU4XLocale* ICU4XLocale_create_de();
+
+ICU4XLocale* ICU4XLocale_create_en();
+
+ICU4XLocale* ICU4XLocale_create_en_gb();
+
+ICU4XLocale* ICU4XLocale_create_es();
+
+ICU4XLocale* ICU4XLocale_create_es_419();
+
+ICU4XLocale* ICU4XLocale_create_fr();
+
+ICU4XLocale* ICU4XLocale_create_hi();
+
+ICU4XLocale* ICU4XLocale_create_id();
+
+ICU4XLocale* ICU4XLocale_create_ja();
+
+ICU4XLocale* ICU4XLocale_create_ko();
+
+ICU4XLocale* ICU4XLocale_create_pt();
+
+ICU4XLocale* ICU4XLocale_create_ru();
+
+ICU4XLocale* ICU4XLocale_create_th();
+
+ICU4XLocale* ICU4XLocale_create_tr();
+
+ICU4XLocale* ICU4XLocale_create_ur();
+
+ICU4XLocale* ICU4XLocale_create_vi();
+
+ICU4XLocale* ICU4XLocale_create_zh();
+
+ICU4XLocale* ICU4XLocale_create_zh_hant();
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 #ifdef __cplusplus

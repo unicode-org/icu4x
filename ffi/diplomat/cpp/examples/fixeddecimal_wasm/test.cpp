@@ -19,7 +19,7 @@ int runFixedDecimal() {
 #ifdef __EMSCRIPTEN__
     diplomat_init();
 #endif
-    ICU4XLocale locale = ICU4XLocale::create_from_string("bn").ok().value();
+    ICU4XLocale locale = ICU4XLocale::create_bn();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::create_with_grouping_strategy(

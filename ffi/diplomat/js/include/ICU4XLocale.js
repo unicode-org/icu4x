@@ -257,4 +257,84 @@ export class ICU4XLocale {
     buf_arg_other.free();
     return diplomat_out;
   }
+
+  static create_ar() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_ar(), true, []);
+  }
+
+  static create_bn() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
+  }
+
+  static create_de() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_de(), true, []);
+  }
+
+  static create_en() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
+  }
+
+  static create_en_gb() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_en_gb(), true, []);
+  }
+
+  static create_es() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_es(), true, []);
+  }
+
+  static create_es_419() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_es_419(), true, []);
+  }
+
+  static create_fr() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_fr(), true, []);
+  }
+
+  static create_hi() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_hi(), true, []);
+  }
+
+  static create_id() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_id(), true, []);
+  }
+
+  static create_ja() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_ja(), true, []);
+  }
+
+  static create_ko() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_ko(), true, []);
+  }
+
+  static create_pt() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_pt(), true, []);
+  }
+
+  static create_ru() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_ru(), true, []);
+  }
+
+  static create_th() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_th(), true, []);
+  }
+
+  static create_tr() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_tr(), true, []);
+  }
+
+  static create_ur() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_ur(), true, []);
+  }
+
+  static create_vi() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_vi(), true, []);
+  }
+
+  static create_zh() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_zh(), true, []);
+  }
+
+  static create_zh_hant() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_zh_hant(), true, []);
+  }
 }
