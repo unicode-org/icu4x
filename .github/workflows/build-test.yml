@@ -68,10 +68,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -113,10 +111,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -156,10 +152,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -209,10 +203,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -249,10 +241,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -329,10 +319,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -397,10 +385,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -477,10 +463,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -543,10 +527,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -584,10 +566,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -636,10 +616,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -680,10 +658,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -786,10 +762,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -933,10 +907,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
@@ -1047,10 +1019,8 @@ jobs:
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/install@v0.1.2
-      with:
-        crate: cargo-make
-        version: latest
+      run: cargo +stable install cargo-make
+
 
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
