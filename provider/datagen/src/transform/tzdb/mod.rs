@@ -43,9 +43,9 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
             .dedup_by(|(lhs_tzid, _), (rhs_tzid, _)| lhs_tzid == rhs_tzid)
             .flat_map(|(bcp47_tzid, data)| {
                 match convert::try_create_time_zone_transition_list(data) {
-                    Ok(list) => std::iter::repeat(bcp47_tzid)
-                        .zip(list)
-                        .map(|(bcp47_tzid, (local_time_record, transition_times))| {
+                    Ok(list) => list
+                        .into_iter()
+                        .map(move |(local_time_record, transition_times)| {
                             Ok((
                                 bcp47_tzid,
                                 local_time_record,
