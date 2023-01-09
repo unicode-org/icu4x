@@ -74,7 +74,7 @@ harness = false
 [[bench]]
 name = "zeromap"
 harness = false
-required-features = ["serde"]
+required-features = ["serde", "hashmap"]
 
 [[example]]
 name = "zv_serde"
