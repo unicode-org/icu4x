@@ -213,9 +213,9 @@ class ICU4XLocale {
   static ICU4XLocale create_en();
 
   /**
-   * Construct an [`ICU4XLocale`] for the `en-GB` locale.
+   * Construct an [`ICU4XLocale`] for the `en-001` locale.
    */
-  static ICU4XLocale create_en_gb();
+  static ICU4XLocale create_en_001();
 
   /**
    * Construct an [`ICU4XLocale`] for the `es` locale.
@@ -527,8 +527,8 @@ inline ICU4XLocale ICU4XLocale::create_de() {
 inline ICU4XLocale ICU4XLocale::create_en() {
   return ICU4XLocale(capi::ICU4XLocale_create_en());
 }
-inline ICU4XLocale ICU4XLocale::create_en_gb() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en_gb());
+inline ICU4XLocale ICU4XLocale::create_en_001() {
+  return ICU4XLocale(capi::ICU4XLocale_create_en_001());
 }
 inline ICU4XLocale ICU4XLocale::create_es() {
   return ICU4XLocale(capi::ICU4XLocale_create_es());

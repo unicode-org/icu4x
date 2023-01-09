@@ -60,7 +60,7 @@ ICU4XLocale* ICU4XLocale_create_de();
 
 ICU4XLocale* ICU4XLocale_create_en();
 
-ICU4XLocale* ICU4XLocale_create_en_gb();
+ICU4XLocale* ICU4XLocale_create_en_001();
 
 ICU4XLocale* ICU4XLocale_create_es();
 

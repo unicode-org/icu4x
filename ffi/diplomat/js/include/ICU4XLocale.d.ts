@@ -165,9 +165,9 @@ export class ICU4XLocale {
 
   /**
 
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `en-GB` locale.
+   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `en-001` locale.
    */
-  static create_en_gb(): ICU4XLocale;
+  static create_en_001(): ICU4XLocale;
 
   /**
 

@@ -274,8 +274,8 @@ export class ICU4XLocale {
     return new ICU4XLocale(wasm.ICU4XLocale_create_en(), true, []);
   }
 
-  static create_en_gb() {
-    return new ICU4XLocale(wasm.ICU4XLocale_create_en_gb(), true, []);
+  static create_en_001() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_en_001(), true, []);
   }
 
   static create_es() {

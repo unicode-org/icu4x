@@ -182,9 +182,9 @@
         Construct an :cpp:class:`ICU4XLocale` for the ``en`` locale.
 
 
-    .. cpp:function:: static ICU4XLocale create_en_gb()
+    .. cpp:function:: static ICU4XLocale create_en_001()
 
-        Construct an :cpp:class:`ICU4XLocale` for the ``en-GB`` locale.
+        Construct an :cpp:class:`ICU4XLocale` for the ``en-001`` locale.
 
 
     .. cpp:function:: static ICU4XLocale create_es()

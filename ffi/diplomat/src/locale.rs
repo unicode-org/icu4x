@@ -253,9 +253,9 @@ pub mod ffi {
             Box::new(ICU4XLocale(icu_locid::locale!("en")))
         }
 
-        /// Construct an [`ICU4XLocale`] for the `en-GB` locale.
-        pub fn create_en_gb() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("en-GB")))
+        /// Construct an [`ICU4XLocale`] for the `en-001` locale.
+        pub fn create_en_001() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid::locale!("en-001")))
         }
 
         /// Construct an [`ICU4XLocale`] for the `es` locale.

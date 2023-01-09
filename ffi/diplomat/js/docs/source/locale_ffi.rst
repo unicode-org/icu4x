@@ -131,9 +131,9 @@
         Construct an :js:class:`ICU4XLocale` for the ``en`` locale.
 
 
-    .. js:function:: create_en_gb()
+    .. js:function:: create_en_001()
 
-        Construct an :js:class:`ICU4XLocale` for the ``en-GB`` locale.
+        Construct an :js:class:`ICU4XLocale` for the ``en-001`` locale.
 
 
     .. js:function:: create_es()
