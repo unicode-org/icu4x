@@ -8,7 +8,7 @@ import { ICU4XFixedDecimalFormatter } from "./lib/ICU4XFixedDecimalFormatter.js"
 import { ICU4XFixedDecimal } from "./lib/ICU4XFixedDecimal.js";
 import { readFileSync } from "fs";
 
-const data = readFileSync("icu4x_data.postcard");
+const data = readFileSync("icu4x_data_tinywasm.postcard");
 
 async function main() {
     const locale = ICU4XLocale.create_from_string("bn");
