@@ -2,7 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 [Unstable] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -14,6 +20,12 @@ use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 
 /// A collection of strings to affix to a decimal number.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -33,6 +45,12 @@ pub struct AffixesV1<'data> {
 
 /// A collection of settings expressing where to put grouping separators in a decimal number.
 /// For example, `1,000,000` has two grouping separators, positioned along every 3 digits.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, Copy, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -57,6 +75,12 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     DecimalSymbolsV1Marker,
     "decimal/symbols@1",

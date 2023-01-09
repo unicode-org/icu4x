@@ -19,6 +19,12 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -53,6 +59,12 @@ impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
 ///
 /// The `Skeleton` is an "exotic type" in the serialization process, and handles its own
 /// custom serialization practices.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

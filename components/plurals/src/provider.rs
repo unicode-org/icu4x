@@ -5,7 +5,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 [Unstable] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -20,6 +26,12 @@ use crate::PluralCategory;
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
 ///
 /// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     CardinalV1Marker = "plurals/cardinal@1",
     OrdinalV1Marker = "plurals/ordinal@1"
