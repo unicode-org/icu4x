@@ -63,12 +63,7 @@ pub(super) fn try_create_time_zone_transition_list(
         } else {
             transition_time
         };
-        match transition_list.get_mut(&local_time_record) {
-            Some(v) => v.push(local_time.0),
-            None => {
-                transition_list.insert(local_time_record, vec![local_time.0]);
-            }
-        }
+        transition_list.entry(local_time_record).or_default().push(local_time.0);
     }
 
     Ok(transition_list)
