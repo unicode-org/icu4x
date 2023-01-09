@@ -25,7 +25,7 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -61,7 +61,7 @@ pub enum LineBreakRule {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -85,7 +85,7 @@ pub enum WordBreakRule {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -135,7 +135,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -624,7 +624,7 @@ pub trait LineBreakType<'l, 's> {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>

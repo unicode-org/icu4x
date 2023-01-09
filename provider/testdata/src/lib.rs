@@ -11,13 +11,13 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
+//! * [`buffer`], [`buffer_no_fallback`] (`buffer` Cargo feature)
 //!
 //!
-//! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
-//! such as the CLDR Gitref  and the list of included locales.
+//! Additionally, the `metadata` Cargo feature exposes the [`metadata`] module which contains
+//! information such as the CLDR Gitref  and the list of included locales.
 //!
-//! # `bin` feature
+//! # `bin` Cargo feature
 //!
 //! ## Downloading fresh CLDR data
 //!
@@ -113,44 +113,28 @@ pub mod versions {
 
     /// Gets the CLDR tag used as the test data source (for formatters, likely subtags, ...)
     ///
-    /// Enabled with the "metadata" feature.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
+    /// Enabled with the "metadata" Cargo feature.
     ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn cldr_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .cldr_json_gitref
+        crate::metadata::load().cldr_json_gitref
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
     ///
-    /// Enabled with the "metadata" feature.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the package metadata cannot be loaded.
+    /// Enabled with the "metadata" Cargo feature.
     ///
     /// # Examples
     ///
     /// ```
     /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
-    #[allow(clippy::unwrap_used)] // documented
     pub fn icu_tag() -> String {
-        crate::metadata::load()
-            .unwrap()
-            .package_metadata
-            .icuexportdata_gitref
+        crate::metadata::load().icuexportdata_gitref
     }
 }
 

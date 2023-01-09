@@ -11,7 +11,7 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::fmt::Write;
-    use core::str::{self, FromStr};
+    use core::str::{self};
     use diplomat_runtime::DiplomatResult;
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
@@ -29,13 +29,12 @@ pub mod ffi {
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::try_from_bytes, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_bytes, FnInStruct, hidden)]
         pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
-            // TODO(#2543): Use a byte parsing API once available in CustomTimeZone (also #2520)
-            if str::from_utf8(s.as_bytes()).is_err() {
-                return Err(ICU4XError::TimeZoneInvalidOffsetError).into();
-            }
-            CustomTimeZone::from_str(s)
+            let bytes = s.as_bytes();
+            CustomTimeZone::try_from_bytes(bytes)
                 .map(ICU4XCustomTimeZone::from)
                 .map(Box::from)
                 .map_err(Into::into)

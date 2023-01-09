@@ -40,7 +40,7 @@ use zerovec::ZeroMap2d;
 /// is stored.
 ///
 /// Finally, the pattern indicating noncompact notation for the first few powers
-/// of ten is omitted; that is, there is an implict (1, other) ↦ 0.
+/// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
 #[icu_provider::data_struct(
     LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
     ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"

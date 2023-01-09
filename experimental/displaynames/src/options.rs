@@ -25,7 +25,7 @@
 /// .expect("Data should load successfully");
 ///
 /// let region_code = "BA";
-/// assert_eq!(display_name.of(&region_code), Ok("Bosnia"));
+/// assert_eq!(display_name.of(&region_code), Some("Bosnia"));
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {

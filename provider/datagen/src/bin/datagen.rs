@@ -5,14 +5,10 @@
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
 
-use icu_datagen::*;
-use icu_locid::LanguageIdentifier;
+use icu_datagen::prelude::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
-use icu_provider::prelude::*;
-use icu_provider_fs::export::serializers::{bincode, json, postcard};
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
-use std::str::FromStr;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
@@ -248,8 +244,11 @@ fn main() -> eyre::Result<()> {
     let selected_locales = matches
         .values_of("LOCALES")
         .map(|ls| {
-            ls.map(|s| LanguageIdentifier::from_str(s).with_context(|| s.to_string()))
-                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
+            ls.map(|s| {
+                s.parse::<LanguageIdentifier>()
+                    .with_context(|| s.to_string())
+            })
+            .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
         })
         .transpose()?;
 
@@ -320,10 +319,10 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .ok_or_else(|| eyre::eyre!("--out must be specified for --format=dir"))?,
             serializer: match matches.value_of("SYNTAX") {
-                Some("bincode") => Box::new(bincode::Serializer::default()),
-                Some("postcard") => Box::new(postcard::Serializer::default()),
-                _ if matches.is_present("PRETTY") => Box::new(json::Serializer::pretty()),
-                _ => Box::new(json::Serializer::default()),
+                Some("bincode") => Box::new(syntax::Bincode::default()),
+                Some("postcard") => Box::new(syntax::Postcard::default()),
+                _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
+                _ => Box::new(syntax::Json::default()),
             },
             overwrite: matches.is_present("OVERWRITE"),
             fingerprint: matches.is_present("FINGERPRINT"),
