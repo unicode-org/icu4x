@@ -5,7 +5,7 @@
 // The reordering algorithms in this file are adapted from ICU4C and,
 // therefore, are subject to the ICU license as described in LICENSE.
 
-//! 🚧 [Unstable] Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,

@@ -5,7 +5,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! 🚧 [Unstable] Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
