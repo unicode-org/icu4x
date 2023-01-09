@@ -89,7 +89,8 @@ fn main() -> eyre::Result<()> {
                 .help(
                     "Path to a local directory contining TZif files"
                 )
-                .takes_value(true),
+                .takes_value(true)
+                .default_value("/usr/share/zoneinfo"),
         )
         .arg(
             Arg::with_name("ICUEXPORT_TAG")
