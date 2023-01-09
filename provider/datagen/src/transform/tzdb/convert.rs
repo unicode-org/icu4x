@@ -63,7 +63,10 @@ pub(super) fn try_create_time_zone_transition_list(
         } else {
             transition_time
         };
-        transition_list.entry(local_time_record).or_default().push(local_time.0);
+        transition_list
+            .entry(local_time_record)
+            .or_default()
+            .push(local_time.0);
     }
 
     Ok(transition_list)

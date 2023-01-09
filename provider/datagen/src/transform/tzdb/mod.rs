@@ -9,10 +9,8 @@ use icu_datetime::provider::tzdb::{
     TimeZoneHistoricTransitionsV1, TimeZoneHistoricTransitionsV1Marker, TimeZoneTransitionRuleV1,
     TimeZoneTransitionRulesV1, TimeZoneTransitionRulesV1Marker,
 };
-use icu_provider::{
-    datagen::IterableDataProvider, DataError, DataPayload, DataProvider, DataRequest, DataResponse,
-    DataResponseMetadata,
-};
+use icu_provider::datagen::IterableDataProvider;
+use icu_provider::prelude::*;
 use itertools::Itertools;
 use zerovec::ZeroVec;
 
@@ -23,10 +21,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
     fn load(
         &self,
         _req: DataRequest,
-    ) -> Result<
-        icu_provider::DataResponse<TimeZoneHistoricTransitionsV1Marker>,
-        icu_provider::DataError,
-    > {
+    ) -> Result<DataResponse<TimeZoneHistoricTransitionsV1Marker>, DataError> {
         let tzdb_paths = self.source.tzdb()?;
         let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
             .source
@@ -85,7 +80,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
 }
 
 impl IterableDataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<icu_provider::DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -94,8 +89,7 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         _req: DataRequest,
-    ) -> Result<icu_provider::DataResponse<TimeZoneTransitionRulesV1Marker>, icu_provider::DataError>
-    {
+    ) -> Result<DataResponse<TimeZoneTransitionRulesV1Marker>, DataError> {
         let tzdb_paths = self.source.tzdb()?;
         let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
             .source
@@ -150,7 +144,7 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
 }
 
 impl IterableDataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<icu_provider::DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
