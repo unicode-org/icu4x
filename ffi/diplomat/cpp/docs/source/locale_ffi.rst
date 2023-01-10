@@ -15,6 +15,16 @@
         See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XLocale create_en()
+
+        Construct an :cpp:class:`ICU4XLocale` for the English language.
+
+
+    .. cpp:function:: static ICU4XLocale create_bn()
+
+        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
+
+
     .. cpp:function:: static ICU4XLocale create_und()
 
         Construct a default undefined :cpp:class:`ICU4XLocale` "und".
@@ -160,104 +170,4 @@
     .. cpp:function:: ICU4XOrdering strict_cmp(const std::string_view other) const
 
         See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
-
-
-    .. cpp:function:: static ICU4XLocale create_ar()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``ar`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_bn()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``bn`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_de()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``de`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_en()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``en`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_en_001()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``en-001`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_es()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``es`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_es_419()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``es-419`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_fr()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``fr`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_hi()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``hi`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_id()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``id`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_ja()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``ja`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_ko()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``ko`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_pt()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``pt`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_ru()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``ru`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_th()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``th`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_tr()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``tr`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_ur()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``ur`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_vi()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``vi`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_zh()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``zh`` locale.
-
-
-    .. cpp:function:: static ICU4XLocale create_zh_hant()
-
-        Construct an :cpp:class:`ICU4XLocale` for the ``zh-Hant`` locale.
 

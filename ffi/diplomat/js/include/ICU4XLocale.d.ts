@@ -21,6 +21,18 @@ export class ICU4XLocale {
 
   /**
 
+   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the English language.
+   */
+  static create_en(): ICU4XLocale;
+
+  /**
+
+   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the Bangla language.
+   */
+  static create_bn(): ICU4XLocale;
+
+  /**
+
    * Construct a default undefined {@link ICU4XLocale `ICU4XLocale`} "und".
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND Rust documentation for `UND`} for more information.
@@ -138,124 +150,4 @@ export class ICU4XLocale {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp Rust documentation for `strict_cmp`} for more information.
    */
   strict_cmp(other: string): ICU4XOrdering;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `ar` locale.
-   */
-  static create_ar(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `bn` locale.
-   */
-  static create_bn(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `de` locale.
-   */
-  static create_de(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `en` locale.
-   */
-  static create_en(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `en-001` locale.
-   */
-  static create_en_001(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `es` locale.
-   */
-  static create_es(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `es-419` locale.
-   */
-  static create_es_419(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `fr` locale.
-   */
-  static create_fr(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `hi` locale.
-   */
-  static create_hi(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `id` locale.
-   */
-  static create_id(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `ja` locale.
-   */
-  static create_ja(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `ko` locale.
-   */
-  static create_ko(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `pt` locale.
-   */
-  static create_pt(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `ru` locale.
-   */
-  static create_ru(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `th` locale.
-   */
-  static create_th(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `tr` locale.
-   */
-  static create_tr(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `ur` locale.
-   */
-  static create_ur(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `vi` locale.
-   */
-  static create_vi(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `zh` locale.
-   */
-  static create_zh(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the `zh-Hant` locale.
-   */
-  static create_zh_hant(): ICU4XLocale;
 }

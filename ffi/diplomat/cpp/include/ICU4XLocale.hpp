@@ -40,6 +40,16 @@ class ICU4XLocale {
   static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
 
   /**
+   * Construct an [`ICU4XLocale`] for the English language.
+   */
+  static ICU4XLocale create_en();
+
+  /**
+   * Construct an [`ICU4XLocale`] for the Bangla language.
+   */
+  static ICU4XLocale create_bn();
+
+  /**
    * Construct a default undefined [`ICU4XLocale`] "und".
    * 
    * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
@@ -191,106 +201,6 @@ class ICU4XLocale {
    * See the [Rust documentation for `strict_cmp`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
    */
   ICU4XOrdering strict_cmp(const std::string_view other) const;
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `ar` locale.
-   */
-  static ICU4XLocale create_ar();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `bn` locale.
-   */
-  static ICU4XLocale create_bn();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `de` locale.
-   */
-  static ICU4XLocale create_de();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `en` locale.
-   */
-  static ICU4XLocale create_en();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `en-001` locale.
-   */
-  static ICU4XLocale create_en_001();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `es` locale.
-   */
-  static ICU4XLocale create_es();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `es-419` locale.
-   */
-  static ICU4XLocale create_es_419();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `fr` locale.
-   */
-  static ICU4XLocale create_fr();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `hi` locale.
-   */
-  static ICU4XLocale create_hi();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `id` locale.
-   */
-  static ICU4XLocale create_id();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `ja` locale.
-   */
-  static ICU4XLocale create_ja();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `ko` locale.
-   */
-  static ICU4XLocale create_ko();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `pt` locale.
-   */
-  static ICU4XLocale create_pt();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `ru` locale.
-   */
-  static ICU4XLocale create_ru();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `th` locale.
-   */
-  static ICU4XLocale create_th();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `tr` locale.
-   */
-  static ICU4XLocale create_tr();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `ur` locale.
-   */
-  static ICU4XLocale create_ur();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `vi` locale.
-   */
-  static ICU4XLocale create_vi();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `zh` locale.
-   */
-  static ICU4XLocale create_zh();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the `zh-Hant` locale.
-   */
-  static ICU4XLocale create_zh_hant();
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -311,6 +221,12 @@ inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create_from_string
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XLocale ICU4XLocale::create_en() {
+  return ICU4XLocale(capi::ICU4XLocale_create_en());
+}
+inline ICU4XLocale ICU4XLocale::create_bn() {
+  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 inline ICU4XLocale ICU4XLocale::create_und() {
   return ICU4XLocale(capi::ICU4XLocale_create_und());
@@ -514,65 +430,5 @@ inline bool ICU4XLocale::normalizing_eq(const std::string_view other) const {
 }
 inline ICU4XOrdering ICU4XLocale::strict_cmp(const std::string_view other) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XLocale_strict_cmp(this->inner.get(), other.data(), other.size()));
-}
-inline ICU4XLocale ICU4XLocale::create_ar() {
-  return ICU4XLocale(capi::ICU4XLocale_create_ar());
-}
-inline ICU4XLocale ICU4XLocale::create_bn() {
-  return ICU4XLocale(capi::ICU4XLocale_create_bn());
-}
-inline ICU4XLocale ICU4XLocale::create_de() {
-  return ICU4XLocale(capi::ICU4XLocale_create_de());
-}
-inline ICU4XLocale ICU4XLocale::create_en() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en());
-}
-inline ICU4XLocale ICU4XLocale::create_en_001() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en_001());
-}
-inline ICU4XLocale ICU4XLocale::create_es() {
-  return ICU4XLocale(capi::ICU4XLocale_create_es());
-}
-inline ICU4XLocale ICU4XLocale::create_es_419() {
-  return ICU4XLocale(capi::ICU4XLocale_create_es_419());
-}
-inline ICU4XLocale ICU4XLocale::create_fr() {
-  return ICU4XLocale(capi::ICU4XLocale_create_fr());
-}
-inline ICU4XLocale ICU4XLocale::create_hi() {
-  return ICU4XLocale(capi::ICU4XLocale_create_hi());
-}
-inline ICU4XLocale ICU4XLocale::create_id() {
-  return ICU4XLocale(capi::ICU4XLocale_create_id());
-}
-inline ICU4XLocale ICU4XLocale::create_ja() {
-  return ICU4XLocale(capi::ICU4XLocale_create_ja());
-}
-inline ICU4XLocale ICU4XLocale::create_ko() {
-  return ICU4XLocale(capi::ICU4XLocale_create_ko());
-}
-inline ICU4XLocale ICU4XLocale::create_pt() {
-  return ICU4XLocale(capi::ICU4XLocale_create_pt());
-}
-inline ICU4XLocale ICU4XLocale::create_ru() {
-  return ICU4XLocale(capi::ICU4XLocale_create_ru());
-}
-inline ICU4XLocale ICU4XLocale::create_th() {
-  return ICU4XLocale(capi::ICU4XLocale_create_th());
-}
-inline ICU4XLocale ICU4XLocale::create_tr() {
-  return ICU4XLocale(capi::ICU4XLocale_create_tr());
-}
-inline ICU4XLocale ICU4XLocale::create_ur() {
-  return ICU4XLocale(capi::ICU4XLocale_create_ur());
-}
-inline ICU4XLocale ICU4XLocale::create_vi() {
-  return ICU4XLocale(capi::ICU4XLocale_create_vi());
-}
-inline ICU4XLocale ICU4XLocale::create_zh() {
-  return ICU4XLocale(capi::ICU4XLocale_create_zh());
-}
-inline ICU4XLocale ICU4XLocale::create_zh_hant() {
-  return ICU4XLocale(capi::ICU4XLocale_create_zh_hant());
 }
 #endif
