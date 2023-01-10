@@ -101,8 +101,10 @@ metadata = [
     "toml",
     "serde",
 ]
-internal_all_features_hack = []
+# Deactivates baked in case it doesn't build
 internal_ignore_baked = []
+# Excludes `internal_ignore_baked` from `--all-features` 
+internal_all_features_hack = []
 
 [[bench]]
 name = "providers"

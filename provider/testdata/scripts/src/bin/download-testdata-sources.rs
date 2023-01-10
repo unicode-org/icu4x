@@ -28,11 +28,11 @@ struct CldrJsonDownloader<'a> {
     /// Repo owner and name, like "unicode-org/cldr-json"
     pub repo_owner_and_name: &'a str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: &'a str,
+    pub tag: String,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
     /// Downloader client
-    pub client: reqwest::Client,
+    pub client: &'a reqwest::Client,
 }
 
 fn expand_paths(in_paths: Vec<String>) -> Vec<String> {
@@ -87,16 +87,16 @@ impl CldrJsonDownloader<'_> {
     }
 }
 
-struct IcuExportDataDownloader<'a> {
+struct IcuExportDataDownloader {
     /// Repo owner and name, like "unicode-org/cldr-json"
-    pub repo_owner_and_name: &'a str,
+    pub repo_owner_and_name: &'static str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: &'a str,
+    pub tag: String,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
 }
 
-impl IcuExportDataDownloader<'_> {
+impl IcuExportDataDownloader {
     /// Returns the reqwest client back to the caller for use later
     async fn download(self, client: &reqwest::Client) -> eyre::Result<IcuExportDataUnzipper> {
         let url = format!(
@@ -224,13 +224,11 @@ async fn main() -> eyre::Result<()> {
         ))
         .build()?;
 
-    let tag = icu_testdata::versions::cldr_tag();
-
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: &tag,
-        root_dir: output_path.clone().join("cldr"),
-        client: client.clone(),
+        tag: icu_testdata::versions::cldr_tag(),
+        root_dir: output_path.join("cldr"),
+        client: &client,
     };
     fs::remove_dir_all(&cldr_downloader.root_dir)
         .await
@@ -249,12 +247,10 @@ async fn main() -> eyre::Result<()> {
         })
         .await?;
 
-    let tag = icu_testdata::versions::icu_tag();
-
     let icued_downloader = IcuExportDataDownloader {
         repo_owner_and_name: "unicode-org/icu",
-        tag: &tag,
-        root_dir: output_path.clone().join("icuexport"),
+        tag: icu_testdata::versions::icu_tag(),
+        root_dir: output_path.join("icuexport"),
     };
     fs::remove_dir_all(&icued_downloader.root_dir)
         .await
