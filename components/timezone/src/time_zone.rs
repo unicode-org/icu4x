@@ -37,11 +37,11 @@ use icu_calendar::{DateTime, Iso};
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: Option<GmtOffset>,
-    /// The IANA time-zone identifier
+    /// The BCP47 time-zone identifier
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetazoneId>,
-    /// The time variant e.g. "daylight" or "standard"
+    /// The time variant e.g. daylight or standard
     pub zone_variant: Option<ZoneVariant>,
 }
 
