@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673285596417,
+  "lastUpdate": 1673345348329,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33773,6 +33773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7029716cee81a25fe0a64f5cedb6cbff3383965f"
         },
         "date": 1673285510400,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7617802eb321af3693382c88e5a9503a9bbe9bb3",
+          "message": "Unstable doc for provider modules (#2968)",
+          "timestamp": "2023-01-10T11:06:37+01:00",
+          "tree_id": "581be00b314450c5c88bd15cd81c894710ec2f65",
+          "url": "https://github.com/unicode-org/icu4x/commit/7617802eb321af3693382c88e5a9503a9bbe9bb3"
+        },
+        "date": 1673345270229,
         "tool": "ndjson",
         "benches": [
           {
