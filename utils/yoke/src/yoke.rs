@@ -121,7 +121,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         //
         // See safety docs at the bottom of this file for more information
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-        <C as Deref>::Target: 'static
+        <C as Deref>::Target: 'static,
     {
         let deserialized = f(cart.deref());
         Self {
@@ -138,7 +138,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-        <C as Deref>::Target: 'static
+        <C as Deref>::Target: 'static,
     {
         let deserialized = f(cart.deref())?;
         Ok(Self {
@@ -154,7 +154,10 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    ) -> Self where <C as Deref>::Target: 'static {
+    ) -> Self
+    where
+        <C as Deref>::Target: 'static,
+    {
         Self::attach_to_cart(cart, f)
     }
 
@@ -165,7 +168,10 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E> where <C as Deref>::Target: 'static {
+    ) -> Result<Self, E>
+    where
+        <C as Deref>::Target: 'static,
+    {
         Self::try_attach_to_cart(cart, f)
     }
 }
@@ -1287,11 +1293,9 @@ const _: () = ();
 ///
 /// type Contra<'a> = fn(&'a ());
 ///
-/// fn main() {
-///     let local = String::from("Hello World!");
-///     let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
-///     println!("{:?}", yoke.get());
-/// }
+/// let local = String::from("Hello World!");
+/// let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
+/// println!("{:?}", yoke.get());
 /// ```
 ///
 /// It is dangerous if allowed to transform (testcase from #2926)
@@ -1301,17 +1305,17 @@ const _: () = ();
 ///
 /// type Contra<'a> = fn(&'a ());
 ///
-/// fn main() {
-///     let local = String::from("Hello World!");
-///     let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
-///     println!("{:?}", yoke.get());
-///     let yoke_longer: Yoke<&'static str, Box<Contra<'static>>> = yoke;
-///     let leaked: &'static Yoke<&'static str, Box<Contra<'static>>> = Box::leak(Box::new(yoke_longer));
-///     let reference: &'static str = leaked.get();
 ///
-///     println!("pre-drop: {reference}");
-///     drop(local);
-///     println!("post-drop: {reference}");
-/// }
+/// let local = String::from("Hello World!");
+/// let yoke: Yoke<&'static str, Box<Contra<'_>>> = Yoke::attach_to_cart(Box::new((|_| {}) as _), |_| &local[..]);
+/// println!("{:?}", yoke.get());
+/// let yoke_longer: Yoke<&'static str, Box<Contra<'static>>> = yoke;
+/// let leaked: &'static Yoke<&'static str, Box<Contra<'static>>> = Box::leak(Box::new(yoke_longer));
+/// let reference: &'static str = leaked.get();
+///
+/// println!("pre-drop: {reference}");
+/// drop(local);
+/// println!("post-drop: {reference}");
+///
 /// ```
 const _: () = ();
