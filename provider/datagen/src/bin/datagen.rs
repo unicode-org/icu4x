@@ -306,6 +306,7 @@ fn main() -> eyre::Result<()> {
         source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
     }
 
+    #[cfg(feature = "experimental")]
     if let Some(path) = matches.value_of("TZDB_ROOT") {
         source_data = source_data.with_tzdb(PathBuf::from(path))?;
     }
