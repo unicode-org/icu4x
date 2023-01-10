@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673378131360,
+  "lastUpdate": 1673383385664,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33863,6 +33863,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6d17b9a9e93732ed9c3910676b4e1551a9630537"
         },
         "date": 1673378041205,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "323ecbe8c1ba9092ae323ee069a5e0f090ecac8f",
+          "message": "Add mutation methods to MultiForkByErrorProvider (#2972)",
+          "timestamp": "2023-01-10T12:40:07-08:00",
+          "tree_id": "e0e10d7f673753acc50134408a7f4483346518ce",
+          "url": "https://github.com/unicode-org/icu4x/commit/323ecbe8c1ba9092ae323ee069a5e0f090ecac8f"
+        },
+        "date": 1673383293037,
         "tool": "ndjson",
         "benches": [
           {
