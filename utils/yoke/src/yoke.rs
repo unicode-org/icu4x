@@ -1171,7 +1171,8 @@ const _: () = ();
 /// The `attach_to_cart()` family of methods get by by using the following bound:
 ///
 /// ```rust,ignore
-/// F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output
+/// F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+/// C::Target: 'static
 /// ```
 ///
 /// to enforce that the yoking closure produces a yokeable that is *only* allowed to borrow from the cart.
@@ -1182,11 +1183,10 @@ const _: () = ();
 ///
 /// ## Implied bounds and variance
 ///
-/// Okay, now forget everything I just said. It's a convenient analysis, but it's not actually what's happening,
-/// due to implied bounds.
+/// The `C::Target: 'static` bound is tricky, however. Let's imagine a situation where we *didn't* have that bound.
 ///
 /// One thing to remember is that we are okay with the cart itself borrowing from places,
-/// e.g. `&[u8]` is a valid cart, as is `Box<&[u8]>`. `C` is not `'static`, and neither is `C::Target`.
+/// e.g. `&[u8]` is a valid cart, as is `Box<&[u8]>`. `C` is not `'static`.
 ///
 /// (I'm going to use `CT` in prose to refer to `C::Target` here, since almost everything here has to do
 /// with C::Target and not C itself.)
@@ -1228,11 +1228,12 @@ const _: () = ();
 /// So the Yoke can be upcast to having a longer lifetime than `'ct`, and *that* Yoke
 /// can outlive `'ct`.
 ///
-/// We fix this by just not allowing yoke to ever be upcast over lifetimes contained in the cart
-/// by forcing them to be invariant. This is unfortunate but ultimately fine.
-///
-/// An alternate fix would be to force `C::Target: 'static` in `attach_to_cart()`, which would make it work
+/// We fix this by forcing `C::Target: 'static` in `attach_to_cart()`, which would make it work
 /// for fewer types, but would also allow Yoke to continue to be covariant over cart lifetimes if necessary.
+///
+/// An alternate fix would be to not allowing yoke to ever be upcast over lifetimes contained in the cart
+/// by forcing them to be invariant. This is a bit more restrictive and affects *all* `Yoke` users, not just
+/// those using `attach_to_cart()`.
 ///
 /// See https://github.com/unicode-org/icu4x/issues/2926
 /// See also https://github.com/rust-lang/rust/issues/106431 for potentially fixing this upstream by
@@ -1252,10 +1253,21 @@ const _: () = ();
 ///
 /// Fails as expected.
 ///
-/// Here's an `attach_to_cart()` that is successfully able to borrow from a longer-lived local due to
-/// the cart being covariant:
+/// And here's a working one with a local borrowed cart that does not do any sneaky borrows whilst attaching.
 ///
 /// ```rust
+/// use yoke::{Yoke, Yokeable};
+///
+/// let cart = vec![1, 2, 3, 4].into_boxed_slice();
+/// let local = vec![4, 5, 6, 7];
+/// let yoke: Yoke<&[u8], &[u8]> = Yoke::attach_to_cart(&cart, |c| &*c);
+/// ```
+///
+/// Here's an `attach_to_cart()` that attempts to borrow from a longer-lived local due to
+/// the cart being covariant. It fails, but would not if the alternate fix of forcing Yoke to be invariant
+/// were implemented. It is technically a safe operation:
+///
+/// ```rust,compile_fail
 /// use yoke::{Yoke, Yokeable};
 /// // longer lived
 /// let local = vec![4, 5, 6, 7];
@@ -1267,10 +1279,10 @@ const _: () = ();
 /// println!("{:?}", yoke.get());
 /// ```
 ///
-/// Finally, here's an `attach_to_cart()` that successfully borrows from a longer lived local
-/// in the case of a contravariant lifetime.
+/// Finally, here's an `attach_to_cart()` that attempts to borrow from a longer lived local
+/// in the case of a contravariant lifetime. It does not compile, but in and of itself is not dangerous:
 ///
-/// ```rust
+/// ```rust,compile_fail
 /// use yoke::Yoke;
 ///
 /// type Contra<'a> = fn(&'a ());
@@ -1282,9 +1294,9 @@ const _: () = ();
 /// }
 /// ```
 ///
-/// However, it cannot be transformed to cause unsoundness (testcase from #2926)
+/// It is dangerous if allowed to transform (testcase from #2926)
 ///
-/// ```rust, compile_fail
+/// ```rust,compile_fail
 /// use yoke::Yoke;
 ///
 /// type Contra<'a> = fn(&'a ());
