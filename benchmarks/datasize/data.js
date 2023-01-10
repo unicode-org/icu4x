@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673346837776,
+  "lastUpdate": 1673378131360,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33833,6 +33833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/15d8e3ac8e2dd1bdbd8ed11c348bc6ac3a71334d"
         },
         "date": 1673346753224,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6d17b9a9e93732ed9c3910676b4e1551a9630537",
+          "message": "Fix tz offset bounds (#2955)",
+          "timestamp": "2023-01-10T20:12:34+01:00",
+          "tree_id": "1219f4674874c19c2db25dead4e9ca841fdf89d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/6d17b9a9e93732ed9c3910676b4e1551a9630537"
+        },
+        "date": 1673378041205,
         "tool": "ndjson",
         "benches": [
           {
