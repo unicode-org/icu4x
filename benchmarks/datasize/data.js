@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673345348329,
+  "lastUpdate": 1673346837776,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33803,6 +33803,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7617802eb321af3693382c88e5a9503a9bbe9bb3"
         },
         "date": 1673345270229,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "15d8e3ac8e2dd1bdbd8ed11c348bc6ac3a71334d",
+          "message": "Datagen CLI improvements (#2950)",
+          "timestamp": "2023-01-10T11:31:20+01:00",
+          "tree_id": "d8eac1a353d487bbb8d014f0c024d7489ccffea2",
+          "url": "https://github.com/unicode-org/icu4x/commit/15d8e3ac8e2dd1bdbd8ed11c348bc6ac3a71334d"
+        },
+        "date": 1673346753224,
         "tool": "ndjson",
         "benches": [
           {
