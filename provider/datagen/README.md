@@ -43,7 +43,7 @@ Once the tool is installed, you can invoke it like this:
 
 ```bash
 $ icu4x-datagen \
->    --all-keys \
+>    --keys all \
 >    --locales de en-AU \
 >    --format blob \
 >    --out data.postcard

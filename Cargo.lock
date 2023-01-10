@@ -1559,7 +1559,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rayon",
- "reqwest",
  "rust-format",
  "serde",
  "serde-aux",
