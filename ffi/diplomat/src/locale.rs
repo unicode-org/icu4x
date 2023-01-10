@@ -32,6 +32,16 @@ pub mod ffi {
                 .into()
         }
 
+        /// Construct an [`ICU4XLocale`] for the English language.
+        pub fn create_en() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid::locale!("en")))
+        }
+
+        /// Construct an [`ICU4XLocale`] for the Bangla language.
+        pub fn create_bn() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
+        }
+
         /// Construct a default undefined [`ICU4XLocale`] "und".
         #[diplomat::rust_link(icu::locid::Locale::UND, AssociatedConstantInStruct)]
         pub fn create_und() -> Box<ICU4XLocale> {
@@ -229,108 +239,6 @@ pub mod ffi {
         pub fn strict_cmp(&self, other: &str) -> ICU4XOrdering {
             let other = other.as_bytes(); // #2520
             self.0.strict_cmp(other).into()
-        }
-
-        //============ CONSTANTS ============
-
-        /// Construct an [`ICU4XLocale`] for the `ar` locale.
-        pub fn create_ar() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("ar")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `bn` locale.
-        pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `de` locale.
-        pub fn create_de() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("de")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `en` locale.
-        pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("en")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `en-001` locale.
-        pub fn create_en_001() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("en-001")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `es` locale.
-        pub fn create_es() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("es")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `es-419` locale.
-        pub fn create_es_419() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("es-419")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `fr` locale.
-        pub fn create_fr() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("fr")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `hi` locale.
-        pub fn create_hi() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("hi")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `id` locale.
-        pub fn create_id() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("id")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `ja` locale.
-        pub fn create_ja() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("ja")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `ko` locale.
-        pub fn create_ko() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("ko")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `pt` locale.
-        pub fn create_pt() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("pt")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `ru` locale.
-        pub fn create_ru() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("ru")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `th` locale.
-        pub fn create_th() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("th")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `tr` locale.
-        pub fn create_tr() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("tr")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `ur` locale.
-        pub fn create_ur() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("ur")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `vi` locale.
-        pub fn create_vi() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("vi")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `zh` locale.
-        pub fn create_zh() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("zh")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the `zh-Hant` locale.
-        pub fn create_zh_hant() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("zh-Hant")))
         }
     }
 }

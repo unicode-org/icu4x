@@ -72,7 +72,9 @@ build: optim0.elf optim1.elf optim2.elf optim3.elf optim4.elf optim5.elf
 
 # note: optim2.elf and optim3.elf crash when run with error "Illegal instruction" (investigate?)
 test: build
-	./optim0.elf
-	./optim1.elf
-	./optim4.elf
-	./optim5.elf
+	./optim0.elf bn
+	./optim1.elf bn
+	./optim2.elf bn
+	./optim2.elf bn
+	./optim4.elf bn
+	./optim5.elf bn
