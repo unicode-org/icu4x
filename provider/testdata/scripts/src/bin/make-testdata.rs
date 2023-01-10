@@ -57,6 +57,8 @@ fn main() {
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
 
+    let _ = std::fs::remove_dir_all(paths::data_root().join("baked"));
+
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked"),
         pretty: true,

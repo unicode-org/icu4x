@@ -4,9 +4,7 @@
 
 use clap::{App, Arg, ArgGroup};
 use eyre::WrapErr;
-
 use icu_datagen::prelude::*;
-use icu_provider::hello_world::HelloWorldV1Marker;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
@@ -28,8 +26,10 @@ fn main() -> eyre::Result<()> {
                 .possible_value("dir")
                 .possible_value("blob")
                 .possible_value("mod")
-                .help("Output to a directory on the filesystem, a single blob, or a Rust module.")
-                .default_value("dir"),
+                .possible_value("deprecated-default")
+                .default_value("deprecated-default")
+                .hide_default_value(true)
+                .help("Select the output format: a directory tree of files, a single blob, or a Rust module."),
         )
         .arg(
             Arg::with_name("OVERWRITE")
@@ -45,26 +45,29 @@ fn main() -> eyre::Result<()> {
                 .possible_value("json")
                 .possible_value("bincode")
                 .possible_value("postcard")
-                .help("File format syntax for data files."),
+                .help("--format=dir only: serde serialization format."),
         )
         .arg(
             Arg::with_name("PRETTY")
                 .short("p")
                 .long("pretty")
-                .help("Whether to pretty-print the output files. Only affects JSON and Rust modules."),
+                .help("--format=mod, --format=dir only: pretty-print the Rust or JSON output files."),
         )
         .arg(
             Arg::with_name("FINGERPRINT")
                 .long("fingerprint")
-                .help("Whether to add a fingerprints file to the output. Not compatible with --format=blob")
+                .help("--format=dir only: whether to add a fingerprints file to the output.")
         )
         .arg(
             Arg::with_name("CLDR_TAG")
                 .short("t")
                 .long("cldr-tag")
                 .value_name("TAG")
+                .default_value("latest")
                 .help(
                     "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
+                    Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                    Ignored if '--cldr-root' is present.\n\
                     Note that some keys do not support versions before 41.0.0.",
                 )
                 .takes_value(true),
@@ -75,7 +78,6 @@ fn main() -> eyre::Result<()> {
                 .value_name("PATH")
                 .help(
                     "Path to a local cldr-{version}-json-full.zip directory (see https://github.com/unicode-org/cldr-json/releases).\n\
-                    Ignored if '--cldr-tag' is present.\n\
                     Note that some keys do not support versions before 41.0.0.",
                 )
                 .takes_value(true),
@@ -84,8 +86,11 @@ fn main() -> eyre::Result<()> {
             Arg::with_name("ICUEXPORT_TAG")
                 .long("icuexport-tag")
                 .value_name("TAG")
+                .default_value("latest")
                 .help(
                     "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
+                    Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                    Ignored if '--icuexport-root' is present.\n\
                     Note that some keys do not support versions before release-71-1."
                 )
                 .takes_value(true),
@@ -96,7 +101,6 @@ fn main() -> eyre::Result<()> {
                 .value_name("PATH")
                 .help(
                     "Path to a local icuexportdata_uprops_full directory (see https://github.com/unicode-org/icu/releases).\n\
-                    Ignored if '--icuexport-tag is present.\n\
                     Note that some keys do not support versions before release-71-1.",
                 )
                 .takes_value(true),
@@ -132,10 +136,8 @@ fn main() -> eyre::Result<()> {
         .arg(
             Arg::with_name("CLDR_LOCALE_SUBSET")
                 .long("cldr-locale-subset")
-                .takes_value(true)
-                .possible_value("full")
-                .possible_value("modern")
-                .help("CLDR JSON locale subset; defaults to 'full'")
+                .hidden(true)
+                .help("Deprecated, use --locales full or --locales modern")
                 .takes_value(true),
         )
         .arg(
@@ -145,8 +147,8 @@ fn main() -> eyre::Result<()> {
                 .multiple(true)
                 .takes_value(true)
                 .help(
-                    "Include this resource key in the output. Accepts multiple arguments. \
-                    Also see --key-file.",
+                    "Include these resource keys in the output. Accepts multiple arguments.\n\
+                    Set to 'all' for all keys, or 'none' for no keys.",
                 ),
         )
         .arg(
@@ -155,7 +157,7 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .help(
                     "Path to text file with resource keys to include, one per line. Empty lines \
-                    and lines starting with '#' are ignored. Also see --key.",
+                    and lines starting with '#' are ignored.",
                 ),
         )
         .arg(
@@ -167,22 +169,17 @@ fn main() -> eyre::Result<()> {
                 ),
         )
         .arg(
-            Arg::with_name("HELLO_WORLD")
-                .long("hello-world-key")
-                .help("Whether to include the 'hello world' key."),
-        )
-        .arg(
             Arg::with_name("ALL_KEYS")
                 .long("all-keys")
-                .help("Include all keys known to ICU4X."),
+                .hidden(true)
+                .help("Deprecated: alias for --keys all"),
         )
         .group(
             ArgGroup::with_name("KEY_MODE")
                 .arg("KEYS")
                 .arg("KEY_FILE")
-                .arg("HELLO_WORLD")
-                .arg("ALL_KEYS")
                 .arg("KEYS_FOR_BIN")
+                .arg("ALL_KEYS")
                 .required(true),
         )
         .arg(
@@ -191,21 +188,17 @@ fn main() -> eyre::Result<()> {
                 .long("locales")
                 .multiple(true)
                 .takes_value(true)
+                .required_unless("ALL_LOCALES")
                 .help(
                     "Include this locale in the output. Accepts multiple arguments. \
-                    Omit this option to include all locales.",
+                    Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales.",
                 ),
         )
         .arg(
             Arg::with_name("ALL_LOCALES")
                 .long("all-locales")
-                .help("Include all locales present in the input CLDR JSON."),
-        )
-        .group(
-            ArgGroup::with_name("LOCALE_MODE")
-                .arg("LOCALES")
-                .arg("ALL_LOCALES")
-                .required(true),
+                .hidden(true)
+                .help("Deprecated: alias for --locales full"),
         )
         .arg(
             Arg::with_name("OUTPUT")
@@ -214,17 +207,18 @@ fn main() -> eyre::Result<()> {
                 .help(
                     "Path to output directory or file. Must be empty or non-existent, unless \
                     --overwrite is present, in which case the directory is deleted first. \
-                    For --format blob, omit this option to dump to stdout.",
+                    For --format=blob, omit this option to dump to stdout. \
+                    For --format={dir,mod} defaults to 'icu4x_data'.",
                 )
                 .takes_value(true),
         )
         .arg(Arg::with_name("INSERT_FEATURE_GATES")
             .long("insert-feature-gates")
-            .help("Module-mode only: Insert per-key feature gates for each key's crate.")
+            .help("--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates")
         )
         .arg(Arg::with_name("USE_SEPARATE_CRATES")
             .long("use-separate-crates")
-            .help("Module-mode only: Use types from individual crates instead of the `icu` meta-crate.")
+            .help("--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate.")
         )
         .get_matches();
 
@@ -241,23 +235,43 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let selected_locales = matches
-        .values_of("LOCALES")
-        .map(|ls| {
-            ls.map(|s| {
-                s.parse::<LanguageIdentifier>()
-                    .with_context(|| s.to_string())
-            })
-            .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()
-        })
-        .transpose()?;
+    let mut cldr_locales = CldrLocaleSubset::Full;
+
+    let selected_locales = if matches.is_present("ALL_LOCALES") {
+        None
+    } else {
+        match matches
+            .values_of("LOCALES")
+            .unwrap()
+            .collect::<Vec<_>>()
+            .as_slice()
+        {
+            ["full"] => None,
+            ["modern"] => {
+                cldr_locales = CldrLocaleSubset::Modern;
+                None
+            }
+            ["none"] => Some(vec![]),
+            locales => Some(
+                locales
+                    .iter()
+                    .map(|s| {
+                        s.parse::<LanguageIdentifier>()
+                            .with_context(|| s.to_string())
+                    })
+                    .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
+            ),
+        }
+    };
 
     let selected_keys = if matches.is_present("ALL_KEYS") {
         icu_datagen::all_keys()
-    } else if matches.is_present("HELLO_WORLD") {
-        vec![HelloWorldV1Marker::KEY]
     } else if let Some(paths) = matches.values_of("KEYS") {
-        icu_datagen::keys(&paths.collect::<Vec<_>>())
+        match paths.collect::<Vec<_>>().as_slice() {
+            ["none"] => vec![],
+            ["all"] => icu_datagen::all_keys(),
+            keys => icu_datagen::keys(keys),
+        }
     } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {
         icu_datagen::keys_from_file(key_file_path)
             .with_context(|| key_file_path.to_string_lossy().into_owned())?
@@ -265,33 +279,30 @@ fn main() -> eyre::Result<()> {
         icu_datagen::keys_from_bin(bin_path)
             .with_context(|| bin_path.to_string_lossy().into_owned())?
     } else {
-        unreachable!();
+        unreachable!("required group")
     };
 
     if selected_keys.is_empty() {
         log::warn!("No keys selected");
     }
 
-    let cldr_locales = match matches.value_of("CLDR_LOCALE_SUBSET") {
-        Some("modern") => icu_datagen::CldrLocaleSubset::Modern,
-        _ => icu_datagen::CldrLocaleSubset::Full,
-    };
-
     let mut source_data = SourceData::default();
-    if Some("latest") == matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr_latest(cldr_locales)?;
+    if let Some(path) = matches.value_of("CLDR_ROOT") {
+        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Full)?;
+    } else if Some("latest") == matches.value_of("CLDR_TAG") {
+        source_data =
+            source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, cldr_locales)?;
     } else if let Some(tag) = matches.value_of("CLDR_TAG") {
         source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
-    } else if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), cldr_locales)?;
     }
 
-    if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
-        source_data = source_data.with_icuexport_latest()?;
+    if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
+        source_data = source_data.with_icuexport(PathBuf::from(path))?;
+    } else if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+        source_data =
+            source_data.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?;
     } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
         source_data = source_data.with_icuexport_for_tag(tag)?;
-    } else if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
-        source_data = source_data.with_icuexport(PathBuf::from(path))?;
     }
 
     if matches.value_of("TRIE_TYPE") == Some("fast") {
@@ -309,24 +320,26 @@ fn main() -> eyre::Result<()> {
             source_data.with_collations(collations.into_iter().map(String::from).collect());
     }
 
-    let out = match matches
-        .value_of("FORMAT")
-        .expect("Option has default value")
-    {
-        "dir" => icu_datagen::Out::Fs {
-            output_path: matches
-                .value_of_os("OUTPUT")
-                .map(PathBuf::from)
-                .ok_or_else(|| eyre::eyre!("--out must be specified for --format=dir"))?,
-            serializer: match matches.value_of("SYNTAX") {
-                Some("bincode") => Box::new(syntax::Bincode::default()),
-                Some("postcard") => Box::new(syntax::Postcard::default()),
-                _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
-                _ => Box::new(syntax::Json::default()),
-            },
-            overwrite: matches.is_present("OVERWRITE"),
-            fingerprint: matches.is_present("FINGERPRINT"),
-        },
+    let out = match matches.value_of("FORMAT").expect("required") {
+        v @ ("dir" | "deprecated-default") => {
+            if v == "deprecated-default" {
+                log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
+            }
+            icu_datagen::Out::Fs {
+                output_path: matches
+                    .value_of_os("OUTPUT")
+                    .map(PathBuf::from)
+                    .unwrap_or_else(|| PathBuf::from("icu4x_data")),
+                serializer: match matches.value_of("SYNTAX") {
+                    Some("bincode") => Box::new(syntax::Bincode::default()),
+                    Some("postcard") => Box::new(syntax::Postcard::default()),
+                    _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
+                    _ => Box::new(syntax::Json::default()),
+                },
+                overwrite: matches.is_present("OVERWRITE"),
+                fingerprint: matches.is_present("FINGERPRINT"),
+            }
+        }
         "blob" => icu_datagen::Out::Blob(if let Some(path) = matches.value_of_os("OUTPUT") {
             let path_buf = PathBuf::from(path);
             if !matches.is_present("OVERWRITE") && path_buf.exists() {
@@ -339,15 +352,24 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
-        "mod" => icu_datagen::Out::Module {
-            mod_directory: matches
+        "mod" => {
+            let mod_directory = matches
                 .value_of_os("OUTPUT")
                 .map(PathBuf::from)
-                .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
-            pretty: matches.is_present("PRETTY"),
-            insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-            use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
-        },
+                .unwrap_or_else(|| PathBuf::from("icu4x_data"));
+
+            if mod_directory.exists() && matches.is_present("OVERWRITE") {
+                std::fs::remove_dir_all(&mod_directory)
+                    .with_context(|| mod_directory.to_string_lossy().into_owned())?;
+            }
+
+            icu_datagen::Out::Module {
+                mod_directory,
+                pretty: matches.is_present("PRETTY"),
+                insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
+                use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
+            }
+        }
         _ => unreachable!(),
     };
 
@@ -357,17 +379,5 @@ fn main() -> eyre::Result<()> {
         &source_data,
         vec![out],
     )
-    .map_err(|e| -> eyre::ErrReport {
-        if icu_datagen::is_missing_cldr_error(e) {
-            eyre::eyre!(
-                "Either --cldr-tag or --cldr-root or --input-from-testdata must be specified"
-            )
-        } else if icu_datagen::is_missing_icuexport_error(e) {
-            eyre::eyre!(
-                "Either --icuexport-tag or --icuexport-root or --input-from-testdata must be specified"
-            )
-        } else {
-            e.into()
-        }
-    })
+    .map_err(eyre::ErrReport::from)
 }

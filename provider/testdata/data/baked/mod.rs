@@ -2596,7 +2596,6 @@ macro_rules! impl_any_provider {
                 const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_timezone")]
                 const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash = ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
-                #[allow(clippy::match_single_binding)]
                 match key.hashed() {
                     #[cfg(feature = "icu_calendar")]
                     JAPANESEERASV1MARKER => calendar::japanese_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),

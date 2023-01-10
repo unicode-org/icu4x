@@ -130,6 +130,11 @@ pub(crate) fn generic_pattern_for_date_length(
     })
 }
 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone)]
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
