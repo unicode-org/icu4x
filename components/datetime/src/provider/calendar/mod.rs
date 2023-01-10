@@ -16,6 +16,12 @@ pub use skeletons::*;
 pub use symbols::*;
 
 /// Pattern data for dates.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
@@ -49,6 +55,12 @@ impl DataMarker for ErasedDateLengthsV1Marker {
 }
 
 /// Pattern data for times.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -82,6 +94,12 @@ pub mod patterns {
     use icu_provider::{yoke, zerofrom};
 
     /// Data struct for date/time patterns broken down by pattern length.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -105,6 +123,12 @@ pub mod patterns {
     }
 
     /// Data struct for generic date/time patterns, broken down by pattern length.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -153,6 +177,12 @@ pub mod patterns {
     ///
     /// Expresses the formatting positions of other formatted elements (ex: the order
     /// and formatting of a date and a time within a date-time pattern).
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]

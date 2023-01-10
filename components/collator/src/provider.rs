@@ -5,7 +5,15 @@
 // The reordering algorithms in this file are adapted from ICU4C and,
 // therefore, are subject to the ICU license as described in LICENSE.
 
-//! Data structs for the collator
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+//!
+//! Read more about data providers: [`icu_provider`]
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
@@ -60,6 +68,12 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 }
 
 /// The main collation data either for the root or for a tailoring
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     CollationDataV1Marker,
     "collator/data@1",
@@ -170,6 +184,12 @@ impl<'data> CollationDataV1<'data> {
 }
 
 /// Secondary weights for the start of the Combining Diacritics block.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     CollationDiacriticsV1Marker,
     "collator/dia@1",
@@ -190,6 +210,12 @@ pub struct CollationDiacriticsV1<'data> {
 }
 
 /// `CollationElement32`s for the Hangul Jamo Unicode Block
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -202,6 +228,12 @@ pub struct CollationJamoV1<'data> {
 }
 
 /// Script reordering data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     CollationReorderingV1Marker,
     "collator/reord@1",
@@ -286,6 +318,12 @@ impl<'data> CollationReorderingV1<'data> {
 /// Each non-alias collation that the data provider knows
 /// about explicitly has an data entry at least for this
 /// struct.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     CollationMetadataV1Marker,
     "collator/meta@1",
@@ -376,6 +414,12 @@ impl CollationMetadataV1 {
 }
 
 /// Special primaries associated with the root collation
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
