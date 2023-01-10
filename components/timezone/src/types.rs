@@ -23,11 +23,10 @@ fn try_get_time_component([tens, ones]: [u8; 2]) -> Option<i32> {
 }
 
 impl GmtOffset {
-    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
-    /// overflows or underflows.
+    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns
+    /// [`TimeZoneError::OffsetOutOfBounds`] when the seconds are out of bounds.
     pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, TimeZoneError> {
-        // Valid range is +-24:59:59
-        if seconds.unsigned_abs() >= 25 * 60 * 60 {
+        if seconds.unsigned_abs() > 18 * 60 * 60 {
             Err(TimeZoneError::OffsetOutOfBounds)
         } else {
             Ok(Self(seconds))

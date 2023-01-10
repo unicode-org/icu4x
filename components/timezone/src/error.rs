@@ -15,7 +15,7 @@ impl std::error::Error for TimeZoneError {}
 #[non_exhaustive]
 pub enum TimeZoneError {
     /// An input overflowed its range.
-    #[displaydoc("GmtOffset must be between (-12 × 60 × 60) - (14 × 60 × 60)")]
+    #[displaydoc("GmtOffset must be within ±18:00:00")]
     OffsetOutOfBounds,
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
