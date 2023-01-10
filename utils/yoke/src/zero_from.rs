@@ -48,7 +48,7 @@ where
     ///
     /// assert_eq!("demo", yoke.get());
     /// ```
-    pub fn attach_to_zero_copy_cart(cart: C) -> Self {
+    pub fn attach_to_zero_copy_cart(cart: C) -> Self where <C as Deref>::Target: 'static {
         Yoke::<Y, C>::attach_to_cart(cart, |c| {
             YokeTraitHack::<<Y as Yokeable>::Output>::zero_from(c).0
         })

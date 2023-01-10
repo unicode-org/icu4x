@@ -81,11 +81,6 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: Y,
     cart: C,
-    // See the safety docs for attach_to_cart at the bottom of this file for more information
-    // This marker forces Yoke to be invariant over all lifetimes in C (fn args are contravariant,
-    // fn return types are covariant, both at once gets us invariance)
-    #[allow(unused)]
-    marker: PhantomData<fn(C) -> C>,
 }
 
 impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
@@ -124,15 +119,14 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         // safety note: This works by enforcing that the *only* place the return value of F
         // can borrow from is the cart, since `F` must be valid for all lifetimes `'de`
         //
-        // safety note 2: this is partially a lie due to the implied bound `C::Target: 'de`,
-        // See the safety docs at the bottom of this file for more information
+        // See safety docs at the bottom of this file for more information
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+        <C as Deref>::Target: 'static
     {
         let deserialized = f(cart.deref());
         Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
-            marker: PhantomData,
         }
     }
 
@@ -144,12 +138,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
+        <C as Deref>::Target: 'static
     {
         let deserialized = f(cart.deref())?;
         Ok(Self {
             yokeable: unsafe { Y::make(deserialized) },
             cart,
-            marker: PhantomData,
         })
     }
 
@@ -160,7 +154,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    ) -> Self {
+    ) -> Self where <C as Deref>::Target: 'static {
         Self::attach_to_cart(cart, f)
     }
 
@@ -171,7 +165,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E> {
+    ) -> Result<Self, E> where <C as Deref>::Target: 'static {
         Self::try_attach_to_cart(cart, f)
     }
 }
@@ -294,7 +288,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: self.yokeable,
             cart: f(self.cart),
-            marker: PhantomData,
         }
     }
 
@@ -422,11 +415,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// assert_eq!(yoke.get(), "hello");
     /// ```
     pub fn new_always_owned(yokeable: Y) -> Self {
-        Self {
-            yokeable,
-            cart: (),
-            marker: PhantomData,
-        }
+        Self { yokeable, cart: () }
     }
 
     /// Obtain the yokeable out of a `Yoke<Y, ()>`
@@ -468,7 +457,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         Self {
             yokeable,
             cart: None,
-            marker: PhantomData,
         }
     }
 
@@ -527,7 +515,6 @@ where
         Yoke {
             yokeable: unsafe { Y::make(this_hack.clone().0) },
             cart: self.cart.clone(),
-            marker: PhantomData,
         }
     }
 }
@@ -647,7 +634,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: PhantomData,
         }
     }
 
@@ -669,7 +655,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: PhantomData,
         }
     }
 
@@ -747,7 +732,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: PhantomData,
         })
     }
 
@@ -769,7 +753,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: PhantomData,
         })
     }
     /// This is similar to [`Yoke::map_project`], but it works around older versions
@@ -793,7 +776,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: PhantomData,
         }
     }
 
@@ -819,7 +801,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: PhantomData,
         }
     }
 
@@ -845,7 +826,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart,
-            marker: PhantomData,
         })
     }
 
@@ -872,7 +852,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         Ok(Yoke {
             yokeable: unsafe { P::make(p) },
             cart: self.cart.clone(),
-            marker: PhantomData,
         })
     }
 }
