@@ -242,7 +242,6 @@ pub mod ffi {
             value: &ICU4XDate,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            #[allow(unused_variables)]
             self.0.format(&value.0)?.write_to(write)?;
             Ok(())
         }
@@ -325,7 +324,6 @@ pub mod ffi {
             value: &ICU4XDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            #[allow(unused_variables)]
             self.0.format(&value.0)?.write_to(write)?;
             Ok(())
         }
@@ -345,7 +343,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
             let any = value.0.to_any();
-            #[allow(unused_variables)]
             self.0.format(&any)?.write_to(write)?;
             Ok(())
         }

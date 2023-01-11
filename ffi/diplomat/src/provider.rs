@@ -44,7 +44,6 @@ pub mod ffi {
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
     #[cfg(feature = "any_provider")]
-    #[allow(dead_code)] // feature-specific
     fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(x: D) -> ICU4XDataProvider {
         ICU4XDataProvider(super::ICU4XDataProviderInner::Any(Box::new(x)))
     }
@@ -128,6 +127,7 @@ pub mod ffi {
             hidden
         )]
         pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+            #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 #[cfg(feature = "any_provider")]
@@ -151,6 +151,7 @@ pub mod ffi {
             Struct
         )]
         pub fn fork_by_locale(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
+            #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 #[cfg(feature = "any_provider")]
