@@ -36,7 +36,7 @@ fn main() {
     let source_data = SourceData::default()
         .with_cldr(paths::cldr_json_root(), CldrLocaleSubset::Full)
         .unwrap()
-        .with_tzdb(paths::tzdb_root())
+        .with_tzif(paths::tzif_root())
         .unwrap()
         .with_icuexport(paths::icuexport_toml_root())
         .unwrap();

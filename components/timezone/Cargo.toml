@@ -26,6 +26,7 @@ include = [
 [features]
 std = []
 bench = []
+experimental = []
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "tinystr/databake"]
 

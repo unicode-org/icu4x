@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Custom Serialize and Deserialize implementations for TZDB types.
+//! Custom Serialize and Deserialize implementations for tzif types.
 
 #[cfg(feature = "datagen")]
 use ::serde::{Serialize, Serializer};
@@ -125,7 +125,7 @@ impl Serialize for TransitionDateV1 {
 
 #[cfg(all(test, feature = "serde"))]
 mod test {
-    use crate::provider::tzdb::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
+    use crate::provider::tzif::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
 
     #[test]
     fn local_time_record_json_roundtrips() {

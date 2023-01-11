@@ -11,8 +11,8 @@ pub(crate) const MISSING_ICUEXPORT_ERROR: DataError =
     DataErrorKind::MissingSourceData.with_str_context("icuexport");
 
 #[cfg(feature = "experimental")]
-pub(crate) const MISSING_TZDB_ERROR: DataError =
-    DataErrorKind::MissingSourceData.with_str_context("tzdb");
+pub(crate) const MISSING_TZIF_ERROR: DataError =
+    DataErrorKind::MissingSourceData.with_str_context("tzif");
 
 /// Identifies errors that are due to missing CLDR data.
 ///
@@ -30,13 +30,13 @@ pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
     e == MISSING_ICUEXPORT_ERROR
 }
 
-/// Identifies errors that are due to missing TZDB data.
+/// Identifies errors that are due to missing tzif data.
 ///
 /// See [`datagen`](crate::datagen).
-pub fn is_missing_tzdb_error(mut e: DataError) -> bool {
+pub fn is_missing_tzif_error(mut e: DataError) -> bool {
     e.key = None;
     #[cfg(feature = "experimental")]
-    return e == MISSING_TZDB_ERROR;
+    return e == MISSING_tzif_ERROR;
     #[cfg(not(feature = "experimental"))]
     return false;
 }

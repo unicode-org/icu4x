@@ -7,8 +7,7 @@
 pub mod serde;
 pub mod ule;
 
-use super::time_zones::TimeZoneBcp47Id;
-
+use crate::TimeZoneBcp47Id;
 use icu_provider::{yoke, zerofrom};
 use zerovec::vecs::{Index32, VarZeroVec};
 use zerovec::{ZeroMap, ZeroMap2d, ZeroSlice};
@@ -19,7 +18,7 @@ use zerovec::{ZeroMap, ZeroMap2d, ZeroSlice};
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_datetime::provider::tzdb),
+    databake(path = icu_timezone::provider::tzif),
 )]
 pub struct LocalTimeRecordV1 {
     /// The GMT offset in seconds.
@@ -37,12 +36,12 @@ pub struct LocalTimeRecordV1 {
 /// so to get around having to use a larger 64-bit index, we split the map into two data members
 /// that each use a 32-bit index. The final values of `historic_transitions_indices` are indices
 /// corresponding to the location of the relevant slice of timestamps in `historic_transitions`.
-#[icu_provider::data_struct(TimeZoneHistoricTransitionsV1Marker = "tzdb/historic_transitions@1")]
+#[icu_provider::data_struct(TimeZoneHistoricTransitionsV1Marker = "tzif/historic_transitions@1")]
 #[derive(Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzdb),
+    databake(path = icu_datetime_experimental::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -60,7 +59,7 @@ pub struct TimeZoneHistoricTransitionsV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::tzdb),
+    databake(path = icu_timezone::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 pub enum TransitionDayV1 {
@@ -89,7 +88,7 @@ pub enum TransitionDayV1 {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_datetime::provider::tzdb),
+    databake(path = icu_timezone::provider::tzif),
 )]
 pub struct TransitionDateV1 {
     /// The day on which the transition occurrs.
@@ -106,7 +105,7 @@ pub struct TransitionDateV1 {
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzdb),
+    databake(path = icu_datetime_experimental::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[zerovec::make_ule(TimeZoneTransitionRuleULE)]
@@ -126,12 +125,12 @@ pub struct TimeZoneTransitionRuleV1 {
 
 /// A map from TZID to its transition rules.
 /// See [`TimeZoneTransitionRuleV1`] for more info.
-#[icu_provider::data_struct(TimeZoneTransitionRulesV1Marker = "tzdb/transition_rules@1")]
+#[icu_provider::data_struct(TimeZoneTransitionRulesV1Marker = "tzif/transition_rules@1")]
 #[derive(Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzdb),
+    databake(path = icu_datetime_experimental::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[yoke(prove_covariance_manually)]

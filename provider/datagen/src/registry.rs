@@ -23,13 +23,13 @@ use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
 use icu_compactdecimal::provider::*;
 #[cfg(feature = "experimental")]
-use icu_datetime::provider::tzdb::*;
-#[cfg(feature = "experimental")]
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
 use icu_relativetime::provider::*;
 #[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
+#[cfg(feature = "experimental")]
+use icu_timezone::provider::tzif::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {

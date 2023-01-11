@@ -21,9 +21,9 @@ pub fn icuexport_toml_root() -> PathBuf {
     data_root().join("icuexport")
 }
 
-/// Returns the absolute path to the TZDB root directory.
-pub fn tzdb_root() -> PathBuf {
-    data_root().join("tzdb")
+/// Returns the absolute path to the TZif root directory.
+pub fn tzif_root() -> PathBuf {
+    data_root().join("tzif")
 }
 
 /// Returns the absolute path to the collation tailoring TOML root directory.

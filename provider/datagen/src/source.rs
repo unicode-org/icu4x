@@ -21,7 +21,7 @@ use std::sync::RwLock;
 use zip::ZipArchive;
 
 #[cfg(feature = "experimental")]
-use crate::transform::tzdb::source::TzdbPaths;
+use crate::transform::tzif::source::TzifPaths;
 
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
@@ -29,7 +29,7 @@ use crate::transform::tzdb::source::TzdbPaths;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     #[cfg(feature = "experimental")]
-    tzdb_paths: Option<Arc<TzdbPaths>>,
+    tzif_paths: Option<Arc<TzifPaths>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
@@ -46,7 +46,7 @@ impl Default for SourceData {
             cldr_paths: None,
             icuexport_paths: None,
             #[cfg(feature = "experimental")]
-            tzdb_paths: None,
+            tzif_paths: None,
             segmenter_paths: Arc::new(SerdeCache::new(
                 AbstractFs::new(&segmenter_path).expect("valid dir"),
             )),
@@ -75,7 +75,7 @@ impl SourceData {
                 CldrLocaleSubset::Full,
             )
             .expect("testdata is valid")
-            .with_tzdb(icu_testdata::paths::tzdb_root())
+            .with_tzif(icu_testdata::paths::tzif_root())
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .expect("testdata is valid")
@@ -106,13 +106,13 @@ impl SourceData {
         })
     }
 
-    /// Adds TZDB data to this `DataSource`. The root should point to the directory
-    /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
-    /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    pub fn with_tzdb(self, _root: PathBuf) -> Result<Self, DataError> {
+    /// Adds TZif data to this `DataSource`. The root should point to a directory
+    /// containing a hierarchy of TZif files, which can be generated from the
+    /// [IANA Time Zone Database](https://www.iana.org/time-zones)
+    pub fn with_tzif(self, _root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             #[cfg(feature = "experimental")]
-            tzdb_paths: Some(Arc::new(TzdbPaths::new(_root)?)),
+            tzif_paths: Some(Arc::new(TzifPaths::new(_root)?)),
             ..self
         })
     }
@@ -219,10 +219,10 @@ impl SourceData {
     }
 
     #[cfg(feature = "experimental")]
-    pub(crate) fn tzdb(&self) -> Result<&TzdbPaths, DataError> {
-        self.tzdb_paths
+    pub(crate) fn tzif(&self) -> Result<&TzifPaths, DataError> {
+        self.tzif_paths
             .as_deref()
-            .ok_or(crate::error::MISSING_TZDB_ERROR)
+            .ok_or(crate::error::MISSING_tzif_ERROR)
     }
 
     /// Path to Unicode Properties source data.

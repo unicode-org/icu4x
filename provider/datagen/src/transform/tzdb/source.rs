@@ -10,15 +10,18 @@ use std::path::Path;
 use tzif::data::tzif::TzifData;
 
 #[derive(Debug)]
-pub(crate) struct TzifDir<'a>(&'a TzdbPaths);
+pub(crate) struct TzifPaths(AbstractFs);
 
-impl<'a> TzifDir<'a> {
+impl TzifPaths {
+    pub(crate) fn new<T: AsRef<Path>>(root: T) -> Result<Self, DataError> {
+        AbstractFs::new(root).map(Self)
+    }
+
     pub(crate) fn read_and_parse(&self) -> Result<HashMap<String, TzifData>, DataError> {
         self.0
-             .0
-            .list("tzif", true)?
+            .list(".", true)?
             .map(|path| -> Result<_, DataError> {
-                let buf = self.0 .0.read_to_buf(&format!("tzif/{path}"))?;
+                let buf = self.0.read_to_buf(&format!("{path}"))?;
                 let data = tzif::parse_tzif(&buf).map_err(|e| {
                     DataError::custom("TZif parse")
                         .with_display_context(&e)
@@ -27,18 +30,5 @@ impl<'a> TzifDir<'a> {
                 Ok((path, data))
             })
             .collect()
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct TzdbPaths(AbstractFs);
-
-impl TzdbPaths {
-    pub(crate) fn new<T: AsRef<Path>>(root: T) -> Result<Self, DataError> {
-        AbstractFs::new(root).map(Self)
-    }
-
-    pub(crate) fn tzif(&self) -> TzifDir<'_> {
-        TzifDir(self)
     }
 }

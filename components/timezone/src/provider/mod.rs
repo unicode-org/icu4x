@@ -15,6 +15,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "experimental")]
+pub mod tzif;
+
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyAsciiStr;

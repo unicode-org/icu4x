@@ -83,8 +83,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(
-            Arg::with_name("TZDB_ROOT")
-                .long("tzdb-root")
+            Arg::with_name("TZIF_ROOT")
+                .long("tzif-root")
                 .value_name("PATH")
                 .help(
                     "Path to a local directory contining TZif files"
@@ -307,8 +307,8 @@ fn main() -> eyre::Result<()> {
     }
 
     #[cfg(feature = "experimental")]
-    if let Some(path) = matches.value_of("TZDB_ROOT") {
-        source_data = source_data.with_tzdb(PathBuf::from(path))?;
+    if let Some(path) = matches.value_of("tzif_ROOT") {
+        source_data = source_data.with_tzif(PathBuf::from(path))?;
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {

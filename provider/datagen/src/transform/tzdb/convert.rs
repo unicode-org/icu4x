@@ -4,7 +4,7 @@
 
 use std::collections::BTreeMap;
 
-use icu_datetime::provider::tzdb::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
+use icu_timezone::provider::tzif::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
 use tzif::data::{
     posix::{TransitionDate, TransitionDay},
     tzif::{TzifData, UtLocalIndicator},

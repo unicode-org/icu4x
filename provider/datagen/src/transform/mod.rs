@@ -8,7 +8,7 @@ pub mod icuexport;
 pub mod segmenter;
 
 #[cfg(feature = "experimental")]
-pub mod tzdb;
+pub mod tzif;
 
 use icu_provider::datagen::*;
 use icu_provider::hello_world::*;

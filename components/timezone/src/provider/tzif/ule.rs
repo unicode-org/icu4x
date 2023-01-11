@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! ULE types and ipmlementations for TZDB types.
+//! ULE types and ipmlementations for tzif types.
 
 use icu_provider::yoke;
 use zerovec::{
@@ -10,7 +10,7 @@ use zerovec::{
     ZeroSlice, ZeroVec,
 };
 
-use crate::provider::tzdb::TransitionDayV1;
+use crate::provider::tzif::TransitionDayV1;
 
 use super::{LocalTimeRecordV1, TransitionDateV1};
 
@@ -23,10 +23,10 @@ use super::{LocalTimeRecordV1, TransitionDateV1};
 /// The [`LocalTimeRecordV1`] which contains a GMT offset stored in an [`i32`]
 /// and a [`bool`] for whether the offset represent standard or daylight time.
 ///
-/// However, ICU4X expects GMT offsets only within the range of `[-43200 to 50400]` seconds,
-/// which correspond to GMT-12 and GMT+14, the minimum and maximum GMT offsets that exist.
+/// However, ICU4X expects GMT offsets only within the range of `[-64800 to 64800]` seconds,
+/// which correspond to GMT-18 and GMT+18, the minimum and maximum GMT offsets that exist.
 ///
-/// Since the magnitudes of `43200` and `50400` each small enough to fit within a [`u16`] value,
+/// Since the magnitude of `64800` is small enough to fit within a [`u16`] value,
 /// we can more efficiently store this 5-byte structure in only 3 bytes by storing the magnitude
 /// of the offset in two bytes, and storing one bit of information about whether the magnitude
 /// is positive or negative in the byte that contains the [`bool`].
@@ -34,9 +34,9 @@ use super::{LocalTimeRecordV1, TransitionDateV1};
 /// # Diagram
 ///
 /// ```text
-/// ┌───────────────┬───────────────┬───────────────┐
-/// │       u8      │       u8      │       u8      │
-/// ├─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┤
+/// ┌───────────────────────────────┬───────────────┐
+/// │              u16              │       u8      │
+/// ├─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┼─┬─┬─┬─┬─┬─┬─┬─┤
 /// ├─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┼─┴─┴─┴─┴─┴─┼─┼─┤
 /// │     GMT Offset Magnitude      │   Empty   │X│X│
 /// └───────────────────────────────┴───────────┴─┴─┘
@@ -242,7 +242,7 @@ impl AsULE for TransitionDateV1 {
 #[cfg(test)]
 mod test {
     use super::H167_M59_S59;
-    use crate::provider::tzdb::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
+    use crate::provider::tzif::{LocalTimeRecordV1, TransitionDateV1, TransitionDayV1};
     use zerovec::ule::AsULE;
 
     #[test]

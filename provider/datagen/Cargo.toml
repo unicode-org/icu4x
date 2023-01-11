@@ -99,7 +99,7 @@ icu = { path = "../../components/icu" }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime", "icu_compactdecimal"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime", "icu_compactdecimal", "icu_timezone/experimental"]
 bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]
