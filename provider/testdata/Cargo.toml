@@ -31,6 +31,7 @@ all-features = true
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
+denylist = ["internal_all_features_hack"]
 extra_features = [
     "icu_datetime",
     "icu_list",

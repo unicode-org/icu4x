@@ -103,7 +103,7 @@ pub mod versions {
     /// ```
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
-    pub fn cldr_tag() -> String {
+    pub fn cldr_tag() -> alloc::string::String {
         crate::metadata::load().cldr_json_gitref
     }
 
@@ -116,7 +116,7 @@ pub mod versions {
     /// ```
     /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
     /// ```
-    pub fn icu_tag() -> String {
+    pub fn icu_tag() -> alloc::string::String {
         crate::metadata::load().icuexportdata_gitref
     }
 }
@@ -133,7 +133,7 @@ pub mod versions {
 /// assert!(icu_testdata::locales().len() > 10);
 /// ```
 #[cfg(feature = "metadata")]
-pub fn locales() -> Vec<icu_locid::LanguageIdentifier> {
+pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
     crate::metadata::load().locales
 }
 
