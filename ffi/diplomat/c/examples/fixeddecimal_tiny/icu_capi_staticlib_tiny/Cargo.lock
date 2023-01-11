@@ -24,7 +24,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -35,12 +35,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
 
 [[package]]
 name = "diplomat_core"
 version = "0.4.4"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0#d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -141,7 +141,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -338,7 +338,6 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
- "serde_json",
  "utf8_iter",
  "zerovec",
 ]
@@ -381,12 +380,6 @@ dependencies = [
  "tinystr",
  "zerovec",
 ]
-
-[[package]]
-name = "itoa"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
 
 [[package]]
 name = "lazy_static"
@@ -486,17 +479,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "serde_json"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e466864e431129c7e0d3476b92f20458e5879919a0596c6472738d9fa2d342f8"
-dependencies = [
- "itoa",
- "ryu",
- "serde",
 ]
 
 [[package]]
