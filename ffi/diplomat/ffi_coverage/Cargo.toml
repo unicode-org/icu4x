@@ -32,7 +32,7 @@ all-features = true
 syn-inline-mod = { version =  "0.4.0" }
 serde_json = { version =  "1" }
 rustdoc-types = { version =  "0.14" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "30bc4d2d148a0f2e5e58ce237a827d6617789569" }
 lazy_static = { version =  "1" }
 elsa = { version = "1" }
 

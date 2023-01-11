@@ -158,15 +158,17 @@ where
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
+        let mut result = 
+            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
-            let result = provider.load_buffer(key, req);
+            result = provider.load_buffer(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        result
     }
 }
 
@@ -176,15 +178,17 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let mut result = 
+            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
-            let result = provider.load_any(key, req);
+            result = provider.load_any(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        result
     }
 }
 
@@ -195,15 +199,17 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut result = 
+            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
-            let result = provider.load_data(key, req);
+            result = provider.load_data(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        result
     }
 }
 
@@ -215,15 +221,17 @@ where
     F: ForkByErrorPredicate,
 {
     fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        let mut result = 
+            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
-            let result = provider.supported_locales_for_key(key);
+            result = provider.supported_locales_for_key(key);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(err) if !self.predicate.test(key, None, err) => return Err(err),
                 _ => (),
             };
         }
-        Err(DataErrorKind::MissingDataKey.with_key(key))
+        result
     }
 }
 
