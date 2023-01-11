@@ -6,6 +6,12 @@
 #include <array>
 #include <optional>
 
+#if __cplusplus >= 202002L
+#include<span>
+#else
+#include <type_traits>
+#endif
+
 #include "diplomat_runtime.h"
 
 namespace diplomat {
@@ -122,8 +128,7 @@ public:
 // Use custom std::span on C++17, otherwise use std::span
 #if __cplusplus >= 202002L
 
-#include<span>
-using span = std::span;
+template<class T> using span = std::span<T>;
 
 #else // __cplusplus >= 202002L
 
@@ -135,8 +140,8 @@ public:
   constexpr span(T* data, size_t size)
     : data_(data), size_(size) {}
   template<size_t N>
-  constexpr span(std::array<T, N>& arr)
-    : data_(arr.data()), size_(N) {}
+  constexpr span(std::array<typename std::remove_const<T>::type, N>& arr)
+    : data_(const_cast<T*>(arr.data())), size_(N) {}
   constexpr T* data() const noexcept {
     return this->data_;
   }

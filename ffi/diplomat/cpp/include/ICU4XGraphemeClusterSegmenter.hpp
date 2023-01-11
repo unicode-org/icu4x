@@ -59,7 +59,7 @@ class ICU4XGraphemeClusterSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XGraphemeClusterBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
+  ICU4XGraphemeClusterBreakIteratorUtf16 segment_utf16(const diplomat::span<const uint16_t> input) const;
 
   /**
    * Segments a Latin-1 string.
@@ -68,7 +68,7 @@ class ICU4XGraphemeClusterSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XGraphemeClusterBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
+  ICU4XGraphemeClusterBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XGraphemeClusterSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGraphemeClusterSegmenter* AsFFIMut() { return this->inner.get(); }
   inline ICU4XGraphemeClusterSegmenter(capi::ICU4XGraphemeClusterSegmenter* i) : inner(i) {}
@@ -97,10 +97,10 @@ inline diplomat::result<ICU4XGraphemeClusterSegmenter, ICU4XError> ICU4XGrapheme
 inline ICU4XGraphemeClusterBreakIteratorUtf8 ICU4XGraphemeClusterSegmenter::segment_utf8(const std::string_view input) const {
   return ICU4XGraphemeClusterBreakIteratorUtf8(capi::ICU4XGraphemeClusterSegmenter_segment_utf8(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XGraphemeClusterBreakIteratorUtf16 ICU4XGraphemeClusterSegmenter::segment_utf16(const diplomat::span<uint16_t> input) const {
+inline ICU4XGraphemeClusterBreakIteratorUtf16 ICU4XGraphemeClusterSegmenter::segment_utf16(const diplomat::span<const uint16_t> input) const {
   return ICU4XGraphemeClusterBreakIteratorUtf16(capi::ICU4XGraphemeClusterSegmenter_segment_utf16(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XGraphemeClusterBreakIteratorLatin1 ICU4XGraphemeClusterSegmenter::segment_latin1(const diplomat::span<uint8_t> input) const {
+inline ICU4XGraphemeClusterBreakIteratorLatin1 ICU4XGraphemeClusterSegmenter::segment_latin1(const diplomat::span<const uint8_t> input) const {
   return ICU4XGraphemeClusterBreakIteratorLatin1(capi::ICU4XGraphemeClusterSegmenter_segment_latin1(this->inner.get(), input.data(), input.size()));
 }
 #endif
