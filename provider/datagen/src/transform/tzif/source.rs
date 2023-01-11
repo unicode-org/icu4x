@@ -19,8 +19,9 @@ impl TzifPaths {
 
     pub(crate) fn read_and_parse(&self) -> Result<HashMap<String, TzifData>, DataError> {
         self.0
-            .list(".", true)?
+            .list("", true)?
             .map(|path| -> Result<_, DataError> {
+                println!("PATH: {:?}", path);
                 let buf = self.0.read_to_buf(&format!("{path}"))?;
                 let data = tzif::parse_tzif(&buf).map_err(|e| {
                     DataError::custom("TZif parse")

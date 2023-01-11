@@ -22,9 +22,8 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
         &self,
         _req: DataRequest,
     ) -> Result<DataResponse<TimeZoneHistoricTransitionsV1Marker>, DataError> {
-        println!("\n\n\n HIT THE LOAD FUNCTION \n\n\n");
         let tzif_paths = self.source.tzif()?;
-        println!("\n\n\n tzif PATHS {:?} \n\n\n", tzif_paths);
+
         let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
             .source
             .cldr()?
@@ -34,11 +33,7 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
         let bcp47_tzids =
             compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
 
-        println!("\n\n\n BCP47 TZIDS {:?}", bcp47_tzids);
-
         let tzif_data = tzif_paths.read_and_parse()?;
-
-        println!("\n\n\n TZIF DATA {:?}", tzif_data);
 
         let raw_transitions = bcp47_tzids
             .into_iter()

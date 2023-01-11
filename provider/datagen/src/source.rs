@@ -222,7 +222,7 @@ impl SourceData {
     pub(crate) fn tzif(&self) -> Result<&TzifPaths, DataError> {
         self.tzif_paths
             .as_deref()
-            .ok_or(crate::error::MISSING_tzif_ERROR)
+            .ok_or(crate::error::MISSING_TZIF_ERROR)
     }
 
     /// Path to Unicode Properties source data.

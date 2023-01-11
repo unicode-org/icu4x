@@ -36,7 +36,7 @@ pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
 pub fn is_missing_tzif_error(mut e: DataError) -> bool {
     e.key = None;
     #[cfg(feature = "experimental")]
-    return e == MISSING_tzif_ERROR;
+    return e == MISSING_TZIF_ERROR;
     #[cfg(not(feature = "experimental"))]
     return false;
 }
