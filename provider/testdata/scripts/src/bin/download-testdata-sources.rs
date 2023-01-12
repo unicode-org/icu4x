@@ -12,16 +12,44 @@ use std::{io::Read, path::PathBuf};
 use tokio::{fs, io::AsyncWriteExt};
 use zip::ZipArchive;
 
+#[derive(Debug, serde::Deserialize)]
+struct GlobMetadata {
+    cldr_json_glob: Vec<String>,
+    icuexportdata_glob: Vec<String>,
+}
+
+fn load_sources() -> GlobMetadata {
+    #[allow(clippy::unwrap_used)] // the TOML source is a constant
+    toml::from_str(include_str!("../../globs.toml")).unwrap()
+}
+
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
     /// Repo owner and name, like "unicode-org/cldr-json"
     pub repo_owner_and_name: &'a str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: &'a str,
+    pub tag: String,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
     /// Downloader client
-    pub client: reqwest::Client,
+    pub client: &'a reqwest::Client,
+}
+
+fn expand_paths(in_paths: Vec<String>) -> Vec<String> {
+    let mut paths = vec![];
+    for pattern in in_paths {
+        if pattern.contains("$LOCALES") {
+            for locale in icu_testdata::locales().iter() {
+                paths.push(pattern.replace("$LOCALES", &locale.to_string()));
+            }
+            // Also add "root" for older CLDRs
+            paths.push(pattern.replace("$LOCALES", "root"));
+        } else {
+            // No variable in pattern
+            paths.push(pattern)
+        }
+    }
+    paths
 }
 
 impl CldrJsonDownloader<'_> {
@@ -59,16 +87,16 @@ impl CldrJsonDownloader<'_> {
     }
 }
 
-struct IcuExportDataDownloader<'a> {
+struct IcuExportDataDownloader {
     /// Repo owner and name, like "unicode-org/cldr-json"
-    pub repo_owner_and_name: &'a str,
+    pub repo_owner_and_name: &'static str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: &'a str,
+    pub tag: String,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
 }
 
-impl IcuExportDataDownloader<'_> {
+impl IcuExportDataDownloader {
     /// Returns the reqwest client back to the caller for use later
     async fn download(self, client: &reqwest::Client) -> eyre::Result<IcuExportDataUnzipper> {
         let url = format!(
@@ -188,9 +216,6 @@ async fn main() -> eyre::Result<()> {
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
 
-    let metadata = icu_testdata::metadata::load();
-    log::debug!("Package metadata: {:?}", metadata);
-
     let client = reqwest::ClientBuilder::new()
         .user_agent(concat!(
             env!("CARGO_PKG_NAME"),
@@ -201,9 +226,9 @@ async fn main() -> eyre::Result<()> {
 
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: &metadata.cldr_json_gitref,
-        root_dir: output_path.clone().join("cldr"),
-        client: client.clone(),
+        tag: icu_testdata::versions::cldr_tag(),
+        root_dir: output_path.join("cldr"),
+        client: &client,
     };
     fs::remove_dir_all(&cldr_downloader.root_dir)
         .await
@@ -214,8 +239,7 @@ async fn main() -> eyre::Result<()> {
             )
         })?;
 
-    let all_paths = metadata.get_all_cldr_paths();
-    stream::iter(all_paths)
+    stream::iter(expand_paths(load_sources().cldr_json_glob))
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {
             log::info!("Downloading: {}", path);
@@ -225,8 +249,8 @@ async fn main() -> eyre::Result<()> {
 
     let icued_downloader = IcuExportDataDownloader {
         repo_owner_and_name: "unicode-org/icu",
-        tag: &metadata.icuexportdata_gitref,
-        root_dir: output_path.clone().join("icuexport"),
+        tag: icu_testdata::versions::icu_tag(),
+        root_dir: output_path.join("icuexport"),
     };
     fs::remove_dir_all(&icued_downloader.root_dir)
         .await
@@ -239,7 +263,7 @@ async fn main() -> eyre::Result<()> {
 
     let mut icued_unzipper = icued_downloader.download(&client).await?;
 
-    let all_paths = metadata.get_all_icuexportdata_paths();
+    let all_paths = expand_paths(load_sources().icuexportdata_glob);
     for path in all_paths {
         log::info!("Unzipping: {}", path);
         icued_unzipper.unzip(&path).await?;
