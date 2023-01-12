@@ -2,7 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![no_std]
+
+#[cfg(feature = "gen")]
+extern crate alloc;
+
+#[cfg(feature = "gen")]
 use alloc::vec;
+#[cfg(feature = "gen")]
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 use t1ha::T1haHasher;
@@ -10,28 +17,24 @@ use t1ha::T1haHasher;
 // Const seed to be used with [`T1haHasher::with_seed`].
 const SEED: u64 = 0xaabbccdd;
 
-/// Split the 64bit `hash` into (g, f0, f1).
+/// Compute hash using [`T1haHasher`] and split into (g, f0, f1).
 /// g denotes the highest 16bits of the hash modulo `m`, and is referred to as first level hash.
 /// (f0, f1) denotes the middle, and lower 24bits of the hash respectively.
 /// (f0, f1) are used to distribute the keys with same g, into distinct slots.
 ///
 /// # Arguments
 ///
-/// * `hash` - The hash to split.
+/// * `key` - The item to hash.
 /// * `m` - The modulo used to split the hash.
-pub const fn split_hash64(hash: u64, m: usize) -> (usize, u32, u32) {
+pub fn compute_hash<K: Hash + ?Sized>(key: &K, m: usize) -> (usize, u32, u32) {
+    let mut hasher = T1haHasher::with_seed(SEED);
+    key.hash(&mut hasher);
+    let hash = hasher.finish();
     (
         ((hash >> 48) as usize % m),
         ((hash >> 24) as u32 & 0xffffff),
         ((hash & 0xffffff) as u32),
     )
-}
-
-/// Compute hash using [`T1haHasher`].
-pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
-    let mut hasher = T1haHasher::with_seed(SEED);
-    key.hash(&mut hasher);
-    hasher.finish()
 }
 
 /// Calculate the index using (f0, f1), (d0, d1) in modulo m.
@@ -42,6 +45,26 @@ pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
         None
     } else {
         Some((f.1.wrapping_mul(d.0).wrapping_add(f.0).wrapping_add(d.1) % m) as usize)
+    }
+}
+
+/// Applies a permutation as returned from [`compute_displacements`]
+/// using the given `swap` function. `swap` should swap in both the
+/// key and value list, as this function consumes the permutation.
+#[cfg(feature = "gen")]
+pub fn apply_permutation(mut permutation: Vec<usize>, mut swap: impl FnMut(usize, usize)) {
+    for cycle_start in 0..permutation.len() {
+        let mut curr = cycle_start;
+        let mut next = permutation[curr];
+
+        while next != cycle_start {
+            swap(curr, next);
+            // Make curr a self-cycle so we don't use it as a cycle_start later
+            permutation[curr] = curr;
+            curr = next;
+            next = permutation[next];
+        }
+        permutation[curr] = curr;
     }
 }
 
@@ -59,10 +82,22 @@ pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
 ///
 /// # Arguments
 ///
-/// * `key_hashes` - [`ExactSizeIterator`] over the hashed key values
+/// * `keys` - [`ExactSizeIterator`] over the keys
+#[cfg(feature = "gen")]
+pub fn compute_displacements<K>(
+    keys: impl ExactSizeIterator<Item = K>,
+) -> (Vec<(u32, u32)>, Vec<usize>)
+where
+    K: Hash + Eq,
+{
+    let m = keys.len();
+    compute_displacements_internal(keys.map(|v| compute_hash(&v, m)))
+}
+
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
-pub fn compute_displacements(
-    key_hashes: impl ExactSizeIterator<Item = u64>,
+#[cfg(feature = "gen")]
+fn compute_displacements_internal(
+    key_hashes: impl ExactSizeIterator<Item = (usize, u32, u32)>,
 ) -> (Vec<(u32, u32)>, Vec<usize>) {
     let len = key_hashes.len();
 
@@ -74,8 +109,7 @@ pub fn compute_displacements(
 
     // Compute initial displacement and bucket sizes
 
-    key_hashes.into_iter().enumerate().for_each(|(i, kh)| {
-        let h = split_hash64(kh, len);
+    key_hashes.into_iter().enumerate().for_each(|(i, h)| {
         bucket_sizes[h.0] += 1;
         bucket_flatten.push((h, i))
     });

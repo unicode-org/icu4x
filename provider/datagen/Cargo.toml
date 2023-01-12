@@ -65,6 +65,7 @@ icu_locid = { version = "1.1.0", path = "../../components/locid", features = ["s
 itertools = "0.10"
 lazy_static = "1"
 log = "0.4"
+perfect_hash_utils = { version = "0.0.0", path = "../../utils/perfect_hash_utils", features = ["gen"]}
 proc-macro2 = "1.0"
 quote = "1.0.9"
 rayon = "1.5"

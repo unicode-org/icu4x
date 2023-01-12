@@ -5,11 +5,8 @@
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::borrow::Borrow;
-use alloc::vec;
 use core::hash::Hash;
-
-pub mod algorithms;
-use algorithms::*;
+use perfect_hash_utils::*;
 
 #[cfg(feature = "serde")]
 mod serde;
@@ -68,8 +65,7 @@ where
     where
         A: Borrow<K> + ?Sized,
     {
-        let hash = compute_hash(key.borrow());
-        let (g, f0, f1) = split_hash64(hash, self.len());
+        let (g, f0, f1) = compute_hash(key.borrow(), self.len());
 
         #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();
@@ -165,10 +161,10 @@ where
 
 impl<'a, K, V, A, B> FromIterator<(A, B)> for ZeroHashMap<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
+    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
     B: Borrow<V>,
-    A: Borrow<K>,
+    A: Borrow<K> + Hash + Eq,
 {
     /// Build a [`ZeroHashMap`] from an iterator returning (K, V) tuples.
     ///
@@ -190,17 +186,17 @@ where
             (lower, None) => lower,
         };
 
-        let mut key_hashes = vec![];
-        key_hashes.reserve(size_hint);
+        let mut k_keys = Vec::with_capacity(size_hint);
         let mut keys = K::Container::zvl_with_capacity(size_hint);
         let mut values = V::Container::zvl_with_capacity(size_hint);
         for (k, v) in iter {
             keys.zvl_push(k.borrow());
-            key_hashes.push(compute_hash(k.borrow()));
             values.zvl_push(v.borrow());
+            // By `Borrow`s invariant, `k` and `k.borrow()` have the same hash.
+            k_keys.push(k);
         }
 
-        let (displacements, mut reverse_mapping) = compute_displacements(key_hashes.into_iter());
+        let (displacements, mut reverse_mapping) = compute_displacements(k_keys.into_iter());
 
         keys.zvl_permute(&mut reverse_mapping.clone());
         values.zvl_permute(&mut reverse_mapping);

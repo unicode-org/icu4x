@@ -50,6 +50,7 @@ members = [
     "utils/fixed_decimal",
     "utils/litemap",
     "utils/pattern",
+    "utils/perfect_hash_utils",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",

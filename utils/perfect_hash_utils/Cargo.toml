@@ -1,0 +1,30 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "perfect_hash_utils"
+description = "Utilities for perfect hashing"
+version = "0.0.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license = "Unicode-DFS-2016"
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.workspaces]
+independent = true
+
+[dependencies]
+t1ha = "0.1"
+
+[features]
+gen = []

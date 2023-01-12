@@ -319,7 +319,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
             }
-            n => {
+            n if n < 20 => {
                 quote! {
                     pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
                         static KEYS: [&str; #n] = [#(#keys),*];
@@ -332,6 +332,53 @@ impl DataExporter for BakedDataExporter {
                                 // Safe because KEYS and DATA have the same length
                                 *DATA.get_unchecked(i)
                             })
+                    }
+                }
+            }
+            n => {
+                let mut keys = keys;
+                let mut values = values;
+
+                // Hash the keys as `DataLocale`s, as that's what we'll have at runtime
+                let (displacements, permutation) = perfect_hash_utils::compute_displacements(
+                    keys.iter()
+                        .map(|s| DataLocale::from(s.parse::<icu_locid::Locale>().unwrap())),
+                );
+
+                perfect_hash_utils::apply_permutation(permutation, |a, b| {
+                    keys.swap(a, b);
+                    values.swap(a, b);
+                });
+
+                fn u_type_for(x: u32) -> TokenStream {
+                    if x <= u8::MAX as u32 {
+                        quote!(u8)
+                    } else if x <= u16::MAX as u32 {
+                        quote!(u16)
+                    } else {
+                        quote!(u32)
+                    }
+                }
+
+                let d0_type = u_type_for(displacements.iter().map(|&(d0, _)| d0).max().unwrap());
+                let d1_type = u_type_for(displacements.iter().map(|&(_, d1)| d1).max().unwrap());
+
+                let displacements = displacements.iter().map(|x| {
+                    // Not using quote! as we don't want the type encoded in the suffix.
+                    format!("{x:?}").parse::<TokenStream>().unwrap()
+                });
+
+                self.dependencies.insert("perfect_hash_utils");
+                quote! {
+                    pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
+                        static KEYS: [&str; #n] = [#(#keys),*];
+                        static DATA: [&DataStruct; #n] = [#(&#values),*];
+                        static DISPLACEMENTS: [(#d0_type, #d1_type); #n] = [#(#displacements),*];
+
+                        let (g, f0, f1) = perfect_hash_utils::compute_hash(locale, #n);
+                        let (d0, d1) = DISPLACEMENTS.get(g).copied()?;
+                        let i = perfect_hash_utils::compute_index((f0, f1), (d0 as u32, d1 as u32), #n)?;
+                        locale.strict_cmp(KEYS.get(i)?.as_bytes()).is_eq().then(|| DATA.get(i).copied()).flatten()
                     }
                 }
             }
