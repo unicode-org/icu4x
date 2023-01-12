@@ -36,21 +36,21 @@ Consider the struct
 
 ```rust
 #[derive(serde::Deserialize)]
-pub struct WeekdayNamesBad {
+pub struct MonthNamesBad {
     // Invariant 1: the first element in the vector is the default value
     // Invariant 2: there are 7 elements in the vector
-    weekday_names: Vec<String>,
+    month_names: Vec<String>,
 }
 
-impl WeekdayNamesBad {
-    pub fn get_first_weekday_name(&self) -> &str {
-        &self.weekday_names[0]
+impl MonthNamesBad {
+    pub fn get_first_month_name(&self) -> &str {
+        &self.month_names[0]
     }
-    pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
+    pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         if idx >= 7 {
             return None;
         }
-        Some(&self.weekday_names[idx])
+        Some(&self.month_names[idx])
     }
 }
 ```
@@ -67,24 +67,24 @@ Change the functions to return default fallback values if the data is not in the
 
 ```rust
 #[derive(serde::Deserialize)]
-pub struct WeekdayNamesGIGO {
+pub struct MonthNamesGIGO {
     // WEAK Invariant 1: the first element in the vector is the default value
     // WEAK Invariant 2: there are 7 elements in the vector
-    weekday_names: Vec<String>,
+    month_names: Vec<String>,
 }
 
-impl WeekdayNamesGIGO {
-    pub fn get_first_weekday_name(&self) -> &str {
-        match self.weekday_names.get(0) {
+impl MonthNamesGIGO {
+    pub fn get_first_month_name(&self) -> &str {
+        match self.month_names.get(0) {
             Some(v) => v,
             None => {
-                debug_assert!(false, "weekday_names is empty");
+                debug_assert!(false, "month_names is empty");
                 ""
             }
         }
     }
-    pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
-        self.weekday_names.get(idx).map(String::as_str)
+    pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
+        self.month_names.get(idx).map(String::as_str)
     }
 }
 ```
@@ -95,20 +95,20 @@ Change the struct so that it doesn't have internal invariants.
 
 ```rust
 #[derive(serde::Deserialize)]
-pub struct WeekdayNamesNoInvariants {
-    pub first_weekday_name: String,
-    pub remaining_weekdays: Vec<String>,
+pub struct MonthNamesNoInvariants {
+    pub first_month_name: String,
+    pub remaining_months: Vec<String>,
 }
 
-impl WeekdayNamesNoInvariants {
-    pub fn get_first_weekday_name(&self) -> &str {
-        &self.first_weekday_name
+impl MonthNamesNoInvariants {
+    pub fn get_first_month_name(&self) -> &str {
+        &self.first_month_name
     }
-    pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
+    pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         if idx == 0 {
-            Some(&self.first_weekday_name)
+            Some(&self.first_month_name)
         } else {
-            self.remaining_weekdays.get(idx - 1).map(String::as_str)
+            self.remaining_months.get(idx - 1).map(String::as_str)
         }
     }
 }
@@ -124,35 +124,35 @@ With this solution, check that there are the expected number of items at deseria
 use icu_provider::DataError;
 
 #[derive(serde::Deserialize)]
-struct WeekdayNamesInner {
-    pub weekday_names: Vec<String>,
+struct MonthNamesInner {
+    pub month_names: Vec<String>,
 }
 
 #[derive(serde::Deserialize)]
-#[serde(try_from = "WeekdayNamesInner")]
-pub struct WeekdayNamesCheckedInvariants {
+#[serde(try_from = "MonthNamesInner")]
+pub struct MonthNamesCheckedInvariants {
     // Invariant: the vector is non-empty.
-    weekday_names: Vec<String>,
+    month_names: Vec<String>,
 }
 
-impl TryFrom<WeekdayNamesInner> for WeekdayNamesCheckedInvariants {
+impl TryFrom<MonthNamesInner> for MonthNamesCheckedInvariants {
     type Error = DataError;
-    fn try_from(other: WeekdayNamesInner) -> Result<Self, Self::Error> {
-        if other.weekday_names.is_empty() {
-            Err(DataError::custom("weekday_names must not be empty"))
+    fn try_from(other: MonthNamesInner) -> Result<Self, Self::Error> {
+        if other.month_names.is_empty() {
+            Err(DataError::custom("month_names must not be empty"))
         } else {
-            Ok(Self { weekday_names: other.weekday_names })
+            Ok(Self { month_names: other.month_names })
         }
     }
 }
 
-impl WeekdayNamesCheckedInvariants {
-    pub fn get_first_weekday_name(&self) -> &str {
+impl MonthNamesCheckedInvariants {
+    pub fn get_first_month_name(&self) -> &str {
         #[allow(clippy::indexing_slicing)] // validated invariant
-        &self.weekday_names[0]
+        &self.month_names[0]
     }
-    pub fn get_weekday_name_at_index(&self, idx: usize) -> Option<&str> {
-        self.weekday_names.get(idx).map(String::as_str)
+    pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
+        self.month_names.get(idx).map(String::as_str)
     }
 }
 ```
