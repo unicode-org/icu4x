@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673487600931,
+  "lastUpdate": 1673510910677,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33953,6 +33953,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5ca97abd20541fcdd5ae2dff41cf4a4b76addc67"
         },
         "date": 1673487513670,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c0b3985d8a71e521cb8e438097a43bdb08aa0d9",
+          "message": "Change the signature of newly added inner_mut function (#2977)\n\nChanges 323ecbe8c1ba9092ae323ee069a5e0f090ecac8f",
+          "timestamp": "2023-01-12T02:05:20-06:00",
+          "tree_id": "fd7382ee1532e928a67f33865a06d322a633b351",
+          "url": "https://github.com/unicode-org/icu4x/commit/0c0b3985d8a71e521cb8e438097a43bdb08aa0d9"
+        },
+        "date": 1673510814545,
         "tool": "ndjson",
         "benches": [
           {
