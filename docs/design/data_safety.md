@@ -7,23 +7,27 @@ At its core, ICU4X is a set of algorithms that map input data to human-ready out
 
 Given the following evidence…
 
-1. It is rare to be 100% confident about the safety of your data\*
-1. Validating data invariants can be expensive
-1. Moving validation into the algorithm (post-deserialization) often reduces the overall overhead of validation
-1. It is useful to _be able to_ learn whether code traverses unexpected code paths
-1. End users of ICU4X algorithms are not in a position to reason about invalid data in otherwise-infallible terminal functions
-1. Algorithms that panic on malformed data increase the vulnerability space of an application\*\*
-1. "Garbage in, garbage out" (GIGO) does not increase the space that malicious actors could leverage\*\*
+1. It is rare to be 100% confident about the safety of your data.[^1]
+1. Validating data invariants can be expensive at deserialization time.[^2]
+1. Validating data invariants at runtime is _sometimes free_ and _usually cheaper_ than at deserialization time.
+1. It is useful to _be able to_ learn whether code traverses unexpected code paths.
+1. End users of ICU4X algorithms are not in a position to reason about invalid data in otherwise-infallible terminal functions.
+1. All types of ICU4X data, including CLDR and Unicode property data, may be loaded and deserialized dynamically.
+1. Deserialization cost should be small _enough_ that it is merely one of many factors that clients should consider when deciding between baked or dynamically-loaded data.
+1. Algorithms that panic on malformed data increase the vulnerability space of an application.[^3]
+1. "Garbage in, garbage out" (GIGO) does not increase the space that malicious actors could leverage.[^3]
 
 …the ICU4X project has adopted the following policy:
 
-1. Code should never panic at runtime based on invalid data; and be it
-1. Data structs should reduce the number of internal invariants; and be it
+1. Code should never panic at runtime based on invalid data.
+1. Data structs should reduce the number of internal invariants, _especially_ ones that are expensive to validate.\*\*
 1. Code paths only reachable by invalid data should use GIGO with debug assertions.
 
-\* *As a thought experiment, if you were 100% confident, you could use `get_unchecked` and other unsafe operations. If you are not confident enough to use unsafe code, then you are not 100% confident.*
+[^1]: *As a thought experiment, if you were 100% confident, you could use `get_unchecked` and other unsafe operations. If you are not confident enough to use unsafe code, then you are not 100% confident.*
 
-\*\* *An attacker could construct data to produce a result they desire, regardless of whether unexpected operations end in GIGO. However, panicky algorithms could enable attackers to perform denial-of-service attacks.*
+[^2]: *"Expensive" refers to both code size and performance.*
+
+[^3]: *If an attacker is able to mutate ICU4X data sources, they could construct data to produce a result they desire, regardless of whether unexpected operations end in GIGO. However, panicky algorithms could enable attackers to perform denial-of-service attacks.*
 
 Additional points:
 
