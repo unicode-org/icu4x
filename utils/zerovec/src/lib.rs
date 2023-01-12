@@ -216,7 +216,7 @@ extern crate alloc;
 mod error;
 mod flexzerovec;
 #[cfg(feature = "hashmap")]
-mod hashmap;
+pub mod hashmap;
 mod map;
 mod map2d;
 #[cfg(test)]

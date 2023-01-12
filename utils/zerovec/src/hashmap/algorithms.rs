@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::borrow::Borrow;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
@@ -33,7 +32,7 @@ pub const fn split_hash64(hash: u64, m: u32) -> (usize, u32, u32) {
 #[inline]
 pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
     let mut hasher = T1haHasher::with_seed(SEED);
-    key.borrow().hash(&mut hasher);
+    key.hash(&mut hasher);
     hasher.finish()
 }
 

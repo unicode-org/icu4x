@@ -9,7 +9,7 @@ use alloc::vec;
 use core::hash::Hash;
 
 pub mod algorithms;
-use algorithms::*
+use algorithms::*;
 
 /// A perfect zerohashmap optimized for lookups over immutable keys.
 ///
