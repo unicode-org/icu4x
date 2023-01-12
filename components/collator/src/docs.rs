@@ -156,4 +156,3 @@
 //! itself as data (476 bytes as UTF-16).
 //!
 //! Note: Investigate [#2723](https://github.com/unicode-org/icu4x/issues/2723)
-//!
