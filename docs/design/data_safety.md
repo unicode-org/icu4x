@@ -3,18 +3,23 @@ Data Safety in ICU4X
 
 At its core, ICU4X is a set of algorithms that map input data to human-ready outputs. Since a core value proposition of ICU4X is the ability to dynamically load data, we can't always assume that our data are valid and pristine. This doc covers how we think about this problem and handle it in ICU4X.
 
-## Resolution
+## Problem and Policy Statement
 
-1. _Whereas_ it is rare to be 100% confident about the safety of your data\*; and
-1. _Whereas_ validating data invariants can be expensive; and
-1. _Whereas_ moving validation into the algorithm (post-deserialization) often reduces the overall overhead of validation; and
-1. _Whereas_ it is useful to _be able to_ learn whether code traverses unexpected code paths; and
-1. _Whereas_ end users of ICU4X algorithms are not in a position to reason about invalid data in otherwise-infallible terminal functions; and
-1. _Whereas_ algorithms that panic on malformed data increase the vulnerability space of an application\*\*; and
-1. _Whereas_ "garbage in, garbage out" (GIGO) does not increase the space that malicious actors could leverage\*\*; be it
-1. _Resolved_ that code should never panic at runtime based on invalid data; and be it
-1. _Resolved_ that data structs should reduce the number of internal invariants; and be it
-1. _Resolved_ that code paths only reachable by invalid data should use GIGO with debug assertions.
+Given the following evidence…
+
+1. It is rare to be 100% confident about the safety of your data\*
+1. Validating data invariants can be expensive
+1. Moving validation into the algorithm (post-deserialization) often reduces the overall overhead of validation
+1. It is useful to _be able to_ learn whether code traverses unexpected code paths
+1. End users of ICU4X algorithms are not in a position to reason about invalid data in otherwise-infallible terminal functions
+1. Algorithms that panic on malformed data increase the vulnerability space of an application\*\*
+1. "Garbage in, garbage out" (GIGO) does not increase the space that malicious actors could leverage\*\*
+
+…the ICU4X project has adopted the following policy:
+
+1. Code should never panic at runtime based on invalid data; and be it
+1. Data structs should reduce the number of internal invariants; and be it
+1. Code paths only reachable by invalid data should use GIGO with debug assertions.
 
 \* *As a thought experiment, if you were 100% confident, you could use `get_unchecked` and other unsafe operations. If you are not confident enough to use unsafe code, then you are not 100% confident.*
 
