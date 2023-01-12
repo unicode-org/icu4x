@@ -83,7 +83,12 @@ impl ListFormatter {
     /// use icu::list::*;
     /// # use icu::locid::locale;
     /// # use writeable::*;
-    /// let formatteur = ListFormatter::try_new_and_with_length_unstable(&icu_testdata::unstable(), &locale!("fr").into(), ListLength::Wide).unwrap();
+    /// let formatteur = ListFormatter::try_new_and_with_length_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("fr").into(),
+    ///     ListLength::Wide,
+    /// )
+    /// .unwrap();
     /// let pays = ["Italie", "France", "Espagne", "Allemagne"];
     ///
     /// assert_writeable_parts_eq!(
