@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673544085030,
+  "lastUpdate": 1673546649202,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34108,6 +34108,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "70a05235630502d8aefd48a563a8675197f69fe5",
+          "message": "Updating lock files (#2980)",
+          "timestamp": "2023-01-12T19:00:49+01:00",
+          "tree_id": "fe80fffaaadef6a77e35c85e47dd99850a5ade70",
+          "url": "https://github.com/unicode-org/icu4x/commit/70a05235630502d8aefd48a563a8675197f69fe5"
+        },
+        "date": 1673546553414,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
             "unit": "bytes",
             "biggerIsBetter": false
           }
