@@ -11,7 +11,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use crate::timezone::ffi::ICU4XCustomTimeZone;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_datetime::time_zone::FallbackFormat;
     use icu_datetime::time_zone::IsoFormat;
     use icu_datetime::time_zone::IsoMinutes;
@@ -66,17 +65,16 @@ pub mod ffi {
         pub fn create_with_localized_gmt_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TimeZoneFormatter::try_new_unstable(
-                &provider.0,
-                &locale,
-                FallbackFormat::LocalizedGmt.into(),
-            )
-            .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            Ok(Box::new(ICU4XTimeZoneFormatter(
+                TimeZoneFormatter::try_new_unstable(
+                    &provider.0,
+                    &locale,
+                    FallbackFormat::LocalizedGmt.into(),
+                )?,
+            )))
         }
 
         /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
@@ -92,13 +90,12 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             options: ICU4XIsoTimeZoneOptions,
-        ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
+        ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            TimeZoneFormatter::try_new_unstable(&provider.0, &locale, options.into())
-                .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XTimeZoneFormatter(
+                TimeZoneFormatter::try_new_unstable(&provider.0, &locale, options.into())?,
+            )))
         }
 
         /// Loads generic non-location long format. Example: "Pacific Time"
@@ -109,12 +106,9 @@ pub mod ffi {
         pub fn load_generic_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_generic_non_location_long(&provider.0)
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_generic_non_location_long(&provider.0)?;
+            Ok(())
         }
 
         /// Loads generic non-location short format. Example: "PT"
@@ -125,12 +119,9 @@ pub mod ffi {
         pub fn load_generic_non_location_short(
             &mut self,
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_generic_non_location_short(&provider.0)
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_generic_non_location_short(&provider.0)?;
+            Ok(())
         }
 
         /// Loads specific non-location long format. Example: "Pacific Standard Time"
@@ -141,12 +132,9 @@ pub mod ffi {
         pub fn load_specific_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_specific_non_location_long(&provider.0)
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_specific_non_location_long(&provider.0)?;
+            Ok(())
         }
 
         /// Loads specific non-location short format. Example: "PST"
@@ -157,12 +145,9 @@ pub mod ffi {
         pub fn load_specific_non_location_short(
             &mut self,
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_specific_non_location_short(&provider.0)
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_specific_non_location_short(&provider.0)?;
+            Ok(())
         }
 
         /// Loads generic location format. Example: "Los Angeles Time"
@@ -173,12 +158,9 @@ pub mod ffi {
         pub fn load_generic_location_format(
             &mut self,
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_generic_location_format(&provider.0)
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_generic_location_format(&provider.0)?;
+            Ok(())
         }
 
         /// Loads localized GMT format. Example: "GMT-07:00"
@@ -186,12 +168,9 @@ pub mod ffi {
             icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
             FnInStruct
         )]
-        pub fn load_localized_gmt_format(&mut self) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_localized_gmt_format()
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        pub fn load_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
+            self.0.load_localized_gmt_format()?;
+            Ok(())
         }
 
         /// Loads ISO-8601 format. Example: "-07:00"
@@ -202,16 +181,13 @@ pub mod ffi {
         pub fn load_iso_8601_format(
             &mut self,
             options: ICU4XIsoTimeZoneOptions,
-        ) -> DiplomatResult<(), ICU4XError> {
-            self.0
-                .load_iso_8601_format(
-                    options.format.into(),
-                    options.minutes.into(),
-                    options.seconds.into(),
-                )
-                .map(|_| ())
-                .map_err(Into::into)
-                .into()
+        ) -> Result<(), ICU4XError> {
+            self.0.load_iso_8601_format(
+                options.format.into(),
+                options.minutes.into(),
+                options.seconds.into(),
+            )?;
+            Ok(())
         }
 
         /// Formats a [`ICU4XCustomTimeZone`] to a string.
@@ -224,15 +200,9 @@ pub mod ffi {
             &self,
             value: &ICU4XCustomTimeZone,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            let result = self
-                .0
-                .format(&value.0)
-                .write_to(write)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
+        ) -> Result<(), ICU4XError> {
+            self.0.format(&value.0).write_to(write)?;
+            Ok(())
         }
     }
 }

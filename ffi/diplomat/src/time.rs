@@ -6,7 +6,6 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use diplomat_runtime::DiplomatResult;
     use icu_calendar::types::Time;
 
     use crate::errors::ffi::ICU4XError;
@@ -24,18 +23,18 @@ pub mod ffi {
             minute: u8,
             second: u8,
             nanosecond: u32,
-        ) -> DiplomatResult<Box<ICU4XTime>, ICU4XError> {
-            let hour = try_icu4x!(hour.try_into());
-            let minute = try_icu4x!(minute.try_into());
-            let second = try_icu4x!(second.try_into());
-            let nanosecond = try_icu4x!(nanosecond.try_into());
+        ) -> Result<Box<ICU4XTime>, ICU4XError> {
+            let hour = hour.try_into()?;
+            let minute = minute.try_into()?;
+            let second = second.try_into()?;
+            let nanosecond = nanosecond.try_into()?;
             let time = Time {
                 hour,
                 minute,
                 second,
                 nanosecond,
             };
-            Ok(Box::new(ICU4XTime(time))).into()
+            Ok(Box::new(ICU4XTime(time)))
         }
 
         /// Returns the hour in this time
