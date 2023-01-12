@@ -1,0 +1,46 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[255u8, 0u8, 1u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 16u8, 0u8, 30u8, 0u8, 110u8, 97u8, 107u8,
+                    97u8, 114u8, 97u8, 97u8, 110u8, 103u8, 32u8, 108u8, 105u8, 110u8, 103u8,
+                    103u8, 111u8, 110u8, 103u8, 97u8, 121u8, 111u8, 110u8, 103u8, 32u8, 108u8,
+                    105u8, 110u8, 103u8, 103u8, 111u8, 115u8, 117u8, 115u8, 117u8, 110u8,
+                    111u8, 100u8, 32u8, 110u8, 97u8, 32u8, 108u8, 105u8, 110u8, 103u8, 103u8,
+                    111u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" linggo ang nakalipas"),
+            index: 0u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" (na) linggo ang nakalipas"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  linggo"),
+            index: 3u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed("sa  linggo"),
+            index: 3u8,
+        },
+    },
+}

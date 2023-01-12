@@ -17,8 +17,21 @@ use zerovec::ZeroVec;
 use zerovec::ZeroVecError;
 
 /// The type of trie represents whether the trie has an optimization that
-/// would make it small or fast.
-/// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
+/// would make it smaller or faster.
+///
+/// Regarding performance, a trie being a small or fast type affects the number of array lookups
+/// needed for code points in the range `[0x1000, 0x10000)`. In this range, `Small` tries use 4 array lookups,
+/// while `Fast` tries use 2 array lookups.
+/// Code points before the interval (in `[0, 0x1000)`) will always use 2 array lookups.
+/// Code points after the interval (in `[0x10000, 0x10FFFF]`) will always use 4 array lookups.
+///
+/// Regarding size, `Fast` type tries are larger than `Small` type tries because the minimum size of
+/// the index array is larger. The minimum size is the "fast max" limit, which is the limit of the range
+/// of code points with 2 array lookups.
+///
+/// See the document [Unicode Properties and Code Point Tries in ICU4X](https://github.com/unicode-org/icu4x/blob/main/docs/design/properties_code_point_trie.md).
+///
+/// Also see [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]

@@ -624,7 +624,7 @@ fn test_region_fallback() {
 fn test_reordering() {
     let locale: Locale = langid!("bn").into();
 
-    // অ is Bengali
+    // অ is Bangla
     // ऄ is Devanagari
 
     {
@@ -1402,6 +1402,20 @@ fn test_conformance_non_ignorable() {
             prev = parsed;
         }
     }
+}
+
+#[test]
+fn test_case_level() {
+    let mut options = CollatorOptions::new();
+    options.strength = Some(Strength::Primary);
+    options.case_level = Some(CaseLevel::On);
+    let collator_with_case =
+        Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options)
+            .unwrap();
+    assert_eq!(
+        collator_with_case.compare("aA", "Aa"),
+        core::cmp::Ordering::Less
+    );
 }
 
 // TODO: Test languages that map to the root.

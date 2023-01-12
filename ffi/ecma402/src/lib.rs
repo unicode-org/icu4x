@@ -64,8 +64,9 @@ impl std::fmt::Display for crate::DataLocale {
     }
 }
 
-mod provider {
-    include!(concat!(env!("OUT_DIR"), "/baked/mod.rs"));
-}
+pub(crate) struct GlobalDataProvider;
 
-pub(crate) use provider::BakedDataProvider;
+mod baked {
+    include!(concat!(env!("OUT_DIR"), "/baked/mod.rs"));
+    impl_data_provider!(super::GlobalDataProvider);
+}

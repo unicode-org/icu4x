@@ -56,7 +56,8 @@ const POSTCARD_HASHMAP: [u8; 176] = [
     114, 97, 98, 105, 99,
 ];
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate() {
     let map = build_zeromap(false);
@@ -64,7 +65,8 @@ fn generate() {
     println!("{:?}", buf);
 }
 
-/// Run this function to print new data to the console. Requires the optional `serde` feature.
+/// Run this function to print new data to the console.
+/// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
 fn generate_hashmap() {
     let map = build_hashmap(false);

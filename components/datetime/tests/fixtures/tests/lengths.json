@@ -11,9 +11,9 @@
         },
         "output": {
             "values": {
-                "en" : "Feb 20, 2020, 12:12:00 AM",
-                "en-u-ca-buddhist": "Feb 20, 2563 BE, 12:12:00 AM",
-                "en-u-ca-japanese": "Feb 20, 2 Reiwa, 12:12:00 AM"
+                "en" : "Feb 20, 2020, 12:12:00\u202fAM",
+                "en-u-ca-buddhist": "Feb 20, 2563 BE, 12:12:00\u202fAM",
+                "en-u-ca-japanese": "Feb 20, 2 Reiwa, 12:12:00\u202fAM"
             }
         }
     },
@@ -29,7 +29,7 @@
         },
         "output": {
             "values": {
-                "en": "1/30/00, 10:15 PM"
+                "en": "1/30/00, 10:15\u202fPM"
             }
         }
     },
@@ -64,7 +64,7 @@
         },
         "output": {
             "values": {
-                "en": "6:45:10 PM"
+                "en": "6:45:10\u202fPM"
             }
         }
     },
@@ -81,8 +81,8 @@
         },
         "output": {
             "values": {
-                "ru": "21 мар. 2020 г., 08:25",
-                "ru-u-ca-buddhist": "21 мар. 2563 г. BE, 08:25",
+                "ru": "21 мар. 2020\u202fг., 08:25",
+                "ru-u-ca-buddhist": "21 мар. 2563\u202fг. BE, 08:25",
                 "ja-u-ca-japanese": "令和2年3月21日 8:25"
             }
         }

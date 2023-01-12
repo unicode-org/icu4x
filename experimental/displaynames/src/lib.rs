@@ -9,7 +9,7 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! </div>
 //!
@@ -19,4 +19,12 @@
 
 #![warn(missing_docs)]
 
+pub mod displaynames;
+pub mod options;
 pub mod provider;
+
+pub use displaynames::DisplayNames;
+pub use options::DisplayNamesOptions;
+pub use options::Fallback;
+pub use options::LanguageDisplay;
+pub use options::Style;

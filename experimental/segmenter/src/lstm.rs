@@ -3,12 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::lstm_bies::Lstm;
-use crate::provider::LstmDataV1Marker;
-
+use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use alloc::borrow::ToOwned;
 use alloc::string::String;
-use core::char::decode_utf16;
-use icu_provider::DataError;
-use icu_provider::DataPayload;
+use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
+use icu_provider::{DataError, DataErrorKind, DataPayload};
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
@@ -25,7 +24,7 @@ impl Iterator for LstmSegmenterIterator {
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let ch = self.bies_str.chars().nth(self.pos)?;
-            self.pos_utf8 += self.input.chars().nth(self.pos).unwrap().len_utf8();
+            self.pos_utf8 += self.input.chars().nth(self.pos)?.len_utf8();
             self.pos += 1;
             if ch == 'e' && self.bies_str.len() > self.pos {
                 return Some(self.pos_utf8);
@@ -69,7 +68,7 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 impl LstmSegmenterIteratorUtf16 {
     pub fn new(lstm: &Lstm, input: &[u16]) -> Self {
         let input: String = decode_utf16(input.iter().cloned())
-            .map(|r| r.unwrap())
+            .map(|r| r.unwrap_or(REPLACEMENT_CHARACTER))
             .collect();
         let lstm_output = lstm.word_segmenter(&input);
         Self {
@@ -84,9 +83,12 @@ pub struct LstmSegmenter<'l> {
 }
 
 impl<'l> LstmSegmenter<'l> {
-    pub fn try_new_unstable(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
-        let lstm = Lstm::try_new(payload).unwrap();
-
+    pub fn try_new_unstable(
+        payload: &'l DataPayload<LstmDataV1Marker>,
+        grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    ) -> Result<Self, DataError> {
+        let lstm = Lstm::try_new(payload, grapheme)
+            .map_err(|_| DataErrorKind::MissingPayload.with_type_context::<LstmDataV1Marker>())?;
         Ok(Self { lstm })
     }
 
@@ -104,7 +106,7 @@ impl<'l> LstmSegmenter<'l> {
 #[cfg(test)]
 mod tests {
     use crate::lstm::*;
-    use crate::provider::LstmDataV1;
+    use crate::provider::{GraphemeClusterBreakDataV1Marker, LstmDataV1};
     use icu_locid::locale;
     use icu_provider::prelude::*;
 
@@ -122,7 +124,7 @@ mod tests {
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
-        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload, None).expect("Data exists");
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [12, 21, 33], "Thai test");
 
@@ -144,7 +146,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
         let data: LstmDataV1 = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload, None).expect("Data exists");
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks, [12, 18, 30], "Burmese test");
@@ -162,7 +164,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/km.json");
         let data: LstmDataV1 = serde_json::from_slice(KHMER_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload, None).expect("Data exists");
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: This small sample matches the ICU dictionary segmenter
         assert_eq!(breaks, [39, 48, 54, 72], "Khmer test");
@@ -179,7 +181,7 @@ mod tests {
             include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/lo.json");
         let data: LstmDataV1 = serde_json::from_slice(LAO_MODEL).expect("JSON syntax error");
         let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
-        let segmenter = LstmSegmenter::try_new_unstable(&payload).unwrap();
+        let segmenter = LstmSegmenter::try_new_unstable(&payload, None).expect("Data exists");
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: LSTM finds a break at '12' that the dictionary does not find
         assert_eq!(breaks, [12, 21, 30, 39], "Lao test");
@@ -187,5 +189,25 @@ mod tests {
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
         assert_eq!(breaks, [4, 7, 10, 13], "Lao utf-16 test");
+    }
+
+    #[test]
+    fn thai_word_break_with_grapheme_model() {
+        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
+        // The keys of Lstm JSON data has to be sorted. So this JSON is generated by converter.py in data directory.
+        const MODEL: &[u8; 280433] = include_bytes!(
+            "../tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json"
+        );
+        let data: LstmDataV1 = serde_json::from_slice(MODEL).expect("JSON syntax error");
+        let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let segmenter = LstmSegmenter::try_new_unstable(&payload, Some(grapheme.get())).expect("");
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        assert_eq!(breaks, [6, 12, 21, 27, 33], "Thai test with grapheme model");
     }
 }

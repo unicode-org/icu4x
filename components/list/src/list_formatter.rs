@@ -72,8 +72,34 @@ impl ListFormatter {
     );
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
-    /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
-    /// elements, and [`parts::LITERAL`] for list literals.
+    /// formatting.
+    ///
+    /// The [`Writeable`] is annotated with [`parts::ELEMENT`] for input elements,
+    /// and [`parts::LITERAL`] for list literals.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::list::*;
+    /// # use icu::locid::locale;
+    /// # use writeable::*;
+    /// let formatteur = ListFormatter::try_new_and_with_length_unstable(&icu_testdata::unstable(), &locale!("fr").into(), ListLength::Wide).unwrap();
+    /// let pays = ["Italie", "France", "Espagne", "Allemagne"];
+    ///
+    /// assert_writeable_parts_eq!(
+    ///     formatteur.format(pays.iter()),
+    ///     "Italie, France, Espagne et Allemagne",
+    ///     [
+    ///         (0, 6, parts::ELEMENT),
+    ///         (6, 8, parts::LITERAL),
+    ///         (8, 14, parts::ELEMENT),
+    ///         (14, 16, parts::LITERAL),
+    ///         (16, 23, parts::ELEMENT),
+    ///         (23, 27, parts::LITERAL),
+    ///         (27, 36, parts::ELEMENT),
+    ///     ]
+    /// );
+    /// ```
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
@@ -99,6 +125,9 @@ pub mod parts {
     use writeable::Part;
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is an element.
+    ///
+    /// * `category`: `"list"`
+    /// * `value`: `"element"`
     pub const ELEMENT: Part = Part {
         category: "list",
         value: "element",
@@ -106,6 +135,9 @@ pub mod parts {
 
     /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
+    ///
+    /// * `category`: `"list"`
+    /// * `value`: `"literal"`
     pub const LITERAL: Part = Part {
         category: "list",
         value: "literal",

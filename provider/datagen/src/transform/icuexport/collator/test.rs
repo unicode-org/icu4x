@@ -7,8 +7,9 @@ use std::cmp::Ordering;
 use crate::testutil::ResolvedLocaleAdapter;
 use crate::*;
 use icu_collator::{provider::CollationDataV1Marker, Collator, CollatorOptions, Strength};
-use icu_locid::{langid, locale};
+use icu_locid::{langid, locale, subtags::Language, subtags_language as language};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use writeable::Writeable;
 
 #[derive(Debug)]
 struct TestCase<'a> {
@@ -204,4 +205,105 @@ fn test_nb_nn_no() {
         provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
         Some(&locale!("no").into())
     );
+}
+
+#[test]
+fn test_zh() {
+    let provider = crate::DatagenProvider::for_test();
+    let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
+    let provider = ResolvedLocaleAdapter::new(provider);
+
+    let input_locale = locale!("zh-u-co-gb2312").into();
+    Collator::try_new_unstable(&provider, &input_locale, CollatorOptions::new()).unwrap();
+    assert_eq!(
+        provider.resolved_locale_for(CollationDataV1Marker::KEY, input_locale),
+        Some(&locale!("zh-u-co-gb2312").into())
+    );
+}
+
+#[test]
+fn test_collation_filtering() {
+    #[derive(Debug)]
+    struct TestCase<'a> {
+        include_collations: &'a [&'a str],
+        language: Language,
+        expected: &'a [&'a str],
+    }
+    let cases = [
+        TestCase {
+            include_collations: &[],
+            language: language!("zh"),
+            expected: &["zh", "zh-u-co-stroke", "zh-u-co-unihan", "zh-u-co-zhuyin"],
+        },
+        TestCase {
+            include_collations: &["big5han"],
+            language: language!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-big5han",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &["gb2312", "search*"],
+            language: language!("zh"),
+            expected: &[
+                "zh",
+                "zh-u-co-gb2312",
+                "zh-u-co-stroke",
+                "zh-u-co-unihan",
+                "zh-u-co-zhuyin",
+            ],
+        },
+        TestCase {
+            include_collations: &[],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["searchjl"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search", "searchjl"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+        TestCase {
+            include_collations: &["search*", "big5han"],
+            language: language!("ko"),
+            expected: &["ko", "ko-u-co-search", "ko-u-co-searchjl", "ko-u-co-unihan"],
+        },
+    ];
+    for cas in cases {
+        let provider = DatagenProvider {
+            source: SourceData::for_test().with_collations(
+                cas.include_collations
+                    .iter()
+                    .copied()
+                    .map(String::from)
+                    .collect(),
+            ),
+        };
+        let mut resolved_locales: Vec<String> =
+            IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
+                .unwrap()
+                .into_iter()
+                .filter(|l| l.language() == cas.language)
+                .map(|l| l.write_to_string().into_owned())
+                .collect();
+        resolved_locales.sort();
+        let mut expected_locales: Vec<String> =
+            cas.expected.iter().copied().map(String::from).collect();
+        expected_locales.sort();
+        assert_eq!(resolved_locales, expected_locales, "{:?}", cas);
+    }
 }

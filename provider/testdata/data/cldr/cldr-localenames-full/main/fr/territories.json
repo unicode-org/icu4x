@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "fr"
       },
@@ -87,7 +87,7 @@
           "CG-alt-variant": "République du Congo",
           "CH": "Suisse",
           "CI": "Côte d’Ivoire",
-          "CI-alt-variant": "​​République de Côte d’Ivoire",
+          "CI-alt-variant": "République de Côte d’Ivoire",
           "CK": "Îles Cook",
           "CL": "Chili",
           "CM": "Cameroun",
@@ -226,6 +226,7 @@
           "NR": "Nauru",
           "NU": "Niue",
           "NZ": "Nouvelle-Zélande",
+          "NZ-alt-variant": "Aotearoa (Nouvelle-Zélande)",
           "OM": "Oman",
           "PA": "Panama",
           "PE": "Pérou",
@@ -285,6 +286,7 @@
           "TN": "Tunisie",
           "TO": "Tonga",
           "TR": "Turquie",
+          "TR-alt-variant": "Türkiye",
           "TT": "Trinité-et-Tobago",
           "TV": "Tuvalu",
           "TW": "Taïwan",
@@ -293,7 +295,7 @@
           "UG": "Ouganda",
           "UM": "Îles mineures éloignées des États-Unis",
           "UN": "Nations Unies",
-          "UN-alt-short": "NU",
+          "UN-alt-short": "ONU",
           "US": "États-Unis",
           "US-alt-short": "É.-U.",
           "UY": "Uruguay",

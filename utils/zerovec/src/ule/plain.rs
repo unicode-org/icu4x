@@ -101,6 +101,7 @@ macro_rules! impl_const_constructors {
                 /// ```compile_fail
                 /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
                 /// ```
+                #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
                 const _: () = ();
                 let len = bytes.len();
                 #[allow(clippy::modulo_one)]

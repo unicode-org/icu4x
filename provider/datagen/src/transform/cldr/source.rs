@@ -33,21 +33,11 @@ impl std::fmt::Display for LocaleSubset {
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
-    locale_subset: LocaleSubset,
-    cache: SerdeCache,
+    pub locale_subset: LocaleSubset,
+    pub cache: SerdeCache,
 }
 
 impl CldrCache {
-    pub fn new<P: AsRef<std::path::Path>>(
-        root: P,
-        locale_subset: LocaleSubset,
-    ) -> Result<Self, DataError> {
-        Ok(Self {
-            locale_subset,
-            cache: SerdeCache::new(root)?,
-        })
-    }
-
     pub fn core(&self) -> CldrDirNoLang<'_> {
         CldrDirNoLang(&self.cache, "cldr-core".to_string())
     }
@@ -70,6 +60,7 @@ impl CldrCache {
         CldrDirNoLang(&self.cache, "cldr-bcp47/bcp47".to_string())
     }
 
+    #[cfg(feature = "experimental")]
     pub fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.cache,

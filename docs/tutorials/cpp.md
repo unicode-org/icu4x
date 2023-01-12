@@ -4,7 +4,7 @@ ICU4X's core functionality is completely available from C++, with headers genera
 
 Generated headers can be found under [`ffi/diplomat/cpp/include`], with Sphinx docs at [`ffi/diplomat/cpp/docs`]. The port is header-only; no additional C++ translation units need to be compiled to use ICU4X from C++.
 
-Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate ([crates.io][staticlib-crates], [source][staticlib-source]) with the `cpp_default` feature, and link the resultant static library to their C++ application. This crate builds on the `icu_capi` crate: a `no_std` crate containing all of the relevant [Diplomat]-generated `extern "C"` declarations.
+Typically C++ users can build ICU4X by building the `icu_capi_staticlib` crate ([crates.io][staticlib-crates], [source][staticlib-source]) with the `cpp_default` Cargo feature, and link the resultant static library to their C++ application. This crate builds on the `icu_capi` crate: a `no_std` crate containing all of the relevant [Diplomat]-generated `extern "C"` declarations.
 
 Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
 
@@ -12,23 +12,25 @@ _We are still working on improving the user experience of using ICU4X from other
 
 ## Building and linking ICU4X
 
-As seen in the Makefile, if one wishes to use ICU4X in C++, one should:
-
- - Fetch `icu_capi_staticlib` from somewhere, either by downloading from crates.io, or cloning the `icu4x` repository at the appropriately tagged version
- - Fetch the headers from [`ffi/diplomat/cpp/include`] in the ICU4X repo.
- - Build `icu_capi_staticlib` with `cargo build -p icu_capi_staticlib --release`. Be sure to pass `--release` to get an optimized build! Further options include:
-    - Cargo features (passed in via `--features foo,bar,..`)
-        - `provider_test` to include testing data via `ICU4XDataProvider::create_test()` (not recommended for production builds). It needs `buffer_provider` or `any_provider` to be enabled.
-        - `provider_fs`  for loading data from files with `ICU4XDataProvider::create_fs()`
-        - `icu_provider/deserialize_json`  for JSON support in `ICU4XDataProvider::create_fs()`
+- `cargo build` only supports local crates, so you have to download the published code from crates.io
+    - You can use `cargo clone icu_capi_staticlib@1.0.0` to do this (`cargo install cargo-clone` if the command is not installed)
+- Inside the crate you can use `cargo build` to build the library
+    - Be sure to pass `--release` to get an optimized build
+    - Specify Cargo features with `--features ...`:
         - `buffer_provider` for working with blob data providers (`ICU4XDataProvider::create_from_byte_slice()`)
+        - `provider_test` to include testing data (`ICU4XDataProvider::create_test()`)
+        - `provider_fs` for loading data from the file system (`ICU4XDataProvider::create_fs()`). This also requires enabling a syntax on the `icu_provider` crate.
         - `logging` and `simple_logger` enable basic stdout logging of error metadata. Further loggers can be added on request.
         - `cpp_default` turns on a bunch of these and is useful for exploration, but should not be used in production as it enables `provider_test`
-    - Build options:       
-        - `--profile=release-opt-size` to optimize for size
-        - Using `cargo panic-abort-build` and potentially `--features=x86tiny` (see below)
- - Copy out the static library from `target/{debug, release}/libicu_capi_staticlib.a`
- - Build their code with `g++ -std=c++17 libicu_capi_staticlib_test.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
+    - Set `CARGO_PROFILE_RELEASE_LTO=true` to enable link-time optimization
+    - Set `CARGO_PROFILE_RELEASE_OPT_LEVEL="s"` to optimize for size
+    - See [cargo profiles](cargo-profiles) for more options
+ - Copy the header files from the `icu_capi` crate
+    - If you're using the default crate registry, they will be in `~/.cargo/registry/src/*/icu_capi-1.0.0/cpp/include`
+    - If you cannot find the crate, download it from crates.io
+    - Make sure to use the same version as above
+        - While we selected a version for `icu_capi_staticlib` before, and here we're looking at `icu_capi`, those versions will always be in sync. You can sanity check this by running `cargo pkgid -p icu_capi`.
+ - Compile with `g++ -std=c++17 icu/target/releaselibicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Using ICU4X from C++
 Here's an annotated, shorter version of the fixed decimal example, that can be built using the steps above, using `--features cpp_default`:
@@ -73,11 +75,37 @@ int main() {
 }
 ```
 
-## no_std and embedded platforms
+## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [freertos port]. ICU4X is happy to accept such ports upstream.
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
 
-The `icu_capi_staticlib` crate additionally supports an `x86tiny` for highly size-optimized builds, to be run with `cargo panic-abort-build` (shorthand for `build` with `-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort`). This requires a nighly compiler; it has been tested to work on `nightly-2022-04-05`.
+```rust,compile_fail
+#![feature(alloc_error_handler)]
+
+#![no_std]
+
+extern crate icu_capi;
+extern crate dlmalloc;
+
+use core::alloc::Layout;
+use core::panic::PanicInfo;
+use dlmalloc::GlobalDlmalloc;
+
+#[global_allocator]
+static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
+
+#[alloc_error_handler]
+fn alloc_error(_layout: Layout) -> ! {
+    loop {}
+}
+
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}
+}
+```
+
+This can then be compiled with `cargo +nightly -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort` for a minimal build.
 
 ## Tips
 
@@ -103,3 +131,4 @@ These bindings may be customized by running `diplomat-tool` directly (including 
  [`ffi/diplomat/cpp/include`]: https://github.com/unicode-org/icu4x/tree/main/ffi/diplomat/cpp/include
  [`ffi/diplomat/cpp/docs`]: https://github.com/unicode-org/icu4x/tree/main/ffi/diplomat/cpp/docs
  [rust-docs]: https://docs.rs/icu_capi/latest/icu_capi/
+ [cargo-profiles]: https://doc.rust-lang.org/cargo/reference/profiles.html

@@ -50,7 +50,7 @@ jobs:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
     - name: Authenticate to Google Cloud
@@ -81,7 +81,7 @@ jobs:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Authenticate to Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2
       with:
@@ -128,7 +128,7 @@ jobs:
       GCP_PROJECT_ID: "dev-infra-273822"
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Authenticate to Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2
@@ -145,6 +145,7 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
 
     - name: Init
+      # Note: --foreground-scripts makes npm forward the output of build.sh
       run: |
         cd ffi/diplomat/js/examples/wasm-demo
         npm ci --foreground-scripts
@@ -199,7 +200,7 @@ jobs:
     #   run: |
     #     cp index.html /tmp/wasm-demo-index.html
     # - name: Checkout gh-pages
-    #   uses: actions/checkout@v2
+    #   uses: actions/checkout@v3
     #   with:
     #     ref: gh-pages
     # - name: Retrieve index.html

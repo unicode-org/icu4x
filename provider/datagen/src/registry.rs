@@ -21,13 +21,18 @@ use icu_timezone::provider::*;
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
+use icu_compactdecimal::provider::*;
+#[cfg(feature = "experimental")]
 use icu_displaynames::provider::*;
+#[cfg(feature = "experimental")]
+use icu_relativetime::provider::*;
 #[cfg(feature = "experimental")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
         /// List of all supported keys
+        // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             vec![
                 $(
@@ -88,6 +93,7 @@ registry!(
     AlphabeticV1Marker,
     AndListV1Marker,
     AsciiHexDigitV1Marker,
+    BasicEmojiV1Marker,
     BidiClassV1Marker,
     BidiControlV1Marker,
     BidiMirroredV1Marker,
@@ -133,6 +139,11 @@ registry!(
     EthiopianDateLengthsV1Marker,
     EthiopianDateSymbolsV1Marker,
     ExemplarCitiesV1Marker,
+    ExemplarCharactersAuxiliaryV1Marker,
+    ExemplarCharactersIndexV1Marker,
+    ExemplarCharactersMainV1Marker,
+    ExemplarCharactersNumbersV1Marker,
+    ExemplarCharactersPunctuationV1Marker,
     ExtendedPictographicV1Marker,
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
@@ -212,13 +223,40 @@ registry!(
     {
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
-        TerritoryDisplayNamesV1Marker,
+        RegionDisplayNamesV1Marker,
+        LanguageDisplayNamesV1Marker,
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
         LstmDataV1Marker,
         SentenceBreakDataV1Marker,
         UCharDictionaryBreakDataV1Marker,
         WordBreakDataV1Marker,
+        LongSecondRelativeTimeFormatDataV1Marker,
+        ShortSecondRelativeTimeFormatDataV1Marker,
+        NarrowSecondRelativeTimeFormatDataV1Marker,
+        LongMinuteRelativeTimeFormatDataV1Marker,
+        ShortMinuteRelativeTimeFormatDataV1Marker,
+        NarrowMinuteRelativeTimeFormatDataV1Marker,
+        LongHourRelativeTimeFormatDataV1Marker,
+        ShortHourRelativeTimeFormatDataV1Marker,
+        NarrowHourRelativeTimeFormatDataV1Marker,
+        LongDayRelativeTimeFormatDataV1Marker,
+        ShortDayRelativeTimeFormatDataV1Marker,
+        NarrowDayRelativeTimeFormatDataV1Marker,
+        LongWeekRelativeTimeFormatDataV1Marker,
+        ShortWeekRelativeTimeFormatDataV1Marker,
+        NarrowWeekRelativeTimeFormatDataV1Marker,
+        LongMonthRelativeTimeFormatDataV1Marker,
+        ShortMonthRelativeTimeFormatDataV1Marker,
+        NarrowMonthRelativeTimeFormatDataV1Marker,
+        LongQuarterRelativeTimeFormatDataV1Marker,
+        ShortQuarterRelativeTimeFormatDataV1Marker,
+        NarrowQuarterRelativeTimeFormatDataV1Marker,
+        LongYearRelativeTimeFormatDataV1Marker,
+        ShortYearRelativeTimeFormatDataV1Marker,
+        NarrowYearRelativeTimeFormatDataV1Marker,
+        LongCompactDecimalFormatDataV1Marker,
+        ShortCompactDecimalFormatDataV1Marker,
     }
 );
 

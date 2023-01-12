@@ -1,0 +1,41 @@
+{
+  "relatives": {
+    "-1": "prošlog kvartala",
+    "0": "ovog kvartala",
+    "1": "sledećeg kvartala"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": "pre  kv.",
+      "index": 4
+    },
+    "two": null,
+    "few": {
+      "pattern": "pre  kv.",
+      "index": 4
+    },
+    "many": null,
+    "other": {
+      "pattern": "pre  kv.",
+      "index": 4
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "za  kv.",
+      "index": 3
+    },
+    "two": null,
+    "few": {
+      "pattern": "za  kv.",
+      "index": 3
+    },
+    "many": null,
+    "other": {
+      "pattern": "za  kv.",
+      "index": 3
+    }
+  }
+}

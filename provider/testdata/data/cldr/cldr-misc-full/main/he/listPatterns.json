@@ -3,7 +3,7 @@
     "he": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "he"
       },
@@ -17,7 +17,7 @@
         "listPattern-type-or": {
           "start": "{0}, {1}",
           "middle": "{0}, {1}",
-          "end": "{0}, או {1}",
+          "end": "{0} או {1}",
           "2": "{0} או {1}"
         },
         "listPattern-type-or-narrow": {
@@ -47,7 +47,7 @@
         "listPattern-type-unit": {
           "start": "{0}, {1}",
           "middle": "{0}, {1}",
-          "end": "{0} ו{1}",
+          "end": "{0} ו-{1}",
           "2": "{0}, {1}"
         },
         "listPattern-type-unit-narrow": {

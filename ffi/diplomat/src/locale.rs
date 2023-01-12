@@ -13,7 +13,7 @@ pub mod ffi {
     use icu_locid::Locale;
     use writeable::Writeable;
 
-    use crate::collator::ffi::ICU4XOrdering;
+    use crate::common::ffi::ICU4XOrdering;
 
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.

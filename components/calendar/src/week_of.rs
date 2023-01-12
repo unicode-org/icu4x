@@ -177,7 +177,7 @@ enum RelativeWeek {
 
 /// Information about a year or month.
 struct UnitInfo {
-    /// The weekday of ths year/month's first day.
+    /// The weekday of this year/month's first day.
     first_day: IsoWeekday,
     /// The number of days in this year/month.
     duration_days: u16,
@@ -265,7 +265,7 @@ pub struct WeekOf {
 ///
 /// # Arguments
 ///  - calendar: Calendar information used to compute the week number.
-///  - num_days_in_previous_unit: The number of days in the preceeding month/year.
+///  - num_days_in_previous_unit: The number of days in the preceding month/year.
 ///  - num_days_in_unit: The number of days in the month/year.
 ///  - day: 1-based day of month/year.
 ///  - week_day: The weekday of `day`..
@@ -305,7 +305,11 @@ pub fn week_of(
     }
 }
 
-/// Computes & returns the week of given month or year accoding to a calendar with min_week_days = 1.
+/// Computes & returns the week of given month or year according to a calendar with min_week_days = 1.
+///
+/// Does not know anything about the unit size (month or year), and will just assume the date falls
+/// within whatever unit that is being considered. In other words, this function returns strictly increasing
+/// values as `day` increases, unlike [`week_of()`] which is cyclic.
 ///
 /// # Arguments
 ///  - first_weekday: The first day of a week.
@@ -320,10 +324,10 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
     #[allow(clippy::unwrap_used)] // week_of should can't fail with MIN_UNIT_DAYS
     week_of(
         &calendar,
-        // The duration of the current and previous unit does not influence the result if min_week_days = 1
+        // The duration of the previous unit does not influence the result if min_week_days = 1
         // so we only need to use a valid value.
         MIN_UNIT_DAYS,
-        MIN_UNIT_DAYS,
+        u16::MAX,
         day,
         week_day,
     )
@@ -597,9 +601,8 @@ fn test_simple_week_of() {
     );
 
     // The 1st is a Monday and the week starts on Sundays.
-    // TODO(#2461): Enable this test
-    // assert_eq!(
-    //     simple_week_of(IsoWeekday::Sunday, 26, IsoWeekday::Friday),
-    //     4
-    // );
+    assert_eq!(
+        simple_week_of(IsoWeekday::Sunday, 26, IsoWeekday::Friday),
+        4
+    );
 }

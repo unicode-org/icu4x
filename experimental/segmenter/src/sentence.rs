@@ -3,34 +3,32 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
-use core::str::CharIndices;
 use icu_provider::prelude::*;
 
-use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
-pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf8>;
+pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>;
 
 /// Sentence break iterator for potentially invalid UTF-8 strings
 pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, SentenceBreakTypePotentiallyIllFormedUtf8>;
+    RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
-pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
+pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Sentence break iterator for a UTF-16 string.
-pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf16>;
+pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -64,8 +62,6 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 /// ```
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
 }
 
 impl SentenceSegmenter {
@@ -75,13 +71,7 @@ impl SentenceSegmenter {
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let dictionary = Dictionary::default();
-        let lstm = LstmPayloads::default();
-        Ok(Self {
-            payload,
-            dictionary,
-            lstm,
-        })
+        Ok(Self { payload })
     }
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
@@ -94,8 +84,9 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
         }
     }
     /// Create a sentence break iterator for a potentially ill-formed UTF8 string
@@ -111,8 +102,9 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
         }
     }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
@@ -126,8 +118,9 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
         }
     }
 
@@ -139,84 +132,9 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
+            dictionary: None,
+            lstm: None,
+            grapheme: None,
         }
-    }
-}
-
-pub struct SentenceBreakTypeUtf8;
-
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
-    type IterAttr = CharIndices<'s>;
-    type CharType = char;
-
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        panic!("not reachable")
-    }
-}
-pub struct SentenceBreakTypePotentiallyIllFormedUtf8;
-
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyIllFormedUtf8 {
-    type IterAttr = Utf8CharIndices<'s>;
-    type CharType = char;
-
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.current_pos_data.unwrap().1.len_utf8()
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        panic!("not reachable")
-    }
-}
-
-pub struct SentenceBreakTypeLatin1;
-
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
-    type CharType = u8;
-
-    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        panic!("not reachable")
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        panic!("not reachable")
-    }
-}
-
-pub struct SentenceBreakTypeUtf16;
-
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'s>;
-    type CharType = u32;
-
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        let ch = iter.current_pos_data.unwrap().1;
-        if ch >= 0x10000 {
-            2
-        } else {
-            1
-        }
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        panic!("not reachable")
     }
 }

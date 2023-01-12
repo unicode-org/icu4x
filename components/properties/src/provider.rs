@@ -5,7 +5,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -14,16 +20,23 @@ use crate::Script;
 
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
-/// A set of characters with a particular property.
+/// A set of characters which share a particular property value.
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -44,6 +57,12 @@ pub enum PropertyCodePointSetV1<'data> {
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -60,7 +79,87 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
+/// A set of characters and strings which share a particular property value.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum PropertyUnicodeSetV1<'data> {
+    /// A set representing characters in an inversion list, and the strings in a list.
+    CPInversionListStrList(
+        #[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionListAndStringList<'data>,
+    ),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+impl<'data> PropertyUnicodeSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains(&self, s: &str) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains(s),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains32(&self, cp: u32) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains32(cp),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_char(&self, ch: char) -> bool {
+        match *self {
+            Self::CPInversionListStrList(ref l) => l.contains_char(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list_string_list(
+        l: CodePointInversionListAndStringList<'static>,
+    ) -> Self {
+        Self::CPInversionListStrList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list_string_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionListAndStringList<'data>> {
+        match *self {
+            Self::CPInversionListStrList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInversionListStrList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list_string_list(
+        &self,
+    ) -> CodePointInversionListAndStringList<'_> {
+        match *self {
+            Self::CPInversionListStrList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
@@ -214,61 +313,97 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 
 macro_rules! expand {
     (
-        ($(($bin_marker:ident, $bin_s:literal),)+),
-        ($(($enum_marker:ident, $enum_s:literal, $value_ty:ident),)+)
+        ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
+        ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
+        ($(($code_point_map_marker:ident, $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
+            // Data keys that return code point sets (represented as CodePointSetData).
+            // For now, synonymous with binary properties of code points only.
             $(
-                #[doc = core::concat!("Data marker for the '", $bin_s, "' Unicode property")]
-                pub struct $bin_marker;
+                #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
+                pub struct $code_point_set_marker;
 
-                impl DataMarker for $bin_marker {
+                impl DataMarker for $code_point_set_marker {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl KeyedDataMarker for $bin_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
+                impl KeyedDataMarker for $code_point_set_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $bin_marker {
+                impl Default for $code_point_set_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $bin_marker {
+                impl databake::Bake for $code_point_set_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$bin_marker }
+                        databake::quote!{ ::icu_properties::provider::$code_point_set_marker }
                     }
                 }
             )+
 
+            // Data keys that return sets of strings + code points (represented as UnicodeSetData).
+            // Includes:
+            //   - binary properties of strings + code points
+            //   - exemplar characters
             $(
-                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
-                pub struct $enum_marker;
+                #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
+                pub struct $unicode_set_marker;
 
-                impl DataMarker for $enum_marker {
-                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
+                impl DataMarker for $unicode_set_marker {
+                    type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
-
-                impl KeyedDataMarker for $enum_marker {
-                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
+                impl KeyedDataMarker for $unicode_set_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
-                impl Default for $enum_marker {
+                impl Default for $unicode_set_marker {
                     fn default() -> Self {
                         Self
                     }
                 }
 
                 #[cfg(feature = "datagen")]
-                impl databake::Bake for $enum_marker {
+                impl databake::Bake for $unicode_set_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$enum_marker }
+                        databake::quote!{ ::icu_properties::provider::$unicode_set_marker }
+                    }
+                }
+            )+
+
+            // Data keys that return code point map (represented as CodePointMapData).
+            // For now, synonymous with enumerated properties [of code points only].
+            $(
+                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
+                pub struct $code_point_map_marker;
+
+                impl DataMarker for $code_point_map_marker {
+                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
+                }
+
+                impl KeyedDataMarker for $code_point_map_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
+                }
+
+                #[cfg(feature = "datagen")]
+                impl Default for $code_point_map_marker {
+                    fn default() -> Self {
+                        Self
+                    }
+                }
+
+                #[cfg(feature = "datagen")]
+                impl databake::Bake for $code_point_map_marker {
+                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                        env.insert("icu_properties");
+                        databake::quote!{ ::icu_properties::provider::$code_point_map_marker }
                     }
                 }
             )+
@@ -277,7 +412,7 @@ macro_rules! expand {
 
 expand!(
     (
-        // Binary properties
+        // code point sets
         (AsciiHexDigitV1Marker, "AHex"),
         (AlnumV1Marker, "alnum"),
         (AlphabeticV1Marker, "Alpha"),
@@ -345,7 +480,22 @@ expand!(
         (XidStartV1Marker, "XIDS"),
     ),
     (
-        // Enum properties
+        // UnicodeSets (code points + strings)
+        (BasicEmojiV1Marker, "Basic_Emoji"),
+        (ExemplarCharactersMainV1Marker, "exemplarchars/main"),
+        (
+            ExemplarCharactersAuxiliaryV1Marker,
+            "exemplarchars/auxiliary"
+        ),
+        (
+            ExemplarCharactersPunctuationV1Marker,
+            "exemplarchars/punctuation"
+        ),
+        (ExemplarCharactersNumbersV1Marker, "exemplarchars/numbers"),
+        (ExemplarCharactersIndexV1Marker, "exemplarchars/index"),
+    ),
+    (
+        // code point maps
         (
             CanonicalCombiningClassV1Marker,
             "ccc",

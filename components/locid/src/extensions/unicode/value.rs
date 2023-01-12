@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::helpers::ShortVec;
-use crate::parser::{get_subtag_iterator, ParserError};
+use crate::parser::{ParserError, SubtagIterator};
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
@@ -55,7 +55,7 @@ impl Value {
         let mut v = ShortVec::new();
 
         if !input.is_empty() {
-            for subtag in get_subtag_iterator(input) {
+            for subtag in SubtagIterator::new(input) {
                 let val = Self::subtag_from_bytes(subtag)?;
                 if let Some(val) = val {
                     v.push(val);

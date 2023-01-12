@@ -1,0 +1,75 @@
+::icu_relativetime::provider::RelativeTimePatternDataV1 {
+    relatives: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 49u8, 0u8, 109u8, 0u8, 141u8, 0u8, 209u8,
+                    0u8, 240u8, 145u8, 132u8, 137u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8,
+                    132u8, 163u8, 240u8, 145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 152u8,
+                    240u8, 145u8, 132u8, 172u8, 32u8, 240u8, 145u8, 132u8, 155u8, 240u8, 145u8,
+                    132u8, 167u8, 240u8, 145u8, 132u8, 162u8, 240u8, 145u8, 132u8, 180u8,
+                    240u8, 145u8, 132u8, 165u8, 240u8, 145u8, 132u8, 170u8, 240u8, 145u8,
+                    132u8, 137u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 163u8,
+                    240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8,
+                    132u8, 179u8, 240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 135u8,
+                    240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8,
+                    132u8, 180u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 179u8,
+                    240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8,
+                    132u8, 131u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 140u8,
+                    240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 165u8, 240u8, 145u8,
+                    132u8, 179u8, 240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 172u8,
+                    240u8, 145u8, 132u8, 131u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8,
+                    132u8, 142u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 150u8,
+                    240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8,
+                    132u8, 179u8, 240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 135u8,
+                    240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8,
+                    132u8, 180u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 179u8,
+                    240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8,
+                    132u8, 131u8, 240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 142u8,
+                    240u8, 145u8, 132u8, 172u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8,
+                    132u8, 180u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8, 132u8, 179u8,
+                    240u8, 145u8, 132u8, 160u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8,
+                    132u8, 172u8, 240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
+                    240u8, 145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 179u8, 240u8, 145u8,
+                    132u8, 160u8, 240u8, 145u8, 132u8, 172u8, 32u8, 240u8, 145u8, 132u8, 155u8,
+                    240u8, 145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 162u8, 240u8, 145u8,
+                    132u8, 180u8, 240u8, 145u8, 132u8, 165u8, 240u8, 145u8, 132u8, 170u8,
+                ])
+            },
+        )
+    },
+    past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄘\u{11128}𑄚\u{11134} 𑄃𑄉𑄬"),
+            index: 0u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(" 𑄘\u{11128}𑄚\u{11134} 𑄃𑄉𑄬"),
+            index: 0u8,
+        },
+    },
+    future: ::icu_relativetime::provider::PluralRulesCategoryMapping {
+        zero: None,
+        one: Some(::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(
+                " 𑄘\u{11128}𑄚\u{1112e} 𑄟\u{11127}𑄖\u{11134}𑄙\u{11133}𑄠",
+            ),
+            index: 0u8,
+        }),
+        two: None,
+        few: None,
+        many: None,
+        other: ::icu_relativetime::provider::SingularSubPattern {
+            pattern: alloc::borrow::Cow::Borrowed(
+                " 𑄘\u{11128}𑄚\u{1112e} 𑄟\u{11127}𑄖\u{11134}𑄙\u{11133}𑄠",
+            ),
+            index: 0u8,
+        },
+    },
+}

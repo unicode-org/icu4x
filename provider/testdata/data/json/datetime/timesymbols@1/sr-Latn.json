@@ -24,8 +24,8 @@
     "stand_alone": {
       "abbreviated": null,
       "narrow": {
-        "am": "pre podne",
-        "pm": "po podne",
+        "am": "pre podne",
+        "pm": "po podne",
         "noon": "podne",
         "midnight": "ponoć"
       },

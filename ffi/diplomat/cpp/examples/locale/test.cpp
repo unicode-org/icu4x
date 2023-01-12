@@ -9,7 +9,7 @@
 
 static bool test_locale(ICU4XLocale &locale, std::string_view expectedString,
                         const char *message) {
-  std::string_view actualString = locale.to_string().ok().value();
+  std::string actualString = locale.to_string().ok().value();
   std::cout << message << ": \"" << actualString << "\"" << std::endl;
   if (actualString != expectedString) {
     std::cout << "Locale did not match expected: \"" << expectedString << "\""

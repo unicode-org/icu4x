@@ -4,8 +4,8 @@
 
 //! Utilities for dumping data to an ICU4X filesystem tree.
 //!
-//! The `export` feature enables you to pull all data from some other data provider and persist it
-//! on the filesystem to be read by an FsDataProvider at runtime.
+//! The `export` Cargo feature enables you to pull all data from some other data provider and
+//! persist it on the filesystem to be read by an FsDataProvider at runtime.
 //!
 //! For a command-line user interface, see the `icu_datagen` crate.
 //!

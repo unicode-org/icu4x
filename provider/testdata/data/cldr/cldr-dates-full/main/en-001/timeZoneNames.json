@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "en",
         "territory": "001"
@@ -1143,6 +1143,9 @@
               "Broken_Hill": {
                 "exemplarCity": "Broken Hill"
               },
+              "Currie": {
+                "exemplarCity": "Currie"
+              },
               "Darwin": {
                 "exemplarCity": "Darwin"
               },
@@ -1186,6 +1189,9 @@
               },
               "Efate": {
                 "exemplarCity": "Efate"
+              },
+              "Enderbury": {
+                "exemplarCity": "Enderbury"
               },
               "Fakaofo": {
                 "exemplarCity": "Fakaofo"

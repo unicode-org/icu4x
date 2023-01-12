@@ -71,8 +71,9 @@ impl<'s> Iterator for LanguageIterator<'s> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut s = String::new();
 
-        let lang = get_language(self.current_ch? as u32);
-        s.push(self.current_ch.unwrap());
+        let current_ch = self.current_ch?;
+        let lang = get_language(current_ch as u32);
+        s.push(current_ch);
         for c in self.input.by_ref() {
             self.current_ch = Some(c);
             let new_lang = get_language(c as u32);
@@ -106,8 +107,9 @@ impl<'s> Iterator for LanguageIteratorUtf16<'s> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut s: Vec<u16> = Vec::new();
 
-        let lang = get_language(*self.current_ch? as u32);
-        s.push(*self.current_ch.unwrap());
+        let current_ch = *self.current_ch?;
+        let lang = get_language(current_ch as u32);
+        s.push(current_ch);
         for c in self.input.by_ref() {
             self.current_ch = Some(c);
             let new_lang = get_language(*c as u32);

@@ -226,8 +226,8 @@
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
-//! assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(primary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
+//! assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
+//! assert_eq!(primary_and_case.compare("dejavu", "dejAvu"), Ordering::Less);
 //! assert_eq!(primary_and_case.compare("dejavu", "déjavu"), Ordering::Equal);
 //!
 //! // Secondary with case level on
@@ -239,8 +239,8 @@
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
-//! assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(secondary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
+//! assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
+//! assert_eq!(secondary_and_case.compare("dejavu", "dejAvu"), Ordering::Less);
 //! assert_eq!(secondary_and_case.compare("dejavu", "déjavu"), Ordering::Less);  // secondary difference
 //!
 //! // Tertiary
@@ -269,7 +269,7 @@
 //! ## Numeric
 //!
 //! When set to `true` (on), any sequence of decimal
-//! digits is sorted at a primary level accoding to the
+//! digits is sorted at a primary level according to the
 //! numeric value.
 //!
 //! ```

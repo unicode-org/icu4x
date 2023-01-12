@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "geçen çeyrek",
+    "0": "bu çeyrek",
+    "1": "gelecek çeyrek"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " çeyrek önce",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " çeyrek önce",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " çeyrek sonra",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " çeyrek sonra",
+      "index": 0
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "patterns": {
+    "3": {
+      "One": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " тысяча"
+      },
+      "Many": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " тысяч"
+      },
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " тысячи"
+      }
+    },
+    "6": {
+      "One": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " миллион"
+      },
+      "Many": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " миллионов"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " миллиона"
+      }
+    },
+    "9": {
+      "One": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " миллиард"
+      },
+      "Many": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " миллиардов"
+      },
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " миллиарда"
+      }
+    },
+    "12": {
+      "One": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " триллион"
+      },
+      "Many": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " триллионов"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " триллиона"
+      }
+    }
+  }
+}

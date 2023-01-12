@@ -27,8 +27,6 @@ include = [
 skip_optional_dependencies = true
 
 [dependencies]
-icu_calendar = { version = "1.0.0-beta1", path = "../calendar" }
-icu_timezone = { version = "1.0.0-beta1", path = "../timezone" }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -39,17 +37,5 @@ serde-json-core = { version = "0.4", features = ["std"] }
 path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
-[[bench]]
-name = "bench"
-harness = false
-
-[[test]]
-name = "complex_word"
-required-features = ["lstm"]
-
 [features]
 default = []
-lstm = ["ndarray", "num-traits", "serde"]
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
-datagen = ["serde", "databake", "zerovec/databake", "icu_collections/databake"]
-lstm-grapheme = ["lstm", "unicode-segmentation"]

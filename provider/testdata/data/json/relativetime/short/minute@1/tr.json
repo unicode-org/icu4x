@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "bu dakika"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " dk. önce",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " dk. önce",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": " dk. sonra",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " dk. sonra",
+      "index": 0
+    }
+  }
+}

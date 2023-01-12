@@ -1,0 +1,33 @@
+{
+  "relatives": {
+    "0": "ngayong oras"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " oras ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " oras ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  oras",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  (na) oras",
+      "index": 3
+    }
+  }
+}

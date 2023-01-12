@@ -1,0 +1,35 @@
+{
+  "relatives": {
+    "-1": "nakalipas na linggo",
+    "0": "sa linggong ito",
+    "1": "susunod na linggo"
+  },
+  "past": {
+    "zero": null,
+    "one": {
+      "pattern": " linggo ang nakalipas",
+      "index": 0
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": " linggo ang nakalipas",
+      "index": 0
+    }
+  },
+  "future": {
+    "zero": null,
+    "one": {
+      "pattern": "sa  linggo",
+      "index": 3
+    },
+    "two": null,
+    "few": null,
+    "many": null,
+    "other": {
+      "pattern": "sa  linggo",
+      "index": 3
+    }
+  }
+}

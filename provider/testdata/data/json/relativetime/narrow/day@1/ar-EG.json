@@ -1,0 +1,61 @@
+{
+  "relatives": {
+    "-2": "أول أمس",
+    "-1": "أمس",
+    "0": "اليوم",
+    "1": "غدًا",
+    "2": "بعد الغد"
+  },
+  "past": {
+    "zero": {
+      "pattern": "قبل  يوم",
+      "index": 7
+    },
+    "one": {
+      "pattern": "قبل يوم واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "قبل يومين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "قبل  أيام",
+      "index": 7
+    },
+    "many": {
+      "pattern": "قبل  يومًا",
+      "index": 7
+    },
+    "other": {
+      "pattern": "قبل  يوم",
+      "index": 7
+    }
+  },
+  "future": {
+    "zero": {
+      "pattern": "خلال  يوم",
+      "index": 9
+    },
+    "one": {
+      "pattern": "خلال يوم واحد",
+      "index": 255
+    },
+    "two": {
+      "pattern": "خلال يومين",
+      "index": 255
+    },
+    "few": {
+      "pattern": "خلال  أيام",
+      "index": 9
+    },
+    "many": {
+      "pattern": "خلال  يومًا",
+      "index": 9
+    },
+    "other": {
+      "pattern": "خلال  يوم",
+      "index": 9
+    }
+  }
+}

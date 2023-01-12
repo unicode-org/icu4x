@@ -49,6 +49,7 @@ mod utils;
 pub mod bidi;
 pub mod calendar;
 pub mod collator;
+pub mod common;
 pub mod data_struct;
 pub mod date;
 pub mod datetime;

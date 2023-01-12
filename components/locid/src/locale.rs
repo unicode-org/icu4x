@@ -4,9 +4,8 @@
 
 use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_locale,
-    parse_locale_with_single_variant_single_keyword_unicode_keyword_extension, ParserError,
-    ParserMode,
+    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
+    ParserError, ParserMode, SubtagIterator,
 };
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
@@ -88,6 +87,8 @@ pub struct Locale {
 
 #[test]
 fn test_sizes() {
+    // Remove when we upgrade to a compiler where the new sizes are default
+    let forced_nightly = std::env::var("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_ok();
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
     assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
@@ -100,12 +101,21 @@ fn test_sizes() {
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
     assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 48);
+    assert_eq!(
+        core::mem::size_of::<extensions::unicode::Keywords>(),
+        if forced_nightly { 40 } else { 48 }
+    );
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
     assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 192);
+    assert_eq!(
+        core::mem::size_of::<extensions::Extensions>(),
+        if forced_nightly { 184 } else { 192 }
+    );
 
-    assert_eq!(core::mem::size_of::<Locale>(), 240);
+    assert_eq!(
+        core::mem::size_of::<Locale>(),
+        if forced_nightly { 232 } else { 240 }
+    );
 }
 
 impl Locale {
@@ -282,7 +292,7 @@ impl Locale {
             };
         }
 
-        let mut iter = get_subtag_iterator(other.as_bytes());
+        let mut iter = SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.id.language) {
             return false;
         }

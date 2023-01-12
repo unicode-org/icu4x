@@ -54,7 +54,7 @@ int main() {
     ICU4XDateTimeFormatter any_dtf = ICU4XDateTimeFormatter::create_with_lengths(dp, locale, ICU4XDateLength::Medium, ICU4XTimeLength::Short).ok().value();
     out = any_dtf.format_datetime(any_date).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Oct 5, 2 Reiwa, 1:33 PM") {
+    if (out != "Oct 5, 2 Reiwa, 1:33\u202fPM") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
@@ -90,7 +90,7 @@ int main() {
     ICU4XGregorianZonedDateTimeFormatter gzdtf = ICU4XGregorianZonedDateTimeFormatter::create_with_lengths(dp, locale, ICU4XDateLength::Full, ICU4XTimeLength::Full).ok().value();
     out = gzdtf.format_iso_datetime_with_custom_time_zone(date, time_zone).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Monday, July 11, 2022 at 1:06:42 PM Central Daylight Time") {
+    if (out != "Monday, July 11, 2022, 1:06:42\u202fPM Central Daylight Time") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
@@ -98,7 +98,7 @@ int main() {
     ICU4XZonedDateTimeFormatter zdtf = ICU4XZonedDateTimeFormatter::create_with_lengths(dp, locale, ICU4XDateLength::Full, ICU4XTimeLength::Full).ok().value();
     out = zdtf.format_datetime_with_custom_time_zone(any_date, time_zone).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
-    if (out != "Monday, October 5, 2 Reiwa at 1:33:15 PM Central Daylight Time") {
+    if (out != "Monday, October 5, 2 Reiwa, 1:33:15\u202fPM Central Daylight Time") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
