@@ -38,19 +38,24 @@ Consider the struct
 #[derive(serde::Deserialize)]
 pub struct MonthNamesBad {
     // Invariant 1: the first element in the vector is the default value
-    // Invariant 2: there are 7 elements in the vector
+    // Invariant 2: the vector contains 1 element per month in the current calendar
     month_names: Vec<String>,
+    month_count: usize,
 }
 
 impl MonthNamesBad {
     pub fn get_first_month_name(&self) -> &str {
         &self.month_names[0]
     }
+    /// Returns None only if `idx` is greater than the month count.
     pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
-        if idx >= 7 {
+        if idx >= self.month_count {
             return None;
         }
         Some(&self.month_names[idx])
+    }
+    pub fn get_month_count(&self) -> usize {
+        self.month_count
     }
 }
 ```
@@ -63,13 +68,13 @@ Below are 3 approaches to resolve this issue that are consistent with the ICU4X 
 
 ### Solution 1: Garbage In, Garbage Out
 
-Change the functions to return default fallback values if the data is not in the expected form.
+Change the functions to return default fallback values if the data is not in the expected form. This code also consolidates `month_count` and `month_names` into the same field.
 
 ```rust
 #[derive(serde::Deserialize)]
 pub struct MonthNamesGIGO {
     // WEAK Invariant 1: the first element in the vector is the default value
-    // WEAK Invariant 2: there are 7 elements in the vector
+    // WEAK Invariant 2: the vector length is the count of months in the current calendar
     month_names: Vec<String>,
 }
 
@@ -85,6 +90,9 @@ impl MonthNamesGIGO {
     }
     pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         self.month_names.get(idx).map(String::as_str)
+    }
+    pub fn get_month_count(&self) -> usize {
+        self.month_names.len()
     }
 }
 ```
@@ -110,6 +118,9 @@ impl MonthNamesNoInvariants {
         } else {
             self.remaining_months.get(idx - 1).map(String::as_str)
         }
+    }
+    pub fn get_month_count(&self) -> usize {
+        self.remaining_months.len() + 1
     }
 }
 ```
@@ -153,6 +164,9 @@ impl MonthNamesCheckedInvariants {
     }
     pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         self.month_names.get(idx).map(String::as_str)
+    }
+    pub fn get_month_count(&self) -> usize {
+        self.month_names.len()
     }
 }
 ```
