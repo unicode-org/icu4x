@@ -22,7 +22,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::ops::Deref;
 
-/// A zero-copy vector for fixed-width types.
+/// A zero-copy, byte-aligned vector for fixed-width types.
 ///
 /// `ZeroVec<T>` is designed as a drop-in replacement for `Vec<T>` in situations where it is
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization.
