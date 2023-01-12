@@ -5,22 +5,27 @@ At its core, ICU4X is a set of algorithms that map input data to human-ready out
 
 ## Problem and Policy Statement
 
-Given the following evidence…
+Given the following goals…
+
+1. The ICU4X core library should not panic internally.
+1. Both baked and dynamically-loaded data are core features, and we seek to minimize the tradeoffs between them.
+
+…and the the following evidence…
 
 1. It is rare to be 100% confident about the safety of your data.[^1]
+1. Data loading and validation is known to be a performance bottleneck in prior-art libraries such as ICU4C.
 1. Validating data invariants can be expensive at deserialization time.[^2]
 1. Validating data invariants at runtime is _sometimes free_ and _usually cheaper_ than at deserialization time.
 1. It is useful to _be able to_ learn whether code traverses unexpected code paths.
 1. End users of ICU4X algorithms are not in a position to reason about invalid data in otherwise-infallible terminal functions.
 1. All types of ICU4X data, including CLDR and Unicode property data, may be loaded and deserialized dynamically.
-1. Deserialization cost should be small _enough_ that it is merely one of many factors that clients should consider when deciding between baked or dynamically-loaded data.
 1. Algorithms that panic on malformed data increase the vulnerability space of an application.[^3]
 1. "Garbage in, garbage out" (GIGO) does not increase the space that malicious actors could leverage.[^3]
 
 …the ICU4X project has adopted the following policy:
 
 1. Code should never panic at runtime based on invalid data.
-1. Data structs should reduce the number of internal invariants, _especially_ ones that are expensive to validate.\*\*
+1. Data structs should minimize the number of internal invariants, _especially_ ones that are expensive to validate.\*\*
 1. Code paths only reachable by invalid data should use GIGO with debug assertions.
 
 [^1]: *As a thought experiment, if you were 100% confident, you could use `get_unchecked` and other unsafe operations. If you are not confident enough to use unsafe code, then you are not 100% confident.*
@@ -42,7 +47,8 @@ Consider the struct
 #[derive(serde::Deserialize)]
 pub struct MonthNamesBad {
     // Invariant 1: the first element in the vector is the default value
-    // Invariant 2: the vector contains 1 element per month in the current calendar
+    // Invariant 2: the length of the vector is the same as month_count
+    // Invariant 3: month_count is at least 1
     month_names: Vec<String>,
     month_count: usize,
 }
@@ -72,13 +78,12 @@ Below are 3 approaches to resolve this issue that are consistent with the ICU4X 
 
 ### Solution 1: Garbage In, Garbage Out
 
-Change the functions to return default fallback values if the data is not in the expected form. This code also consolidates `month_count` and `month_names` into the same field.
+Change the functions to return default fallback values if the data is not in the expected form. This code also consolidates `month_count` and `month_names` into the same field, a change reflected in all of the proposed solutions.
 
 ```rust
 #[derive(serde::Deserialize)]
 pub struct MonthNamesGIGO {
-    // WEAK Invariant 1: the first element in the vector is the default value
-    // WEAK Invariant 2: the vector length is the count of months in the current calendar
+    // WEAK Invariant: the first element in the vector is the default value
     month_names: Vec<String>,
 }
 
