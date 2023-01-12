@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673484345226,
+  "lastUpdate": 1673487600931,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33923,6 +33923,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/37cb17c06a46e6b104ea48094fc5b1b9bf570a76"
         },
         "date": 1673484267905,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5ca97abd20541fcdd5ae2dff41cf4a4b76addc67",
+          "message": "Fix cargo check --all-targets --no-default-features (#2978)",
+          "timestamp": "2023-01-11T17:37:17-08:00",
+          "tree_id": "292c2ce2c16b0dd2b6266c03cb8fa21570a4d26f",
+          "url": "https://github.com/unicode-org/icu4x/commit/5ca97abd20541fcdd5ae2dff41cf4a4b76addc67"
+        },
+        "date": 1673487513670,
         "tool": "ndjson",
         "benches": [
           {
