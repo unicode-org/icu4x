@@ -100,8 +100,8 @@ zerovec = { version = "*", path = "../../utils/zerovec" }
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 # ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "30bc4d2d148a0f2e5e58ce237a827d6617789569" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "30bc4d2d148a0f2e5e58ce237a827d6617789569" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "9e263b53cdee44b4b5310fc247182032945f7a84" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "9e263b53cdee44b4b5310fc247182032945f7a84" }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

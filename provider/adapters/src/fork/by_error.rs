@@ -142,9 +142,19 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
         &self.providers
     }
 
+    /// Returns a mutable reference to the inner vector of providers.
+    pub fn inner_mut(&mut self) -> &mut Vec<P> {
+        &mut self.providers
+    }
+
     /// Returns ownership of the inner providers to the caller.
     pub fn into_inner(self) -> Vec<P> {
         self.providers
+    }
+
+    /// Adds an additional child provider.
+    pub fn push(&mut self, provider: P) {
+        self.providers.push(provider);
     }
 }
 
@@ -158,8 +168,7 @@ where
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let mut result = 
-            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
+        let mut result = Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
             result = provider.load_buffer(key, req);
             match result {
@@ -178,8 +187,7 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut result = 
-            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
+        let mut result = Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
             result = provider.load_any(key, req);
             match result {
@@ -199,8 +207,7 @@ where
     F: ForkByErrorPredicate,
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        let mut result = 
-            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
+        let mut result = Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
             result = provider.load_data(key, req);
             match result {
@@ -221,8 +228,7 @@ where
     F: ForkByErrorPredicate,
 {
     fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let mut result = 
-            Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
+        let mut result = Err(DataErrorKind::MissingDataKey.with_key(key)); // will be returned if self.providers is empty
         for provider in self.providers.iter() {
             result = provider.supported_locales_for_key(key);
             match result {

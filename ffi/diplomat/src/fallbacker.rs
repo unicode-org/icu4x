@@ -7,7 +7,6 @@ use icu_provider_adapters::fallback::LocaleFallbackConfig;
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_provider::FallbackPriority;
     use icu_provider_adapters::fallback::LocaleFallbackConfig;
     use icu_provider_adapters::fallback::LocaleFallbackIterator;
@@ -59,12 +58,10 @@ pub mod ffi {
         )]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XLocaleFallbacker>, ICU4XError> {
-            LocaleFallbacker::try_new_unstable(&provider.0)
-                .map(ICU4XLocaleFallbacker)
-                .map(Box::new)
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XLocaleFallbacker>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleFallbacker(
+                LocaleFallbacker::try_new_unstable(&provider.0)?,
+            )))
         }
 
         /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
@@ -84,14 +81,10 @@ pub mod ffi {
         pub fn for_config<'a, 'temp>(
             &'a self,
             config: ICU4XLocaleFallbackConfig<'temp>,
-        ) -> DiplomatResult<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XError> {
-            match LocaleFallbackConfig::try_from(config) {
-                Ok(converted) => Ok(Box::new(ICU4XLocaleFallbackerWithConfig(
-                    self.0.for_config(converted),
-                ))),
-                Err(e) => Err(e),
-            }
-            .into()
+        ) -> Result<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleFallbackerWithConfig(
+                self.0.for_config(LocaleFallbackConfig::try_from(config)?),
+            )))
         }
     }
 

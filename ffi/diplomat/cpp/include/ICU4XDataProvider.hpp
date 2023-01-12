@@ -43,7 +43,7 @@ class ICU4XDataProvider {
 
   /**
    * Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-   * Requires the `provider_test` Cargo feature.
+   * Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
    * 
    * See the [Rust documentation for `icu_testdata`](https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html) for more information.
    */
@@ -56,7 +56,7 @@ class ICU4XDataProvider {
    * 
    * Lifetimes: `blob` must live for the duration of the program.
    */
-  static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
+  static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<const uint8_t> blob);
 
   /**
    * Constructs an empty [`ICU4XDataProvider`].
@@ -140,7 +140,7 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
 inline ICU4XDataProvider ICU4XDataProvider::create_test() {
   return ICU4XDataProvider(capi::ICU4XDataProvider_create_test());
 }
-inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_from_byte_slice(const diplomat::span<uint8_t> blob) {
+inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_from_byte_slice(const diplomat::span<const uint8_t> blob) {
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(), blob.size());
   diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {

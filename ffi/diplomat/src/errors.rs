@@ -135,13 +135,9 @@ pub mod ffi {
 }
 
 impl ICU4XError {
-    #[cfg(not(feature = "logging"))]
-    pub(crate) fn with_original<T: core::fmt::Display + ?Sized>(self, _: &T) -> Self {
-        self
-    }
-
     #[cfg(feature = "logging")]
-    pub(crate) fn with_original<T: core::fmt::Display + ?Sized>(self, e: &T) -> Self {
+    #[inline]
+    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, e: &T) -> Self {
         use core::any;
         log::warn!(
             "Returning ICU4XError::{:?} based on original {}: {}",
@@ -153,24 +149,15 @@ impl ICU4XError {
     }
 
     #[cfg(not(feature = "logging"))]
-    pub(crate) fn with_message(self, _: &str) -> Self {
-        self
-    }
-
-    #[cfg(feature = "logging")]
-    pub(crate) fn with_message(self, e: &str) -> Self {
-        log::warn!(
-            "Returning ICU4XError::{:?}: {}",
-            self,
-            e
-        );
+    #[inline]
+    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, _e: &T) -> Self {
         self
     }
 }
 
 impl From<fmt::Error> for ICU4XError {
     fn from(e: fmt::Error) -> Self {
-        ICU4XError::WriteableError.with_original(&e)
+        ICU4XError::WriteableError.log_original(&e)
     }
 }
 
@@ -197,7 +184,8 @@ impl From<DataError> for ICU4XError {
                 ICU4XError::DataUnavailableBufferFormatError
             }
             _ => ICU4XError::UnknownError,
-        }.with_original(&e)
+        }
+        .log_original(&e)
     }
 }
 
@@ -208,7 +196,8 @@ impl From<CollatorError> for ICU4XError {
             CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
             CollatorError::Data(_) => ICU4XError::DataIoError,
             _ => ICU4XError::DataIoError,
-        }.with_original(&e)
+        }
+        .log_original(&e)
     }
 }
 
@@ -221,7 +210,8 @@ impl From<PropertiesError> for ICU4XError {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
             _ => ICU4XError::UnknownError,
-        }.with_original(&e)
+        }
+        .log_original(&e)
     }
 }
 
@@ -240,7 +230,7 @@ impl From<CalendarError> for ICU4XError {
             CalendarError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -266,7 +256,7 @@ impl From<DateTimeError> for ICU4XError {
             }
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -277,7 +267,7 @@ impl From<FixedDecimalError> for ICU4XError {
             FixedDecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -287,7 +277,7 @@ impl From<PluralsError> for ICU4XError {
             PluralsError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -297,7 +287,7 @@ impl From<DecimalError> for ICU4XError {
             DecimalError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -307,7 +297,7 @@ impl From<LocaleTransformError> for ICU4XError {
             LocaleTransformError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -317,7 +307,7 @@ impl From<SegmenterError> for ICU4XError {
             SegmenterError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -327,7 +317,7 @@ impl From<ListError> for ICU4XError {
             ListError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -339,7 +329,7 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -351,7 +341,7 @@ impl From<TinyStrError> for ICU4XError {
             TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -363,7 +353,7 @@ impl From<TimeZoneError> for ICU4XError {
             TimeZoneError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }
 
@@ -375,6 +365,6 @@ impl From<NormalizerError> for ICU4XError {
             NormalizerError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
         }
-        .with_original(&e)
+        .log_original(&e)
     }
 }

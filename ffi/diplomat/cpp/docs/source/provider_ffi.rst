@@ -17,12 +17,12 @@
 
     .. cpp:function:: static ICU4XDataProvider create_test()
 
-        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` Cargo feature.
+        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` and one of ``any_provider`` or ``buffer_provider`` Cargo features.
 
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob)
+    .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<const uint8_t> blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
 

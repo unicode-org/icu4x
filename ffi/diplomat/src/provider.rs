@@ -46,7 +46,6 @@ pub mod ffi {
     #[allow(unused_imports)] // feature-gated
     use crate::fallbacker::ffi::ICU4XLocaleFallbacker;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     #[allow(unused_imports)] // feature-gated
     use icu_provider_adapters::empty::EmptyDataProvider;
     #[allow(unused_imports)] // feature-gated
@@ -60,7 +59,6 @@ pub mod ffi {
     pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
     #[cfg(feature = "any_provider")]
-    #[allow(dead_code)] // feature-specific
     fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(x: D) -> ICU4XDataProvider {
         ICU4XDataProvider(super::ICU4XDataProviderInner::Any(Box::new(x)))
     }
@@ -74,30 +72,26 @@ pub mod ffi {
 
     impl ICU4XDataProvider {
         /// Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-        ///
-        /// Requires the `provider_fs` Cargo feature. Not supported in WASM.
+        /// Requires the `provider_fs` Cargo feature.
+        /// Not supported in WASM.
         #[diplomat::rust_link(icu_provider_fs::FsDataProvider, Struct)]
         #[cfg(all(
             feature = "provider_fs",
             not(any(target_arch = "wasm32", target_os = "none"))
         ))]
-        pub fn create_fs(path: &str) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
+        pub fn create_fs(path: &str) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
             // #2520
             // In the future we can start using OsString APIs to support non-utf8 paths
-            if let Err(e) = core::str::from_utf8(path.as_bytes()) {
-                return Err(ICU4XError::DataIoError.with_original(&e)).into();
-            }
-            icu_provider_fs::FsDataProvider::try_new(path)
-                .map_err(Into::into)
-                .map(convert_buffer_provider)
-                .map(Box::new)
-                .into()
+            core::str::from_utf8(path.as_bytes())
+                .map_err(|e| ICU4XError::DataIoError.log_original(&e))?;
+
+            Ok(Box::new(convert_buffer_provider(
+                icu_provider_fs::FsDataProvider::try_new(path)?,
+            )))
         }
 
         /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-        ///
-        /// Requires the `provider_test` Cargo feature as well as either `any_provider`
-        /// or `buffer_provider`.
+        /// Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
         #[diplomat::rust_link(icu_testdata, Mod)]
         #[cfg(all(
             feature = "provider_test",
@@ -107,23 +101,19 @@ pub mod ffi {
             #[cfg(feature = "any_provider")]
             return Box::new(convert_any_provider(icu_testdata::any()));
 
-            #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
+            #[cfg(not(feature = "any_provider"))]
             return Box::new(convert_buffer_provider(icu_testdata::buffer()));
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
-        ///
-        /// Requires the `buffer_provider` feature.
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_from_byte_slice(
             blob: &'static [u8],
-        ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
-            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)
-                .map_err(Into::into)
-                .map(convert_buffer_provider)
-                .map(Box::new)
-                .into()
+        ) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
+            Ok(Box::new(convert_buffer_provider(
+                icu_provider_blob::BlobDataProvider::try_new_from_static_blob(blob)?,
+            )))
         }
 
         /// Constructs an empty [`ICU4XDataProvider`].
@@ -143,8 +133,6 @@ pub mod ffi {
         /// environment variable to the baked data folder.
         ///
         /// If no data is supplied, this behaves like an empty provider.
-        ///
-        /// Requires the `baked_provider` feature.
         pub fn create_baked() -> Box<ICU4XDataProvider> {
             Box::new(ICU4XDataProvider(ICU4XDataProviderInner::Baked))
         }
@@ -163,41 +151,36 @@ pub mod ffi {
             Struct,
             hidden
         )]
-        pub fn fork_by_key(
-            &mut self,
-            other: &mut ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
+        pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
-            *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
-                (Destroyed, _) | (_, Destroyed) => {
-                    return Err(ICU4XError::DataCustomError.with_message("This provider has been destroyed")).into()
-                }
-                (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
-                #[cfg(not(feature = "any_provider"))]
-                (Baked, Baked) => ICU4XDataProvider(Baked),
-                #[cfg(feature = "any_provider")]
-                // All AnyProviders are some kind of BakedProvider, so they have the same key set
-                (a @ (Any(_) | Baked), Any(_) | Baked) => ICU4XDataProvider(a),
-                #[cfg(feature = "buffer_provider")]
-                (Buffer(a), Buffer(b)) => convert_buffer_provider(
-                    icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
-                ),
-                #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
-                (Buffer(_), Baked) | (Baked, Buffer(_)) => {
-                    return Err(ICU4XError::DataMismatchedAnyBufferError.with_message(
-                        "fork_by_key must be passed the same type of provider (Any or Buffer)",
-                    ))
-                    .into();
-                }
-                #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-                (Buffer(_), Any(_) | Baked) | (Any(_) | Baked, Buffer(_)) => {
-                    return Err(ICU4XError::DataMismatchedAnyBufferError.with_message(
-                        "fork_by_key must be passed the same type of provider (Any or Buffer)",
-                    ))
-                    .into();
-                }
-            };
-            Ok(()).into()
+            *self =
+                match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
+                    (Destroyed, _) | (_, Destroyed) => Err(ICU4XError::DataCustomError
+                        .log_original("This provider has been destroyed"))?,
+                    (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
+                    #[cfg(not(feature = "any_provider"))]
+                    (Baked, Baked) => ICU4XDataProvider(Baked),
+                    #[cfg(feature = "any_provider")]
+                    // All AnyProviders are some kind of BakedProvider, so they have the same key set
+                    (a @ (Any(_) | Baked), Any(_) | Baked) => ICU4XDataProvider(a),
+                    #[cfg(feature = "buffer_provider")]
+                    (Buffer(a), Buffer(b)) => convert_buffer_provider(
+                        icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
+                    ),
+                    #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
+                    (Buffer(_), Baked) | (Baked, Buffer(_)) => {
+                        Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
+                            "fork_by_key must be passed the same type of provider (Any or Buffer)",
+                        ))?
+                    }
+                    #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
+                    (Buffer(_), Any(_) | Baked) | (Any(_) | Baked, Buffer(_)) => {
+                        Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
+                            "fork_by_key must be passed the same type of provider (Any or Buffer)",
+                        ))?
+                    }
+                };
+            Ok(())
         }
 
         /// Same as `fork_by_key` but forks by locale instead of key.
@@ -205,14 +188,12 @@ pub mod ffi {
             icu_provider_adapters::fork::predicates::MissingLocalePredicate,
             Struct
         )]
-        pub fn fork_by_locale(
-            &mut self,
-            other: &mut ICU4XDataProvider,
-        ) -> DiplomatResult<(), ICU4XError> {
+        pub fn fork_by_locale(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 (Destroyed, _) | (_, Destroyed) => {
-                    return Err(ICU4XError::DataCustomError.with_message("This provider has been destroyed")).into()
+                    Err(ICU4XError::DataCustomError
+                        .log_original("This provider has been destroyed"))?
                 }
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
                 (Baked, Baked) => ICU4XDataProvider(Baked),
@@ -250,20 +231,18 @@ pub mod ffi {
                 ),
                 #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
                 (Buffer(_), Baked) | (Baked, Buffer(_)) => {
-                    return Err(ICU4XError::DataMismatchedAnyBufferError.with_message(
+                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
                         "fork_by_locale must be passed the same type of provider (Any or Buffer)",
-                    ))
-                    .into();
+                    ))?
                 }
                 #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
                 (Buffer(_), Any(_) | Baked) | (Any(_) | Baked, Buffer(_)) => {
-                    return Err(ICU4XError::DataMismatchedAnyBufferError.with_message(
+                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
                         "fork_by_locale must be passed the same type of provider (Any or Buffer)",
-                    ))
-                    .into();
+                    ))?
                 }
             };
-            Ok(()).into()
+            Ok(())
         }
 
         /// Enables locale fallbacking for data requests made to this provider.
@@ -279,24 +258,25 @@ pub mod ffi {
             compact
         )]
         #[cfg(feature = "any_provider")]
-        pub fn enable_locale_fallback(&mut self) -> DiplomatResult<(), ICU4XError> {
+        pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
-            match core::mem::take(&mut self.0) {
-                Destroyed => Err(icu_provider::DataError::custom(
-                    "This provider has been destroyed",
-                )),
-                Empty => Ok(ICU4XDataProvider(Empty)),
-                Baked => LocaleFallbackProvider::try_new_with_any_provider(BakedProvider)
-                    .map(convert_any_provider),
-                Any(inner) => LocaleFallbackProvider::try_new_with_any_provider(inner)
-                    .map(convert_any_provider),
-                #[cfg(feature = "buffer_provider")]
-                Buffer(inner) => LocaleFallbackProvider::try_new_with_buffer_provider(inner)
-                    .map(convert_buffer_provider),
-            }
-            .map(|p| *self = p)
-            .map_err(Into::into)
-            .into()
+            *self =
+                match core::mem::take(&mut self.0) {
+                    Destroyed => Err(ICU4XError::DataCustomError
+                        .log_original("This provider has been destroyed"))?,
+                    Empty => ICU4XDataProvider(Empty),
+                    Baked => convert_any_provider(
+                        LocaleFallbackProvider::try_new_with_any_provider(BakedProvider)?,
+                    ),
+                    Any(inner) => convert_any_provider(
+                        LocaleFallbackProvider::try_new_with_any_provider(inner)?,
+                    ),
+                    #[cfg(feature = "buffer_provider")]
+                    Buffer(inner) => convert_buffer_provider(
+                        LocaleFallbackProvider::try_new_with_buffer_provider(inner)?,
+                    ),
+                };
+            Ok(())
         }
 
         #[diplomat::rust_link(
@@ -313,27 +293,26 @@ pub mod ffi {
         pub fn enable_locale_fallback_with(
             &mut self,
             fallbacker: &ICU4XLocaleFallbacker,
-        ) -> DiplomatResult<(), ICU4XError> {
+        ) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
-            *self = match core::mem::take(&mut self.0) {
-                Destroyed => {
-                    return Err(ICU4XError::DataCustomError.with_message("This provider has been destroyed")).into()
-                }
-                Empty => ICU4XDataProvider(Empty),
-                Baked => convert_any_provider(LocaleFallbackProvider::new_with_fallbacker(
-                    BakedProvider,
-                    fallbacker.0.clone(),
-                )),
-                Any(inner) => convert_any_provider(LocaleFallbackProvider::new_with_fallbacker(
-                    inner,
-                    fallbacker.0.clone(),
-                )),
-                #[cfg(feature = "buffer_provider")]
-                Buffer(inner) => convert_buffer_provider(
-                    LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
-                ),
-            };
-            Ok(()).into()
+            *self =
+                match core::mem::take(&mut self.0) {
+                    Destroyed => Err(ICU4XError::DataCustomError
+                        .log_original("This provider has been destroyed"))?,
+                    Empty => ICU4XDataProvider(Empty),
+                    Baked => convert_any_provider(LocaleFallbackProvider::new_with_fallbacker(
+                        BakedProvider,
+                        fallbacker.0.clone(),
+                    )),
+                    Any(inner) => convert_any_provider(
+                        LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
+                    ),
+                    #[cfg(feature = "buffer_provider")]
+                    Buffer(inner) => convert_buffer_provider(
+                        LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
+                    ),
+                };
+            Ok(())
         }
     }
 }
