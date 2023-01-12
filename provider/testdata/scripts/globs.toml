@@ -2,79 +2,6 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-# icu4x_testdata metadata: schema defined in ./src/metadata.rs
-
-# Locales to include in testdata. Keep this list somewhat short, but cover all features.
-# We use 10 base languages with a small number of variants to allow for 10 languages to be
-# used in microbenchmarks.
-locales = [
-    # Arabic:
-    # - Good example for RTL
-    # - Non-latin numerals in Egypt
-    "ar",
-    "ar-EG",
-
-    # Bangla:
-    # - Uses non-Latin numerals
-    "bn",
-
-    # Chakma:
-    # - High-coverage language that uses non-BMP code points
-    "ccp",
-
-    # English:
-    # - Widely understood language in software engineering
-    # - Includes regional variants to test similar-data fallbacks
-    "en",
-    "en-001",
-    "en-ZA",
-
-    # Spanish:
-    #  - Most popular Romance language
-    #  - South American dialect
-    #  - Has context dependent list fragments
-    "es",
-    "es-AR",
-
-    # French:
-    # - Often the first non-English locale to receive new data in CLDR
-    "fr",
-
-    # Filipino:
-    # - Week of month/year have plural variants.
-    "fil",
-
-    # Japanese:
-    # - Four scripts
-    # - Complex date patterns
-    "ja",
-
-    # Russian:
-    # - Cyrillic script
-    # - Interesting plural rules
-    # - Hightly inflected, many gramatical cases
-    "ru",
-
-    # Serbian:
-    # - Multiple scripts
-    # - Southern Europe
-    # - Hightly inflected, many gramatical cases
-    "sr",
-    "sr-Cyrl",
-    "sr-Latn",
-
-    # Thai:
-    # - Complex word breaking
-    "th",
-
-    # Turkish:
-    # - Interesting case-mappings
-    "tr",
-
-    # Root data
-    "und",
-]
-
 # Paths from CLDR JSON to copy into testdata. Uses gitignore-like syntax.
 # The variable "$LOCALES" is replaced with the list of locales from above.
 cldr_json_glob = [
@@ -111,9 +38,6 @@ cldr_json_glob = [
     "cldr-dates-full/main/en-CA/timeZoneNames.json", # required by en-CA/ca-gregorian.json
     "cldr-misc-full/main/he/listPatterns.json", # required for list transformer test
 ]
-
-# Git tag or sha1 for the CLDR data used to generate the testdata.
-cldr_json_gitref = "42.0.0"
 
 icuexportdata_glob = [
     "collation/implicithan/bn_standard_data.toml",
@@ -248,5 +172,3 @@ icuexportdata_glob = [
     "uprops/small/XIDC.toml",
     "uprops/small/XIDS.toml",
 ]
-
-icuexportdata_gitref = "release-72-1"

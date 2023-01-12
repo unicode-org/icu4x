@@ -107,8 +107,8 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml"
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/tinywasm/node_modules" "ffi/diplomat/c/examples"
+skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml" "ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/Cargo.toml" "provider/testdata/scripts/Cargo.toml"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/tinywasm/node_modules"
 
 template = canonicalize README.tpl
 
@@ -201,7 +201,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}

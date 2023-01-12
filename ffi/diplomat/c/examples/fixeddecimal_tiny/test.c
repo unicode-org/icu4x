@@ -6,8 +6,18 @@
 #include <string.h>
 #include <stdio.h>
 
-int main() {
-    ICU4XLocale* locale = ICU4XLocale_create_bn();
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: %s <language>\n", argv[0]);
+        return 1;
+    }
+
+    ICU4XLocale* locale = ICU4XLocale_create_und();
+    if (!ICU4XLocale_set_language(locale, argv[1], strlen(argv[1])).is_ok) {
+        printf("Invalid language tag \"%s\"\n", argv[1]);
+        return 1;
+    }
+
     ICU4XDataProvider* provider = ICU4XDataProvider_create_baked();
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create_from_u64(1000007);
 

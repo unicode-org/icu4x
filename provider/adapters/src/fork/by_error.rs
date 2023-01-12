@@ -142,9 +142,9 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
         &self.providers
     }
 
-    /// Returns a mutable reference to the inner vector of providers.
-    pub fn inner_mut(&mut self) -> &mut Vec<P> {
-        &mut self.providers
+    /// Exposes a mutable vector of providers to a closure so it can be mutated.
+    pub fn with_inner_mut(&mut self, f: impl FnOnce(&mut Vec<P>)) {
+        f(&mut self.providers)
     }
 
     /// Returns ownership of the inner providers to the caller.
