@@ -7,38 +7,40 @@
 
 # List of components with at least two owners as specified in docs/crate-ownership.
 
+components/calendar/              @Manishearth @sffc
 components/collator/              @hsivonen @echeran
+components/collections/           @echeran @iainireland
 components/datetime/              @zbraniecki @gregtatum @nordzilla
 components/decimal/               @sffc
-components/icu/                   @unicode-org/icu4x-owners
-components/icu4x/                 @unicode-org/icu4x-owners
-components/locale_canonicalizer/  @dminor @zbraniecki
+components/list/                  @robertbastian
 components/locid/                 @zbraniecki @nciric
+components/locid_transform/       @dminor @zbraniecki
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
-components/uniset/                @echeran @iainireland
+components/timezone/              @nordzilla
 experimental/bies/                @sffc
-experimental/calendar/            @Manishearth @sffc
-experimental/codepointtrie/       @echeran
-experimental/provider_ppucd/      @echeran
+experimental/compactdecimal/      @eggrobin
+experimental/displaynames/        @sffc
+experimental/relativetime/        @pdogr
 experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth
-ffi/cpp/                          @Manishearth
 ffi/ecma402/                      @filmil
-ffi/wasm/                         @Manishearth
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/datagen/                 @sffc @robertbastian @Manishearth
 provider/fs/                      @sffc
 provider/macros/                  @Manishearth @sffc
-provider/testdata/                @unicode-org/icu4x-owners
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
 tools/scripts/                    @Manishearth @sffc
+utils/databake                    @robertbastian
+utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
-utils/writeable/                  @sffc
+utils/tinystr                     @zbraniecki
+utils/writeable/                  @sffc @robertbastian
 utils/yoke/                       @Manishearth @sffc
+utils/zerofrom                    @Manishearth @sffc
 utils/zerovec/                    @Manishearth @sffc
