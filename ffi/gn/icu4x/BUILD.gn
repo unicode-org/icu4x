@@ -259,7 +259,7 @@ rust_library("icu_capi-v1_0_0") {
     deps += [ ":log-v0_4_14" ]
   }
 
-  rustenv = []
+  rustenv = [ "ICU4X_FFI_BAKED_ROOT=../empty_bake" ]
 
   rustflags = [
     "--cap-lints=allow",

@@ -46,7 +46,7 @@
 
         When compiling the Rust library, set the ``ICU4X_FFI_BAKED_ROOT`` environment variable to the baked data folder.
 
-        If no data is supplied, this behaves like an empty provider.
+        If build.rs is used, this will default to an empty provider.
 
 
     .. js:function:: fork_by_key(other)
