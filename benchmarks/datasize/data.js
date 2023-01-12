@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673383385664,
+  "lastUpdate": 1673484345226,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -33893,6 +33893,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/323ecbe8c1ba9092ae323ee069a5e0f090ecac8f"
         },
         "date": 1673383293037,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "37cb17c06a46e6b104ea48094fc5b1b9bf570a76",
+          "message": "Bumping Diplomat version and using new features (#2976)",
+          "timestamp": "2023-01-12T01:43:16+01:00",
+          "tree_id": "a06b9ee991dfa9b36361e36ef2c2e6b0ad07c01f",
+          "url": "https://github.com/unicode-org/icu4x/commit/37cb17c06a46e6b104ea48094fc5b1b9bf570a76"
+        },
+        "date": 1673484267905,
         "tool": "ndjson",
         "benches": [
           {
