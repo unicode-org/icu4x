@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673513467936,
+  "lastUpdate": 1673513737210,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34043,6 +34043,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6b572258d79b7d6fa5fbd44808017015c3b0f88f"
         },
         "date": 1673513389028,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "302c5c9fcfc27ffed616fbb084ae9d6d05bad249",
+          "message": "Adding language parsing to `fixeddecimal_tiny` (#2917)",
+          "timestamp": "2023-01-12T09:52:19+01:00",
+          "tree_id": "539b0c2ad6ac930a774b44f647ed55c019ecb9e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/302c5c9fcfc27ffed616fbb084ae9d6d05bad249"
+        },
+        "date": 1673513652365,
         "tool": "ndjson",
         "benches": [
           {
