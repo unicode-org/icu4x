@@ -304,7 +304,7 @@ fn build_zerohashmap(large: bool) -> ZeroHashMap<'static, Index32Str, Index32Str
         }
     }
 
-    ZeroHashMap::build_from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
+    ZeroHashMap::from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
 }
 
 fn bench_deserialize_zerohashmap(c: &mut Criterion) {

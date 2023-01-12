@@ -18,7 +18,7 @@ pub use algorithms::*;
 /// use zerovec::ZeroHashMap;
 ///
 /// let kv = vec![(0, "a"), (1, "b"), (2, "c")];
-/// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::build_from_iter(kv.into_iter());
+/// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::from_iter(kv.into_iter());
 /// assert_eq!(hashmap.get(&0), Some("a"));
 /// assert_eq!(hashmap.get(&2), Some("c"));
 /// assert_eq!(hashmap.get(&4), None);
@@ -84,7 +84,7 @@ where
     /// use zerovec::ZeroHashMap;
     ///
     /// let hashmap: ZeroHashMap<str, str> =
-    ///     ZeroHashMap::build_from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
+    ///     ZeroHashMap::from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
     ///
     /// assert_eq!(hashmap.get("a"), Some("A"));
     /// assert_eq!(hashmap.get("z"), Some("Z"));
@@ -104,7 +104,15 @@ where
             None
         }
     }
+}
 
+impl<'a, K, V, A, B> FromIterator<(A, B)> for ZeroHashMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
+    V: ZeroMapKV<'a> + ?Sized,
+    B: Borrow<V>,
+    A: Borrow<K>,
+{
     /// Build a [`ZeroHashMap`] from an iterator returning (K, V) tuples.
     ///
     /// # Example
@@ -112,18 +120,14 @@ where
     /// use zerovec::ZeroHashMap;
     ///
     /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
-    /// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::build_from_iter(kv.into_iter());
+    /// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::from_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
     /// assert_eq!(hashmap.get(&4), Some("d"));
     /// ```
-    pub fn build_from_iter<A, B, I>(iter: I) -> Self
-    where
-        A: Borrow<K>,
-        B: Borrow<V>,
-        I: Iterator<Item = (A, B)>,
-    {
+    fn from_iter<T: IntoIterator<Item = (A, B)>>(iter: T) -> Self {
+        let iter = iter.into_iter();
         let size_hint = match iter.size_hint() {
             (_, Some(upper)) => upper,
             (lower, None) => lower,
@@ -166,7 +170,7 @@ mod tests {
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
         let hashmap: ZeroHashMap<u64, u64> =
-            ZeroHashMap::build_from_iter(kv.iter().map(|e| (&e.0, &e.1)));
+            ZeroHashMap::from_iter(kv.iter().map(|e| (&e.0, &e.1)));
         for (k, v) in kv {
             assert_eq!(
                 hashmap.get(&k).copied().map(<u64 as AsULE>::from_unaligned),
