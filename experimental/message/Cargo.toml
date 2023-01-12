@@ -1,0 +1,27 @@
+[package]
+name = "icu_message"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+smallvec = "1.6"
+intl-memoizer = "0.5"
+icu_locid = { path = "../../components/locid" }
+
+[dev-dependencies]
+iai = "0.1"
+criterion = "0.3.4"
+
+[[bench]]
+name = "parser_iai"
+harness = false
+
+[[bench]]
+name = "parser"
+harness = false
+
+[[bench]]
+name = "mf"
+harness = false

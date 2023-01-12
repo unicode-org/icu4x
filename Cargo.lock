@@ -1718,6 +1718,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_message"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "iai",
+ "icu_locid",
+ "intl-memoizer",
+ "smallvec",
+]
+
+[[package]]
 name = "icu_normalizer"
 version = "1.0.0"
 dependencies = [
@@ -2042,6 +2053,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if 1.0.0",
+]
+
+[[package]]
+name = "intl-memoizer"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c310433e4a310918d6ed9243542a6b83ec1183df95dff8f23f87bb88a264a66f"
+dependencies = [
+ "type-map",
+ "unic-langid",
 ]
 
 [[package]]
@@ -3532,6 +3553,12 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29738eedb4388d9ea620eeab9384884fc3f06f586a2eddb56bedc5885126c7c1"
+
+[[package]]
+name = "tinystr"
 version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3169b0bf6d91040e9ac3d98f6e847d1b6312054634f7e61874c116205e96d984"
@@ -3704,6 +3731,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 
 [[package]]
+name = "type-map"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6d3364c5e96cb2ad1603037ab253ddd34d7fb72a58bdddf4b7350760fc69a46"
+dependencies = [
+ "rustc-hash",
+]
+
+[[package]]
 name = "typenum"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3722,6 +3758,24 @@ name = "ucd-trie"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56dee185309b50d1f11bfedef0fe6d036842e3fb77413abef29f8f8d1c5d4c1c"
+
+[[package]]
+name = "unic-langid"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73328fcd730a030bdb19ddf23e192187a6b01cd98be6d3140622a89129459ce5"
+dependencies = [
+ "unic-langid-impl",
+]
+
+[[package]]
+name = "unic-langid-impl"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a4a8eeaf0494862c1404c95ec2f4c33a2acff5076f64314b465e3ddae1b934d"
+dependencies = [
+ "tinystr 0.3.4",
+]
 
 [[package]]
 name = "unicode-bidi"
