@@ -307,7 +307,7 @@ fn main() -> eyre::Result<()> {
     }
 
     #[cfg(feature = "experimental")]
-    if let Some(path) = matches.value_of("tzif_ROOT") {
+    if let Some(path) = matches.value_of("TZIF_ROOT") {
         source_data = source_data.with_tzif(PathBuf::from(path))?;
     }
 

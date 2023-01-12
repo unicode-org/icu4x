@@ -457,6 +457,33 @@ impl AbstractFs {
         }
     }
 
+    pub fn read_to_buf_exact(&self, n: usize, path: &str) -> Result<Vec<u8>, DataError> {
+        match self {
+            Self::Fs(root) => {
+                log::trace!("Reading: {}/{}", root.display(), path);
+                let mut buf = vec![0; n];
+                let mut file = std::fs::File::open(root.join(path))?;
+                file.read_exact(&mut buf)
+                    .map(|_| buf)
+                    .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
+            }
+            Self::Zip(zip) => {
+                log::trace!("Reading: <zip>/{}", path);
+                let mut buf = vec![0; n];
+                zip.write()
+                    .expect("poison")
+                    .by_name(path)
+                    .map_err(|e| {
+                        DataError::custom("Zip")
+                            .with_display_context(&e)
+                            .with_display_context(path)
+                    })?
+                    .read_exact(&mut buf)?;
+                Ok(buf)
+            }
+        }
+    }
+
     pub fn list(
         &self,
         path: &str,

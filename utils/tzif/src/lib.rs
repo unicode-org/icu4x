@@ -39,9 +39,26 @@ pub mod parse;
 /// Error types an implementations.
 pub mod error;
 
+/// Returns `true` if the bytes contain the TZif magic sequence that designates
+/// that the bytes contain TZif data, otherwise returns `false`.
+pub fn is_tzif(bytes: &[u8]) -> bool {
+    parse::tzif::magic_sequence().parse(bytes).is_ok()
+}
+
 /// Parses a byte slice as `TZif`
 pub fn parse_tzif(bytes: &[u8]) -> Result<TzifData, Error> {
     Ok(parse::tzif::tzif().parse(bytes)?.0)
+}
+
+/// Returns `true` if the file contains the TZif magic sequence that designates
+/// that the file contains TZif data, otherwise returns `false`.
+pub fn is_tzif_file<P: AsRef<Path>>(path: P) -> Result<bool, Error> {
+    let file = File::open(path)?;
+    let stream = stream::buffered::Stream::new(
+        stream::position::Stream::new(stream::read::Stream::new(file)),
+        0, /* lookahead */
+    );
+    Ok(parse::tzif::magic_sequence().parse(stream).is_ok())
 }
 
 /// Parses a `TZif` file at the provided `path`.
