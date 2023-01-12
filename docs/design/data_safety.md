@@ -25,7 +25,7 @@ Given the following goals…
 …the ICU4X project has adopted the following policy:
 
 1. Code should never panic at runtime based on invalid data.
-1. Data structs should minimize the number of internal invariants, _especially_ ones that are expensive to validate.\*\*
+1. Data structs should minimize the number of internal invariants, _especially_ ones that are expensive to validate.[^2]
 1. Code paths only reachable by invalid data should use GIGO with debug assertions.
 
 [^1]: *As a thought experiment, if you were 100% confident, you could use `get_unchecked` and other unsafe operations. If you are not confident enough to use unsafe code, then you are not 100% confident.*
