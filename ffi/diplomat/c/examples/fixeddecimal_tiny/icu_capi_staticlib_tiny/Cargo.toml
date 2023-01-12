@@ -13,7 +13,8 @@ crate-type = ["staticlib"]
 
 [dependencies]
 icu_capi = { path = "../../../..", default-features = false, features = ["buffer_provider"] }
-dlmalloc = { version = "0.2", features = ["global"] }
+dlmalloc = { version = "0.2.3", features = ["global"] }
+libc = "=0.2.126" # This is the last version that builds on our current pinned nightly
 
 [profile.release]
 lto = true
