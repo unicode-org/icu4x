@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673488219019,
+  "lastUpdate": 1673511629751,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -91847,6 +91847,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5051,
             "range": "± 18",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c0b3985d8a71e521cb8e438097a43bdb08aa0d9",
+          "message": "Change the signature of newly added inner_mut function (#2977)\n\nChanges 323ecbe8c1ba9092ae323ee069a5e0f090ecac8f",
+          "timestamp": "2023-01-12T02:05:20-06:00",
+          "tree_id": "fd7382ee1532e928a67f33865a06d322a633b351",
+          "url": "https://github.com/unicode-org/icu4x/commit/0c0b3985d8a71e521cb8e438097a43bdb08aa0d9"
+        },
+        "date": 1673511552099,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 68222,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 111073,
+            "range": "± 168",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 63873,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 72654,
+            "range": "± 207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 68391,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 75806,
+            "range": "± 252",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 72664,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 105714,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 118660,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 110575,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 122932,
+            "range": "± 4387",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 118918,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5308,
+            "range": "± 33",
             "unit": "ns/iter"
           }
         ]
