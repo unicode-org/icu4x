@@ -26,6 +26,7 @@ where
     Y: for<'a> Yokeable<'a>,
     for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: ZeroFrom<'a, <C as Deref>::Target>,
     C: StableDeref + Deref,
+    <C as Deref>::Target: 'static,
 {
     /// Construct a [`Yoke`]`<Y, C>` from a cart implementing `StableDeref` by zero-copy cloning
     /// the cart to `Y` and then yokeing that object to the cart.
@@ -48,10 +49,7 @@ where
     ///
     /// assert_eq!("demo", yoke.get());
     /// ```
-    pub fn attach_to_zero_copy_cart(cart: C) -> Self
-    where
-        <C as Deref>::Target: 'static,
-    {
+    pub fn attach_to_zero_copy_cart(cart: C) -> Self {
         Yoke::<Y, C>::attach_to_cart(cart, |c| {
             YokeTraitHack::<<Y as Yokeable>::Output>::zero_from(c).0
         })
