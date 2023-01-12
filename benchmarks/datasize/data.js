@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673513450898,
+  "lastUpdate": 1673513467936,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34013,6 +34013,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/075fe689d5c945d8c02652886e5591eb06b880b8"
         },
         "date": 1673513365214,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303051,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b572258d79b7d6fa5fbd44808017015c3b0f88f",
+          "message": "Restore docs from PR #2278 (#2979)",
+          "timestamp": "2023-01-12T09:48:02+01:00",
+          "tree_id": "e956bf74516dc0de67bf391c1a608d3e4b879bff",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b572258d79b7d6fa5fbd44808017015c3b0f88f"
+        },
+        "date": 1673513389028,
         "tool": "ndjson",
         "benches": [
           {
