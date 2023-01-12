@@ -8,8 +8,8 @@ use alloc::borrow::Borrow;
 use alloc::vec;
 use core::hash::Hash;
 
-mod algorithms;
-pub use algorithms::*;
+pub mod algorithms;
+use algorithms::*
 
 /// A perfect zerohashmap optimized for lookups over immutable keys.
 ///
