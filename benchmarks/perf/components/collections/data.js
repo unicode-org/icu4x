@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673384018281,
+  "lastUpdate": 1673485045228,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42815,6 +42815,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54891453,
             "range": "± 850025",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "37cb17c06a46e6b104ea48094fc5b1b9bf570a76",
+          "message": "Bumping Diplomat version and using new features (#2976)",
+          "timestamp": "2023-01-12T01:43:16+01:00",
+          "tree_id": "a06b9ee991dfa9b36361e36ef2c2e6b0ad07c01f",
+          "url": "https://github.com/unicode-org/icu4x/commit/37cb17c06a46e6b104ea48094fc5b1b9bf570a76"
+        },
+        "date": 1673484954955,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 624,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 378,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 399,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 442,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 896,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1037,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 383,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 391,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 431,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 500,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 858,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 52049369,
+            "range": "± 888265",
             "unit": "ns/iter"
           },
           {
