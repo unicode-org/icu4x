@@ -83,7 +83,10 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     cart: C,
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
+impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
+where
+    <C as Deref>::Target: 'static,
+{
     /// Construct a [`Yoke`] by yokeing an object to a cart in a closure.
     ///
     /// See also [`Yoke::try_attach_to_cart()`] to return a `Result` from the closure.
@@ -119,6 +122,8 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
         // safety note: This works by enforcing that the *only* place the return value of F
         // can borrow from is the cart, since `F` must be valid for all lifetimes `'de`
         //
+        // The <C as Deref>::Target: 'static on the impl is crucial for safety as well
+        //
         // See safety docs at the bottom of this file for more information
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
         <C as Deref>::Target: 'static,
@@ -138,7 +143,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart<E, F>(cart: C, f: F) -> Result<Self, E>
     where
         F: for<'de> FnOnce(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-        <C as Deref>::Target: 'static,
     {
         let deserialized = f(cart.deref())?;
         Ok(Self {
@@ -154,10 +158,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn attach_to_cart_badly(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
-    ) -> Self
-    where
-        <C as Deref>::Target: 'static,
-    {
+    ) -> Self {
         Self::attach_to_cart(cart, f)
     }
 
@@ -168,10 +169,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C> {
     pub fn try_attach_to_cart_badly<E>(
         cart: C,
         f: for<'de> fn(&'de <C as Deref>::Target) -> Result<<Y as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E>
-    where
-        <C as Deref>::Target: 'static,
-    {
+    ) -> Result<Self, E> {
         Self::try_attach_to_cart(cart, f)
     }
 }
