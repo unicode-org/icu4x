@@ -92,7 +92,7 @@ impl SourceData {
         _locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
-        let locale_subset = if root.list("cldr-misc-full").is_ok() {
+        let locale_subset = if root.list("cldr-misc-full", false).is_ok() {
             CldrLocaleSubset::Full
         } else {
             CldrLocaleSubset::Modern
@@ -133,7 +133,7 @@ impl SourceData {
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
     pub fn with_cldr_for_tag(
         self,
-        tag: &str,tzdb-datagen
+        tag: &str,
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
@@ -212,7 +212,7 @@ impl SourceData {
     }
 
     /// Paths to CLDR source data.
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, Dtzdb-datagenataError> {
+    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
             .as_deref()
             .ok_or(crate::error::MISSING_CLDR_ERROR)
@@ -367,7 +367,6 @@ impl SerdeCache {
     }
 }
 
-#[derive(Debug)]
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
@@ -432,6 +431,7 @@ impl AbstractFs {
 
     /// Returns the size, in bytes, of the entry at `path`.
     pub fn size(&self, path: &str) -> Result<u64, DataError> {
+        self.init()?;
         match self {
             AbstractFs::Fs(root) => root
                 .join(path)
@@ -441,6 +441,9 @@ impl AbstractFs {
             AbstractFs::Zip(zip) => zip
                 .write()
                 .expect("poison")
+                .as_mut()
+                .ok()
+                .unwrap() // init called
                 .by_name(path)
                 .map(|entry| entry.size())
                 .map_err(|e| {
@@ -453,6 +456,7 @@ impl AbstractFs {
 
     /// Returns [`true`] if the entry at `path` is a file, otherwise [`false`]
     pub fn is_file(&self, path: &str) -> Result<bool, DataError> {
+        self.init()?;
         match self {
             AbstractFs::Fs(root) => root
                 .join(path)
@@ -462,6 +466,9 @@ impl AbstractFs {
             AbstractFs::Zip(zip) => zip
                 .write()
                 .expect("poison")
+                .as_mut()
+                .ok()
+                .unwrap() // init called
                 .by_name(path)
                 .map(|entry| entry.is_file())
                 .map_err(|e| {
@@ -473,6 +480,7 @@ impl AbstractFs {
     }
 
     pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+        self.init()?;
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -500,6 +508,7 @@ impl AbstractFs {
     }
 
     pub fn read_to_buf_exact(&self, n: usize, path: &str) -> Result<Vec<u8>, DataError> {
+        self.init()?;
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -514,6 +523,9 @@ impl AbstractFs {
                 let mut buf = vec![0; n];
                 zip.write()
                     .expect("poison")
+                    .as_mut()
+                    .ok()
+                    .unwrap() // init called
                     .by_name(path)
                     .map_err(|e| {
                         DataError::custom("Zip")
@@ -531,6 +543,7 @@ impl AbstractFs {
         path: &str,
         recursive: bool,
     ) -> Result<impl Iterator<Item = String>, DataError> {
+        self.init()?;
         Ok(match self {
             Self::Fs(root) => {
                 let path = root.join(path);

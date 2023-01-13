@@ -32,7 +32,7 @@ fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
     source
         .icuexport()
         .and_then(|i| i.list(&format!("collation/{}", source.collation_han_database())))
-        .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
+        .map(|mut iter| iter.any(|s| s == "sv_reformed_meta.toml"))
         .unwrap_or(false)
 }
 
