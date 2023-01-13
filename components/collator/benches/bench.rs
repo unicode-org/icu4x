@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
+use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion, black_box};
 
 use icu::collator::*;
 use icu::locid::Locale;
@@ -131,7 +131,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         let mut group = criterion.benchmark_group(locale_under_bench.to_string());
 
         for content_under_bench in files_under_bench {
-            let (file_name, elements) = content_under_bench;
+            let (file_name, elements) = black_box(content_under_bench);
             // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
             group.bench_function(
                 BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
