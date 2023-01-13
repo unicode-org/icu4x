@@ -10,15 +10,13 @@ command-line utility.
 ### `build.rs`
 
 ```rust
-use icu::locid::langid;
-use icu_datagen::*;
+use icu_datagen::prelude::*;
 use std::fs::File;
-use std::path::PathBuf;
 
 fn main() {
     icu_datagen::datagen(
         Some(&[langid!("de"), langid!("en-AU")]),
-        &icu_datagen::keys(&["list/and@1"]),
+        &[icu::list::provider::AndListV1Marker::KEY],
         &SourceData::default(),
         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
     )
@@ -45,7 +43,7 @@ Once the tool is installed, you can invoke it like this:
 
 ```bash
 $ icu4x-datagen \
->    --all-keys \
+>    --keys all \
 >    --locales de en-AU \
 >    --format blob \
 >    --out data.postcard

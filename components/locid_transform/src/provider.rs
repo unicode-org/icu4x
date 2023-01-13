@@ -5,7 +5,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -44,6 +50,12 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
     databake(path = icu_locid_transform::provider),
 )]
 /// A pair of strings with a EncodeAsVarULE implementation.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 pub struct StrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
@@ -70,6 +82,12 @@ pub struct StrStrPair<'a>(
 /// The algorithm in tr35 is not guaranteed to terminate on data other than what
 /// is currently in CLDR. For this reason, it is not a good idea to attempt to add
 /// or modify aliases for use in this structure.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 // TODO: Use validated types as value types
 pub struct AliasesV1<'data> {
     /// `[language(-variant)+\] -> [langid]`
@@ -134,6 +152,12 @@ pub struct AliasesV1<'data> {
 /// for searching and replacing. E.g., the `language_script` field is used to store
 /// rules for `LanguageIdentifier`s that contain a language and a script, but not a
 /// region.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[yoke(prove_covariance_manually)]
 pub struct LikelySubtagsV1<'data> {
     /// Language and script.

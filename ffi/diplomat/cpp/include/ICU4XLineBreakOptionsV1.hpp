@@ -14,14 +14,6 @@
 #include "ICU4XLineBreakRule.hpp"
 #include "ICU4XWordBreakRule.hpp"
 
-/**
- * A destruction policy for using ICU4XLineBreakOptionsV1 with std::unique_ptr.
- */
-struct ICU4XLineBreakOptionsV1Deleter {
-  void operator()(capi::ICU4XLineBreakOptionsV1* l) const noexcept {
-    capi::ICU4XLineBreakOptionsV1_destroy(l);
-  }
-};
 
 /**
  * 

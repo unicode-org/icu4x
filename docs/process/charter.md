@@ -36,7 +36,7 @@ The list of target platforms is expected to evolve over time, and will be primar
 
 Current list of target platforms:
 * Web Platform (V8, SpiderMonkey, JSC)
-* Software platforms (Fuschia, Gecko)
+* Software platforms (Fuchsia, Gecko)
 * Mobile OSes (iOS, Android)
 * Low-power OSes with [alloc] (WearOS, WatchOS)
 * Client-side toolkits (Flutter)

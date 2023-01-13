@@ -58,9 +58,13 @@ impl BakedDataExporter {
         pretty: bool,
         insert_feature_gates: bool,
         use_separate_crates: bool,
-    ) -> Self {
-        let _ = std::fs::remove_dir_all(&mod_directory);
-        Self {
+    ) -> Result<Self, DataError> {
+        if mod_directory.exists() {
+            std::fs::remove_dir(&mod_directory)
+                .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+        }
+
+        Ok(Self {
             mod_directory,
             pretty,
             insert_feature_gates: insert_feature_gates && use_separate_crates,
@@ -69,7 +73,7 @@ impl BakedDataExporter {
             mod_files: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
-        }
+        })
     }
 
     fn write_to_file<P: AsRef<std::path::Path>>(
@@ -433,6 +437,27 @@ impl DataExporter for BakedDataExporter {
             );
         }
 
+        let any_code = if any_cases.is_empty() {
+            quote! {
+                Err(DataErrorKind::MissingDataKey.with_req(key, req))
+            }
+        } else {
+            let any_consts = any_consts.values();
+            let any_cases = any_cases.values();
+            quote! {
+                #(#any_consts)*
+                match key.hashed() {
+                    #(#any_cases)*
+                    _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
+                }
+                .map(|payload| AnyResponse {
+                    payload: Some(payload),
+                    metadata: Default::default(),
+                })
+                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))
+            }
+        };
+
         let mods = self
             .mod_files
             .get_mut()
@@ -443,8 +468,6 @@ impl DataExporter for BakedDataExporter {
             .map(|p| p.parse::<TokenStream>().unwrap());
 
         let data_impls = data_impls.values();
-        let any_consts = any_consts.values();
-        let any_cases = any_cases.values();
 
         self.write_to_file(
             PathBuf::from("mod"),
@@ -491,17 +514,7 @@ impl DataExporter for BakedDataExporter {
                     ($provider:path) => {
                         impl AnyProvider for $provider {
                             fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-                                #(#any_consts)*
-                                #[allow(clippy::match_single_binding)]
-                                match key.hashed() {
-                                    #(#any_cases)*
-                                    _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
-                                }
-                                .map(|payload| AnyResponse {
-                                    payload: Some(payload),
-                                    metadata: Default::default(),
-                                })
-                                .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))
+                                #any_code
                             }
                         }
                     }

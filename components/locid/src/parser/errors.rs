@@ -57,7 +57,10 @@ pub enum ParserError {
     /// use icu::locid::Locale;
     /// use icu::locid::ParserError;
     ///
-    /// assert_eq!("und-u-hc-h12-u-ca-calendar".parse::<Locale>(), Err(ParserError::DuplicatedExtension));
+    /// assert_eq!(
+    ///     "und-u-hc-h12-u-ca-calendar".parse::<Locale>(),
+    ///     Err(ParserError::DuplicatedExtension)
+    /// );
     /// ```
     #[displaydoc("Duplicated extension")]
     DuplicatedExtension,

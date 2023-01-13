@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datagen::*;
-use icu_provider::KeyedDataMarker;
-use icu_provider_fs::export::serializers::{json, postcard};
-use icu_testdata::{metadata, paths};
+use icu_datagen::prelude::*;
+use icu_testdata::paths;
 use std::fs::File;
 
 // icuexport test data isn't complete, so we don't test these keys.
@@ -40,18 +38,17 @@ fn main() {
         .unwrap()
         .with_icuexport(paths::icuexport_toml_root())
         .unwrap();
-    let locales = metadata::load().locales;
 
     let json_out = Out::Fs {
         output_path: paths::data_root().join("json"),
-        serializer: Box::new(json::Serializer::pretty()),
+        serializer: Box::new(syntax::Json::pretty()),
         overwrite: true,
         fingerprint: true,
     };
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
-        serializer: Box::new(postcard::Serializer::default()),
+        serializer: Box::new(syntax::Postcard::default()),
         overwrite: true,
         fingerprint: true,
     };
@@ -59,6 +56,8 @@ fn main() {
     let blob_out = Out::Blob(Box::new(
         File::create(paths::data_root().join("testdata.postcard")).unwrap(),
     ));
+
+    let _ = std::fs::remove_dir_all(paths::data_root().join("baked"));
 
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked"),
@@ -68,7 +67,7 @@ fn main() {
     };
 
     icu_datagen::datagen(
-        Some(&locales),
+        Some(&icu_testdata::locales()),
         &icu_datagen::all_keys()
             .into_iter()
             .filter(|k| !IGNORED_KEYS.contains(&&*k.path()))

@@ -14,7 +14,6 @@ pub mod ffi {
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
     use crate::errors::ffi::ICU4XError;
-    use diplomat_runtime::DiplomatResult;
 
     /// FFI version of `PluralCategory`.
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
@@ -33,12 +32,11 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::get_for_cldr_bytes, FnInEnum)]
-        pub fn get_for_cldr_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
+        pub fn get_for_cldr_string(s: &str) -> Result<ICU4XPluralCategory, ()> {
             let s = s.as_bytes(); // #2520
             PluralCategory::get_for_cldr_bytes(s)
-                .map(Into::into)
                 .ok_or(())
-                .into()
+                .map(Into::into)
         }
     }
 
@@ -55,12 +53,11 @@ pub mod ffi {
         pub fn create_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
+        ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
             let locale = locale.to_datalocale();
-            PluralRules::try_new_cardinal_unstable(&provider.0, &locale)
-                .map(|r| Box::new(ICU4XPluralRules(r)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XPluralRules(
+                PluralRules::try_new_cardinal_unstable(&provider.0, &locale)?,
+            )))
         }
 
         /// Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
@@ -70,20 +67,17 @@ pub mod ffi {
         pub fn create_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-        ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
+        ) -> Result<Box<ICU4XPluralRules>, ICU4XError> {
             let locale = locale.to_datalocale();
-            PluralRules::try_new_ordinal_unstable(&provider.0, &locale)
-                .map(|r| Box::new(ICU4XPluralRules(r)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XPluralRules(
+                PluralRules::try_new_ordinal_unstable(&provider.0, &locale)?,
+            )))
         }
 
         /// Get the category for a given number represented as operands
         #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
         pub fn category_for(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
-            let res = self.0.category_for(op.0);
-
-            res.into()
+            self.0.category_for(op.0).into()
         }
 
         /// Get all of the categories needed in the current locale
@@ -121,16 +115,12 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XPluralOperands>, ICU4XError> {
+        pub fn create_from_string(s: &str) -> Result<Box<ICU4XPluralOperands>, ICU4XError> {
             let s = s.as_bytes(); // #2520
-            FixedDecimal::try_from(s)
-                .as_ref()
-                .map(PluralOperands::from)
-                .map(ICU4XPluralOperands)
+            Ok(Box::new(ICU4XPluralOperands(PluralOperands::from(
                 // XXX should this have its own errors?
-                .map_err(|_| ICU4XError::PluralsParserError)
-                .map(Box::new)
-                .into()
+                &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
+            ))))
         }
     }
 
