@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{BenchmarkId, Criterion};
+use criterion::{BenchmarkId, Criterion, black_box};
 use detone::IterDecomposeVietnamese;
 
 use icu_normalizer::properties::{CanonicalComposition, CanonicalDecomposition, Decomposed};
@@ -149,7 +149,7 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 
     let composer = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
-    for bench_data_content in normalizer_bench_data() {
+    for bench_data_content in black_box(normalizer_bench_data()) {
         group.bench_function(
             BenchmarkId::from_parameter(format!("from_nfc_{}", bench_data_content.file_name)),
             |bencher| bencher.iter(|| function_under_bench(&composer, &bench_data_content.pairs)),
