@@ -41,12 +41,9 @@ fn process_cli_args() -> ProcessedArgs {
                     .long("toolchain")
                     .takes_value(true)
                     .value_name("TOOLCHAIN")
-                    .required(false)
-                    .help("The toolchain for cargo to use. Defaults to nightly.")
+                    .default_value("stable")
+                    .help("The toolchain for cargo to use..")
             ).get_matches();
-
-    let default_toolchain =
-        env::var("ICU4X_NIGHTLY_TOOLCHAIN").unwrap_or_else(|_| "nightly-2022-04-05".into());
 
     ProcessedArgs {
         // Validate the OS, and copy into an owned String.
@@ -77,7 +74,7 @@ fn process_cli_args() -> ProcessedArgs {
 
         toolchain: matches
             .value_of("TOOLCHAIN")
-            .unwrap_or(&default_toolchain)
+            .unwrap()
             .to_string(),
     }
 }
@@ -236,11 +233,8 @@ fn main() {
             .arg("run")
             .arg("--example")
             .arg(example)
-            // This is an unstable option.
             .arg("--profile")
             .arg("bench")
-            .arg("-Z")
-            .arg("unstable-options")
             // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
             // icu_benchmark_macros package.
             .arg("--manifest-path")
