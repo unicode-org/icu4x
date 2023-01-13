@@ -69,7 +69,9 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             lazy_static! {
                 // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                 // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))")).expect("Valid regex");
+                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(
+                    Cow::Borrowed(r"o|ho|8|(11(\.?[0123456789][0123456789][0123456789])*(,[0123456789]*)?([^\.,[0123456789]]|$))")
+                ).expect("Valid regex");
             }
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
