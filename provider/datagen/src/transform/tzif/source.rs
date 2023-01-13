@@ -13,6 +13,8 @@ use tzif::data::tzif::TzifData;
 pub(crate) struct TzifPaths(AbstractFs);
 
 impl TzifPaths {
+    const TZIF_HEADER_LEN: usize = 4;
+
     pub(crate) fn new<T: AsRef<Path>>(root: T) -> Result<Self, DataError> {
         AbstractFs::new(root).map(Self)
     }
@@ -20,12 +22,25 @@ impl TzifPaths {
     pub(crate) fn read_and_parse(&self) -> Result<HashMap<String, TzifData>, DataError> {
         self.0
             .list("", true)?
-            // Read the first four bytes of each file to check if the sequence
-            // matches the first four bytes requred by every TZif file. If the
-            // read failed we still keep this entry so that we can propagate that error.
+            // Filter only the paths that lead to files. We don't want to try to parse
+            // TZif data from any other types of entries. If the metadata itself failed
+            // to be gathered, we want to keep this entry to propagate the error.
+            .filter(|path| self.0.is_file(path).unwrap_or(true))
+            // Filter only files whose length in bytes is at least large enough to fit
+            // the TZif file header. If the metadata itself failed to be gathered,
+            // we want to keep this entry to propagate the error.
             .filter(|path| {
                 self.0
-                    .read_to_buf_exact(4, &path.to_string())
+                    .size(path)
+                    .map(|size| size > Self::TZIF_HEADER_LEN as u64)
+                    .unwrap_or(true)
+            })
+            // Read the first four bytes of each file to check if the sequence
+            // matches the TZif file header. If the read itself failed, we want to
+            // keep this entry to propagate the error.
+            .filter(|path| {
+                self.0
+                    .read_to_buf_exact(Self::TZIF_HEADER_LEN, &path.to_string())
                     .map(|buf| tzif::is_tzif(&buf))
                     .unwrap_or(true)
             })

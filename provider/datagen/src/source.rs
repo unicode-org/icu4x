@@ -430,6 +430,48 @@ impl AbstractFs {
         }
     }
 
+    /// Returns the size, in bytes, of the entry at `path`.
+    pub fn size(&self, path: &str) -> Result<u64, DataError> {
+        match self {
+            AbstractFs::Fs(root) => root
+                .join(path)
+                .metadata()
+                .map(|metadata| metadata.len())
+                .map_err(Into::into),
+            AbstractFs::Zip(zip) => zip
+                .write()
+                .expect("poison")
+                .by_name(path)
+                .map(|entry| entry.size())
+                .map_err(|e| {
+                    DataError::custom("Zip")
+                        .with_display_context(&e)
+                        .with_display_context(path)
+                }),
+        }
+    }
+
+    /// Returns [`true`] if the entry at `path` is a file, otherwise [`false`]
+    pub fn is_file(&self, path: &str) -> Result<bool, DataError> {
+        match self {
+            AbstractFs::Fs(root) => root
+                .join(path)
+                .metadata()
+                .map(|metadata| metadata.is_file())
+                .map_err(Into::into),
+            AbstractFs::Zip(zip) => zip
+                .write()
+                .expect("poison")
+                .by_name(path)
+                .map(|entry| entry.is_file())
+                .map_err(|e| {
+                    DataError::custom("Zip")
+                        .with_display_context(&e)
+                        .with_display_context(path)
+                }),
+        }
+    }
+
     pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         match self {
             Self::Fs(root) => {
