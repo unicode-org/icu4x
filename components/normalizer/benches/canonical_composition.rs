@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{BenchmarkId, Criterion, black_box};
+use criterion::{black_box, BenchmarkId, Criterion};
 use detone::IterDecomposeVietnamese;
 
 use icu_normalizer::properties::{CanonicalComposition, CanonicalDecomposition, Decomposed};
