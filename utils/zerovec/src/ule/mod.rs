@@ -283,6 +283,12 @@ where
 /// "12.3e3" are logically equal, but not byte-for-byte equal, so we could define a canonical form
 /// where only a single digit is allowed before `.`.
 ///
+/// There may also be cases where a `VarULE` has muiltiple canonical forms, such as a faster
+/// version and a smaller version. The cleanest way to handle this case would be separate types.
+/// However, if this is not feasible, then the application should ensure that the data it is
+/// deserializing is in the expected form. For example, if the data is being loaded from an
+/// external source, then requests could carry information about the expected form of the data.
+///
 /// Failure to follow this invariant will cause surprising behavior in `PartialEq`, which may
 /// result in unpredictable operations on `ZeroVec`, `VarZeroVec`, and `ZeroMap`.
 pub unsafe trait VarULE: 'static {

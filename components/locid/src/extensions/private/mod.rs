@@ -14,7 +14,7 @@
 //!
 //! ```
 //! use icu::locid::extensions_private_subtag as subtag;
-//! use icu::locid::{Locale, locale};
+//! use icu::locid::{locale, Locale};
 //!
 //! let mut loc: Locale = "en-US-x-foo-faa".parse().expect("Parsing failed.");
 //!

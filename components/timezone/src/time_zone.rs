@@ -37,11 +37,11 @@ use icu_calendar::{DateTime, Iso};
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: Option<GmtOffset>,
-    /// The IANA time-zone identifier
+    /// The BCP47 time-zone identifier
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetazoneId>,
-    /// The time variant e.g. "daylight" or "standard"
+    /// The time variant e.g. daylight or standard
     pub zone_variant: Option<ZoneVariant>,
 }
 
@@ -90,14 +90,14 @@ impl CustomTimeZone {
     /// use icu::timezone::GmtOffset;
     /// use icu::timezone::TimeZoneError;
     ///
-    /// let tz0: CustomTimeZone =
-    ///     CustomTimeZone::try_from_bytes(b"Z").expect("Failed to parse a time zone");
-    /// let tz1: CustomTimeZone =
-    ///     CustomTimeZone::try_from_bytes(b"+02").expect("Failed to parse a time zone");
-    /// let tz2: CustomTimeZone =
-    ///     CustomTimeZone::try_from_bytes(b"-0230").expect("Failed to parse a time zone");
-    /// let tz3: CustomTimeZone =
-    ///     CustomTimeZone::try_from_bytes(b"+02:30").expect("Failed to parse a time zone");
+    /// let tz0: CustomTimeZone = CustomTimeZone::try_from_bytes(b"Z")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz1: CustomTimeZone = CustomTimeZone::try_from_bytes(b"+02")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz2: CustomTimeZone = CustomTimeZone::try_from_bytes(b"-0230")
+    ///     .expect("Failed to parse a time zone");
+    /// let tz3: CustomTimeZone = CustomTimeZone::try_from_bytes(b"+02:30")
+    ///     .expect("Failed to parse a time zone");
     ///
     /// assert_eq!(tz0.gmt_offset.map(GmtOffset::offset_seconds), Some(0));
     /// assert_eq!(tz1.gmt_offset.map(GmtOffset::offset_seconds), Some(7200));
@@ -174,8 +174,7 @@ impl FromStr for CustomTimeZone {
     /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::GmtOffset;
     ///
-    /// let tz0: CustomTimeZone =
-    ///     "Z".parse().expect("Failed to parse a time zone");
+    /// let tz0: CustomTimeZone = "Z".parse().expect("Failed to parse a time zone");
     /// let tz1: CustomTimeZone =
     ///     "+02".parse().expect("Failed to parse a time zone");
     /// let tz2: CustomTimeZone =

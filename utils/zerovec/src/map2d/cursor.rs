@@ -174,7 +174,9 @@ where
     ///     ("a", 0u8, 1usize),
     ///     ("b", 1u8, 1000usize),
     ///     ("b", 2u8, 2000usize),
-    /// ].into_iter().collect();
+    /// ]
+    /// .into_iter()
+    /// .collect();
     ///
     /// let mut total_value = 0;
     ///

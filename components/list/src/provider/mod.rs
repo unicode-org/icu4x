@@ -5,7 +5,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -15,9 +21,16 @@ use icu_provider::DataMarker;
 use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
 
-pub use crate::string_matcher::StringMatcher;
+mod string_matcher;
+pub use string_matcher::StringMatcher;
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     AndListV1Marker = "list/and@1",
     OrListV1Marker = "list/or@1",
@@ -99,6 +112,12 @@ impl<'data> ListFormatterPatternsV1<'data> {
 }
 
 /// A pattern that can behave conditionally on the next element.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -116,6 +135,12 @@ pub struct ConditionalListJoinerPattern<'data> {
 }
 
 /// The special case of a [`ConditionalListJoinerPattern`]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -133,6 +158,12 @@ pub struct SpecialCasePattern<'data> {
 }
 
 /// A pattern containing two numeric placeholders ("{0}, and {1}.")
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 pub struct ListJoinerPattern<'data> {

@@ -12,9 +12,7 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-testdata-datagen",
-    "--no-default-features",
-    "--features=bin",
+    "--bin=make-testdata",
 ]
 
 [tasks.testdata-check]
@@ -47,10 +45,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--hello-world-key",
-    "--all-locales",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
     "--out=provider/fs/tests/data/json",
     "--overwrite",
 ]
@@ -62,11 +61,12 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
     "--syntax=bincode",
-    "--hello-world-key",
-    "--all-locales",
     "--out=provider/fs/tests/data/bincode",
     "--overwrite",
 ]
@@ -78,11 +78,12 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=dir",
     "--syntax=postcard",
-    "--hello-world-key",
-    "--all-locales",
     "--out=provider/fs/tests/data/postcard",
     "--overwrite",
 ]
@@ -94,11 +95,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
     "--format=blob",
-    "--hello-world-key",
-    "--all-locales",
     "--out=provider/blob/tests/data/hello_world.postcard",
     "--overwrite",
 ]
@@ -126,12 +127,9 @@ args = [
     "icu_datagen",
     "--features=bin",
     "--",
-    "--cldr-tag=latest",
-    "--icuexport-tag=latest",
+    "--keys=all",
+    "--locales=full",
     "--format=blob",
-    "--syntax=postcard",
-    "--all-keys",
-    "--all-locales",
     "--out=/dev/null",
     "--overwrite",
 ]
@@ -155,10 +153,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--hello-world-key",
+    "--keys=core/helloworld@1",
     "--locales=de",
+    "--format=dir",
     "--out=provider/adapters/tests/data/langtest/de",
     "--overwrite",
 ]
@@ -170,10 +169,11 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=experimental,bin",
+    "--features=bin",
     "--",
-    "--hello-world-key",
+    "--keys=core/helloworld@1",
     "--locales=ro",
+    "--format=dir",
     "--out=provider/adapters/tests/data/langtest/ro",
     "--overwrite",
 ]

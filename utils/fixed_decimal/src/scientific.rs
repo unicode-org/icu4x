@@ -43,13 +43,19 @@ impl ScientificDecimal {
 /// # use writeable::assert_writeable_eq;
 /// #
 /// assert_writeable_eq!(
-///     ScientificDecimal::from(FixedDecimal::from(1729).multiplied_pow10(-3),
-///                             FixedInteger::from(3)),
-///     "1.729e3");
+///     ScientificDecimal::from(
+///         FixedDecimal::from(1729).multiplied_pow10(-3),
+///         FixedInteger::from(3)
+///     ),
+///     "1.729e3"
+/// );
 /// assert_writeable_eq!(
-///     ScientificDecimal::from(FixedDecimal::from_str("+1.729").unwrap(),
-///                             FixedInteger::from_str("+03").unwrap()),
-///     "+1.729e+03");
+///     ScientificDecimal::from(
+///         FixedDecimal::from_str("+1.729").unwrap(),
+///         FixedInteger::from_str("+03").unwrap()
+///     ),
+///     "+1.729e+03"
+/// );
 /// ```
 impl writeable::Writeable for ScientificDecimal {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {

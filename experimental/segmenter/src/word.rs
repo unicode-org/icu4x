@@ -44,9 +44,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordSegmenter;
-/// let segmenter =
-///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -57,9 +56,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordSegmenter;
-/// let segmenter =
-///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();

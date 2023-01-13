@@ -13,15 +13,13 @@
 //! ## `build.rs`
 //!
 //! ```no_run
-//! use icu::locid::langid;
-//! use icu_datagen::*;
+//! use icu_datagen::prelude::*;
 //! use std::fs::File;
-//! use std::path::PathBuf;
 //!
 //! fn main() {
 //!     icu_datagen::datagen(
 //!         Some(&[langid!("de"), langid!("en-AU")]),
-//!         &icu_datagen::keys(&["list/and@1"]),
+//!         &[icu::list::provider::AndListV1Marker::KEY],
 //!         &SourceData::default(),
 //!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
 //!     )
@@ -48,7 +46,7 @@
 //!
 //! ```bash
 //! $ icu4x-datagen \
-//! >    --all-keys \
+//! >    --keys all \
 //! >    --locales de en-AU \
 //! >    --format blob \
 //! >    --out data.postcard
@@ -79,15 +77,30 @@ mod source;
 mod testutil;
 mod transform;
 
-pub use error::*;
+pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 pub use registry::all_keys;
-pub use source::*;
+pub use source::{CldrLocaleSubset, CollationHanDatabase, SourceData};
+
+/// [Out::Fs] serialization formats.
+pub mod syntax {
+    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
+}
+
+/// A prelude for using the datagen API
+pub mod prelude {
+    pub use super::{syntax, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
+    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_provider::KeyedDataMarker;
+}
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
-use icu_provider_fs::export::serializers;
+use icu_provider_fs::export::serializers::AbstractSerializer;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
@@ -120,11 +133,34 @@ impl AnyProvider for DatagenProvider {
     }
 }
 
+/// Parses a human-readable key identifier into a [`DataKey`].
+//  Supports the hello world key
+/// # Example
+/// ```
+/// # use icu_provider::KeyedDataMarker;
+/// assert_eq!(
+///     icu_datagen::key("list/and@1"),
+///     Some(icu::list::provider::AndListV1Marker::KEY),
+/// );
+/// ```
+pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
+    lazy_static::lazy_static! {
+        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys()
+                    .into_iter()
+                    .chain(std::iter::once(
+                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
+                    ))
+                    .map(|k| (k.path().get(), k))
+                    .collect();
+    }
+    LOOKUP.get(string.as_ref()).copied()
+}
+
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
-///
+//  Supports the hello world key
 /// # Example
 /// ```
 /// # use icu_provider::KeyedDataMarker;
@@ -137,18 +173,14 @@ impl AnyProvider for DatagenProvider {
 /// );
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
-    let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
-    all_keys()
-        .into_iter()
-        .filter(|k| keys.contains(&*k.path()))
-        .collect()
+    strings.iter().map(AsRef::as_ref).filter_map(key).collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
-///
+//  Supports the hello world key
 /// # Example
 ///
 /// #### keys.txt
@@ -184,7 +216,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
 ///
 /// Unknown key names are ignored.
-///
+//  Supports the hello world key
 /// # Example
 ///
 /// #### build.rs
@@ -235,8 +267,8 @@ pub enum Out {
     Fs {
         /// The root path.
         output_path: PathBuf,
-        /// The serialization format. See [icu_provider_fs::export::serializers].
-        serializer: Box<dyn serializers::AbstractSerializer + Sync>,
+        /// The serialization format. See [syntax].
+        serializer: Box<dyn AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
         /// Whether to create a fingerprint file with SHA2 hashes
@@ -310,26 +342,26 @@ pub fn datagen(
                     pretty,
                     insert_feature_gates,
                     use_separate_crates,
-                )),
+                )?),
             })
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    let mut provider: Box<dyn ExportableProvider> = Box::new(DatagenProvider {
-        source: source.clone(),
-    });
-
-    if let Some(locales) = locales {
-        let locales = locales.to_vec();
-        provider = Box::new(
-            provider
-                .filterable("icu4x-datagen locales")
-                .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        );
-    }
+    let provider: Box<dyn ExportableProvider> = match locales {
+        Some(&[]) => Box::new(EmptyDataProvider::default()),
+        Some(locales) => Box::new(
+            DatagenProvider {
+                source: source.clone(),
+            }
+            .filterable("icu4x-datagen locales")
+            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
+        ),
+        None => Box::new(DatagenProvider {
+            source: source.clone(),
+        }),
+    };
 
     keys.into_par_iter().try_for_each(|&key| {
-        log::info!("Writing key: {}", key);
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
@@ -348,6 +380,7 @@ pub fn datagen(
             })
         });
 
+        log::info!("Writing key: {}", key);
         for e in &exporters {
             e.flush(key).map_err(|e| e.with_key(key))?;
         }
@@ -373,8 +406,8 @@ fn test_keys() {
         ]),
         vec![
             icu_list::provider::AndListV1Marker::KEY,
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
         ]
     );
 }

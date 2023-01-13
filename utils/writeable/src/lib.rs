@@ -146,8 +146,14 @@ impl LengthHint {
 /// `PUNCTUATION` could thus be defined as
 /// ```
 /// # use writeable::Part;
-/// const NAME: Part = Part { category: "userlist", value: "name" };
-/// const PUNCTUATION: Part = Part { category: "userlist", value: "punctuation" };
+/// const NAME: Part = Part {
+///     category: "userlist",
+///     value: "name",
+/// };
+/// const PUNCTUATION: Part = Part {
+///     category: "userlist",
+///     value: "punctuation",
+/// };
 /// ```
 ///
 /// That said, consumers should not usually have to inspect `Part` internals. Instead,

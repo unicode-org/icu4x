@@ -86,3 +86,26 @@ where
         Err(self.error_kind.with_req(M::KEY, base_req))
     }
 }
+
+#[cfg(feature = "datagen")]
+impl<M> icu_provider::datagen::IterableDataProvider<M> for EmptyDataProvider
+where
+    M: KeyedDataMarker,
+{
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        Ok(vec![])
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<M> icu_provider::datagen::IterableDynamicDataProvider<M> for EmptyDataProvider
+where
+    M: DataMarker,
+{
+    fn supported_locales_for_key(
+        &self,
+        _: DataKey,
+    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        Ok(vec![])
+    }
+}

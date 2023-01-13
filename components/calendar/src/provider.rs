@@ -2,7 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -18,6 +24,12 @@ use zerovec::ZeroVec;
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[zerovec::make_ule(EraStartDateULE)]
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
@@ -39,6 +51,12 @@ pub struct EraStartDate {
 
 /// A data structure containing the necessary era data for constructing a
 /// [`Japanese`](crate::japanese::Japanese) calendar object
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     marker(JapaneseErasV1Marker, "calendar/japanese@1"),
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
@@ -77,6 +95,12 @@ impl FromStr for EraStartDate {
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(
     WeekDataV1Marker,
     "datetime/week_data@1",

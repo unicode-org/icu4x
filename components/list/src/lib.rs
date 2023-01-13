@@ -94,7 +94,6 @@ extern crate alloc;
 
 mod error;
 mod list_formatter;
-mod string_matcher;
 
 pub mod provider;
 

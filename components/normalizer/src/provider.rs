@@ -2,7 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data structs for the normalizer
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+//!
+//! Read more about data providers: [`icu_provider`]
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
@@ -13,6 +21,12 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
 /// Main data for NFD
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -25,6 +39,12 @@ pub struct DecompositionDataV1<'data> {
 
 /// Data that either NFKD or the decomposed form of UTS 46 needs
 /// _in addition to_ the NFD data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     CompatibilityDecompositionSupplementV1Marker = "normalizer/nfkd@1",
     Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1"
@@ -68,6 +88,12 @@ impl DecompositionSupplementV1<'_> {
 
 /// The expansion tables for cases where the decomposition isn't
 /// contained in the trie value
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     CanonicalDecompositionTablesV1Marker = "normalizer/nfdex@1",
     CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1"
@@ -86,6 +112,12 @@ pub struct DecompositionTablesV1<'data> {
 }
 
 /// Non-Hangul canonical compositions
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(CanonicalCompositionsV1Marker = "normalizer/comp@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
@@ -100,6 +132,12 @@ pub struct CanonicalCompositionsV1<'data> {
 
 /// Non-recursive canonical decompositions that differ from
 /// `DecompositionDataV1`.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]

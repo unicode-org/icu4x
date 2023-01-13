@@ -9,7 +9,6 @@ pub mod ffi {
     use icu_properties::{script, Script};
 
     use crate::errors::ffi::ICU4XError;
-    use diplomat_runtime::DiplomatResult;
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
@@ -29,11 +28,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XScriptWithExtensions>, ICU4XError> {
-            script::load_script_with_extensions_unstable(&provider.0)
-                .map(|data| Box::new(ICU4XScriptWithExtensions(data)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XScriptWithExtensions>, ICU4XError> {
+            Ok(Box::new(ICU4XScriptWithExtensions(
+                script::load_script_with_extensions_unstable(&provider.0)?,
+            )))
         }
 
         /// Get the Script property value for a code point
@@ -110,8 +108,8 @@ pub mod ffi {
 
         /// Get script at index, returning an error if out of bounds
         #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
-        pub fn script_at(&self, index: usize) -> DiplomatResult<u16, ()> {
-            self.0.array_get(index).map(|x| x.0).ok_or(()).into()
+        pub fn script_at(&self, index: usize) -> Result<u16, ()> {
+            self.0.array_get(index).map(|x| x.0).ok_or(())
         }
     }
 }

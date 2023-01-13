@@ -43,7 +43,7 @@ fn main() {
     // manually drop to avoid dhat from printing stats at the end
     let _profiler = ManuallyDrop::new(dhat::Profiler::new_heap());
 
-    let selected_locales = icu_testdata::metadata::load().locales;
+    let selected_locales = icu_testdata::locales();
 
     let converter = DatagenProvider {
         source: SourceData::default()

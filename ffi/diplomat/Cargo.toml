@@ -98,8 +98,8 @@ icu_testdata = { version = "1.0.0", path = "../../provider/testdata", optional =
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 # ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "d3010a4b88a0f37d23e3c64cf5500cedc4e8cdf0" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "9e263b53cdee44b4b5310fc247182032945f7a84" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "9e263b53cdee44b4b5310fc247182032945f7a84" }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

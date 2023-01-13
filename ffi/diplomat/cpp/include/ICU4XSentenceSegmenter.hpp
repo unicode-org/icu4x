@@ -58,7 +58,7 @@ class ICU4XSentenceSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XSentenceBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
+  ICU4XSentenceBreakIteratorUtf16 segment_utf16(const diplomat::span<const uint16_t> input) const;
 
   /**
    * Segments a Latin-1 string.
@@ -67,7 +67,7 @@ class ICU4XSentenceSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XSentenceBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
+  ICU4XSentenceBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const;
   inline const capi::ICU4XSentenceSegmenter* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XSentenceSegmenter* AsFFIMut() { return this->inner.get(); }
   inline ICU4XSentenceSegmenter(capi::ICU4XSentenceSegmenter* i) : inner(i) {}
@@ -96,10 +96,10 @@ inline diplomat::result<ICU4XSentenceSegmenter, ICU4XError> ICU4XSentenceSegment
 inline ICU4XSentenceBreakIteratorUtf8 ICU4XSentenceSegmenter::segment_utf8(const std::string_view input) const {
   return ICU4XSentenceBreakIteratorUtf8(capi::ICU4XSentenceSegmenter_segment_utf8(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XSentenceBreakIteratorUtf16 ICU4XSentenceSegmenter::segment_utf16(const diplomat::span<uint16_t> input) const {
+inline ICU4XSentenceBreakIteratorUtf16 ICU4XSentenceSegmenter::segment_utf16(const diplomat::span<const uint16_t> input) const {
   return ICU4XSentenceBreakIteratorUtf16(capi::ICU4XSentenceSegmenter_segment_utf16(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XSentenceBreakIteratorLatin1 ICU4XSentenceSegmenter::segment_latin1(const diplomat::span<uint8_t> input) const {
+inline ICU4XSentenceBreakIteratorLatin1 ICU4XSentenceSegmenter::segment_latin1(const diplomat::span<const uint8_t> input) const {
   return ICU4XSentenceBreakIteratorLatin1(capi::ICU4XSentenceSegmenter_segment_latin1(this->inner.get(), input.data(), input.size()));
 }
 #endif
