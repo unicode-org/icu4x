@@ -79,7 +79,7 @@ const POSTCARD_ZEROHASHMAP: [u8; 412] = [
 /// Run this function to print new data to the console.
 /// Requires the optional `serde` Cargo feature.
 #[allow(dead_code)]
-fn generate() {
+fn generate_zeromap() {
     let map = build_zeromap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
     println!("{:?}", buf);
@@ -119,20 +119,22 @@ fn generate_test_data() {
 }
 
 fn overview_bench(c: &mut Criterion) {
+    bench_zeromap(c);
+    bench_hashmap(c);
+    bench_zerohashmap(c);
+
+    #[cfg(feature = "generate")]
+    generate_test_data();
+}
+
+fn bench_zeromap(c: &mut Criterion) {
     // Uncomment the following line to re-generate the binary data.
-    // generate();
+    // generate_hashmap();
 
     bench_deserialize(c);
     bench_deserialize_large(c);
     bench_lookup(c);
     bench_lookup_large(c);
-
-    bench_hashmap(c);
-
-    bench_zerohashmap(c);
-
-    #[cfg(feature = "generate")]
-    generate_test_data();
 }
 
 fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
