@@ -271,7 +271,7 @@ mod tests {
 
     fn formatter(length: ListLength) -> ListFormatter {
         ListFormatter {
-            data: DataPayload::from_owned(crate::provider::test::test_patterns()),
+            data: DataPayload::from_owned(crate::patterns::test::test_patterns()),
             length,
         }
     }
