@@ -884,7 +884,7 @@ jobs:
     - name: Run the example with dhat-rs to collect memory information
       run: |
         # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain ${{ env.INSTALLED_NIGHTLY_VERSION }}
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
     # dashboard HTML in a commit of a branch of the local repo.
