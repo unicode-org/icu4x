@@ -127,22 +127,24 @@ unsafe extern "C" fn icu4x_hb_unicode_compose(
     ab: *mut hb_codepoint_t,
     user_data: *mut c_void,
 ) -> hb_bool_t {
-    // Could we trust HarfBuzz to pass valid scalar values?
-    // `hb_buffer_add_codepoints` seems to allow the introduction
-    // of non-scalar-value items to the HarfBuzz buffer. Should we
-    // treat that as conceptually `unsafe` so that if the app has
-    // introduced values that are not valid scalar values, we'd
-    // be OK with UB? OTOH, HarfBuzz docs say "code points", so
-    // following docs to the letter could still result in
-    // surrogate code points even if they don't make sense.
+    // It appears that HarfBuzz will pass valid scalar values
+    // unless the application violated the contract of
+    // `hb_buffer_add_codepoints` and passed in non-scalar values.
+    // If we treated `hb_buffer_add_codepoints` as conceptually
+    // `unsafe`, it would be appropriate not to do scalar value
+    // validation here.
     let first = if let Some(first) = core::char::from_u32(a) {
         first
     } else {
+        // GIGO case
+        assert!(false);
         return false as hb_bool_t;
     };
     let second = if let Some(second) = core::char::from_u32(b) {
         second
     } else {
+        // GIGO case
+        assert!(false);
         return false as hb_bool_t;
     };
     if let Some(c) = (*(user_data as *mut CanonicalComposition)).compose(first, second) {
@@ -164,17 +166,17 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose(
     b: *mut hb_codepoint_t,
     user_data: *mut c_void,
 ) -> hb_bool_t {
-    // Could we trust HarfBuzz to pass a valid scalar value?
-    // `hb_buffer_add_codepoints` seems to allow the introduction
-    // of non-scalar-value items to the HarfBuzz buffer. Should we
-    // treat that as conceptually `unsafe` so that if the app has
-    // introduced values that are not valid scalar values, we'd
-    // be OK with UB? OTOH, HarfBuzz docs say "code points", so
-    // following docs to the letter could still result in
-    // surrogate code points even if they don't make sense.
+    // It appears that HarfBuzz will pass valid scalar values
+    // unless the application violated the contract of
+    // `hb_buffer_add_codepoints` and passed in non-scalar values.
+    // If we treated `hb_buffer_add_codepoints` as conceptually
+    // `unsafe`, it would be appropriate not to do scalar value
+    // validation here.
     let composed = if let Some(composed) = core::char::from_u32(ab) {
         composed
     } else {
+        // GIGO case
+        assert!(false);
         return false as hb_bool_t;
     };
     match (*(user_data as *mut CanonicalDecomposition)).decompose(composed) {
