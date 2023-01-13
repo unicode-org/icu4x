@@ -41,7 +41,7 @@ pub struct LocalTimeRecordV1 {
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzif),
+    databake(path = icu_timezone::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -105,7 +105,7 @@ pub struct TransitionDateV1 {
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzif),
+    databake(path = icu_timezone::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[zerovec::make_ule(TimeZoneTransitionRuleULE)]
@@ -130,7 +130,7 @@ pub struct TimeZoneTransitionRuleV1 {
 #[cfg_attr(
     feature = "datagen",
     derive(::serde::Serialize, databake::Bake),
-    databake(path = icu_datetime_experimental::provider::tzif),
+    databake(path = icu_timezone::provider::tzif),
 )]
 #[cfg_attr(feature = "serde", derive(::serde::Deserialize))]
 #[yoke(prove_covariance_manually)]

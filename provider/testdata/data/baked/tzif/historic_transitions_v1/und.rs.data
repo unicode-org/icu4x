@@ -1,4 +1,4 @@
-::icu_datetime_experimental::provider::tzif::TimeZoneHistoricTransitionsV1 {
+::icu_timezone::provider::tzif::TimeZoneHistoricTransitionsV1 {
     historic_transitions_indices: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
