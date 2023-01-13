@@ -61,10 +61,9 @@ where
     K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
     V: ZeroMapKV<'a> + ?Sized,
 {
-    /// Given a `key` return the probable index of the key or [`None`] if the key is guaranteed to be absent.
-    /// Another check to determine if the key matches the one at the probable index is required.
+    /// Given a `key` return the index for the key or [`None`] if the key is absent.
     #[inline]
-    pub fn index<A>(&self, key: &A) -> Option<usize>
+    fn index<A>(&self, key: &A) -> Option<usize>
     where
         A: Borrow<K> + ?Sized,
     {
@@ -73,11 +72,19 @@ where
 
         #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();
-        compute_index((f0, f1), (d0, d1), self.displacements.len() as u32)
+        let index = compute_index((f0, f1), (d0, d1), self.displacements.len() as u32)?;
+
+        #[allow(clippy::unwrap_used)] // index is in 0..self.keys.len()
+        let found = self.keys.zvl_get(index).unwrap();
+        if K::Container::zvl_get_as_t(found, |found| found == key.borrow()) {
+            Some(index)
+        } else {
+            None
+        }
     }
 
     /// Get the value corresponding to `key`.
-    /// If absent `None` is returned.
+    /// If absent [`None`] is returned.
     ///
     /// # Example
     /// ```
@@ -95,14 +102,65 @@ where
     where
         A: Borrow<K> + ?Sized + 'b,
     {
-        let i = self.index(key)?;
-        #[allow(clippy::unwrap_used)] // i is in 0..self.keys.len()
-        let found = self.keys.zvl_get(i).unwrap();
-        if K::Container::zvl_get_as_t(found, |found| found == key.borrow()) {
-            self.values.zvl_get(i)
-        } else {
-            None
-        }
+        self.index(key).and_then(|i| self.values.zvl_get(i))
+    }
+
+    /// Returns whether `key` is contained in this hashmap
+    ///
+    /// # Example
+    /// ```rust
+    /// use zerovec::ZeroHashMap;
+    ///
+    /// let hashmap: ZeroHashMap<str, str> =
+    ///     ZeroHashMap::from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
+    ///
+    /// assert!(hashmap.contains_key("a"));
+    /// assert!(!hashmap.contains_key("p"));
+    /// ```
+    #[inline]
+    pub fn contains_key(&self, key: &K) -> bool {
+        self.index(key).is_some()
+    }
+}
+
+impl<'a, K, V> ZeroHashMap<'a, K, V>
+where
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
+{
+    // Produce an iterator over (key, value) pairs.
+    pub fn iter<'b>(
+        &'b self,
+    ) -> impl ExactSizeIterator<
+        Item = (
+            &'b <K as ZeroMapKV<'a>>::GetType,
+            &'b <V as ZeroMapKV<'a>>::GetType,
+        ),
+    > {
+        (0..self.len()).map(|index| {
+            (
+                #[allow(clippy::unwrap_used)] // index is in range
+                self.keys.zvl_get(index).unwrap(),
+                #[allow(clippy::unwrap_used)] // index is in range
+                self.values.zvl_get(index).unwrap(),
+            )
+        })
+    }
+
+    // Produce an iterator over keys.
+    pub fn iter_keys<'b>(
+        &'b self,
+    ) -> impl ExactSizeIterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // index is in range
+        (0..self.len()).map(|index| self.keys.zvl_get(index).unwrap())
+    }
+
+    // Produce an iterator over values.
+    pub fn iter_values<'b>(
+        &'b self,
+    ) -> impl ExactSizeIterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+        #[allow(clippy::unwrap_used)] // index is in range
+        (0..self.len()).map(|index| self.values.zvl_get(index).unwrap())
     }
 }
 
