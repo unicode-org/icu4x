@@ -1798,7 +1798,9 @@ impl TryFrom<&[u8]> for FixedDecimal {
                 }
                 dot_index = i;
                 has_dot = true;
-                if i == 0 || i == no_sign_str.len() - 1 {
+                // We do support omitting the leading zero,
+                // but not trailing decimal points
+                if i == no_sign_str.len() - 1 {
                     return Err(Error::Syntax);
                 }
             } else if *c == b'e' || *c == b'E' {
@@ -1847,7 +1849,11 @@ impl TryFrom<&[u8]> for FixedDecimal {
         }
 
         // Computing DecimalFixed.upper_magnitude
-        let temp_upper_magnitude = dot_index - 1;
+        // We support strings like `0.x` and `.x`. The upper magnitude
+        // is always one less than the position of the dot, except in the case where
+        // the 0 is omitted; when dot_index = 0. We use saturating_sub to set
+        // magnitude to 0 in that case.
+        let temp_upper_magnitude = dot_index.saturating_sub(1);
         if temp_upper_magnitude > i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -1991,7 +1997,7 @@ impl FixedDecimal {
     /// implementations may yield higher performance; for more details, see
     /// [icu4x#166](https://github.com/unicode-org/icu4x/issues/166).
     ///
-    /// This function can be made available with the `"ryu"` feature.
+    /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
@@ -2370,89 +2376,127 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
+        /// The output str, None for roundtrip
+        pub output_str: Option<&'static str>,
         /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
         pub magnitudes: [i16; 4],
     }
     let cases = [
         TestCase {
             input_str: "-00123400",
+            output_str: None,
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
             input_str: "+00123400",
+            output_str: None,
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
             input_str: "0.0123400",
+            output_str: None,
             magnitudes: [0, -2, -5, -7],
         },
         TestCase {
             input_str: "-00.123400",
+            output_str: None,
             magnitudes: [1, -1, -4, -6],
         },
         TestCase {
             input_str: "0012.3400",
+            output_str: None,
             magnitudes: [3, 1, -2, -4],
         },
         TestCase {
             input_str: "-0012340.0",
+            output_str: None,
             magnitudes: [6, 4, 1, -1],
         },
         TestCase {
             input_str: "1234",
+            output_str: None,
             magnitudes: [3, 3, 0, 0],
         },
         TestCase {
             input_str: "0.000000001",
+            output_str: None,
             magnitudes: [0, -9, -9, -9],
         },
         TestCase {
             input_str: "0.0000000010",
+            output_str: None,
             magnitudes: [0, -9, -9, -10],
         },
         TestCase {
             input_str: "1000000",
+            output_str: None,
             magnitudes: [6, 6, 6, 0],
         },
         TestCase {
             input_str: "10000001",
+            output_str: None,
             magnitudes: [7, 7, 0, 0],
         },
         TestCase {
             input_str: "123",
+            output_str: None,
             magnitudes: [2, 2, 0, 0],
         },
         TestCase {
             input_str: "922337203685477580898230948203840239384.9823094820384023938423424",
+            output_str: None,
             magnitudes: [38, 38, -25, -25],
         },
         TestCase {
             input_str: "009223372000.003685477580898230948203840239384000",
+            output_str: None,
             magnitudes: [11, 9, -33, -36],
         },
         TestCase {
             input_str: "-009223372000.003685477580898230948203840239384000",
+            output_str: None,
             magnitudes: [11, 9, -33, -36],
         },
         TestCase {
             input_str: "0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "-0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "+0",
+            output_str: None,
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
             input_str: "000",
+            output_str: None,
             magnitudes: [2, 0, 0, 0],
         },
         TestCase {
             input_str: "-00.0",
+            output_str: None,
             magnitudes: [1, 0, 0, -1],
+        },
+        // no leading 0 parsing
+        TestCase {
+            input_str: ".0123400",
+            output_str: Some("0.0123400"),
+            magnitudes: [0, -2, -5, -7],
+        },
+        TestCase {
+            input_str: ".000000001",
+            output_str: Some("0.000000001"),
+            magnitudes: [0, -9, -9, -9],
+        },
+        TestCase {
+            input_str: "-.123400",
+            output_str: Some("-0.123400"),
+            magnitudes: [0, -1, -4, -6],
         },
     ];
     for cas in &cases {
@@ -2466,7 +2510,8 @@ fn test_from_str() {
         assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{:?}", cas);
         assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{:?}", cas);
         let input_str_roundtrip = fd.to_string();
-        assert_eq!(cas.input_str, input_str_roundtrip, "{:?}", cas);
+        let output_str = cas.output_str.unwrap_or(cas.input_str);
+        assert_eq!(output_str, input_str_roundtrip, "{:?}", cas);
     }
 }
 
@@ -2680,16 +2725,8 @@ fn test_syntax_error() {
             expected_err: Some(Error::Syntax),
         },
         TestCase {
-            input_str: "-.00123400",
-            expected_err: Some(Error::Syntax),
-        },
-        TestCase {
             input_str: "-0.00123400",
             expected_err: None,
-        },
-        TestCase {
-            input_str: ".00123400",
-            expected_err: Some(Error::Syntax),
         },
         TestCase {
             input_str: "00123400.",

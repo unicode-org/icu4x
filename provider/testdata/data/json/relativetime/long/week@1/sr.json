@@ -23,10 +23,19 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "за  недељу",
+      "index": 5
+    },
     "two": null,
-    "few": null,
+    "few": {
+      "pattern": "за  недеље",
+      "index": 5
+    },
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "за  недеља",
+      "index": 5
+    }
   }
 }

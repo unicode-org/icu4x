@@ -133,7 +133,7 @@ their type.
 | datetime | `icu_datetime` | `use icu_datetime::DateTimeFormat` | `use icu::DateTimeFormat` |
 | datetime | `icu_datetime` | `use icu_datetime::skeleton::SkeletonField` | `use icu::datetime::skeleton::SkeletonField` |
 
-While the scheme may feel repetitive when looking at the import lines, it pays off in being unambigous without aliasing when multiple structs from different components get used together:
+While the scheme may feel repetitive when looking at the import lines, it pays off in being unambiguous without aliasing when multiple structs from different components get used together:
 
 ```rust
 use icu_locid::Locale;
@@ -541,7 +541,7 @@ Obviously where an if-statement is simply there to do optional work, and not cov
 
 ### Constructor conventions :: suggested
 
-If the struct doesn't require any arguments to be initialied, it should implement or derive the `Default` trait.
+If the struct doesn't require any arguments to be initialized, it should implement or derive the `Default` trait.
 For structs with argumented constructors, `new` or `try_new` methods should be used for canonical construction, `From` and `TryFrom` traits should be implemented for generic conversions and `from_*` and `try_from_*` for non-trait based specific conversions.
 
 | Type | Fallible | Trait | Use |
@@ -717,7 +717,7 @@ Note that in cases where the Rust compiler can statically determine that a check
 
 ### Where Result is needed, use IcuResult<T> :: required
 
-While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X concensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
+While it's still an open question in the Rust community as to what the best way to handle error is, the current ICU4X consensus is that we should start simple and expect to revisit this topic again at some point. The simplest reasonable starting point would be to have a `IcuResult<T>`, which is type as `Result<T, IcuError>`, where:
 
 ```rust
 // Nesting semantically interesting error information inside the generic error type.
@@ -772,6 +772,27 @@ Call non-panicking data access APIs whenever data is not guaranteed to be safe.
 This should not include the contract of code in a different Crate. I.e. if a function in a different Crate promises to return a valid map key, but it's not a compile time checked type (like an enum), then the calling code must allow for it to fail.
 
 See also: the [Panics](#Panics--required) section of this document.
+
+#### Special Case: `split_at`
+
+The standard library functions such as `slice::split_at` are panicky, but they are not covered by our Clippy lints.
+
+Instead of using `slice::split_at` directly, it is recommended to use a helper function, which can be saved in the file in which it is being used. Example:
+
+```rust
+/// Like slice::split_at but returns an Option instead of panicking
+#[inline]
+fn debug_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
+    if mid > slice.len() {
+        debug_assert!(false, "debug_split_at: index expected to be in range");
+        None
+    } else {
+        // Note: We're trusting the compiler to inline this and remove the assertion
+        // hiding on the top of slice::split_at: `assert(mid <= self.len())`
+        Some(slice.split_at(mid))
+    }
+}
+```
 
 #### Exception: Poison
 
@@ -1033,9 +1054,9 @@ Thus we could provide one or more ICU4X traits bound to things like `str` to pro
 * [Introduction - Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/)
   * This is brilliantly written and very educational about how you get into a Rust mindset.
 * [Elegant Library APIs in Rust](https://deterministic.space/elegant-apis-in-rust.html)
-  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somehwat out of date (2017). It has a video too.
+  * This has a lot of good points and is well worth a read, but be warned that some of the details about implementation are somewhat out of date (2017). It has a video too.
 * [Good Practices for Writing Rust Libraries](https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/)
-  * Shorter and more focussed on the act of coding the libraries, and less about API design. Also potentially out of date in places.
+  * Shorter and more focused on the act of coding the libraries, and less about API design. Also potentially out of date in places.
 * [Strategies for Returning References in Rust](http://bryce.fisher-fleig.org/blog/strategies-for-returning-references-in-rust/index.html)
   * Though I don't believe we should be doing this, it's still an interesting read.
 

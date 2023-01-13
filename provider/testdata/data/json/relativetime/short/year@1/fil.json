@@ -14,16 +14,22 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) taon ang nakalipas",
+      "pattern": " taon ang nakalipas",
       "index": 0
     }
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "sa  taon",
+      "index": 3
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "sa  taon",
+      "index": 3
+    }
   }
 }

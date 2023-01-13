@@ -16,16 +16,22 @@
     "few": null,
     "many": null,
     "other": {
-      "pattern": " (na) araw ang nakalipas",
+      "pattern": " araw ang nakalipas",
       "index": 0
     }
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "sa  araw",
+      "index": 3
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "sa  araw",
+      "index": 3
+    }
   }
 }

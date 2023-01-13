@@ -1,0 +1,201 @@
+::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}"),
+                alloc::borrow::Cow::Borrowed("ফেব"),
+                alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
+                alloc::borrow::Cow::Borrowed("এপ\u{9cd}রি"),
+                alloc::borrow::Cow::Borrowed("মে"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ন"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ল"),
+                alloc::borrow::Cow::Borrowed("আগ"),
+                alloc::borrow::Cow::Borrowed("সেপ"),
+                alloc::borrow::Cow::Borrowed("অক\u{9cd}টো"),
+                alloc::borrow::Cow::Borrowed("নভে"),
+                alloc::borrow::Cow::Borrowed("ডিসে"),
+            ]),
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("জ\u{9be}"),
+                alloc::borrow::Cow::Borrowed("ফে"),
+                alloc::borrow::Cow::Borrowed("ম\u{9be}"),
+                alloc::borrow::Cow::Borrowed("এ"),
+                alloc::borrow::Cow::Borrowed("মে"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ন"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}"),
+                alloc::borrow::Cow::Borrowed("আ"),
+                alloc::borrow::Cow::Borrowed("সে"),
+                alloc::borrow::Cow::Borrowed("অ"),
+                alloc::borrow::Cow::Borrowed("ন"),
+                alloc::borrow::Cow::Borrowed("ডি"),
+            ]),
+            short: None,
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}য\u{9bc}\u{9be}রী"),
+                alloc::borrow::Cow::Borrowed("ফেব\u{9cd}র\u{9c1}য\u{9bc}\u{9be}রী"),
+                alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
+                alloc::borrow::Cow::Borrowed("এপ\u{9cd}রিল"),
+                alloc::borrow::Cow::Borrowed("মে"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ন"),
+                alloc::borrow::Cow::Borrowed("জ\u{9c1}ল\u{9be}ই"),
+                alloc::borrow::Cow::Borrowed("আগস\u{9cd}ট"),
+                alloc::borrow::Cow::Borrowed("সেপ\u{9cd}টেম\u{9cd}বর"),
+                alloc::borrow::Cow::Borrowed("অক\u{9cd}টোবর"),
+                alloc::borrow::Cow::Borrowed("নভেম\u{9cd}বর"),
+                alloc::borrow::Cow::Borrowed("ডিসেম\u{9cd}বর"),
+            ]),
+        },
+        stand_alone: Some(
+            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
+                abbreviated: Some(
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                        alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}"),
+                        alloc::borrow::Cow::Borrowed("ফেব"),
+                        alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
+                        alloc::borrow::Cow::Borrowed("এপ\u{9cd}রিল"),
+                        alloc::borrow::Cow::Borrowed("মে"),
+                        alloc::borrow::Cow::Borrowed("জ\u{9c1}ন"),
+                        alloc::borrow::Cow::Borrowed("জ\u{9c1}ল\u{9be}ই"),
+                        alloc::borrow::Cow::Borrowed("আগস\u{9cd}ট"),
+                        alloc::borrow::Cow::Borrowed("সেপ\u{9cd}টেম\u{9cd}বর"),
+                        alloc::borrow::Cow::Borrowed("অক\u{9cd}টোবর"),
+                        alloc::borrow::Cow::Borrowed("নভেম\u{9cd}বর"),
+                        alloc::borrow::Cow::Borrowed("ডিসেম\u{9cd}বর"),
+                    ]),
+                ),
+                narrow: None,
+                short: None,
+                wide: None,
+            },
+        ),
+    },
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("রবি"),
+                alloc::borrow::Cow::Borrowed("সোম"),
+                alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c1}ধ"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতি"),
+                alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}র"),
+                alloc::borrow::Cow::Borrowed("শনি"),
+            ]),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("র"),
+                alloc::borrow::Cow::Borrowed("সো"),
+                alloc::borrow::Cow::Borrowed("ম"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c1}"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c3}"),
+                alloc::borrow::Cow::Borrowed("শ\u{9c1}"),
+                alloc::borrow::Cow::Borrowed("শ"),
+            ]),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("রঃ"),
+                alloc::borrow::Cow::Borrowed("সোঃ"),
+                alloc::borrow::Cow::Borrowed("মঃ"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"),
+                alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"),
+                alloc::borrow::Cow::Borrowed("শনি"),
+            ])),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                alloc::borrow::Cow::Borrowed("রবিব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("সোমব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c1}ধব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতিব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}রব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed("শনিব\u{9be}র"),
+            ]),
+        },
+        stand_alone: None,
+    },
+    eras: ::icu_datetime::provider::calendar::Eras {
+        names: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
+                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
+                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
+                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
+                        97u8, 105u8, 115u8, 104u8, 111u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 69u8, 0u8, 75u8, 0u8, 80u8,
+                        0u8, 85u8, 0u8, 91u8, 0u8, 224u8, 166u8, 150u8, 224u8, 167u8, 141u8,
+                        224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8, 184u8, 224u8,
+                        167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8, 224u8, 167u8,
+                        130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8, 166u8, 172u8,
+                        224u8, 166u8, 150u8, 224u8, 167u8, 141u8, 224u8, 166u8, 176u8, 224u8,
+                        167u8, 128u8, 224u8, 166u8, 183u8, 224u8, 167u8, 141u8, 224u8, 166u8,
+                        159u8, 224u8, 166u8, 190u8, 224u8, 166u8, 172u8, 224u8, 167u8, 141u8,
+                        224u8, 166u8, 166u8, 72u8, 101u8, 105u8, 115u8, 101u8, 105u8, 77u8,
+                        101u8, 105u8, 106u8, 105u8, 82u8, 101u8, 105u8, 119u8, 97u8, 83u8,
+                        104u8, 197u8, 141u8, 119u8, 97u8, 84u8, 97u8, 105u8, 115u8, 104u8,
+                        197u8, 141u8,
+                    ])
+                },
+            )
+        },
+        abbr: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
+                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
+                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
+                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
+                        97u8, 105u8, 115u8, 104u8, 111u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 63u8, 0u8, 69u8, 0u8, 74u8,
+                        0u8, 79u8, 0u8, 85u8, 0u8, 224u8, 166u8, 150u8, 224u8, 167u8, 141u8,
+                        224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8, 184u8, 224u8,
+                        167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8, 224u8, 167u8,
+                        130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8, 166u8, 172u8,
+                        224u8, 166u8, 150u8, 224u8, 167u8, 131u8, 224u8, 166u8, 183u8, 224u8,
+                        167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 190u8, 224u8, 166u8,
+                        172u8, 224u8, 167u8, 141u8, 224u8, 166u8, 166u8, 72u8, 101u8, 105u8,
+                        115u8, 101u8, 105u8, 77u8, 101u8, 105u8, 106u8, 105u8, 82u8, 101u8,
+                        105u8, 119u8, 97u8, 83u8, 104u8, 197u8, 141u8, 119u8, 97u8, 84u8, 97u8,
+                        105u8, 115u8, 104u8, 197u8, 141u8,
+                    ])
+                },
+            )
+        },
+        narrow: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
+                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
+                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
+                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
+                        97u8, 105u8, 115u8, 104u8, 111u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 63u8, 0u8, 64u8, 0u8, 65u8,
+                        0u8, 66u8, 0u8, 67u8, 0u8, 224u8, 166u8, 150u8, 224u8, 167u8, 141u8,
+                        224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8, 184u8, 224u8,
+                        167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8, 224u8, 167u8,
+                        130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8, 166u8, 172u8,
+                        224u8, 166u8, 150u8, 224u8, 167u8, 131u8, 224u8, 166u8, 183u8, 224u8,
+                        167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 190u8, 224u8, 166u8,
+                        172u8, 224u8, 167u8, 141u8, 224u8, 166u8, 166u8, 72u8, 77u8, 82u8,
+                        83u8, 84u8,
+                    ])
+                },
+            )
+        },
+    },
+}

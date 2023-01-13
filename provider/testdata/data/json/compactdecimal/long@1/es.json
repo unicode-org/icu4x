@@ -1,0 +1,56 @@
+{
+  "patterns": {
+    "3": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " mil"
+      }
+    },
+    "6": {
+      "One": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " millón"
+      },
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " millones"
+      }
+    },
+    "7": {
+      "Other": {
+        "exponent": 6,
+        "index": 0,
+        "literal_text": " millones"
+      }
+    },
+    "9": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " mil millones"
+      }
+    },
+    "12": {
+      "One": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " billón"
+      },
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " billones"
+      }
+    },
+    "13": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " billones"
+      }
+    }
+  }
+}

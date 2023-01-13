@@ -1279,7 +1279,7 @@ impl FormatTimeZone for ExemplarCityFormat {
                 // Writes the unknown city "Etc/Unknown" for the current locale.
                 //
                 // If there is no localized form of "Etc/Unknown" for the current locale,
-                // returns the "Etc/Uknown" value of the `und` locale as a hard-coded string.
+                // returns the "Etc/Unknown" value of the `und` locale as a hard-coded string.
                 //
                 // This can be used as a fallback if [`exemplar_city()`](TimeZoneFormatter::exemplar_city())
                 // is unable to produce a localized form of the time zone's exemplar city in the current locale.

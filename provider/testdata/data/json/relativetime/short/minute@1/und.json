@@ -19,6 +19,9 @@
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "+ min",
+      "index": 1
+    }
   }
 }

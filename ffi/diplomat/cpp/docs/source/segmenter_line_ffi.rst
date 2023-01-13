@@ -76,7 +76,7 @@
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
 
 
-    .. cpp:function:: ICU4XLineBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const
+    .. cpp:function:: ICU4XLineBreakIteratorUtf16 segment_utf16(const diplomat::span<const uint16_t> input) const
 
         Segments a UTF-16 string.
 
@@ -85,7 +85,7 @@
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
 
 
-    .. cpp:function:: ICU4XLineBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const
+    .. cpp:function:: ICU4XLineBreakIteratorLatin1 segment_latin1(const diplomat::span<const uint8_t> input) const
 
         Segments a Latin-1 string.
 

@@ -11,8 +11,10 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locid::Locale;
-use icu_provider::AsDeserializingBufferProvider;
 use icu_timezone::CustomTimeZone;
+
+#[cfg(feature = "experimental")]
+use icu_provider::AsDeserializingBufferProvider;
 
 #[path = "../tests/mock.rs"]
 mod mock;

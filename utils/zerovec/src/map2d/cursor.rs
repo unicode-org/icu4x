@@ -92,7 +92,9 @@ where
         self.keys0.zvl_get(self.key0_index).unwrap()
     }
 
-    /// Borrow an ordered iterator over keys1 for a particular key0.
+    /// Borrow an ordered iterator over keys1 and values for a particular key0.
+    ///
+    /// To get the values as copy types, see [`Self::iter1_copied`].
     ///
     /// For an example, see [`ZeroMap2d::iter0()`].
     pub fn iter1(
@@ -147,6 +149,64 @@ where
         debug_assert!(start < limit);
         debug_assert!((limit as usize) <= self.values.zvl_len());
         (start as usize)..(limit as usize)
+    }
+}
+
+impl<'l, 'a, K0, K1, V> ZeroMap2dCursor<'l, 'a, K0, K1, V>
+where
+    K0: ZeroMapKV<'a>,
+    K1: ZeroMapKV<'a>,
+    V: ZeroMapKV<'a>,
+    K0: ?Sized,
+    K1: ?Sized,
+    V: Copy,
+{
+    /// Borrow an ordered iterator over keys1 and values for a particular key0.
+    ///
+    /// The values are returned as copy types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let zm2d: ZeroMap2d<str, u8, usize> = [
+    ///     ("a", 0u8, 1usize),
+    ///     ("b", 1u8, 1000usize),
+    ///     ("b", 2u8, 2000usize),
+    /// ]
+    /// .into_iter()
+    /// .collect();
+    ///
+    /// let mut total_value = 0;
+    ///
+    /// for cursor in zm2d.iter0() {
+    ///     for (_, value) in cursor.iter1_copied() {
+    ///         total_value += value;
+    ///     }
+    /// }
+    ///
+    /// assert_eq!(total_value, 3001);
+    /// ```
+    pub fn iter1_copied(
+        &self,
+    ) -> impl Iterator<Item = (&'l <K1 as ZeroMapKV<'a>>::GetType, V)> + '_ {
+        let range = self.get_range();
+        #[allow(clippy::unwrap_used)] // `self.get_range()` returns a valid range
+        range.map(move |idx| {
+            (
+                self.keys1.zvl_get(idx).unwrap(),
+                self.get1_copied_at(idx).unwrap(),
+            )
+        })
+    }
+
+    fn get1_copied_at(&self, index: usize) -> Option<V> {
+        let ule = self.values.zvl_get(index)?;
+        let mut result = Option::<V>::None;
+        V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
+        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
+        Some(result.unwrap())
     }
 }
 
@@ -252,14 +312,6 @@ where
     pub fn get1_copied_by(&self, predicate: impl FnMut(&K1) -> Ordering) -> Option<V> {
         let key1_index = self.get_key1_index_by(predicate)?;
         self.get1_copied_at(key1_index)
-    }
-
-    fn get1_copied_at(&self, index: usize) -> Option<V> {
-        let ule = self.values.zvl_get(index)?;
-        let mut result = Option::<V>::None;
-        V::Container::zvl_get_as_t(ule, |v| result.replace(*v));
-        #[allow(clippy::unwrap_used)] // `zvl_get_as_t` guarantees that the callback is invoked
-        Some(result.unwrap())
     }
 }
 

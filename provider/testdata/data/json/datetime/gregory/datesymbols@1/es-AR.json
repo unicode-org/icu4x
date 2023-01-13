@@ -100,12 +100,12 @@
       "ce": "después de Cristo"
     },
     "abbr": {
-      "bce": "a. C.",
-      "ce": "d. C."
+      "bce": "a.C.",
+      "ce": "d.C."
     },
     "narrow": {
-      "bce": "a. C.",
-      "ce": "d. C."
+      "bce": "a.C.",
+      "ce": "d.C."
     }
   }
 }

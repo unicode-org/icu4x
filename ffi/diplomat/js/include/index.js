@@ -21,7 +21,6 @@ export { ICU4XCollatorNumeric } from './ICU4XCollatorNumeric.js';
 export { ICU4XCollatorOptionsV1 } from './ICU4XCollatorOptionsV1.js';
 export { ICU4XCollatorStrength } from './ICU4XCollatorStrength.js';
 export { ICU4XComposingNormalizer } from './ICU4XComposingNormalizer.js';
-export { ICU4XCreateDataProviderResult } from './ICU4XCreateDataProviderResult.js';
 export { ICU4XCustomTimeZone } from './ICU4XCustomTimeZone.js';
 export { ICU4XDataProvider } from './ICU4XDataProvider.js';
 export { ICU4XDataStruct } from './ICU4XDataStruct.js';

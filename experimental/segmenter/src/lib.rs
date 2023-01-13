@@ -15,7 +15,7 @@
 //!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 //! </div>
@@ -32,9 +32,8 @@
 //!```rust
 //! use icu::segmenter::LineSegmenter;
 //!
-//! let segmenter =
-//!     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//! let segmenter = LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+//!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
@@ -54,9 +53,8 @@
 //!```rust
 //! use icu::segmenter::WordSegmenter;
 //!
-//! let segmenter =
-//!     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//! let segmenter = WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+//!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();

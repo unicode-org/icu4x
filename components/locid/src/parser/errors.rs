@@ -48,6 +48,22 @@ pub enum ParserError {
     /// ```
     #[displaydoc("Invalid extension")]
     InvalidExtension,
+
+    /// Duplicated extension.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::Locale;
+    /// use icu::locid::ParserError;
+    ///
+    /// assert_eq!(
+    ///     "und-u-hc-h12-u-ca-calendar".parse::<Locale>(),
+    ///     Err(ParserError::DuplicatedExtension)
+    /// );
+    /// ```
+    #[displaydoc("Duplicated extension")]
+    DuplicatedExtension,
 }
 
 #[cfg(feature = "std")]

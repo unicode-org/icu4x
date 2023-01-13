@@ -42,6 +42,12 @@ The first step to introduce data into the ICU4X pipeline is to download it from 
 
 When clients use ICU4X, this is generally a manual step, although we may provide tooling to assist with it. For the purpose of ICU4X test data, the tool [`icu4x-testdata-download-source`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/index.html) should automatically download data from the external source and save it in the ICU4X tree. `icu4x-testdata-download-source` should not do anything other than downloading the raw source data.
 
+To download test data into the ICU4X source tree, run: 
+
+```console
+$ cargo make testdata-download-sources
+```
+
 ### Source Data Providers
 
 "Source data providers" read from a source data file, deserialize it, and transform it to an ICU4X data struct. This corresponds to steps 2 and 3 above.
@@ -137,9 +143,9 @@ use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 #[icu_provider::data_struct(marker(DecimalSymbolsV1Marker, "decimal/symbols@1", extension_key = "nu" ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
-feature = "datagen",
-derive(serde::Serialize, databake::Bake),
-databake(path = icu_decimal::provider),
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_decimal::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DecimalSymbolsV1<'data> {

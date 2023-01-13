@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::{Dictionary, LstmPayloads};
-use crate::grapheme::GraphemeClusterSegmenter;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
@@ -36,7 +35,7 @@ pub trait RuleBreakType<'l, 's> {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -46,9 +45,9 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakDataV1<'l>,
-    pub(crate) dictionary: &'l Dictionary,
-    pub(crate) lstm: &'l LstmPayloads,
-    pub(crate) grapheme: Option<&'l GraphemeClusterSegmenter>,
+    pub(crate) dictionary: Option<&'l Dictionary>,
+    pub(crate) lstm: Option<&'l LstmPayloads>,
+    pub(crate) grapheme: Option<&'l RuleBreakDataV1<'l>>,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {

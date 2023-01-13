@@ -7,23 +7,29 @@
   "past": {
     "zero": null,
     "one": {
-      "pattern": " mo. ago",
+      "pattern": "mo ago",
       "index": 0
     },
     "two": null,
     "few": null,
     "many": null,
     "other": {
-      "pattern": " mo. ago",
+      "pattern": "mo ago",
       "index": 0
     }
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": "in mo",
+      "index": 3
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": "in mo",
+      "index": 3
+    }
   }
 }

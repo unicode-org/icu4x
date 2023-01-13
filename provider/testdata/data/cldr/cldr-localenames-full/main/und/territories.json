@@ -3,7 +3,7 @@
     "und": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "root"
       },
@@ -226,6 +226,7 @@
           "NR": "NR",
           "NU": "NU",
           "NZ": "NZ",
+          "NZ-alt-variant": "NZ",
           "OM": "OM",
           "PA": "PA",
           "PE": "PE",
@@ -285,6 +286,7 @@
           "TN": "TN",
           "TO": "TO",
           "TR": "TR",
+          "TR-alt-variant": "TR",
           "TT": "TT",
           "TV": "TV",
           "TW": "TW",

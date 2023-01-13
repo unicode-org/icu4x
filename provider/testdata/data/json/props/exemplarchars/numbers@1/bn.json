@@ -1,0 +1,13 @@
+{
+  "CPInversionListStrList": {
+    "cp_inv_list": [
+      "%",
+      "+-.",
+      "0-9",
+      "০-৯",
+      "‑",
+      "‰"
+    ],
+    "str_list": []
+  }
+}

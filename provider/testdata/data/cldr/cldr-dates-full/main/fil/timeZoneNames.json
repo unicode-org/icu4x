@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "41"
+          "_cldrVersion": "42"
         },
         "language": "fil"
       },
@@ -1393,30 +1393,30 @@
             },
             "America_Central": {
               "long": {
-                "generic": "Sentral na Oras",
-                "standard": "Sentral na Standard na Oras",
-                "daylight": "Sentral na Daylight Time"
+                "generic": "Sentral na Oras sa North America",
+                "standard": "Sentral na Standard na Oras sa North America",
+                "daylight": "Sentral na Daylight na Oras sa North America"
               }
             },
             "America_Eastern": {
               "long": {
-                "generic": "Eastern Time",
-                "standard": "Eastern na Standard na Oras",
-                "daylight": "Eastern Daylight Time"
+                "generic": "Oras sa Silangan ng Hilagang Amerika",
+                "standard": "Standard na Oras sa Silangan ng Hilangang Amerika",
+                "daylight": "Daylight na Oras sa Silangan ng Hilagang Amerika"
               }
             },
             "America_Mountain": {
               "long": {
-                "generic": "Oras sa Bundok",
-                "standard": "Standard na Oras sa Bundok",
-                "daylight": "Daylight Time sa Bundok"
+                "generic": "Oras sa Bundok sa Hilagang Amerika",
+                "standard": "Standard na Oras sa Bundok sa Hilagang Amerika",
+                "daylight": "Daylight na Oras sa Bundok sa Hilagang Amerika"
               }
             },
             "America_Pacific": {
               "long": {
-                "generic": "Oras sa Pasipiko",
-                "standard": "Standard na Oras sa Pasipiko",
-                "daylight": "Daylight Time sa Pasipiko"
+                "generic": "Oras sa Pasipiko sa HIlagang Amerika",
+                "standard": "Standard na Oras sa Pasipiko sa Hilagang Amerika",
+                "daylight": "Daylight na Oras sa Pasipiko sa Hilagang Amerika"
               }
             },
             "Anadyr": {
@@ -1465,7 +1465,7 @@
               "long": {
                 "generic": "Oras sa Atlantiko",
                 "standard": "Standard na Oras sa Atlantiko",
-                "daylight": "Daylight Time sa Atlantiko"
+                "daylight": "Daylight na Oras sa Atlantiko"
               }
             },
             "Australia_Central": {
@@ -1607,7 +1607,7 @@
               "long": {
                 "generic": "Oras sa Cuba",
                 "standard": "Standard na Oras sa Cuba",
-                "daylight": "Daylight Time sa Cuba"
+                "daylight": "Daylight na Oras sa Cuba"
               }
             },
             "Davis": {
@@ -1918,14 +1918,14 @@
               "long": {
                 "generic": "Oras sa Hilagang-kanlurang Mexico",
                 "standard": "Standard na Oras sa Hilagang-kanlurang Mexico",
-                "daylight": "Daylight Time sa Hilagang-kanlurang Mexico"
+                "daylight": "Daylight na Oras sa Hilagang-kanlurang Mexico"
               }
             },
             "Mexico_Pacific": {
               "long": {
                 "generic": "Oras sa Pasipiko ng Mexico",
                 "standard": "Standard na Oras sa Pasipiko ng Mexico",
-                "daylight": "Daylight Time sa Pasipiko ng Mexico"
+                "daylight": "Daylight na Oras sa Pasipiko ng Mexico"
               }
             },
             "Mongolia": {
@@ -1975,7 +1975,7 @@
               "long": {
                 "generic": "Oras sa Newfoundland",
                 "standard": "Standard na Oras sa Newfoundland",
-                "daylight": "Daylight Time sa Newfoundland"
+                "daylight": "Daylight na Oras sa Newfoundland"
               }
             },
             "Niue": {
@@ -2058,7 +2058,7 @@
               "long": {
                 "generic": "Oras sa Saint Pierre & Miquelon",
                 "standard": "Standard na Oras sa Saint Pierre & Miquelon",
-                "daylight": "Daylight Time sa Saint Pierre & Miquelon"
+                "daylight": "Daylight na Oras sa Saint Pierre & Miquelon"
               }
             },
             "Pitcairn": {
@@ -2254,7 +2254,7 @@
             },
             "Yukon": {
               "long": {
-                "standard": "Yukon Time"
+                "standard": "Oras sa Yukon"
               }
             }
           }

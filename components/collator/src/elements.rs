@@ -45,7 +45,7 @@ const FDFA_MARKER: u16 = 3;
 const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
 
 // Magic marker trie value for characters whose decomposition
-// starts with a non-starter. The actual decompostion is
+// starts with a non-starter. The actual decomposition is
 // hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
@@ -311,7 +311,7 @@ pub(crate) enum Tag {
 /// tertiary weight are zero.)
 ///
 /// For the special case:
-/// Bits 31..8: tag-specific; see the documention for `Tag`.
+/// Bits 31..8: tag-specific; see the documentation for `Tag`.
 /// Bits  7..6: The specialness marker; both bits set to 1
 /// Bits  5..4: Reserved. May be used in the future to indicate lccc!=0 and tccc!=0.
 /// Bits  3..0: the tag (bit-compatible with `Tag`)
@@ -789,7 +789,7 @@ where
     ///
     /// Invariant: (Checked by `debug_assert!`) At the start of `next()` call,
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
-    /// first `char` in `upcoming` must have its decompostion start with a
+    /// first `char` in `upcoming` must have its decomposition start with a
     /// starter.
     upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
     /// The root collation data.

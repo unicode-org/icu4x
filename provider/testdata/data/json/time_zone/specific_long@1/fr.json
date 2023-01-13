@@ -33,11 +33,11 @@
       "st": "heure normale de l’Amazonie"
     },
     "amce": {
-      "dt": "heure d’été du Centre",
+      "dt": "heure d’été du centre nord-américain",
       "st": "heure normale du centre nord-américain"
     },
     "amea": {
-      "dt": "heure d’été de l’Est",
+      "dt": "heure d’été de l’Est nord-américain",
       "st": "heure normale de l’Est nord-américain"
     },
     "ammo": {
@@ -45,7 +45,7 @@
       "st": "heure normale des Rocheuses"
     },
     "ampa": {
-      "dt": "heure d’été du Pacifique",
+      "dt": "heure d’été du Pacifique nord-américain",
       "st": "heure normale du Pacifique nord-américain"
     },
     "anad": {
@@ -123,7 +123,7 @@
       "st": "heure normale de Brasilia"
     },
     "brun": {
-      "st": "heure du Brunéi"
+      "st": "heure du Brunei"
     },
     "cave": {
       "dt": "heure d’été du Cap-Vert",
@@ -242,8 +242,8 @@
       "st": "heure du Guyana"
     },
     "haal": {
-      "dt": "heure d’été d’Hawaii - Aléoutiennes",
-      "st": "heure normale d’Hawaii - Aléoutiennes"
+      "dt": "heure d’été d’Hawaï - Aléoutiennes",
+      "st": "heure normale d’Hawaï - Aléoutiennes"
     },
     "hoko": {
       "dt": "heure d’été de Hong Kong",
@@ -385,7 +385,7 @@
       "st": "heure normale de la Nouvelle-Zélande"
     },
     "niue": {
-      "st": "heure de Nioué"
+      "st": "heure de Niue"
     },
     "noma": {
       "st": "heure des îles Mariannes du Nord"

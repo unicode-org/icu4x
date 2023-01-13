@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::complex::*;
-use crate::grapheme::GraphemeClusterSegmenter;
 use crate::indices::*;
 use crate::provider::*;
 use crate::symbols::*;
@@ -26,7 +25,7 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -62,7 +61,7 @@ pub enum LineBreakRule {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -86,7 +85,7 @@ pub enum WordBreakRule {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -136,7 +135,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -148,9 +147,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter =
-///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -184,9 +182,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter =
-///     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = LineSegmenter::try_new_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -197,7 +194,7 @@ pub struct LineSegmenter {
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
     lstm: LstmPayloads,
-    grapheme: Option<GraphemeClusterSegmenter>,
+    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
 
 impl LineSegmenter {
@@ -240,7 +237,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let burmese = Self::load_lstm(provider, locale!("my")).ok();
         let khmer = Self::load_lstm(provider, locale!("km")).ok();
@@ -274,7 +271,7 @@ impl LineSegmenter {
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = GraphemeClusterSegmenter::try_new_unstable(provider).ok();
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         let khmer = Self::load_dictionary(provider, locale!("km")).ok();
         let lao = Self::load_dictionary(provider, locale!("lo")).ok();
@@ -344,7 +341,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -363,7 +360,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -377,7 +374,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
 
@@ -392,7 +389,7 @@ impl LineSegmenter {
             options: &self.options,
             dictionary: &self.dictionary,
             lstm: &self.lstm,
-            grapheme: self.grapheme.as_ref(),
+            grapheme: self.grapheme.get(),
         }
     }
 }
@@ -625,7 +622,7 @@ pub trait LineBreakType<'l, 's> {
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
@@ -638,7 +635,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
     lstm: &'l LstmPayloads,
-    grapheme: Option<&'l GraphemeClusterSegmenter>,
+    grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -941,7 +938,12 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
+    let breaks = complex_language_segment_str(
+        Some(iter.dictionary),
+        Some(iter.lstm),
+        Some(iter.grapheme),
+        &s,
+    );
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
@@ -1041,9 +1043,9 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
         let breaks = complex_language_segment_utf16(
-            iterator.dictionary,
-            iterator.lstm,
-            iterator.grapheme,
+            Some(iterator.dictionary),
+            Some(iterator.lstm),
+            Some(iterator.grapheme),
             &s,
         );
         let mut i = 1;

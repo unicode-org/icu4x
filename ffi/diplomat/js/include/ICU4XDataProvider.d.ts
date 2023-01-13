@@ -12,7 +12,7 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Constructs an `FsDataProvider` and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_fs` feature. Not supported in WASM.
+   * Constructs an `FsDataProvider` and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_fs` Cargo feature. Not supported in WASM.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html Rust documentation for `FsDataProvider`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -21,7 +21,7 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Constructs a testdata provider and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_test` feature.
+   * Constructs a testdata provider and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html Rust documentation for `icu_testdata`} for more information.
    */

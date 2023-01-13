@@ -18,10 +18,16 @@
   },
   "future": {
     "zero": null,
-    "one": null,
+    "one": {
+      "pattern": " saniye sonra",
+      "index": 0
+    },
     "two": null,
     "few": null,
     "many": null,
-    "other": null
+    "other": {
+      "pattern": " saniye sonra",
+      "index": 0
+    }
   }
 }

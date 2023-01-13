@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom, DataKeyMetadata};
+use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
@@ -19,6 +19,12 @@ use litemap::LiteMap;
 //
 /// Skeleton data for dates and times, along with the corresponding plural pattern
 /// information.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -39,7 +45,7 @@ impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
     const KEY: icu_provider::DataKey = icu_provider::data_key!(
         "datetime/skeletons@1",
-        DataKeyMetadata::construct_internal(
+        icu_provider::DataKeyMetadata::construct_internal(
             icu_provider::FallbackPriority::Language,
             Some(icu_locid::extensions_unicode_key!("ca")),
             None
@@ -53,6 +59,12 @@ impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
 ///
 /// The `Skeleton` is an "exotic type" in the serialization process, and handles its own
 /// custom serialization practices.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -88,7 +100,7 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
             }
         });
         databake::quote! {
-            [#(#vals),*]
+            &[#(#vals),*]
         }
     }
 }
@@ -110,7 +122,8 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     }
 }
 
-type BakedDateSkeletonPatternsV1 = [(&'static [crate::fields::Field], PatternPlurals<'static>)];
+type BakedDateSkeletonPatternsV1 =
+    &'static [(&'static [crate::fields::Field], PatternPlurals<'static>)];
 
 impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
     fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
