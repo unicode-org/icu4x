@@ -72,10 +72,7 @@ fn process_cli_args() -> ProcessedArgs {
             })
             .collect(),
 
-        toolchain: matches
-            .value_of("TOOLCHAIN")
-            .unwrap()
-            .to_string(),
+        toolchain: matches.value_of("TOOLCHAIN").unwrap().to_string(),
     }
 }
 
