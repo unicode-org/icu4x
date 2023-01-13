@@ -878,14 +878,6 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
-    # then this line is no longer needed.
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.INSTALLED_NIGHTLY_VERSION }}
-        override: true
-
     ## Actual job
     ##
 
