@@ -62,6 +62,83 @@ impl AdditiveIdentity {
 }
 ```
 
+## Loading Additional Data at Runtime
+
+A key feature of ICU4X is the ability to download data dynamically. A key use case is to add additional locales at runtime.
+
+Dynamic data loading can currently be performed in userland. A future core library API may provide this functionality; please submit feedback in [#2985](https://github.com/unicode-org/icu4x/issues/2985).
+
+```rust
+use icu_provider_adapters::either::EitherProvider;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::fork::MultiForkByErrorProvider;
+use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
+use icu_provider_blob::BlobDataProvider;
+use icu_provider_fs::FsDataProvider;
+use icu_provider::DataLocale;
+use icu_provider::hello_world::HelloWorldFormatter;
+use icu::locid::locale;
+use icu::locid::subtags::Language;
+use std::path::PathBuf;
+use writeable::Writeable;
+
+// Our growable data provider will be a fallback-enabled ForkByKeyProvider forking between a
+// BlobDataProvider with static core data and a MultiForkByErrorProvider with runtime-loaded data.
+type GrowableDataProvider = LocaleFallbackProvider<
+    ForkByKeyProvider<
+        BlobDataProvider,
+        MultiForkByErrorProvider<FsDataProvider, MissingLocalePredicate>
+    >
+>;
+
+// Create the empty MultiForkByErrorProvider:
+let multi_lang_provider = MultiForkByErrorProvider::new_with_predicate(
+    vec![],
+    MissingLocalePredicate
+);
+
+// Put together the rest of the data pipeline:
+static CORE_DATA: &[u8] = include_bytes!("../../../provider/adapters/tests/data/fallback.postcard");
+let provider = BlobDataProvider::try_new_from_static_blob(CORE_DATA)
+    .expect("Core data should be valid");
+let provider = ForkByKeyProvider::new(provider, multi_lang_provider);
+let mut provider: GrowableDataProvider = LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+    .expect("Fallback data is in core data");
+
+// Helper function to add data into the GrowableDataProvider on demand:
+let mut get_hello_world_formatter = |loc: &DataLocale| {
+    // Try to create the formatter a first time with data that has already been loaded.
+    if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
+        return formatter;
+    }
+
+    // We failed to create the formatter. Load more data for the language.
+    let mut path_buf: PathBuf = "../../provider/adapters/tests/data/langtest".parse().unwrap();
+    path_buf.push(&*loc.language().write_to_string());
+    let lang_provider = match FsDataProvider::try_new(&path_buf) {
+        Ok(p) => p,
+        Err(e) => panic!("Language not available? {:?}", e)
+    };
+    println!("Successfully loaded: {:?}", loc);
+
+    // Add the data to the GrowableDataProvider and try creating the formatter a second time.
+    provider.inner_mut().inner_mut().1.push(lang_provider);
+    HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc)
+        .expect("Language data should now be available")
+};
+
+// Test that it works:
+assert_eq!(
+    get_hello_world_formatter(&locale!("de-CH").into()).format().write_to_string(),
+    "Hallo Welt"
+);
+assert_eq!(
+    get_hello_world_formatter(&locale!("ro-RO").into()).format().write_to_string(),
+    "Salut, lume"
+);
+```
+
 ## Caching Data Provider
 
 ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.

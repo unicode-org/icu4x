@@ -146,7 +146,7 @@ args = [
     "-v",
 ]
 
-[tasks.hello-world-lang-de]
+[tasks.provider-adapters-hello-world-lang-de]
 description = "Build Hello World data for 'de'"
 category = "ICU4X Data"
 command = "cargo"
@@ -162,7 +162,7 @@ args = [
     "--overwrite",
 ]
 
-[tasks.hello-world-lang-ro]
+[tasks.provider-adapters-hello-world-lang-ro]
 description = "Build Hello World data for 'ro'"
 category = "ICU4X Data"
 command = "cargo"
@@ -178,10 +178,28 @@ args = [
     "--overwrite",
 ]
 
-[tasks.hello-world-lang-all]
-description = "Build all Hello World languages."
+[tasks.provider-adapters-fallback]
+description = "Build postcard data for vertical fallback"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=bin",
+    "--",
+    "--keys=fallback/likelysubtags@1",
+    "--keys=fallback/parents@1",
+    "--locales=full",
+    "--format=blob",
+    "--out=provider/adapters/tests/data/fallback.postcard",
+    "--overwrite",
+]
+
+[tasks.provider-adapters-testdata]
+description = "Build all testdata for the icu_provider_adapters crate."
 category = "ICU4X Data"
 dependencies = [
-    "hello-world-lang-de",
-    "hello-world-lang-ro",
+    "provider-adapters-hello-world-lang-de",
+    "provider-adapters-hello-world-lang-ro",
+    "provider-adapters-fallback",
 ]
