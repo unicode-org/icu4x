@@ -40,7 +40,17 @@ use icu_properties::provider::GeneralCategoryV1Marker;
 use icu_properties::GeneralCategory;
 use icu_provider::prelude::*;
 
-/// HarfBuzz uses a C enum, which is wider than `u8` but only uses implied
+/// The total number of General Category values is fixed per
+/// https://www.unicode.org/policies/stability_policy.html :
+/// "The enumeration of General_Category property values is fixed. No new values will be added."
+///
+/// Despite General Category logically being a fixed enumeration, the Unicode
+/// Standard does not assign numeric identifiers to the possible General Category
+/// values. Both ICU4X and HarfBuzz do, but in different order. This table provides
+/// the permutation to go from the ICU4X number assignment in a Rust `enum` to
+/// the HarfBuzz number assignment in a C `enum`.
+///
+/// The C `enum` used by HarfBuzz is wider than `u8` but only uses implied
 /// values, so the values stay in the `u8` range. Let's use that to pack this.
 /// Note: ICU4X does not declare the enum items in their numeric order!
 static ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ: [u8; 30] = [
