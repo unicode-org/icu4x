@@ -9,12 +9,12 @@ macro_rules! impl_core_helloworld_v1 {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
                 type DataStruct =
                     <::icu_provider::hello_world::HelloWorldV1Marker as ::icu_provider::DataMarker>::Yokeable;
-                static KEYS: [&str; 4usize] = ["bn", "en", "ja", "ru"];
+                static KEYS: &[&str] = &["bn", "en", "en-US", "ja", "ru"];
                 static BN: DataStruct = data_core_helloworld_v1_bn!();
                 static EN: DataStruct = data_core_helloworld_v1_en!();
                 static JA: DataStruct = data_core_helloworld_v1_ja!();
                 static RU: DataStruct = data_core_helloworld_v1_ru!();
-                static DATA: [&DataStruct; 4usize] = [&BN, &EN, &JA, &RU];
+                static DATA: &[&DataStruct] = &[&BN, &EN, &EN, &JA, &RU];
                 KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok()
                     .map(|i| unsafe { *DATA.get_unchecked(i) })
