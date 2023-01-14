@@ -1216,6 +1216,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
 
 [[package]]
+name = "globaldata"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_provider",
+]
+
+[[package]]
 name = "h2"
 version = "0.3.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1894,6 +1902,7 @@ dependencies = [
  "dhat 0.3.2",
  "displaydoc",
  "erased-serde",
+ "globaldata",
  "icu_locid",
  "icu_provider_adapters",
  "icu_provider_macros",
@@ -2325,14 +2334,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b823e83b2affd8f40a9ee8c29dbc56404c1e34cd2710921f2801e2cf29527afa"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "macroinclude"
-version = "0.1.0"
-dependencies = [
- "icu_locid",
- "icu_provider",
 ]
 
 [[package]]

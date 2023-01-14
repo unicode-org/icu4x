@@ -66,6 +66,7 @@ stable_deref_trait = { version = "1.2.0", default-features = false }
 log = { version = "0.4", optional = true }
 icu_provider_macros = { version = "1.0.0", path = "../macros", optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+globaldata = { path = "../../experimental/globaldata", optional = true }
 
 # Serde formats
 serde_json = { version = "1.0", default-features = false, features = ["alloc"], optional = true }

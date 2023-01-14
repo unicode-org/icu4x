@@ -238,6 +238,32 @@ impl HelloWorldFormatter {
 
     crate::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
 
+    /// Creates a new [`HelloWorldFormatter`] with global data.
+    ///
+    /// Requires the "globaldata" Cargo feature.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::hello_world::HelloWorldFormatter;
+    /// use icu_locid::locale;
+    ///
+    /// let formatter = HelloWorldFormatter::try_new(&locale!("ja").into()).unwrap();
+    ///
+    /// assert_eq!(
+    ///     "こんにちは世界",
+    ///     formatter.format_to_string()
+    /// );
+    /// ```
+    #[cfg(feature = "globaldata")]
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+        struct LocalBakedProvider;
+        use globaldata::*;
+        use crate as icu_provider;
+        globaldata::impl_core_helloworld_v1!(LocalBakedProvider);
+        Self::try_new_unstable(&LocalBakedProvider, locale)
+    }
+
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
     #[allow(clippy::needless_lifetimes)] // documentary example
     pub fn format<'l>(&'l self) -> FormattedHelloWorld<'l> {
