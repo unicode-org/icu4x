@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673546649202,
+  "lastUpdate": 1673675739324,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34133,6 +34133,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/70a05235630502d8aefd48a563a8675197f69fe5"
         },
         "date": 1673546553414,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "65bd1954115544f2f49b89737238bf337ccd0284",
+          "message": "Fix error propagation in MultiForkByErrorProvider (#2986)",
+          "timestamp": "2023-01-13T21:52:43-08:00",
+          "tree_id": "7c24088ff11753e797dbab49768b10afa1f7c288",
+          "url": "https://github.com/unicode-org/icu4x/commit/65bd1954115544f2f49b89737238bf337ccd0284"
+        },
+        "date": 1673675643739,
         "tool": "ndjson",
         "benches": [
           {
