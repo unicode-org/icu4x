@@ -11,3 +11,4 @@ icu_locid = { path = "../../components/locid" }
 
 [features]
 custom_data = []
+all_features_hack = []
