@@ -2328,6 +2328,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "macroinclude"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_provider",
+]
+
+[[package]]
 name = "matrixmultiply"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

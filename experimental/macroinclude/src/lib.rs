@@ -1,22 +1,34 @@
-#[cfg(feature = "a")]
-include!("a.rs");
+#![allow(unused_imports)]
+#![allow(unused_macros)]
 
-#[cfg(not(feature = "a"))]
-include!("b.rs");
+extern crate alloc;
+
+mod baked {
+    #[cfg(feature = "custom_data")]
+    include!(env!("ICU4X_MACROINCLUDE_PATH"));
+    #[cfg(not(feature = "custom_data"))]
+    include!("data/mod.rs");
+}
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    #[cfg(feature = "a")]
-    fn test_a() {
-        let result = demo!();
-        assert_eq!(result, "A");
-    }
+    use super::*;
+    use icu_provider::prelude::*;
 
     #[test]
-    #[cfg(not(feature = "a"))]
-    fn test_a() {
-        let result = demo!();
-        assert_eq!(result, "B");
+    fn test() {
+        use baked::core_helloworld_v1::*;
+        struct BakedProvider;
+        impl_core_helloworld_v1!(BakedProvider);
+
+        assert_eq!(
+            "こんにちは世界",
+            icu_provider::hello_world::HelloWorldFormatter::try_new_unstable(
+                &BakedProvider,
+                &icu_locid::locale!("ja").into(),
+            )
+            .unwrap()
+            .format_to_string()
+        );
     }
 }
