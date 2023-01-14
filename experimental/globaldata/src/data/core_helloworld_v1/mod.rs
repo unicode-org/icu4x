@@ -11,10 +11,10 @@ macro_rules! impl_core_helloworld_v1 {
                 type DataStruct =
                     <icu_provider::hello_world::HelloWorldV1Marker as icu_provider::DataMarker>::Yokeable;
                 static KEYS: &[&str] = &["bn", "en", "en-US", "ja", "ru"];
-                static BN: DataStruct = data_core_helloworld_v1_bn!();
-                static EN: DataStruct = data_core_helloworld_v1_en!();
-                static JA: DataStruct = data_core_helloworld_v1_ja!();
-                static RU: DataStruct = data_core_helloworld_v1_ru!();
+                static BN: DataStruct = $crate::baked::core_helloworld_v1::data_core_helloworld_v1_bn!();
+                static EN: DataStruct = $crate::baked::core_helloworld_v1::data_core_helloworld_v1_en!();
+                static JA: DataStruct = $crate::baked::core_helloworld_v1::data_core_helloworld_v1_ja!();
+                static RU: DataStruct = $crate::baked::core_helloworld_v1::data_core_helloworld_v1_ru!();
                 static DATA: &[&DataStruct] = &[&BN, &EN, &EN, &JA, &RU];
                 KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok()
@@ -31,4 +31,4 @@ macro_rules! impl_core_helloworld_v1 {
     };
 }
 
-pub(crate) use impl_core_helloworld_v1;
+pub use impl_core_helloworld_v1;

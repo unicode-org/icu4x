@@ -7,4 +7,4 @@ macro_rules! data_core_helloworld_v1_en {
     }
 }
 
-pub(crate) use data_core_helloworld_v1_en;
+pub use data_core_helloworld_v1_en;

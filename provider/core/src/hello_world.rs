@@ -258,7 +258,6 @@ impl HelloWorldFormatter {
     #[cfg(feature = "globaldata")]
     pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
         struct LocalBakedProvider;
-        use globaldata::*;
         use crate as icu_provider;
         globaldata::impl_core_helloworld_v1!(LocalBakedProvider);
         Self::try_new_unstable(&LocalBakedProvider, locale)

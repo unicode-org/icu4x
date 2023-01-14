@@ -3,7 +3,8 @@
 
 extern crate alloc;
 
-mod baked {
+#[doc(hidden)]
+pub mod baked {
     #[cfg(all(feature = "custom_data", not(feature = "all_features_hack")))]
     include!(env!("ICU4X_MACROINCLUDE_PATH"));
     #[cfg(any(not(feature = "custom_data"), feature = "all_features_hack"))]
