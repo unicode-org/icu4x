@@ -23,6 +23,7 @@ members = [
     "experimental/casemapping",
     "experimental/compactdecimal",
     "experimental/displaynames",
+    "experimental/macroinclude",
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/tutorials",
@@ -77,6 +78,7 @@ lto = true
 [profile.release-opt-size]
 inherits = "release"
 opt-level = "s"
+debug = true
 
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
