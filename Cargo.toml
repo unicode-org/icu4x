@@ -23,7 +23,7 @@ members = [
     "experimental/casemapping",
     "experimental/compactdecimal",
     "experimental/displaynames",
-    "experimental/macroinclude",
+    "experimental/globaldata",
     "experimental/ixdtf",
     "experimental/relativetime",
     "experimental/tutorials",
