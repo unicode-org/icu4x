@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673675739324,
+  "lastUpdate": 1673877918593,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34163,6 +34163,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/65bd1954115544f2f49b89737238bf337ccd0284"
         },
         "date": 1673675643739,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "30522939382516dcc6a632ea277e58302954c578",
+          "message": "Add more inner_mut functions in icu_provider_adapters (#2987)",
+          "timestamp": "2023-01-16T15:02:12+01:00",
+          "tree_id": "e11cf2d529fa7a290905928f8fa06d5fdc30f866",
+          "url": "https://github.com/unicode-org/icu4x/commit/30522939382516dcc6a632ea277e58302954c578"
+        },
+        "date": 1673877822409,
         "tool": "ndjson",
         "benches": [
           {
