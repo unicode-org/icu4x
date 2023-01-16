@@ -21,8 +21,8 @@ use icu_provider::DataMarker;
 use icu_provider::{yoke, zerofrom};
 use writeable::{LengthHint, Writeable};
 
-mod string_matcher;
-pub use string_matcher::StringMatcher;
+mod serde_dfa;
+pub use serde_dfa::StringMatcher;
 
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///
