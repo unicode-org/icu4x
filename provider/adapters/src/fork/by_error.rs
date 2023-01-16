@@ -32,6 +32,11 @@ impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
         (&self.0, &self.1)
     }
 
+    /// Returns mutable references to the inner providers.
+    pub fn inner_mut(&mut self) -> (&mut P0, &mut P1) {
+        (&mut self.0, &mut self.1)
+    }
+
     /// Returns ownership of the inner providers to the caller.
     pub fn into_inner(self) -> (P0, P1) {
         (self.0, self.1)

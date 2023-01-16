@@ -162,6 +162,11 @@ impl<P> LocaleFallbackProvider<P> {
         &self.inner
     }
 
+    /// Returns a mutable reference to the inner provider.
+    pub fn inner_mut(&mut self) -> &mut P {
+        &mut self.inner
+    }
+
     /// Returns ownership of the inner provider to the caller.
     pub fn into_inner(self) -> P {
         self.inner
