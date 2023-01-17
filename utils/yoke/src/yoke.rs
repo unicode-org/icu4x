@@ -6,7 +6,6 @@ use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::trait_hack::YokeTraitHack;
-use crate::IsCovariant;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -48,8 +47,7 @@ use alloc::sync::Arc;
 /// into another `Yoke` containing a different type that may contain elements of the original yoked
 /// value. See the [`Yoke::map_project()`] docs for more details.
 ///
-/// In general, `C` is a concrete type, but it is also possible for it to be a trait object;
-/// for more information, see [`IsCovariant`].
+/// In general, `C` is a concrete type, but it is also possible for it to be a trait object.
 ///
 /// # Example
 ///
@@ -522,9 +520,6 @@ where
         }
     }
 }
-
-// This is safe because Y is 'static and C has a covariant lifetime
-unsafe impl<'b, Y: for<'a> Yokeable<'a>, C: IsCovariant<'b>> IsCovariant<'b> for Yoke<Y, C> {}
 
 #[test]
 fn test_clone() {
