@@ -40,12 +40,12 @@ impl TzifPaths {
             // keep this entry to propagate the error.
             .filter(|path| {
                 self.0
-                    .read_to_buf_exact(Self::TZIF_HEADER_LEN, &path.to_string())
+                    .read_to_buf_exact(Self::TZIF_HEADER_LEN, path)
                     .map(|buf| tzif::is_tzif(&buf))
                     .unwrap_or(true)
             })
             .map(|path| -> Result<_, DataError> {
-                let buf = self.0.read_to_buf(&path.to_string())?;
+                let buf = self.0.read_to_buf(&path)?;
                 let data = tzif::parse_tzif(&buf).map_err(|e| {
                     DataError::custom("TZif parse")
                         .with_display_context(&e)
