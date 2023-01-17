@@ -5,9 +5,10 @@
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
 use regex_automata::dfa::sparse::DFA;
-use regex_automata::dfa::Automaton;
 
-/// A precompiled regex
+/// A serde-compatible version of [regex_automata::dfa::sparse::DFA]. This does not implement
+/// [`serde::Deserialize`] directly, as binary deserialization is not supported in big-endian
+/// platforms. `Self::maybe_deserialize` can be used to deserialize to `Option<SerdeDFA>`.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -15,32 +16,42 @@ use regex_automata::dfa::Automaton;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub struct StringMatcher<'data> {
+pub struct SerdeDFA<'data> {
     // Safety: These always represent a valid DFA (DFA::from_bytes(dfa_bytes).is_ok())
     dfa_bytes: Cow<'data, [u8]>,
     pattern: Option<Cow<'data, str>>,
 }
 
-impl PartialEq for StringMatcher<'_> {
+#[cfg(feature = "datagen")]
+impl PartialEq for SerdeDFA<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.dfa_bytes == other.dfa_bytes
     }
 }
 
 #[cfg(feature = "datagen")]
-impl databake::Bake for StringMatcher<'_> {
+impl databake::Bake for SerdeDFA<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_list");
-        let bytes = (&&*self.dfa_bytes).bake(env);
-        // Safe because our own data is safe
+        let le_bytes = self.deref().to_bytes_little_endian().as_slice().bake(env);
+        let be_bytes = self.deref().to_bytes_big_endian().as_slice().bake(env);
+        // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant.
         databake::quote! {
-            unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
+            unsafe {
+                ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
+                    if cfg!(target_endian = "little") {
+                        &#le_bytes
+                    } else {
+                        &#be_bytes
+                    }
+                )
+            }
         }
     }
 }
 
 #[cfg(feature = "datagen")]
-impl serde::Serialize for StringMatcher<'_> {
+impl serde::Serialize for SerdeDFA<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::ser::Serializer,
@@ -52,42 +63,41 @@ impl serde::Serialize for StringMatcher<'_> {
                 .unwrap_or_else(|| {
                     use serde::ser::Error;
                     Err(S::Error::custom(
-                        "cannot serialize a deserialized bincode StringMatcher to JSON",
+                        "cannot serialize a deserialized bincode SerdeDFA to JSON",
                     ))
                 })
         } else {
-            self.dfa_bytes.serialize(serializer)
+            self.deref().to_bytes_little_endian().serialize(serializer)
         }
     }
 }
 
 #[cfg(feature = "serde")]
-impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<'data> SerdeDFA<'data> {
+    /// Deserializes to `Option<Self>`. Will return `None` for non-human-readable serialization
+    /// formats on big-endian systems, as `regex_automata` serialization is endian-sensitive.
+    pub fn maybe_deserialize<'de: 'data, D>(deserializer: D) -> Result<Option<Self>, D::Error>
     where
         D: serde::de::Deserializer<'de>,
     {
         use icu_provider::serde::borrow_de_utils::CowBytesWrap;
+        use serde::Deserialize;
 
         #[cfg(feature = "serde_human")]
         if deserializer.is_human_readable() {
             #[cfg(not(feature = "std"))]
             use alloc::string::ToString;
             use serde::de::Error;
-            return StringMatcher::new(Cow::<str>::deserialize(deserializer)?)
+            return SerdeDFA::new(Cow::<str>::deserialize(deserializer)?)
+                .map(Some)
                 .map_err(|e| D::Error::custom(e.to_string()));
         }
 
-        if cfg!(target_endian = "big") {
-            // TODO: Convert LE to BE. For now we just behave like the
-            // accept-nothing DFA on BE systems.
-            return Ok(StringMatcher {
-                dfa_bytes: Cow::Borrowed(&[]),
-                pattern: None,
-            });
-        }
-
         let dfa_bytes = <CowBytesWrap<'de>>::deserialize(deserializer)?.0;
+
+        if cfg!(target_endian = "big") {
+            return Ok(None);
+        }
 
         // Verify safety invariant
         DFA::from_bytes(&dfa_bytes).map_err(|e| {
@@ -95,15 +105,15 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for StringMatcher<'data> {
             D::Error::custom(alloc::format!("Invalid DFA bytes: {}", e))
         })?;
 
-        Ok(StringMatcher {
+        Ok(Some(SerdeDFA {
             dfa_bytes,
             pattern: None,
-        })
+        }))
     }
 }
 
-impl<'data> StringMatcher<'data> {
-    /// Creates a `StringMatcher` from a serialized DFA. Used internally by databake.
+impl<'data> SerdeDFA<'data> {
+    /// Creates a `SerdeDFA` from raw bytes. Used internally by databake.
     ///
     /// # Safety
     ///
@@ -115,7 +125,7 @@ impl<'data> StringMatcher<'data> {
         }
     }
 
-    /// Creates a `StringMatcher` from regex.
+    /// Creates a `SerdeDFA` from a regex.
     #[cfg(any(feature = "datagen", feature = "serde_human",))]
     pub fn new(pattern: Cow<'data, str>) -> Result<Self, icu_provider::DataError> {
         use regex_automata::{
@@ -138,20 +148,16 @@ impl<'data> StringMatcher<'data> {
             })?;
 
         Ok(Self {
-            dfa_bytes: dfa.to_bytes_little_endian().into(),
+            dfa_bytes: dfa.to_bytes_native_endian().into(),
             pattern: Some(pattern),
         })
     }
 
+    /// Returns the represented [`DFA`]
     #[allow(clippy::unwrap_used)] // by invariant
-    pub(crate) fn test(&self, string: &str) -> bool {
-        cfg!(target_endian = "little")
-            && matches!(
-                // Safe due to struct invariant.
-                unsafe { DFA::from_bytes_unchecked(&self.dfa_bytes).unwrap().0 }
-                    .find_earliest_fwd(string.as_bytes()),
-                Ok(Some(_))
-            )
+    pub fn deref(&'data self) -> DFA<&'data [u8]> {
+        // Safe due to struct invariant.
+        unsafe { DFA::from_bytes_unchecked(&self.dfa_bytes).unwrap().0 }
     }
 }
 
@@ -160,58 +166,78 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_string_matcher() {
-        let matcher = StringMatcher::new(Cow::Borrowed("abc.*")).unwrap();
-        assert!(!matcher.test("ab"));
-        assert!(matcher.test("abc"));
-        assert!(matcher.test("abcde"));
+    fn test_serde_dfa() {
+        use regex_automata::dfa::Automaton;
+
+        let matcher = SerdeDFA::new(Cow::Borrowed("abc")).unwrap();
+
+        assert!(matcher.deref().find_earliest_fwd(b"ab").unwrap().is_none());
+        assert!(matcher.deref().find_earliest_fwd(b"abc").unwrap().is_some());
+        assert!(matcher
+            .deref()
+            .find_earliest_fwd(b"abcde")
+            .unwrap()
+            .is_some());
+        assert!(matcher
+            .deref()
+            .find_earliest_fwd(b" abcde")
+            .unwrap()
+            .is_none());
     }
 
+    #[derive(serde::Deserialize)]
+    struct OptionSerdeDFA<'data>(
+        #[serde(borrow, deserialize_with = "SerdeDFA::maybe_deserialize")] Option<SerdeDFA<'data>>,
+    );
+
     #[test]
+    #[cfg(target_endian = "little")]
     fn test_postcard_serialization() {
-        let matcher = StringMatcher::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
 
         let mut bytes = postcard::to_stdvec(&matcher).unwrap();
         assert_eq!(
-            postcard::from_bytes::<StringMatcher>(&bytes).unwrap(),
-            matcher
+            postcard::from_bytes::<OptionSerdeDFA>(&bytes).unwrap().0,
+            Some(matcher)
         );
 
         // A corrupted byte leads to an error
         bytes[17] ^= 255;
-        assert!(postcard::from_bytes::<StringMatcher>(&bytes).is_err());
+        assert!(postcard::from_bytes::<OptionSerdeDFA>(&bytes).is_err());
         bytes[17] ^= 255;
 
         // An extra byte leads to an error
         bytes.insert(123, 40);
-        assert!(postcard::from_bytes::<StringMatcher>(&bytes).is_err());
+        assert!(postcard::from_bytes::<OptionSerdeDFA>(&bytes).is_err());
         bytes.remove(123);
 
         // Missing bytes lead to an error
-        assert!(postcard::from_bytes::<StringMatcher>(&bytes[0..bytes.len() - 5]).is_err());
+        assert!(postcard::from_bytes::<OptionSerdeDFA>(&bytes[0..bytes.len() - 5]).is_err());
     }
 
     #[test]
     #[cfg(feature = "serde_human")]
     fn test_json_serialization() {
-        let matcher = StringMatcher::new(Cow::Borrowed("abc*")).unwrap();
+        let matcher = SerdeDFA::new(Cow::Borrowed("abc*")).unwrap();
 
         let json = serde_json::to_string(&matcher).unwrap();
         assert_eq!(
-            serde_json::from_str::<StringMatcher>(&json).unwrap(),
-            matcher
+            serde_json::from_str::<OptionSerdeDFA>(&json).unwrap().0,
+            Some(matcher)
         );
-        assert!(serde_json::from_str::<StringMatcher>(".*[").is_err());
+        assert!(serde_json::from_str::<OptionSerdeDFA>(".*[").is_err());
     }
 
     #[test]
     #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn databake() {
         databake::test_bake!(
-            StringMatcher,
-            const: unsafe {
-                crate::provider::StringMatcher::from_dfa_bytes_unchecked(&[49u8, 50u8, 51u8, ])
-            },
+            SerdeDFA,
+            const: unsafe { crate::provider::SerdeDFA::from_dfa_bytes_unchecked(if cfg!(target_endian = "little") {
+                &[1] // TODO: set this when activating the test
+            } else {
+                &[2] // TODO: set this when activating the test
+            })},
             icu_list
         );
     }
