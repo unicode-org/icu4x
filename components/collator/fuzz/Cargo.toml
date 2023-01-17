@@ -4,11 +4,9 @@
 
 [package]
 name = "icu_collator-fuzz"
-version = "0.0.0"
-authors = ["Automatically generated"]
 publish = false
+version = "0.0.0"
 edition = "2018"
-license = "Unicode-DFS-2016"
 
 [package.metadata]
 cargo-fuzz = true

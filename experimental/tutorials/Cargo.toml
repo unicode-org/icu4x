@@ -4,24 +4,9 @@
 
 [package]
 name = "icu_tutorials"
-description = "Tutorials for International Components for Unicode"
-version = "1.0.0-beta1"
-authors = ["The ICU4X Project Developers"]
+publish = false
+version = "0.0.0"
 edition = "2018"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
 
 [dev-dependencies]
 databake = { path = "../../utils/databake", features = ["derive"] }

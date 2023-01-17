@@ -1443,7 +1443,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_macros"
-version = "0.7.0"
+version = "0.0.0"
 dependencies = [
  "dhat 0.2.4",
  "dlmalloc",
@@ -1733,7 +1733,7 @@ dependencies = [
 
 [[package]]
 name = "icu_ffi_coverage"
-version = "0.0.1"
+version = "0.0.0"
 dependencies = [
  "diplomat_core",
  "elsa",
@@ -2027,7 +2027,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata_scripts"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "bytes",
  "clap",
@@ -2063,7 +2063,7 @@ dependencies = [
 
 [[package]]
 name = "icu_tutorials"
-version = "1.0.0-beta1"
+version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",

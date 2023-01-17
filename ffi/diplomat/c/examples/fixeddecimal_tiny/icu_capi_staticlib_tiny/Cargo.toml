@@ -4,9 +4,9 @@
 
 [package]
 name = "icu_capi_staticlib_tiny"
-version = "1.0.0"
-edition = "2021"
 publish = false
+version = "0.0.0"
+edition = "2021"
 
 [lib]
 crate-type = ["staticlib"]

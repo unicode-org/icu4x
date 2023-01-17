@@ -4,22 +4,9 @@
 
 [package]
 name = "icu_benchmark_macros"
-authors = ["The ICU4X Project Developers"]
+publish = false
+version = "0.0.0"
 edition = "2018"
-version = "0.7.0"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-description = "Internal ICU4X benchmarking crate"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
 
 [dependencies]
 dhat = { version = "0.2", optional = true }

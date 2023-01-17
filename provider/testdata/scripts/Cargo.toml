@@ -4,9 +4,9 @@
 
 [package]
 name = "icu_testdata_scripts"
-version = "0.1.0"
-edition = "2021"
 publish = false
+version = "0.0.0"
+edition = "2021"
 
 [dependencies]
 icu_testdata = { version = "1.0", path = "..", features = ["metadata", "std", "internal_ignore_baked"]}
