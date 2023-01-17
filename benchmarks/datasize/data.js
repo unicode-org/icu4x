@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673973217828,
+  "lastUpdate": 1673976283935,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34318,6 +34318,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6691648a0d5a556a15bd768636fe2195847e960a",
+          "message": "Fixing Spanish regex (#2989)",
+          "timestamp": "2023-01-17T18:22:05+01:00",
+          "tree_id": "e02467bafde03c9daf5d53b1274093d2a73a24f5",
+          "url": "https://github.com/unicode-org/icu4x/commit/6691648a0d5a556a15bd768636fe2195847e960a"
+        },
+        "date": 1673976197684,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
             "unit": "bytes",
             "biggerIsBetter": false
           }
