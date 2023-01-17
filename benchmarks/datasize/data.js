@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673877918593,
+  "lastUpdate": 1673971580451,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34193,6 +34193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/30522939382516dcc6a632ea277e58302954c578"
         },
         "date": 1673877822409,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1775d5d468ae1fd21acbdc5089a90e00e3a62723",
+          "message": "Installing `grcov` on stable (#2995)",
+          "timestamp": "2023-01-17T17:03:39+01:00",
+          "tree_id": "b4d21c0ac43dcb449e85e905ac783494946e0a04",
+          "url": "https://github.com/unicode-org/icu4x/commit/1775d5d468ae1fd21acbdc5089a90e00e3a62723"
+        },
+        "date": 1673971492145,
         "tool": "ndjson",
         "benches": [
           {
