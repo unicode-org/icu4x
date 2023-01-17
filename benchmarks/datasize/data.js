@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673972724244,
+  "lastUpdate": 1673973217828,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34283,6 +34283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2d86a4513fceee8eaa57839bef5518904c13c56b"
         },
         "date": 1673972635627,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3625da45751860025be5ec2ab4782a935cc4700a",
+          "message": "Untangling list provider from logic and fixing big endian safety bug (#2994)",
+          "timestamp": "2023-01-17T17:28:35+01:00",
+          "tree_id": "03f19a11ec360a13381bb2d4eef90b6e8b7090af",
+          "url": "https://github.com/unicode-org/icu4x/commit/3625da45751860025be5ec2ab4782a935cc4700a"
+        },
+        "date": 1673973131291,
         "tool": "ndjson",
         "benches": [
           {
