@@ -391,7 +391,10 @@ where
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(M::KEY, req)?.downcast()
+        self.0
+            .load_any(M::KEY, req)?
+            .downcast()
+            .map_err(|e| e.with_req(M::KEY, req))
     }
 }
 
@@ -405,7 +408,10 @@ where
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(key, req)?.downcast()
+        self.0
+            .load_any(key, req)?
+            .downcast()
+            .map_err(|e| e.with_req(key, req))
     }
 }
 

@@ -58,7 +58,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
             lazy_static! {
                 // Starts with i or (hi but not hia/hie)
-                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new(
+                static ref I_SOUND: SerdeDFA<'static> = SerdeDFA::new(
                     Cow::Borrowed("i|hi([^ae]|$)")
                 ).expect("Valid regex");
             }
@@ -71,7 +71,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             lazy_static! {
                 // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                 // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(
+                static ref O_SOUND: SerdeDFA<'static> = SerdeDFA::new(
                     Cow::Borrowed(r"o|ho|8|(11([\.  ]?[0-9]{3})*(,[0-9]*)?([^\.,[0-9]]|$))")
                 ).expect("Valid regex");
             }
@@ -85,7 +85,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
 
     if langid.language == language!("he") {
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
-        let non_hebrew = StringMatcher::new(Cow::Owned(format!(
+        let non_hebrew = SerdeDFA::new(Cow::Owned(format!(
             "[^{}]",
             icu_properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
