@@ -65,7 +65,7 @@ impl DecimalSeparator {
 /// fields.
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
-pub struct ParsedDateTime {
+pub struct ParsedDateTime<'a> {
     pub year: Option<i32>,
     pub month: Option<u8>,
     pub day: Option<u8>,
@@ -73,7 +73,7 @@ pub struct ParsedDateTime {
     pub minute: Option<u8>,
     pub second: Option<u8>,
     pub nano_second: Option<i32>,
-    pub time_zone: Option<Vec<u8>>,
+    pub time_zone: Option<(&'a [u8], usize)>,
 }
 
 /// [`DateTimeParser`] is the parser to parse IXDTF bytes.
@@ -127,19 +127,20 @@ impl<'a> DateTimeParser<'a> {
             || letter == b'+';
     }
 
-    fn parse_time_zone_part(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
-        let mut time_zone_part = Vec::new();
+    fn parse_time_zone_part(&mut self) -> Result<Option<(&'a [u8], usize)>, ParseError> {
+        let time_zone_part = self.bytes;
+        let mut len: usize = 0;
         if let Some((first, remains)) = self.bytes.split_first() {
             if Self::is_time_zone_initial(*first) {
-                time_zone_part.push(*first);
+                len += 1;
                 let mut cnt = 0;
                 let mut mut_inner_remains = remains;
                 while cnt < 13 {
                     if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
                         if Self::is_time_zone_char(*inner_first) {
-                            time_zone_part.push(*inner_first);
                             mut_inner_remains = inner_remains;
                             cnt += 1;
+                            len += 1;
                         } else {
                             break;
                         }
@@ -155,7 +156,7 @@ impl<'a> DateTimeParser<'a> {
                     return Err(ParseError::TimeZonePart);
                 }
                 self.bytes = mut_inner_remains;
-                return Ok(Some(time_zone_part));
+                return Ok(Some((time_zone_part, len)));
             } else {
                 return Err(ParseError::TimeZonePart);
             }
@@ -164,20 +165,20 @@ impl<'a> DateTimeParser<'a> {
         }
     }
 
-    fn parse_time_numoffset(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
-        let mut time_numoffset = Vec::new();
+    fn parse_time_numoffset(&mut self) -> Result<Option<(&'a [u8], usize)>, ParseError> {
+        let time_numoffset = self.bytes;
+        let mut len: usize = 0;
         if let Some((first, remains)) = self.bytes.split_first() {
             if first == &b'+' || first == &b'-' {
-                time_numoffset.push(*first);
+                len += 1;
                 let mut hour: u8 = 0;
                 let mut minute: u8 = 0;
                 let mut cnt = 0;
                 let mut mut_inner_remains = remains;
                 while cnt < 2 {
                     if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                        if (&b'0'..=&b'9').contains(&inner_first) {
                             hour = hour * 10 + *inner_first - b'0';
-                            time_numoffset.push(*inner_first);
                             mut_inner_remains = inner_remains;
                         } else {
                             return Err(ParseError::TimeNumOffset);
@@ -186,13 +187,14 @@ impl<'a> DateTimeParser<'a> {
                         return Err(ParseError::TimeNumOffset);
                     }
                     cnt += 1;
+                    len += 1;
                 }
                 if !(0..=23).contains(&hour) {
                     return Err(ParseError::TimeNumOffset);
                 }
                 if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
                     if inner_first >= &b':' {
-                        time_numoffset.push(*inner_first);
+                        len += 1;
                         mut_inner_remains = inner_remains;
                     } else {
                         return Err(ParseError::TimeNumOffset);
@@ -203,9 +205,8 @@ impl<'a> DateTimeParser<'a> {
                 cnt = 0;
                 while cnt < 2 {
                     if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
-                        if inner_first >= &b'0' && inner_first <= &b'9' {
+                        if (&b'0'..=&b'9').contains(&inner_first) {
                             minute = minute * 10 + *inner_first - b'0';
-                            time_numoffset.push(*inner_first);
                             mut_inner_remains = inner_remains;
                         } else {
                             return Err(ParseError::TimeNumOffset);
@@ -214,12 +215,13 @@ impl<'a> DateTimeParser<'a> {
                         return Err(ParseError::TimeNumOffset);
                     }
                     cnt += 1;
+                    len += 1;
                 }
                 if !(0..=59).contains(&minute) {
                     return Err(ParseError::TimeNumOffset);
                 }
                 self.bytes = mut_inner_remains;
-                return Ok(Some(time_numoffset));
+                return Ok(Some((time_numoffset, len)));
             } else {
                 return Err(ParseError::TimeNumOffset);
             }
@@ -228,47 +230,44 @@ impl<'a> DateTimeParser<'a> {
         }
     }
 
-    fn parse_time_zone_name(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
-        let mut time_zone_name = Vec::new();
+    fn parse_time_zone_name(&mut self) -> Result<Option<(&'a [u8], usize)>, ParseError> {
+        let time_zone_name = self.bytes;
+        let mut len: usize = 0;
         let time_zone_part_result = self.parse_time_zone_part();
         if let Ok(Some(time_zone_part)) = time_zone_part_result {
-            time_zone_name.append(&mut time_zone_part.to_vec());
+            len += time_zone_part.1;
         } else {
             return Err(ParseError::TimeZoneName);
         }
-        loop {
-            if let Some((first, remains)) = self.bytes.split_first() {
-                if first == &b'/' {
-                    time_zone_name.push(*first);
-                    self.bytes = remains;
-                    let time_zone_part_next_result = self.parse_time_zone_part();
-                    if let Ok(Some(time_zone_part)) = time_zone_part_next_result {
-                        time_zone_name.append(&mut time_zone_part.to_vec());
-                    } else {
-                        return Err(ParseError::TimeZoneName);
-                    }
+        while let Some((first, remains)) = self.bytes.split_first() {
+            if first == &b'/' {
+                len += 1;
+                self.bytes = remains;
+                let time_zone_part_next_result = self.parse_time_zone_part();
+                if let Ok(Some(time_zone_part)) = time_zone_part_next_result {
+                    len += time_zone_part.1;
                 } else {
-                    break;
+                    return Err(ParseError::TimeZoneName);
                 }
             } else {
                 break;
             }
         }
-        return Ok(Some(time_zone_name));
+        return Ok(Some((time_zone_name, len)));
     }
 
-    fn parse_time_zone(&mut self) -> Result<Option<Vec<u8>>, ParseError> {
+    fn parse_time_zone(&mut self) -> Result<Option<(&'a [u8], usize)>, ParseError> {
         if let Some((first, remains)) = self.bytes.split_first() {
             if first == &b'[' {
                 let mut mut_inner_remains = remains;
-                if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                if let Some((inner_first, _inner_remains)) = mut_inner_remains.split_first() {
                     if inner_first == &b'!' {
                         mut_inner_remains = remains
                     }
                 }
                 self.bytes = mut_inner_remains;
-                let mut time_zone_result;
-                if let Some((inner_first, inner_remains)) = mut_inner_remains.split_first() {
+                let time_zone_result;
+                if let Some((inner_first, _inner_remains)) = mut_inner_remains.split_first() {
                     if inner_first == &b'+' || inner_first == &b'-' {
                         time_zone_result = self.parse_time_numoffset();
                     } else {
@@ -277,9 +276,7 @@ impl<'a> DateTimeParser<'a> {
                 } else {
                     return Err(ParseError::TimeZone);
                 }
-                if time_zone_result.is_err() {
-                    return time_zone_result;
-                }
+                time_zone_result?;
                 if let Some((inner_first, inner_remains)) = self.bytes.split_first() {
                     if inner_first == &b']' {
                         self.bytes = inner_remains;
@@ -670,7 +667,8 @@ mod test {
     #[test]
     fn test_correct_datetime() {
         let dt = "2022-11-08[+05:12]".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -681,12 +679,13 @@ mod test {
                 minute: None,
                 second: None,
                 nano_second: None,
-                time_zone: Some(vec![43, 48, 53, 58, 49, 50]),
+                time_zone: Some((&dt[11..], 6)),
             })
         );
 
         let dt = "2022-11-08[America/Chicago]".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -697,14 +696,13 @@ mod test {
                 minute: None,
                 second: None,
                 nano_second: None,
-                time_zone: Some(vec![
-                    65, 109, 101, 114, 105, 99, 97, 47, 67, 104, 105, 99, 97, 103, 111
-                ]),
+                time_zone: Some((&dt[11..], 15)),
             })
         );
 
         let dt = "2022-11-08".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -720,7 +718,8 @@ mod test {
         );
 
         let dt = "20220605".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -736,7 +735,8 @@ mod test {
         );
 
         let dt = "2022-06-05T04".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -752,7 +752,8 @@ mod test {
         );
 
         let dt = "2022-06-05t04:34".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -768,7 +769,8 @@ mod test {
         );
 
         let dt = "2022-06-05 04:34:22".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -784,7 +786,8 @@ mod test {
         );
 
         let dt = "2022-06-05 04:34:22.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -800,7 +803,8 @@ mod test {
         );
 
         let dt = "2022-06-05 043422.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(
             parsed,
             Ok(ParsedDateTime {
@@ -819,54 +823,66 @@ mod test {
     #[test]
     fn test_bad_date() {
         let dt = "-2022-06-05".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::DateExtendedYear));
 
         let dt = "!2022-06-05".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::DateFourDigitYear));
 
         let dt = "20-06-05".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::DateFourDigitYear));
 
         let dt = "2022-0605".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::DateSeparator));
 
         let dt = "202206-05".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::DateSeparator));
 
         let dt = "2022-06-05e".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeZone));
     }
 
     #[test]
     fn test_bad_time_spec_separator() {
         let dt = "2022-06-05  043422.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeHour));
 
         let dt = "2022-06-05 04:3422.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeSeparator));
 
         let dt = "2022-06-05 0434:22.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeSeparator));
 
         let dt = "2022-06-05 03422.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeSecond));
 
         let dt = "2022-06-05 3:42:22.000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeHour));
 
         let dt = "2022-06-05 03:42:22;000".as_bytes();
-        let parsed = DateTimeParser::new(dt).parse();
+        let mut parser = DateTimeParser::new(dt);
+        let parsed = parser.parse();
         assert_eq!(parsed, Err(ParseError::TimeZone));
     }
 }
