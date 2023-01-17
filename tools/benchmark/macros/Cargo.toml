@@ -26,12 +26,12 @@ dhat = { version = "0.2", optional = true }
 
 # This cfg originates in dlmalloc/lib.rs
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
-dlmalloc = { version = "0.2", optional = true, features = ["global"] }
+dlmalloc = { version = "0.2", features = ["global"], optional = true }
 
 [features]
 
 # Enables `dhat` in example files to analyze memory allocations.
-benchmark_memory = ["dhat"]
+benchmark_memory = ["dep:dhat"]
 
 # Enables `dlmalloc` in example files to bypass the system allocator.
-rust_global_allocator = ["dlmalloc"]
+rust_global_allocator = ["dep:dlmalloc"]

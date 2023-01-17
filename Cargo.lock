@@ -879,18 +879,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "embed-doc-image"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af36f591236d9d822425cb6896595658fa558fcebf5ee8accac1d4b92c47166e"
-dependencies = [
- "base64",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "embedded-hal"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1584,7 +1572,6 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "zerofrom",
  "zerovec",
 ]
 
@@ -1701,7 +1688,6 @@ dependencies = [
  "icu_timezone",
  "litemap",
  "serde",
- "serde-tuple-vec-map",
  "serde_json",
  "smallvec",
  "tinystr 0.7.0",
@@ -1770,13 +1756,11 @@ dependencies = [
 name = "icu_list"
 version = "1.0.0"
 dependencies = [
- "criterion",
  "databake",
  "deduplicating_array",
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
- "icu_locid",
  "icu_provider",
  "icu_testdata",
  "postcard",
@@ -1784,7 +1768,6 @@ dependencies = [
  "serde",
  "serde_json",
  "writeable",
- "zerovec",
 ]
 
 [[package]]
@@ -1842,7 +1825,6 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
- "zerofrom",
  "zerovec",
 ]
 
@@ -1979,8 +1961,8 @@ dependencies = [
  "databake",
  "displaydoc",
  "fixed_decimal",
+ "icu",
  "icu_decimal",
- "icu_locid",
  "icu_plurals",
  "icu_provider",
  "icu_testdata",
@@ -2085,7 +2067,6 @@ version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
- "embed-doc-image",
  "icu",
  "icu_datagen",
  "icu_provider",
@@ -3195,15 +3176,6 @@ checksum = "8014aeea272bca0f0779778d43253f2f3375b414185b30e6ecc4d3e4a9994781"
 dependencies = [
  "heapless",
  "ryu",
- "serde",
-]
-
-[[package]]
-name = "serde-tuple-vec-map"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a04d0ebe0de77d7d445bb729a895dcb0a288854b267ca85f030ce51cdc578c82"
-dependencies = [
  "serde",
 ]
 

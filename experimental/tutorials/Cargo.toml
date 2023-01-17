@@ -23,28 +23,20 @@ include = [
     "README.md"
 ]
 
-[package.metadata.docs.rs]
-all-features = true
-
-[features]
-doc-images = []
-
-
-[dependencies]
-icu = { version = "1.0.0", path = "../../components/icu", default-features = false }
-icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
-icu_provider_fs = { version = "1.0.0", path = "../../provider/fs" }
-icu_provider_blob = { version = "1.0.0", path = "../../provider/blob" }
-icu_testdata = { version = "1.0.0", path = "../../provider/testdata", features = ["buffer"] }
-zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
-serde = { version = "1.0", features = ["derive", "alloc", "std"] }
-icu_datagen = { version = "1.0.0", path = "../../provider/datagen" }
-yoke = { version = "0.6.0", path = "../../utils/yoke" }
-displaydoc = { version = "0.2.3" }
-litemap = { version = "0.6", path = "../../utils/litemap" }
-tinystr = { path = "../../utils/tinystr", version = "0.7", features = ["alloc"], default-features = false }
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"] }
-serde-aux = "2.1.1"
+[dev-dependencies]
+databake = { path = "../../utils/databake", features = ["derive"] }
+displaydoc = "0.2.3"
+icu = { path = "../../components/icu", default-features = false }
+icu_datagen = { path = "../../provider/datagen" }
+icu_provider = { path = "../../provider/core", default-features = false }
+icu_provider_blob = { path = "../../provider/blob" }
+icu_provider_fs = { path = "../../provider/fs" }
+icu_testdata = { path = "../../provider/testdata", features = ["buffer"] }
 itertools = "0.10"
-embed-doc-image = "0.1"
+litemap = { path = "../../utils/litemap" }
 lru = "0.8.1"
+serde = { version = "1.0", features = ["derive", "alloc", "std"] }
+serde-aux = "2.1.1"
+tinystr = { path = "../../utils/tinystr", features = ["alloc"], default-features = false }
+yoke = { path = "../../utils/yoke" }
+zerofrom = { path = "../../utils/zerofrom" }

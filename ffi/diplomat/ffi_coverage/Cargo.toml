@@ -29,10 +29,10 @@ include = [
 all-features = true
 
 [dependencies]
-syn-inline-mod = { version =  "0.4.0" }
-serde_json = { version =  "1" }
-rustdoc-types = { version =  "0.14" }
 diplomat_core = "0.5"
-lazy_static = { version = "1" }
-elsa = { version = "1" }
+elsa = "1"
+lazy_static ="1"
+rustdoc-types = "0.14"
+serde_json = "1"
+syn-inline-mod = "0.4.0"
 
