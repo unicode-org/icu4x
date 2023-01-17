@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1673971580451,
+  "lastUpdate": 1673971894284,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34223,6 +34223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1775d5d468ae1fd21acbdc5089a90e00e3a62723"
         },
         "date": 1673971492145,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4303177,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9de68adb05fc8a23ce5475ab640807b55b9ba5b",
+          "message": "Setting correct DataError for .as_deserializing(), .as_downcasting() (#2993)",
+          "timestamp": "2023-01-17T17:09:03+01:00",
+          "tree_id": "70dc0b384eaeca01a8e1bb33ce8252f9b574cb7b",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9de68adb05fc8a23ce5475ab640807b55b9ba5b"
+        },
+        "date": 1673971816786,
         "tool": "ndjson",
         "benches": [
           {
