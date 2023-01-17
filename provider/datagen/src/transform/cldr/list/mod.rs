@@ -58,7 +58,9 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
             lazy_static! {
                 // Starts with i or (hi but not hia/hie)
-                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new(Cow::Borrowed("i|hi([^ae]|$)")).expect("Valid regex");
+                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new(
+                    Cow::Borrowed("i|hi([^ae]|$)")
+                ).expect("Valid regex");
             }
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
@@ -70,7 +72,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
                 // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
                 // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
                 static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(
-                    Cow::Borrowed(r"o|ho|8|(11([\.  ]?[0123456789][0123456789][0123456789])*(,[0123456789]*)?([^\.,[0123456789]]|$))")
+                    Cow::Borrowed(r"o|ho|8|(11([\.  ]?[0-9]{3})*(,[0-9]*)?([^\.,[0-9]]|$))")
                 ).expect("Valid regex");
             }
             // Replace " o " with " u " before /o/ sound.
