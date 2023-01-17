@@ -136,16 +136,16 @@ where
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
-        let buffer_format = buffer_response
-            .metadata
-            .buffer_format
-            .ok_or_else(|| DataError::custom("BufferProvider didn't set BufferFormat"))?;
+        let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
+            DataError::custom("BufferProvider didn't set BufferFormat").with_req(key, req)
+        })?;
         Ok(DataResponse {
             metadata: buffer_response.metadata,
             payload: buffer_response
                 .payload
                 .map(|p| p.into_deserialized(buffer_format))
-                .transpose()?,
+                .transpose()
+                .map_err(|e| e.with_req(key, req))?,
         })
     }
 }
