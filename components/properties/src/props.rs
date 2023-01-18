@@ -2,10 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! A collection of enums for enumerated properties.
+//! A collection of property definitions shared across contexts
+//! (ex: representing trie values).
+//!
+//! This module defines enums / newtypes for enumerated properties.
+//! String properties are represented as newtypes if their
+//! values represent code points.
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+
+//
+// Enumerated properties
+//
 
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
@@ -870,3 +879,31 @@ impl CanonicalCombiningClass {
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
 }
+
+//
+// String properties
+//
+
+/// String property Bidi_Mirroring_Glyph.
+///
+/// Informative mapping for substituting characters in an implementation of bidirectional mirroring.
+/// This maps a subset of characters with the Bidi_Mirrored property to other characters that normally
+/// are displayed with the corresponding mirrored glyph. When a character with the Bidi_Mirrored
+/// property has the default value for Bidi_Mirroring_Glyph, that means that no other character exists
+/// whose glyph is appropriate for character-based glyph mirroring.
+///
+/// See <https://www.unicode.org/reports/tr44/> .
+/// 
+/// ICU4X represents the property values as `Option<char>`, which is effectively equivalent
+/// to ICU's representation of a `u32` (in which  a code point with no mirroring glyph has
+/// a return value of the same input value).
+///
+/// Also see `u_charMirror` in ICU4C.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(BidiMirroringGlyphULE)]
+pub struct BidiMirroringGlyph(pub u32);

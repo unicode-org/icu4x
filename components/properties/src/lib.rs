@@ -98,7 +98,7 @@ mod trievalue;
 
 pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak, BidiMirroringGlyph,
 };
 
 pub use error::PropertiesError;

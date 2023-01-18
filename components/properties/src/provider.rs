@@ -509,5 +509,6 @@ expand!(
         (GraphemeClusterBreakV1Marker, "GCB", GraphemeClusterBreak),
         (WordBreakV1Marker, "WB", WordBreak),
         (SentenceBreakV1Marker, "SB", SentenceBreak),
+        (BidiMirroringGlyphV1Marker, "bmg", BidiMirroringGlyph),
     )
 );
