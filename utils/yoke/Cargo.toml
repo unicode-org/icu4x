@@ -21,6 +21,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [features]
 derive = ["dep:yoke-derive", "zerofrom/derive"]
 alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]

@@ -24,6 +24,9 @@ include = [
     "list_to_ucptrie.wasm"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [dependencies]
 icu_collections = { path = "..", features = ["serde"] }
 lazy_static = "1.4.0"

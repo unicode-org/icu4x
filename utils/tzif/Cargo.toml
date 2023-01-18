@@ -14,7 +14,8 @@ repository = "https://github.com/unicode-org/icu4x"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 categories = ["date-and-time", "parser-implementations"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.workspaces]
+independent = true
 
 [dependencies]
 combine = "4.6.4"
