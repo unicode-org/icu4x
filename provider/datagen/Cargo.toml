@@ -79,7 +79,7 @@ tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", 
 toml = "0.5"
 writeable = { version = "0.5", path = "../../utils/writeable" }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
-zip = "0.6"
+zip = "0.5"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
