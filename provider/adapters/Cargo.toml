@@ -24,13 +24,13 @@ include = [
 ]
 
 [dependencies]
-icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["zerovec"] }
-icu_provider = { version = "1.0.0", path = "../core", features = ["macros"] }
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["zerovec"] }
-yoke = { version = "0.6", path = "../../utils/yoke" }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
+icu_locid = { path = "../../components/locid", features = ["zerovec"] }
+icu_provider = { path = "../core", features = ["macros"] }
+tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
+yoke = { path = "../../utils/yoke" }
+zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
 
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]

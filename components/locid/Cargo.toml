@@ -28,13 +28,13 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-litemap = { version = "0.6", path = "../../utils/litemap" }
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
-writeable = { version = "0.5", path = "../../utils/writeable" }
+litemap = { path = "../../utils/litemap" }
+tinystr = { path = "../../utils/tinystr", features = ["alloc"], default-features = false }
+writeable = { path = "../../utils/writeable" }
 
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["alloc", "derive"], optional = true }
-zerovec = { version = "0.9", path = "../../utils/zerovec", optional = true }
+zerovec = { path = "../../utils/zerovec", optional = true }
 
 [dev-dependencies]
 criterion = "0.3.3"

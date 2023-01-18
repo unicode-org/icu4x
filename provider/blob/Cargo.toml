@@ -27,17 +27,17 @@ include = [
 all-features = true
 
 [dependencies]
-icu_provider = { version = "1.0.0", path = "../core", features = ["deserialize_postcard_1", "serde"] }
+icu_provider = { path = "../core", features = ["deserialize_postcard_1", "serde"] }
 postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
-writeable = { version = "0.5", path = "../../utils/writeable" }
-yoke = { version = "0.6.0", path = "../../utils/yoke" }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+writeable = { path = "../../utils/writeable" }
+yoke = { path = "../../utils/yoke" }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 log = { version = "0.4", optional = true }
 
 [dev-dependencies]
-icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["serde"] }
+icu_locid = { path = "../../components/locid", features = ["serde"] }
 
 [features]
 std = ["icu_provider/std"]

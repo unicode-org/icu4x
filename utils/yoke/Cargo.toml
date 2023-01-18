@@ -32,10 +32,10 @@ all-features = true
 [dependencies]
 stable_deref_trait = { version = "1.2.0", default-features = false }
 
-yoke-derive = { version = "0.6.0", path = "./derive", optional = true }
+yoke-derive = { path = "./derive", optional = true }
 
 serde = { version = "1.0", default-features = false, optional = true }
-zerofrom = { version = "0.1.0", path = "../zerofrom", default-features = false, optional = true} 
+zerofrom = { path = "../zerofrom", default-features = false, optional = true} 
 
 [dev-dependencies]
 bincode = "1.3.3"

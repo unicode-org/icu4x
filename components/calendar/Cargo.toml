@@ -28,13 +28,13 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
-zerovec = { version = "0.9", path = "../../utils/zerovec", default-features = false, features = ["derive"] }
-writeable = { version = "0.5", path = "../../utils/writeable" }
+icu_provider = { path = "../../provider/core", features = ["macros"] }
+icu_locid = { path = "../../components/locid" }
+tinystr = { path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
+zerovec = { path = "../../utils/zerovec", default-features = false, features = ["derive"] }
+writeable = { path = "../../utils/writeable" }
 
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }
+databake = { path = "../../utils/databake", features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]

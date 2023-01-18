@@ -32,9 +32,9 @@ crate-type = ["staticlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
+icu_capi = { path = "../diplomat", default-features = false }
 # Included to allow syntax selection
-icu_provider = { version = "1.0.0", path = "../../provider/core", default-features = false }
+icu_provider = { path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]

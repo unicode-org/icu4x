@@ -34,4 +34,4 @@ derive = ["dep:databake-derive"]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
 syn = { version = "1.0.73", features = ["derive", "fold"] }
-databake-derive = { version = "0.1.1", path = "./derive", optional = true}
+databake-derive = { path = "./derive", optional = true}

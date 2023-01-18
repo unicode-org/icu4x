@@ -27,14 +27,14 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
-icu_decimal = { version = "1.0.0", path = "../../components/decimal" }
-icu_plurals = { version = "1.0.0", path = "../../components/plurals" }
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-writeable = { version = "0.5", path = "../../utils/writeable" }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
+fixed_decimal = { path = "../../utils/fixed_decimal" }
+icu_decimal = { path = "../../components/decimal" }
+icu_plurals = { path = "../../components/plurals" }
+icu_provider = { path = "../../provider/core", features = ["macros"] }
+writeable = { path = "../../utils/writeable" }
+zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
 
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]

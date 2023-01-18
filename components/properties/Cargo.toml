@@ -28,11 +28,11 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.0.0", path = "../../components/collections"}
-icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["derive"] }
+icu_collections = { path = "../../components/collections"}
+icu_provider = { path = "../../provider/core", features = ["macros"] }
+zerovec = { path = "../../utils/zerovec", features = ["derive"] }
 
-databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 unicode-bidi = { version = "0.3.8", default-features = false, optional = true }

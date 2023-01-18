@@ -25,7 +25,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-writeable = { version = "0.5", path = "../writeable" }
+writeable = { path = "../writeable" }
 
 [dev-dependencies]
 iai = "0.1"
