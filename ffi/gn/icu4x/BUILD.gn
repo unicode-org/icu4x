@@ -162,7 +162,6 @@ rust_library("fixed_decimal-v0_5_1") {
     "--edition=2018",
     "-Cmetadata=8e1f0ae43b980cdc",
     "-Cextra-filename=-8e1f0ae43b980cdc",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"ryu\"",
   ]
 
@@ -196,7 +195,6 @@ rust_library("icu-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=2254fd8593ac7ad",
     "-Cextra-filename=-2254fd8593ac7ad",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -285,7 +283,6 @@ rust_library("icu_collator-v1_0_1") {
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
-  deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
@@ -295,7 +292,6 @@ rust_library("icu_collator-v1_0_1") {
     "--edition=2018",
     "-Cmetadata=ce9bf51a8e1443ab",
     "-Cextra-filename=-ce9bf51a8e1443ab",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -319,7 +315,6 @@ rust_library("icu_collections-v1_0_0") {
     "--edition=2021",
     "-Cmetadata=164caf90f9f352fa",
     "-Cextra-filename=-164caf90f9f352fa",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -340,7 +335,6 @@ rust_library("icu_datetime-v1_0_0") {
   deps += [ ":icu_plurals-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":icu_timezone-v1_0_0" ]
-  deps += [ ":litemap-v0_6_0" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":tinystr-v0_7_0" ]
   deps += [ ":writeable-v0_5_0" ]
@@ -353,7 +347,6 @@ rust_library("icu_datetime-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=de7f4fb86ece008",
     "-Cextra-filename=-de7f4fb86ece008",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -378,7 +371,6 @@ rust_library("icu_decimal-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=a5a8f88f182ba519",
     "-Cextra-filename=-a5a8f88f182ba519",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -391,11 +383,9 @@ rust_library("icu_list-v1_0_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
-  deps += [ ":icu_locid-v1_0_0" ]
   deps += [ ":icu_provider-v1_0_1" ]
   deps += [ ":regex-automata-v0_2_0" ]
   deps += [ ":writeable-v0_5_0" ]
-  deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
 
@@ -428,7 +418,6 @@ rust_library("icu_locid-v1_0_0") {
     "--edition=2021",
     "-Cmetadata=c4734995c00ee87a",
     "-Cextra-filename=-c4734995c00ee87a",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"zerovec\"",
   ]
 
@@ -474,7 +463,6 @@ rust_library("icu_normalizer-v1_0_0") {
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":write16-v1_0_0" ]
-  deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-v0_9_1" ]
 
   rustenv = []
@@ -484,7 +472,6 @@ rust_library("icu_normalizer-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=f3224b66518ad7a2",
     "-Cextra-filename=-f3224b66518ad7a2",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -509,7 +496,6 @@ rust_library("icu_plurals-v1_0_0") {
     "--edition=2018",
     "-Cmetadata=a800ef29c59579ab",
     "-Cextra-filename=-a800ef29c59579ab",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -535,7 +521,6 @@ rust_library("icu_properties-v1_0_0") {
     "-Cmetadata=f10822a90176cae0",
     "-Cextra-filename=-f10822a90176cae0",
     "--cfg=feature=\"bidi\"",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -563,8 +548,6 @@ rust_library("icu_provider-v1_0_1") {
     "--edition=2021",
     "-Cmetadata=233818899f786646",
     "-Cextra-filename=-233818899f786646",
-    "--cfg=feature=\"default\"",
-    "--cfg=feature=\"icu_provider_macros\"",
     "--cfg=feature=\"macros\"",
   ]
 
@@ -637,7 +620,6 @@ rust_library("icu_segmenter-v0_7_0") {
     "--edition=2018",
     "-Cmetadata=1277f37dd84917bc",
     "-Cextra-filename=-1277f37dd84917bc",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -1203,7 +1185,6 @@ rust_library("writeable-v0_5_0") {
     "--edition=2018",
     "-Cmetadata=bdf02940b559b826",
     "-Cextra-filename=-bdf02940b559b826",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -1230,7 +1211,6 @@ rust_library("yoke-v0_6_2") {
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
-    "--cfg=feature=\"yoke-derive\"",
     "--cfg=feature=\"zerofrom\"",
   ]
 
@@ -1278,7 +1258,6 @@ rust_library("zerofrom-v0_1_1") {
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
-    "--cfg=feature=\"zerofrom-derive\"",
   ]
 
   visibility = [ ":*" ]
@@ -1326,7 +1305,6 @@ rust_library("zerovec-v0_9_1") {
     "-Cextra-filename=-1834722305961906",
     "--cfg=feature=\"derive\"",
     "--cfg=feature=\"yoke\"",
-    "--cfg=feature=\"zerovec-derive\"",
   ]
 
   visibility = [ ":*" ]
