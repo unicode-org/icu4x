@@ -35,13 +35,13 @@ rust_library("cfg-if-v1_0_0") {
   visibility = [ ":*" ]
 }
 
-rust_proc_macro("diplomat-v0_4_2") {
+rust_proc_macro("diplomat-v0_5_0") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
-  output_name = "diplomat-9f296b2540875f41"
+  output_name = "diplomat-9daf153118294f87"
 
   deps = []
-  deps += [ ":diplomat_core-v0_4_4" ]
+  deps += [ ":diplomat_core-v0_5_0" ]
   deps += [ ":proc-macro2-v1_0_32" ]
   deps += [ ":quote-v1_0_10" ]
   deps += [ ":syn-v1_0_81" ]
@@ -51,17 +51,17 @@ rust_proc_macro("diplomat-v0_4_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=9f296b2540875f41",
-    "-Cextra-filename=-9f296b2540875f41",
+    "-Cmetadata=9daf153118294f87",
+    "-Cextra-filename=-9daf153118294f87",
   ]
 
   visibility = [ ":*" ]
 }
 
-rust_library("diplomat-runtime-v0_4_2") {
+rust_library("diplomat-runtime-v0_5_0") {
   crate_name = "diplomat_runtime"
   crate_root = "//ffi/gn/vendor/diplomat-runtime/src/lib.rs"
-  output_name = "diplomat_runtime-eff23b5306de0076"
+  output_name = "diplomat_runtime-ba74e6cf5c205b3b"
 
   deps = []
 
@@ -70,17 +70,17 @@ rust_library("diplomat-runtime-v0_4_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=eff23b5306de0076",
-    "-Cextra-filename=-eff23b5306de0076",
+    "-Cmetadata=ba74e6cf5c205b3b",
+    "-Cextra-filename=-ba74e6cf5c205b3b",
   ]
 
   visibility = [ ":*" ]
 }
 
-rust_library("diplomat_core-v0_4_4") {
+rust_library("diplomat_core-v0_5_0") {
   crate_name = "diplomat_core"
   crate_root = "//ffi/gn/vendor/diplomat_core/src/lib.rs"
-  output_name = "diplomat_core-b867f0fdeb1f181c"
+  output_name = "diplomat_core-3bccd3c003c9e78d"
 
   deps = []
   deps += [ ":lazy_static-v1_4_0" ]
@@ -96,8 +96,8 @@ rust_library("diplomat_core-v0_4_4") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=b867f0fdeb1f181c",
-    "-Cextra-filename=-b867f0fdeb1f181c",
+    "-Cmetadata=3bccd3c003c9e78d",
+    "-Cextra-filename=-3bccd3c003c9e78d",
   ]
 
   visibility = [ ":*" ]
@@ -233,8 +233,8 @@ rust_library("icu_capi-v1_0_0") {
   output_name = "icu_capi-e3e3519444f45361"
 
   deps = []
-  deps += [ ":diplomat-v0_4_2($host_toolchain)" ]
-  deps += [ ":diplomat-runtime-v0_4_2" ]
+  deps += [ ":diplomat-v0_5_0($host_toolchain)" ]
+  deps += [ ":diplomat-runtime-v0_5_0" ]
   deps += [ ":fixed_decimal-v0_5_1" ]
   deps += [ ":icu_calendar-v1_0_0" ]
   deps += [ ":icu_collator-v1_0_1" ]
