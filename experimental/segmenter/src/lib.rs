@@ -53,7 +53,7 @@
 //!```rust
 //! use icu::segmenter::WordSegmenter;
 //!
-//! let segmenter = WordSegmenter::try_new_unstable(&icu_testdata::unstable())
+//! let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 //!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =

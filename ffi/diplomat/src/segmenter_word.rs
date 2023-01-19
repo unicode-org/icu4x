@@ -34,7 +34,7 @@ pub mod ffi {
 
     impl ICU4XWordSegmenter {
         /// Construct an [`ICU4XWordSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_unstable, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
@@ -48,7 +48,7 @@ pub mod ffi {
                 + ?Sized,
         {
             Ok(Box::new(ICU4XWordSegmenter(
-                WordSegmenter::try_new_unstable(provider)?,
+                WordSegmenter::try_new_auto_unstable(provider)?,
             )))
         }
 
