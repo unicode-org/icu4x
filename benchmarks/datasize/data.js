@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674146009591,
+  "lastUpdate": 1674146133421,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34463,6 +34463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/89cb6758648efd7d1f7a8b03ac7f8ad16799d94c"
         },
         "date": 1674145927207,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "92a24ff64857ca7024c7ee860dda817fce81a0a4",
+          "message": "Putting FFI `bn` `en` constructors behind test feature (#2983)",
+          "timestamp": "2023-01-19T17:29:12+01:00",
+          "tree_id": "f48a131d7bc4b08e038dd3ed2fc7c63c8e7c799e",
+          "url": "https://github.com/unicode-org/icu4x/commit/92a24ff64857ca7024c7ee860dda817fce81a0a4"
+        },
+        "date": 1674146031793,
         "tool": "ndjson",
         "benches": [
           {
