@@ -38,4 +38,3 @@ rustflags = []
 
 [gn.package.icu_capi."1.0.0"]
 rustflags = []
-env_vars = ["ICU4X_FFI_BAKED_ROOT=../empty_bake"]
