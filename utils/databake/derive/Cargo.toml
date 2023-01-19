@@ -23,8 +23,6 @@ include = [
     "README.md"
 ]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [lib]
 proc_macro = true
 path = "src/lib.rs"
@@ -36,4 +34,4 @@ syn = { version = "1.0.73", features = ["derive", "fold"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
-databake = { version = "0.1.1", path = "..", features = ["derive"]}
+databake = { path = "..", features = ["derive"]}

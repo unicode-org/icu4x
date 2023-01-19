@@ -82,7 +82,8 @@ impl CompactDecimalFormatter {
     ///
     /// CompactDecimalFormatter::try_new_short_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &locale!("sv").into());
+    ///     &locale!("sv").into(),
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -146,7 +147,8 @@ impl CompactDecimalFormatter {
     ///
     /// CompactDecimalFormatter::try_new_long_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &locale!("sv").into());
+    ///     &locale!("sv").into(),
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -317,28 +319,58 @@ impl CompactDecimalFormatter {
     /// let three_million = CompactDecimal::from_str("+3c6").unwrap();
     /// let ten_lakhs = CompactDecimal::from_str("10c5").unwrap();
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
-    /// assert_writeable_eq!(short_french.format_compact_decimal(&about_a_million).unwrap(), "1,20 M");
-    /// assert_writeable_eq!(long_french.format_compact_decimal(&about_a_million).unwrap(), "1,20 million");
+    /// assert_writeable_eq!(
+    ///     short_french
+    ///         .format_compact_decimal(&about_a_million)
+    ///         .unwrap(),
+    ///     "1,20 M"
+    /// );
+    /// assert_writeable_eq!(
+    ///     long_french
+    ///         .format_compact_decimal(&about_a_million)
+    ///         .unwrap(),
+    ///     "1,20 million"
+    /// );
     ///
     /// # // The following line contains U+00A0 NO-BREAK SPACE.
-    /// assert_writeable_eq!(short_french.format_compact_decimal(&three_million).unwrap(), "+3 M");
-    /// assert_writeable_eq!(long_french.format_compact_decimal(&three_million).unwrap(), "+3 millions");
+    /// assert_writeable_eq!(
+    ///     short_french.format_compact_decimal(&three_million).unwrap(),
+    ///     "+3 M"
+    /// );
+    /// assert_writeable_eq!(
+    ///     long_french.format_compact_decimal(&three_million).unwrap(),
+    ///     "+3 millions"
+    /// );
     ///
-    /// assert_writeable_eq!(long_bangla.format_compact_decimal(&ten_lakhs).unwrap(), "১০ লাখ");
+    /// assert_writeable_eq!(
+    ///     long_bangla.format_compact_decimal(&ten_lakhs).unwrap(),
+    ///     "১০ লাখ"
+    /// );
     ///
     /// assert_eq!(
-    ///     long_bangla.format_compact_decimal(&about_a_million).err().unwrap().to_string(),
+    ///     long_bangla
+    ///         .format_compact_decimal(&about_a_million)
+    ///         .err()
+    ///         .unwrap()
+    ///         .to_string(),
     ///     "Expected compact exponent 5 for 10^6, got 6",
     /// );
     /// assert_eq!(
-    ///     long_french.format_compact_decimal(&ten_lakhs).err().unwrap().to_string(),
+    ///     long_french
+    ///         .format_compact_decimal(&ten_lakhs)
+    ///         .err()
+    ///         .unwrap()
+    ///         .to_string(),
     ///     "Expected compact exponent 6 for 10^6, got 5",
     /// );
     ///
     /// /// Some patterns omit the digits; in those cases, the output does not
     /// /// contain the sequence of digits specified by the CompactDecimal.
     /// let a_thousand = CompactDecimal::from_str("1c3").unwrap();
-    /// assert_writeable_eq!(long_french.format_compact_decimal(&a_thousand).unwrap(), "mille");
+    /// assert_writeable_eq!(
+    ///     long_french.format_compact_decimal(&a_thousand).unwrap(),
+    ///     "mille"
+    /// );
     /// ```
     pub fn format_compact_decimal<'l>(
         &'l self,
@@ -371,8 +403,8 @@ impl CompactDecimalFormatter {
     /// use icu_compactdecimal::CompactDecimalFormatter;
     /// use icu_locid::locale;
     ///
-    /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
-    ///     .map(|locale| {
+    /// let [long_french, long_japanese, long_bangla] =
+    ///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {
     ///         CompactDecimalFormatter::try_new_long_unstable(
     ///             &icu_testdata::unstable(),
     ///             &locale.into(),

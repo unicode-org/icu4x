@@ -42,10 +42,9 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterSegmenter;
-/// let segmenter = GraphemeClusterSegmenter::try_new_unstable(
-///     &icu_testdata::unstable(),
-/// )
-/// .expect("Data exists");
+/// let segmenter =
+///     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
 /// // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
@@ -56,10 +55,9 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterSegmenter;
-/// let segmenter = GraphemeClusterSegmenter::try_new_unstable(
-///     &icu_testdata::unstable(),
-/// )
-/// .expect("Data exists");
+/// let segmenter =
+///     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();

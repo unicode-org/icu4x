@@ -4,9 +4,9 @@
 
 [package]
 name = "icu_testdata_scripts"
-version = "0.1.0"
-edition = "2021"
 publish = false
+version = "0.0.0"
+edition = "2021"
 
 [dependencies]
 icu_testdata = { version = "1.0", path = "..", features = ["std", "internal_ignore_baked"]}
@@ -21,4 +21,4 @@ log = "0.4"
 reqwest = { version = "0.11", features = ["stream"] }
 simple_logger = { version = "1.12", default-features = false }
 tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"] }
-zip = "0.6.2"
+zip = "0.5"

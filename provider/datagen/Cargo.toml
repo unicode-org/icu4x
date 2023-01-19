@@ -25,10 +25,6 @@ include = [
 ]
 default-run = "icu4x-datagen"
 
-[package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
-skip_optional_dependencies = true
-
 [package.metadata.docs.rs]
 all-features = true
 
@@ -48,10 +44,10 @@ icu_timezone = { version = "1.0.0", path = "../../components/timezone", features
 
 # (experimental)
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
-icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
+icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", features = ["datagen"], optional = true }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", features = ["datagen"], optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", features = ["datagen"], optional = true }
-icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", features = ["datagen"], optional = true }
+icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "1.0.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
@@ -60,45 +56,45 @@ icu_provider_blob = { version = "1.0.0", path = "../blob", features = ["export"]
 icu_provider_fs = { version = "1.0.0", path = "../fs", features = ["export"] }
 
 # Other
+cached-path = "0.5"
+crlify = { version = "1", path = "../../utils/crlify"}
+databake = { version = "0.1.0", path = "../../utils/databake"}
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_collections = { version = "1.0.0", path = "../../components/collections", features = ["serde"] }
 icu_codepointtrie_builder = { version = "0.3.3", path = "../../components/collections/codepointtrie_builder" }
+icu_collections = { version = "1.0.0", path = "../../components/collections", features = ["serde"] }
 icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["std"] }
 itertools = "0.10"
+lazy_static = "1"
 log = "0.4"
+proc-macro2 = "1.0"
+quote = "1.0.9"
 rayon = "1.5"
+rust-format = { version = "0.3.4", features = ["token_stream"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
+syn = {version = "1.0", features = ["parsing"] }
 tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
-quote = "1.0.9"
-databake = { version = "0.1.0", path = "../../utils/databake"}
-proc-macro2 = "1.0"
-crlify = { version = "1", path = "../../utils/crlify"}
-syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.5", path = "../../utils/writeable" }
-zip = "0.6"
-cached-path = "0.5"
-lazy_static = "1"
-rust-format = { version = "0.3.4", features = ["token_stream"] }
+zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zip = "0.5"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
-simple_logger = { version = "1.12", optional = true, default-features = false }
+simple_logger = { version = "1.12", default-features = false, optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
-icu_testdata = { path = "../testdata", features = ["buffer"] }
 icu = { path = "../../components/icu" }
+icu_testdata = { path = "../testdata", features = ["buffer", "std"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_displaynames", "icu_relativetime", "icu_compactdecimal"]
-bin = ["clap", "eyre", "simple_logger"]
+experimental = ["dep:icu_casemapping", "dep:icu_segmenter", "icu_datetime/experimental", "dep:icu_displaynames", "dep:icu_relativetime", "dep:icu_compactdecimal"]
+bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 
 [[bin]]
 name = "icu4x-datagen"
