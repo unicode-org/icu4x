@@ -42,9 +42,9 @@
 
         Constructs a :cpp:class:`ICU4XDataProvider` containing baked data.
 
-        When compiling the Rust library, set the ``ICU4X_FFI_BAKED_ROOT`` environment variable to the baked data folder.
+        When compiling the Rust library, set the ``ICU4X_FFI_BAKED_ROOT`` environment variable to the baked data folder generated with the ``ffi`` feature.
 
-        If build.rs is used, this will default to an empty provider.
+        If the variable is not set, it will fall back to empty data. This fallback requires the ``build.rs`` to run, so in environments that don't support ``build.rs``, disabling the "custom_bake_data" default feature can force the empty fallback.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> fork_by_key(ICU4XDataProvider& other)
