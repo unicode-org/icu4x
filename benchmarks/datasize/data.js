@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674146133421,
+  "lastUpdate": 1674151629815,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34493,6 +34493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/92a24ff64857ca7024c7ee860dda817fce81a0a4"
         },
         "date": 1674146031793,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9c25bbd04e4c9de8a77cc1e1cfae6c82ea690962",
+          "message": "Not allocating `Writeable`s for regex evaluation (#2991)",
+          "timestamp": "2023-01-19T19:04:01+01:00",
+          "tree_id": "defbdc9fa2b0e4f9bc80e8108b8073e38237e750",
+          "url": "https://github.com/unicode-org/icu4x/commit/9c25bbd04e4c9de8a77cc1e1cfae6c82ea690962"
+        },
+        "date": 1674151533223,
         "tool": "ndjson",
         "benches": [
           {
