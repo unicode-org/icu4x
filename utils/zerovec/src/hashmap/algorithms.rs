@@ -20,11 +20,11 @@ const SEED: u64 = 0xaabbccdd;
 /// * `hash` - The hash to split.
 /// * `m` - The modulo used to split the hash.
 #[inline]
-pub const fn split_hash64(hash: u64, m: usize) -> (usize, u32, u32) {
+pub const fn split_hash64(hash: u64, m: usize) -> (usize, usize, usize) {
     (
         ((hash >> 48) as usize % m),
-        (hash >> 24) as u32 & 0xffffff,
-        ((hash & 0xffffff) as u32),
+        ((hash >> 24) as u32 & 0xffffff) as usize,
+        ((hash & 0xffffff) as usize),
     )
 }
 
@@ -40,11 +40,11 @@ pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
 /// Returns [`None`] if d is (0, 0) or modulo is 0
 /// else returns the index computed using (f0 + f1 * d0 + d1) mod m.
 #[inline]
-pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
+pub fn compute_index(f: (usize, usize), d: (u32, u32), m: usize) -> Option<usize> {
     if d == (0, 0) || m == 0 {
         None
     } else {
-        Some((f.1.wrapping_mul(d.0).wrapping_add(f.0).wrapping_add(d.1) % m) as usize)
+        Some((f.1 % m * d.0 as usize + f.0 + d.1 as usize) % m)
     }
 }
 
@@ -133,7 +133,7 @@ pub fn compute_displacements(
                 generation += 1;
 
                 for ((_, f0, f1), _) in buckets {
-                    let displacement_idx = compute_index((*f0, *f1), (d0, d1), len as u32).unwrap();
+                    let displacement_idx = compute_index((*f0, *f1), (d0, d1), len).unwrap();
 
                     // displacement_idx is always within bounds
                     if occupied[displacement_idx] || assignments[displacement_idx] == generation {

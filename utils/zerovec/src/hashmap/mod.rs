@@ -72,7 +72,7 @@ where
 
         #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();
-        let index = compute_index((f0, f1), (d0, d1), self.displacements.len() as u32)?;
+        let index = compute_index((f0, f1), (d0, d1), self.displacements.len())?;
 
         #[allow(clippy::unwrap_used)] // index is in 0..self.keys.len()
         let found = self.keys.zvl_get(index).unwrap();
