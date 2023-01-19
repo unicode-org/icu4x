@@ -28,12 +28,9 @@ include = [
 all-features = true
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
-skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-# serde enables dependency features but buffer_provider affects the actual code
-denylist = ["bench", "logging"]
+denylist = ["bench", "logging", "cpp_default", "wasm_default"]
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates
 [features]
@@ -108,7 +105,7 @@ simple_logger = { version = "1.12", optional = true }
 log = { version = "0.4", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-log = { version = "0.4" }
+log = "0.4"
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { version = "1.0.0", path = "../../provider/fs/", optional = true }
