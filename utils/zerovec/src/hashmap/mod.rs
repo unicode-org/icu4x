@@ -68,7 +68,7 @@ where
         A: Borrow<K> + ?Sized,
     {
         let hash = compute_hash(key.borrow());
-        let (g, f0, f1) = split_hash64(hash, self.len() as u32);
+        let (g, f0, f1) = split_hash64(hash, self.len());
 
         #[allow(clippy::unwrap_used)] // g is in-range
         let (d0, d1) = self.displacements.get(g).unwrap();

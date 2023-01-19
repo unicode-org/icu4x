@@ -20,9 +20,9 @@ const SEED: u64 = 0xaabbccdd;
 /// * `hash` - The hash to split.
 /// * `m` - The modulo used to split the hash.
 #[inline]
-pub const fn split_hash64(hash: u64, m: u32) -> (usize, u32, u32) {
+pub const fn split_hash64(hash: u64, m: usize) -> (usize, u32, u32) {
     (
-        ((hash >> 48) as u32 % m) as usize,
+        ((hash >> 48) as usize % m),
         (hash >> 24) as u32 & 0xffffff,
         ((hash & 0xffffff) as u32),
     )
@@ -79,7 +79,7 @@ pub fn compute_displacements(
     // Compute initial displacement and bucket sizes
 
     key_hashes.into_iter().enumerate().for_each(|(i, kh)| {
-        let h = split_hash64(kh, len as u32);
+        let h = split_hash64(kh, len);
         bucket_sizes[h.0] += 1;
         bucket_flatten.push((h, i))
     });
