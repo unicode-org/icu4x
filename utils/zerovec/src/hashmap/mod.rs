@@ -62,7 +62,6 @@ where
     V: ZeroMapKV<'a> + ?Sized,
 {
     /// Given a `key` return the index for the key or [`None`] if the key is absent.
-    #[inline]
     fn index<A>(&self, key: &A) -> Option<usize>
     where
         A: Borrow<K> + ?Sized,
@@ -97,7 +96,6 @@ where
     /// assert_eq!(hashmap.get("z"), Some("Z"));
     /// assert_eq!(hashmap.get("0"), None);
     /// ```
-    #[inline]
     pub fn get<'b, A>(&'b self, key: &A) -> Option<&'b V::GetType>
     where
         A: Borrow<K> + ?Sized + 'b,
@@ -117,7 +115,6 @@ where
     /// assert!(hashmap.contains_key("a"));
     /// assert!(!hashmap.contains_key("p"));
     /// ```
-    #[inline]
     pub fn contains_key(&self, key: &K) -> bool {
         self.index(key).is_some()
     }

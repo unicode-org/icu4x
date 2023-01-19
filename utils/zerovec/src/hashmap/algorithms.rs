@@ -19,17 +19,15 @@ const SEED: u64 = 0xaabbccdd;
 ///
 /// * `hash` - The hash to split.
 /// * `m` - The modulo used to split the hash.
-#[inline]
-pub const fn split_hash64(hash: u64, m: usize) -> (usize, usize, usize) {
+pub const fn split_hash64(hash: u64, m: usize) -> (usize, u32, u32) {
     (
         ((hash >> 48) as usize % m),
-        ((hash >> 24) as u32 & 0xffffff) as usize,
-        ((hash & 0xffffff) as usize),
+        ((hash >> 24) as u32 & 0xffffff),
+        ((hash & 0xffffff) as u32),
     )
 }
 
 /// Compute hash using [`T1haHasher`].
-#[inline]
 pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
     let mut hasher = T1haHasher::with_seed(SEED);
     key.hash(&mut hasher);
@@ -39,12 +37,13 @@ pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
 /// Calculate the index using (f0, f1), (d0, d1) in modulo m.
 /// Returns [`None`] if d is (0, 0) or modulo is 0
 /// else returns the index computed using (f0 + f1 * d0 + d1) mod m.
-#[inline]
-pub fn compute_index(f: (usize, usize), d: (u32, u32), m: usize) -> Option<usize> {
+pub fn compute_index(f: (u32, u32), d: (u32, u32), m: usize) -> Option<usize> {
     if d == (0, 0) || m == 0 {
         None
     } else {
-        Some((f.1 % m * d.0 as usize + f.0 + d.1 as usize) % m)
+        // f.0, f.1 are 24bits
+        let r = (f.1 as u64 * d.0 as u64) + (f.0 + d.1) as u64;
+        Some((r % m as u64) as usize)
     }
 }
 
@@ -63,7 +62,6 @@ pub fn compute_index(f: (usize, usize), d: (u32, u32), m: usize) -> Option<usize
 /// # Arguments
 ///
 /// * `key_hashes` - [`ExactSizeIterator`] over the hashed key values
-#[inline]
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
 pub fn compute_displacements(
     key_hashes: impl ExactSizeIterator<Item = u64>,
