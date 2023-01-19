@@ -35,19 +35,13 @@ class ICU4XLocale {
   /**
    * Construct an [`ICU4XLocale`] from an locale identifier.
    * 
+   * This will run the complete locale parsing algorithm. If code size and
+   * performance are critical and the locale is of a known shape (such as
+   * `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
+   * 
    * See the [Rust documentation for `try_from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
    */
   static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
-
-  /**
-   * Construct an [`ICU4XLocale`] for the English language.
-   */
-  static ICU4XLocale create_en();
-
-  /**
-   * Construct an [`ICU4XLocale`] for the Bangla language.
-   */
-  static ICU4XLocale create_bn();
 
   /**
    * Construct a default undefined [`ICU4XLocale`] "und".
@@ -201,6 +195,22 @@ class ICU4XLocale {
    * See the [Rust documentation for `strict_cmp`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
    */
   ICU4XOrdering strict_cmp(const std::string_view other) const;
+
+  /**
+   * Construct an [`ICU4XLocale`] for the English language.
+   * 
+   * This convenience constructor is intended for testing only
+   * and requires the `provider_test` feature.
+   */
+  static ICU4XLocale create_en();
+
+  /**
+   * Construct an [`ICU4XLocale`] for the Bangla language.
+   * 
+   * This convenience constructor is intended for testing only
+   * and requires the `provider_test` feature.
+   */
+  static ICU4XLocale create_bn();
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -221,12 +231,6 @@ inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create_from_string
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
-}
-inline ICU4XLocale ICU4XLocale::create_en() {
-  return ICU4XLocale(capi::ICU4XLocale_create_en());
-}
-inline ICU4XLocale ICU4XLocale::create_bn() {
-  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 inline ICU4XLocale ICU4XLocale::create_und() {
   return ICU4XLocale(capi::ICU4XLocale_create_und());
@@ -430,5 +434,11 @@ inline bool ICU4XLocale::normalizing_eq(const std::string_view other) const {
 }
 inline ICU4XOrdering ICU4XLocale::strict_cmp(const std::string_view other) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XLocale_strict_cmp(this->inner.get(), other.data(), other.size()));
+}
+inline ICU4XLocale ICU4XLocale::create_en() {
+  return ICU4XLocale(capi::ICU4XLocale_create_en());
+}
+inline ICU4XLocale ICU4XLocale::create_bn() {
+  return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
 #endif

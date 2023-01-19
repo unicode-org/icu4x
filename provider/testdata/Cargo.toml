@@ -37,10 +37,6 @@ icu_provider_adapters = { version = "1.0.0", path = "../adapters" }
 icu_provider_blob = { version = "1.0.0", path = "../blob", optional = true }
 lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
-# metadata feature
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-toml = { version = "0.5", default-features = false, optional = true }
-
 # databake deps
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
 icu_collections = { version = "1.0.0", path = "../../components/collections" }
@@ -87,13 +83,6 @@ icu_datetime_experimental = [
 ]
 buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "dep:lazy_static"]
 std = []
-# Enables programmatic access to the sources.toml file
-# If you want this to be made public stable, file an issue on the ICU4X repository.
-metadata = [
-    "icu_locid/serde",
-    "dep:toml",
-    "dep:serde",
-]
 # Deactivates baked in case it doesn't build
 internal_ignore_baked = []
 # Excludes `internal_ignore_baked` from `--all-features` 
