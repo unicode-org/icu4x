@@ -9,12 +9,9 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-icu_testdata = { version = "1.0", path = "..", features = ["metadata", "std", "internal_ignore_baked"]}
+icu_testdata = { version = "1.0", path = "..", features = ["std", "internal_ignore_baked"]}
 icu_datagen = { version = "1.0.0", path = "../../datagen", features = ["experimental"] }
 icu_provider = { version = "1.0.0", path = "../../core" }
-
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
-toml = { version = "0.5", default-features = false }
 
 bytes = "1.1.0"
 clap = "2.33"
