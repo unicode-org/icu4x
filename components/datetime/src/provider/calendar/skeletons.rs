@@ -35,13 +35,13 @@ pub struct DateSkeletonPatternsV1<'data>(
 );
 
 /// Marker type for [`DateSkeletonPatternsV1`].
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub struct DateSkeletonPatternsV1Marker;
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
     type Yokeable = DateSkeletonPatternsV1<'static>;
 }
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
     const KEY: icu_provider::DataKey = icu_provider::data_key!(
         "datetime/skeletons@1",
@@ -105,14 +105,14 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl Default for DateSkeletonPatternsV1Marker {
     fn default() -> Self {
         Self
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");

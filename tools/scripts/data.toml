@@ -45,7 +45,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=full",
@@ -61,7 +60,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=full",
@@ -78,7 +76,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=full",
@@ -95,7 +92,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=full",
@@ -124,7 +120,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=all",
     "--locales=full",
@@ -151,7 +146,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=de",
@@ -167,7 +161,6 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-datagen",
-    "--features=bin",
     "--",
     "--keys=core/helloworld@1",
     "--locales=ro",

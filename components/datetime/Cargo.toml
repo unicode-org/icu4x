@@ -83,17 +83,14 @@ serde = [
 ]
 datagen = [
     "dep:databake",
-    "experimental_skeleton_matching",
+    "dep:litemap",
     "icu_calendar/datagen",
     "icu_provider/datagen",
     "icu_timezone/datagen",
     "serde",
     "std",
     ]
-# experimental_skeleton_matching is the minimal set of skeleton features required for datagen.
-experimental_skeleton_matching = ["dep:litemap"]
-# experimental is the full set of skeleton and component APIs.
-experimental = ["experimental_skeleton_matching"]
+experimental = ["dep:litemap"]
 bench = ["serde"]
 
 [lib]

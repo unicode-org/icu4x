@@ -35,7 +35,7 @@ icu_calendar = { version = "1.0.0", path = "../../components/calendar", features
 icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", features = ["datagen"] }
 icu_collator = { version = "1.0.0", path = "../../components/collator", features = ["datagen"] }
 icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", features = ["datagen"] }
-icu_datetime = { version = "1.0.0", path = "../../components/datetime", features = ["datagen", "experimental"] }
+icu_datetime = { version = "1.0.0", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "1.0.0", path = "../../components/decimal", features = ["datagen"] }
 icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", features = ["datagen"] }
 icu_list = { version = "1.0.0", path = "../../components/list", features = ["datagen"]}
@@ -90,6 +90,7 @@ icu = { path = "../../components/icu" }
 icu_testdata = { path = "../testdata", features = ["buffer", "std"] }
 
 [features]
+default = ["bin"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 
 [[bin]]

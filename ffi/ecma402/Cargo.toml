@@ -37,4 +37,4 @@ zerovec = { version = "0.9", path = "../../utils/zerovec" }
 
 [build-dependencies]
 icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
-icu_datagen = { version = "1.0.0", path = "../../provider/datagen" }
+icu_datagen = { version = "1.0.0", path = "../../provider/datagen", default-features = false}

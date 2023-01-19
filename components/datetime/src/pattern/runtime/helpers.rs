@@ -38,7 +38,7 @@ pub fn maybe_replace_first(pattern: &mut Pattern, f: impl Fn(&PatternItem) -> Op
 ///
 /// For a variant that replaces just the first matching instance,
 /// see `maybe_replace_first`.
-#[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+#[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
 pub fn maybe_replace(pattern: &mut Pattern, f: impl Fn(&PatternItem) -> Option<PatternItem>) {
     let result = pattern
         .items
