@@ -4,29 +4,9 @@
 
 [package]
 name = "icu_capi_gn"
-description = "GN interface to ICU4X"
 publish = false
-version = "0.1.0"
-authors = ["The ICU4X Project Developers"]
+version = "0.0.0"
 edition = "2018"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
-
-[package.metadata.docs.rs]
-all-features = true
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.

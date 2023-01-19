@@ -35,8 +35,8 @@ path = "src/lib.rs"
 icu_capi = { version = "1.0.0", path = "../diplomat", default-features = false }
 
 [target.'cfg(target_os = "none")'.dependencies]
-freertos-rust = { version = "0.1.2" }
-cortex-m = { version = "0.7.3" }
+cortex-m = "0.7.3"
+freertos-rust = "0.1.2"
 
 [features]
 # Currently we don't enable anything here as WearOS loads data manually, but the feature remains for future use

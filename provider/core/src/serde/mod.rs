@@ -136,16 +136,16 @@ where
 {
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
-        let buffer_format = buffer_response
-            .metadata
-            .buffer_format
-            .ok_or_else(|| DataError::custom("BufferProvider didn't set BufferFormat"))?;
+        let buffer_format = buffer_response.metadata.buffer_format.ok_or_else(|| {
+            DataError::custom("BufferProvider didn't set BufferFormat").with_req(key, req)
+        })?;
         Ok(DataResponse {
             metadata: buffer_response.metadata,
             payload: buffer_response
                 .payload
                 .map(|p| p.into_deserialized(buffer_format))
-                .transpose()?,
+                .transpose()
+                .map_err(|e| e.with_req(key, req))?,
         })
     }
 }
@@ -165,21 +165,21 @@ where
     }
 }
 
-#[cfg(feature = "serde_json")]
+#[cfg(feature = "deserialize_json")]
 impl From<serde_json::error::Error> for crate::DataError {
     fn from(e: serde_json::error::Error) -> Self {
         crate::DataError::custom("JSON deserialize").with_display_context(&e)
     }
 }
 
-#[cfg(feature = "bincode")]
+#[cfg(feature = "deserialize_bincode_1")]
 impl From<bincode::Error> for crate::DataError {
     fn from(e: bincode::Error) -> Self {
         crate::DataError::custom("Bincode deserialize").with_display_context(&e)
     }
 }
 
-#[cfg(feature = "postcard")]
+#[cfg(feature = "deserialize_postcard_1")]
 impl From<postcard::Error> for crate::DataError {
     fn from(e: postcard::Error) -> Self {
         crate::DataError::custom("Postcard deserialize").with_display_context(&e)

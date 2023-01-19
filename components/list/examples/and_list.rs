@@ -6,8 +6,8 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_list::{ListFormatter, ListLength};
-use icu_locid::locale;
+use icu::list::{ListFormatter, ListLength};
+use icu::locid::locale;
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {

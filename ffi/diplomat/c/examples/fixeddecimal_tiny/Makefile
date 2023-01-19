@@ -31,7 +31,7 @@ icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +$(ICU4X_NIGHTLY_TOOLCHAIN) panic-abort-build --target x86_64-unknown-linux-gnu --profile=release-opt-size
 
 $(ICU4X_FFI_BAKED_ROOT):
-	cargo run -p icu_datagen --features bin,icu_segmenter -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format mod --use-separate-crates --out ${ICU4X_FFI_BAKED_ROOT}
+	cargo run -p icu_datagen --features bin,ffi -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format mod --use-separate-crates --out ${ICU4X_FFI_BAKED_ROOT}
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c

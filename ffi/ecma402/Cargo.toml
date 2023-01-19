@@ -27,7 +27,7 @@ include = [
 all-features = true
 
 [dependencies]
-ecma402_traits = { version = "0.2.0" }
+ecma402_traits = "0.2.0"
 icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
 icu_provider = { version = "1.0.0", path = "../../provider/core" }
 writeable = { version = "0.5", path = "../../utils/writeable" }

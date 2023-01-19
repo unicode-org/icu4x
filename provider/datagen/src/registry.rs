@@ -26,11 +26,11 @@ use icu_compactdecimal::provider::*;
 use icu_displaynames::provider::*;
 #[cfg(feature = "experimental")]
 use icu_relativetime::provider::*;
-#[cfg(feature = "icu_segmenter")]
+#[cfg(feature = "ffi")]
 use icu_segmenter::provider::*;
 
 macro_rules! registry {
-    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ } #[cfg(feature = "icu_segmenter")] { $($seg_marker:ident,)+ }) => {
+    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ } #[cfg(feature = "ffi")] { $($seg_marker:ident,)+ }) => {
         /// List of all supported keys
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
@@ -43,7 +43,7 @@ macro_rules! registry {
                     <$exp_marker>::KEY,
                 )+
                 $(
-                    #[cfg(feature = "icu_segmenter")]
+                    #[cfg(feature = "ffi")]
                     <$seg_marker>::KEY,
                 )+
             ]
@@ -60,7 +60,7 @@ macro_rules! registry {
             ]
         );
 
-        #[cfg(all(feature = "icu_segmenter", not(feature = "experimental")))]
+        #[cfg(all(feature = "ffi", not(feature = "experimental")))]
         icu_provider::make_exportable_provider!(
             crate::DatagenProvider,
             [
@@ -70,7 +70,7 @@ macro_rules! registry {
             ]
         );
 
-        #[cfg(all(not(feature = "icu_segmenter"), not(feature = "experimental")))]
+        #[cfg(all(not(feature = "ffi"), not(feature = "experimental")))]
         icu_provider::make_exportable_provider!(
             crate::DatagenProvider,
             [
@@ -98,7 +98,7 @@ macro_rules! registry {
                 }
             )+
             $(
-                #[cfg(feature = "icu_segmenter")]
+                #[cfg(feature = "ffi")]
                 if key == $seg_marker::KEY {
                     return $seg_marker.bake(env);
                 }
@@ -273,7 +273,7 @@ registry!(
         LongCompactDecimalFormatDataV1Marker,
         ShortCompactDecimalFormatDataV1Marker,
     }
-    #[cfg(feature = "icu_segmenter")]
+    #[cfg(feature = "ffi")]
     {
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,

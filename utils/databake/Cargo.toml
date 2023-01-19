@@ -24,15 +24,11 @@ include = [
     "README.md"
 ]
 
-[lib]
-path = "src/lib.rs"
-
-
 [package.metadata.docs.rs]
 all-features = true
 
 [features]
-derive = ["databake-derive"]
+derive = ["dep:databake-derive"]
 
 [dependencies]
 proc-macro2 = "1.0.27"

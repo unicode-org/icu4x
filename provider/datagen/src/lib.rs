@@ -134,9 +134,7 @@ impl AnyProvider for DatagenProvider {
 }
 
 /// Parses a human-readable key identifier into a [`DataKey`].
-///
 //  Supports the hello world key
-//
 /// # Example
 /// ```
 /// # use icu_provider::KeyedDataMarker;
@@ -162,9 +160,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
 /// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
-///
 //  Supports the hello world key
-//
 /// # Example
 /// ```
 /// # use icu_provider::KeyedDataMarker;
@@ -184,9 +180,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
-///
 //  Supports the hello world key
-//
 /// # Example
 ///
 /// #### keys.txt
@@ -222,9 +216,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
 ///
 /// Unknown key names are ignored.
-///
 //  Supports the hello world key
-//
 /// # Example
 ///
 /// #### build.rs

@@ -10,8 +10,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "diplomat"
-version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "715c9a09a3623bfc1e3e7f602dd46ff28271869b97c7141b250c2041e3f50742"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -21,13 +22,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72436165c1437c454114de69a35992c2fe33a8a538bb0a7f781fe10d34a8ad5e"
 
 [[package]]
 name = "diplomat_core"
-version = "0.4.4"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c59c2b777f3d2914166b3f9106348118c67959c5fae4aecab88d5f2620d5bd5b"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -117,15 +120,16 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_staticlib_tiny"
-version = "1.0.0"
+version = "0.0.0"
 dependencies = [
  "dlmalloc",
  "icu_capi",
+ "libc",
 ]
 
 [[package]]
 name = "icu_collator"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -136,7 +140,6 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "zerofrom",
  "zerovec",
 ]
 
@@ -163,7 +166,6 @@ dependencies = [
  "icu_plurals",
  "icu_provider",
  "icu_timezone",
- "litemap",
  "smallvec",
  "tinystr",
  "writeable",
@@ -186,11 +188,9 @@ name = "icu_list"
 version = "1.0.0"
 dependencies = [
  "displaydoc",
- "icu_locid",
  "icu_provider",
  "regex-automata",
  "writeable",
- "zerovec",
 ]
 
 [[package]]
@@ -227,7 +227,6 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
- "zerofrom",
  "zerovec",
 ]
 
@@ -295,8 +294,6 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "serde",
- "serde_json",
  "utf8_iter",
  "zerovec",
 ]
@@ -314,12 +311,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "itoa"
-version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
-
-[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -327,9 +318,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.125"
+version = "0.2.126"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5916d2ae698f6de9bfb891ad7a8d65c09d232dc58cc4ac433c7da3b2fd84bc2b"
+checksum = "349d5a591cd28b49e1d1037471617a32ddcda5731b99419008085f72d5a53836"
 
 [[package]]
 name = "litemap"
@@ -401,17 +392,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "serde_json"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e466864e431129c7e0d3476b92f20458e5879919a0596c6472738d9fa2d342f8"
-dependencies = [
- "itoa",
- "ryu",
- "serde",
 ]
 
 [[package]]

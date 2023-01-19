@@ -23,11 +23,6 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
 [package.metadata.docs.rs]
 all-features = true
 
@@ -46,20 +41,23 @@ toml = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 criterion = "0.3.4"
-icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 iai = "0.1.1"
 icu = { path = "../icu", default-features = false }
+
+[features]
+std = []
+serde = ["dep:serde", "zerovec/serde"]
+databake = ["dep:databake", "zerovec/databake"]
+bench = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI
 path = "src/lib.rs"
 
-[features]
-default = []
-std = []
-serde = ["dep:serde", "zerovec/serde"]
-bench = []
-databake = ["dep:databake", "zerovec/databake"]
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
 
 [[bench]]
 name = "codepointtrie"
