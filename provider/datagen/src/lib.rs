@@ -32,7 +32,7 @@
 //! The command line interface can be installed with the `bin` Cargo feature.
 //!
 //! ```bash
-//! $ cargo install icu_datagen
+//! $ cargo install icu_datagen --features bin
 //! ```
 //!
 //! Once the tool is installed, you can invoke it like this:

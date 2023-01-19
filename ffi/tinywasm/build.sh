@@ -32,7 +32,7 @@ cp target/wasm32-unknown-unknown/release/icu_capi_tinywasm.wasm icu_capi.wasm
 # Don't regen the postcard data by default; delete the file to regen
 if ! test -f "icu4x_data.postcard"; then
     # Regen all data
-    cargo run --manifest-path ../../provider/datagen/Cargo.toml -- \
+    cargo run --manifest-path ../../provider/datagen/Cargo.toml --features bin -- \
         --keys-for-bin icu_capi.wasm \
         --locales full \
         --format blob \

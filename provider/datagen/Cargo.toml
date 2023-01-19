@@ -79,19 +79,23 @@ writeable = { version = "0.5", path = "../../utils/writeable" }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 zip = "0.5"
 
-# Dependencies for bin
-clap = { version = "2.33" }
-eyre = { version = "0.6" }
-simple_logger = { version = "1.12", default-features = false }
+# Dependencies for "bin" feature
+clap = { version = "2.33", optional = true }
+eyre = { version = "0.6", optional = true }
+simple_logger = { version = "1.12", default-features = false, optional = true }
 
 [dev-dependencies]
 dhat = "0.3.0"
 icu = { path = "../../components/icu" }
 icu_testdata = { path = "../testdata", features = ["buffer", "std"] }
 
+[features]
+bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+
 [[bin]]
 name = "icu4x-datagen"
 path = "src/bin/datagen.rs"
+required-features = ["bin"]
 
 [[test]]
 name = "icu4x-verify-zero-copy"
