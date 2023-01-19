@@ -5,7 +5,7 @@
 [package]
 name = "icu_capi_staticlib"
 description = "C interface to ICU4X"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 resolver = "2"

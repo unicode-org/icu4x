@@ -5,7 +5,7 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"

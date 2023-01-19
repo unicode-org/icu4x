@@ -5,7 +5,7 @@
 [package]
 name = "icu_displaynames"
 description = "API to enable the translation of Region display names"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"

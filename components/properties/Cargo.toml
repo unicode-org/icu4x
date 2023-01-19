@@ -5,7 +5,7 @@
 [package]
 name = "icu_properties"
 description = "Definitions for Unicode properties"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
