@@ -30,11 +30,12 @@ all-features = true
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "logging", "cpp_default", "wasm_default"]
+denylist = ["bench", "logging", "cpp_default", "wasm_default", "custom_bake_data"]
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates
 [features]
-default = []
+default = ["custom_bake_data"]
+custom_bake_data = []
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",

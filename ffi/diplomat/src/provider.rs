@@ -31,7 +31,11 @@ impl Default for ICU4XDataProviderInner {
 
 struct BakedProvider;
 mod baked {
+    #[cfg(feature = "custom_bake_data")]
     include!(concat!(core::env!("ICU4X_FFI_BAKED_ROOT"), "/mod.rs"));
+    #[cfg(not(feature = "custom_bake_data"))]
+    include!(concat!("../empty_bake/mod.rs"));
+
     impl_data_provider!(super::BakedProvider, COMPLETE);
     #[cfg(feature = "any_provider")]
     impl_any_provider!(super::BakedProvider);
@@ -130,9 +134,13 @@ pub mod ffi {
         /// Constructs a [`ICU4XDataProvider`] containing baked data.
         ///
         /// When compiling the Rust library, set the `ICU4X_FFI_BAKED_ROOT`
-        /// environment variable to the baked data folder.
+        /// environment variable to the baked data folder generated with
+        /// the `ffi` feature.
         ///
-        /// If build.rs is used, this will default to an empty provider.
+        /// If the variable is not set, it will fall back to empty data.
+        /// This fallback requires the `build.rs` to run, so in environments
+        /// that don't support `build.rs`, disabling the "custom_bake_data"
+        /// default feature can force the empty fallback.
         pub fn create_baked() -> Box<ICU4XDataProvider> {
             Box::new(ICU4XDataProvider(ICU4XDataProviderInner::Baked))
         }

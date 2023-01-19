@@ -39,6 +39,7 @@ icu_provider = { version = "1.0.0", path = "../../provider/core", default-featur
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
 default = ["icu_capi/default"]
+custom_bake_data = ["icu_capi/custom_bake_data"]
 any_provider = ["icu_capi/any_provider"]
 buffer_provider = ["icu_capi/buffer_provider"]
 provider_fs = ["icu_capi/provider_fs"] # Indirectly implies buffer_provider

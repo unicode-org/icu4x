@@ -20,7 +20,7 @@ LLD := lld-14
 export ICU4X_FFI_BAKED_ROOT = $(dir $(realpath $(lastword $(MAKEFILE_LIST))))baked
 
 ../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST) $(ICU4X_FFI_BAKED_ROOT)
-	cargo build -p icu_capi_staticlib --no-default-features
+	cargo build -p icu_capi_staticlib
 
 icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: $(ALL_RUST) $(ICU4X_FFI_BAKED_ROOT)
 	cd icu_capi_staticlib_tiny && \
