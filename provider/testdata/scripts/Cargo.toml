@@ -10,7 +10,7 @@ edition = "2021"
 
 [dependencies]
 icu_testdata = { version = "1.0", path = "..", features = ["metadata", "std", "internal_ignore_baked"]}
-icu_datagen = { version = "1.0.0", path = "../../datagen", features = ["experimental"] }
+icu_datagen = { version = "1.0.0", path = "../../datagen" }
 icu_provider = { version = "1.0.0", path = "../../core" }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
