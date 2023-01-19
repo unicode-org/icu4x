@@ -27,7 +27,7 @@ macro_rules! registry {
     ($($marker:ident,)+ # experimental # { $($exp_marker:ident,)+ }) => {
         /// List of all supported keys, except those that require the "experimental"
         /// feature on the `icu` crate.
-        /// 
+        ///
         /// See [all_keys_with_experimental].
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
