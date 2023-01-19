@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::lazy_automaton::LazyAutomaton;
 use crate::provider::*;
 use crate::ListLength;
 #[cfg(feature = "datagen")]
 use alloc::borrow::Cow;
 #[cfg(feature = "datagen")]
 use icu_provider::DataError;
-use regex_automata::dfa::Automaton;
 use writeable::{LengthHint, Writeable};
 
 impl<'data> ListFormatterPatternsV1<'data> {
@@ -89,12 +89,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
     ) -> PatternParts<'a> {
         match &self.special_case {
             Some(SpecialCasePattern { condition, pattern })
-                if matches!(
-                    condition
-                        .deref()
-                        .find_earliest_fwd(following_value.write_to_string().as_bytes()),
-                    Ok(Some(_))
-                ) =>
+                if condition.deref().matches_earliest_fwd_lazy(following_value) =>
             {
                 pattern.borrow_tuple()
             }
