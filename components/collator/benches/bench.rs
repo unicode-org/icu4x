@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
+use criterion::{BatchSize, BenchmarkId, black_box, Criterion, criterion_group, criterion_main};
 
 use icu::collator::*;
 use icu::locid::Locale;
@@ -20,56 +20,64 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     let content_latin: (&str, Vec<&str>) = (
         "TestNames_Latin",
         include_str!("data/TestNames_Latin.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_asian: (&str, Vec<&str>) = (
         "TestNames_Asian",
         include_str!("data/TestNames_Asian.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect(),
     );
     let content_russian: (&str, Vec<&str>) = (
         "TestNames_Russian",
         include_str!("data/TestNames_Russian.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect(),
     );
     let content_chinese: (&str, Vec<&str>) = (
         "TestNames_Chinese",
         include_str!("data/TestNames_Chinese.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect(),
     );
     let content_jp_h: (&str, Vec<&str>) = (
         "TestNames_Japanese_h",
         include_str!("data/TestNames_Japanese_h.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_jp_k: (&str, Vec<&str>) = (
         "TestNames_Japanese_k",
         include_str!("data/TestNames_Japanese_k.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_korean: (&str, Vec<&str>) = (
         "TestNames_Korean",
         include_str!("data/TestNames_Korean.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect::<Vec<&str>>(),
     );
     let content_thai: (&str, Vec<&str>) = (
         "TestNames_Thai",
         include_str!("data/TestNames_Thai.txt")
-            .split('\n')
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
             .rev()
             .collect::<Vec<&str>>(),
     );
@@ -153,7 +161,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                     &locale_under_bench,
                     options,
                 )
-                .unwrap();
+                    .unwrap();
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
                     BenchmarkId::new(
