@@ -354,7 +354,7 @@ pub fn datagen(
         }),
     };
 
-    let keys: HashSet<_> = keys.into_iter().collect();
+    let keys: HashSet<_> = keys.iter().collect();
 
     keys.into_par_iter().try_for_each(|&key| {
         let locales = provider
