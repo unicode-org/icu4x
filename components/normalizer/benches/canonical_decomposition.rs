@@ -15,6 +15,14 @@ struct BenchDataContent {
     pub nfkd: String,
 }
 
+fn strip_headers(content: &str) -> String {
+    content.lines()
+        .filter(|&s| !s.starts_with('#'))
+        .map(|s| s.to_owned())
+        .collect::<Vec<String>>()
+        .join("\n")
+}
+
 fn normalizer_bench_data() -> [BenchDataContent; 15] {
     let nfc_normalizer: ComposingNormalizer =
         ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
@@ -27,61 +35,61 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
 
     let content_latin: (&str, &str) = (
         "TestNames_Latin",
-        include_str!("./data/TestNames_Latin.txt"),
+        &strip_headers(include_str!("./data/TestNames_Latin.txt")),
     );
     let content_jp_h: (&str, &str) = (
         "TestNames_Japanese_h",
-        include_str!("./data/TestNames_Japanese_h.txt"),
+        &strip_headers(include_str!("./data/TestNames_Japanese_h.txt")),
     );
     let content_jp_k: (&str, &str) = (
         "TestNames_Japanese_k",
-        include_str!("./data/TestNames_Japanese_k.txt"),
+        &strip_headers(include_str!("./data/TestNames_Japanese_k.txt")),
     );
     let content_korean: (&str, &str) = (
         "TestNames_Korean",
-        include_str!("./data/TestNames_Korean.txt"),
+        &strip_headers(include_str!("./data/TestNames_Korean.txt")),
     );
     let content_random_words_ar: (&str, &str) = (
         "TestRandomWordsUDHR_ar",
-        include_str!("./data/TestRandomWordsUDHR_ar.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_ar.txt")),
     );
     let content_random_words_de: (&str, &str) = (
         "TestRandomWordsUDHR_de",
-        include_str!("./data/TestRandomWordsUDHR_de.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_de.txt")),
     );
     let content_random_words_el: (&str, &str) = (
         "TestRandomWordsUDHR_el",
-        include_str!("./data/TestRandomWordsUDHR_el.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_el.txt")),
     );
     let content_random_words_es: (&str, &str) = (
         "TestRandomWordsUDHR_es",
-        include_str!("./data/TestRandomWordsUDHR_es.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_es.txt")),
     );
     let content_random_words_fr: (&str, &str) = (
         "TestRandomWordsUDHR_fr",
-        include_str!("./data/TestRandomWordsUDHR_fr.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_fr.txt")),
     );
     let content_random_words_he: (&str, &str) = (
         "TestRandomWordsUDHR_he",
-        include_str!("./data/TestRandomWordsUDHR_he.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_he.txt")),
     );
     let content_random_words_pl: (&str, &str) = (
         "TestRandomWordsUDHR_pl",
-        include_str!("./data/TestRandomWordsUDHR_pl.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_pl.txt")),
     );
     let content_random_words_ru: (&str, &str) = (
         "TestRandomWordsUDHR_ru",
-        include_str!("./data/TestRandomWordsUDHR_ru.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_ru.txt")),
     );
     let content_random_words_th: (&str, &str) = (
         "TestRandomWordsUDHR_th",
-        include_str!("./data/TestRandomWordsUDHR_th.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_th.txt")),
     );
     let content_random_words_tr: (&str, &str) = (
         "TestRandomWordsUDHR_tr",
-        include_str!("./data/TestRandomWordsUDHR_tr.txt"),
+        &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
-    let content_viet: (&str, &str) = ("udhr_vie", include_str!("./data/udhr_vie.txt"));
+    let content_viet: (&str, &str) = ("udhr_vie", &strip_headers(include_str!("./data/udhr_vie.txt")));
 
     [
         content_latin,
