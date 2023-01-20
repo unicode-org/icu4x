@@ -15,7 +15,8 @@ struct BenchDataContent {
 }
 
 fn strip_headers(content: &str) -> String {
-    content.lines()
+    content
+        .lines()
         .filter(|&s| !s.starts_with('#'))
         .map(|s| s.to_owned())
         .collect::<Vec<String>>()
@@ -88,7 +89,10 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         "TestRandomWordsUDHR_tr",
         &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
-    let content_viet: (&str, &str) = ("udhr_vie", &strip_headers(include_str!("./data/udhr_vie.txt")));
+    let content_viet: (&str, &str) = (
+        "udhr_vie",
+        &strip_headers(include_str!("./data/udhr_vie.txt")),
+    );
 
     [
         content_latin,
