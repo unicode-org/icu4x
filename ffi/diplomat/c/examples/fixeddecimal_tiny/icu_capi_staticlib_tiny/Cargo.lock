@@ -23,8 +23,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "715c9a09a3623bfc1e3e7f602dd46ff28271869b97c7141b250c2041e3f50742"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -34,13 +35,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.4.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72436165c1437c454114de69a35992c2fe33a8a538bb0a7f781fe10d34a8ad5e"
 
 [[package]]
 name = "diplomat_core"
-version = "0.4.4"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=9e263b53cdee44b4b5310fc247182032945f7a84#9e263b53cdee44b4b5310fc247182032945f7a84"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c59c2b777f3d2914166b3f9106348118c67959c5fae4aecab88d5f2620d5bd5b"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -133,7 +136,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_staticlib_tiny"
-version = "1.0.0"
+version = "0.0.0"
 dependencies = [
  "dlmalloc",
  "icu_capi",
@@ -154,7 +157,6 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "zerofrom",
  "zerovec",
 ]
 
@@ -208,12 +210,10 @@ version = "1.0.0"
 dependencies = [
  "deduplicating_array",
  "displaydoc",
- "icu_locid",
  "icu_provider",
  "regex-automata",
  "serde",
  "writeable",
- "zerovec",
 ]
 
 [[package]]
@@ -253,7 +253,6 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
- "zerofrom",
  "zerovec",
 ]
 

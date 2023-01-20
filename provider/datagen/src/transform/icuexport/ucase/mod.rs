@@ -5,8 +5,6 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-#![cfg(feature = "experimental")]
-
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_collections::codepointtrie::toml::CodePointDataSlice;

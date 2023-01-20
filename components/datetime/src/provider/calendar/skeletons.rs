@@ -25,7 +25,13 @@ use litemap::LiteMap;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
+#[icu_provider::data_struct(marker(
+    DateSkeletonPatternsV1Marker,
+    "datetime/skeletons@1",
+    fallback_by = "language",
+    extension_key = "ca",
+))]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateSkeletonPatternsV1<'data>(
@@ -33,25 +39,6 @@ pub struct DateSkeletonPatternsV1<'data>(
     #[zerofrom(clone)]
     pub LiteMap<SkeletonV1, PatternPlurals<'data>>,
 );
-
-/// Marker type for [`DateSkeletonPatternsV1`].
-#[cfg(feature = "experimental")]
-pub struct DateSkeletonPatternsV1Marker;
-#[cfg(feature = "experimental")]
-impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
-    type Yokeable = DateSkeletonPatternsV1<'static>;
-}
-#[cfg(feature = "experimental")]
-impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
-    const KEY: icu_provider::DataKey = icu_provider::data_key!(
-        "datetime/skeletons@1",
-        icu_provider::DataKeyMetadata::construct_internal(
-            icu_provider::FallbackPriority::Language,
-            Some(icu_locid::extensions_unicode_key!("ca")),
-            None
-        )
-    );
-}
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
 /// access to the serialization and deserialization capabilities, without exposing the
@@ -105,14 +92,14 @@ impl databake::Bake for DateSkeletonPatternsV1<'_> {
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl Default for DateSkeletonPatternsV1Marker {
     fn default() -> Self {
         Self
     }
 }
 
-#[cfg(all(feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "datagen")]
 impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
