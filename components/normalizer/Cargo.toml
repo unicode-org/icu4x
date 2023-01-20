@@ -46,8 +46,8 @@ arrayvec = "0.7.2"
 atoi = "1.0.0"
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties"] }
 write16 = { version = "1.0", features = ["arrayvec"] }
-criterion = "0.3"
 detone = "1.0.0"
+criterion = "0.4.0"
 
 [features]
 std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
