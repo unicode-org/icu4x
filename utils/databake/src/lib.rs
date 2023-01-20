@@ -179,7 +179,7 @@ macro_rules! test_bake {
         )?
         assert_eq!(bake, expected_bake);
 
-        #[allow(unused_variable)]
+        #[allow(unused_variables)]
         let _env = env.into_iter().collect::<std::collections::HashSet<_>>();
         $(
             assert!(_env.contains(stringify!($krate)), "Crate {:?} was not added to the CrateEnv", stringify!($krate));

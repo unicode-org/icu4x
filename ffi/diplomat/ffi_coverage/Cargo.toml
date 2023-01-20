@@ -4,35 +4,15 @@
 
 [package]
 name = "icu_ffi_coverage"
-description = "C interface to ICU4X"
-version = "0.0.1"
 publish = false
-authors = ["The ICU4X Project Developers"]
+version = "0.0.0"
 edition = "2021"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
-
-[package.metadata.docs.rs]
-all-features = true
 
 [dependencies]
-syn-inline-mod = { version =  "0.4.0" }
-serde_json = { version =  "1" }
-rustdoc-types = { version =  "0.14" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "9e263b53cdee44b4b5310fc247182032945f7a84" }
-lazy_static = { version =  "1" }
-elsa = { version = "1" }
+diplomat_core = "0.5"
+elsa = "1"
+lazy_static ="1"
+rustdoc-types = "0.14"
+serde_json = "1"
+syn-inline-mod = "0.4.0"
 
