@@ -113,6 +113,23 @@ impl Dictionary {
         }
     }
 
+    /// Construct a [`Dictionary`] for East Asian languages (Burmese, Khmer, Lao, and Thai).
+    pub(crate) fn new_east_asian<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Self {
+        let burmese = Self::load(provider, locale!("my")).ok();
+        let khmer = Self::load(provider, locale!("km")).ok();
+        let lao = Self::load(provider, locale!("lo")).ok();
+        let thai = Self::load(provider, locale!("th")).ok();
+        Dictionary {
+            burmese,
+            khmer,
+            lao,
+            thai,
+            ..Default::default()
+        }
+    }
+
     pub(crate) fn load<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,
         locale: Locale,

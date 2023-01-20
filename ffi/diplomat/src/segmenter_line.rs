@@ -60,7 +60,7 @@ pub mod ffi {
 
     impl ICU4XLineSegmenter {
         /// Construct a [`ICU4XLineSegmenter`] with default options.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::try_new_auto_unstable, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
@@ -74,13 +74,13 @@ pub mod ffi {
                 + ?Sized,
         {
             Ok(Box::new(ICU4XLineSegmenter(
-                LineSegmenter::try_new_unstable(provider)?,
+                LineSegmenter::try_new_auto_unstable(provider)?,
             )))
         }
 
         /// Construct a [`ICU4XLineSegmenter`] with custom options.
         #[diplomat::rust_link(
-            icu::segmenter::LineSegmenter::try_new_with_options_unstable,
+            icu::segmenter::LineSegmenter::try_new_auto_with_options_unstable,
             FnInStruct
         )]
         pub fn create_with_options_v1(
@@ -102,7 +102,7 @@ pub mod ffi {
                 + ?Sized,
         {
             Ok(Box::new(ICU4XLineSegmenter(
-                LineSegmenter::try_new_with_options_unstable(provider, options.into())?,
+                LineSegmenter::try_new_auto_with_options_unstable(provider, options.into())?,
             )))
         }
 

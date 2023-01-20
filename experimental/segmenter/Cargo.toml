@@ -67,3 +67,7 @@ harness = false
 [[test]]
 name = "complex_word"
 required-features = ["dictionary", "lstm"]
+
+[[test]]
+name = "css_word_break"
+required-features = ["dictionary"]
