@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674151629815,
+  "lastUpdate": 1674209391756,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34523,6 +34523,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9c25bbd04e4c9de8a77cc1e1cfae6c82ea690962"
         },
         "date": 1674151533223,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20b636b12b7a277685d0369f3c5874c9bb444b65",
+          "message": "Fix allow attribute in test_bake macro (#3011)\n\nWithout this patch, running `cargo +nightly check --all-features --all-targets`\r\nlocally generates the following warning.\r\n\r\n```\r\nwarning: unknown lint: `unused_variable`\r\n```",
+          "timestamp": "2023-01-20T11:07:04+01:00",
+          "tree_id": "e8b018ee19e38f108e70d531d6bdff578e418868",
+          "url": "https://github.com/unicode-org/icu4x/commit/20b636b12b7a277685d0369f3c5874c9bb444b65"
+        },
+        "date": 1674209301548,
         "tool": "ndjson",
         "benches": [
           {
