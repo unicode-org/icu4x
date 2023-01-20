@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674209391756,
+  "lastUpdate": 1674245280481,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34553,6 +34553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/20b636b12b7a277685d0369f3c5874c9bb444b65"
         },
         "date": 1674209301548,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dfafa98ceda9ac9900e2e8195da04244a32b5ca1",
+          "message": "Removing experimental feature from datagen (#3005)",
+          "timestamp": "2023-01-20T21:04:59+01:00",
+          "tree_id": "48d52a660978051566adef74cfee8af1fb2a7d1c",
+          "url": "https://github.com/unicode-org/icu4x/commit/dfafa98ceda9ac9900e2e8195da04244a32b5ca1"
+        },
+        "date": 1674245186537,
         "tool": "ndjson",
         "benches": [
           {
