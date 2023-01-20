@@ -276,7 +276,7 @@ impl LineSegmenter {
 
         let dictionary = if cfg!(not(feature = "lstm")) && cfg!(feature = "dictionary") {
             // Line segmenter doesn't need CJ dictionary.
-            Dictionary::new_east_asian(provider)
+            Dictionary::new_southeast_asian(provider)
         } else {
             Dictionary::default()
         };
@@ -335,7 +335,7 @@ impl LineSegmenter {
             options,
             payload,
             // Line segmenter doesn't need CJ dictionary.
-            dictionary: Dictionary::new_east_asian(provider),
+            dictionary: Dictionary::new_southeast_asian(provider),
             lstm: LstmPayloads::default(),
             grapheme,
         })
