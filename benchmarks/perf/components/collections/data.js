@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674152219958,
+  "lastUpdate": 1674210109808,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45335,6 +45335,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 47160424,
             "range": "± 106377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20b636b12b7a277685d0369f3c5874c9bb444b65",
+          "message": "Fix allow attribute in test_bake macro (#3011)\n\nWithout this patch, running `cargo +nightly check --all-features --all-targets`\r\nlocally generates the following warning.\r\n\r\n```\r\nwarning: unknown lint: `unused_variable`\r\n```",
+          "timestamp": "2023-01-20T11:07:04+01:00",
+          "tree_id": "e8b018ee19e38f108e70d531d6bdff578e418868",
+          "url": "https://github.com/unicode-org/icu4x/commit/20b636b12b7a277685d0369f3c5874c9bb444b65"
+        },
+        "date": 1674209999828,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 596,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 467,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 511,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 518,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 870,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 963,
+            "range": "± 111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 466,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 517,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 526,
+            "range": "± 109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 583,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1000,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 47578080,
+            "range": "± 3251859",
             "unit": "ns/iter"
           },
           {
