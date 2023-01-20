@@ -46,6 +46,7 @@ arraystring = "0.3.0"
 atoi = "1.0.0"
 icu = { path = "../icu" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer"] }
+criterion = "0.4.0"
 
 [features]
 std = ["icu_collections/std", "icu_locid/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
