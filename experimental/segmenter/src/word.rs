@@ -113,6 +113,17 @@ impl WordSegmenter {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_auto_unstable,
+            try_new_auto_with_any_provider,
+            try_new_auto_with_buffer_provider
+        ]
+    );
+
     /// Construct a [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and Thai.
     ///
     /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or Japanese.
@@ -135,6 +146,18 @@ impl WordSegmenter {
         })
     }
 
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_lstm_unstable,
+            try_new_lstm_with_any_provider,
+            try_new_lstm_with_buffer_provider
+        ]
+    );
+
     /// Construct a [`WordSegmenter`] with dictionary payload data for Chinese, Japanese, Burmese,
     /// Khmer, Lao, and Thai.
     #[cfg(feature = "dictionary")]
@@ -156,14 +179,15 @@ impl WordSegmenter {
         })
     }
 
+    #[cfg(feature = "dictionary")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
         error: SegmenterError,
         functions: [
-            Self::try_new_auto_unstable,
-            try_new_auto_with_any_provider,
-            try_new_auto_with_buffer_provider
+            Self::try_new_dictionary_unstable,
+            try_new_dictionary_with_any_provider,
+            try_new_dictionary_with_buffer_provider
         ]
     );
 

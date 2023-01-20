@@ -210,6 +210,17 @@ impl LineSegmenter {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_auto_unstable,
+            try_new_auto_with_any_provider,
+            try_new_auto_with_buffer_provider
+        ]
+    );
+
     /// Construct a [`LineSegmenter`] via [`Self::try_new_lstm_with_options_unstable`] with default
     /// [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
@@ -222,6 +233,18 @@ impl LineSegmenter {
     {
         Self::try_new_lstm_with_options_unstable(provider, Default::default())
     }
+
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_lstm_unstable,
+            try_new_lstm_with_any_provider,
+            try_new_lstm_with_buffer_provider
+        ]
+    );
 
     /// Construct a [`LineSegmenter`] via [`Self::try_new_dictionary_with_options_unstable`] with
     /// default [`LineBreakOptions`].
@@ -236,14 +259,15 @@ impl LineSegmenter {
         Self::try_new_dictionary_with_options_unstable(provider, Default::default())
     }
 
+    #[cfg(feature = "dictionary")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
         error: SegmenterError,
         functions: [
-            Self::try_new_auto_unstable,
-            try_new_auto_with_any_provider,
-            try_new_auto_with_buffer_provider
+            Self::try_new_dictionary_unstable,
+            try_new_dictionary_with_any_provider,
+            try_new_dictionary_with_buffer_provider
         ]
     );
 
@@ -290,6 +314,17 @@ impl LineSegmenter {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: LineBreakOptions,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_auto_with_options_unstable,
+            try_new_auto_with_options_with_any_provider,
+            try_new_auto_with_options_with_buffer_provider
+        ]
+    );
+
     /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`] and LSTM payload data for
     /// Burmese, Khmer, Lao, and Thai.
     #[cfg(feature = "lstm")]
@@ -314,6 +349,18 @@ impl LineSegmenter {
             grapheme,
         })
     }
+
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: LineBreakOptions,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_lstm_with_options_unstable,
+            try_new_lstm_with_options_with_any_provider,
+            try_new_lstm_with_options_with_buffer_provider
+        ]
+    );
 
     /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`] and dictionary payload data
     /// for Burmese, Khmer, Lao, and Thai.
@@ -341,14 +388,15 @@ impl LineSegmenter {
         })
     }
 
+    #[cfg(feature = "dictionary")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: LineBreakOptions,
         error: SegmenterError,
         functions: [
-            Self::try_new_auto_with_options_unstable,
-            try_new_auto_with_options_with_any_provider,
-            try_new_auto_with_options_with_buffer_provider
+            Self::try_new_dictionary_with_options_unstable,
+            try_new_dictionary_with_options_with_any_provider,
+            try_new_dictionary_with_options_with_buffer_provider
         ]
     );
 
