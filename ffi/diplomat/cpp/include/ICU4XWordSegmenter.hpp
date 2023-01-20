@@ -38,7 +38,7 @@ class ICU4XWordSegmenter {
   /**
    * Construct an [`ICU4XWordSegmenter`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_auto_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable) for more information.
    */
   static diplomat::result<ICU4XWordSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 

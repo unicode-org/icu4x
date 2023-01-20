@@ -49,14 +49,14 @@
 
         Construct a :js:class:`ICU4XLineSegmenter` with default options.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
     .. js:function:: create_with_options_v1(provider, options)
 
         Construct a :js:class:`ICU4XLineSegmenter` with custom options.
 
-        See the `Rust documentation for try_new_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_with_options_unstable>`__ for more information.
+        See the `Rust documentation for try_new_auto_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable>`__ for more information.
 
 
     .. js:function:: segment_utf8(input)

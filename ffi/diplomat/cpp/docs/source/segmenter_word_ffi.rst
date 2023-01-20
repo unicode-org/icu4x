@@ -33,7 +33,7 @@
 
         Construct an :cpp:class:`ICU4XWordSegmenter`.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
     .. cpp:function:: ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const
