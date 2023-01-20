@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674152307287,
+  "lastUpdate": 1674210105446,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -93785,6 +93785,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5317,
             "range": "± 32",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20b636b12b7a277685d0369f3c5874c9bb444b65",
+          "message": "Fix allow attribute in test_bake macro (#3011)\n\nWithout this patch, running `cargo +nightly check --all-features --all-targets`\r\nlocally generates the following warning.\r\n\r\n```\r\nwarning: unknown lint: `unused_variable`\r\n```",
+          "timestamp": "2023-01-20T11:07:04+01:00",
+          "tree_id": "e8b018ee19e38f108e70d531d6bdff578e418868",
+          "url": "https://github.com/unicode-org/icu4x/commit/20b636b12b7a277685d0369f3c5874c9bb444b65"
+        },
+        "date": 1674209998415,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 107630,
+            "range": "± 15956",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 165211,
+            "range": "± 10573",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 100504,
+            "range": "± 8824",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 128068,
+            "range": "± 19107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 109805,
+            "range": "± 18813",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 133924,
+            "range": "± 13893",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 125873,
+            "range": "± 19710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 170350,
+            "range": "± 22438",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 218270,
+            "range": "± 25045",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 167283,
+            "range": "± 13599",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 209372,
+            "range": "± 21570",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 212971,
+            "range": "± 21313",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6832,
+            "range": "± 574",
             "unit": "ns/iter"
           }
         ]
