@@ -464,6 +464,15 @@ lazy_static::lazy_static! {
         "icu::segmenter::WordBreakIteratorUtf8",
         "icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8",
 
+        // Segmenter constructors controlled by features. We probably don't want to expose them over
+        // FFI unless they are needed.
+        "icu::segmenter::LineSegmenter::try_new_dictionary_unstable",
+        "icu::segmenter::LineSegmenter::try_new_dictionary_with_options_unstable",
+        "icu::segmenter::LineSegmenter::try_new_lstm_unstable",
+        "icu::segmenter::LineSegmenter::try_new_lstm_with_options_unstable",
+        "icu::segmenter::WordSegmenter::try_new_dictionary_unstable",
+        "icu::segmenter::WordSegmenter::try_new_lstm_unstable",
+
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
 
