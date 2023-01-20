@@ -95,6 +95,7 @@ use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
 use rayon::prelude::*;
+use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
@@ -165,7 +166,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
 /// );
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
-    strings.iter().filter_map(key).collect()
+    strings.iter().filter_map(crate::key).collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
@@ -198,7 +199,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
-        .filter_map(|k| k.map(key).transpose())
+        .filter_map(|k| k.map(crate::key).transpose())
         .collect()
 }
 
@@ -237,7 +238,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
         {
             if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
                 .ok()
-                .and_then(key)
+                .and_then(crate::key)
             {
                 result.push(key);
             }
@@ -247,8 +248,8 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
             i += 1;
         }
     }
-    // Stability across binary changes.
     result.sort();
+    result.dedup();
     Ok(result)
 }
 
@@ -352,6 +353,8 @@ pub fn datagen(
             source: source.clone(),
         }),
     };
+
+    let keys: HashSet<_> = keys.into_iter().collect();
 
     keys.into_par_iter().try_for_each(|&key| {
         let locales = provider
