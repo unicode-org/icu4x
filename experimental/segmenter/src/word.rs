@@ -73,9 +73,9 @@ impl WordSegmenter {
     /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
     /// dictionary payload data.
     ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" feature
-    /// is enabled. When both features are enabled, it uses dictionary for Chinese and Japanese, and
-    /// LSTM for Burmese, Khmer, Lao, and Thai.
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
+    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>

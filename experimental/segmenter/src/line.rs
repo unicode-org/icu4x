@@ -250,8 +250,8 @@ impl LineSegmenter {
     /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`]. It automatically loads the
     /// best available payload data for Burmese, Khmer, Lao, and Thai.
     ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" feature
-    /// is enabled. When both features are enabled, it prefers LSTM payload data.
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it prefers LSTM payload data.
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
