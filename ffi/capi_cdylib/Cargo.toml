@@ -49,8 +49,5 @@ wasm_default = ["icu_capi/wasm_default"]
 cpp_default = ["icu_capi/cpp_default"]
 
 [package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI.
-# logging enables a feature of a dependency that has no externally visible API changes
-# serde enables dependency features but buffer_provider affects the actual code
-# wasm_default and cpp_default are metafeatures
-denylist = ["bench", "serde", "logging", "wasm_default", "cpp_default"]
+# Tested by icu_capi
+allowlist = []

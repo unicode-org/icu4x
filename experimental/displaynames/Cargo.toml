@@ -22,24 +22,23 @@ include = [
     "README.md"
 ]
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
 icu_collections = { version = "1.0.0", path = "../../components/collections" }
 icu_locid = { version = "1.0.0", path = "../../components/locid" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
+tinystr = { version = "0.7", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
+
+databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
-tinystr = { version = "0.7", path = "../../utils/tinystr", features = ["alloc", "zerovec"], default-features = false }
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_displaynames"] }
 
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
-
 [features]
-std = ["icu_provider/std"]
-default = []
+std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "std", "databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake"]

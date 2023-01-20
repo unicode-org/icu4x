@@ -470,6 +470,7 @@ lazy_static::lazy_static! {
         // Decompositions of providers is tricky to do over FFI and the use cases are unclear.
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner",
+        "icu_provider_adapters::fallback::LocaleFallbackProvider::inner_mut",
 
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",

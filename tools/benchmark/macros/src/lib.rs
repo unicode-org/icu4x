@@ -41,10 +41,10 @@ pub mod benchmark_memory {
     #[macro_export]
     macro_rules! static_setup {
         () => {
-            use $crate::benchmark_memory::dhat::{Dhat, DhatAlloc};
-            // Use the DhatAlloc global allocator to instrument memory usage.
+            use $crate::benchmark_memory::dhat;
+            // Use the dhat global allocator to instrument memory usage.
             #[global_allocator]
-            static ALLOCATOR: DhatAlloc = DhatAlloc;
+            static ALLOCATOR: dhat::Alloc = dhat::Alloc;
         };
     }
     #[macro_export]
@@ -52,7 +52,7 @@ pub mod benchmark_memory {
         () => {
             // The dhat instance will be alive for the life of the main function, and when dropped,
             // it will output heap usage information.
-            let _dhat = Dhat::start_heap_profiling();
+            let _profiler = dhat::Profiler::new_heap();
             eprintln!("Feature");
         };
     }

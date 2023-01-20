@@ -14,22 +14,12 @@ export class ICU4XLocale {
 
    * Construct an {@link ICU4XLocale `ICU4XLocale`} from an locale identifier.
 
+   * This will run the complete locale parsing algorithm. If code size and performance are critical and the locale is of a known shape (such as `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes Rust documentation for `try_from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_string(name: string): ICU4XLocale | never;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the English language.
-   */
-  static create_en(): ICU4XLocale;
-
-  /**
-
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the Bangla language.
-   */
-  static create_bn(): ICU4XLocale;
 
   /**
 
@@ -150,4 +140,20 @@ export class ICU4XLocale {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp Rust documentation for `strict_cmp`} for more information.
    */
   strict_cmp(other: string): ICU4XOrdering;
+
+  /**
+
+   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the English language.
+
+   * This convenience constructor is intended for testing only and requires the `provider_test` feature.
+   */
+  static create_en(): ICU4XLocale;
+
+  /**
+
+   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the Bangla language.
+
+   * This convenience constructor is intended for testing only and requires the `provider_test` feature.
+   */
+  static create_bn(): ICU4XLocale;
 }

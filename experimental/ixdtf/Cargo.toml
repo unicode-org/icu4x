@@ -23,8 +23,8 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 
@@ -32,10 +32,3 @@ skip_optional_dependencies = true
 criterion = "0.3"
 icu_testdata = { path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }
-
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
-
-[features]
-default = []

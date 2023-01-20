@@ -28,28 +28,23 @@ all-features = true
 
 [dependencies]
 icu_provider = { version = "1.0.0", path = "../core", features = ["deserialize_postcard_1", "serde"] }
-serde = { version = "1.0", default-features = false, features = ["alloc"] }
 postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
+serde = { version = "1.0", default-features = false, features = ["alloc"] }
 writeable = { version = "0.5", path = "../../utils/writeable" }
 yoke = { version = "0.6.0", path = "../../utils/yoke" }
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
-# For the export feature
 log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 icu_locid = { version = "1.0.0", path = "../../components/locid", features = ["serde"] }
 
-[lib]
-path = "src/lib.rs"
-
 [features]
-default = []
+std = ["icu_provider/std"]
 export = [
+    "icu_provider/datagen",
     "log",
     "postcard/alloc",
     "std", 
-    "icu_provider/datagen",
     "zerovec/serde",
 ]
-std = ["icu_provider/std"]
