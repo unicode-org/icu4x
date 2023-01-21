@@ -115,7 +115,7 @@ impl WordSegmenter {
 
     /// Construct a [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and Thai.
     ///
-    /// Warning: WordSegmenter created by this function doesn't handle Chinese or Japanese.
+    /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or Japanese.
     #[cfg(feature = "lstm")]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
