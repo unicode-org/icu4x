@@ -44,6 +44,7 @@ tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
 default = ["alloc"]
 alloc = []
 bench = []
+std = []
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI
