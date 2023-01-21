@@ -59,13 +59,19 @@ pub mod ffi {
     pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineSegmenter {
-        /// Construct a [`ICU4XLineSegmenter`] with default options.
+        /// Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
+        /// available payload data for Burmese, Khmer, Lao, and Thai.
+        ///
+        /// Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload
+        /// data.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::try_new_auto_unstable, FnInStruct)]
-        pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
-            Self::try_new_impl(&provider.0)
+        pub fn create_auto(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
+            Self::try_new_auto_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
+        fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -78,19 +84,68 @@ pub mod ffi {
             )))
         }
 
-        /// Construct a [`ICU4XLineSegmenter`] with custom options.
+        /// Construct a [`ICU4XLineSegmenter`] with default options and LSTM payload data for
+        /// Burmese, Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::LineSegmenter::try_new_lstm_unstable, FnInStruct)]
+        pub fn create_lstm(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
+            Self::try_new_lstm_impl(&provider.0)
+        }
+
+        fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
+        where
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XLineSegmenter(
+                LineSegmenter::try_new_lstm_unstable(provider)?,
+            )))
+        }
+
+        /// Construct a [`ICU4XLineSegmenter`] with default options and dictionary payload data for
+        /// Burmese, Khmer, Lao, and Thai..
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::try_new_dictionary_unstable,
+            FnInStruct
+        )]
+        pub fn create_dictionary(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
+            Self::try_new_dictionary_impl(&provider.0)
+        }
+
+        fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
+        where
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XLineSegmenter(
+                LineSegmenter::try_new_dictionary_unstable(provider)?,
+            )))
+        }
+
+        /// Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
+        /// available payload data for Burmese, Khmer, Lao, and Thai.
+        ///
+        /// Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload
+        /// data.
         #[diplomat::rust_link(
             icu::segmenter::LineSegmenter::try_new_auto_with_options_unstable,
             FnInStruct
         )]
-        pub fn create_with_options_v1(
+        pub fn create_auto_with_options_v1(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptionsV1,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
-            Self::try_new_with_options_impl(&provider.0, options)
+            Self::try_new_auto_with_options_impl(&provider.0, options)
         }
 
-        fn try_new_with_options_impl<D>(
+        fn try_new_auto_with_options_impl<D>(
             provider: &D,
             options: ICU4XLineBreakOptionsV1,
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
@@ -103,6 +158,62 @@ pub mod ffi {
         {
             Ok(Box::new(ICU4XLineSegmenter(
                 LineSegmenter::try_new_auto_with_options_unstable(provider, options.into())?,
+            )))
+        }
+
+        /// Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
+        /// Burmese, Khmer, Lao, and Thai.
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::try_new_lstm_with_options_unstable,
+            FnInStruct
+        )]
+        pub fn create_lstm_with_options_v1(
+            provider: &ICU4XDataProvider,
+            options: ICU4XLineBreakOptionsV1,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
+            Self::try_new_lstm_with_options_impl(&provider.0, options)
+        }
+
+        fn try_new_lstm_with_options_impl<D>(
+            provider: &D,
+            options: ICU4XLineBreakOptionsV1,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
+        where
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XLineSegmenter(
+                LineSegmenter::try_new_lstm_with_options_unstable(provider, options.into())?,
+            )))
+        }
+
+        /// Construct a [`ICU4XLineSegmenter`] with custom options and dictionary payload data for
+        /// Burmese, Khmer, Lao, and Thai.
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenter::try_new_dictionary_with_options_unstable,
+            FnInStruct
+        )]
+        pub fn create_dictionary_with_options_v1(
+            provider: &ICU4XDataProvider,
+            options: ICU4XLineBreakOptionsV1,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError> {
+            Self::try_new_dictionary_with_options_impl(&provider.0, options)
+        }
+
+        fn try_new_dictionary_with_options_impl<D>(
+            provider: &D,
+            options: ICU4XLineBreakOptionsV1,
+        ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
+        where
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XLineSegmenter(
+                LineSegmenter::try_new_dictionary_with_options_unstable(provider, options.into())?,
             )))
         }
 
