@@ -45,18 +45,50 @@
     See the `Rust documentation for LineSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:function:: create_auto(provider)
 
-        Construct a :js:class:`ICU4XLineSegmenter` with default options.
+        Construct a :js:class:`ICU4XLineSegmenter` with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
+
+        Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
 
         See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
-    .. js:function:: create_with_options_v1(provider, options)
+    .. js:function:: create_lstm(provider)
 
-        Construct a :js:class:`ICU4XLineSegmenter` with custom options.
+        Construct a :js:class:`ICU4XLineSegmenter` with default options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_lstm_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable>`__ for more information.
+
+
+    .. js:function:: create_dictionary(provider)
+
+        Construct a :js:class:`ICU4XLineSegmenter` with default options and dictionary payload data for Burmese, Khmer, Lao, and Thai..
+
+        See the `Rust documentation for try_new_dictionary_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable>`__ for more information.
+
+
+    .. js:function:: create_auto_with_options_v1(provider, options)
+
+        Construct a :js:class:`ICU4XLineSegmenter` with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
+
+        Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
 
         See the `Rust documentation for try_new_auto_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable>`__ for more information.
+
+
+    .. js:function:: create_lstm_with_options_v1(provider, options)
+
+        Construct a :js:class:`ICU4XLineSegmenter` with custom options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_lstm_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable>`__ for more information.
+
+
+    .. js:function:: create_dictionary_with_options_v1(provider, options)
+
+        Construct a :js:class:`ICU4XLineSegmenter` with custom options and dictionary payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_dictionary_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable>`__ for more information.
 
 
     .. js:function:: segment_utf8(input)
