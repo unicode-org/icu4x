@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674245280481,
+  "lastUpdate": 1674332500980,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34583,6 +34583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dfafa98ceda9ac9900e2e8195da04244a32b5ca1"
         },
         "date": 1674245186537,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "3947+bheylin@users.noreply.github.com",
+            "name": "bheylin",
+            "username": "bheylin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5ba22c9d6ed287c8195c45a6bc2e6430cf574791",
+          "message": "Add `std` feature to `tinystr` and std:*:Error impl (#3009)",
+          "timestamp": "2023-01-21T20:18:31Z",
+          "tree_id": "c374cb04bfc3cd88ed515b1f4952a10d4d7619f1",
+          "url": "https://github.com/unicode-org/icu4x/commit/5ba22c9d6ed287c8195c45a6bc2e6430cf574791"
+        },
+        "date": 1674332403298,
         "tool": "ndjson",
         "benches": [
           {
