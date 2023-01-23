@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674497358363,
+  "lastUpdate": 1674502438657,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34673,6 +34673,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bd7c1bbbe68c8417e713313611e1b2fed1391ae9"
         },
         "date": 1674497273133,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2705d20d28e06b1d616b646fe4b92528c2c937e2",
+          "message": "Using `core` integer log when available (#3015)",
+          "timestamp": "2023-01-23T20:30:47+01:00",
+          "tree_id": "e28cd73a1d35e0e238ab8d4a066889c15fb5f57f",
+          "url": "https://github.com/unicode-org/icu4x/commit/2705d20d28e06b1d616b646fe4b92528c2c937e2"
+        },
+        "date": 1674502337826,
         "tool": "ndjson",
         "benches": [
           {
