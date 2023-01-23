@@ -81,8 +81,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     f(self)
                 }
             }
-            // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#static_bounds),* {}
         }
     } else {
         if lts != 1 {
@@ -250,9 +248,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
-            // This is safe because it is in the same block as the above impl, which only compiles
-            // if 'a is a covariant lifetime.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#static_bounds),* {}
         }
     }
 }
