@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674497993101,
+  "lastUpdate": 1674503035594,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45935,6 +45935,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 52557084,
             "range": "± 725724",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2705d20d28e06b1d616b646fe4b92528c2c937e2",
+          "message": "Using `core` integer log when available (#3015)",
+          "timestamp": "2023-01-23T20:30:47+01:00",
+          "tree_id": "e28cd73a1d35e0e238ab8d4a066889c15fb5f57f",
+          "url": "https://github.com/unicode-org/icu4x/commit/2705d20d28e06b1d616b646fe4b92528c2c937e2"
+        },
+        "date": 1674502945302,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 448,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 319,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 321,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 370,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 609,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 647,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 295,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 321,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 370,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 412,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 647,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 52462516,
+            "range": "± 794272",
             "unit": "ns/iter"
           },
           {
