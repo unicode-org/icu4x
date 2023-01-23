@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674495590238,
+  "lastUpdate": 1674497358363,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34643,6 +34643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/43eb371de7387aec6ce4183619b448de342a39da"
         },
         "date": 1674495499502,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bd7c1bbbe68c8417e713313611e1b2fed1391ae9",
+          "message": "Removing `slice::from_raw_parts` canaries (#3016)",
+          "timestamp": "2023-01-23T19:06:39+01:00",
+          "tree_id": "6ce96fe964209e2641b73c3206ada1a0301c9739",
+          "url": "https://github.com/unicode-org/icu4x/commit/bd7c1bbbe68c8417e713313611e1b2fed1391ae9"
+        },
+        "date": 1674497273133,
         "tool": "ndjson",
         "benches": [
           {
