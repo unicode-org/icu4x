@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674502438657,
+  "lastUpdate": 1674504634959,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34703,6 +34703,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2705d20d28e06b1d616b646fe4b92528c2c937e2"
         },
         "date": 1674502337826,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78e6a90cd62261d237029e48415511429bb26998",
+          "message": "Fix soundness issue in Yoke::attach_to_cart() around implied bounds (#2949)\n\n* Fix soundness issue\r\n\r\n* rm IsCovariant",
+          "timestamp": "2023-01-23T20:07:23Z",
+          "tree_id": "13fe2fcd5b9e6495c1efd3f19bf96f1653525594",
+          "url": "https://github.com/unicode-org/icu4x/commit/78e6a90cd62261d237029e48415511429bb26998"
+        },
+        "date": 1674504536342,
         "tool": "ndjson",
         "benches": [
           {
