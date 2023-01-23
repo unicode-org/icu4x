@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674502997013,
+  "lastUpdate": 1674505336401,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -94397,6 +94397,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5362,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "78e6a90cd62261d237029e48415511429bb26998",
+          "message": "Fix soundness issue in Yoke::attach_to_cart() around implied bounds (#2949)\n\n* Fix soundness issue\r\n\r\n* rm IsCovariant",
+          "timestamp": "2023-01-23T20:07:23Z",
+          "tree_id": "13fe2fcd5b9e6495c1efd3f19bf96f1653525594",
+          "url": "https://github.com/unicode-org/icu4x/commit/78e6a90cd62261d237029e48415511429bb26998"
+        },
+        "date": 1674505242759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 83509,
+            "range": "± 5232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 136336,
+            "range": "± 8836",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 77087,
+            "range": "± 4020",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 86768,
+            "range": "± 7261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 82686,
+            "range": "± 6636",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 91554,
+            "range": "± 5179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 86329,
+            "range": "± 4227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 138643,
+            "range": "± 13998",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 142235,
+            "range": "± 9606",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 133705,
+            "range": "± 8955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 149062,
+            "range": "± 7349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 144049,
+            "range": "± 7767",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6317,
+            "range": "± 460",
             "unit": "ns/iter"
           }
         ]
