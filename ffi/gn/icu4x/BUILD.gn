@@ -304,7 +304,7 @@ rust_library("icu_collections-v1_1_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
-  deps += [ ":yoke-v0_6_2" ]
+  deps += [ ":yoke-v0_7_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-v0_9_2" ]
 
@@ -537,7 +537,7 @@ rust_library("icu_provider-v1_1_0") {
   deps += [ ":icu_provider_macros-v1_1_0($host_toolchain)" ]
   deps += [ ":stable_deref_trait-v1_2_0" ]
   deps += [ ":writeable-v0_5_1" ]
-  deps += [ ":yoke-v0_6_2" ]
+  deps += [ ":yoke-v0_7_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-v0_9_2" ]
 
@@ -563,7 +563,7 @@ rust_library("icu_provider_adapters-v1_1_0") {
   deps += [ ":icu_locid-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
   deps += [ ":tinystr-v0_7_1" ]
-  deps += [ ":yoke-v0_6_2" ]
+  deps += [ ":yoke-v0_7_0" ]
   deps += [ ":zerovec-v0_9_2" ]
 
   rustenv = []
@@ -1190,15 +1190,15 @@ rust_library("writeable-v0_5_1") {
   visibility = [ ":*" ]
 }
 
-rust_library("yoke-v0_6_2") {
+rust_library("yoke-v0_7_0") {
   crate_name = "yoke"
   crate_root = "//utils/yoke/src/lib.rs"
-  output_name = "yoke-32de6de2da9cea0c"
+  output_name = "yoke-e90a73c077e69b1c"
 
   deps = []
   deps += [ ":serde-v1_0_130" ]
   deps += [ ":stable_deref_trait-v1_2_0" ]
-  deps += [ ":yoke-derive-v0_6_2($host_toolchain)" ]
+  deps += [ ":yoke-derive-v0_7_0($host_toolchain)" ]
   deps += [ ":zerofrom-v0_1_1" ]
 
   rustenv = []
@@ -1206,8 +1206,8 @@ rust_library("yoke-v0_6_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=32de6de2da9cea0c",
-    "-Cextra-filename=-32de6de2da9cea0c",
+    "-Cmetadata=e90a73c077e69b1c",
+    "-Cextra-filename=-e90a73c077e69b1c",
     "--cfg=feature=\"alloc\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
@@ -1217,10 +1217,10 @@ rust_library("yoke-v0_6_2") {
   visibility = [ ":*" ]
 }
 
-rust_proc_macro("yoke-derive-v0_6_2") {
+rust_proc_macro("yoke-derive-v0_7_0") {
   crate_name = "yoke_derive"
   crate_root = "//utils/yoke/derive/src/lib.rs"
-  output_name = "yoke_derive-de7187021762cd9"
+  output_name = "yoke_derive-3e9c672e07d044e2"
 
   deps = []
   deps += [ ":proc-macro2-v1_0_32" ]
@@ -1233,8 +1233,8 @@ rust_proc_macro("yoke-derive-v0_6_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=de7187021762cd9",
-    "-Cextra-filename=-de7187021762cd9",
+    "-Cmetadata=3e9c672e07d044e2",
+    "-Cextra-filename=-3e9c672e07d044e2",
   ]
 
   visibility = [ ":*" ]
@@ -1292,7 +1292,7 @@ rust_library("zerovec-v0_9_2") {
   output_name = "zerovec-a050463855190a40"
 
   deps = []
-  deps += [ ":yoke-v0_6_2" ]
+  deps += [ ":yoke-v0_7_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
   deps += [ ":zerovec-derive-v0_9_2($host_toolchain)" ]
 

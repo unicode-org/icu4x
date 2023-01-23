@@ -498,7 +498,7 @@ version = "0.5.1"
 
 [[package]]
 name = "yoke"
-version = "0.6.2"
+version = "0.7.0"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -508,7 +508,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.6.2"
+version = "0.7.0"
 dependencies = [
  "proc-macro2",
  "quote",
