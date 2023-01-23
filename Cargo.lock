@@ -1959,8 +1959,6 @@ dependencies = [
  "icu_segmenter",
  "icu_timezone",
  "lazy_static",
- "serde",
- "toml",
  "zerovec",
 ]
 
@@ -1977,10 +1975,8 @@ dependencies = [
  "icu_testdata",
  "log",
  "reqwest",
- "serde",
  "simple_logger",
  "tokio",
- "toml",
  "zip",
 ]
 

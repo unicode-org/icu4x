@@ -9,6 +9,7 @@ use rayon::prelude::*;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -367,14 +368,18 @@ impl DataExporter for BakedDataExporter {
 
         let mut lookup_idents = move_out!(self.lookup_idents).into_inner().expect("poison");
 
-        for marker in crate::registry::all_keys()
+        let ffi_keys = crate::registry::all_keys_for_ffi()
+            .into_iter()
+            .collect::<HashSet<_>>();
+
+        for key in crate::registry::all_keys_with_experimental()
             .into_iter()
             // HelloWorld is the only key not returned by all_keys
             .chain(std::iter::once(
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))
-            .map(|k| crate::registry::key_to_marker_bake(k, &self.dependencies))
         {
+            let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
             let marker_str = marker.to_string();
             let feature = self.feature_gate(&marker_str, false);
 
@@ -439,7 +444,7 @@ impl DataExporter for BakedDataExporter {
                         }
                     },
                 );
-            } else {
+            } else if ffi_keys.contains(&key) {
                 non_requested_data_impls.insert(
                     marker_str.clone(),
                     quote! {
@@ -457,7 +462,7 @@ impl DataExporter for BakedDataExporter {
             }
         }
 
-        assert!(lookup_idents.is_empty());
+        assert!(lookup_idents.is_empty(), "{:?}", lookup_idents);
 
         let any_code = if any_cases.is_empty() {
             quote! {
@@ -518,7 +523,7 @@ impl DataExporter for BakedDataExporter {
                     ($provider:path) => {
                         #(#data_impls)*
                     };
-                    ($provider:path, COMPLETE) => {
+                    ($provider:path, FFI_COMPLETE) => {
                         impl_data_provider!($provider);
                         #(#non_requested_data_impls)*
                     };

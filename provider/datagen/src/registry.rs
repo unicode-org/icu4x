@@ -5,10 +5,13 @@
 use icu_provider::{DataKey, KeyedDataMarker};
 
 use icu_calendar::provider::*;
+use icu_casemapping::provider::*;
 use icu_collator::provider::*;
+use icu_compactdecimal::provider::*;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::provider::time_zones::*;
 use icu_decimal::provider::*;
+use icu_displaynames::provider::*;
 use icu_list::provider::*;
 use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
@@ -16,40 +19,54 @@ use icu_plurals::provider::*;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
+use icu_relativetime::provider::*;
+use icu_segmenter::provider::*;
 use icu_timezone::provider::*;
 
-#[cfg(feature = "experimental")]
-use icu_casemapping::provider::*;
-#[cfg(feature = "experimental")]
-use icu_compactdecimal::provider::*;
-#[cfg(feature = "experimental")]
-use icu_displaynames::provider::*;
-#[cfg(feature = "experimental")]
-use icu_relativetime::provider::*;
-#[cfg(feature = "ffi")]
-use icu_segmenter::provider::*;
-
 macro_rules! registry {
-    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ } #[cfg(feature = "ffi")] { $($seg_marker:ident,)+ }) => {
-        /// List of all supported keys
+    ($($marker:ident,)+ # ffi # { $($seg_marker:ident,)+} # experimental # { $($exp_marker:ident,)+ }) => {
+        /// List of all supported keys, except those that require the "experimental"
+        /// feature on the `icu` crate.
+        ///
+        /// See [all_keys_with_experimental].
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             vec![
                 $(
                     <$marker>::KEY,
                 )+
+            ]
+        }
+
+        /// List of all supported keys, including those that require the "experimental"
+        /// feature on the `icu` crate.
+        ///
+        /// See [all_keys].
+        pub fn all_keys_with_experimental() -> Vec<DataKey> {
+            vec![
                 $(
-                    #[cfg(feature = "experimental")]
+                    <$marker>::KEY,
+                )+
+                $(
                     <$exp_marker>::KEY,
                 )+
                 $(
-                    #[cfg(feature = "ffi")]
                     <$seg_marker>::KEY,
                 )+
             ]
         }
 
-        #[cfg(feature = "experimental")]
+        pub(crate) fn all_keys_for_ffi() -> Vec<DataKey> {
+            vec![
+                $(
+                    <$marker>::KEY,
+                )+
+                $(
+                    <$seg_marker>::KEY,
+                )+
+            ]
+        }
+
         icu_provider::make_exportable_provider!(
             crate::DatagenProvider,
             [
@@ -57,25 +74,6 @@ macro_rules! registry {
                 $($marker,)+
                 $($exp_marker,)+
                 $($seg_marker,)+
-            ]
-        );
-
-        #[cfg(all(feature = "ffi", not(feature = "experimental")))]
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                HelloWorldV1Marker,
-                $($marker,)+
-                $($seg_marker,)+
-            ]
-        );
-
-        #[cfg(all(not(feature = "ffi"), not(feature = "experimental")))]
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                HelloWorldV1Marker,
-                $($marker,)+
             ]
         );
 
@@ -92,13 +90,11 @@ macro_rules! registry {
                 }
             )+
             $(
-                #[cfg(feature = "experimental")]
                 if key == $exp_marker::KEY {
                     return $exp_marker.bake(env);
                 }
             )+
             $(
-                #[cfg(feature = "ffi")]
                 if key == $seg_marker::KEY {
                     return $seg_marker.bake(env);
                 }
@@ -240,7 +236,16 @@ registry!(
     XdigitV1Marker,
     XidContinueV1Marker,
     XidStartV1Marker,
-    #[cfg(feature = "experimental")]
+    # ffi #
+    {
+        GraphemeClusterBreakDataV1Marker,
+        LineBreakDataV1Marker,
+        LstmDataV1Marker,
+        SentenceBreakDataV1Marker,
+        UCharDictionaryBreakDataV1Marker,
+        WordBreakDataV1Marker,
+    }
+    # experimental #
     {
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
@@ -273,23 +278,13 @@ registry!(
         LongCompactDecimalFormatDataV1Marker,
         ShortCompactDecimalFormatDataV1Marker,
     }
-    #[cfg(feature = "ffi")]
-    {
-        GraphemeClusterBreakDataV1Marker,
-        LineBreakDataV1Marker,
-        LstmDataV1Marker,
-        SentenceBreakDataV1Marker,
-        UCharDictionaryBreakDataV1Marker,
-        WordBreakDataV1Marker,
-    }
-
 );
 
 #[test]
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
-    for key in all_keys() {
+    for key in all_keys_with_experimental() {
         if let Some(colliding_key) = map.insert(key.hashed(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",

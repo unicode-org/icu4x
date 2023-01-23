@@ -36,7 +36,7 @@ mod baked {
     #[cfg(not(feature = "custom_bake_data"))]
     include!(concat!("../empty_bake/mod.rs"));
 
-    impl_data_provider!(super::BakedProvider, COMPLETE);
+    impl_data_provider!(super::BakedProvider, FFI_COMPLETE);
     #[cfg(feature = "any_provider")]
     impl_any_provider!(super::BakedProvider);
 }

@@ -2197,7 +2197,7 @@ macro_rules! impl_data_provider {
             }
         }
     };
-    ($ provider : path , COMPLETE) => {
+    ($ provider : path , FFI_COMPLETE) => {
         impl_data_provider!($provider);
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::AlnumV1Marker> for $provider {

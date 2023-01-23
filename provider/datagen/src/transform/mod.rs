@@ -4,7 +4,6 @@
 
 pub mod cldr;
 pub mod icuexport;
-#[cfg(feature = "ffi")]
 pub mod segmenter;
 
 use icu_provider::datagen::*;

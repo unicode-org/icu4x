@@ -12,7 +12,7 @@ edition = "2018"
 databake = { path = "../../utils/databake", features = ["derive"] }
 displaydoc = "0.2.3"
 icu = { path = "../../components/icu", default-features = false }
-icu_datagen = { path = "../../provider/datagen" }
+icu_datagen = { path = "../../provider/datagen", default-features = false}
 icu_provider = { path = "../../provider/core", default-features = false }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_provider_fs = { path = "../../provider/fs" }

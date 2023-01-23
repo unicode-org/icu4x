@@ -5,7 +5,7 @@
 fn main() {
     if std::env::var("ICU4X_FFI_BAKED_ROOT").is_err() {
         // Empty data generated with
-        // cargo run -p icu_datagen --features bin,icu_segmenter -- --format mod --use-separate-crates --keys none --out empty_bake
+        // cargo run -p icu_datagen -- --format mod --use-separate-crates --keys none --locales none --out empty_bake
         println!("cargo:rustc-env=ICU4X_FFI_BAKED_ROOT=../empty_bake");
     }
 }

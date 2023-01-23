@@ -166,7 +166,6 @@ fn parse(pattern: &str) -> Result<Option<ParsedPattern>, Cow<'static, str>> {
     }
 }
 
-#[cfg(feature = "experimental")]
 impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
     type Error = Cow<'static, str>;
 
