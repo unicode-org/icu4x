@@ -4,7 +4,7 @@
 
 [package]
 name = "yoke"
-version = "0.6.2"
+version = "0.7.0"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
