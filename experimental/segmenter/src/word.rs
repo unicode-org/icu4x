@@ -76,6 +76,7 @@ impl WordSegmenter {
     /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
     /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
     /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
+    #[cfg(all(feature = "lstm", feature = "dictionary"))]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -87,28 +88,68 @@ impl WordSegmenter {
         let payload = provider.load(Default::default())?.take_payload()?;
         let grapheme = provider.load(Default::default())?.take_payload()?;
 
-        // Always trying to load all LSTM models since this function prefers LSTM models over
-        // dictionaries for smaller payload data sizes.
-        let lstm = if cfg!(feature = "lstm") {
-            LstmPayloads::new(provider)
-        } else {
-            LstmPayloads::default()
-        };
+        Ok(Self {
+            payload,
+            dictionary: Dictionary::new_chinese_japanese(provider),
+            lstm: LstmPayloads::new(provider),
+            grapheme,
+        })
+    }
 
-        let dictionary = if cfg!(feature = "dictionary") {
-            if cfg!(feature = "lstm") {
-                Dictionary::new_chinese_japanese(provider)
-            } else {
-                Dictionary::new(provider)
-            }
-        } else {
-            Dictionary::default()
-        };
+    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
+    /// dictionary payload data.
+    ///
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
+    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
+    #[cfg(all(feature = "lstm", not(feature = "dictionary")))]
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_lstm_unstable(provider)
+    }
+
+    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
+    /// dictionary payload data.
+    ///
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
+    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
+    #[cfg(all(not(feature = "lstm"), feature = "dictionary"))]
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_dictionary_unstable(provider)
+    }
+
+    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
+    /// dictionary payload data.
+    ///
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
+    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
+    #[cfg(all(not(feature = "lstm"), not(feature = "dictionary")))]
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = provider.load(Default::default())?.take_payload()?;
 
         Ok(Self {
             payload,
-            dictionary,
-            lstm,
+            dictionary: Dictionary::default(),
+            lstm: LstmPayloads::default(),
             grapheme,
         })
     }

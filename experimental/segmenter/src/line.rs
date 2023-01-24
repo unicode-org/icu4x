@@ -199,11 +199,36 @@ pub struct LineSegmenter {
 impl LineSegmenter {
     /// Construct a [`LineSegmenter`] via [`Self::try_new_auto_with_options_unstable`] with default
     /// [`LineBreakOptions`].
+    #[cfg(feature = "lstm")] // "dictionary" feature is not relevant since this function prefers LSTM.
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_auto_with_options_unstable(provider, Default::default())
+    }
+
+    /// Construct a [`LineSegmenter`] via [`Self::try_new_auto_with_options_unstable`] with default
+    /// [`LineBreakOptions`].
+    #[cfg(all(not(feature = "lstm"), feature = "dictionary"))]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_auto_with_options_unstable(provider, Default::default())
+    }
+
+    /// Construct a [`LineSegmenter`] via [`Self::try_new_auto_with_options_unstable`] with default
+    /// [`LineBreakOptions`].
+    #[cfg(all(not(feature = "lstm"), not(feature = "dictionary")))]
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -276,6 +301,26 @@ impl LineSegmenter {
     ///
     /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
     /// feature is enabled. When both Cargo features are enabled, it prefers LSTM payload data.
+    #[cfg(feature = "lstm")] // "dictionary" feature is not relevant since this function prefers LSTM.
+    pub fn try_new_auto_with_options_unstable<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_lstm_with_options_unstable(provider, options)
+    }
+
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`]. It automatically loads the
+    /// best available payload data for Burmese, Khmer, Lao, and Thai.
+    ///
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it prefers LSTM payload data.
+    #[cfg(all(not(feature = "lstm"), feature = "dictionary"))]
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -283,33 +328,35 @@ impl LineSegmenter {
     where
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Self::try_new_dictionary_with_options_unstable(provider, options)
+    }
+
+    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`]. It automatically loads the
+    /// best available payload data for Burmese, Khmer, Lao, and Thai.
+    ///
+    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
+    /// feature is enabled. When both Cargo features are enabled, it prefers LSTM payload data.
+    #[cfg(all(not(feature = "lstm"), not(feature = "dictionary")))]
+    pub fn try_new_auto_with_options_unstable<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
         let grapheme = provider.load(Default::default())?.take_payload()?;
 
-        // Always trying to load all LSTM models since this function prefers LSTM models over
-        // dictionaries for smaller payload data sizes.
-        let lstm = if cfg!(feature = "lstm") {
-            LstmPayloads::new(provider)
-        } else {
-            LstmPayloads::default()
-        };
-
-        let dictionary = if cfg!(not(feature = "lstm")) && cfg!(feature = "dictionary") {
-            // Line segmenter doesn't need CJ dictionary.
-            Dictionary::new_southeast_asian(provider)
-        } else {
-            Dictionary::default()
-        };
-
         Ok(Self {
             options,
             payload,
-            dictionary,
-            lstm,
+            dictionary: Dictionary::default(),
+            lstm: LstmPayloads::default(),
             grapheme,
         })
     }

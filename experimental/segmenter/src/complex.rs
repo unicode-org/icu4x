@@ -2,16 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dictionary::DictionarySegmenter;
 use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
-use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
-// Use the LSTM when the feature is enabled.
+#[cfg(any(feature = "lstm", features = "dictionary"))]
+use icu_locid::{locale, Locale};
+
 #[cfg(feature = "lstm")]
 use crate::lstm::LstmSegmenter;
+
+#[cfg(feature = "dictionary")]
+use crate::dictionary::DictionarySegmenter;
 
 #[derive(Default)]
 pub struct LstmPayloads {
@@ -21,8 +24,8 @@ pub struct LstmPayloads {
     pub thai: Option<DataPayload<LstmDataV1Marker>>,
 }
 
+#[cfg(feature = "lstm")]
 impl LstmPayloads {
-    #[cfg(feature = "lstm")]
     pub fn best(&self, codepoint: u32) -> Option<&DataPayload<LstmDataV1Marker>> {
         let lang = get_language(codepoint);
         match lang {
@@ -70,6 +73,7 @@ pub struct Dictionary {
     pub cj: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
 }
 
+#[cfg(feature = "dictionary")]
 impl Dictionary {
     fn best(&self, input: u32) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
         match get_language(input) {
@@ -101,6 +105,7 @@ impl Dictionary {
     }
 
     /// Construct a [`Dictionary`] for Chinese and Japanese.
+    #[cfg(feature = "lstm")] // Use by WordSegmenter with "lstm" enabled.
     pub(crate) fn new_chinese_japanese<
         D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
     >(
@@ -173,6 +178,7 @@ pub fn complex_language_segment_utf16(
                 }
             }
 
+            #[cfg(feature = "dictionary")]
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(*first_ch as u32) {
@@ -223,6 +229,7 @@ pub fn complex_language_segment_str(
                 }
             }
 
+            #[cfg(feature = "dictionary")]
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(first_ch as u32) {

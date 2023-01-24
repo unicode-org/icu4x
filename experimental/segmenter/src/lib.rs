@@ -86,7 +86,6 @@
 extern crate alloc;
 
 mod complex;
-mod dictionary;
 mod error;
 mod indices;
 mod language;
@@ -103,7 +102,6 @@ pub mod provider;
 #[doc(hidden)]
 pub mod symbols;
 
-// Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]
@@ -112,6 +110,9 @@ mod lstm_bies;
 mod lstm_error;
 #[cfg(feature = "lstm")]
 mod math_helper;
+
+#[cfg(feature = "dictionary")]
+mod dictionary;
 
 pub use crate::grapheme::{
     GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
