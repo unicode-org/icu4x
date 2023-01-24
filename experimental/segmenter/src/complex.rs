@@ -7,7 +7,7 @@ use crate::provider::*;
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
-#[cfg(any(feature = "lstm", features = "dictionary"))]
+#[cfg(any(feature = "lstm", feature = "dictionary"))]
 use icu_locid::{locale, Locale};
 
 #[cfg(feature = "lstm")]
