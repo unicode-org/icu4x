@@ -46,12 +46,7 @@ tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
 [features]
 default = ["alloc"]
 alloc = []
-bench = []
 std = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[test]]
 name = "serde"
@@ -64,14 +59,12 @@ harness = false
 [[bench]]
 name = "construct"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "read"
 harness = false
-required-features = ["bench"]
 
 [[bench]]
 name = "serde"
 harness = false
-required-features = ["bench", "serde"]
+required-features = ["serde"]

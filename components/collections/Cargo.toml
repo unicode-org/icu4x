@@ -49,15 +49,6 @@ icu = { path = "../icu", default-features = false }
 std = []
 serde = ["dep:serde", "zerovec/serde"]
 databake = ["dep:databake", "zerovec/databake"]
-bench = []
-
-[lib]
-bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "codepointtrie"
@@ -67,7 +58,6 @@ path = "src/codepointtrie/benches/codepointtrie.rs"
 [[bench]]
 name = "iai_cpt"
 harness = false
-required-features = ["bench"]
 path = "src/codepointtrie/benches/iai_cpt.rs"
 
 [[bench]]

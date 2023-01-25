@@ -35,7 +35,7 @@ fn operands(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         use criterion::BenchmarkId;
 

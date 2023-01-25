@@ -46,15 +46,6 @@ rand_pcg = "0.3"
 
 [features]
 std = []
-bench = []
-
-[lib]
-bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "fixed_decimal"

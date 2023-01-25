@@ -91,16 +91,6 @@ datagen = [
     "std",
     ]
 experimental = ["dep:litemap"]
-bench = ["serde"]
-
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "datetime"
@@ -110,7 +100,6 @@ required-features = ["serde"]
 [[bench]]
 name = "pattern"
 harness = false
-required-features = ["bench"]
 
 [[test]]
 name = "datetime"

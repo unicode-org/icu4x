@@ -50,11 +50,6 @@ getrandom = { version = "0.2", features = ["js"] }
 std = ["fixed_decimal/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake"]
-bench = ["serde"]
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "fixed_decimal_format"

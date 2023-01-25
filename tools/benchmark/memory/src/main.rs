@@ -64,7 +64,7 @@ fn process_cli_args() -> ProcessedArgs {
             .map(|example| {
                 if !example
                     .chars()
-                    .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
+                    .all(|c| c.is_alphanumeric() || c == '_' || c == '/' || c == ':')
                 {
                     panic!("An example had an unexpected character \"{:?}\"", example);
                 }
@@ -184,18 +184,21 @@ fn main() {
     }
 
     for ref package_example in examples {
-        let (package_name, example) = {
-            // Split up the "package_name/example" string.
+        let (package_features, example) = {
+            // Split up the "package_features/example" string.
             let parts: Vec<&str> = package_example.split('/').collect();
             if parts.len() != 2 {
                 eprintln!(
-                    "An example is expected take the form package_name/example: {:?}",
+                    "An example is expected take the form package_name(:features)/example: {:?}",
                     package_example
                 );
                 process::exit(1);
             }
             (*parts.get(0).unwrap(), *parts.get(1).unwrap())
         };
+
+        let mut package_features = package_features.split(':');
+        let package_name = package_features.next().unwrap();
 
         let package = match metadata
             .packages
@@ -221,6 +224,15 @@ fn main() {
 
         println!("[memory] Starting example {:?}", example);
 
+        // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
+        // icu_benchmark_macros package.
+        let mut features = "icu_benchmark_macros/benchmark_memory".to_string();
+
+        if let Some(fs) = package_features.next() {
+            features.push(',');
+            features.push_str(fs);
+        }
+
         let mut run_example = Command::new("rustup")
             .arg("run")
             // +nightly is required for unstable options. This option is used by the CI to provide
@@ -232,14 +244,11 @@ fn main() {
             .arg(example)
             .arg("--profile")
             .arg("bench")
-            // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
-            // icu_benchmark_macros package.
             .arg("--manifest-path")
             .arg(&package.manifest_path)
             .arg("--features")
-            .arg("icu_benchmark_macros/benchmark_memory")
-            .arg("--features")
-            .arg("bench")
+            .arg(&features)
+            .env("RUSTFLAGS", "--cfg=ICU4X_EXTENDED_BENCHING")
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {

@@ -45,7 +45,7 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         smaller_isize_benches(c);
         larger_isize_benches(c);
@@ -54,7 +54,7 @@ fn overview_bench(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn smaller_isize_benches(c: &mut Criterion) {
     // Smaller nums: -1e4 to 1e4
     let nums = triangular_nums(1e4);
@@ -72,7 +72,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn larger_isize_benches(c: &mut Criterion) {
     // Larger nums: -1e16 to 1e16
     let nums = triangular_nums(1e16);
@@ -90,7 +90,7 @@ fn larger_isize_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn to_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
     use writeable::Writeable;
@@ -125,7 +125,7 @@ fn to_string_benches(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn from_string_benches(c: &mut Criterion) {
     use criterion::BenchmarkId;
 

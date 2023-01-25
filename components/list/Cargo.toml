@@ -48,11 +48,6 @@ std = ["icu_provider/std"]
 serde = ["dep:deduplicating_array", "dep:serde", "icu_provider/serde"]
 serde_human = ["serde", "regex-automata/alloc"]
 datagen = ["serde", "std", "dep:databake", "regex-automata/alloc"]
-bench = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[example]]
 name = "and_list"

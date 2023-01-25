@@ -31,7 +31,7 @@ fn pluralrules(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         use criterion::black_box;
         use icu_locid::locale;

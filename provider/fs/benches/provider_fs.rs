@@ -26,7 +26,7 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         json_bench(c);
         bincode_bench(c);
@@ -34,7 +34,7 @@ fn overview_bench(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn json_bench(c: &mut Criterion) {
     let provider =
         FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
@@ -66,7 +66,7 @@ fn json_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench"))]
+#[cfg(all(ICU4X_EXTENDED_BENCHING))]
 fn bincode_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/data/bincode")
         .expect("Loading file from testdata directory");
@@ -99,7 +99,7 @@ fn bincode_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench"))]
+#[cfg(all(ICU4X_EXTENDED_BENCHING))]
 fn postcard_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/data/postcard")
         .expect("Loading file from testdata directory");

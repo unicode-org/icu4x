@@ -398,8 +398,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
         }
     }
 
-    #[cfg(feature = "bench")]
-    #[doc(hidden)]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T, F> {
         self.as_slice().as_components()
     }

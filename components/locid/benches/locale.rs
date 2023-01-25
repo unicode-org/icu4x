@@ -22,7 +22,7 @@ fn locale_benches(c: &mut Criterion) {
         group.finish();
     }
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         use criterion::BenchmarkId;
 

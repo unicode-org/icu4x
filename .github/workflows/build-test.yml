@@ -685,7 +685,6 @@ jobs:
   # Benchmarking & dashboards job
 
   benchmark:
-    # We don't expect to keep being clippy-clean on nightly Rust
     strategy:
       # max-parallel: 1
       fail-fast: false
@@ -753,7 +752,9 @@ jobs:
         mkdir -p $REL_OUTPUT_PATH;
         export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
         export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-        cargo bench --features bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+        export MAYBE_SERDE=$([ ${{ matrix.component }} == components/plurals ] || [ ${{ matrix.component }} == components/datetime ] && echo "--features serde")
+        export RUSTFLAGS="--cfg ICU4X_EXTENDED_BENCHING"
+        cargo bench $MAYBE_SERDE -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
         popd
 
     # In the following step(s) regarding converting benchmark output to dashboards, the branch in `gh-pages-branch` needs to exist.
@@ -836,12 +837,12 @@ jobs:
           - >-
               icu_calendar/iso_date_manipulations
               icu_calendar/iso_datetime_manipulations
-              icu_datetime/work_log
+              icu_datetime:serde/work_log
               icu_list/and_list
               icu_locid/syntatically_canonicalize_locales
               icu_locid/filter_langids
-              icu_plurals/unread_emails
-              icu_plurals/elevator_floors
+              icu_plurals:serde/unread_emails
+              icu_plurals:serde/elevator_floors
               icu_collections/unicode_bmp_blocks_selector
               fixed_decimal/permyriad
               writeable/writeable_message

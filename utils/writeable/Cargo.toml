@@ -34,15 +34,6 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
 
 [features]
-bench = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
-[lib]
-bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [[bench]]
 name = "writeable"

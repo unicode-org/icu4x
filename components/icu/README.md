@@ -84,8 +84,6 @@ functionality are compiled. These features are:
 The following Cargo features are only available on the individual crates, but not on this meta-crate:
 
 - `datagen`: Whether to implement `serde::Serialize` and functionality that is only required during data generation.
-- `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
-  when running `cargo bench`.
 
 There are additional features that, when enabled on specific crates, enable functionality across ICU4X:
 

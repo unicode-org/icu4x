@@ -49,7 +49,7 @@ fn parser(c: &mut Criterion) {
         })
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     c.bench_function("plurals/parser/lex", |b| {
         use icu_plurals::rules::reference::Lexer;
         b.iter(|| {

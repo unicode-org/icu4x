@@ -61,14 +61,6 @@ export = [
     "icu_provider/deserialize_json",
     "icu_provider/deserialize_postcard_1",
 ]
-bench = []
-
-[lib]
-path = "src/lib.rs"
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "provider_fs"

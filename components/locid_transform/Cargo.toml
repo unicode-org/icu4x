@@ -22,11 +22,6 @@ include = [
     "README.md"
 ]
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
-
 [package.metadata.docs.rs]
 all-features = true
 
@@ -47,14 +42,9 @@ serde_json = "1.0"
 icu = { path = "../icu" }
 writeable = { path = "../../utils/writeable" }
 
-[lib]
-bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
-
 [features]
 default = []
 std = []
-bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake"]
 

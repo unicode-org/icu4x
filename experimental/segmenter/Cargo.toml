@@ -57,10 +57,6 @@ serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/se
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["ndarray", "num-traits"]
 
-[lib]
-path = "src/lib.rs"
-bench = false  # This option is required for Benchmark CI
-
 [[bench]]
 name = "bench"
 harness = false

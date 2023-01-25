@@ -17,8 +17,7 @@ mod serde;
 
 pub use crate::{VarZeroSlice, VarZeroVec};
 
-#[cfg(feature = "bench")]
-#[doc(hidden)]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 pub use components::VarZeroVecComponents;
 
 pub use components::{Index16, Index32, VarZeroVecFormat};

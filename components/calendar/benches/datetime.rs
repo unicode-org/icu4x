@@ -76,7 +76,7 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_iso_datetime(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/buddhist",
@@ -85,7 +85,7 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_buddhist_datetime(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/coptic",
@@ -94,7 +94,7 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_coptic_datetime(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/ethiopic",
@@ -114,7 +114,7 @@ fn datetime_benches(c: &mut Criterion) {
         },
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/gregorian",
@@ -123,7 +123,7 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_gregorian_datetime(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/indian",
@@ -132,7 +132,7 @@ fn datetime_benches(c: &mut Criterion) {
         |y, m, d, h, min, s| DateTime::try_new_indian_datetime(y, m, d, h, min, s).unwrap(),
     );
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     bench_calendar(
         &mut group,
         "calendar/julian",

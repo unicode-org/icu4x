@@ -67,14 +67,14 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         sum_benches(c);
         binary_search_benches(c);
     }
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn sum_benches(c: &mut Criterion) {
     let normal_slice = &TEST_SLICE[0..19];
     let aligned_ule_slice = <u32 as AsULE>::ULE::parse_byte_slice(&TEST_BUFFER_LE[0..76]).unwrap();
@@ -109,7 +109,7 @@ fn sum_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn binary_search_benches(c: &mut Criterion) {
     c.bench_function("zerovec/binary_search/sample/slice", |b| {
         b.iter(|| black_box(&TEST_SLICE).binary_search(&0x0c0d0c));

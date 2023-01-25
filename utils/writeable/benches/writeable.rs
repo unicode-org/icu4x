@@ -58,7 +58,7 @@ fn overview_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
+    #[cfg(ICU4X_EXTENDED_BENCHING)]
     {
         writeable_benches(c);
         writeable_dyn_benches(c);
@@ -66,7 +66,7 @@ fn overview_bench(c: &mut Criterion) {
     }
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn writeable_benches(c: &mut Criterion) {
     c.bench_function("writeable/to_string/short", |b| {
         b.iter(|| {
@@ -97,7 +97,7 @@ fn writeable_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn writeable_dyn_benches(c: &mut Criterion) {
     // Same as `write_to_string`, but casts to a `dyn fmt::Write`
     fn writeable_dyn_to_string(w: &impl Writeable) -> String {
@@ -130,7 +130,7 @@ fn writeable_dyn_benches(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
+#[cfg(ICU4X_EXTENDED_BENCHING)]
 fn display_benches(c: &mut Criterion) {
     c.bench_function("display/to_string/short", |b| {
         b.iter(|| {

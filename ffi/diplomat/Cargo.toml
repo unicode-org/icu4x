@@ -30,7 +30,7 @@ all-features = true
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "logging", "cpp_default", "wasm_default"]
+denylist = ["logging", "cpp_default", "wasm_default"]
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates
 [features]

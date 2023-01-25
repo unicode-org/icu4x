@@ -55,11 +55,6 @@ zerofrom = { path = "../zerofrom", features = ["derive"] }
 [features]
 std = []
 derive = ["dep:zerovec-derive"]
-bench = []
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "zerovec"
