@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674504634959,
+  "lastUpdate": 1674687186626,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34733,6 +34733,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/78e6a90cd62261d237029e48415511429bb26998"
         },
         "date": 1674504536342,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68a8aa88a799b4cd2078bfedc41ebc27f7c3d35f",
+          "message": "Remove redundant blocks in complex.rs (#3029)",
+          "timestamp": "2023-01-25T14:50:30-08:00",
+          "tree_id": "f0c43558c6dbd34ec5883cd09a9bd33f1b098fdf",
+          "url": "https://github.com/unicode-org/icu4x/commit/68a8aa88a799b4cd2078bfedc41ebc27f7c3d35f"
+        },
+        "date": 1674687105730,
         "tool": "ndjson",
         "benches": [
           {
