@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674505336401,
+  "lastUpdate": 1674687788376,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -94499,6 +94499,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6317,
             "range": "± 460",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "68a8aa88a799b4cd2078bfedc41ebc27f7c3d35f",
+          "message": "Remove redundant blocks in complex.rs (#3029)",
+          "timestamp": "2023-01-25T14:50:30-08:00",
+          "tree_id": "f0c43558c6dbd34ec5883cd09a9bd33f1b098fdf",
+          "url": "https://github.com/unicode-org/icu4x/commit/68a8aa88a799b4cd2078bfedc41ebc27f7c3d35f"
+        },
+        "date": 1674687710357,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 70000,
+            "range": "± 4999",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 119670,
+            "range": "± 8396",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 65225,
+            "range": "± 4699",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 76034,
+            "range": "± 7695",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 71059,
+            "range": "± 5678",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 79160,
+            "range": "± 9741",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 74944,
+            "range": "± 4295",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 114280,
+            "range": "± 8053",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 125008,
+            "range": "± 9293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 118580,
+            "range": "± 12483",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 129583,
+            "range": "± 5298",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 125058,
+            "range": "± 7966",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5193,
+            "range": "± 431",
             "unit": "ns/iter"
           }
         ]
