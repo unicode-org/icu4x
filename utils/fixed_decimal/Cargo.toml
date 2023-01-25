@@ -32,7 +32,7 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 smallvec = "1.9"
-writeable = { path = "../../utils/writeable" }
+writeable = { version = "0.5.1",  path = "../../utils/writeable" }
 
 ryu = { version = "1.0.5", features = ["small"], optional = true }
 

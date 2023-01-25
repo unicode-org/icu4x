@@ -33,4 +33,4 @@ derive = ["dep:zerofrom-derive"]
 default = ["alloc"]
 
 [dependencies]
-zerofrom-derive = { path = "./derive", optional = true}
+zerofrom-derive = { version = "0.1.1",  path = "./derive", optional = true}

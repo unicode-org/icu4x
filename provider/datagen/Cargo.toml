@@ -31,37 +31,37 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu_calendar = { path = "../../components/calendar", features = ["datagen"] }
-icu_casemapping = { path = "../../experimental/casemapping", features = ["datagen"] }
-icu_collator = { path = "../../components/collator", features = ["datagen"] }
-icu_compactdecimal = { path = "../../experimental/compactdecimal", features = ["datagen"] }
-icu_datetime = { path = "../../components/datetime", features = ["datagen"] }
-icu_decimal = { path = "../../components/decimal", features = ["datagen"] }
-icu_displaynames = { path = "../../experimental/displaynames", features = ["datagen"] }
-icu_list = { path = "../../components/list", features = ["datagen"]}
-icu_locid_transform = { path = "../../components/locid_transform", features = ["datagen"] }
-icu_normalizer = { path = "../../components/normalizer", features = ["datagen"] }
-icu_plurals = { path = "../../components/plurals", features = ["datagen"] }
-icu_properties = { path = "../../components/properties", features = ["datagen"]}
-icu_relativetime = { path = "../../experimental/relativetime", features = ["datagen"] }
-icu_segmenter = { path = "../../experimental/segmenter", features = ["datagen", "lstm"] }
-icu_timezone = { path = "../../components/timezone", features = ["datagen"] }
+icu_calendar = { version = "1.1.0",  path = "../../components/calendar", features = ["datagen"] }
+icu_casemapping = { version = "0.7.1",  path = "../../experimental/casemapping", features = ["datagen"] }
+icu_collator = { version = "1.1.0",  path = "../../components/collator", features = ["datagen"] }
+icu_compactdecimal = { version = "0.1.0",  path = "../../experimental/compactdecimal", features = ["datagen"] }
+icu_datetime = { version = "1.1.0",  path = "../../components/datetime", features = ["datagen"] }
+icu_decimal = { version = "1.1.0",  path = "../../components/decimal", features = ["datagen"] }
+icu_displaynames = { version = "0.8.0",  path = "../../experimental/displaynames", features = ["datagen"] }
+icu_list = { version = "1.1.0",  path = "../../components/list", features = ["datagen"]}
+icu_locid_transform = { version = "1.1.0",  path = "../../components/locid_transform", features = ["datagen"] }
+icu_normalizer = { version = "1.1.0",  path = "../../components/normalizer", features = ["datagen"] }
+icu_plurals = { version = "1.1.0",  path = "../../components/plurals", features = ["datagen"] }
+icu_properties = { version = "1.1.0",  path = "../../components/properties", features = ["datagen"]}
+icu_relativetime = { version = "0.1.0",  path = "../../experimental/relativetime", features = ["datagen"] }
+icu_segmenter = { version = "0.8.0",  path = "../../experimental/segmenter", features = ["datagen", "lstm"] }
+icu_timezone = { version = "1.1.0",  path = "../../components/timezone", features = ["datagen"] }
 
 # ICU provider infrastructure
-icu_provider = { path = "../core", features = ["std", "log_error_context", "datagen"]}
-icu_provider_adapters = { path = "../adapters", features = ["datagen"] }
-icu_provider_blob = { path = "../blob", features = ["export"] }
-icu_provider_fs = { path = "../fs", features = ["export"] }
+icu_provider = { version = "1.1.0",  path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider_adapters = { version = "1.1.0",  path = "../adapters", features = ["datagen"] }
+icu_provider_blob = { version = "1.1.0",  path = "../blob", features = ["export"] }
+icu_provider_fs = { version = "1.1.0",  path = "../fs", features = ["export"] }
 
 # Other
 cached-path = "0.5"
-crlify = { path = "../../utils/crlify"}
-databake = { path = "../../utils/databake"}
+crlify = { version = "1.0.1",  path = "../../utils/crlify"}
+databake = { version = "0.1.3",  path = "../../utils/databake"}
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_codepointtrie_builder = { path = "../../components/collections/codepointtrie_builder" }
-icu_collections = { path = "../../components/collections", features = ["serde"] }
-icu_locid = { path = "../../components/locid", features = ["std"] }
+icu_codepointtrie_builder = { version = "0.3.4",  path = "../../components/collections/codepointtrie_builder" }
+icu_collections = { version = "1.1.0",  path = "../../components/collections", features = ["serde"] }
+icu_locid = { version = "1.1.0",  path = "../../components/locid", features = ["std"] }
 itertools = "0.10"
 lazy_static = "1"
 log = "0.4"
@@ -73,10 +73,10 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = "2.1.1"
 syn = {version = "1.0", features = ["parsing"] }
-tinystr = { path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
+tinystr = { version = "0.7.1",  path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
-writeable = { path = "../../utils/writeable" }
-zerovec = { path = "../../utils/zerovec", features = ["serde", "yoke"] }
+writeable = { version = "0.5.1",  path = "../../utils/writeable" }
+zerovec = { version = "0.9.2",  path = "../../utils/zerovec", features = ["serde", "yoke"] }
 zip = "0.5"
 
 # Dependencies for "bin" feature

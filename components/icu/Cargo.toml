@@ -27,27 +27,27 @@ include = [
 all-features = true
 
 [dependencies]
-icu_calendar = { path = "../calendar", default-features = false }
-icu_collator = { path = "../collator", default-features = false }
-icu_collections = { path = "../collections", default-features = false }
-icu_datetime = { path = "../datetime", default-features = false }
-icu_decimal = { path = "../decimal", default-features = false }
-icu_list = { path = "../list", default-features = false }
-icu_locid = { path = "../locid", default-features = false }
-icu_locid_transform = { path = "../locid_transform", default-features = false }
-icu_normalizer = { path = "../normalizer", default-features = false }
-icu_plurals = { path = "../plurals", default-features = false }
-icu_properties = { path = "../properties", default-features = false }
-icu_timezone = { path = "../timezone", default-features = false }
+icu_calendar = { version = "1.1.0",  path = "../calendar", default-features = false }
+icu_collator = { version = "1.1.0",  path = "../collator", default-features = false }
+icu_collections = { version = "1.1.0",  path = "../collections", default-features = false }
+icu_datetime = { version = "1.1.0",  path = "../datetime", default-features = false }
+icu_decimal = { version = "1.1.0", path = "../decimal", default-features = false }
+icu_list = { version = "1.1.0",  path = "../list", default-features = false }
+icu_locid = { version = "1.1.0",  path = "../locid", default-features = false }
+icu_locid_transform = { version = "1.1.0",  path = "../locid_transform", default-features = false }
+icu_normalizer = { version = "1.1.0",  path = "../normalizer", default-features = false }
+icu_plurals = { version = "1.1.0",  path = "../plurals", default-features = false }
+icu_properties = { version = "1.1.0",  path = "../properties", default-features = false }
+icu_timezone = { version = "1.1.0", path = "../timezone", default-features = false }
 
 # Experimental components
-icu_casemapping = { path = "../../experimental/casemapping", default-features = false, optional = true }
-icu_displaynames = { path = "../../experimental/displaynames", default-features = false, optional = true }
-icu_relativetime = { path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_segmenter = { path = "../../experimental/segmenter", default-features = false, optional = true }
+icu_casemapping = { version = "0.7.1",  path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_displaynames = { version = "0.8.0",  path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_relativetime = { version = "0.1.0",  path = "../../experimental/relativetime", default-features = false, optional = true }
+icu_segmenter = { version = "0.8.0",  path = "../../experimental/segmenter", default-features = false, optional = true }
 
 # For docs links
-icu_provider = { path = "../../provider/core", default-features = false }
+icu_provider = { version = "1.1.0",  path = "../../provider/core", default-features = false }
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
