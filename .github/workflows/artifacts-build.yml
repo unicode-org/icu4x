@@ -222,22 +222,10 @@ jobs:
         fetch-depth: 2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      run: |
+        cargo +stable install cargo-quickinstall
+        cargo +stable quickinstall cargo-make
 
     # Actual job
 
@@ -340,22 +328,10 @@ jobs:
         fetch-depth: 2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      run: |
+        cargo +stable install cargo-quickinstall
+        cargo +stable quickinstall cargo-make
 
     # Actual job
 
@@ -432,22 +408,10 @@ jobs:
         fetch-depth: 2
 
     # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
+      run: |
+        cargo +stable install cargo-quickinstall
+        cargo +stable quickinstall cargo-make
 
     # Job-specific dependencies
     - name: Install Node.js v16.18.0
@@ -462,17 +426,8 @@ jobs:
         npm install -g wabt
         npm install -g wasm-opt
     
-    - name: Attempt to load cached twiggy
-      uses: actions/cache@v3
-      id: twiggy-cache
-      with:
-        path: |
-          ~/.cargo/bin/twiggy
-          ~/.cargo/bin/twiggy.exe
-        key: ${{ runner.os }}-twiggy-0.7
     - name: Install twiggy
-      if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      run: cargo install twiggy --version 0.7.0
+      run: cargo +stable quickinstall twiggy --version 0.7.0
 
     # Actual job
     - name: Build wasm executables
