@@ -1376,7 +1376,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_binsize"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "cargo_metadata",
 ]
@@ -1391,7 +1391,7 @@ dependencies = [
 
 [[package]]
 name = "icu_benchmark_memory"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "cargo_metadata",
  "clap",

@@ -5,6 +5,7 @@
 [package]
 name = "icu_compactdecimal"
 version = "0.1.0"
+description = "Compact decimal"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"

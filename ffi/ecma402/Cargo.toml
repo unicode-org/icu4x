@@ -20,7 +20,8 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "build.rs",
 ]
 
 [package.metadata.docs.rs]
