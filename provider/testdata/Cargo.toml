@@ -24,6 +24,7 @@ include = [
     # Exception: We want to be able to run tests, so
     # we include the test data
     "data/**/*",
+    "metadata.rs.data",
 ]
 
 [package.metadata.docs.rs]

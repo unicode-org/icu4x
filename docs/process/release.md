@@ -25,10 +25,11 @@ Once the release is complete, the assigned release driver will:
     * Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
 * `cargo workspaces version --no-git-push` to bump the version numbers
   * This will only update crates that have changed, and will ask you which version number to bump for each crate
-  * You can use commands like `git log icu@0.4.1..@ -- components/plurals/src/` to figure out whether to do a minor or patch release
-* `cargo workspaces publish` to publish the crates in the correct order
-* Add `icu4x-release` group as owners to each new component you're publishing
-  * `cargo owner -a github:unicode-org:icu4x-release`
+  * You can use commands like `git log icu@1.0.0..@ -- components/plurals/src/` and `cargo public-api -p icu_list diff 1.0.0` to figure out whether to do a major, minor, or patch release
+  * Get this reviewed and checked in before continuing
+* Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order
+  * Add `icu4x-release` group as owners to each new component you're publishing
+    * `cargo owner -a github:unicode-org:icu4x-release`
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public
 
@@ -41,7 +42,7 @@ While code may compile using our local path dependencies, when publishing we mus
 
 In general, if you ever cut a new release of a `utils/` crate, all `icu4x` crates depending on new behavior should have their `Cargo.toml` updated to the latest version. Typically, it is more convenient to update _all_ crates that depend on the utility, not just the ones that require the new behavior. If your new release introduces behavior that is not relied upon by any of our crates (e.g. some error formatting code was improved), it is fine to cut a release of the crate
 
-When cutting new ICU4X releases, make sure all utilities with changes have had a new release containing those changes. To do so, go through the `utils/` folder and check the history of each crate since the last version bump. Bear in mind that some folders like `yoke/` contain multiple crates (`yoke/derive/`).
+When cutting new ICU4X releases, make sure all utilities with changes have had a new release containing those changes. To do so, go through the `utils/` folder and check the history of each crate since the last version bump. Bear in mind that some folders like `yoke/` contain multiple crates (`yoke/derive/`), and to keep derive-crates' versions in sync with their crates.
 
 If there are no changes, ensure that the current version of the crate is the version in use in ICU4X's components. If not, make sure that ICU4X is not relying on any features since the release that is in use. In case of such reliance, update the version in use in the ICU4X components.
 
