@@ -248,7 +248,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert!(vzv.is_empty());
     /// ```
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(VarZeroSlice::new_empty())
     }
 

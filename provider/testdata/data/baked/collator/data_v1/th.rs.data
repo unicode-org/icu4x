@@ -16,7 +16,7 @@
         },
         192u32,
     ),
-    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+    ces: ::zerovec::ZeroVec::new(),
     ce32s: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(
             b"\x05\x05hr\x08\x05cr\x05\x05hr\x07\x05cr\x06\x05hr\x06\x05cr",

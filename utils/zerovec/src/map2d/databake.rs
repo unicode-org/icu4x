@@ -51,49 +51,24 @@ fn test_baked_map() {
             #[allow(unused_unsafe)]
             crate::ZeroMap2d::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(&[
-                        97u8, 114u8, 99u8, 97u8, 122u8, 0u8, 99u8, 117u8, 0u8, 101u8, 110u8, 0u8,
-                        102u8, 102u8, 0u8, 103u8, 114u8, 99u8, 107u8, 107u8, 0u8, 107u8, 117u8,
-                        0u8, 107u8, 121u8, 0u8, 108u8, 105u8, 102u8, 109u8, 97u8, 110u8, 109u8,
-                        110u8, 0u8, 112u8, 97u8, 0u8, 112u8, 97u8, 108u8, 115u8, 100u8, 0u8, 116u8,
-                        103u8, 0u8, 117u8, 103u8, 0u8, 117u8, 110u8, 114u8, 117u8, 122u8, 0u8,
-                        121u8, 117u8, 101u8, 122u8, 104u8, 0u8,
-                    ])
+                    crate::VarZeroVec::from_bytes_unchecked(
+                        b"arcaz\0cu\0en\0ff\0grckk\0ku\0ky\0lifmanmn\0pa\0palsd\0tg\0ug\0unruz\0yuezh\0"
+                    )
                 },
                 unsafe {
-                    crate::ZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8,
-                        0u8, 6u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 10u8, 0u8,
-                        0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8,
-                        15u8, 0u8, 0u8, 0u8, 16u8, 0u8, 0u8, 0u8, 17u8, 0u8, 0u8, 0u8, 20u8, 0u8,
-                        0u8, 0u8, 21u8, 0u8, 0u8, 0u8, 22u8, 0u8, 0u8, 0u8, 23u8, 0u8, 0u8, 0u8,
-                        24u8, 0u8, 0u8, 0u8, 25u8, 0u8, 0u8, 0u8, 28u8, 0u8, 0u8, 0u8,
-                    ])
+                    crate::ZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0\x07\0\0\0\x08\0\0\0\n\0\0\0\x0C\0\0\0\r\0\0\0\x0E\0\0\0\x0F\0\0\0\x10\0\0\0\x11\0\0\0\x14\0\0\0\x15\0\0\0\x16\0\0\0\x17\0\0\0\x18\0\0\0\x19\0\0\0\x1C\0\0\0"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(&[
-                        78u8, 98u8, 97u8, 116u8, 80u8, 97u8, 108u8, 109u8, 65u8, 114u8, 97u8, 98u8,
-                        71u8, 108u8, 97u8, 103u8, 83u8, 104u8, 97u8, 119u8, 65u8, 100u8, 108u8,
-                        109u8, 76u8, 105u8, 110u8, 98u8, 65u8, 114u8, 97u8, 98u8, 65u8, 114u8,
-                        97u8, 98u8, 89u8, 101u8, 122u8, 105u8, 65u8, 114u8, 97u8, 98u8, 76u8, 97u8,
-                        116u8, 110u8, 76u8, 105u8, 109u8, 98u8, 78u8, 107u8, 111u8, 111u8, 77u8,
-                        111u8, 110u8, 103u8, 65u8, 114u8, 97u8, 98u8, 80u8, 104u8, 108u8, 112u8,
-                        68u8, 101u8, 118u8, 97u8, 75u8, 104u8, 111u8, 106u8, 83u8, 105u8, 110u8,
-                        100u8, 65u8, 114u8, 97u8, 98u8, 67u8, 121u8, 114u8, 108u8, 68u8, 101u8,
-                        118u8, 97u8, 65u8, 114u8, 97u8, 98u8, 72u8, 97u8, 110u8, 115u8, 66u8,
-                        111u8, 112u8, 111u8, 72u8, 97u8, 110u8, 98u8, 72u8, 97u8, 110u8, 116u8,
-                    ])
+                    crate::VarZeroVec::from_bytes_unchecked(
+                        b"NbatPalmArabGlagShawAdlmLinbArabArabYeziArabLatnLimbNkooMongArabPhlpDevaKhojSindArabCyrlDevaArabHansBopoHanbHant"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(&[
-                        74u8, 79u8, 0u8, 83u8, 89u8, 0u8, 73u8, 82u8, 0u8, 66u8, 71u8, 0u8, 71u8,
-                        66u8, 0u8, 71u8, 78u8, 0u8, 71u8, 82u8, 0u8, 67u8, 78u8, 0u8, 73u8, 81u8,
-                        0u8, 71u8, 69u8, 0u8, 67u8, 78u8, 0u8, 84u8, 82u8, 0u8, 73u8, 78u8, 0u8,
-                        71u8, 78u8, 0u8, 67u8, 78u8, 0u8, 80u8, 75u8, 0u8, 67u8, 78u8, 0u8, 73u8,
-                        78u8, 0u8, 73u8, 78u8, 0u8, 73u8, 78u8, 0u8, 80u8, 75u8, 0u8, 75u8, 90u8,
-                        0u8, 78u8, 80u8, 0u8, 65u8, 70u8, 0u8, 67u8, 78u8, 0u8, 84u8, 87u8, 0u8,
-                        84u8, 87u8, 0u8, 84u8, 87u8, 0u8,
-                    ])
+                    crate::VarZeroVec::from_bytes_unchecked(
+                        b"JO\0SY\0IR\0BG\0GB\0GN\0GR\0CN\0IQ\0GE\0CN\0TR\0IN\0GN\0CN\0PK\0CN\0IN\0IN\0IN\0PK\0KZ\0NP\0AF\0CN\0TW\0TW\0TW\0"
+                    )
                 },
             )
         },
@@ -109,49 +84,24 @@ fn test_baked_borrowed_map() {
             #[allow(unused_unsafe)]
             crate::maps::ZeroMap2dBorrowed::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(&[
-                        97u8, 114u8, 99u8, 97u8, 122u8, 0u8, 99u8, 117u8, 0u8, 101u8, 110u8, 0u8,
-                        102u8, 102u8, 0u8, 103u8, 114u8, 99u8, 107u8, 107u8, 0u8, 107u8, 117u8,
-                        0u8, 107u8, 121u8, 0u8, 108u8, 105u8, 102u8, 109u8, 97u8, 110u8, 109u8,
-                        110u8, 0u8, 112u8, 97u8, 0u8, 112u8, 97u8, 108u8, 115u8, 100u8, 0u8, 116u8,
-                        103u8, 0u8, 117u8, 103u8, 0u8, 117u8, 110u8, 114u8, 117u8, 122u8, 0u8,
-                        121u8, 117u8, 101u8, 122u8, 104u8, 0u8,
-                    ])
+                    crate::VarZeroSlice::from_bytes_unchecked(
+                        b"arcaz\0cu\0en\0ff\0grckk\0ku\0ky\0lifmanmn\0pa\0palsd\0tg\0ug\0unruz\0yuezh\0"
+                    )
                 },
                 unsafe {
-                    crate::ZeroSlice::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8,
-                        0u8, 6u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 10u8, 0u8,
-                        0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 13u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8,
-                        15u8, 0u8, 0u8, 0u8, 16u8, 0u8, 0u8, 0u8, 17u8, 0u8, 0u8, 0u8, 20u8, 0u8,
-                        0u8, 0u8, 21u8, 0u8, 0u8, 0u8, 22u8, 0u8, 0u8, 0u8, 23u8, 0u8, 0u8, 0u8,
-                        24u8, 0u8, 0u8, 0u8, 25u8, 0u8, 0u8, 0u8, 28u8, 0u8, 0u8, 0u8,
-                    ])
+                    crate::ZeroSlice::from_bytes_unchecked(
+                        b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0\x07\0\0\0\x08\0\0\0\n\0\0\0\x0C\0\0\0\r\0\0\0\x0E\0\0\0\x0F\0\0\0\x10\0\0\0\x11\0\0\0\x14\0\0\0\x15\0\0\0\x16\0\0\0\x17\0\0\0\x18\0\0\0\x19\0\0\0\x1C\0\0\0"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(&[
-                        78u8, 98u8, 97u8, 116u8, 80u8, 97u8, 108u8, 109u8, 65u8, 114u8, 97u8, 98u8,
-                        71u8, 108u8, 97u8, 103u8, 83u8, 104u8, 97u8, 119u8, 65u8, 100u8, 108u8,
-                        109u8, 76u8, 105u8, 110u8, 98u8, 65u8, 114u8, 97u8, 98u8, 65u8, 114u8,
-                        97u8, 98u8, 89u8, 101u8, 122u8, 105u8, 65u8, 114u8, 97u8, 98u8, 76u8, 97u8,
-                        116u8, 110u8, 76u8, 105u8, 109u8, 98u8, 78u8, 107u8, 111u8, 111u8, 77u8,
-                        111u8, 110u8, 103u8, 65u8, 114u8, 97u8, 98u8, 80u8, 104u8, 108u8, 112u8,
-                        68u8, 101u8, 118u8, 97u8, 75u8, 104u8, 111u8, 106u8, 83u8, 105u8, 110u8,
-                        100u8, 65u8, 114u8, 97u8, 98u8, 67u8, 121u8, 114u8, 108u8, 68u8, 101u8,
-                        118u8, 97u8, 65u8, 114u8, 97u8, 98u8, 72u8, 97u8, 110u8, 115u8, 66u8,
-                        111u8, 112u8, 111u8, 72u8, 97u8, 110u8, 98u8, 72u8, 97u8, 110u8, 116u8,
-                    ])
+                    crate::VarZeroSlice::from_bytes_unchecked(
+                        b"NbatPalmArabGlagShawAdlmLinbArabArabYeziArabLatnLimbNkooMongArabPhlpDevaKhojSindArabCyrlDevaArabHansBopoHanbHant"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(&[
-                        74u8, 79u8, 0u8, 83u8, 89u8, 0u8, 73u8, 82u8, 0u8, 66u8, 71u8, 0u8, 71u8,
-                        66u8, 0u8, 71u8, 78u8, 0u8, 71u8, 82u8, 0u8, 67u8, 78u8, 0u8, 73u8, 81u8,
-                        0u8, 71u8, 69u8, 0u8, 67u8, 78u8, 0u8, 84u8, 82u8, 0u8, 73u8, 78u8, 0u8,
-                        71u8, 78u8, 0u8, 67u8, 78u8, 0u8, 80u8, 75u8, 0u8, 67u8, 78u8, 0u8, 73u8,
-                        78u8, 0u8, 73u8, 78u8, 0u8, 73u8, 78u8, 0u8, 80u8, 75u8, 0u8, 75u8, 90u8,
-                        0u8, 78u8, 80u8, 0u8, 65u8, 70u8, 0u8, 67u8, 78u8, 0u8, 84u8, 87u8, 0u8,
-                        84u8, 87u8, 0u8, 84u8, 87u8, 0u8,
-                    ])
+                    crate::VarZeroSlice::from_bytes_unchecked(
+                        b"JO\0SY\0IR\0BG\0GB\0GN\0GR\0CN\0IQ\0GE\0CN\0TR\0IN\0GN\0CN\0PK\0CN\0IN\0IN\0IN\0PK\0KZ\0NP\0AF\0CN\0TW\0TW\0TW\0"
+                    )
                 },
             )
         },

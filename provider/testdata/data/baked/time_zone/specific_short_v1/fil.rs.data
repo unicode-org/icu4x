@@ -2,10 +2,10 @@
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"") },
+            ::zerovec::ZeroVec::new(),
+            ::zerovec::ZeroVec::new(),
+            ::zerovec::ZeroVec::new(),
+            ::zerovec::VarZeroVec::new(),
         )
     },
     overrides: unsafe {

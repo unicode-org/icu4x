@@ -35,7 +35,7 @@
             },
         )
     },
-    language: unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\0\0\0\0") },
+    language: ::zerovec::VarZeroVec::new(),
     script: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

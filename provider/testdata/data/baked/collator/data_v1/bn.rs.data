@@ -16,7 +16,7 @@
         },
         192u32,
     ),
-    ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
-    ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
-    contexts: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+    ces: ::zerovec::ZeroVec::new(),
+    ce32s: ::zerovec::ZeroVec::new(),
+    contexts: ::zerovec::ZeroVec::new(),
 }
