@@ -9,71 +9,54 @@ use std::fmt::Debug;
 use std::str::FromStr;
 
 /// Specifies a variant of CLDR JSON
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize)]
 #[non_exhaustive]
 pub enum LocaleSubset {
-    /// Includes all data
+    /// Deprecated. Use `Modern` + `Moderate` + `Basic`
+    #[deprecated]
     Full,
     /// Includes locales listed as modern coverage targets by the CLDR subcomittee
+    #[serde(rename = "modern")]
     Modern,
-}
-
-impl std::fmt::Display for LocaleSubset {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Full => "full",
-                Self::Modern => "modern",
-            }
-        )
-    }
+    /// Includes locales listed as moderate coverage targets by the CLDR subcomittee
+    #[serde(rename = "moderate")]
+    Moderate,
+    /// Includes locales listed as basic coverage targets by the CLDR subcomittee
+    #[serde(rename = "basic")]
+    Basic,
 }
 
 #[derive(Debug)]
-pub(crate) struct CldrCache {
-    pub locale_subset: LocaleSubset,
-    pub cache: SerdeCache,
-}
+pub(crate) struct CldrCache(pub SerdeCache);
 
 impl CldrCache {
     pub fn core(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self.cache, "cldr-core".to_string())
+        CldrDirNoLang(&self.0, "cldr-core".to_owned())
     }
 
     pub fn numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(
-            &self.cache,
-            format!("cldr-numbers-{}/main", self.locale_subset),
-        )
+        CldrDirLang(&self.0, "cldr-numbers-full/main".to_owned())
     }
 
     pub fn misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(
-            &self.cache,
-            format!("cldr-misc-{}/main", self.locale_subset),
-        )
+        CldrDirLang(&self.0, "cldr-misc-full/main".to_owned())
     }
 
     pub fn bcp47(&self) -> CldrDirNoLang<'_> {
-        CldrDirNoLang(&self.cache, "cldr-bcp47/bcp47".to_string())
+        CldrDirNoLang(&self.0, "cldr-bcp47/bcp47".to_string())
     }
 
     pub fn displaynames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(
-            &self.cache,
-            format!("cldr-localenames-{}/main", self.locale_subset),
-        )
+        CldrDirLang(&self.0, "cldr-localenames-full/main".to_owned())
     }
 
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
-            &self.cache,
+            &self.0,
             if cal == "gregorian" {
-                format!("cldr-dates-{}/main", self.locale_subset)
+                "cldr-dates-full/main".to_owned()
             } else {
-                format!("cldr-cal-{}-{}/main", cal, self.locale_subset)
+                format!("cldr-cal-{}-full/main", cal)
             },
         )
     }

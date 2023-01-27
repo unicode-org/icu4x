@@ -78,19 +78,11 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _locale_subset: CldrLocaleSubset,
+        _unused_locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
-        let locale_subset = if root.list("cldr-misc-full").is_ok() {
-            CldrLocaleSubset::Full
-        } else {
-            CldrLocaleSubset::Modern
-        };
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(root),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(root)))),
             ..self
         })
     }
@@ -112,16 +104,14 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        locale_subset: CldrLocaleSubset,
+        _unused_locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                    tag, tag, locale_subset
-                ))),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
+                    "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
+                    tag, tag
+                )))
+            ))),
             ..self
         })
     }
@@ -151,8 +141,8 @@ impl SourceData {
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     /// Deprecated
-    pub fn with_cldr_latest(self, locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, locale_subset)
+    pub fn with_cldr_latest(self, _unused_locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
+        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, _unused_locale_subset)
     }
 
     #[deprecated(
@@ -222,6 +212,27 @@ impl SourceData {
 
     pub(crate) fn collations(&self) -> &[String] {
         &self.collations
+    }
+
+    /// List the locales for the given subsets
+    pub fn locales(
+        &self,
+        subsets: &[CldrLocaleSubset],
+    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        if subsets.contains(&CldrLocaleSubset::Full) {
+            return self.locales(&[CldrLocaleSubset::Basic, CldrLocaleSubset::Moderate, CldrLocaleSubset::Basic]);
+        }
+        Ok(self
+            .cldr()?
+            .0
+            .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
+                "cldr-core/coverageLevels.json",
+            )?
+            .coverage_levels
+            .iter()
+            .filter_map(|(locale, c)| subsets.contains(c).then(|| locale))
+            .cloned()
+            .collect())
     }
 }
 
