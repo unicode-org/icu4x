@@ -21,18 +21,22 @@ BASEDIR=$(dirname "$(realpath "$0")")
 
 # Build the WASM library
 # TODO: This likely doesn't work if $BASEDIR has spaces
-RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" \
+# Special linker flags shouldn't overwrite the top-level target directory
+CARGO_TARGET_DIR="target" \
+cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
     -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
     --target wasm32-unknown-unknown \
     --release \
-    --package icu_capi_tinywasm
+    --package icu_capi_cdylib \
+    --features buffer_provider,logging \
 
-cp target/wasm32-unknown-unknown/release/icu_capi_tinywasm.wasm icu_capi.wasm
+cp target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
 
 # Don't regen the postcard data by default; delete the file to regen
 if ! test -f "icu4x_data.postcard"; then
     # Regen all data
-    cargo run --manifest-path ../../provider/datagen/Cargo.toml -- \
+    cargo run -p icu_datagen -- \
         --keys-for-bin icu_capi.wasm \
         --locales full \
         --format blob \
@@ -42,4 +46,4 @@ fi
 # Refresh the lib folder
 rm -rf lib
 mkdir -p lib
-cp ../diplomat/js/include/* lib
+cp ../../include/* lib
