@@ -269,7 +269,7 @@ exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    cd ffi/tinywasm
+    cd ffi/diplomat/js/examples/tinywasm
 
     exec --fail-on-error ./build.sh
     exec --fail-on-error ls -l
