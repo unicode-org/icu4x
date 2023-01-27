@@ -63,7 +63,7 @@ impl SourceData {
         Self::default()
             .with_cldr(
                 icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Full,
+                CldrLocaleSubset::Basic,
             )
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())

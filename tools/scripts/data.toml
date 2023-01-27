@@ -30,7 +30,7 @@ output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
-    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata`:"
+    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata` and `cargo make testdata-hello-world:"
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
     msg = array_join ${msg} "\n"
@@ -47,7 +47,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--keys=core/helloworld@1",
-    "--locales=full",
+    "--locales", "bn","cs","de","el","en","eo","fa","fi","is","ja","la","pt","ro","ru","vi","zh",
     "--format=dir",
     "--out=provider/fs/tests/data/json",
     "--overwrite",
@@ -62,7 +62,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--keys=core/helloworld@1",
-    "--locales=full",
+    "--locales", "bn","cs","de","el","en","eo","fa","fi","is","ja","la","pt","ro","ru","vi","zh",
     "--format=dir",
     "--syntax=bincode",
     "--out=provider/fs/tests/data/bincode",
@@ -78,7 +78,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--keys=core/helloworld@1",
-    "--locales=full",
+    "--locales", "bn","cs","de","el","en","eo","fa","fi","is","ja","la","pt","ro","ru","vi","zh",
     "--format=dir",
     "--syntax=postcard",
     "--out=provider/fs/tests/data/postcard",
@@ -94,7 +94,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--keys=core/helloworld@1",
-    "--locales=full",
+    "--locales", "bn","cs","de","el","en","eo","fa","fi","is","ja","la","pt","ro","ru","vi","zh",
     "--format=blob",
     "--out=provider/blob/tests/data/hello_world.postcard",
     "--overwrite",
@@ -122,7 +122,7 @@ args = [
     "--bin=icu4x-datagen",
     "--",
     "--keys=all",
-    "--locales=full",
+    "--locales", "bn","cs","de","el","en","eo","fa","fi","is","ja","la","pt","ro","ru","vi","zh",
     "--format=blob",
     "--out=/dev/null",
     "--overwrite",
