@@ -68,7 +68,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&icu_testdata::locales()),
-        &icu_datagen::all_keys()
+        &icu_datagen::all_keys_with_experimental()
             .into_iter()
             .filter(|k| !IGNORED_KEYS.contains(&&*k.path()))
             .chain(core::iter::once(

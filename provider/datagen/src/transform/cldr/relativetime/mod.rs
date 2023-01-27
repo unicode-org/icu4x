@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "experimental")]
-
 use std::borrow::Borrow;
 
 use crate::transform::cldr::cldr_serde;

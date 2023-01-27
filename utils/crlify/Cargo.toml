@@ -20,3 +20,6 @@ include = [
     "LICENSE",
     "README.md"
 ]
+
+[package.metadata.workspaces]
+independent = true

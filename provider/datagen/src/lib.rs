@@ -32,14 +32,7 @@
 //! The command line interface can be installed with the `bin` Cargo feature.
 //!
 //! ```bash
-//! $ cargo install icu_datagen --features bin
-//! ```
-//!
-//! If you need to export keys for experimental components,
-//! enable the `experimental` Cargo feature:
-//!
-//! ```bash
-//! $ cargo install icu_datagen --features bin,experimental
+//! $ cargo install icu4x-datagen
 //! ```
 //!
 //! Once the tool is installed, you can invoke it like this:
@@ -78,7 +71,7 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::all_keys;
+pub use registry::{all_keys, all_keys_with_experimental};
 pub use source::{CldrLocaleSubset, CollationHanDatabase, SourceData};
 
 /// [Out::Fs] serialization formats.
@@ -145,7 +138,7 @@ impl AnyProvider for DatagenProvider {
 /// ```
 pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
     lazy_static::lazy_static! {
-        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys()
+        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
                     .into_iter()
                     .chain(std::iter::once(
                         icu_provider::hello_world::HelloWorldV1Marker::KEY,
@@ -173,7 +166,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
 /// );
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
-    strings.iter().map(AsRef::as_ref).filter_map(key).collect()
+    strings.iter().filter_map(crate::key).collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
@@ -204,16 +197,13 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # }
 /// ```
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
+    BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
-        .collect::<std::io::Result<HashSet<String>>>()?;
-    Ok(all_keys()
-        .into_iter()
-        .filter(|k| keys.contains(&*k.path()))
-        .collect())
+        .filter_map(|k| k.map(crate::key).transpose())
+        .collect()
 }
 
-/// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
+/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
 ///
 /// Unknown key names are ignored.
 //  Supports the hello world key
@@ -236,7 +226,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let mut candidates = HashSet::new();
+    let mut result = Vec::new();
     let mut i = 0;
     let mut last_start = None;
     while i < file.len() {
@@ -246,18 +236,21 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
         } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
             && last_start.is_some()
         {
-            candidates.insert(&file[last_start.unwrap()..i]);
+            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
+                .ok()
+                .and_then(crate::key)
+            {
+                result.push(key);
+            }
             i += icu_provider::trailing_tag!().len();
             last_start = None;
         } else {
             i += 1;
         }
     }
-
-    Ok(all_keys()
-        .into_iter()
-        .filter(|k| candidates.contains(k.path().as_bytes()))
-        .collect())
+    result.sort();
+    result.dedup();
+    Ok(result)
 }
 
 /// The output format.
@@ -361,6 +354,8 @@ pub fn datagen(
         }),
     };
 
+    let keys: HashSet<_> = keys.iter().collect();
+
     keys.into_par_iter().try_for_each(|&key| {
         let locales = provider
             .supported_locales_for_key(key)
@@ -420,12 +415,12 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_calendar::provider::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
 }
@@ -439,13 +434,13 @@ fn test_keys_from_bin() {
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_calendar::provider::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
 }

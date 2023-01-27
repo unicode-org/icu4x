@@ -21,6 +21,9 @@ include = [
     "README.md"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [package.metadata.docs.rs]
 all-features = true
 
@@ -30,4 +33,4 @@ derive = ["dep:zerofrom-derive"]
 default = ["alloc"]
 
 [dependencies]
-zerofrom-derive = { version = "0.1.0", path = "./derive", optional = true}
+zerofrom-derive = { version = "0.1.1", path = "./derive", optional = true}
