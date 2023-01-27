@@ -210,6 +210,7 @@ pub struct UnstableDataProvider;
     not(feature = "internal_ignore_baked")
 ))] // allow accessing metadata even if databake doesn't compile
 mod baked {
+    #![allow(clippy::octal_escapes)]
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     impl_data_provider!(super::UnstableDataProvider);
     impl_any_provider!(super::UnstableDataProvider);
