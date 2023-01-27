@@ -14,7 +14,7 @@ export class FixedDecimalDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_en());
+        this.#locale = Ok(ICU4XLocale.create_from_string("en"));
         this.#groupingStrategy = ICU4XFixedDecimalGroupingStrategy.Auto;
         this.#fixedDecimal = null;
         this.#updateFormatter()

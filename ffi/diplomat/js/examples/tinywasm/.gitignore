@@ -1,3 +1,3 @@
-lib/
-icu4x_data.postcard
+lib
 icu_capi.wasm
+data.postcard
