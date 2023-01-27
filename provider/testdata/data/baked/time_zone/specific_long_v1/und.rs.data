@@ -2,19 +2,19 @@
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"") },
         )
     },
     overrides: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"") },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"") },
         )
     },
 }

@@ -35,6 +35,15 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        if core::mem::size_of::<Self>() == core::mem::size_of::<&[u8]>()
+            && core::any::type_name::<Self>() == core::any::type_name::<&[u8]>()
+        {
+            let bytes = syn::LitByteStr::new(
+                unsafe { core::mem::transmute_copy(self) },
+                proc_macro2::Span::call_site(),
+            );
+            return quote!(#bytes);
+        }
         let t = <T as Bake>::bake(*self, ctx);
         quote! {
             &#t
@@ -55,6 +64,15 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        if core::mem::size_of::<T>() == core::mem::size_of::<u8>()
+            && core::any::type_name::<T>() == core::any::type_name::<u8>()
+        {
+            let bytes = syn::LitByteStr::new(
+                unsafe { core::mem::transmute(self) },
+                proc_macro2::Span::call_site(),
+            );
+            return quote!(*#bytes);
+        }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
             [#(#data,)*]

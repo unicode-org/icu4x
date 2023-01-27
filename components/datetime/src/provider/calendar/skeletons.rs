@@ -78,17 +78,17 @@ impl TryFrom<&str> for SkeletonV1 {
 #[cfg(feature = "datagen")]
 impl databake::Bake for DateSkeletonPatternsV1<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        use zerofrom::ZeroFrom;
         env.insert("icu_datetime");
-        let vals = self.0.iter().map(|(skeleton, pattern)| {
-            let fields = skeleton.0 .0.iter().map(|f| f.bake(env));
-            let pattern = pattern.bake(env);
-            databake::quote! {
-                (&[#(#fields),*], #pattern)
-            }
-        });
-        databake::quote! {
-            &[#(#vals),*]
-        }
+        databake::Bake::bake(
+            &self
+                .0
+                .iter()
+                .map(|(skeleton, pattern)| (skeleton.0.0.as_slice(), PatternPlurals::zero_from(pattern)))
+                .collect::<Vec<_>>()
+                .as_slice(),
+            env,
+        )
     }
 }
 

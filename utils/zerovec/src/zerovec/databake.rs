@@ -12,8 +12,8 @@ where
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
+        quote! { unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(#bytes) } }
     }
 }
 
@@ -23,8 +23,8 @@ where
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::ZeroSlice::from_bytes_unchecked(&[#(#bytes),*]) } }
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
+        quote! { unsafe { ::zerovec::ZeroSlice::from_bytes_unchecked(#bytes) } }
     }
 }
 

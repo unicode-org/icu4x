@@ -8,16 +8,16 @@ use databake::*;
 impl Bake for FlexZeroVec<'_> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[#(#bytes),*]).as_flexzerovec() } }
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
+        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(#bytes).as_flexzerovec() } }
     }
 }
 
 impl Bake for &FlexZeroSlice {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
-        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[#(#bytes),*]) } }
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
+        quote! { unsafe { ::zerovec::vecs::FlexZeroSlice::from_byte_slice_unchecked(#bytes) } }
     }
 }
 

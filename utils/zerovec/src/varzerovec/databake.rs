@@ -8,18 +8,18 @@ use databake::*;
 impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
         // Safe because self.as_bytes is a safe input
-        quote! { unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(&[#(#bytes),*]) } }
+        quote! { unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(#bytes) } }
     }
 }
 
 impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
-        let bytes = self.as_bytes();
+        let bytes = databake::Bake::bake(&self.as_bytes(), env);
         // Safe because self.as_bytes is a safe input
-        quote! { unsafe { ::zerovec::VarZeroSlice::from_bytes_unchecked(&[#(#bytes),*]) } }
+        quote! { unsafe { ::zerovec::VarZeroSlice::from_bytes_unchecked(#bytes) } }
     }
 }
 
