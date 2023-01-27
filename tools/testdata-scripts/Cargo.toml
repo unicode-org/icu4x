@@ -9,9 +9,9 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-icu_testdata = { path = "..", features = ["std", "internal_ignore_baked"]}
-icu_datagen = { path = "../../datagen", default-features = false }
-icu_provider = { path = "../../core" }
+icu_testdata = { path = "../../provider/testdata", features = ["std", "internal_ignore_baked"]}
+icu_datagen = { path = "../../provider/datagen", default-features = false }
+icu_provider = { path = "../../provider/core" }
 
 bytes = "1.1.0"
 clap = "2.33"

@@ -42,7 +42,7 @@ description = "Produces the list of ICU APIs that are not exported through Diplo
 category = "ICU4X Development"
 toolchain = "nightly-2022-08-25"
 script = '''
-cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/ffi_coverage/tests/missing_apis.txt
+cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
 '''
 
 [tasks.verify-diplomat-coverage]
@@ -54,7 +54,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/diplomat/ffi_coverage/tests
+code = exec --get-exit-code git diff --exit-code -- ffi/diplomat/tests
 if ${code}
     trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
 end

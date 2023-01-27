@@ -35,7 +35,7 @@ provider/testdata/                @unicode-org/icu4x-owners
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
-tools/scripts/                    @Manishearth @sffc
+tools/make/                       @Manishearth @sffc
 utils/fixed_decimal/              @sffc
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
