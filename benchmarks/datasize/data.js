@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674771034966,
+  "lastUpdate": 1674851152867,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34853,6 +34853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/659b2687043776316ab9c12e048751377416234b"
         },
         "date": 1674770953271,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ec659c307e310d797b9a5d754451e1114bf4922a",
+          "message": "Update data_management.md (#3039)\n\nFixes #3034",
+          "timestamp": "2023-01-27T21:22:46+01:00",
+          "tree_id": "2869644d95e5c16e3aafc08cfabd3a8f54150c3a",
+          "url": "https://github.com/unicode-org/icu4x/commit/ec659c307e310d797b9a5d754451e1114bf4922a"
+        },
+        "date": 1674851057860,
         "tool": "ndjson",
         "benches": [
           {
