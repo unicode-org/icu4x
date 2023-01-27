@@ -55,7 +55,7 @@ pub struct Field {
 }
 
 impl Field {
-    #[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
     pub(crate) fn get_length_type(&self) -> TextOrNumeric {
         match self.symbol {
             FieldSymbol::Era => TextOrNumeric::Text,

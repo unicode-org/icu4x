@@ -5,7 +5,7 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -24,8 +24,11 @@ include = [
     "list_to_ucptrie.wasm"
 ]
 
+[package.metadata.workspaces]
+independent = true
+
 [dependencies]
-icu_collections = { version = "1.0.0", path = "..", features = ["serde"] }
+icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
 lazy_static = "1.4.0"
 toml = "0.5"
 

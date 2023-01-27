@@ -352,12 +352,6 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
-        const _: () = ();
         Self::new_borrowed(core::mem::transmute((
             bytes.as_ptr(),
             bytes.len() / core::mem::size_of::<T::ULE>(),

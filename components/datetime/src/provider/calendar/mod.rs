@@ -4,14 +4,14 @@
 
 //! Data structs for calendar-specific symbols and patterns.
 
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 mod skeletons;
 mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
 use icu_provider::{yoke, zerofrom};
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub use skeletons::*;
 pub use symbols::*;
 
