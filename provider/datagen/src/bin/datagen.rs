@@ -293,10 +293,7 @@ fn main() -> eyre::Result<()> {
             source_data.with_collations(collations.into_iter().map(String::from).collect());
     }
 
-    let raw_locales = matches
-        .values_of("LOCALES")
-        .unwrap()
-        .collect::<Vec<_>>();
+    let raw_locales = matches.values_of("LOCALES").unwrap().collect::<Vec<_>>();
 
     let locales = if raw_locales == ["none"] || selected_keys.is_empty() {
         vec![]
@@ -380,11 +377,6 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    icu_datagen::datagen(
-        Some(&locales),
-        &selected_keys,
-        &source_data,
-        vec![out],
-    )
-    .map_err(eyre::ErrReport::from)
+    icu_datagen::datagen(Some(&locales), &selected_keys, &source_data, vec![out])
+        .map_err(eyre::ErrReport::from)
 }

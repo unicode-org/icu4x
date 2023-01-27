@@ -141,7 +141,10 @@ impl SourceData {
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     /// Deprecated
-    pub fn with_cldr_latest(self, _unused_locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
+    pub fn with_cldr_latest(
+        self,
+        _unused_locale_subset: CldrLocaleSubset,
+    ) -> Result<Self, DataError> {
         self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, _unused_locale_subset)
     }
 
@@ -219,8 +222,13 @@ impl SourceData {
         &self,
         subsets: &[CldrLocaleSubset],
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        #[allow(deprecated)] // still have to support it
         if subsets.contains(&CldrLocaleSubset::Full) {
-            return self.locales(&[CldrLocaleSubset::Basic, CldrLocaleSubset::Moderate, CldrLocaleSubset::Basic]);
+            return self.locales(&[
+                CldrLocaleSubset::Basic,
+                CldrLocaleSubset::Moderate,
+                CldrLocaleSubset::Basic,
+            ]);
         }
         Ok(self
             .cldr()?

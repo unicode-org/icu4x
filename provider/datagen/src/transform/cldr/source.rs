@@ -14,6 +14,7 @@ use std::str::FromStr;
 pub enum LocaleSubset {
     /// Deprecated. Use `Modern` + `Moderate` + `Basic`
     #[deprecated]
+    #[serde(skip)]
     Full,
     /// Includes locales listed as modern coverage targets by the CLDR subcomittee
     #[serde(rename = "modern")]
