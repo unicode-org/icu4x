@@ -2,19 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::dictionary::DictionarySegmenter;
 use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
-use icu_provider::prelude::*;
-
-#[cfg(any(feature = "lstm", feature = "dictionary"))]
 use icu_locid::{locale, Locale};
+use icu_provider::prelude::*;
 
 #[cfg(feature = "lstm")]
 use crate::lstm::LstmSegmenter;
-
-#[cfg(feature = "dictionary")]
-use crate::dictionary::DictionarySegmenter;
 
 #[derive(Default)]
 pub struct LstmPayloads {
@@ -73,7 +69,6 @@ pub struct Dictionary {
     pub cj: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
 }
 
-#[cfg(feature = "dictionary")]
 impl Dictionary {
     fn best(&self, input: u32) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
         match get_language(input) {
@@ -178,7 +173,6 @@ pub fn complex_language_segment_utf16(
                 }
             }
 
-            #[cfg(feature = "dictionary")]
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(*first_ch as u32) {
@@ -229,7 +223,6 @@ pub fn complex_language_segment_str(
                 }
             }
 
-            #[cfg(feature = "dictionary")]
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(first_ch as u32) {

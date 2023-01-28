@@ -61,9 +61,6 @@ pub mod ffi {
     impl ICU4XLineSegmenter {
         /// Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
-        ///
-        /// Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload
-        /// data.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::try_new_auto_unstable, FnInStruct)]
         pub fn create_auto(
             provider: &ICU4XDataProvider,
@@ -74,7 +71,6 @@ pub mod ffi {
         fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + DataProvider<LstmDataV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
@@ -131,9 +127,6 @@ pub mod ffi {
 
         /// Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai.
-        ///
-        /// Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload
-        /// data.
         #[diplomat::rust_link(
             icu::segmenter::LineSegmenter::try_new_auto_with_options_unstable,
             FnInStruct
@@ -151,7 +144,6 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + DataProvider<LstmDataV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,

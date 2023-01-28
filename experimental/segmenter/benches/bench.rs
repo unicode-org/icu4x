@@ -18,13 +18,13 @@ fn line_break_iter_latin1(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/Latin1");
 
     let segmenter =
-        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+        LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineSegmenter::try_new_auto_with_options_unstable(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {
@@ -48,7 +48,7 @@ fn line_break_iter_utf8(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF8");
 
     let segmenter =
-        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+        LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     group.bench_function("En", |b| {
         b.iter(|| {
@@ -74,13 +74,13 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
 
     let segmenter =
-        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+        LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
     let segmenter_css =
-        LineSegmenter::try_new_auto_with_options_unstable(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     group.bench_function("En", |b| {

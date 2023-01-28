@@ -14,7 +14,7 @@ fn check_with_options(
     options: LineBreakOptions,
 ) {
     let segmenter =
-        LineSegmenter::try_new_auto_with_options_unstable(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     let iter = segmenter.segment_str(s);

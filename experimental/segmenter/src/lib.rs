@@ -86,6 +86,7 @@
 extern crate alloc;
 
 mod complex;
+mod dictionary;
 mod error;
 mod indices;
 mod language;
@@ -110,9 +111,6 @@ mod lstm_bies;
 mod lstm_error;
 #[cfg(feature = "lstm")]
 mod math_helper;
-
-#[cfg(feature = "dictionary")]
-mod dictionary;
 
 pub use crate::grapheme::{
     GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,

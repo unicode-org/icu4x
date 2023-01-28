@@ -70,13 +70,12 @@ pub struct WordSegmenter {
 }
 
 impl WordSegmenter {
-    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
+    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM and
     /// dictionary payload data.
     ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
-    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
-    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
-    #[cfg(all(feature = "lstm", feature = "dictionary"))]
+    /// Note: This function loads dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer,
+    /// Lao, and Thai.
+    #[cfg(all(feature = "lstm"))]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -96,64 +95,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
-    /// dictionary payload data.
-    ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
-    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
-    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
-    #[cfg(all(feature = "lstm", not(feature = "dictionary")))]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
-    where
-        D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
-            + ?Sized,
-    {
-        Self::try_new_lstm_unstable(provider)
-    }
-
-    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
-    /// dictionary payload data.
-    ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
-    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
-    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
-    #[cfg(all(not(feature = "lstm"), feature = "dictionary"))]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
-    where
-        D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
-            + ?Sized,
-    {
-        Self::try_new_dictionary_unstable(provider)
-    }
-
-    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM or
-    /// dictionary payload data.
-    ///
-    /// Note: This function can change behavior depending on whether "dictionary" or "lstm" Cargo
-    /// feature is enabled. When both Cargo features are enabled, it uses dictionary for Chinese and
-    /// Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
-    #[cfg(all(not(feature = "lstm"), not(feature = "dictionary")))]
-    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
-    where
-        D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
-            + ?Sized,
-    {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
-        Ok(Self {
-            payload,
-            dictionary: Dictionary::default(),
-            lstm: LstmPayloads::default(),
-            grapheme,
-        })
-    }
-
+    #[cfg(all(feature = "lstm"))]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
@@ -201,7 +143,6 @@ impl WordSegmenter {
 
     /// Construct a [`WordSegmenter`] with dictionary payload data for Chinese, Japanese, Burmese,
     /// Khmer, Lao, and Thai.
-    #[cfg(feature = "dictionary")]
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -220,7 +161,6 @@ impl WordSegmenter {
         })
     }
 
-    #[cfg(feature = "dictionary")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
