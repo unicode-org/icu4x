@@ -610,6 +610,8 @@ rust_library("icu_segmenter-v0_8_0") {
   deps += [ ":icu_collections-v1_1_0" ]
   deps += [ ":icu_locid-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":ndarray-v0_15_6" ]
+  deps += [ ":num-traits-v0_2_15" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerovec-v0_9_2" ]
 
@@ -620,6 +622,11 @@ rust_library("icu_segmenter-v0_8_0") {
     "--edition=2018",
     "-Cmetadata=fa9b09bff56d0368",
     "-Cextra-filename=-fa9b09bff56d0368",
+    "--cfg=feature=\"auto\"",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"lstm\"",
+    "--cfg=feature=\"ndarray\"",
+    "--cfg=feature=\"num-traits\"",
   ]
 
   visibility = [ ":*" ]
@@ -664,6 +671,26 @@ rust_library("lazy_static-v1_4_0") {
     "--edition=2015",
     "-Cmetadata=cdf593bd3fb3d68f",
     "-Cextra-filename=-cdf593bd3fb3d68f",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("libm-v0_2_6") {
+  crate_name = "libm"
+  crate_root = "//ffi/gn/vendor/libm/src/lib.rs"
+  output_name = "libm-6b5214f2031c6f9e"
+
+  deps = []
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2018",
+    "-Cmetadata=6b5214f2031c6f9e",
+    "-Cextra-filename=-6b5214f2031c6f9e",
+    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]

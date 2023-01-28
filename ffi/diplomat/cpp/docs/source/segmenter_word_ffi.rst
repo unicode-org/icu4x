@@ -33,7 +33,7 @@
 
         Construct an :cpp:class:`ICU4XWordSegmenter` with automatically selecting the best available LSTM or dictionary payload data.
 
-        Note: When both LSTM and dictionary payload data are available, it uses dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
+        Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer, Lao, and Thai.
 
         See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 

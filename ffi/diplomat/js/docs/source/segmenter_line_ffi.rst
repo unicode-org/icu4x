@@ -49,8 +49,6 @@
 
         Construct a :js:class:`ICU4XLineSegmenter` with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-        Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
-
         See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
@@ -71,8 +69,6 @@
     .. js:function:: create_auto_with_options_v1(provider, options)
 
         Construct a :js:class:`ICU4XLineSegmenter` with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
-
-        Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
 
         See the `Rust documentation for try_new_auto_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable>`__ for more information.
 

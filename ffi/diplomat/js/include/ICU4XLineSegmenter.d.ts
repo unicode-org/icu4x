@@ -18,8 +18,6 @@ export class ICU4XLineSegmenter {
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-   * Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
-
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable Rust documentation for `try_new_auto_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
@@ -46,8 +44,6 @@ export class ICU4XLineSegmenter {
   /**
 
    * Construct a {@link ICU4XLineSegmenter `ICU4XLineSegmenter`} with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
-
-   * Note: When both LSTM and dictionary payload data are available, it prefers LSTM payload data.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable Rust documentation for `try_new_auto_with_options_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
