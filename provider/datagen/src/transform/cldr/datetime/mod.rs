@@ -313,7 +313,6 @@ impl_data_provider!(
     |dates, _| { symbols::convert_times(dates) },
     calendared = "false"
 );
-#[cfg(feature = "experimental")]
 impl_data_provider!(
     DateSkeletonPatternsV1Marker,
     |dates, _| { DateSkeletonPatternsV1::from(dates) },
@@ -402,7 +401,6 @@ mod test {
     }
 
     #[test]
-    #[cfg(feature = "experimental")]
     fn test_datetime_skeletons() {
         use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
         use icu_plurals::PluralCategory;

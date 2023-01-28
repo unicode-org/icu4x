@@ -13,7 +13,8 @@ keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.workspaces]
+independent = true
 
 [lib]
 proc_macro = true
@@ -26,6 +27,6 @@ syn = { version = "1.0.73", features = ["derive", "fold"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
-zerofrom = { version = "0.1", path = "..", features = ["derive"]}
-zerovec = { version = "0.9", path = "../../zerovec", features = ["yoke"] }
+zerofrom = { path = "..", features = ["derive"]}
+zerovec = { path = "../../zerovec", features = ["yoke"] }
 

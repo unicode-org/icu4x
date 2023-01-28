@@ -159,16 +159,14 @@ pub fn complex_language_segment_utf16(
     for str_per_lang in lang_iter {
         if let Some(first_ch) = str_per_lang.get(0) {
             #[cfg(feature = "lstm")]
-            {
-                if let Some(lstm) = lstm {
-                    if let Some(model) = lstm.best(*first_ch as u32) {
-                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                            let breaks = segmenter.segment_utf16(&str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.len();
-                            result.push(offset);
-                            continue;
-                        }
+            if let Some(lstm) = lstm {
+                if let Some(model) = lstm.best(*first_ch as u32) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                        let breaks = segmenter.segment_utf16(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.len();
+                        result.push(offset);
+                        continue;
                     }
                 }
             }
@@ -209,16 +207,14 @@ pub fn complex_language_segment_str(
     for str_per_lang in lang_iter {
         if let Some(first_ch) = str_per_lang.chars().next() {
             #[cfg(feature = "lstm")]
-            {
-                if let Some(lstm) = lstm {
-                    if let Some(model) = lstm.best(first_ch as u32) {
-                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                            let breaks = segmenter.segment_str(&str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
-                            result.push(offset);
-                            continue;
-                        }
+            if let Some(lstm) = lstm {
+                if let Some(model) = lstm.best(first_ch as u32) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                        let breaks = segmenter.segment_str(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                        result.push(offset);
+                        continue;
                     }
                 }
             }

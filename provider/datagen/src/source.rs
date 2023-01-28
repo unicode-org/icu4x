@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(not(feature = "experimental"), allow(dead_code))]
-
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
 use elsa::sync::FrozenMap;

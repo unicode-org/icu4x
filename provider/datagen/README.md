@@ -29,14 +29,7 @@ fn main() {
 The command line interface can be installed with the `bin` Cargo feature.
 
 ```bash
-$ cargo install icu_datagen --features bin
-```
-
-If you need to export keys for experimental components,
-enable the `experimental` Cargo feature:
-
-```bash
-$ cargo install icu_datagen --features bin,experimental
+$ cargo install icu4x-datagen
 ```
 
 Once the tool is installed, you can invoke it like this:
