@@ -12,8 +12,6 @@ use std::env;
 use std::str::FromStr;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
-use zerovec::ule::AsULE;
-use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
@@ -53,9 +51,7 @@ impl crate::DatagenProvider {
             .abbr;
         let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
 
-        let mut ret = JapaneseErasV1 {
-            dates_to_eras: ZeroVec::new(),
-        };
+        let mut dates_to_eras = BTreeMap::new();
 
         for (era_id, era_name) in era_name_map.iter() {
             // These don't exist but may in the future
@@ -78,12 +74,13 @@ impl crate::DatagenProvider {
             let code = era_to_code(era_name, start_date.year)
                 .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
             if start_date.year >= 1868 || japanext {
-                ret.dates_to_eras
-                    .with_mut(|v| v.push((start_date, code).to_unaligned()));
+                dates_to_eras.insert(start_date, code);
             }
         }
 
-        ret.dates_to_eras.to_mut_slice().sort_unstable();
+        let ret = JapaneseErasV1 {
+            dates_to_eras: dates_to_eras.into_iter().collect(),
+        };
 
         // Integrity check
         //

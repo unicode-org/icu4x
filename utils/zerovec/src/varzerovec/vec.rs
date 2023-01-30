@@ -405,6 +405,18 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     }
 }
 
+impl<A, T, F> From<Vec<A>> for VarZeroVec<'static, T, F>
+where
+    T: VarULE + ?Sized,
+    A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
+{
+    #[inline]
+    fn from(elements: Vec<A>) -> Self {
+        Self::from(elements.as_slice())
+    }
+}
+
 impl<A, T, F> From<&Vec<A>> for VarZeroVec<'static, T, F>
 where
     T: VarULE + ?Sized,
@@ -413,8 +425,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 
@@ -439,8 +450,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 

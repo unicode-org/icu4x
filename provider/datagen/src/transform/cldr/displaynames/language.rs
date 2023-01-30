@@ -7,8 +7,8 @@ use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeMap;
 use zerovec::ule::UnvalidatedStr;
-use zerovec::ZeroMap;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
@@ -57,10 +57,10 @@ const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
 impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNamesV1<'static> {
     fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
-        let mut names = ZeroMap::new();
-        let mut short_names = ZeroMap::new();
-        let mut long_names = ZeroMap::new();
-        let mut menu_names = ZeroMap::new();
+        let mut names = BTreeMap::new();
+        let mut short_names = BTreeMap::new();
+        let mut long_names = BTreeMap::new();
+        let mut menu_names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
                 if let Some(region) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
@@ -79,10 +79,10 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
             }
         }
         Self {
-            names,
-            short_names,
-            long_names,
-            menu_names,
+            names: names.into_iter().collect(),
+            short_names: short_names.into_iter().collect(),
+            long_names: long_names.into_iter().collect(),
+            menu_names: menu_names.into_iter().collect(),
         }
     }
 }
