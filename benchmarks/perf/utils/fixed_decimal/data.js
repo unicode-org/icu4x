@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674851715505,
+  "lastUpdate": 1675103420499,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -69191,6 +69191,120 @@ window.BENCHMARK_DATA = {
             "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
             "value": 157987,
             "range": "± 99",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed91bab61b41132f0a4c1195268afe4a304920ab",
+          "message": "Moving no-publish tool crates into /tools (#3036)",
+          "timestamp": "2023-01-30T19:17:22+01:00",
+          "tree_id": "c90969dd3dc1e06ea0242f8316542661a1f7a722",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed91bab61b41132f0a4c1195268afe4a304920ab"
+        },
+        "date": 1675103329046,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106546,
+            "range": "± 10729",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20633,
+            "range": "± 1987",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62602,
+            "range": "± 4853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/22.50",
+            "value": 47,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 200,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/22.50",
+            "value": 28,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 79,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0012.3400",
+            "value": 41,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00.0012216734340",
+            "value": 87,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00002342561123400.0",
+            "value": 96,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/-00123400",
+            "value": 39,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/922337203685477580898230948203840239384.9823094820384023938423424",
+            "value": 457,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0.000000001",
+            "value": 52,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
+            "value": 128808,
+            "range": "± 9393",
             "unit": "ns/iter"
           }
         ]
