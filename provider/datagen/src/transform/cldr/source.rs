@@ -11,18 +11,14 @@ use std::str::FromStr;
 /// Specifies a variant of CLDR JSON
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize)]
 #[non_exhaustive]
-pub enum LocaleSubset {
-    /// Deprecated. Use `Modern` + `Moderate` + `Basic`
-    #[deprecated]
-    #[serde(skip)]
-    Full,
-    /// Includes locales listed as modern coverage targets by the CLDR subcomittee
+pub enum CoverageLevel {
+    /// Locales listed as modern coverage targets by the CLDR subcomittee.
     #[serde(rename = "modern")]
     Modern,
-    /// Includes locales listed as moderate coverage targets by the CLDR subcomittee
+    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
     #[serde(rename = "moderate")]
     Moderate,
-    /// Includes locales listed as basic coverage targets by the CLDR subcomittee
+    /// Locales listed as basic coverage targets by the CLDR subcomittee.
     #[serde(rename = "basic")]
     Basic,
 }

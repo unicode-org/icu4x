@@ -261,12 +261,12 @@ fn main() -> eyre::Result<()> {
 
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Basic)?;
+        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Ignored)?;
     } else if Some("latest") == matches.value_of("CLDR_TAG") {
         source_data = source_data
-            .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Basic)?;
+            .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Ignored)?;
     } else if let Some(tag) = matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr_for_tag(tag, CldrLocaleSubset::Basic)?;
+        source_data = source_data.with_cldr_for_tag(tag, CldrLocaleSubset::Ignored)?;
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
@@ -299,16 +299,16 @@ fn main() -> eyre::Result<()> {
         vec![]
     } else if raw_locales == ["full"] || matches.is_present("ALL_LOCALES") {
         source_data.locales(&[
-            CldrLocaleSubset::Basic,
-            CldrLocaleSubset::Moderate,
-            CldrLocaleSubset::Modern,
+            CoverageLevel::Basic,
+            CoverageLevel::Moderate,
+            CoverageLevel::Modern,
         ])?
     } else if let Some(locale_subsets) = raw_locales
         .iter()
         .map(|&s| match s {
-            "basic" => Some(CldrLocaleSubset::Basic),
-            "moderate" => Some(CldrLocaleSubset::Moderate),
-            "modern" => Some(CldrLocaleSubset::Modern),
+            "basic" => Some(CoverageLevel::Basic),
+            "moderate" => Some(CoverageLevel::Moderate),
+            "modern" => Some(CoverageLevel::Modern),
             _ => None,
         })
         .collect::<Option<Vec<_>>>()

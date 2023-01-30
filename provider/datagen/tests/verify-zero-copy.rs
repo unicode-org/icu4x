@@ -49,7 +49,7 @@ fn main() {
         source: SourceData::default()
             .with_cldr(
                 icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Basic,
+                CldrLocaleSubset::Ignored,
             )
             .unwrap()
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())

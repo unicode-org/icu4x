@@ -72,7 +72,20 @@ mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 pub use registry::{all_keys, all_keys_with_experimental};
-pub use source::{CldrLocaleSubset, CollationHanDatabase, SourceData};
+pub use source::{CoverageLevel, CollationHanDatabase, SourceData};
+
+#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[doc(hidden)]
+pub enum CldrLocaleSubset {
+    Ignored,
+}
+
+impl CldrLocaleSubset {
+    #[allow(non_upper_case_globals)]
+    pub const Full: Self = Self::Ignored;
+    #[allow(non_upper_case_globals)]
+    pub const Modern: Self = Self::Ignored;
+}
 
 /// [Out::Fs] serialization formats.
 pub mod syntax {
@@ -83,12 +96,11 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{syntax, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
+    pub use super::{syntax, CoverageLevel, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
     pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
 }
 
-use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;

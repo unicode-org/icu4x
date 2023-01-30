@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::source::CldrCache;
-pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
+pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
@@ -63,7 +63,7 @@ impl SourceData {
         Self::default()
             .with_cldr(
                 icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Basic,
+                crate::CldrLocaleSubset::Ignored,
             )
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
@@ -78,7 +78,7 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _unused_locale_subset: CldrLocaleSubset,
+        _unused_locale_subset: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
         Ok(Self {
@@ -104,7 +104,7 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        _unused_locale_subset: CldrLocaleSubset,
+        _unused_locale_subset: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
@@ -143,7 +143,7 @@ impl SourceData {
     /// Deprecated
     pub fn with_cldr_latest(
         self,
-        _unused_locale_subset: CldrLocaleSubset,
+        _unused_locale_subset: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, _unused_locale_subset)
     }
@@ -220,16 +220,8 @@ impl SourceData {
     /// List the locales for the given subsets
     pub fn locales(
         &self,
-        subsets: &[CldrLocaleSubset],
+        levels: &[CoverageLevel],
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
-        #[allow(deprecated)] // still have to support it
-        if subsets.contains(&CldrLocaleSubset::Full) {
-            return self.locales(&[
-                CldrLocaleSubset::Basic,
-                CldrLocaleSubset::Moderate,
-                CldrLocaleSubset::Basic,
-            ]);
-        }
         Ok(self
             .cldr()?
             .0
@@ -238,7 +230,7 @@ impl SourceData {
             )?
             .coverage_levels
             .iter()
-            .filter_map(|(locale, c)| subsets.contains(c).then(|| locale))
+            .filter_map(|(locale, c)| levels.contains(c).then(|| locale))
             .cloned()
             .collect())
     }
