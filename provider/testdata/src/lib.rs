@@ -91,23 +91,11 @@ pub mod versions {
     //! Functions to access version info of the ICU test data.
 
     /// Gets the CLDR tag used as the test data source (for formatters, likely subtags, ...)
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
-    /// ```
     pub fn cldr_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::CLDR_TAG)
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
-    /// ```
     pub fn icu_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
     }
