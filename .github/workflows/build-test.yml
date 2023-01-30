@@ -318,6 +318,10 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x
+    - name: Warm up datagen
+      # We do this so its compilation doesn't go on the time bugdet of the 
+      # first test that uses it.
+      run: cargo build -p icu_datagen
 
     # Actual job
     - name: Run `cargo make ci-job-ffi`
@@ -449,7 +453,7 @@ jobs:
       with:
         path: |
           ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/gn.toml') }}
+        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1

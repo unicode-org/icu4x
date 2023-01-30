@@ -107,8 +107,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-skip_paths = set_new "components/collator/fuzz/Cargo.toml" "components/normalizer/fuzz/Cargo.toml" "ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/Cargo.toml" "provider/testdata/scripts/Cargo.toml"
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/tinywasm/node_modules"
+glob_skip_pattern = array "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/diplomat/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*"
 
 template = canonicalize README.tpl
 
@@ -117,17 +116,20 @@ if not contains ${cargo_list.stdout} "readme"
     trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
 end
 
+skip_paths = set_new
+for skip_pattern in ${glob_skip_pattern}
+    paths = glob_array ${skip_pattern}
+    for p in ${paths}
+        set_put ${skip_paths} ${p}
+    end
+end
+
 handle = glob_array ${glob_pattern}
 for path in ${handle}
     root_dir = dirname ${path}
     skip_this = is_empty ${root_dir}
     if set_contains ${skip_paths} ${path}
         skip_this = set true
-    end
-    for skip_path_prefix in ${skip_path_prefixes}
-        if starts_with ${path} ${skip_path_prefix}
-            skip_this = set true
-        end
     end
     if not ${skip_this}
         echo "Automatically generating ${root_dir}/README.md"
