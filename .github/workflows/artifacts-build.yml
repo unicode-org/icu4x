@@ -144,11 +144,20 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
-    - name: Init
-      # Note: --foreground-scripts makes npm forward the output of build.sh
+    - name: Install Rust nightly
       run: |
-        cd ffi/diplomat/js/examples/wasm-demo
-        npm ci --foreground-scripts
+        rustup toolchain install nightly-2022-04-05
+        rustup +nightly-2022-04-05 component add rust-src
+
+    - name: Init node package
+      run: |
+        cd ffi/diplomat/js/examples/node
+        make lib
+        make icu_capi.wasm
+        # Manually running datagen with the required keys
+        cargo run -p icu_datagen -- --key-file ../wasm-demo/required-keys.txt --locales full --format blob --out data.postcard
+        cd ../wasm-demo
+        npm ci
 
     - name: Run Webpack
       run: |
