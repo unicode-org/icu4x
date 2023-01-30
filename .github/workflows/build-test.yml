@@ -164,7 +164,12 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job specific dependencies
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
     - name: Install rustfmt
       run: rustup component add rustfmt
 
