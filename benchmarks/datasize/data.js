@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1674851152867,
+  "lastUpdate": 1675102814501,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34883,6 +34883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ec659c307e310d797b9a5d754451e1114bf4922a"
         },
         "date": 1674851057860,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ed91bab61b41132f0a4c1195268afe4a304920ab",
+          "message": "Moving no-publish tool crates into /tools (#3036)",
+          "timestamp": "2023-01-30T19:17:22+01:00",
+          "tree_id": "c90969dd3dc1e06ea0242f8316542661a1f7a722",
+          "url": "https://github.com/unicode-org/icu4x/commit/ed91bab61b41132f0a4c1195268afe4a304920ab"
+        },
+        "date": 1675102723622,
         "tool": "ndjson",
         "benches": [
           {
