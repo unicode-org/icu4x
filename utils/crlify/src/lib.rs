@@ -10,13 +10,15 @@ use std::io::{BufWriter, Result, Write};
 /// Workaround for <https://github.com/serde-rs/json/issues/535>
 pub struct BufWriterWithLineEndingFix<W: Write> {
     inner: BufWriter<W>,
-    last_written: Option<u8>
-};
+    #[cfg(windows)]
+    last_written: Option<u8>,
+}
 
 impl<W: Write> BufWriterWithLineEndingFix<W> {
     pub fn new(inner: W) -> Self {
         Self {
             inner: BufWriter::with_capacity(4096, inner),
+            #[cfg(windows)]
             last_written: None,
         }
     }
@@ -30,10 +32,10 @@ impl<W: Write> Write for BufWriterWithLineEndingFix<W> {
                 // Note: Since we need to emit the \r, we are adding extra bytes than were in
                 // the input buffer. BufWriter helps because short writes (less than 4096 B)
                 // will always write or fail in their entirety.
-                self.0.write(b"\r\n")
+                self.inner.write(b"\r\n")
             } else {
                 self.last_written = Some(b);
-                self.0.write(&[b])
+                self.inner.write(&[b])
             }?;
         }
         // The return value is the number of *input* bytes that were written.
@@ -43,11 +45,11 @@ impl<W: Write> Write for BufWriterWithLineEndingFix<W> {
     #[cfg(not(windows))]
     #[inline]
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        self.0.write(buf)
+        self.inner.write(buf)
     }
 
     #[inline]
     fn flush(&mut self) -> Result<()> {
-        self.0.flush()
+        self.inner.flush()
     }
 }
