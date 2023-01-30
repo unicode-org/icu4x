@@ -24,7 +24,6 @@ include = [
     # Exception: We want to be able to run tests, so
     # we include the test data
     "data/**/*",
-    "metadata.rs.data",
 ]
 
 [package.metadata.docs.rs]
@@ -84,10 +83,6 @@ icu_datetime_experimental = [
 ]
 buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "dep:lazy_static"]
 std = []
-# Deactivates baked in case it doesn't build
-internal_ignore_baked = []
-# Excludes `internal_ignore_baked` from `--all-features` 
-internal_all_features_hack = []
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

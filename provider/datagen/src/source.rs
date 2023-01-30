@@ -62,12 +62,14 @@ impl SourceData {
     pub fn for_test() -> Self {
         Self::default()
             .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
                 CldrLocaleSubset::Full,
             )
-            .expect("testdata is valid")
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-            .expect("testdata is valid")
+            .unwrap()
+            .with_icuexport(
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/icuexport").into(),
+            )
+            .unwrap()
     }
 
     /// Adds CLDR data to this `DataSource`. The root should point to a local

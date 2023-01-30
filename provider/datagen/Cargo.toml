@@ -87,7 +87,7 @@ simple_logger = { version = "1.12", default-features = false, optional = true }
 [dev-dependencies]
 dhat = "0.3.0"
 icu = { path = "../../components/icu" }
-icu_testdata = { path = "../testdata", features = ["buffer", "std"] }
+icu_testdata = { path = "../testdata", features = ["buffer"] }
 
 [features]
 default = ["bin"]

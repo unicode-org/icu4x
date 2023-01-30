@@ -6,6 +6,7 @@ use bytes::Bytes;
 use clap::{value_t, App, Arg};
 use eyre::WrapErr;
 use futures::stream::{self, StreamExt, TryStreamExt};
+use icu_locid::*;
 use simple_logger::SimpleLogger;
 use std::io::Cursor;
 use std::{io::Read, path::PathBuf};
@@ -13,13 +14,14 @@ use tokio::{fs, io::AsyncWriteExt};
 use zip::ZipArchive;
 
 include!("../../globs.rs.data");
+include!("../../locales.rs.data");
 
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
     /// Repo owner and name, like "unicode-org/cldr-json"
     pub repo_owner_and_name: &'a str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: String,
+    pub tag: &'static str,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
     /// Downloader client
@@ -30,7 +32,7 @@ fn expand_paths(in_paths: &[&str]) -> Vec<String> {
     let mut paths = vec![];
     for pattern in in_paths {
         if pattern.contains("$LOCALES") {
-            for locale in icu_testdata::locales().iter() {
+            for locale in LOCALES.iter() {
                 paths.push(pattern.replace("$LOCALES", &locale.to_string()));
             }
             // Also add "root" for older CLDRs
@@ -82,7 +84,7 @@ struct IcuExportDataDownloader {
     /// Repo owner and name, like "unicode-org/cldr-json"
     pub repo_owner_and_name: &'static str,
     /// Git tag or ref, like "39.0.0"
-    pub tag: String,
+    pub tag: &'static str,
     /// Root directory to save downloaded files
     pub root_dir: PathBuf,
 }
@@ -143,8 +145,6 @@ impl IcuExportDataUnzipper {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    let testdata_data_root = icu_testdata::paths::data_root();
-
     let args = App::new("ICU4X Test Data Downloader")
         .version("0.0.1")
         .author("The ICU4X Project Developers")
@@ -164,7 +164,7 @@ async fn main() -> eyre::Result<()> {
                     "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree.",
                 )
                 .takes_value(true)
-                .default_value_os(testdata_data_root.as_os_str()),
+                .required(true),
         )
         .arg(
             Arg::with_name("HTTP_CONCURRENCY")
@@ -199,13 +199,10 @@ async fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let output_path = PathBuf::from(
-        args.value_of_os("OUTPUT")
-            .expect("Option has a default value"),
-    );
+    let output_path = PathBuf::from(args.value_of_os("OUTPUT").expect("arg is required"));
 
     let http_concurrency: usize =
-        value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
+        value_t!(args, "HTTP_CONCURRENCY", usize).expect("arg has a default value");
 
     let client = reqwest::ClientBuilder::new()
         .user_agent(concat!(
@@ -217,7 +214,7 @@ async fn main() -> eyre::Result<()> {
 
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: icu_testdata::versions::cldr_tag(),
+        tag: icu_datagen::SourceData::LATEST_TESTED_CLDR_TAG,
         root_dir: output_path.join("cldr"),
         client: &client,
     };
@@ -240,7 +237,7 @@ async fn main() -> eyre::Result<()> {
 
     let icued_downloader = IcuExportDataDownloader {
         repo_owner_and_name: "unicode-org/icu",
-        tag: icu_testdata::versions::icu_tag(),
+        tag: icu_datagen::SourceData::LATEST_TESTED_ICUEXPORT_TAG,
         root_dir: output_path.join("icuexport"),
     };
     fs::remove_dir_all(&icued_downloader.root_dir)

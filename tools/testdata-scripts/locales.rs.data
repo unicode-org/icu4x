@@ -2,12 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{langid, LanguageIdentifier};
-
-// Locales to include in testdata. Keep this list somewhat short, but cover all features.
-// We use 10 base languages with a small number of variants to allow for 10 languages to be
-// used in microbenchmarks.
-pub const LOCALES: &[LanguageIdentifier] = &[
+const LOCALES: &[LanguageIdentifier] = &[
     // Arabic:
     // - Good example for RTL
     // - Non-latin numerals in Egypt
@@ -62,9 +57,3 @@ pub const LOCALES: &[LanguageIdentifier] = &[
     // Root data
     langid!("und"),
 ];
-
-// Git tag or sha1 for the CLDR data used to generate the testdata.
-pub const CLDR_JSON_GITREF: &str = "42.0.0";
-
-// Git tag or sha1 for the ICU data used to generate the testdata.
-pub const ICUEXPORTDATA_GITREF: &str = "release-72-1";

@@ -134,8 +134,9 @@ category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-testdata-download-sources",
+    "--bin=download-test-sources",
     "--",
+    "--out=provider/datagen/tests/data",
     "-v",
 ]
 

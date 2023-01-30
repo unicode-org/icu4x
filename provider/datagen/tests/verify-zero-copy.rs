@@ -48,11 +48,13 @@ fn main() {
     let converter = DatagenProvider {
         source: SourceData::default()
             .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
                 CldrLocaleSubset::Full,
             )
             .unwrap()
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+            .with_icuexport(
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/icuexport").into(),
+            )
             .unwrap(),
     }
     .filterable("icu4x-datagen locales")
