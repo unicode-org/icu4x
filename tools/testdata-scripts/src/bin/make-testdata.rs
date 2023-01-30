@@ -57,7 +57,7 @@ fn main() {
     };
 
     icu_datagen::datagen(
-        Some(&LOCALES),
+        Some(LOCALES),
         &icu_datagen::all_keys_with_experimental()
             .into_iter()
             .chain(core::iter::once(
