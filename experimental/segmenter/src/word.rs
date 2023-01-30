@@ -75,7 +75,7 @@ impl WordSegmenter {
     ///
     /// Note: This function loads dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer,
     /// Lao, and Thai.
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -95,7 +95,7 @@ impl WordSegmenter {
         })
     }
 
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,

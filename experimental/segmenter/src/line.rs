@@ -199,7 +199,7 @@ pub struct LineSegmenter {
 impl LineSegmenter {
     /// Construct a [`LineSegmenter`] via [`Self::try_new_auto_with_options_unstable`] with default
     /// [`LineBreakOptions`].
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -210,7 +210,7 @@ impl LineSegmenter {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
     }
 
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
@@ -272,7 +272,7 @@ impl LineSegmenter {
 
     /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`]. It automatically loads the
     /// best available payload data for Burmese, Khmer, Lao, and Thai.
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -286,7 +286,7 @@ impl LineSegmenter {
         Self::try_new_lstm_with_options_unstable(provider, options)
     }
 
-    #[cfg(all(feature = "lstm", feature = "auto"))]
+    #[cfg(feature = "auto")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: LineBreakOptions,
