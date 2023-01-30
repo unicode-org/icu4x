@@ -449,7 +449,7 @@ jobs:
       with:
         path: |
           ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/gn.toml') }}
+        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
