@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675103436690,
+  "lastUpdate": 1675110261665,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46895,6 +46895,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50597385,
             "range": "± 899957",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "50620d8fa0af69c9865d8048da78e4fcef2b18e6",
+          "message": "Makefile and CI improvements (#3041)",
+          "timestamp": "2023-01-30T21:10:48+01:00",
+          "tree_id": "b2f5ed277aeaa504ee600386e92dbc3f70b59c5c",
+          "url": "https://github.com/unicode-org/icu4x/commit/50620d8fa0af69c9865d8048da78e4fcef2b18e6"
+        },
+        "date": 1675110176172,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 536,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 349,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 380,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 474,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 726,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 781,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 349,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 391,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 477,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 520,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 779,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 40156543,
+            "range": "± 1732939",
             "unit": "ns/iter"
           },
           {
