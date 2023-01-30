@@ -353,7 +353,12 @@ impl LineSegmenter {
         Ok(Self {
             options,
             payload,
-            // Line segmenter doesn't need CJ dictionary.
+            // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
+            // characters [1]. Southeast Asian languages however require complex context analysis
+            // [2].
+            //
+            // [1]: https://www.unicode.org/reports/tr14/#ID
+            // [2]: https://www.unicode.org/reports/tr14/#SA
             dictionary: Dictionary::new_southeast_asian(provider),
             lstm: LstmPayloads::default(),
             grapheme,
