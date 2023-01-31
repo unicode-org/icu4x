@@ -12,11 +12,13 @@ use icu::plurals::PluralRules;
 
 mod baked {
     include!("../baked_data/mod.rs");
+    pub struct UnstableProvider;
+    impl_data_provider!(UnstableProvider);
 }
 
 fn main() {
     let rules =
-        PluralRules::try_new_cardinal_unstable(&baked::BakedDataProvider, &locale!("ru").into())
+        PluralRules::try_new_cardinal_unstable(&baked::UnstableProvider, &locale!("ru").into())
             .expect("Locale 'ru' is present in the databake");
     let result = rules.category_for(&3.into());
     assert_eq!(result, PluralCategory::Few);

@@ -31,3 +31,23 @@ description = "Run all Rust doctests with all features"
 category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc", "--no-fail-fast"]
+
+[tasks.test-cargo-tutorial]
+description = "Build the Cargo tutorial projects"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+cd docs/tutorials/cargo_tests
+
+pwd = pwd
+set_env CARGO_TARGET_DIR ${pwd}/target
+
+exec --fail-on-error cargo run --release --manifest-path=baked/Cargo.toml
+exec --fail-on-error make -C buffer
+exec --fail-on-error cargo run --release --manifest-path=buffer/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path=experimental/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path=lazy_static/Cargo.toml
+exec --fail-on-error cargo run --release --manifest-path=testdata/Cargo.toml
+'''

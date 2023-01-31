@@ -9,15 +9,20 @@ use icu_provider::marker::KeyedDataMarker;
 use std::path::PathBuf;
 
 fn main() {
+    // TODO(#3046): We shouldn't need to do this since it worked in 1.0
+    let mod_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("baked_data");
+    if mod_directory.exists() {
+        std::fs::remove_dir_all(&mod_directory).unwrap();
+    }
+
     icu_datagen::datagen(
         Some(&[langid!("ru")]),
         &[icu::plurals::provider::CardinalV1Marker::KEY],
         &SourceData::default()
-            // Note: We use "latest" to stay fresh with the latest CLDR data.
-            .with_cldr_for_tag("latest", CldrLocaleSubset::Modern)
+            .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Modern)
             .expect("Source data should download successfully"),
         vec![icu_datagen::Out::Module {
-            mod_directory: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("baked_data"),
+            mod_directory,
             pretty: true,
             insert_feature_gates: false,
             use_separate_crates: false,

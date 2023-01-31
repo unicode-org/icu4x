@@ -13,5 +13,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.0"
-icu_testdata = "1.0"
+icu = "1.1"
+icu_testdata = "1.1"

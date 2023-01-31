@@ -6,10 +6,10 @@
 //! 
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::segmenter::GraphemeClusterBreakSegmenter;
+use icu::segmenter::GraphemeClusterSegmenter;
 
 fn main() {
-    let segmenter = GraphemeClusterBreakSegmenter::try_new_unstable(
+    let segmenter = GraphemeClusterSegmenter::try_new_unstable(
         &icu_testdata::unstable(),
     )
     .expect("Grapheme break data is present in testdata");
