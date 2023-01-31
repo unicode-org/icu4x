@@ -255,7 +255,7 @@ impl databake::Bake for ListJoinerPattern<'_> {
 fn databake() {
     databake::test_bake!(
         ListJoinerPattern,
-        const: unsafe { crate::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8) },
+        const: crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
         icu_list
     );
 }
