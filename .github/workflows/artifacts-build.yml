@@ -240,6 +240,7 @@ jobs:
           export_default_credentials: true
       - name: Download artifacts
         run: |
+          gsutil help cp
           gsutil -m cp -rf gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs doc
           gsutil -m cp -rf  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp doc/ffi/cpp
           gsutil -m cp -rf gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js doc/ffi/js
