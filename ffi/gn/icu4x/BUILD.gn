@@ -625,8 +625,6 @@ rust_library("icu_segmenter-v0_8_0") {
     "--cfg=feature=\"auto\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"lstm\"",
-    "--cfg=feature=\"ndarray\"",
-    "--cfg=feature=\"num-traits\"",
   ]
 
   visibility = [ ":*" ]
