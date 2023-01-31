@@ -235,13 +235,13 @@ jobs:
           ref: gh-pages
       - name: Download artifacts
         run: |
-          rm -r docs
+          rm -rf docs
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs . || git checkout HEAD -- docs
-          rm -r docs/ffi/cpp
+          rm -rf docs/ffi/cpp
           gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi || git checkout HEAD -- docs/ffi/cpp
-          rm -r docs/ffi/js
+          rm -rf docs/ffi/js
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi || git checkout HEAD -- docs/ffi/js
-          rm -r wasm-demo
+          rm -rf wasm-demo
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo . || git checkout HEAD -- wasm-demo
       - name: Build commit message
         id: commit_message_step
