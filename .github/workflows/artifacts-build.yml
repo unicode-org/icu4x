@@ -233,19 +233,24 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: gh-pages
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/setup-gcloud@v0.2
-        with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
-          export_default_credentials: true
       - name: Download artifacts
         run: |
+          rm -r docs
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs . || git checkout HEAD -- docs
+          rm -r docs/ffi/cpp
           gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi || git checkout HEAD -- docs/ffi/cpp
+          rm -r docs/ffi/js
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi || git checkout HEAD -- docs/ffi/js
+          rm -r wasm-demo
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo . || git checkout HEAD -- wasm-demo
+      - name: Build commit message
+        id: commit_message_step
+        run: |
+          echo 'commit_message<<EOF' >> $GITHUB_OUTPUT
+          echo -n 'Artifacts for: ' >> $GITHUB_OUTPUT
+          git log --format=%B -n 1 ${{ github.sha }} >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
       - name: Commit to gh-pages
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Artifacts for: $(git log --format=%B -n 1 ${{ github.sha }})"
+          commit_message: ${{ steps.commit_message_step.outputs.commit_message }}
