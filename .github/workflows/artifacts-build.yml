@@ -223,6 +223,7 @@ jobs:
 
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
+    needs: [docs, ffi-docs]
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: 'ubuntu-latest'
     env:
@@ -243,6 +244,6 @@ jobs:
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs doc
           gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp doc/ffi/cpp
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js doc/ffi/js
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo
+          # gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo
       - name: Dry run commit to gh-pages
         run: git status
