@@ -223,8 +223,8 @@ jobs:
 
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
-    needs: [docs, ffi-docs]
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    needs: [docs, ffi-docs, webpack]
+    if: (success() || failure()) # && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
     env:
       GCP_PROJECT_ID: "dev-infra-273822"
@@ -241,13 +241,11 @@ jobs:
           export_default_credentials: true
       - name: Download artifacts
         run: |
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs docs
-          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi/cpp
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi/js
-          # gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo
-      - name: Dry run commit to gh-pages
-        run: |
-          git add -A
-          git status
-          git commit -m 'Automatic commit on main push'
-          git push
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs docs || true
+          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi/cpp || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi/js || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo || true
+      - name: Commit to gh-pages
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automated commit on main push
