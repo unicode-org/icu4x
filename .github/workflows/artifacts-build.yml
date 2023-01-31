@@ -224,6 +224,7 @@ jobs:
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
     needs: [docs, ffi-docs, webpack]
+    # Run this even when one of the dependent jobs failed. This is so we can at least update the other artifacts
     if: (success() || failure()) # && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
     env:
@@ -237,6 +238,7 @@ jobs:
         run: |
           rm -rf docs
           gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs . || git checkout HEAD -- docs
+          mkdir -p docs/ffi
           rm -rf docs/ffi/cpp
           gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi || git checkout HEAD -- docs/ffi/cpp
           rm -rf docs/ffi/js
