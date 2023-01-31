@@ -64,6 +64,7 @@
     "chr": "Cherokee",
     "chy": "Cheyenne",
     "ckb": "Central Kurdish",
+    "ckb-alt-variant": "Kurdish, Sorani",
     "clc": "Chilcotin",
     "co": "Corsican",
     "crg": "Michif",
@@ -148,6 +149,7 @@
     "he": "Hebrew",
     "hi": "Hindi",
     "hi-Latn": "Hindi (Latin)",
+    "hi-Latn-alt-variant": "Hindi (Latin)",
     "hil": "Hiligaynon",
     "hmn": "Hmong",
     "hr": "Croatian",
@@ -321,6 +323,7 @@
     "pqm": "Maliseet-Passamaquoddy",
     "prg": "Prussian",
     "ps": "Pashto",
+    "ps-alt-variant": "Pushto",
     "pt": "Portuguese",
     "pt-BR": "Portuges ng Brasil",
     "pt-PT": "European Portuguese",
@@ -418,6 +421,7 @@
     "tzm": "Central Atlas Tamazight",
     "udm": "Udmurt",
     "ug": "Uyghur",
+    "ug-alt-variant": "Uighur",
     "uk": "Ukranian",
     "umb": "Umbundu",
     "und": "Hindi Kilalang Wika",
@@ -453,5 +457,19 @@
     "zun": "Zuni",
     "zxx": "Walang nilalaman na ukol sa wika",
     "zza": "Zaza"
+  },
+  "short_names": {
+    "az": "Azeri",
+    "en-GB": "Ingles sa UK",
+    "en-US": "Ingles sa US"
+  },
+  "long_names": {
+    "zh-Hans": "Pinasimpleng Mandarin Chinese",
+    "zh-Hant": "Tradisyonal na Mandarin Chinese"
+  },
+  "menu_names": {
+    "ckb": "Kurdish, Central",
+    "yue": "Chinese, Cantonese",
+    "zh": "Chinese, Mandarin"
   }
 }

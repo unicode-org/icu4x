@@ -88,6 +88,7 @@
     "chr": "cheroqui",
     "chy": "cheyene",
     "ckb": "kurdo sorani",
+    "ckb-alt-variant": "kurdo central",
     "clc": "chilcotin",
     "co": "corso",
     "cop": "copto",
@@ -199,6 +200,7 @@
     "he": "hebreo",
     "hi": "hindi",
     "hi-Latn": "hindi (latín)",
+    "hi-Latn-alt-variant": "hinglish",
     "hil": "hiligaynon",
     "hit": "hitita",
     "hmn": "hmong",
@@ -411,6 +413,7 @@
     "prg": "prusiano antiguo",
     "pro": "provenzal antiguo",
     "ps": "pastún",
+    "ps-alt-variant": "pashtún",
     "pt": "portugués",
     "pt-BR": "portugués de Brasil",
     "pt-PT": "portugués de Portugal",
@@ -527,6 +530,7 @@
     "tzm": "tamazight del Atlas Central",
     "udm": "udmurt",
     "ug": "uigur",
+    "ug-alt-variant": "uighur",
     "uga": "ugarítico",
     "uk": "ucraniano",
     "umb": "umbundu",
@@ -571,5 +575,19 @@
     "zun": "zuni",
     "zxx": "sin contenido lingüístico",
     "zza": "zazaki"
+  },
+  "short_names": {
+    "az": "azerí",
+    "en-GB": "inglés (RU)",
+    "en-US": "inglés (EE. UU.)"
+  },
+  "long_names": {
+    "zh-Hans": "chino mandarín simplificado",
+    "zh-Hant": "chino mandarín tradicional"
+  },
+  "menu_names": {
+    "ckb": "kurdo sorani",
+    "yue": "chino cantonés",
+    "zh": "chino mandarín"
   }
 }

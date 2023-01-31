@@ -61,6 +61,7 @@
     "chr": "chr",
     "chy": "chy",
     "ckb": "ckb",
+    "ckb-alt-variant": "ckb",
     "clc": "clc",
     "co": "co",
     "crg": "crg",
@@ -143,6 +144,7 @@
     "he": "he",
     "hi": "hi",
     "hi-Latn": "hi (Latn)",
+    "hi-Latn-alt-variant": "hi (Latn)",
     "hil": "hil",
     "hmn": "hmn",
     "hr": "hr",
@@ -436,5 +438,19 @@
     "zun": "zun",
     "zxx": "zxx",
     "zza": "zza"
+  },
+  "short_names": {
+    "az": "az",
+    "en-GB": "en (GB)",
+    "en-US": "en (US)"
+  },
+  "long_names": {
+    "zh-Hans": "zh (Hans)",
+    "zh-Hant": "zh (Hant)"
+  },
+  "menu_names": {
+    "ckb": "ckb",
+    "yue": "yue",
+    "zh": "zh"
   }
 }

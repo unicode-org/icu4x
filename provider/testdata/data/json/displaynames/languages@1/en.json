@@ -107,6 +107,7 @@
     "chy": "Cheyenne",
     "cic": "Chickasaw",
     "ckb": "Central Kurdish",
+    "ckb-alt-variant": "Kurdish, Sorani",
     "clc": "Chilcotin",
     "co": "Corsican",
     "cop": "Coptic",
@@ -232,6 +233,7 @@
     "he": "Hebrew",
     "hi": "Hindi",
     "hi-Latn": "Hindi (Latin)",
+    "hi-Latn-alt-variant": "Hinglish",
     "hif": "Fiji Hindi",
     "hil": "Hiligaynon",
     "hit": "Hittite",
@@ -325,6 +327,7 @@
     "kw": "Cornish",
     "kwk": "Kwakʼwala",
     "ky": "Kyrgyz",
+    "ky-alt-variant": "Kirghiz",
     "la": "Latin",
     "lad": "Ladino",
     "lag": "Langi",
@@ -399,6 +402,7 @@
     "mwr": "Marwari",
     "mwv": "Mentawai",
     "my": "Burmese",
+    "my-alt-variant": "Myanmar Language",
     "mye": "Myene",
     "myv": "Erzya",
     "mzn": "Mazanderani",
@@ -472,6 +476,7 @@
     "prg": "Prussian",
     "pro": "Old Provençal",
     "ps": "Pashto",
+    "ps-alt-variant": "Pushto",
     "pt": "Portuguese",
     "pt-BR": "Brazilian Portuguese",
     "pt-PT": "European Portuguese",
@@ -610,6 +615,7 @@
     "tzm": "Central Atlas Tamazight",
     "udm": "Udmurt",
     "ug": "Uyghur",
+    "ug-alt-variant": "Uighur",
     "uga": "Ugaritic",
     "uk": "Ukrainian",
     "umb": "Umbundu",
@@ -660,5 +666,26 @@
     "zun": "Zuni",
     "zxx": "No linguistic content",
     "zza": "Zaza"
+  },
+  "short_names": {
+    "az": "Azeri",
+    "en-GB": "UK English",
+    "en-US": "US English"
+  },
+  "long_names": {
+    "zh": "Mandarin Chinese",
+    "zh-Hans": "Simplified Mandarin Chinese",
+    "zh-Hant": "Traditional Mandarin Chinese"
+  },
+  "menu_names": {
+    "ars": "Arabic, Najdi",
+    "ckb": "Kurdish, Central",
+    "se": "Sami, Northern",
+    "sma": "Sami, Southern",
+    "smj": "Sami, Lule",
+    "smn": "Sami, Inari",
+    "sms": "Sami, Skolt",
+    "yue": "Chinese, Cantonese",
+    "zh": "Chinese, Mandarin"
   }
 }

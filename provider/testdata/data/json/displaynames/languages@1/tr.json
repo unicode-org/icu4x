@@ -106,6 +106,7 @@
     "chr": "Çerokice",
     "chy": "Şayence",
     "ckb": "Orta Kürtçe",
+    "ckb-alt-variant": "Kürtçe, Sorani",
     "clc": "Çilkotince",
     "co": "Korsikaca",
     "cop": "Kıptice",
@@ -229,6 +230,7 @@
     "he": "İbranice",
     "hi": "Hintçe",
     "hi-Latn": "Hintçe (Latin)",
+    "hi-Latn-alt-variant": "Hindilizce",
     "hif": "Fiji Hintçesi",
     "hil": "Hiligaynon dili",
     "hit": "Hititçe",
@@ -652,5 +654,20 @@
     "zun": "Zunice",
     "zxx": "Dilbilim içeriği yok",
     "zza": "Zazaca"
+  },
+  "short_names": {
+    "az": "Azerbaycan dili",
+    "en-GB": "Birleşik Krallık İngilizcesi",
+    "en-US": "ABD İngilizcesi"
+  },
+  "long_names": {
+    "zh-Hans": "Basitleştirilmiş Çince (Mandarin)",
+    "zh-Hant": "Geleneksel Çince (Mandarin)"
+  },
+  "menu_names": {
+    "ars": "Arapça, Necd",
+    "ckb": "Kürtçe, Orta",
+    "yue": "Çince, Kantonca",
+    "zh": "Çince, Mandarin"
   }
 }

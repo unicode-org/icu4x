@@ -81,6 +81,7 @@
     "chr": "čeroki",
     "chy": "čejenski",
     "ckb": "centralni kurdski",
+    "ckb-alt-variant": "centralni kurdski",
     "clc": "čilkotin",
     "co": "korzikanski",
     "cop": "koptski",
@@ -190,6 +191,7 @@
     "he": "hebrejski",
     "hi": "hindi",
     "hi-Latn": "hindi (latinica)",
+    "hi-Latn-alt-variant": "hingliš",
     "hil": "hiligajnonski",
     "hit": "hetitski",
     "hmn": "hmonški",
@@ -397,6 +399,7 @@
     "prg": "pruski",
     "pro": "starooksitanski",
     "ps": "paštunski",
+    "ps-alt-variant": "pašto",
     "pt": "portugalski",
     "pt-BR": "portugalski (Brazil)",
     "pt-PT": "portugalski (Portugal)",
@@ -555,5 +558,19 @@
     "zun": "zuni",
     "zxx": "bez lingvističkog sadržaja",
     "zza": "zaza"
+  },
+  "short_names": {
+    "az": "azerski",
+    "en-GB": "engleski (UK)",
+    "en-US": "engleski (SAD)"
+  },
+  "long_names": {
+    "zh-Hans": "pojednostavljeni mandarinski kineski",
+    "zh-Hant": "tradicionalni mandarinski kineski"
+  },
+  "menu_names": {
+    "ckb": "centralni kurdski",
+    "yue": "kantonski kineski",
+    "zh": "mandarinski kineski"
   }
 }
