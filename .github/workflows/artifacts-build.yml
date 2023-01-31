@@ -250,7 +250,7 @@ jobs:
         run: |
           echo 'commit_message<<EOF' >> $GITHUB_OUTPUT
           echo -n 'Artifacts for: ' >> $GITHUB_OUTPUT
-          git log --format=%B -n 1 ${{ github.sha }} >> $GITHUB_OUTPUT
+          (git log --format=%B -n 1 ${{ github.sha }} || echo ${{ github.sha }}) >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       - name: Commit to gh-pages
         uses: stefanzweifel/git-auto-commit-action@v4
