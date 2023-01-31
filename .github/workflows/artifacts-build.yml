@@ -241,11 +241,11 @@ jobs:
           export_default_credentials: true
       - name: Download artifacts
         run: |
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs docs || true
-          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi/cpp || true
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi/js || true
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs . || git checkout HEAD -- docs
+          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi || git checkout HEAD -- docs/ffi/cpp
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi || git checkout HEAD -- docs/ffi/js
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo . || git checkout HEAD -- wasm-demo
       - name: Commit to gh-pages
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Automated commit on main push
+          commit_message: "Artifacts for: $(git log --format=%B -n 1 ${{ github.sha }})"
