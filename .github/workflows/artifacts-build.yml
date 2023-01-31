@@ -241,9 +241,13 @@ jobs:
           export_default_credentials: true
       - name: Download artifacts
         run: |
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs doc
-          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp doc/ffi/cpp
-          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js doc/ffi/js
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs docs
+          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp docs/ffi/cpp
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js docs/ffi/js
           # gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo wasm-demo
       - name: Dry run commit to gh-pages
-        run: git status
+        run: |
+          git add -A
+          git status
+          git commit -m 'Automatic commit on main push'
+          git push
