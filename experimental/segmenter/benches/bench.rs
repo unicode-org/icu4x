@@ -47,24 +47,52 @@ fn line_break_iter_latin1(c: &mut Criterion) {
 fn line_break_iter_utf8(c: &mut Criterion) {
     let mut group = c.benchmark_group("Line Break/UTF8");
 
-    let segmenter =
+    let segmenter_auto =
+        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter_lstm =
+        LineSegmenter::try_new_lstm_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter_dictionary =
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
+    let mut options = LineBreakOptions::default();
+    options.line_break_rule = LineBreakRule::Anywhere;
+    options.word_break_rule = WordBreakRule::BreakAll;
+    let segmenter_css_dictionary =
+        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
+            .expect("Data exists");
+
+    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
+    // UAX14 rules for line breaking.
     group.bench_function("En", |b| {
         b.iter(|| {
-            black_box(&segmenter)
+            black_box(&segmenter_dictionary)
                 .segment_str(black_box(TEST_STR_EN))
                 .count()
         })
     });
 
-    group.bench_function("Th", |b| {
+    group.bench_function("En CSS", |b| {
         b.iter(|| {
-            black_box(&segmenter)
-                .segment_str(black_box(TEST_STR_TH))
+            black_box(&segmenter_css_dictionary)
+                .segment_str(black_box(TEST_STR_EN))
                 .count()
         })
     });
+
+    let segmenters = [
+        (&segmenter_auto, "auto"),
+        (&segmenter_lstm, "lstm"),
+        (&segmenter_dictionary, "dictionary"),
+    ];
+    for (segmenter, variant) in segmenters {
+        group.bench_function("Th/".to_string() + &variant, |b| {
+            b.iter(|| {
+                black_box(&segmenter)
+                    .segment_str(black_box(TEST_STR_TH))
+                    .count()
+            })
+        });
+    }
 }
 
 fn line_break_iter_utf16(c: &mut Criterion) {
@@ -73,19 +101,25 @@ fn line_break_iter_utf16(c: &mut Criterion) {
     let utf16_en: Vec<u16> = TEST_STR_EN.encode_utf16().collect();
     let utf16_th: Vec<u16> = TEST_STR_TH.encode_utf16().collect();
 
-    let segmenter =
+    let segmenter_auto =
+        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter_lstm =
+        LineSegmenter::try_new_lstm_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter_dictionary =
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
     options.line_break_rule = LineBreakRule::Anywhere;
     options.word_break_rule = WordBreakRule::BreakAll;
-    let segmenter_css =
+    let segmenter_css_dictionary =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
+    // No need to test "auto", "lstm", or "dictionary" constructor variants since English uses only
+    // UAX14 rules for line breaking.
     group.bench_function("En", |b| {
         b.iter(|| {
-            black_box(&segmenter)
+            black_box(&segmenter_dictionary)
                 .segment_utf16(black_box(&utf16_en))
                 .count()
         })
@@ -93,19 +127,26 @@ fn line_break_iter_utf16(c: &mut Criterion) {
 
     group.bench_function("En CSS", |b| {
         b.iter(|| {
-            black_box(&segmenter_css)
+            black_box(&segmenter_css_dictionary)
                 .segment_utf16(black_box(&utf16_en))
                 .count()
         })
     });
 
-    group.bench_function("Th", |b| {
-        b.iter(|| {
-            black_box(&segmenter)
-                .segment_utf16(black_box(&utf16_th))
-                .count()
-        })
-    });
+    let segmenters = [
+        (&segmenter_auto, "auto"),
+        (&segmenter_lstm, "lstm"),
+        (&segmenter_dictionary, "dictionary"),
+    ];
+    for (segmenter, variant) in segmenters {
+        group.bench_function("Th/".to_string() + &variant, |b| {
+            b.iter(|| {
+                black_box(&segmenter)
+                    .segment_utf16(black_box(&utf16_th))
+                    .count()
+            })
+        });
+    }
 }
 
 criterion_group!(
