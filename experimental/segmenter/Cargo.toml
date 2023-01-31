@@ -52,10 +52,12 @@ serde_json = "1.0"
 icu = { path = "../../components/icu", features = ["icu_segmenter"]}
 
 [features]
+default = ["auto"]
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-lstm = ["ndarray", "num-traits"]
+lstm = ["dep:ndarray", "dep:num-traits"]
+auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 
 [lib]
 path = "src/lib.rs"
@@ -67,4 +69,4 @@ harness = false
 
 [[test]]
 name = "complex_word"
-required-features = ["lstm"]
+required-features = ["auto"]
