@@ -85,7 +85,7 @@ fn line_break_iter_utf8(c: &mut Criterion) {
         (&segmenter_dictionary, "dictionary"),
     ];
     for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + &variant, |b| {
+        group.bench_function("Th/".to_string() + variant, |b| {
             b.iter(|| {
                 black_box(&segmenter)
                     .segment_str(black_box(TEST_STR_TH))
@@ -139,7 +139,7 @@ fn line_break_iter_utf16(c: &mut Criterion) {
         (&segmenter_dictionary, "dictionary"),
     ];
     for (segmenter, variant) in segmenters {
-        group.bench_function("Th/".to_string() + &variant, |b| {
+        group.bench_function("Th/".to_string() + variant, |b| {
             b.iter(|| {
                 black_box(&segmenter)
                     .segment_utf16(black_box(&utf16_th))
