@@ -10,7 +10,6 @@ pub mod ffi {
     use super::str_to_cow;
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
     use icu_decimal::provider::{
         AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
     };
@@ -40,13 +39,13 @@ pub mod ffi {
             secondary_group_size: u8,
             min_group_size: u8,
             digits: &[char],
-        ) -> DiplomatResult<Box<ICU4XDataStruct>, ICU4XError> {
+        ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
                 new_digits.copy_from_slice(digits);
                 new_digits
             } else {
-                return Err(ICU4XError::DataStructValidityError).into();
+                return Err(ICU4XError::DataStructValidityError);
             };
             let plus_sign_affixes = AffixesV1 {
                 prefix: str_to_cow(plus_sign_prefix),
@@ -72,7 +71,7 @@ pub mod ffi {
             };
 
             let payload: DataPayload<DecimalSymbolsV1Marker> = DataPayload::from_owned(symbols);
-            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload()))).into()
+            Ok(Box::new(ICU4XDataStruct(payload.wrap_into_any_payload())))
         }
     }
 }

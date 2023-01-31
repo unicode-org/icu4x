@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys, CldrLocaleSubset, DatagenProvider, SourceData};
+use icu_datagen::{all_keys_with_experimental, CldrLocaleSubset, DatagenProvider, SourceData};
 use std::cmp;
 use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
@@ -43,10 +43,7 @@ fn main() {
     // manually drop to avoid dhat from printing stats at the end
     let _profiler = ManuallyDrop::new(dhat::Profiler::new_heap());
 
-    let selected_locales = icu_testdata::metadata::load()
-        .unwrap()
-        .package_metadata
-        .locales;
+    let selected_locales = icu_testdata::locales();
 
     let converter = DatagenProvider {
         source: SourceData::default()
@@ -68,7 +65,7 @@ fn main() {
     // violations for total_bytes_allocated (but not net_bytes_allocated)
     let mut total_violations = BTreeSet::new();
 
-    for key in all_keys().into_iter() {
+    for key in all_keys_with_experimental().into_iter() {
         let mut max_total_violation = 0;
         let mut max_net_violation = 0;
 

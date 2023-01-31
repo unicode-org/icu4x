@@ -145,7 +145,7 @@ impl Bag {
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-    #[cfg(feature = "experimental")] // only used in experimental code
+    #[cfg(any(test, feature = "experimental"))] // only used in test and experimental code
     pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
         let mut fields = Vec::new();
         if let Some(era) = self.era {
@@ -551,7 +551,7 @@ pub enum TimeZoneName {
     // UTS-35 fields: O, OOOO
     // Per UTS-35: The long localized GMT format. This is equivalent to the "OOOO" specifier
     // Per UTS-35: Short localized GMT format (e.g., GMT-8)
-    // This enum variant is combining the two types of fields, as the CLDR specifices the preferred
+    // This enum variant is combining the two types of fields, as the CLDR specifies the preferred
     // hour-format for the locale, and ICU4X uses the preferred one.
     //   e.g.
     //   https://github.com/unicode-org/cldr-json/blob/c23635f13946292e40077fd62aee6a8e122e7689/cldr-json/cldr-dates-full/main/es-MX/timeZoneNames.json#L13

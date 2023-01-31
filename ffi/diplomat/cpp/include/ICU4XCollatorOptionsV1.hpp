@@ -19,14 +19,6 @@
 #include "ICU4XCollatorNumeric.hpp"
 #include "ICU4XCollatorBackwardSecondLevel.hpp"
 
-/**
- * A destruction policy for using ICU4XCollatorOptionsV1 with std::unique_ptr.
- */
-struct ICU4XCollatorOptionsV1Deleter {
-  void operator()(capi::ICU4XCollatorOptionsV1* l) const noexcept {
-    capi::ICU4XCollatorOptionsV1_destroy(l);
-  }
-};
 
 /**
  * 

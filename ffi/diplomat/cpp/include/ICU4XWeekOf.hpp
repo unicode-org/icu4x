@@ -13,14 +13,6 @@
 
 #include "ICU4XWeekRelativeUnit.hpp"
 
-/**
- * A destruction policy for using ICU4XWeekOf with std::unique_ptr.
- */
-struct ICU4XWeekOfDeleter {
-  void operator()(capi::ICU4XWeekOf* l) const noexcept {
-    capi::ICU4XWeekOf_destroy(l);
-  }
-};
 
 /**
  * 

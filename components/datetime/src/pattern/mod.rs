@@ -16,7 +16,7 @@ use icu_provider::{yoke, zerofrom};
 pub use item::{GenericPatternItem, PatternItem};
 
 /// The granularity of time represented in a pattern item.
-/// Ordered from least granular to most granular for comparsion.
+/// Ordered from least granular to most granular for comparison.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, yoke::Yokeable, zerofrom::ZeroFrom,
 )]

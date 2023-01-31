@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
@@ -37,18 +36,17 @@ pub mod ffi {
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError> {
+        ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XSentenceSegmenter>, ICU4XError>
+        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError>
         where
             D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
         {
-            SentenceSegmenter::try_new_unstable(provider)
-                .map(|o| Box::new(ICU4XSentenceSegmenter(o)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XSentenceSegmenter(
+                SentenceSegmenter::try_new_unstable(provider)?,
+            )))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.

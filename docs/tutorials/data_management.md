@@ -4,7 +4,7 @@ Unless you're happy shipping your app with the ~10 locales supported by `icu_tes
 
 This tutorial introduces data providers beyond `icu_testdata`, as well as the `icu_datagen` tool.
 
-# 1. Prerequesites
+# 1. Prerequisites
 
 This tutorial assumes you have finished the [introductory tutorial](intro.md) and continues where that tutorial left off. In particular, you should still have the latest version of code for `myapp`.
 
@@ -15,7 +15,7 @@ Data generation is done using the `icu_datagen` crate, which pulls in data from 
 First we will need to install the binary:
 
 ```console
-$ cargo install icu_datagen --features bin
+$ cargo install icu_datagen
 ```
 
 Get a coffee, this might take a while ☕.
@@ -23,17 +23,12 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my_data_blob.postcard --format blob --all-keys --all-locales
+$ icu4x-datagen --keys all --locales full --format blob --out my_data_blob.postcard
 ```
 
-Let's dissect this invocation:
-* `--cldr-tag` selects the CLDR version to use
-* `--icuexport-tag` selects the ICU-exported data version to use
-* `--out` is the location where we want the generated ICU4X data to be stored
-* `--format` sets the format of the output (we'll discuss formats later)
-* `--all-keys` `--all-locales` specifies that we want to include all data for all locales
-
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
+
+`icu4x-datagen` has many options, some of which we'll discover below. The default options should work for most purposes, but check out `icu4x-datagen --help` to learn more about fine-tuning your data.
 
 ## Should you check in data to your repository?
 
@@ -99,10 +94,9 @@ fn main() {
 
 # 4. Data slicing
 
-You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we included `--all-keys` `--all-locales`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
-
+You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all` and `--locales full`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 ```console
-$ icu4x-datagen --overwrite --cldr-tag latest --icuexport-tag latest --out my_data_blob.postcard --format blob --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. In addition, we know that we only need data for the Japanese locale. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
@@ -156,7 +150,7 @@ The `mod` format will generate a Rust module that contains all the required data
 Let's give it a try:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-mod --format mod --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format mod --out my-data-mod
 ```
 
 The output might tell you additional crates that need to be installed. Don't worry, these are transitive dependencies already anyway, but are required directly now to construct our data:
@@ -213,7 +207,7 @@ The `dir` format will generate a directory tree of data files in JSON (although 
 Let's give it a try:
 
 ```console
-$ icu4x-datagen --cldr-tag latest --icuexport-tag latest --out my-data-dir --format dir --keys-for-bin target/debug/myapp --locales ja
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format dir --out my-data-dir
 ```
 
 This directory can be read by the `FsDataProvider` from the `icu_provider_fs` crate. You will also need to activate the Cargo feature for the chosen syntax on the `icu_provider` crate.

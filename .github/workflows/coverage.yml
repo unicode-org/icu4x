@@ -17,9 +17,7 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v2
-
-      # TODO(#315) Re-include caching that also includes the Rust version in the cache key
+      - uses:                   actions/checkout@v3
 
       ## Coverage steps
 
@@ -38,10 +36,8 @@ jobs:
           key: ${{ runner.os }}-make-${{ steps.grcov-version.outputs.hash }}
       - name: Install grcov
         if: steps.grcov-cache.outputs.cache-hit != 'true'
-        uses: actions-rs/install@v0.1.2
-        with:
-          crate: grcov
-          version: latest
+        run: |
+          cargo +stable install grcov
   
       - uses:                   actions-rs/toolchain@v1
         with:
@@ -68,7 +64,7 @@ jobs:
           path-to-lcov:         ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
-        uses:                   codecov/codecov-action@v1
+        uses:                   codecov/codecov-action@v3
         with:
           file:                 ${{ steps.coverage.outputs.report }}
           fail_ci_if_error:     true

@@ -115,6 +115,19 @@ impl AnyPayload {
         }
     }
 
+    /// Clones and then transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
+    pub fn downcast_cloned<M>(&self) -> Result<DataPayload<M>, DataError>
+    where
+        M: DataMarker + 'static,
+        // For the StructRef case:
+        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        // For the PayloadRc case:
+        M::Yokeable: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    {
+        self.clone().downcast()
+    }
+
     /// Creates an `AnyPayload` from a static reference to a data struct.
     ///
     /// # Examples
@@ -230,7 +243,7 @@ impl From<AnyResponse> for DataResponse<AnyMarker> {
 }
 
 impl AnyResponse {
-    /// Transforms a type-erased `DataResponse<AnyMarker>` into a concrete `DataResponse<M>`.
+    /// Transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
     #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
@@ -243,6 +256,39 @@ impl AnyResponse {
             metadata: self.metadata,
             payload: self.payload.map(|p| p.downcast()).transpose()?,
         })
+    }
+
+    /// Clones and then transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
+    pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
+    where
+        M: DataMarker + 'static,
+        M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        M::Yokeable: MaybeSendSync,
+        for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    {
+        Ok(DataResponse {
+            metadata: self.metadata.clone(),
+            payload: self
+                .payload
+                .as_ref()
+                .map(|p| p.downcast_cloned())
+                .transpose()?,
+        })
+    }
+}
+
+impl<M> DataResponse<M>
+where
+    M: DataMarker + 'static,
+    M::Yokeable: MaybeSendSync,
+{
+    /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
+    /// erased `AnyResponse`.
+    pub fn wrap_into_any_response(self) -> AnyResponse {
+        AnyResponse {
+            metadata: self.metadata,
+            payload: self.payload.map(|p| p.wrap_into_any_payload()),
+        }
     }
 }
 
@@ -345,7 +391,10 @@ where
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(M::KEY, req)?.downcast()
+        self.0
+            .load_any(M::KEY, req)?
+            .downcast()
+            .map_err(|e| e.with_req(M::KEY, req))
     }
 }
 
@@ -359,7 +408,10 @@ where
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(key, req)?.downcast()
+        self.0
+            .load_any(key, req)?
+            .downcast()
+            .map_err(|e| e.with_req(key, req))
     }
 }
 

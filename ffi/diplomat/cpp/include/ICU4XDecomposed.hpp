@@ -12,14 +12,6 @@
 #include "ICU4XDecomposed.h"
 
 
-/**
- * A destruction policy for using ICU4XDecomposed with std::unique_ptr.
- */
-struct ICU4XDecomposedDeleter {
-  void operator()(capi::ICU4XDecomposed* l) const noexcept {
-    capi::ICU4XDecomposed_destroy(l);
-  }
-};
 
 /**
  * The outcome of non-recursive canonical decomposition of a character.

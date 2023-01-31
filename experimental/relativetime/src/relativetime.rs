@@ -18,85 +18,95 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// # Example
 ///
 /// ```
-/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
-/// use icu_locid::locale;
-/// use writeable::assert_writeable_eq;
 /// use fixed_decimal::FixedDecimal;
+/// use icu::locid::locale;
+/// use icu::relativetime::{
+///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
+/// };
+/// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("en").into(),
-///     RelativeTimeFormatterOptions::default()
-/// )
-/// .expect("Data should load successfully.");
+/// let relative_time_formatter =
+///     RelativeTimeFormatter::try_new_long_second_unstable(
+///         &icu_testdata::unstable(),
+///         &locale!("en").into(),
+///         RelativeTimeFormatterOptions::default(),
+///     )
+///     .expect("Data should load successfully.");
 ///
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(5i8)),
-///         "in 5 seconds"
+///     relative_time_formatter.format(FixedDecimal::from(5i8)),
+///     "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(-10i8)),
-///         "10 seconds ago"
+///     relative_time_formatter.format(FixedDecimal::from(-10i8)),
+///     "10 seconds ago"
 /// );
 /// ```
 ///
 /// # Example
 ///
 /// ```
-/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
-/// use icu_relativetime::options::Numeric;
-/// use icu_locid::locale;
-/// use writeable::assert_writeable_eq;
 /// use fixed_decimal::FixedDecimal;
+/// use icu::locid::locale;
+/// use icu::relativetime::options::Numeric;
+/// use icu::relativetime::{
+///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
+/// };
+/// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("es").into(),
-///     RelativeTimeFormatterOptions { numeric: Numeric::Auto }
-/// )
-/// .expect("Data should load successfully.");
+/// let relative_time_formatter =
+///     RelativeTimeFormatter::try_new_short_day_unstable(
+///         &icu_testdata::unstable(),
+///         &locale!("es").into(),
+///         RelativeTimeFormatterOptions {
+///             numeric: Numeric::Auto,
+///         },
+///     )
+///     .expect("Data should load successfully.");
 ///
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(0u8)),
-///         "hoy"
+///     relative_time_formatter.format(FixedDecimal::from(0u8)),
+///     "hoy"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(-2i8)),
-///         "anteayer"
+///     relative_time_formatter.format(FixedDecimal::from(-2i8)),
+///     "anteayer"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(2u8)),
-///         "pasado mañana"
+///     relative_time_formatter.format(FixedDecimal::from(2u8)),
+///     "pasado mañana"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(15i8)),
-///         "dentro de 15 d"
+///     relative_time_formatter.format(FixedDecimal::from(15i8)),
+///     "dentro de 15 d"
 /// );
-///
 /// ```
 ///
 /// # Example
 /// ```
-/// use icu_relativetime::{RelativeTimeFormatter, RelativeTimeFormatterOptions};
-/// use icu_relativetime::options::Numeric;
-/// use icu_locid::locale;
-/// use writeable::assert_writeable_eq;
 /// use fixed_decimal::FixedDecimal;
+/// use icu::locid::locale;
+/// use icu::relativetime::options::Numeric;
+/// use icu::relativetime::{
+///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
+/// };
+/// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year_unstable(
-///     &icu_testdata::unstable(),
-///     &locale!("bn").into(),
-///     RelativeTimeFormatterOptions::default()
-/// )
-/// .expect("Data should load successfully.");
+/// let relative_time_formatter =
+///     RelativeTimeFormatter::try_new_narrow_year_unstable(
+///         &icu_testdata::unstable(),
+///         &locale!("bn").into(),
+///         RelativeTimeFormatterOptions::default(),
+///     )
+///     .expect("Data should load successfully.");
 ///
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(3u8)),
-///         "৩ বছরে"
+///     relative_time_formatter.format(FixedDecimal::from(3u8)),
+///     "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
-///         relative_time_formatter.format(FixedDecimal::from(-15i8)),
-///         "১৫ বছর পূর্বে"
+///     relative_time_formatter.format(FixedDecimal::from(-15i8)),
+///     "১৫ বছর পূর্বে"
 /// );
 /// ```
 pub struct RelativeTimeFormatter {
