@@ -2921,5 +2921,5 @@ macro_rules! impl_any_provider {
         }
     };
 }
-struct BakedDataProvider;
+pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);
