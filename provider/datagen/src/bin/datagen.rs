@@ -262,20 +262,27 @@ fn main() -> eyre::Result<()> {
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
         source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Ignored)?;
-    } else if Some("latest") == matches.value_of("CLDR_TAG") {
-        source_data = source_data
-            .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Ignored)?;
-    } else if let Some(tag) = matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr_for_tag(tag, CldrLocaleSubset::Ignored)?;
+    } else {
+        source_data = source_data.with_cldr_for_tag(
+            if Some("latest") == matches.value_of("CLDR_TAG") {
+                SourceData::LATEST_TESTED_CLDR_TAG
+            } else {
+                matches.value_of("CLDR_TAG").unwrap()
+            },
+            CldrLocaleSubset::Ignored,
+        )?
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
         source_data = source_data.with_icuexport(PathBuf::from(path))?;
-    } else if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
-        source_data =
-            source_data.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?;
-    } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
-        source_data = source_data.with_icuexport_for_tag(tag)?;
+    } else {
+        source_data = source_data.with_icuexport_for_tag(
+            if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+                SourceData::LATEST_TESTED_ICUEXPORT_TAG
+            } else {
+                matches.value_of("ICUEXPORT_TAG").unwrap()
+            },
+        )?;
     }
 
     if matches.value_of("TRIE_TYPE") == Some("fast") {
@@ -296,13 +303,9 @@ fn main() -> eyre::Result<()> {
     let raw_locales = matches.values_of("LOCALES").unwrap().collect::<Vec<_>>();
 
     let locales = if raw_locales == ["none"] || selected_keys.is_empty() {
-        vec![]
+        Some(vec![])
     } else if raw_locales == ["full"] || matches.is_present("ALL_LOCALES") {
-        source_data.locales(&[
-            CoverageLevel::Basic,
-            CoverageLevel::Moderate,
-            CoverageLevel::Modern,
-        ])?
+        None
     } else if let Some(locale_subsets) = raw_locales
         .iter()
         .map(|&s| match s {
@@ -313,15 +316,17 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Option<Vec<_>>>()
     {
-        source_data.locales(&locale_subsets)?
+        Some(source_data.locales(&locale_subsets)?)
     } else {
-        raw_locales
-            .into_iter()
-            .map(|s| {
-                s.parse::<LanguageIdentifier>()
-                    .with_context(|| s.to_string())
-            })
-            .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?
+        Some(
+            raw_locales
+                .into_iter()
+                .map(|s| {
+                    s.parse::<LanguageIdentifier>()
+                        .with_context(|| s.to_string())
+                })
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
+        )
     };
 
     let out = match matches.value_of("FORMAT").expect("required") {
@@ -377,6 +382,6 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    icu_datagen::datagen(Some(&locales), &selected_keys, &source_data, vec![out])
+    icu_datagen::datagen(locales.as_deref(), &selected_keys, &source_data, vec![out])
         .map_err(eyre::ErrReport::from)
 }
