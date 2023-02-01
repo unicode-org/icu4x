@@ -9,7 +9,7 @@
 
 components/calendar/              @Manishearth @sffc
 components/collator/              @hsivonen @echeran
-components/collections/           @echeran @iainireland
+components/collections/           @echeran
 components/datetime/              @zbraniecki @gregtatum @nordzilla
 components/decimal/               @sffc
 components/list/                  @robertbastian
