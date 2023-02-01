@@ -53,13 +53,15 @@ impl Default for SourceData {
 
 impl SourceData {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
+    // We have an unenforced invariant that the data in /tests/data/cldr is generated from this tag.
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
+    // We have an unenforced invariant that the data in /tests/data/icuexport is generated from this tag.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-72-1";
 
-    #[cfg(test)]
-    pub fn for_test() -> Self {
+    #[doc(hidden)]
+    pub fn internal_test_data() -> Self {
         Self::default()
             .with_cldr(
                 concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
