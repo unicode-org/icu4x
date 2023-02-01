@@ -20,11 +20,12 @@ components/plurals/               @zbraniecki @sffc
 components/timezone/              @nordzilla
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
-experimental/displaynames/        @sffc
+experimental/displaynames/        @sffc @snktd
 experimental/relativetime/        @pdogr
 experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
+ffi/gn/                           @sffc
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
 provider/datagen/                 @sffc @robertbastian @Manishearth
@@ -34,12 +35,12 @@ tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
 tools/scripts/                    @Manishearth @sffc
-utils/databake                    @robertbastian
+utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc
 utils/litemap/                    @Manishearth @sffc
 utils/pattern/                    @zbraniecki
-utils/tinystr                     @zbraniecki
+utils/tinystr                     @zbraniecki @sffc
 utils/writeable/                  @sffc @robertbastian
 utils/yoke/                       @Manishearth @sffc
 utils/zerofrom                    @Manishearth @sffc
