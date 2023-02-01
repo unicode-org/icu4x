@@ -148,7 +148,8 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true)
                 .help(
                     "Include these resource keys in the output. Accepts multiple arguments.\n\
-                    Set to 'all' for all keys, or 'none' for no keys.",
+                    Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
+                    or 'none' for no keys.",
                 ),
         )
         .arg(
@@ -270,6 +271,7 @@ fn main() -> eyre::Result<()> {
         match paths.collect::<Vec<_>>().as_slice() {
             ["none"] => vec![],
             ["all"] => icu_datagen::all_keys(),
+            ["experimental-all"] => icu_datagen::all_keys_with_experimental(),
             keys => icu_datagen::keys(keys),
         }
     } else if let Some(key_file_path) = matches.value_of_os("KEY_FILE") {

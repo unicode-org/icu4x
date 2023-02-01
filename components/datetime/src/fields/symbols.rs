@@ -138,7 +138,7 @@ impl FieldSymbol {
     }
 
     /// Returns the index associated with this FieldSymbol.
-    #[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
     fn discriminant_idx(&self) -> u8 {
         match self {
             FieldSymbol::Era => 0,
@@ -157,7 +157,7 @@ impl FieldSymbol {
 
     /// Compares this enum with other solely based on the enum variant,
     /// ignoring the enum's data.
-    #[cfg(feature = "experimental_skeleton_matching")] // only referenced in experimental code
+    #[cfg(any(feature = "datagen", feature = "experimental"))] // only referenced in experimental code
     pub(crate) fn discriminant_cmp(&self, other: &Self) -> Ordering {
         self.discriminant_idx().cmp(&other.discriminant_idx())
     }

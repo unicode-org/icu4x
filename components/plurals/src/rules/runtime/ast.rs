@@ -16,7 +16,7 @@ use zerovec::{
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(
-    feature = "databake",
+    feature = "datagen",
     derive(databake::Bake),
     databake(path = icu_plurals::rules::runtime::ast),
 )]

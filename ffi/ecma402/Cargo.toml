@@ -5,7 +5,7 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -20,21 +20,22 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "build.rs",
 ]
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-ecma402_traits = { version = "0.2.0" }
-icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
-icu_provider = { version = "1.0.0", path = "../../provider/core" }
-writeable = { version = "0.5", path = "../../utils/writeable" }
+ecma402_traits = "0.2.0"
+icu = { version = "1.1.0", path = "../../components/icu", features = ["std"] }
+icu_provider = { version = "1.1.0", path = "../../provider/core" }
+writeable = { version = "0.5.1", path = "../../utils/writeable" }
 
 # Bake dependencies
-zerovec = { version = "0.9", path = "../../utils/zerovec" }
+zerovec = { version = "0.9.2", path = "../../utils/zerovec" }
 
 [build-dependencies]
-icu = { version = "1.0.0", path = "../../components/icu", features = ["std"] }
-icu_datagen = { version = "1.0.0", path = "../../provider/datagen" }
+icu = { version = "1.1.0", path = "../../components/icu", features = ["std"] }
+icu_datagen = { version = "1.1.0", path = "../../provider/datagen", default-features = false}

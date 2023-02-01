@@ -11,7 +11,6 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
-use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -44,9 +43,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordSegmenter;
-/// let segmenter =
-///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -57,9 +55,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordSegmenter;
-/// let segmenter =
-///     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -73,9 +70,13 @@ pub struct WordSegmenter {
 }
 
 impl WordSegmenter {
-    /// Construct a [`WordSegmenter`].
-    #[cfg(feature = "lstm")]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM and
+    /// dictionary payload data.
+    ///
+    /// Note: This function loads dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer,
+    /// Lao, and Thai.
+    #[cfg(feature = "auto")]
+    pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -86,40 +87,63 @@ impl WordSegmenter {
         let payload = provider.load(Default::default())?.take_payload()?;
         let grapheme = provider.load(Default::default())?.take_payload()?;
 
-        let cj = Self::load_dictionary(provider, locale!("ja")).ok();
-
-        let lstm = if cfg!(feature = "lstm") {
-            let burmese = Self::load_lstm(provider, locale!("my")).ok();
-            let khmer = Self::load_lstm(provider, locale!("lo")).ok();
-            let lao = Self::load_lstm(provider, locale!("lo")).ok();
-            let thai = Self::load_lstm(provider, locale!("th")).ok();
-            LstmPayloads {
-                burmese,
-                khmer,
-                lao,
-                thai,
-            }
-        } else {
-            LstmPayloads::default()
-        };
-
         Ok(Self {
             payload,
-            dictionary: Dictionary {
-                burmese: None,
-                khmer: None,
-                lao: None,
-                thai: None,
-                cj,
-            },
-            lstm,
+            dictionary: Dictionary::new_chinese_japanese(provider),
+            lstm: LstmPayloads::new(provider),
             grapheme,
         })
     }
 
-    /// Construct a [`WordSegmenter`].
-    #[cfg(not(feature = "lstm"))]
-    pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    #[cfg(feature = "auto")]
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_auto_unstable,
+            try_new_auto_with_any_provider,
+            try_new_auto_with_buffer_provider
+        ]
+    );
+
+    /// Construct a [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and Thai.
+    ///
+    /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or Japanese.
+    #[cfg(feature = "lstm")]
+    pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
+    where
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.take_payload()?;
+        let grapheme = provider.load(Default::default())?.take_payload()?;
+
+        Ok(Self {
+            payload,
+            dictionary: Dictionary::default(),
+            lstm: LstmPayloads::new(provider),
+            grapheme,
+        })
+    }
+
+    #[cfg(feature = "lstm")]
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_lstm_unstable,
+            try_new_lstm_with_any_provider,
+            try_new_lstm_with_buffer_provider
+        ]
+    );
+
+    /// Construct a [`WordSegmenter`] with dictionary payload data for Chinese, Japanese, Burmese,
+    /// Khmer, Lao, and Thai.
+    pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -129,64 +153,24 @@ impl WordSegmenter {
         let payload = provider.load(Default::default())?.take_payload()?;
         let grapheme = provider.load(Default::default())?.take_payload()?;
 
-        let dictionary = if cfg!(feature = "lstm") {
-            let cj = Self::load_dictionary(provider, locale!("ja")).ok();
-            Dictionary {
-                burmese: None,
-                khmer: None,
-                lao: None,
-                thai: None,
-                cj,
-            }
-        } else {
-            let cj = Self::load_dictionary(provider, locale!("ja")).ok();
-            let burmese = Self::load_dictionary(provider, locale!("my")).ok();
-            let khmer = Self::load_dictionary(provider, locale!("km")).ok();
-            let lao = Self::load_dictionary(provider, locale!("lo")).ok();
-            let thai = Self::load_dictionary(provider, locale!("th")).ok();
-            Dictionary {
-                burmese,
-                khmer,
-                lao,
-                thai,
-                cj,
-            }
-        };
-
         Ok(Self {
             payload,
-            dictionary,
+            dictionary: Dictionary::new(provider),
             lstm: LstmPayloads::default(),
             grapheme,
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
-
-    fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: Default::default(),
-            })?
-            .take_payload()
-    }
-
-    #[cfg(feature = "lstm")]
-    fn load_lstm<D: DataProvider<LstmDataV1Marker> + ?Sized>(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<DataPayload<LstmDataV1Marker>, DataError> {
-        provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: Default::default(),
-            })?
-            .take_payload()
-    }
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: SegmenterError,
+        functions: [
+            Self::try_new_dictionary_unstable,
+            try_new_dictionary_with_any_provider,
+            try_new_dictionary_with_buffer_provider
+        ]
+    );
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {

@@ -1,5 +1,156 @@
 # Changelog
 
+## icu4x 1.1 (Jan 26, 2023)
+
+* `icu_calendar`
+  * Fix bug in `simple_week_of()` around unit size (#2951)
+  * Fix math in calendar (#2714)
+  * Add `div_rem_euclid` and use it in icu_calendar (#2704)
+  * Fix Time::from_minute_with_remainder_days to handle negatives (#2643) (#2702)
+  * doc improvements
+
+* `icu_casemapping`
+  * doc improvements
+
+* `icu_collator`
+  * doc improvements
+
+* `icu_collections`
+  * Add APIs for returning exemplar characters data (#2812)
+  * Readable JSON inversion lists (#2855)
+  * Add `UnicodeSet` that supports strings (#2796)
+  * Add documentation on `CodePointTrie` details and perf considerations (#2717)
+
+* `icu_codepointtrie_builder`
+  * internal improvements
+
+* `icu_datetime`
+  * internal and doc improvements
+
+* `icu_decimal`
+  * internal and doc improvements
+
+* `icu_displaynames`
+  * DisplayNames fixes (#2918)
+  * Rename `Territory` -> `Region` for display names component (#2895)
+  * Transformer code for `Language` display names (#2871)
+  * Adding a function to get display name for a region. (#2816)
+  * Transformer code for display names component. (#2635)
+  * doc improvements
+
+* `icu_list`
+  * Untangling list provider from logic and fixing big endian safety bug (#2994)
+  * Not allocating `Writeable`s for regex evaluation (#2991)
+  * doc improvements
+
+* `icu_locid`
+  * Reject duplicated extensions (#2893)
+  * More borrowing in locid's `write_to_string` (#2693)
+  * doc improvements
+
+* `icu_locid_transform`
+  * Clean up dependency specifications so `serde` isn't pulled in by default (#2696)
+  * doc improvements
+
+* `icu_normalizer`
+  * internal and doc improvements
+
+* `icu_plurals`
+  * doc improvements
+
+* `icu_properties`
+  * Add APIs for returning exemplar characters data (#2812)
+  * Add API and testdata for `Basic_Emoji` property (#2802)
+  * Add `UnicodeSet` that supports strings (#2796)
+  * Update `Script` property value enums (#2787)
+  * doc improvements
+
+* `icu_segmenter`
+  * Make metacrate features more specific (#2932)
+  * Remove `serde` dependency from segmenter with `lstm` feature. (#2904)
+  * Simplify construction of grapheme cluster break iterators (#2870)
+  * Store grapheme cluster payload instead of grapheme cluster segmenter. (#2864)
+  * `#[no_std]` for LSTM segmenter (#2845)
+  * icu_segmenter: enforce `clippy::indexing_slicing`. (#2325)
+  * Use `GraphemeClusterSegmenter` in `DictionarySegmenter` and `LstmSegmenter` (#2716)
+  * Rename `*BreakSegmenter` to `*Segmenter` (#2707)
+  * Remove unnecessary langauge check for East Asian languagne (SA property) (#2705)
+  * internal and doc improvements
+
+* `icu_timezone`
+  * Adds a bytes parsing API for `GMTOffset` for `CustomTimeZone` and FFI (#2943, #2955)
+  * doc improvements
+
+* `icu_provider_adapters`
+  * Add more `inner_mut` functions in `icu_provider_adapters` (#2987)
+  * Fix error propagation in `MultiForkByErrorProvider` (#2986)
+  * Add mutation methods to `MultiForkByErrorProvider` (#2972)
+
+* `icu_provider_blob`
+  * internal and doc improvements
+
+* `icu_provider`
+  * Setting correct `DataError` for `.as_deserializing()`, `.as_downcasting()` (#2993)
+  * doc improvements
+
+* `icu_datagen`
+  * Removing experimental feature from datagen (#3005)
+  * Fixing Spanish list regex (#2989)
+  * Datagen CLI improvements (#2950)
+  * Some reexports for datagen (#2958)
+  * Databake improvements (#2906)
+  * Exclude certain collations by default and add option to include them (#2789)
+  * Allowing no keys in datagen CLI (#2731)
+  * Fixing baked datagen for no keys and keys with no data (#2698)
+  * Internal and doc improvements
+
+* `icu_provider_fs`
+  * internal and doc improvements
+
+* `icu_testdata`
+  * stabilized metadata
+  * doc improvements
+  * CLDR 42 and ICU 72 data
+
+* `bies`
+  * Bumped `writeable` version
+
+* `databake`
+  * Doc improvements
+
+* `fixed_decimal`
+  * Treat strings starting with a decimal point as valid in `FixedDecimal::from_str()` (#2937)
+  * The actual formatting part of compact decimal formatting (#2898)
+  * Allow noncompact `CompactDecimal` (#2889)
+  * `CompactDecimal` and `ScientificDecimal` (#2847)
+  * doc improvements
+
+* `icu_pattern`
+  * internal improvements
+
+* `litemap`
+  * internal and doc improvements
+
+* `tinystr`
+  * Add `std` feature and `Error` impl for `TinyStrError` (#3009)
+  * internal and doc improvements
+
+* `tzif`
+  * internal and doc improvements
+
+* `writeable`
+  * Using `core` integer log when available (#3015)
+  * `usize` and `isize` implementation
+  * internal and doc improvements
+
+* `yoke`
+  * Add `prove_covariance_manually` guard for `CoerceUnsized` (#2936)
+  * Allow `clippy::forget_copy` in `derive(Yokeable)` impl (#2775)
+  * Fix soundness issue in `Yoke::attach_to_cart()` around implied bounds #2949
+
+* `zerovec`
+  * `ZeroMap2d` cursors
+
 ## Bug fixes in 1.0.x
 
 ### icu_collator 1.0.1

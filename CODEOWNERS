@@ -34,7 +34,7 @@ provider/macros/                  @Manishearth @sffc
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
-tools/scripts/                    @Manishearth @sffc
+tools/make/                       @Manishearth @sffc
 utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
 utils/fixed_decimal/              @sffc

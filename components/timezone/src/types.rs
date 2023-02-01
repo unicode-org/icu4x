@@ -57,10 +57,10 @@ impl GmtOffset {
     ///     GmtOffset::try_from_bytes(b"Z").expect("Failed to parse a time zone");
     /// let offset1: GmtOffset =
     ///     GmtOffset::try_from_bytes(b"+05").expect("Failed to parse a time zone");
-    /// let offset2: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"+0500").expect("Failed to parse a time zone");
-    /// let offset3: GmtOffset =
-    ///     GmtOffset::try_from_bytes(b"-05:00").expect("Failed to parse a time zone");
+    /// let offset2: GmtOffset = GmtOffset::try_from_bytes(b"+0500")
+    ///     .expect("Failed to parse a time zone");
+    /// let offset3: GmtOffset = GmtOffset::try_from_bytes(b"-05:00")
+    ///     .expect("Failed to parse a time zone");
     /// let offset_err0: TimeZoneError =
     ///     GmtOffset::try_from_bytes(b"0500").expect_err("Invalid input");
     /// let offset_err1: TimeZoneError =
@@ -165,8 +165,7 @@ impl FromStr for GmtOffset {
     /// ```
     /// use icu_timezone::GmtOffset;
     ///
-    /// let offset0: GmtOffset =
-    ///     "Z".parse().expect("Failed to parse a GMT offset");
+    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset");
     /// let offset1: GmtOffset =
     ///     "-09".parse().expect("Failed to parse a GMT offset");
     /// let offset2: GmtOffset =

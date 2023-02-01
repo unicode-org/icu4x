@@ -40,7 +40,10 @@ impl CompactDecimal {
     /// # use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     /// #
-    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().significand(), &FixedDecimal::from_str("+1.20").unwrap());
+    /// assert_eq!(
+    ///     CompactDecimal::from_str("+1.20c6").unwrap().significand(),
+    ///     &FixedDecimal::from_str("+1.20").unwrap()
+    /// );
     /// ```
     pub fn significand(&self) -> &FixedDecimal {
         &self.significand
@@ -52,7 +55,12 @@ impl CompactDecimal {
     /// # use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     /// #
-    /// assert_eq!(CompactDecimal::from_str("+1.20c6").unwrap().into_significand(), FixedDecimal::from_str("+1.20").unwrap());
+    /// assert_eq!(
+    ///     CompactDecimal::from_str("+1.20c6")
+    ///         .unwrap()
+    ///         .into_significand(),
+    ///     FixedDecimal::from_str("+1.20").unwrap()
+    /// );
     /// ```
     pub fn into_significand(self) -> FixedDecimal {
         self.significand
@@ -82,7 +90,10 @@ impl CompactDecimal {
 /// # use std::str::FromStr;
 /// # use writeable::assert_writeable_eq;
 /// #
-/// assert_writeable_eq!(CompactDecimal::from_str("+1.20c6").unwrap(), "+1.20c6");
+/// assert_writeable_eq!(
+///     CompactDecimal::from_str("+1.20c6").unwrap(),
+///     "+1.20c6"
+/// );
 /// assert_writeable_eq!(CompactDecimal::from_str("+1729").unwrap(), "+1729");
 /// ```
 impl writeable::Writeable for CompactDecimal {

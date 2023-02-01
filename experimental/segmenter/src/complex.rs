@@ -6,9 +6,9 @@ use crate::dictionary::DictionarySegmenter;
 use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
-use icu_provider::DataPayload;
+use icu_locid::{locale, Locale};
+use icu_provider::prelude::*;
 
-// Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 use crate::lstm::LstmSegmenter;
 
@@ -20,8 +20,8 @@ pub struct LstmPayloads {
     pub thai: Option<DataPayload<LstmDataV1Marker>>,
 }
 
+#[cfg(feature = "lstm")]
 impl LstmPayloads {
-    #[cfg(feature = "lstm")]
     pub fn best(&self, codepoint: u32) -> Option<&DataPayload<LstmDataV1Marker>> {
         let lang = get_language(codepoint);
         match lang {
@@ -31,6 +31,32 @@ impl LstmPayloads {
             Language::Thai => self.thai.as_ref(),
             _ => None,
         }
+    }
+
+    /// Construct a [`LstmPayloads`] for all supported languages.
+    pub(crate) fn new<D: DataProvider<LstmDataV1Marker> + ?Sized>(provider: &D) -> Self {
+        let burmese = Self::load(provider, locale!("my")).ok();
+        let khmer = Self::load(provider, locale!("lo")).ok();
+        let lao = Self::load(provider, locale!("lo")).ok();
+        let thai = Self::load(provider, locale!("th")).ok();
+        LstmPayloads {
+            burmese,
+            khmer,
+            lao,
+            thai,
+        }
+    }
+
+    pub(crate) fn load<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<LstmDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
     }
 }
 
@@ -54,6 +80,69 @@ impl Dictionary {
             _ => None,
         }
     }
+
+    /// Construct a [`Dictionary`] for all supported languages.
+    pub(crate) fn new<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Self {
+        let burmese = Self::load(provider, locale!("my")).ok();
+        let khmer = Self::load(provider, locale!("km")).ok();
+        let lao = Self::load(provider, locale!("lo")).ok();
+        let thai = Self::load(provider, locale!("th")).ok();
+        let cj = Self::load(provider, locale!("ja")).ok();
+        Dictionary {
+            burmese,
+            khmer,
+            lao,
+            thai,
+            cj,
+        }
+    }
+
+    /// Construct a [`Dictionary`] for Chinese and Japanese.
+    #[cfg(feature = "lstm")] // Use by WordSegmenter with "lstm" enabled.
+    pub(crate) fn new_chinese_japanese<
+        D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
+    >(
+        provider: &D,
+    ) -> Self {
+        let cj = Self::load(provider, locale!("ja")).ok();
+        Dictionary {
+            cj,
+            ..Default::default()
+        }
+    }
+
+    /// Construct a [`Dictionary`] for Southeast Asian languages (Burmese, Khmer, Lao, and Thai).
+    pub(crate) fn new_southeast_asian<
+        D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
+    >(
+        provider: &D,
+    ) -> Self {
+        let burmese = Self::load(provider, locale!("my")).ok();
+        let khmer = Self::load(provider, locale!("km")).ok();
+        let lao = Self::load(provider, locale!("lo")).ok();
+        let thai = Self::load(provider, locale!("th")).ok();
+        Dictionary {
+            burmese,
+            khmer,
+            lao,
+            thai,
+            ..Default::default()
+        }
+    }
+
+    pub(crate) fn load<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
@@ -70,16 +159,14 @@ pub fn complex_language_segment_utf16(
     for str_per_lang in lang_iter {
         if let Some(first_ch) = str_per_lang.get(0) {
             #[cfg(feature = "lstm")]
-            {
-                if let Some(lstm) = lstm {
-                    if let Some(model) = lstm.best(*first_ch as u32) {
-                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                            let breaks = segmenter.segment_utf16(&str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.len();
-                            result.push(offset);
-                            continue;
-                        }
+            if let Some(lstm) = lstm {
+                if let Some(model) = lstm.best(*first_ch as u32) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                        let breaks = segmenter.segment_utf16(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.len();
+                        result.push(offset);
+                        continue;
                     }
                 }
             }
@@ -120,16 +207,14 @@ pub fn complex_language_segment_str(
     for str_per_lang in lang_iter {
         if let Some(first_ch) = str_per_lang.chars().next() {
             #[cfg(feature = "lstm")]
-            {
-                if let Some(lstm) = lstm {
-                    if let Some(model) = lstm.best(first_ch as u32) {
-                        if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                            let breaks = segmenter.segment_str(&str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
-                            result.push(offset);
-                            continue;
-                        }
+            if let Some(lstm) = lstm {
+                if let Some(model) = lstm.best(first_ch as u32) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                        let breaks = segmenter.segment_str(&str_per_lang);
+                        result.extend(breaks.map(|n| offset + n));
+                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                        result.push(offset);
+                        continue;
                     }
                 }
             }
@@ -160,7 +245,6 @@ pub fn complex_language_segment_str(
 mod tests {
     use super::*;
     use icu_locid::locale;
-    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {

@@ -48,7 +48,7 @@ env:
 jobs:
 
   # Build job - basic smoke test
-  check:
+  check-msrv:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -73,6 +73,8 @@ jobs:
 
 
     # Toolchain boilerplate
+    - name: Set toolchain to MSRV
+      run: rustup override set 1.61
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
@@ -162,7 +164,7 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job specific dependencies
+    # Job-specific dependencies
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -316,6 +318,10 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x
+    - name: Warm up datagen
+      # We do this so its compilation doesn't go on the time bugdet of the 
+      # first test that uses it.
+      run: cargo build -p icu_datagen
 
     # Actual job
     - name: Run `cargo make ci-job-ffi`
@@ -447,7 +453,7 @@ jobs:
       with:
         path: |
           ffi/gn/third_party_tools
-        key: ${{ runner.os }}-${{ hashFiles('tools/scripts/gn.toml') }}
+        key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       uses: actions-rs/cargo@v1.0.1
@@ -470,7 +476,7 @@ jobs:
   # Feature coverage job - builds all permutations of features
   features:
     runs-on: ubuntu-latest
-    needs: [check]
+    needs: [check-msrv]
     steps:
     - uses: actions/checkout@v3
     # Cargo-make boilerplate
@@ -508,7 +514,7 @@ jobs:
   # WASM Tests - runs C++ to WASM example
   wasm:
     runs-on: ubuntu-latest
-    needs: [check]
+    needs: [check-msrv]
 
     steps:
     - uses: actions/checkout@v3
@@ -704,7 +710,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [check]
+    needs: [check-msrv]
 
     steps:
     - uses: actions/checkout@v3
@@ -849,7 +855,7 @@ jobs:
 
     # Only run the memory benchmark if the main build succeeded. The memory benchmark does not
     # rely on any of the build artifacts.
-    needs: [check]
+    needs: [check-msrv]
 
     steps:
     - uses: actions/checkout@v3
@@ -878,21 +884,13 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    # Nightly is only needed for the `--profile bench` line. Once that is stabilized,
-    # then this line is no longer needed.
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: ${{ env.INSTALLED_NIGHTLY_VERSION }}
-        override: true
-
     ## Actual job
     ##
 
     - name: Run the example with dhat-rs to collect memory information
       run: |
         # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }} --toolchain ${{ env.INSTALLED_NIGHTLY_VERSION }}
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     # Benchmarking & dashboards job > (unmerged PR only) Convert benchmark output into
     # dashboard HTML in a commit of a branch of the local repo.
@@ -1161,7 +1159,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [check, tidy, benchmark, memory, binsize, datasize, doc]
+    needs: [check-msrv, tidy, benchmark, memory, binsize, datasize, doc]
 
     ## Only create docs for merges/pushes to main (skip PRs).
     ## Multiple unfinished PRs should not clobber docs from approved code.
