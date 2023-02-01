@@ -14,9 +14,9 @@ fn main() {
         .unwrap();
 
     let source_data = SourceData::default()
-        .with_cldr_for_tag(&icu_testdata::versions::cldr_tag(), CldrLocaleSubset::Full)
+        .with_cldr(paths::cldr_json_root(), CldrLocaleSubset::Full)
         .unwrap()
-        .with_icuexport_for_tag(&icu_testdata::versions::icu_tag())
+        .with_icuexport(paths::icuexport_toml_root())
         .unwrap();
 
     let json_out = Out::Fs {
