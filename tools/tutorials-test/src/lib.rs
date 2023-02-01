@@ -17,4 +17,4 @@ mod js {}
 #![doc = include_str!("../../../docs/tutorials/markdown_tips.md")]
 mod markdown_tips {}
 #![doc = include_str!("../../../README.md")]
-mod readme
+mod readme {}
