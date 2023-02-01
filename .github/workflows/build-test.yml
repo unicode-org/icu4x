@@ -165,11 +165,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x
     - name: Install rustfmt
       run: rustup component add rustfmt
 
@@ -323,6 +318,10 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x
+    - name: Warm up datagen
+      # We do this so its compilation doesn't go on the time bugdet of the 
+      # first test that uses it.
+      run: cargo build -p icu_datagen
 
     # Actual job
     - name: Run `cargo make ci-job-ffi`

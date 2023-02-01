@@ -91,13 +91,10 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/diplomat/c/examples/pluralrules
-rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../fixeddecimal
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../locale
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 '''
 
@@ -112,9 +109,6 @@ if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
     cd ffi/diplomat/c/examples/fixeddecimal_tiny
-    rm -f ../../../../../target/debug/libicu_capi_staticlib.a
-    rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib.a
-    rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib.a
     exec --fail-on-error make
     exec ls -l
 end
@@ -126,30 +120,22 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/cpp/examples/pluralrules
-rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
-exec --fail-on-error make
-cd ../properties
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
-exec --fail-on-error make
-cd ../bidi
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
+cd ffi/diplomat/cpp/examples/properties
 exec --fail-on-error make
 cd ../segmenter
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../datetime
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../fixeddecimal
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
+exec --fail-on-error make
+cd ../locale
+exec --fail-on-error make
+cd ../pluralrules
+exec --fail-on-error make
+cd ../bidi
 exec --fail-on-error make
 cd ../fixeddecimal_wasm
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make test-host
-cd ../locale
-rm ../../../../../target/debug/libicu_capi_staticlib_test.a
-exec --fail-on-error make
 '''
 
 [tasks.test-cpp-emscripten]
@@ -166,9 +152,13 @@ exec make test
 description = "Run JS tests"
 category = "ICU4X Development"
 script_runner = "@duckscript"
-# Note: --foreground-scripts makes npm forward the output of build.sh
 script = '''
 cd ffi/diplomat/js/examples/node
+exec --fail-on-error make icu_capi.wasm
+exec --fail-on-error make lib
+# Copy testdata instead of generating full data from scratch
+cp ../../../../../provider/testdata/data/testdata.postcard data.postcard
+# --foreground-scripts makes npm forward the output of make
 exec --fail-on-error npm ci --foreground-scripts
 exec --fail-on-error npm test
 '''
@@ -271,7 +261,7 @@ if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
 else
     cd ffi/diplomat/js/examples/tinywasm
 
-    exec --fail-on-error ./build.sh
+    exec --fail-on-error make
     exec --fail-on-error ls -l
     exec --fail-on-error node tiny.mjs
 end
