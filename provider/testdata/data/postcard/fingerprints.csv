@@ -94,10 +94,6 @@ compactdecimal/short@1, th, 52B, 5d1a9ac6cfcd6a0341578e8300535915ecefbf150020c5e
 compactdecimal/short@1, th-u-nu-thai, 52B, 5d1a9ac6cfcd6a0341578e8300535915ecefbf150020c5efa6ff2fb573709615
 compactdecimal/short@1, tr, 63B, 008bf9a95cc638c9107bd733f41c24244dad12699b52a8937e4b0bd5d2e8356f
 compactdecimal/short@1, und, 52B, 8f52802634756eaf0bc39b41d5dc13ce55ba70f8e70f9f6e1967184987aa41e8
-core/helloworld@1, bn, 26B, aa2d572f5f82a2a725a6dcaa468246092c432bb652e263ed0f58dd1a0b8e7893
-core/helloworld@1, en, 12B, 17b4ffecef199f366da18885ccb843fe070b837876e8d0851c0ec6a73edf253c
-core/helloworld@1, ja, 22B, 19cb1643bc27796db5bc2cfdabe00df1466d97b1a42252b49e569f7f9f4d76f7
-core/helloworld@1, ru, 21B, 7b7f5791198c97cc71126268bb1d0cd522ba89cab1312426bcba6a03be8933a5
 datetime/buddhist/datelengths@1, ar, 165B, 4b89bedf3bcdaea4361f4552e5cc6e7b2845daa3abaa3d264f7ff9ecc22c99f9
 datetime/buddhist/datelengths@1, ar-EG, 165B, 4b89bedf3bcdaea4361f4552e5cc6e7b2845daa3abaa3d264f7ff9ecc22c99f9
 datetime/buddhist/datelengths@1, bn, 150B, 5ae722b5fb745246ff77ae1c0690d3b5f4c2f68c50638751d5b54a28a70d9532

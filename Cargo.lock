@@ -1819,6 +1819,7 @@ name = "icu_provider"
 version = "1.1.0"
 dependencies = [
  "bincode",
+ "criterion",
  "databake",
  "dhat",
  "displaydoc",
@@ -1857,6 +1858,7 @@ dependencies = [
 name = "icu_provider_blob"
 version = "1.1.0"
 dependencies = [
+ "criterion",
  "icu_locid",
  "icu_provider",
  "log",
@@ -1939,7 +1941,6 @@ dependencies = [
 name = "icu_testdata"
 version = "1.1.2"
 dependencies = [
- "criterion",
  "icu",
  "icu_calendar",
  "icu_casemapping",

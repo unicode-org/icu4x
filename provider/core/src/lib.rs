@@ -54,8 +54,7 @@
 //!
 //! Examples of AnyProviders:
 //!
-//! - [`CldrJsonDataProvider`] reads structured data from CLDR JSON source files and returns
-//!   structured Rust objects.
+//! - [`DatagenProvider] reads structured data from CLDR source files and returns ICU4X data structs.
 //! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
 //! - The `BakedDataProvider` which encodes structured data directly in Rust source
 //!
@@ -77,7 +76,7 @@
 //!
 //! ## Testing Provider
 //!
-//! This crate also contains a concrete provider for testing purposes:
+//! This crate also contains a concrete provider for demonstration purposes:
 //!
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
 //!
@@ -111,6 +110,7 @@
 //! [`Yokeable`]: yoke::Yokeable
 //! [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
+//! [`DatagenProvider`]: ../icu_datagen/struct.DatagenProvider.html
 //! [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 //! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html

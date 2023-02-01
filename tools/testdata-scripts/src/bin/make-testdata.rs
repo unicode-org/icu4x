@@ -48,12 +48,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&icu_testdata::locales()),
-        &icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .chain(core::iter::once(
-                icu_provider::hello_world::HelloWorldV1Marker::KEY,
-            ))
-            .collect::<Vec<_>>(),
+        &icu_datagen::all_keys_with_experimental(),
         &source_data,
         vec![json_out, blob_out, mod_out, postcard_out],
     )

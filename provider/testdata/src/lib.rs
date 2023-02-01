@@ -17,51 +17,41 @@
 //!
 //! ```
 //! use icu::locid::locale;
-//! use icu_provider::hello_world::*;
-//! use icu_provider::prelude::*;
+//! use icu::list::{ListFormatter, ListLength};
 //!
-//! let req = DataRequest {
-//!     locale: &locale!("en").into(),
-//!     metadata: Default::default(),
-//! };
+//! // Unstable constructor
+//! ListFormatter::try_new_and_with_length_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("fr-CH").into(),
+//!     ListLength::Wide
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     DataProvider::<HelloWorldV1Marker>::load(
-//!         &icu_testdata::unstable(),
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // AnyProvider constructor
+//! ListFormatter::try_new_and_with_length_with_any_provider(
+//!     &icu_testdata::any(),
+//!     &locale!("fr-CH").into(),
+//!     ListLength::Wide
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     BufferProvider::load_buffer(
-//!         &icu_testdata::buffer(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get(),
-//!     &b"\x0bHello World"
-//! );
+//! // BufferProvider constructor (`icu` with `serde` feature, `icu_testdata` with `buffer` feature)
+//! ListFormatter::try_new_and_with_length_with_buffer_provider(
+//!     &icu_testdata::buffer(),
+//!     &locale!("fr-CH").into(),
+//!     ListLength::Wide
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     AnyProvider::load_any(
-//!         &icu_testdata::any(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(AnyResponse::downcast::<HelloWorldV1Marker>)
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // Without fallback the locale match needs to be exact
+//! ListFormatter::try_new_and_with_length_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("fr-CH").into(),
+//!     ListLength::Wide
+//! ).is_err();
+//!
+//! ListFormatter::try_new_and_with_length_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("fr").into(),
+//!     ListLength::Wide
+//! ).unwrap();
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

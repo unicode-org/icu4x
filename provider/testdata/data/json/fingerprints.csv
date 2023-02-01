@@ -94,10 +94,6 @@ compactdecimal/short@1, th, 481B, 3a6f739b2a36003f0f13fcea1a730e114cd117a718b9d9
 compactdecimal/short@1, th-u-nu-thai, 481B, 3a6f739b2a36003f0f13fcea1a730e114cd117a718b9d96ec6e78aad34c12d98
 compactdecimal/short@1, tr, 492B, b8bfabfcc5dd85fa699dcfee60e9056926fac0f81de30dcfe1389c4045667309
 compactdecimal/short@1, und, 481B, 61cc87c95cdd9c23955f74d3b9232ed4c679573de46c6b2ace7100804ac16650
-core/helloworld@1, bn, 45B, 73fbb6436bef1256c13f401ebcd6d3ac2df63a885f68073375139ea1c87c875f
-core/helloworld@1, en, 31B, 51dae8b726b73af2a08428d5a068bf1fa2f95ccf2bedb55545222ae27c35d7be
-core/helloworld@1, ja, 41B, cc12b67e983566343e5ca4d193753ed34c7493952a24ca6d9a752d5ba4080dc2
-core/helloworld@1, ru, 40B, 5e1591de56258fcd925675f8f9548f69c09e50fba8239ee20348c6f134e0d652
 datetime/buddhist/datelengths@1, ar, 278B, db059929b0bddde7d70f3b361177260aac80e59db137184e48aeb67e956e37b5
 datetime/buddhist/datelengths@1, ar-EG, 278B, db059929b0bddde7d70f3b361177260aac80e59db137184e48aeb67e956e37b5
 datetime/buddhist/datelengths@1, bn, 261B, 9342743b9369283aa27c8db9535c656f1ba4751dd907b1c03ad6e844c466c3e6

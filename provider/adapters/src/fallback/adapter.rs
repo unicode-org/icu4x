@@ -16,7 +16,9 @@ use crate::helpers::result_is_err_missing_data_options;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
-/// let provider = icu_testdata::unstable_no_fallback();
+/// # let provider = icu_provider_adapters::fork::ForkByKeyProvider::new(HelloWorldProvider.into_any_provider(), icu_testdata::any());
+/// # let HelloWorldAndFallbackProvider = provider.as_downcasting();
+/// let provider = HelloWorldAndFallbackProvider;
 ///
 /// let req = DataRequest {
 ///     locale: &locale!("ja-JP").into(),

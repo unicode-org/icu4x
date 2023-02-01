@@ -38,6 +38,7 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid", features = ["serde"] }
+criterion = "0.3"
 
 [features]
 std = ["icu_provider/std"]
@@ -48,3 +49,12 @@ export = [
     "std", 
     "zerovec/serde",
 ]
+bench = []
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
+
+[[bench]]
+name = "provider_blob"
+harness = false

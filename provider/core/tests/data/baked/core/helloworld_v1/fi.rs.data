@@ -1,0 +1,3 @@
+::icu_provider::hello_world::HelloWorldV1 {
+    message: alloc::borrow::Cow::Borrowed("hei maailma"),
+}

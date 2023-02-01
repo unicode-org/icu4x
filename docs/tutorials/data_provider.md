@@ -69,7 +69,7 @@ ICU4X has no internal caches because there is no one-size-fits-all solution. It 
 The following example illustrates an LRU cache on top of a BufferProvider that saves deserialized data payloads as type-erased objects and then checks for a cache hit before calling the inner provider.
 
 ```rust
-use icu_provider::hello_world::HelloWorldFormatter;
+use icu_provider::hello_world::{HelloWorldFormatter, HelloWorldProvider};
 use icu_provider::prelude::*;
 use icu::locid::locale;
 use lru::LruCache;
@@ -133,11 +133,10 @@ where
 }
 
 // Usage example:
-let provider = icu_testdata::buffer();
 let lru_capacity = 100usize.try_into().unwrap();
 let provider = LruDataCache {
-    cache: Mutex::new(LruCache::new(lru_capacity)),
-    provider: provider.as_deserializing(),
+    cache: Mutex::new(LruCache::new(NonZeroUsize::new(100).unwrap())),
+    provider: HelloWorldProvider,
 };
 
 // The cache starts empty:

@@ -76,7 +76,7 @@ impl DataPayload<ExportMarker> {
     /// export
     ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
-    /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
+    /// assert_eq!(br#"{"message":"(und) Hello World"}"#, buffer);
     /// ```
     pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
     where

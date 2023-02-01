@@ -100,6 +100,22 @@ args = [
     "--overwrite",
 ]
 
+[tasks.testdata-hello-world-baked]
+description = "Build the Hello World baked module."
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--",
+    "--keys=core/helloworld@1",
+    "--locales=full",
+    "--format=mod",
+    "--pretty",
+    "--out=provider/core/tests/data/baked",
+    "--overwrite",
+]
+
 [tasks.testdata-hello-world]
 description = "Build all three the Hello World outputs."
 category = "ICU4X Data"
@@ -108,6 +124,7 @@ dependencies = [
     "testdata-hello-world-bincode",
     "testdata-hello-world-postcard",
     "testdata-hello-world-blob",
+    "testdata-hello-world-baked",
 ]
 
 ###### END CI TASKS

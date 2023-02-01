@@ -63,8 +63,7 @@ icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter", defa
 icu_timezone = { version = "1.1.0", path = "../../components/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
-icu = { path = "../../components/icu" }
-criterion = "0.3"
+icu = { path = "../../components/icu", features = ["serde"] }
 
 [features]
 default = [
@@ -96,7 +95,3 @@ extra_features = [
     "icu_datetime",
     "icu_list",
 ]
-
-[[bench]]
-name = "providers"
-harness = false

@@ -13,8 +13,11 @@ fn overview_bench(c: &mut Criterion) {
     // End-to-end JSON test
     c.bench_function("json/overview", |b| {
         b.iter(|| {
-            let provider = FsDataProvider::try_new("./tests/data/json")
-                .expect("Loading file from testdata directory");
+            let provider = FsDataProvider::try_new(concat!(
+                core::env!("CARGO_MANIFEST_DIR"),
+                "/tests/data/json"
+            ))
+            .expect("Loading file from testdata directory");
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
                 .as_deserializing()
                 .load(DataRequest {
@@ -36,8 +39,17 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn json_bench(c: &mut Criterion) {
-    let provider =
-        FsDataProvider::try_new("./tests/data/json").expect("Loading file from testdata directory");
+    fn create() -> FsDataProvider {
+        FsDataProvider::try_new(concat!(
+            core::env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/json"
+        ))
+        .expect("Loading file from testdata directory")
+    }
+
+    c.bench_function("json/create", |b| b.iter(create));
+
+    let provider = create();
 
     c.bench_function("json/generic", |b| {
         b.iter(|| {
@@ -66,10 +78,19 @@ fn json_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench"))]
+#[cfg(feature = "bench")]
 fn bincode_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/bincode")
-        .expect("Loading file from testdata directory");
+    fn create() -> FsDataProvider {
+        FsDataProvider::try_new(concat!(
+            core::env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/bincode"
+        ))
+        .expect("Loading file from testdata directory")
+    }
+
+    c.bench_function("bincode/create", |b| b.iter(create));
+
+    let provider = create();
 
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
@@ -99,10 +120,19 @@ fn bincode_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench"))]
+#[cfg(feature = "bench")]
 fn postcard_bench(c: &mut Criterion) {
-    let provider = FsDataProvider::try_new("./tests/data/postcard")
-        .expect("Loading file from testdata directory");
+    fn create() -> FsDataProvider {
+        FsDataProvider::try_new(concat!(
+            core::env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/postcard"
+        ))
+        .expect("Loading file from testdata directory")
+    }
+
+    c.bench_function("postcard/create", |b| b.iter(create));
+
+    let provider = create();
 
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
