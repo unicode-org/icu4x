@@ -1227,3 +1227,20 @@ jobs:
         publish_branch: gh-pages
         publish_dir: ./
         commit_message: Rust API docs + benchmark dashboards -> GH Pages
+
+  # Notify on slack  
+  notify-slack:
+    # Skipped tasks: benchmark, memory, datasize, gh_pages
+    needs: [check-msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, features, wasm, fmt, tidy, clippy, doc]
+    # TODO: only run on cronjob
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify slack of failure
+        uses: ravsamhq/notify-slack-action@v1
+        with:
+          notify_when: failure
+          status: ${{ job.status }}
+          message_format: '{emoji} *{workflow}* ({job}) {status_message} in <{repo_url}|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.ACTION_MONITORING_SLACK }}
