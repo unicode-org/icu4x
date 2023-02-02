@@ -29,6 +29,11 @@ on:
     # Run nightly cronjob CI every day at 14 UTC / 6AM PST / 3PM CET
     - cron:  '0 14 * * *'
 
+concurrency:
+  # Allow one run at a time for PRs, but multiple for other invocations
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 # For the nightly CI, we set four environment variables, and set a rustup override to nightly.
 # Each env var has a different purpose:
 # - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by ICU4X FFI/etc tasks
@@ -50,6 +55,12 @@ jobs:
   # Build job - basic smoke test
   check-msrv:
     runs-on: ubuntu-latest
+    # Defined as a matrix so that all-permutations can start immediately, but
+    # be killed if all-features fails.
+    strategy:
+      matrix: 
+        behavior: [all-features, all-permutations]
+      fail-fast: true
     steps:
     - uses: actions/checkout@v3
 
@@ -81,16 +92,22 @@ jobs:
       run: rustup show
 
     # Actual job
-    - name: Check
+    - name: Check all features
+      if: ${{ matrix.behavior }} == "all-features" 
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
         args: ci-job-check
+    - name: Check all feature permutations
+      if: ${{ matrix.behavior }} == "all-permutations"
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-features
 
   # Test job - runs all "cargo make" testing commands except docs
   test:
     strategy:
-      fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
@@ -214,6 +231,7 @@ jobs:
 
   # Runs full datagen on prod data
   full-datagen:
+    needs: [testdata]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -259,11 +277,7 @@ jobs:
 
   # FFI job - runs all "cargo make" FFI tests
   ffi:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -335,12 +349,7 @@ jobs:
 
   # FFI job - runs all "cargo make" FFI verification tests
   verify-ffi:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
-
+    runs-on: [ ubuntu-latest ]
     steps:
     - uses: actions/checkout@v3
     # Cargo-make boilerplate
@@ -406,11 +415,7 @@ jobs:
 
   # GN job: verifies and runs the GN build of ICU4X
   gn:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -473,48 +478,10 @@ jobs:
         command: make
         args: ci-job-gn
 
-  # Feature coverage job - builds all permutations of features
-  features:
-    runs-on: ubuntu-latest
-    needs: [check-msrv]
-    steps:
-    - uses: actions/checkout@v3
-    # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-    - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Actual job
-    - name: Build All Feature Permutations
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-features
-
   # WASM Tests - runs C++ to WASM example
   wasm:
     runs-on: ubuntu-latest
-    needs: [check-msrv]
+    needs: [clippy]
 
     steps:
     - uses: actions/checkout@v3
@@ -728,13 +695,8 @@ jobs:
 
   # Benchmarking & dashboards job
 
-  benchmark:
-    # We don't expect to keep being clippy-clean on nightly Rust
+  bench-perf:
     strategy:
-      # max-parallel: 1
-      fail-fast: false
-      # `matrix` creates a job matrix (Cartesian product of possible values for each var)
-      # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
       matrix:
         component:
           - components/locid
@@ -750,7 +712,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    needs: [check-msrv]
+    needs: [clippy]
 
     steps:
     - uses: actions/checkout@v3
@@ -826,6 +788,7 @@ jobs:
                           # that the branch in `gh-pages-branch` is different from the branch used for merges to main branch.
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+      continue-on-error: true # If the branch doesn't exist in the fork
 
     # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output into dashboard HTML in a commit of a branch of the local repo.
 
@@ -860,9 +823,8 @@ jobs:
   # The full data report is stored in:
   #   benchmarks/memory/{os}/{example}-dhat-heap.json
 
-  memory:
+  bench-memory:
     strategy:
-      fail-fast: false
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
       # list of the name of the examples. The examples are assumed to be in the
@@ -895,7 +857,7 @@ jobs:
 
     # Only run the memory benchmark if the main build succeeded. The memory benchmark does not
     # rely on any of the build artifacts.
-    needs: [check-msrv]
+    needs: [clippy]
 
     steps:
     - uses: actions/checkout@v3
@@ -962,6 +924,8 @@ jobs:
 
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+      continue-on-error: true # If the branch doesn't exist in the fork
+
 
     # Benchmarking & dashboards job > (PR merge to main only) Convert benchmark output
     # into dashboard HTML in a commit of a branch of the local repo.
@@ -993,11 +957,11 @@ jobs:
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
-  binsize:
+  bench-binsize:
     # TODO(https://github.com/unicode-org/icu4x/issues/2953): Fix this
     if: false
+    needs: [clippy]
     strategy:
-      fail-fast: false
       matrix:
         type: [wasm, gz]
     runs-on: ubuntu-latest
@@ -1095,6 +1059,7 @@ jobs:
         auto-push: false
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+      continue-on-error: true # If the branch doesn't exist in the fork
 
     - name: Store benchmark result (merge to main only)
       # Only for PRs that merge into the ICU4X mainline.
@@ -1116,8 +1081,9 @@ jobs:
 
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
 
-  datasize:
+  bench-datasize:
     runs-on: ubuntu-latest
+    needs: [testdata]
     steps:
     - uses: actions/checkout@v3
 
@@ -1145,6 +1111,7 @@ jobs:
         auto-push: false
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+      continue-on-error: true # If the branch doesn't exist in the fork
 
     - name: Store benchmark result (merge to main only)
       # Only for PRs that merge into the ICU4X mainline.
