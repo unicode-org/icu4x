@@ -1447,7 +1447,7 @@ rust_library("zerovec-v0_9_2") {
   deps = []
   deps += [ ":yoke-v0_7_0" ]
   deps += [ ":zerofrom-v0_1_1" ]
-  deps += [ ":zerovec-derive-v0_9_2($host_toolchain)" ]
+  deps += [ ":zerovec-derive-v0_9_3($host_toolchain)" ]
 
   rustenv = []
 
@@ -1463,10 +1463,10 @@ rust_library("zerovec-v0_9_2") {
   visibility = [ ":*" ]
 }
 
-rust_proc_macro("zerovec-derive-v0_9_2") {
+rust_proc_macro("zerovec-derive-v0_9_3") {
   crate_name = "zerovec_derive"
   crate_root = "//utils/zerovec/derive/src/lib.rs"
-  output_name = "zerovec_derive-7ef1f6966b3a74c7"
+  output_name = "zerovec_derive-4d58846cb210946f"
 
   deps = []
   deps += [ ":proc-macro2-v1_0_32" ]
@@ -1479,8 +1479,8 @@ rust_proc_macro("zerovec-derive-v0_9_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=7ef1f6966b3a74c7",
-    "-Cextra-filename=-7ef1f6966b3a74c7",
+    "-Cmetadata=4d58846cb210946f",
+    "-Cextra-filename=-4d58846cb210946f",
   ]
 
   visibility = [ ":*" ]
