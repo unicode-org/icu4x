@@ -656,8 +656,6 @@ jobs:
         crate: cargo-readme
         version: latest
 
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
     # Actual job
     - name: Tidy
       uses: actions-rs/cargo@v1.0.1
@@ -685,6 +683,28 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         # keep args in sync with `clippy-all` in .cargo/config.toml
         args: --all-targets --all-features -- -D warnings
+
+  # Docs job
+  doc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    - name: Cargo doc
+      uses: actions-rs/cargo@v1
+      env:
+        RUSTDOCFLAGS: "-Dwarnings"
+      with:
+        command: doc
+        args: --workspace --release --all-features --no-deps --lib
+
 
   # Benchmarking & dashboards job
 
@@ -1123,107 +1143,3 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
-
-  # Docs job
-
-  doc:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
-    - name: Cargo doc
-      uses: actions-rs/cargo@v1
-      env:
-        RUSTDOCFLAGS: "-Dwarnings"
-      with:
-        command: doc
-        args: --workspace --release --all-features --no-deps
-
-    - name: Upload doc data (merge to main only)
-      # Only for PRs that merge into the ICU4X mainline.
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-      uses: actions/upload-artifact@v3
-      with:
-        path: target/doc/**
-        name: doc
-        retention-days: 1
-
-  # Doc-GH-Pages job
-
-  gh_pages:
-    name: Copy GH pages to docs repo (merge to main only)
-
-    runs-on: ubuntu-latest
-
-    needs: [check-msrv, tidy, benchmark, memory, binsize, datasize, doc]
-
-    ## Only create docs for merges/pushes to main (skip PRs).
-    ## Multiple unfinished PRs should not clobber docs from approved code.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
-    - name: Switch to benchmark data storage branch.
-      run: |
-        git fetch
-        git checkout merged-bench-data
-
-    # TODO(#234) re-include cache steps, also using Rust version in cache key
-
-    # Doc-GH-Pages job > Download docs files from previous jobs into folder of files to copy to remote repo
-    - name: Download previous content destined for GH pages
-      uses: actions/download-artifact@v3
-      with:
-        path: doc
-        name: doc
-
-    # Doc-GH-Pages job > Generate placeholder root index.html to redirect to `icu` crate
-
-    - name: Create doc /index.html
-      run: |
-        cat > index.html <<EOL
-        <!doctype html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0;url=./doc/icu" />
-            <title>ICU4X Developer Docs</title>
-          </head>
-          <body>
-            <p><a href="./doc/icu">Redirect to the <tt>icu</tt> crate of ICU4X</a></p>
-          </body>
-        </html>
-        EOL
-        
-    - name: Create doc CNAME
-      run: |
-        echo "icu4x.unicode.org" > CNAME
-
-    # Doc-GH-Pages job > Copy docs (+ bench dashboard HTML) to remote docs repo's GH pages branch step
-
-    - name: Doc -> Github Pages
-      uses: peaceiris/actions-gh-pages@v3.9.0
-      with:
-        # Setup for publishing to an external repo using `deploy_key` option:
-        #
-        # Step 1 - Create SSH key pair. Use your public key as a Github "Deploy Key" and your private
-        # key as a Github "Secret". Where to register these keys comes next.
-        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-create-ssh-deploy-key
-        #
-        # Step 2 - After creating public/private key pair, put the private key in the repo running the
-        # action as a Secret and call it "ACTIONS_DEPLOY_KEY". Put the public key as a Deploy Key in the
-        # target repo where the Github Pages will be copied to.
-        # https://github.com/marketplace/actions/github-pages-action#%EF%B8%8F-deploy-to-external-repository
-        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        external_repository: unicode-org/icu4x-docs
-        publish_branch: gh-pages
-        publish_dir: ./
-        commit_message: Rust API docs + benchmark dashboards -> GH Pages
