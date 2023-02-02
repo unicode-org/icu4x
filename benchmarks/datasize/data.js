@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675109612535,
+  "lastUpdate": 1675354179944,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -34948,6 +34948,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4298922,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d94bd4902387456daaa07bd9c173516c54083765",
+          "message": "Fix wasm-demo ... again (#3067)",
+          "timestamp": "2023-02-02T17:06:50+01:00",
+          "tree_id": "257afc59a220c569ce580e104f85f57332530eb1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d94bd4902387456daaa07bd9c173516c54083765"
+        },
+        "date": 1675354099847,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
             "unit": "bytes",
             "biggerIsBetter": false
           }
