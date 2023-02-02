@@ -46,6 +46,9 @@ impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvid
     }
 }
 
+
+/// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
+const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given language. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 /// Substring used to denote long display names data variants for a given language. For example: "az-alt-long".
@@ -62,19 +65,19 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
                 let mut region = String::from(entry.0);
-                if region.contains(ALT_SHORT_SUBSTRING) {
+                if region.ends_with(ALT_SHORT_SUBSTRING) {
                     region.truncate(region.find(ALT_SHORT_SUBSTRING).unwrap());
                     let key = UnvalidatedStr::from_str(&region);
                     short_names.insert(key, entry.1.as_ref());
-                } else if region.contains(ALT_LONG_SUBSTRING) {
+                } else if region.ends_with(ALT_LONG_SUBSTRING) {
                     region.truncate(region.find(ALT_LONG_SUBSTRING).unwrap());
                     let key = UnvalidatedStr::from_str(&region);
                     long_names.insert(key, entry.1.as_ref());
-                } else if region.contains(ALT_MENU_SUBSTRING) {
+                } else if region.ends_with(ALT_MENU_SUBSTRING) {
                     region.truncate(region.find(ALT_MENU_SUBSTRING).unwrap());
                     let key = UnvalidatedStr::from_str(&region);
                     menu_names.insert(key, entry.1.as_ref());
-                } else {
+                } else if !region.contains(ALT_SUBSTRING) {
                     let key = UnvalidatedStr::from_str(&region);
                     names.insert(key, entry.1.as_ref());
                 }
