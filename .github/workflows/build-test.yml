@@ -53,13 +53,13 @@ env:
 jobs:
 
   # Build job - basic smoke test
-  check-msrv:
+  msrv:
     runs-on: ubuntu-latest
-    # Defined as a matrix so that all-permutations can start immediately, but
-    # be killed if all-features fails.
+    # Defined as a matrix so that features can start immediately, but
+    # be killed if check fails.
     strategy:
       matrix: 
-        behavior: [all-features, all-permutations]
+        behavior: [check, features]
       fail-fast: true
     steps:
     - uses: actions/checkout@v3
@@ -92,18 +92,11 @@ jobs:
       run: rustup show
 
     # Actual job
-    - name: Check all features
-      if: ${{ matrix.behavior }} == "all-features" 
+    - name: Check
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-check
-    - name: Check all feature permutations
-      if: ${{ matrix.behavior }} == "all-permutations"
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-features
+        args: ci-job-${{ matrix.behavior }}
 
   # Test job - runs all "cargo make" testing commands except docs
   test:
