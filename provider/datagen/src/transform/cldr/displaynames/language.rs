@@ -64,18 +64,15 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
         let mut menu_names = ZeroMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
-                let mut region = String::from(entry.0);
-                if region.ends_with(ALT_SHORT_SUBSTRING) {
-                    region.truncate(region.find(ALT_SHORT_SUBSTRING).unwrap());
-                    let key = UnvalidatedStr::from_str(&region);
+                let region = String::from(entry.0);
+                if let Some(region) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+                    let key = UnvalidatedStr::from_str(region);
                     short_names.insert(key, entry.1.as_ref());
-                } else if region.ends_with(ALT_LONG_SUBSTRING) {
-                    region.truncate(region.find(ALT_LONG_SUBSTRING).unwrap());
-                    let key = UnvalidatedStr::from_str(&region);
+                } else if let Some(region) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
+                    let key = UnvalidatedStr::from_str(region);
                     long_names.insert(key, entry.1.as_ref());
-                } else if region.ends_with(ALT_MENU_SUBSTRING) {
-                    region.truncate(region.find(ALT_MENU_SUBSTRING).unwrap());
-                    let key = UnvalidatedStr::from_str(&region);
+                } else if let Some(region) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
+                    let key = UnvalidatedStr::from_str(region);
                     menu_names.insert(key, entry.1.as_ref());
                 } else if !region.contains(ALT_SUBSTRING) {
                     let key = UnvalidatedStr::from_str(&region);
