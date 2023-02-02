@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675361603478,
+  "lastUpdate": 1675364474125,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35003,6 +35003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d2ccbcfe0abefe6241e2eceb6476969b485f751a"
         },
         "date": 1675361511690,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "0xflotus@gmail.com",
+            "name": "0xflotus",
+            "username": "0xflotus"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47a2a8c5ffcc6ec8a66a806059f0490379ea29b4",
+          "message": "fix: small errors (#2911)",
+          "timestamp": "2023-02-02T12:58:02-06:00",
+          "tree_id": "3602c74dcb827053339800d5f14b043fab61b8e2",
+          "url": "https://github.com/unicode-org/icu4x/commit/47a2a8c5ffcc6ec8a66a806059f0490379ea29b4"
+        },
+        "date": 1675364378230,
         "tool": "ndjson",
         "benches": [
           {
