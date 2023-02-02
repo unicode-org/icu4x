@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675364474125,
+  "lastUpdate": 1675364687485,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35033,6 +35033,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/47a2a8c5ffcc6ec8a66a806059f0490379ea29b4"
         },
         "date": 1675364378230,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "af55f9a72a9cbf21215f5ce479bc1b138712ded6",
+          "message": "[locid_transform] Do not allocate vectors in bench (#2933)",
+          "timestamp": "2023-02-02T19:01:22Z",
+          "tree_id": "3b5a2a58f41be628d0ee27e82250261a442cc008",
+          "url": "https://github.com/unicode-org/icu4x/commit/af55f9a72a9cbf21215f5ce479bc1b138712ded6"
+        },
+        "date": 1675364589474,
         "tool": "ndjson",
         "benches": [
           {
