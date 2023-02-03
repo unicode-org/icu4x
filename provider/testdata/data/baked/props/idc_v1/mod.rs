@@ -1,5 +1,6 @@
 // @generated
 #![cfg(feature = "icu_properties")]
+#![allow(clippy::octal_escapes)]
 type DataStruct =
     <::icu_properties::provider::IdContinueV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
