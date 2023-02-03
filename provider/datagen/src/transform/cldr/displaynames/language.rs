@@ -64,7 +64,6 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
         let mut menu_names = ZeroMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
-                let region = String::from(entry.0);
                 if let Some(region) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
                     let key = UnvalidatedStr::from_str(region);
                     short_names.insert(key, entry.1.as_ref());
@@ -74,8 +73,8 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
                 } else if let Some(region) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
                     let key = UnvalidatedStr::from_str(region);
                     menu_names.insert(key, entry.1.as_ref());
-                } else if !region.contains(ALT_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(&region);
+                } else if !entry.0.contains(ALT_SUBSTRING) {
+                    let key = UnvalidatedStr::from_str(entry.0);
                     names.insert(key, entry.1.as_ref());
                 }
             }
