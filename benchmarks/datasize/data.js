@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675445927979,
+  "lastUpdate": 1675447033599,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35123,6 +35123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/436d509c179ea4ab142119221845f382dda443dc"
         },
         "date": 1675445835287,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c452d014757964a9770d0df4a6e690555d6c36cf",
+          "message": "Add notify-on-failure job (#3073)",
+          "timestamp": "2023-02-03T17:53:51Z",
+          "tree_id": "4ff4fe2c45d102fe842cb2e4ae690a29603afe0f",
+          "url": "https://github.com/unicode-org/icu4x/commit/c452d014757964a9770d0df4a6e690555d6c36cf"
+        },
+        "date": 1675446933868,
         "tool": "ndjson",
         "benches": [
           {
