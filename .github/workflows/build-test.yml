@@ -1231,7 +1231,7 @@ jobs:
   # Notify on slack  
   notify-slack:
     # Skipped tasks: benchmark, memory, datasize, gh_pages
-    needs: [check-msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, features, wasm, fmt, tidy, clippy, doc]
+    needs: [fmt]
     # TODO: only run on cronjob : (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     runs-on: ubuntu-latest
@@ -1243,6 +1243,6 @@ jobs:
           status: failure # We do the filtering earlier
           notification_title: ''
           message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Nightly' || 'Manually dispatched')) }}
-          footer: '<{{run_url}}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
+          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
