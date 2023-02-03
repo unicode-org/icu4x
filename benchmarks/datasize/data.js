@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675447033599,
+  "lastUpdate": 1675450965336,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35153,6 +35153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c452d014757964a9770d0df4a6e690555d6c36cf"
         },
         "date": 1675446933868,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c151c2bfe6c28820628c1947416406ad4ae9b5a3",
+          "message": "Update Rust edition to 2021 (#3075)",
+          "timestamp": "2023-02-03T10:59:28-08:00",
+          "tree_id": "e1aeed4cec9bffcc191d8d509f255dc093857d39",
+          "url": "https://github.com/unicode-org/icu4x/commit/c151c2bfe6c28820628c1947416406ad4ae9b5a3"
+        },
+        "date": 1675450867729,
         "tool": "ndjson",
         "benches": [
           {
