@@ -711,12 +711,8 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    ## For Rob's PR:
-    ## Skipped tasks: bench-perf, bench-memory, bench-binsize, bench-datasize
-    ## needs: [msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, wasm, fmt, tidy, clippy, doc]
-    
-    # Skipped tasks: benchmark, memory, datasize, binsize
-    needs: [check-msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, features, wasm, fmt, tidy, clippy, doc, ]
+    # Skipped tasks: bench-perf, bench-memory, bench-binsize, bench-datasize
+    needs: [msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, wasm, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     steps:
