@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675416015383,
+  "lastUpdate": 1675445927979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35093,6 +35093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5c3c204ae299f810da05dd2752be6e28470139de"
         },
         "date": 1675415923422,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "436d509c179ea4ab142119221845f382dda443dc",
+          "message": "Using byte string literals in databake (#3040)",
+          "timestamp": "2023-02-03T18:35:51+01:00",
+          "tree_id": "91a26e00d9411412d1797753101ed08202d7b3ea",
+          "url": "https://github.com/unicode-org/icu4x/commit/436d509c179ea4ab142119221845f382dda443dc"
+        },
+        "date": 1675445835287,
         "tool": "ndjson",
         "benches": [
           {
