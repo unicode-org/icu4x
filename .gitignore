@@ -23,7 +23,6 @@ dhat-heap.json
 /benchmarks
 
 # Do not check-in binary file tree test data
-provider/testdata/data/bincode
 provider/testdata/data/postcard/*
 !provider/testdata/data/postcard/fingerprints.csv
 

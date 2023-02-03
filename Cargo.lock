@@ -1649,7 +1649,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "cached-path",
  "clap 2.34.0",
@@ -2031,7 +2031,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "criterion 0.3.6",
  "icu",
@@ -2093,28 +2093,6 @@ dependencies = [
  "serde",
  "tinystr 0.7.1",
  "zerovec",
-]
-
-[[package]]
-name = "icu_tutorials"
-version = "0.0.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu",
- "icu_datagen",
- "icu_provider",
- "icu_provider_blob",
- "icu_provider_fs",
- "icu_testdata",
- "itertools",
- "litemap",
- "lru",
- "serde",
- "serde-aux",
- "tinystr 0.7.1",
- "yoke",
- "zerofrom",
 ]
 
 [[package]]
@@ -3800,6 +3778,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3528ecfd12c466c6f163363caf2d02a71161dd5e1cc6ae7b34207ea2d42d81ed"
 
 [[package]]
+name = "tutorials-test"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_datagen",
+ "icu_provider",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "icu_testdata",
+ "itertools",
+ "litemap",
+ "lru",
+ "serde",
+ "serde-aux",
+ "tinystr 0.7.1",
+ "yoke",
+ "zerofrom",
+]
+
+[[package]]
 name = "typenum"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4548,7 +4548,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.2"
+version = "0.9.3"
 dependencies = [
  "bincode",
  "proc-macro2",

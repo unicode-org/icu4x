@@ -53,18 +53,46 @@
     See the `Rust documentation for LineSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider)
 
-        Construct a :cpp:class:`ICU4XLineSegmenter` with default options.
+        Construct a :cpp:class:`ICU4XLineSegmenter` with default options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider)
 
-        Construct a :cpp:class:`ICU4XLineSegmenter` with custom options.
+        Construct a :cpp:class:`ICU4XLineSegmenter` with default options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
-        See the `Rust documentation for try_new_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_with_options_unstable>`__ for more information.
+        See the `Rust documentation for try_new_lstm_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider)
+
+        Construct a :cpp:class:`ICU4XLineSegmenter` with default options and dictionary payload data for Burmese, Khmer, Lao, and Thai..
+
+        See the `Rust documentation for try_new_dictionary_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
+
+        Construct a :cpp:class:`ICU4XLineSegmenter` with custom options. It automatically loads the best available payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_auto_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
+
+        Construct a :cpp:class:`ICU4XLineSegmenter` with custom options and LSTM payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_lstm_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
+
+        Construct a :cpp:class:`ICU4XLineSegmenter` with custom options and dictionary payload data for Burmese, Khmer, Lao, and Thai.
+
+        See the `Rust documentation for try_new_dictionary_with_options_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable>`__ for more information.
 
 
     .. cpp:function:: ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const

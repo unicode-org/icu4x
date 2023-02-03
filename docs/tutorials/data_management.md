@@ -15,7 +15,7 @@ Data generation is done using the `icu_datagen` crate, which pulls in data from 
 First we will need to install the binary:
 
 ```console
-$ cargo install icu4x-datagen
+$ cargo install icu_datagen
 ```
 
 Get a coffee, this might take a while ☕.
