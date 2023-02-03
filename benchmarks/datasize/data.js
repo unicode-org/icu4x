@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675450965336,
+  "lastUpdate": 1675453200846,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35183,6 +35183,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c151c2bfe6c28820628c1947416406ad4ae9b5a3"
         },
         "date": 1675450867729,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aac86065741fcedb8ada9464983390c7516ac489",
+          "message": "Fix certain nightlies (#3076)",
+          "timestamp": "2023-02-03T20:37:02+01:00",
+          "tree_id": "409c20eaf27f9896248fa48be7e22b8d08d65ffa",
+          "url": "https://github.com/unicode-org/icu4x/commit/aac86065741fcedb8ada9464983390c7516ac489"
+        },
+        "date": 1675453109098,
         "tool": "ndjson",
         "benches": [
           {
