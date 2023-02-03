@@ -33,16 +33,16 @@ impl PartialEq for SerdeDFA<'_> {
 impl databake::Bake for SerdeDFA<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_list");
-        let le_bytes = self.deref().to_bytes_little_endian().as_slice().bake(env);
-        let be_bytes = self.deref().to_bytes_big_endian().as_slice().bake(env);
+        let le_bytes = databake::Bake::bake(&self.deref().to_bytes_little_endian().as_slice(), env);
+        let be_bytes = databake::Bake::bake(&self.deref().to_bytes_big_endian().as_slice(), env);
         // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant.
         databake::quote! {
             unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
                     if cfg!(target_endian = "little") {
-                        &#le_bytes
+                        #le_bytes
                     } else {
-                        &#be_bytes
+                        #be_bytes
                     }
                 )
             }
@@ -234,9 +234,9 @@ mod test {
         databake::test_bake!(
             SerdeDFA,
             const: unsafe { crate::provider::SerdeDFA::from_dfa_bytes_unchecked(if cfg!(target_endian = "little") {
-                &[1] // TODO: set this when activating the test
+                b"foo" // TODO: set this when activating the test
             } else {
-                &[2] // TODO: set this when activating the test
+                b"bar" // TODO: set this when activating the test
             })},
             icu_list
         );

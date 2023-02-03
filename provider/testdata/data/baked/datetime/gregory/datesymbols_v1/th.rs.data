@@ -93,22 +93,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 42u8, 0u8, 224u8, 184u8, 155u8, 224u8,
-                        184u8, 181u8, 224u8, 184u8, 129u8, 224u8, 185u8, 136u8, 224u8, 184u8,
-                        173u8, 224u8, 184u8, 153u8, 224u8, 184u8, 132u8, 224u8, 184u8, 163u8,
-                        224u8, 184u8, 180u8, 224u8, 184u8, 170u8, 224u8, 184u8, 149u8, 224u8,
-                        184u8, 129u8, 224u8, 184u8, 178u8, 224u8, 184u8, 165u8, 224u8, 184u8,
-                        132u8, 224u8, 184u8, 163u8, 224u8, 184u8, 180u8, 224u8, 184u8, 170u8,
-                        224u8, 184u8, 149u8, 224u8, 185u8, 140u8, 224u8, 184u8, 168u8, 224u8,
-                        184u8, 177u8, 224u8, 184u8, 129u8, 224u8, 184u8, 163u8, 224u8, 184u8,
-                        178u8, 224u8, 184u8, 138u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0*\0\xE0\xB8\x9B\xE0\xB8\xB5\xE0\xB8\x81\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\x99\xE0\xB8\x84\xE0\xB8\xA3\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x95\xE0\xB8\x81\xE0\xB8\xB2\xE0\xB8\xA5\xE0\xB8\x84\xE0\xB8\xA3\xE0\xB8\xB4\xE0\xB8\xAA\xE0\xB8\x95\xE0\xB9\x8C\xE0\xB8\xA8\xE0\xB8\xB1\xE0\xB8\x81\xE0\xB8\xA3\xE0\xB8\xB2\xE0\xB8\x8A")
                 },
             )
         },
@@ -116,17 +104,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 21u8, 0u8, 224u8, 184u8, 129u8, 224u8,
-                        185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8, 153u8, 32u8, 224u8,
-                        184u8, 132u8, 46u8, 224u8, 184u8, 168u8, 46u8, 224u8, 184u8, 132u8,
-                        46u8, 224u8, 184u8, 168u8, 46u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x15\0\xE0\xB8\x81\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\x99 \xE0\xB8\x84.\xE0\xB8\xA8.\xE0\xB8\x84.\xE0\xB8\xA8.")
                 },
             )
         },
@@ -134,17 +115,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 21u8, 0u8, 224u8, 184u8, 129u8, 224u8,
-                        185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8, 153u8, 32u8, 224u8,
-                        184u8, 132u8, 46u8, 224u8, 184u8, 168u8, 46u8, 224u8, 184u8, 132u8,
-                        46u8, 224u8, 184u8, 168u8, 46u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x15\0\xE0\xB8\x81\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\x99 \xE0\xB8\x84.\xE0\xB8\xA8.\xE0\xB8\x84.\xE0\xB8\xA8.")
                 },
             )
         },

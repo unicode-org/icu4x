@@ -344,6 +344,8 @@ impl DataExporter for BakedDataExporter {
             quote! {
                 #feature
 
+                #![allow(clippy::octal_escapes)] // https://github.com/dtolnay/proc-macro2/issues/363
+
                 type DataStruct = #struct_type;
 
                 #lookup
