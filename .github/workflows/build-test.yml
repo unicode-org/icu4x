@@ -4,14 +4,9 @@
 
 name: Build and Test
 
-# TODO(#234) re-include cache steps, also using Rust version in cache key
-
-# Note: Each of these jobs, except for the clippy job and the optional benchmarking/coverage
-# jobs, maps to a `ci-job-foo` entry in Makefile.toml. If adding further CI jobs, please add them
-# as makefile targets as well, and list them under `ci-all`.
-#
-# Clippy is special because we're using actions-rs/clippy-check which is able to surface clippy failures on
-# PR bodies
+# Each of these jobs job maps to a `ci-job-foo` entry in Makefile.toml.
+# If adding further CI jobs, please add them as makefile targets as well,
+# and list them under `ci-all`.
 
 on:
   push:
@@ -52,7 +47,8 @@ env:
 
 jobs:
 
-  # Build job - basic smoke test
+  # ci-job-check & ci-job-features
+  # Running at MSRV (1.61)
   msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
@@ -98,7 +94,7 @@ jobs:
         command: make
         args: ci-job-${{ matrix.behavior }}
 
-  # Test job - runs all "cargo make" testing commands except docs
+  # ci-job-test
   test:
     strategy:
       matrix:
@@ -140,6 +136,7 @@ jobs:
         command: make
         args: ci-job-test
 
+  # ci-job-testdata
   testdata:
     strategy:
       matrix:
@@ -185,11 +182,12 @@ jobs:
         command: make
         args: ci-job-testdata
 
-  # Docs test job - runs all "cargo make" testing commands for docs
+  # ci-job-test-docs
   test-docs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -222,7 +220,7 @@ jobs:
         command: make
         args: ci-job-test-docs
 
-  # Runs full datagen on prod data
+  # ci-job-full-datagen
   full-datagen:
     needs: [testdata]
     runs-on: ubuntu-latest
@@ -268,7 +266,7 @@ jobs:
         command: make
         args: ci-job-full-datagen
 
-  # FFI job - runs all "cargo make" FFI tests
+  # ci-job-ffi
   ffi:
     runs-on: ubuntu-latest
 
@@ -339,12 +337,12 @@ jobs:
       env:
         CXX: "g++-10"
 
-
-  # FFI job - runs all "cargo make" FFI verification tests
+  # ci-job-verify-ffi
   verify-ffi:
     runs-on: [ ubuntu-latest ]
     steps:
     - uses: actions/checkout@v3
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -406,7 +404,7 @@ jobs:
         command: make
         args: ci-job-verify-ffi
 
-  # GN job: verifies and runs the GN build of ICU4X
+  # ci-job-gn
   gn:
     runs-on: ubuntu-latest
 
@@ -471,13 +469,14 @@ jobs:
         command: make
         args: ci-job-gn
 
-  # WASM Tests - runs C++ to WASM example
+  # ci-job-wasm
   wasm:
     runs-on: ubuntu-latest
     needs: [clippy]
 
     steps:
     - uses: actions/checkout@v3
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -523,11 +522,12 @@ jobs:
         . ~/emsdk/emsdk_env.sh
         cargo make ci-job-wasm
 
-  # Fmt job - runs cargo fmt
+  # ci-job-fmt
   fmt:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -564,12 +564,12 @@ jobs:
         command: make
         args: ci-job-fmt
 
-
-  # Tidy job - runs all "cargo make" tidy commands
+  # ci-job-tidy
   tidy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -623,28 +623,53 @@ jobs:
         command: make
         args: ci-job-tidy
 
-  # Clippy job (cargo-clippy) - completes and puts warnings inline in PR
+  # ci-job-clippy
   clippy:
+    # We don't expect to be clippy-clean on nightly cronjob.
+    if: ${{ github.event_name != 'schedule' }}
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
-    # We don't expect to keep being clippy-clean on nightly Rust,
-    # so the "toolchain boilerplate" is deliberately omitted
-    # This just means we end up testing on the pinned stable even in the cronjob
-    # CI, which isn't that useful but specially omitting that task is more work than it's worth
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
 
-    # Clippy job > Install and run clippy steps
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
     - name: Install clippy
       run: rustup component add clippy
 
+    # Actual job
+    # Note: this does not use ci-job-clippy, as the GH Action can create code
+    # annotations (although not in PRs: https://github.com/actions-rs/clippy-check/issues/2)
     - uses: actions-rs/clippy-check@v1.0.7
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         # keep args in sync with `clippy-all` in .cargo/config.toml
         args: --all-targets --all-features -- -D warnings
 
-  # Docs job
+  # ci-job-doc
   doc:
     runs-on: ubuntu-latest
 
@@ -678,17 +703,20 @@ jobs:
 
     # Actual job
     - name: Cargo doc
-      uses: actions-rs/cargo@v1
-      env:
-        RUSTDOCFLAGS: "-Dwarnings"
+      uses: actions-rs/cargo@v1.0.1
       with:
-        command: doc
-        args: --workspace --release --all-features --no-deps --lib
-
+        command: make
+        args: ci-job-doc
 
   # Benchmarking & dashboards job
 
   bench-perf:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-perf
     strategy:
       matrix:
         component:
@@ -817,6 +845,12 @@ jobs:
   #   benchmarks/memory/{os}/{example}-dhat-heap.json
 
   bench-memory:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-memory
     strategy:
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
@@ -951,8 +985,12 @@ jobs:
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
 
   bench-binsize:
-    # TODO(https://github.com/unicode-org/icu4x/issues/2953): Fix this
-    if: false
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-binsize
     needs: [clippy]
     strategy:
       matrix:
@@ -1075,6 +1113,12 @@ jobs:
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
 
   bench-datasize:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-datasize
     runs-on: ubuntu-latest
     needs: [testdata]
     steps:
