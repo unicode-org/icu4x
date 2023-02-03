@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675453200846,
+  "lastUpdate": 1675461662552,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35213,6 +35213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/aac86065741fcedb8ada9464983390c7516ac489"
         },
         "date": 1675453109098,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf3635003ef57265a5c485bd511ecdf3085cbe18",
+          "message": "Switch clippy to stable (#2931)\n\n* Switch clippy to stable\r\n\r\n* Update code to stable clippy\r\n\r\n* Fix use of first() and get(1).",
+          "timestamp": "2023-02-03T13:58:04-08:00",
+          "tree_id": "1933039493db183c6b00daf5650224eb4886341f",
+          "url": "https://github.com/unicode-org/icu4x/commit/cf3635003ef57265a5c485bd511ecdf3085cbe18"
+        },
+        "date": 1675461569807,
         "tool": "ndjson",
         "benches": [
           {
