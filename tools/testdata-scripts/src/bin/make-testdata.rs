@@ -58,7 +58,7 @@ fn main() {
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))
             .collect::<Vec<_>>(),
-        &SourceData::internal_test_data(),
+        &SourceData::internal_offline_latest_tested_subset(),
         vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();
@@ -80,7 +80,7 @@ fn main() {
         .unwrap();
 
     let locales = databake::Bake::bake(LOCALES, &Default::default());
-    // `SourceData::internal_test_data()` corresponds to these tags.
+    // `SourceData::internal_offline_latest_tested_subset()` corresponds to these tags.
     let cldr_tag = SourceData::LATEST_TESTED_CLDR_TAG;
     let icu_tag = SourceData::LATEST_TESTED_ICUEXPORT_TAG;
 

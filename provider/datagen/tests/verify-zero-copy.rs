@@ -46,7 +46,7 @@ fn main() {
     let selected_locales = icu_testdata::locales();
 
     let converter = DatagenProvider {
-        source: SourceData::internal_test_data(),
+        source: SourceData::internal_offline_latest_tested_subset(),
     }
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
