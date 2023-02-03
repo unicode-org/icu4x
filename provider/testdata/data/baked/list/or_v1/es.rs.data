@@ -1,20 +1,14 @@
 ::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -25,15 +19,11 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -44,27 +34,19 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -75,15 +57,11 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -94,27 +72,19 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -125,15 +95,11 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(" o ", 3u8),
         special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
                 ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
@@ -144,9 +110,7 @@
                     },
                 )
             },
-            pattern: unsafe {
-                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
-            },
+            pattern: ::icu_list::provider::ListJoinerPattern::from_parts(" u ", 3u8),
         }),
     },
 ])

@@ -522,7 +522,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
 
-                struct BakedDataProvider;
+                pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },
             false,
