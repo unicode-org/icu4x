@@ -632,33 +632,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-    - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
 
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
-    - name: Show the selected Rust toolchain
-      run: rustup show
+    # We don't expect to keep being clippy-clean on nightly Rust,
+    # so the "toolchain boilerplate" is deliberately omitted
+    # This just means we end up testing on the pinned stable even in the cronjob
+    # CI, which isn't that useful but specially omitting that task is more work than it's worth
 
     # Job-specific dependencies
-    - name: Install clippy
-      run: rustup component add clippy
+    - uses: actions-rs/toolchain@v1
+      with:
+          toolchain: 1.67
+          components: clippy
+          override: true
 
     # Actual job
     # Note: this does not use ci-job-clippy, as the GH Action can create code
