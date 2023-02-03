@@ -1,0 +1,378 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+##### README #####
+#
+# This CI workflow will run after a Pull Request is merged. The jobs in this
+# workflow are important to run on any code committed to the upstream
+# repository, but perhaps might be too expensive to run in the standard CI
+# workflow of common checks (`build-test.yml`).
+
+name: Post-merge Tasks and Checks
+
+# Invoke this workflow only after a PR request is merged.
+#
+# Note: we cannot make this workflow only run on upstream `main` and also wait
+# for the "Build and Test" workflow to finish successfully before starting
+# because adding triggers is a union of trigger conditions rather than the
+# intersection of constraints:
+# https://stackoverflow.com/questions/72557368/how-to-run-a-workflow-after-another-only-on-release
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  bench-perf:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-perf
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          - components/locid
+          - components/plurals
+          - components/datetime
+          - components/collections
+          - utils/fixed_decimal
+
+    # If you are modifying and debugging is required, don't be afraid to get
+    # messy in a personal fork, if no better way to do it.
+    # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Actual job
+
+    - name: Run benchmark
+      run: |
+        pushd $PWD && cd ${{ matrix.component }};
+        export REL_OUTPUT_PATH="`dirs +1`/benchmarks/perf/${{ matrix.component }}";
+        mkdir -p $REL_OUTPUT_PATH;
+        export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
+        export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
+        cargo bench --features bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks/perf
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/perf/${{ matrix.component }} benchmarks/perf
+
+    - name: Store benchmark result & create dashboard
+      uses: rhysd/github-action-benchmark@v1.15.0
+      with:
+        name: Rust Benchmark
+        tool: 'cargo'
+        output-file-path: ./benchmarks/perf/${{ matrix.component }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/perf/${{ matrix.component }}
+        # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
+        fail-on-alert: true
+        comment-on-alert: true
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+    - name: Upload new benchmark data
+      run: |
+          gsutil -m cp -r benchmarks/perf/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf
+
+  # Run examples with dhat-rs in order to collect memory heap size metrics. These
+  # metrics will then be charted over time. See tools/benchmark/memory/README.md for
+  # more information.
+
+  # dhat-rs:
+  #   https://github.com/nnethercote/dhat-rs
+  # Benchmarking action (forked):
+  #   https://github.com/gregtatum/github-action-benchmark
+  # The memory data is collected in:
+  #   benchmarks/memory/{os}/output.ndjson
+  # The full data report is stored in:
+  #   benchmarks/memory/{os}/{example}-dhat-heap.json
+
+  bench-memory:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-memory
+    strategy:
+      # Create a matrix of all platforms, and all components. Each job then can run
+      # multiple examples in that job. The examples are defined as a space separated
+      # list of the name of the examples. The examples are assumed to be in the
+      # examples folder.
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        # The list of examples to run, with the form {package}/{example}.
+        #
+        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
+        # entry. It is using the block chomping indicator ">-", which means the multiline string
+        # will be joined together into one line using a single space between each line. This
+        # will place all of the examples on the same line so they can get passed to the
+        # icu_benchmark_memory cli.
+        examples:
+          - >-
+              icu_calendar/iso_date_manipulations
+              icu_calendar/iso_datetime_manipulations
+              icu_datetime/work_log
+              icu_list/and_list
+              icu_locid/syntatically_canonicalize_locales
+              icu_locid/filter_langids
+              icu_plurals/unread_emails
+              icu_plurals/elevator_floors
+              icu_collections/unicode_bmp_blocks_selector
+              fixed_decimal/permyriad
+              writeable/writeable_message
+              litemap/language_names_lite_map
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Actual job
+
+    - name: Run the example with dhat-rs to collect memory information
+      run: |
+        # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+
+    - name: Store benchmark result & create dashboard
+      # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
+      # If the PR gets merged, this can be switched back to the main project.
+      # https://github.com/rhysd/github-action-benchmark/pull/54
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        name: Heap – ${{ matrix.os }}
+        # The ndjson tool is only supported by the gregtatum fork of github-action-benchmark.
+        tool: 'ndjson'
+        benchmark-data-dir-path: ./benchmarks/memory/${{ matrix.os }}
+        output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
+
+    - name: Upload new benchmark data
+      run: |
+          gsutil -m cp -r benchmarks/memory/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory
+
+  # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
+  bench-binsize:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-binsize
+    strategy:
+      matrix:
+        type: [wasm, gz]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Job-specific dependencies
+    - name: Install prerequisites for wasm build
+      run: |
+        rustup toolchain list
+        rustup toolchain install $INSTALLED_NIGHTLY_VERSION
+        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
+
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install npm tools
+      run: |
+        npm install -g wabt
+        npm install -g wasm-opt
+    
+    - name: Attempt to load cached twiggy
+      uses: actions/cache@v3
+      id: twiggy-cache
+      with:
+        path: |
+          ~/.cargo/bin/twiggy
+          ~/.cargo/bin/twiggy.exe
+        key: ${{ runner.os }}-twiggy-0.7
+    - name: Install twiggy
+      if: steps.twiggy-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: install
+        args: twiggy --version 0.7.0
+
+    # Actual job
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/binsize/${{ matrix.type }}
+
+    - name: Build wasm executables
+      run: cargo make wasm-examples
+
+    - name: gzip wasm executables if requested
+      if: ${{ matrix.type == 'gz' }}
+      run: (cd wasmpkg/wasm-opt && gzip *+opt.wasm)
+
+    - name: Measure size of executables
+      run: |
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt ${{ matrix.type }} | tee benchmarks/binsize/${{ matrix.type }}/output.txt
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks/binsize
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
+
+    - name: Store benchmark result & create dashboard
+      # Only for PRs that merge into the ICU4X mainline.
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/${{ matrix.type }}/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/${{ matrix.type }}
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Upload new benchmark data
+      run: |
+          gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
+
+  # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
+  bench-datasize:
+    # This is too expensive to run on every push, so only run it on main.
+    # Remove this line to debug.
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-datasize
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/datasize
+
+    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
+      run: |
+        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
+
+    - name:  Download previous benchmark data
+      run: |
+        mkdir -p benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/datasize benchmarks
+
+    - name: Store benchmark result & create dashboard
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/datasize/output.txt
+        benchmark-data-dir-path: ./benchmarks/datasize
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '100%'
+        fail-on-alert: true
+        comment-on-alert: true
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Upload new benchmark data
+      run: |
+          gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
+
+  gh-pages:
+    name: "Copy artifacts to gh-pages branch"
+    needs: [docs, ffi-docs, webpack, bench-perf, bench-binsize, bench-memory, bench-datasize]
+    # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
+    if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
+    runs-on: 'ubuntu-latest'
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      - name: Download artifacts
+        run: |
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
+          mkdir -p tools/website-skeleton/docs/ffi
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'tools/website-skeleton'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
