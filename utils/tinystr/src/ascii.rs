@@ -729,7 +729,7 @@ mod test {
             };
             let expected = reference_f(&s);
             let actual = tinystr_f(t);
-            assert_eq!(expected, actual, "TinyAsciiStr<{}>: {:?}", N, s);
+            assert_eq!(expected, actual, "TinyAsciiStr<{N}>: {s:?}");
         }
     }
 

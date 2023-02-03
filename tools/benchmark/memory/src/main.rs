@@ -66,7 +66,7 @@ fn process_cli_args() -> ProcessedArgs {
                     .chars()
                     .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
                 {
-                    panic!("An example had an unexpected character \"{:?}\"", example);
+                    panic!("An example had an unexpected character \"{example:?}\"");
                 }
                 example.to_string()
             })
@@ -161,10 +161,7 @@ fn main() {
 
     // Make the directory: benchmarks/memory/{os}
     fs::create_dir_all(&benchmark_dir).unwrap_or_else(|err| {
-        panic!(
-            "Unable to create the benchmark directory {:?} {:?}",
-            benchmark_dir, err
-        );
+        panic!("Unable to create the benchmark directory {benchmark_dir:?} {err:?}");
     });
 
     // benchmarks/memory/{os}/output.ndjson
@@ -176,10 +173,7 @@ fn main() {
 
     if benchmark_output_path.exists() {
         fs::remove_file(&benchmark_output_path).unwrap_or_else(|err| {
-            panic!(
-                "Could not remove the file: {:?} {:?}",
-                benchmark_output_path, err
-            );
+            panic!("Could not remove the file: {benchmark_output_path:?} {err:?}");
         });
     }
 
@@ -187,14 +181,14 @@ fn main() {
         let (package_name, example) = {
             // Split up the "package_name/example" string.
             let parts: Vec<&str> = package_example.split('/').collect();
-            if parts.len() != 2 {
+            if let &[first, second] = &parts[..] {
+                (first, second)
+            } else {
                 eprintln!(
-                    "An example is expected take the form package_name/example: {:?}",
-                    package_example
+                    "An example is expected take the form package_name/example: {package_example:?}"
                 );
                 process::exit(1);
             }
-            (*parts.get(0).unwrap(), *parts.get(1).unwrap())
         };
 
         let package = match metadata
@@ -204,10 +198,7 @@ fn main() {
         {
             Some(p) => p,
             None => {
-                eprintln!(
-                    "Unable to find the metadata for the package_name: {:?}",
-                    package_name
-                );
+                eprintln!("Unable to find the metadata for the package_name: {package_name:?}");
                 process::exit(1);
             }
         };
@@ -219,7 +210,7 @@ fn main() {
             .open(&benchmark_output_path)
             .expect("Unable to open the benchmark output file for write.");
 
-        println!("[memory] Starting example {:?}", example);
+        println!("[memory] Starting example {example:?}");
 
         let mut run_example = Command::new("rustup")
             .arg("run")
@@ -243,7 +234,7 @@ fn main() {
             .stderr(Stdio::piped())
             .spawn()
             .unwrap_or_else(|err| {
-                eprintln!("The example {:?} failed to run. {:?}", example, err);
+                eprintln!("The example {example:?} failed to run. {err:?}");
                 process::exit(1);
             });
 
@@ -255,7 +246,7 @@ fn main() {
         let dhat_log: Vec<_> = BufReader::new(stdout)
             .lines()
             .map(|s| s.expect("Unable to read from stderr."))
-            .inspect(|s| println!("[memory] > {}", s))
+            .inspect(|s| println!("[memory] > {s}"))
             .filter(|s| s.starts_with("dhat: "))
             .collect();
 
@@ -265,8 +256,7 @@ fn main() {
 
         if !status.success() {
             eprintln!(
-                "The example \"{}\" had a non-zero exit code: {:?}",
-                example,
+                "The example \"{}\" had a non-zero exit code: {example:?}",
                 status.code().expect("An example could not be run.")
             );
             process::exit(1);
@@ -274,8 +264,7 @@ fn main() {
 
         if dhat_log.is_empty() {
             eprintln!(
-                "The {:?} example needs to be instrumented with icu_benchmark_macros.",
-                example
+                "The {example:?} example needs to be instrumented with icu_benchmark_macros."
             );
             process::exit(1);
         }
@@ -293,17 +282,14 @@ fn main() {
 
         let output = format!(
             "{}\n{}\n{}\n",
-            write_json(
-                total,
-                format!("{} – Total Heap Allocations", package_example)
-            ),
+            write_json(total, format!("{package_example} – Total Heap Allocations")),
             write_json(
                 gmax,
-                format!("{} – Heap at Global Memory Max", package_example)
+                format!("{package_example} – Heap at Global Memory Max")
             ),
             write_json(
                 end,
-                format!("{} – Heap at End of Program Execution", package_example)
+                format!("{package_example} – Heap at End of Program Execution")
             ),
         );
 
@@ -313,7 +299,7 @@ fn main() {
 
         let dhat_destination = {
             let mut path = benchmark_dir.clone();
-            path.push(format!("{}-dhat-heap.json", example));
+            path.push(format!("{example}-dhat-heap.json"));
             path
         };
 
@@ -324,10 +310,10 @@ fn main() {
             path
         };
 
-        fs::rename(&dhat_source, &dhat_destination).expect("Unable to move the dhat-heap.json");
+        fs::rename(dhat_source, &dhat_destination).expect("Unable to move the dhat-heap.json");
 
-        println!("[memory] Memory log:  {:?}", benchmark_output_path);
-        println!("[memory] dhat file:   {:?}", dhat_destination);
+        println!("[memory] Memory log:  {benchmark_output_path:?}");
+        println!("[memory] dhat file:   {dhat_destination:?}");
         println!("[memory] Viewable in: https://nnethercote.github.io/dh_view/dh_view.html");
     }
 }

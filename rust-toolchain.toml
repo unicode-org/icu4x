@@ -2,11 +2,6 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-[package]
-name = "icu_benchmark_binsize"
-version = "0.0.0"
-publish = false
-edition = "2021"
-
-[dependencies]
-cargo_metadata = "0.13"
+[toolchain]
+# Version updated on 2022-05-23
+channel = "1.61"

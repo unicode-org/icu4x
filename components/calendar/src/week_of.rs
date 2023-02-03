@@ -468,15 +468,12 @@ mod tests {
                         for (index, expected_week_of) in expected.iter().enumerate() {
                             let day = index + 1;
                             assert_eq!(
-                        unit.relative_week(&calendar, day as u16),
-                        *expected_week_of,
-                        "For the {}/{} starting on IsoWeekday {} using start_of_week {} & min_week_days {}",
-                        day,
-                        unit_duration,
-                        start_of_unit,
-                        start_of_week,
-                        min_week_days
-                    );
+                                unit.relative_week(&calendar, day as u16),
+                                *expected_week_of,
+                                "For the {day}/{unit_duration} starting on IsoWeekday \
+                        {start_of_unit} using start_of_week {start_of_week} \
+                        & min_week_days {min_week_days}"
+                            );
                         }
                     }
                 }
