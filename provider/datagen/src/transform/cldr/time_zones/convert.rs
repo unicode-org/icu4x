@@ -142,7 +142,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                                             .exemplar_city()
                                             .map(|city| vec![(bcp47, city)])
                                             .unwrap_or_default(),
-                                        None => panic!("Cannot find bcp47 for {:?}.", key),
+                                        None => panic!("Cannot find bcp47 for {key:?}."),
                                     }
                                 }
                                 LocationOrSubRegion::SubRegion(region) => region
@@ -155,7 +155,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                                             Some(bcp47) => {
                                                 place.exemplar_city().map(|city| (bcp47, city))
                                             }
-                                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
                                     })
                                     .collect::<Vec<_>>(),
@@ -181,7 +181,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                             Some(bcp47) => {
                                 vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
                             }
-                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                            None => panic!("Cannot find bcp47 for {key:?}."),
                         },
                         ZonePeriod::LocationOrSubRegion(place) => place
                             .iter()
@@ -199,7 +199,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                                     meta_zone_id_data.clone(),
                                                 )]
                                             }
-                                            None => panic!("Cannot find bcp47 for {:?}.", key),
+                                            None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
                                     }
                                     MetaLocationOrSubRegion::SubRegion(subregion) => subregion
@@ -216,7 +216,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                                         meta_zone_id_data.clone(),
                                                     )]
                                                 }
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         })
                                         .collect::<Vec<_>>(),
@@ -264,8 +264,7 @@ macro_rules! long_short_impls {
                                             )
                                         } else {
                                             panic!(
-                                                "Cannot find short id of meta zone for {:?}.",
-                                                key
+                                                "Cannot find short id of meta zone for {key:?}."
                                             )
                                         }
                                     }
@@ -293,7 +292,7 @@ macro_rules! long_short_impls {
                                                     .and_then(|zf| type_fallback(&zf).cloned())
                                                     .map(|format| vec![(bcp47, format)])
                                                     .unwrap_or_default(),
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
                                         LocationOrSubRegion::SubRegion(region) => region
@@ -308,7 +307,7 @@ macro_rules! long_short_impls {
                                                         .and_then(|zf| type_fallback(&zf).cloned())
                                                         .map(|format| (bcp47, format)),
                                                     None => {
-                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                        panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
                                             })
@@ -349,8 +348,7 @@ macro_rules! long_short_impls {
                                             })
                                         } else {
                                             panic!(
-                                                "Cannot find short id of meta zone for {:?}.",
-                                                key
+                                                "Cannot find short id of meta zone for {key:?}."
                                             )
                                         }
                                     }
@@ -382,7 +380,7 @@ macro_rules! long_short_impls {
                                                             .map(|format| (bcp47.clone(), format))
                                                     })
                                                     .collect::<Vec<_>>(),
-                                                None => panic!("Cannot find bcp47 for {:?}.", key),
+                                                None => panic!("Cannot find bcp47 for {key:?}."),
                                             }
                                         }
                                         LocationOrSubRegion::SubRegion(region) => region
@@ -396,7 +394,7 @@ macro_rules! long_short_impls {
                                                         .$metazones_name()
                                                         .map(|format| (bcp47.clone(), format)),
                                                     None => {
-                                                        panic!("Cannot find bcp47 for {:?}.", key)
+                                                        panic!("Cannot find bcp47 for {key:?}.")
                                                     }
                                                 }
                                             })
@@ -430,10 +428,7 @@ fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
     match cldr_zone_variant {
         "standard" => ZoneVariant::standard(),
         "daylight" => ZoneVariant::daylight(),
-        _ => panic!(
-            "Time-zone variant was not compatible with ZoneVariant: {}",
-            cldr_zone_variant
-        ),
+        _ => panic!("Time-zone variant was not compatible with ZoneVariant: {cldr_zone_variant}"),
     }
 }
 

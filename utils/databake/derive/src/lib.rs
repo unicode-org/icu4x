@@ -46,7 +46,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
         fn parse(input: ParseStream<'_>) -> syn::parse::Result<Self> {
             let i: Ident = input.parse()?;
             if i != "path" {
-                return Err(input.error(format!("expected token \"path\", found {:?}", i)));
+                return Err(input.error(format!("expected token \"path\", found {i:?}")));
             }
             input.parse::<Token![=]>()?;
             Ok(Self(input.parse::<Path>()?.segments))

@@ -159,7 +159,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtags
             let script = maximized.script.expect("maximized");
             let region = maximized.region.expect("maximized");
             if minimized.script.is_some() {
-                assert!(minimized.region.is_none(), "{:?}", minimized);
+                assert!(minimized.region.is_none(), "{minimized:?}");
                 let region_for_lang = l2r.get_copied(&language.into()).unwrap_or(DEFAULT_REGION);
                 if region != region_for_lang {
                     ls2r.insert(&language.into(), &script.into(), &region);

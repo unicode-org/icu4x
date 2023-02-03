@@ -209,7 +209,7 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
         "ZW" => LineBreak::ZWSpace,
         "ZWJ" => LineBreak::ZWJ,
         _ => {
-            panic!("Invalid property name: {}", name)
+            panic!("Invalid property name: {name}")
         }
     }
 }
@@ -333,7 +333,7 @@ impl crate::DatagenProvider {
                         // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
                         // Katakana will use UAX#29 rules instead of dictionary.
 
-                        let prop = get_word_segmenter_value_from_name(&*p.name);
+                        let prop = get_word_segmenter_value_from_name(&p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if wb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
@@ -356,7 +356,7 @@ impl crate::DatagenProvider {
                             continue;
                         }
 
-                        let prop = get_grapheme_segmenter_value_from_name(&*p.name);
+                        let prop = get_grapheme_segmenter_value_from_name(&p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if gb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
@@ -366,7 +366,7 @@ impl crate::DatagenProvider {
                     }
 
                     "sentence" => {
-                        let prop = get_sentence_segmenter_value_from_name(&*p.name);
+                        let prop = get_sentence_segmenter_value_from_name(&p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if sb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
@@ -440,7 +440,7 @@ impl crate::DatagenProvider {
                             continue;
                         }
 
-                        let prop = get_line_segmenter_value_from_name(&*p.name);
+                        let prop = get_line_segmenter_value_from_name(&p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if lb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;

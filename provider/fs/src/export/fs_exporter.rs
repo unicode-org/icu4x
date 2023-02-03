@@ -123,7 +123,7 @@ impl DataExporter for FilesystemExporter {
         path_buf.set_extension(self.manifest.file_extension);
 
         if let Some(parent_dir) = path_buf.parent() {
-            fs::create_dir_all(&parent_dir)
+            fs::create_dir_all(parent_dir)
                 .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
         }
 
@@ -171,7 +171,7 @@ impl DataExporter for FilesystemExporter {
             );
             for line in fingerprints {
                 use std::io::Write;
-                writeln!(file, "{}", line)?;
+                writeln!(file, "{line}")?;
             }
         }
         Ok(())

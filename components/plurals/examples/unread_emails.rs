@@ -19,7 +19,7 @@ fn print(_input: &str, _value: Option<usize>) {
     if let Some(value) = _value {
         println!("{}", _input.replace("{}", &value.to_string()));
     } else {
-        println!("{}", _input);
+        println!("{_input}");
     }
 }
 

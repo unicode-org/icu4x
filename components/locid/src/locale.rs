@@ -323,7 +323,7 @@ impl Locale {
                 }
             }
         }
-        iter.next() == None
+        iter.next().is_none()
     }
 
     #[doc(hidden)]

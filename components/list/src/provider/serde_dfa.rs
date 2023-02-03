@@ -102,7 +102,7 @@ impl<'data> SerdeDFA<'data> {
         // Verify safety invariant
         DFA::from_bytes(&dfa_bytes).map_err(|e| {
             use serde::de::Error;
-            D::Error::custom(alloc::format!("Invalid DFA bytes: {}", e))
+            D::Error::custom(alloc::format!("Invalid DFA bytes: {e}"))
         })?;
 
         Ok(Some(SerdeDFA {

@@ -341,7 +341,7 @@ pub fn datagen(
         .collect::<Result<Vec<_>, DataError>>()?;
 
     let provider: Box<dyn ExportableProvider> = match locales {
-        Some(&[]) => Box::new(EmptyDataProvider::default()),
+        Some(&[]) => Box::<EmptyDataProvider>::default(),
         Some(locales) => Box::new(
             DatagenProvider {
                 source: source.clone(),

@@ -121,7 +121,7 @@ where
 
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Box<T> {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[T::as_byte_slice(&*self)])
+        cb(&[T::as_byte_slice(self)])
     }
 }
 
@@ -138,7 +138,7 @@ where
     T: ULE,
 {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
-        cb(&[<[T] as VarULE>::as_byte_slice(&*self)])
+        cb(&[<[T] as VarULE>::as_byte_slice(self)])
     }
 }
 

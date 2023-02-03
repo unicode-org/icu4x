@@ -271,7 +271,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             } else {
                 return self.trie_error_val_index();
             };
-            data_block = ((data_block << (2 + (2 * index3_pos))) as u32 & 0x30000) as u32;
+            data_block = (data_block << (2 + (2 * index3_pos))) & 0x30000;
             index3_block += 1;
             data_block =
                 if let Some(index3_val) = self.index.get((index3_block + index3_pos) as usize) {
