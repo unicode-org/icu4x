@@ -28,6 +28,11 @@ name: Artifacts Build
 on:
   push
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   credentials:
     name: "Check Credentials"
@@ -63,7 +68,17 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --workspace --release --all-features --no-deps
+        # Exclude tool and derive crates
+        args: >
+          --workspace --release --all-features --no-deps --lib 
+          --exclude icu_benchmark_macros
+          --exclude icu_ffi_coverage
+          --exclude icu_provider_macros
+          --exclude tutorials-test
+          --exclude databake-derive
+          --exclude yoke-derive
+          --exclude zerofrom-derive
+          --exclude zerovec-derive
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs
@@ -180,43 +195,42 @@ jobs:
         echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
         echo "::endgroup::"
 
-    #   TODO(qnnokabayashi): This was my attempt to get it to copy the HTML to
-    #     the `gh-pages` branch. As of 8/1/2022, idea is that
-    #     `index.html` contains the structure for
-    #     the demo. It needs to call into the Webpacked JavaScript. When testing
-    #     locally, this content is in `dist/`, but
-    #     when deployed, it lives in Google Cloud Storage. But we don't want to
-    #     be editing this arbitrarily complex HTML file in CI. The solution was
-    #     to have it call a very simple `index.js` file which modifies the HTML
-    #     and tells it where to get the script from. Locally, this lives next to
-    #     `index.html` at `index.js`, and contains
-    #     the following:
-    #       ```js
-    #       const gcs = document.createElement('script');
-    #       gcs.setAttribute('src', './dist/bundle.js');
-    #       document.body.appendChild(gcs);
-    #       ```
-    #     The plan was to rewrite this file in CI to point into GCS instead of
-    #     `./dist/bundle.js`, and then commit and push the original `index.html`
-    #     and this new `index.js` to the `gh-pages` branch. That way, when a
-    #     browser visited the Github page, `index.html` would read `index.js`,
-    #     which would then point the browser to get `bundle.js` from GCS.
-    #     
-    #     This was my attempt to make that work, but I couldn't quite figure out
-    #     how to push to `gh-pages`.
-    #     
-    # - name: Store index.html
-    #   run: |
-    #     cp index.html /tmp/wasm-demo-index.html
-    # - name: Checkout gh-pages
-    #   uses: actions/checkout@v3
-    #   with:
-    #     ref: gh-pages
-    # - name: Retrieve index.html
-    #   run: |
-    #     rm -rf wasm-demo-app
-    #     mkdir wasm-demo-app
-    #     printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo-app/index.js
-    #     cp /tmp/wasm-demo-index.html wasm-demo-app/index.html
-    #     git diff-index --quiet HEAD || git commit -m "add wasm demo for ${{ github.sha }}"
-    #     git push
+  gh-pages:
+    name: "Copy artifacts to gh-pages branch"
+    needs: [docs, ffi-docs, webpack]
+    # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
+    if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
+    runs-on: 'ubuntu-latest'
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      # We cannot block this job on the benchmark jobs, so the benchmarks might be
+      # from the previous commit.
+      - uses: actions/checkout@v3
+        with:
+          ref: merged-bench-data
+      - name: Copy benchmark data
+        run: cp -r benchmarks ..
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+      - name: Copy benchmark data
+        run: mv ../benchmarks/* tools/website-skeleton/benchmarks/
+      - name: Download artifacts
+        run: |
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
+          mkdir -p tools/website-skeleton/docs/ffi
+          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'tools/website-skeleton'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
