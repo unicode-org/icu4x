@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675364687485,
+  "lastUpdate": 1675416015383,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35063,6 +35063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/af55f9a72a9cbf21215f5ce479bc1b138712ded6"
         },
         "date": 1675364589474,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5c3c204ae299f810da05dd2752be6e28470139de",
+          "message": "Publishing artifacts to GH pages (#3068)",
+          "timestamp": "2023-02-03T10:17:16+01:00",
+          "tree_id": "46a9e65690f8a2972eacc6ec6c1ef005aa9924d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/5c3c204ae299f810da05dd2752be6e28470139de"
+        },
+        "date": 1675415923422,
         "tool": "ndjson",
         "benches": [
           {
