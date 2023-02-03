@@ -6,7 +6,7 @@
 name = "icu_capi_gn"
 publish = false
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.

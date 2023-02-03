@@ -159,7 +159,7 @@ rust_library("fixed_decimal-v0_5_2") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=241956b00fc85d9b",
     "-Cextra-filename=-241956b00fc85d9b",
     "--cfg=feature=\"ryu\"",
@@ -192,7 +192,7 @@ rust_library("icu-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=2f550ab455e7aa02",
     "-Cextra-filename=-2f550ab455e7aa02",
   ]
@@ -217,7 +217,7 @@ rust_library("icu_calendar-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=7c47bf56d63a9b64",
     "-Cextra-filename=-7c47bf56d63a9b64",
   ]
@@ -289,7 +289,7 @@ rust_library("icu_collator-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=4efb7954b1595003",
     "-Cextra-filename=-4efb7954b1595003",
   ]
@@ -344,7 +344,7 @@ rust_library("icu_datetime-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=ff79965a72a92201",
     "-Cextra-filename=-ff79965a72a92201",
   ]
@@ -368,7 +368,7 @@ rust_library("icu_decimal-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=359d9c71d0cca475",
     "-Cextra-filename=-359d9c71d0cca475",
   ]
@@ -391,7 +391,7 @@ rust_library("icu_list-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=2421a0eb6b506715",
     "-Cextra-filename=-2421a0eb6b506715",
   ]
@@ -440,7 +440,7 @@ rust_library("icu_locid_transform-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=d0310634775346a0",
     "-Cextra-filename=-d0310634775346a0",
     "--cfg=feature=\"default\"",
@@ -469,7 +469,7 @@ rust_library("icu_normalizer-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=cb2d96f831f779c5",
     "-Cextra-filename=-cb2d96f831f779c5",
   ]
@@ -493,7 +493,7 @@ rust_library("icu_plurals-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=f91e36d075695ff8",
     "-Cextra-filename=-f91e36d075695ff8",
   ]
@@ -517,7 +517,7 @@ rust_library("icu_properties-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=2e83b566ba17ced",
     "-Cextra-filename=-2e83b566ba17ced",
     "--cfg=feature=\"bidi\"",
@@ -570,7 +570,7 @@ rust_library("icu_provider_adapters-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=dd4f29d86cd1f170",
     "-Cextra-filename=-dd4f29d86cd1f170",
   ]
@@ -592,7 +592,7 @@ rust_proc_macro("icu_provider_macros-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=cd4374fa4111bd2a",
     "-Cextra-filename=-cd4374fa4111bd2a",
   ]
@@ -619,7 +619,7 @@ rust_library("icu_segmenter-v0_8_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=fa9b09bff56d0368",
     "-Cextra-filename=-fa9b09bff56d0368",
     "--cfg=feature=\"auto\"",
@@ -647,7 +647,7 @@ rust_library("icu_timezone-v1_1_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=8563e9f6ae58a72e",
     "-Cextra-filename=-8563e9f6ae58a72e",
   ]
@@ -1335,7 +1335,7 @@ rust_library("writeable-v0_5_1") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=9190723fc4430022",
     "-Cextra-filename=-9190723fc4430022",
   ]
@@ -1358,7 +1358,7 @@ rust_library("yoke-v0_7_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=e90a73c077e69b1c",
     "-Cextra-filename=-e90a73c077e69b1c",
     "--cfg=feature=\"alloc\"",
@@ -1385,7 +1385,7 @@ rust_proc_macro("yoke-derive-v0_7_0") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=3e9c672e07d044e2",
     "-Cextra-filename=-3e9c672e07d044e2",
   ]
@@ -1405,7 +1405,7 @@ rust_library("zerofrom-v0_1_1") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=56fba0d18203917b",
     "-Cextra-filename=-56fba0d18203917b",
     "--cfg=feature=\"alloc\"",
@@ -1431,7 +1431,7 @@ rust_proc_macro("zerofrom-derive-v0_1_1") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=7fcf3b875300006b",
     "-Cextra-filename=-7fcf3b875300006b",
   ]
@@ -1478,7 +1478,7 @@ rust_proc_macro("zerovec-derive-v0_9_3") {
 
   rustflags = [
     "--cap-lints=allow",
-    "--edition=2018",
+    "--edition=2021",
     "-Cmetadata=4d58846cb210946f",
     "-Cextra-filename=-4d58846cb210946f",
   ]

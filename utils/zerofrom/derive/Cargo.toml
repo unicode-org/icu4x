@@ -11,7 +11,7 @@ license = "Unicode-DFS-2016"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [package.metadata.workspaces]
 independent = true
