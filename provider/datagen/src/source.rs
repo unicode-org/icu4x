@@ -60,7 +60,7 @@ impl SourceData {
 
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
-    /// See [`LATEST_TESTED_CLDR_TAG`] and [`LATEST_TESTED_ICUEXPORT_TAG`].
+    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
     pub fn latest_tested() -> Self {
         Self::default()
             .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Full)
