@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675365320858,
+  "lastUpdate": 1675416691783,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -69989,6 +69989,120 @@ window.BENCHMARK_DATA = {
             "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
             "value": 142942,
             "range": "± 7593",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5c3c204ae299f810da05dd2752be6e28470139de",
+          "message": "Publishing artifacts to GH pages (#3068)",
+          "timestamp": "2023-02-03T10:17:16+01:00",
+          "tree_id": "46a9e65690f8a2972eacc6ec6c1ef005aa9924d3",
+          "url": "https://github.com/unicode-org/icu4x/commit/5c3c204ae299f810da05dd2752be6e28470139de"
+        },
+        "date": 1675416611299,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115243,
+            "range": "± 438",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22635,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 61934,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/22.50",
+            "value": 47,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/22.50",
+            "value": 33,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 81,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0012.3400",
+            "value": 47,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00.0012216734340",
+            "value": 91,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00002342561123400.0",
+            "value": 100,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/-00123400",
+            "value": 46,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/922337203685477580898230948203840239384.9823094820384023938423424",
+            "value": 391,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0.000000001",
+            "value": 49,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
+            "value": 131660,
+            "range": "± 197",
             "unit": "ns/iter"
           }
         ]
