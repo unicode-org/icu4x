@@ -144,6 +144,9 @@ fn main() {
     let blob: BTreeSet<_> = EXTRA_BLOB_DEPS.iter().copied().collect();
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
     let test: BTreeSet<_> = EXTRA_TEST_DEPS.iter().copied().collect();
+    // These tests are in a deliberate order such that the `dep_list_name_for_error`
+    // will be accurate, i.e. each test tests at most one extra array of data compared to the
+    // previous ones, so if a test fails it's obvious which array to update.
     test_dep_list("icu", "normal,no-proc-macro", "", &[&basic_runtime], "`BASIC_RUNTIME_DEPS`");
     test_dep_list("icu", "normal", "", &[&basic], "`BASIC_BUILD_DEPS`");
     test_dep_list(
