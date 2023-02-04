@@ -135,7 +135,7 @@ impl BakedDataExporter {
         } else {
             &formatted
         };
-        std::fs::create_dir_all(&path.parent().unwrap())?;
+        std::fs::create_dir_all(path.parent().unwrap())?;
         let mut file = crlify::BufWriterWithLineEndingFix::new(
             File::create(&path).map_err(|e| DataError::from(e).with_path_context(&path))?,
         );
@@ -172,7 +172,7 @@ impl BakedDataExporter {
             .try_for_each(|(path, mods)| {
                 let mods = mods.into_iter().map(|p| p.parse::<TokenStream>().unwrap());
                 self.write_to_file(
-                    &path.join("mod"),
+                    path.join("mod"),
                     quote! {
                         #(
                             pub mod #mods;
@@ -275,7 +275,7 @@ impl DataExporter for BakedDataExporter {
                 syn::parse_str::<syn::Ident>(&file_name.to_ascii_uppercase().replace('-', "_"))
                     .unwrap();
             self.write_to_file(
-                &path.join(file_name),
+                path.join(file_name),
                 payload_bake_string.parse().unwrap(),
                 true,
             )?;
@@ -340,9 +340,11 @@ impl DataExporter for BakedDataExporter {
         let statics = statics.values();
 
         self.write_to_file(
-            &path.join("mod"),
+            path.join("mod"),
             quote! {
                 #feature
+
+                #![allow(clippy::octal_escapes)] // https://github.com/dtolnay/proc-macro2/issues/363
 
                 type DataStruct = #struct_type;
 

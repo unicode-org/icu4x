@@ -568,7 +568,7 @@ mod tests {
             &mut sink,
         )
         .unwrap();
-        println!("{}", sink);
+        println!("{sink}");
     }
 
     #[test]
@@ -599,7 +599,7 @@ mod tests {
                 format_number(
                     &mut s,
                     &fixed_decimal_format,
-                    FixedDecimal::from(*value as i32),
+                    FixedDecimal::from(*value),
                     *length,
                 )
                 .unwrap();

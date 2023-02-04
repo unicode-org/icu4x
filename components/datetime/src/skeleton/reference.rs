@@ -27,7 +27,7 @@ use smallvec::SmallVec;
 pub struct Skeleton(pub(crate) SmallVec<[fields::Field; 5]>);
 
 impl Skeleton {
-    pub(crate) fn fields_iter<'a>(&'a self) -> impl Iterator<Item = &Field> + 'a {
+    pub(crate) fn fields_iter(&self) -> impl Iterator<Item = &Field> {
         self.0.iter()
     }
 

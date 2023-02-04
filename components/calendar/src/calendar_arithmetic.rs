@@ -118,7 +118,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn months_in_year(&self) -> u8 {
-        C::months_for_every_year(self.year) as u8
+        C::months_for_every_year(self.year)
     }
 
     #[inline]

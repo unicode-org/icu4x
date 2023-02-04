@@ -85,7 +85,7 @@ unsafe impl VarZeroVecFormat for Index16 {
 
 unsafe impl VarZeroVecFormat for Index32 {
     const INDEX_WIDTH: usize = 4;
-    const MAX_VALUE: u32 = u32::MAX as u32;
+    const MAX_VALUE: u32 = u32::MAX;
     type RawBytes = RawBytesULE<4>;
     #[inline]
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
@@ -197,7 +197,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
-            len: len as u32,
+            len,
             indices: indices_bytes,
             things,
             entire_slice: slice,
@@ -392,7 +392,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .copied()
             .map(F::rawbytes_to_usize)
             .collect::<Vec<_>>();
-        format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
+        format!("VarZeroVecComponents {{ indices: {indices:?} }}")
     }
 }
 

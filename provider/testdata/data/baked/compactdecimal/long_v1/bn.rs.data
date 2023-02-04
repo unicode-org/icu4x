@@ -2,25 +2,15 @@
     patterns: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[3u8, 5u8, 7u8, 12u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x07\x0C") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8,
-                    0u8,
-                ])
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0",
+                )
             },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[5u8, 5u8, 5u8, 5u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    4u8, 0u8, 0u8, 0u8, 0u8, 0u8, 18u8, 0u8, 30u8, 0u8, 45u8, 0u8, 3u8, 0u8,
-                    32u8, 224u8, 166u8, 185u8, 224u8, 166u8, 190u8, 224u8, 166u8, 156u8, 224u8,
-                    166u8, 190u8, 224u8, 166u8, 176u8, 5u8, 0u8, 32u8, 224u8, 166u8, 178u8,
-                    224u8, 166u8, 190u8, 224u8, 166u8, 150u8, 7u8, 0u8, 32u8, 224u8, 166u8,
-                    149u8, 224u8, 167u8, 139u8, 224u8, 166u8, 159u8, 224u8, 166u8, 191u8, 12u8,
-                    0u8, 32u8, 224u8, 166u8, 178u8, 224u8, 166u8, 190u8, 224u8, 166u8, 150u8,
-                    32u8, 224u8, 166u8, 149u8, 224u8, 167u8, 139u8, 224u8, 166u8, 159u8, 224u8,
-                    166u8, 191u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x04\0\0\0\0\0\x12\0\x1E\0-\0\x03\0 \xE0\xA6\xB9\xE0\xA6\xBE\xE0\xA6\x9C\xE0\xA6\xBE\xE0\xA6\xB0\x05\0 \xE0\xA6\xB2\xE0\xA6\xBE\xE0\xA6\x96\x07\0 \xE0\xA6\x95\xE0\xA7\x8B\xE0\xA6\x9F\xE0\xA6\xBF\x0C\0 \xE0\xA6\xB2\xE0\xA6\xBE\xE0\xA6\x96 \xE0\xA6\x95\xE0\xA7\x8B\xE0\xA6\x9F\xE0\xA6\xBF")
             },
         )
     },

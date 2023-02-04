@@ -2,45 +2,19 @@
     patterns: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[3u8, 6u8, 9u8, 12u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    3u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8, 9u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8,
-                    0u8,
-                ])
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\x06\0\0\0\t\0\0\0\x0C\0\0\0",
+                )
             },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    1u8, 4u8, 5u8, 1u8, 4u8, 5u8, 1u8, 4u8, 5u8, 1u8, 4u8, 5u8,
-                ])
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x01\x04\x05\x01\x04\x05\x01\x04\x05\x01\x04\x05",
+                )
             },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    12u8, 0u8, 0u8, 0u8, 0u8, 0u8, 15u8, 0u8, 28u8, 0u8, 43u8, 0u8, 60u8, 0u8,
-                    81u8, 0u8, 100u8, 0u8, 119u8, 0u8, 142u8, 0u8, 163u8, 0u8, 182u8, 0u8,
-                    205u8, 0u8, 3u8, 0u8, 32u8, 209u8, 130u8, 209u8, 139u8, 209u8, 129u8,
-                    209u8, 143u8, 209u8, 135u8, 208u8, 176u8, 3u8, 0u8, 32u8, 209u8, 130u8,
-                    209u8, 139u8, 209u8, 129u8, 209u8, 143u8, 209u8, 135u8, 3u8, 0u8, 32u8,
-                    209u8, 130u8, 209u8, 139u8, 209u8, 129u8, 209u8, 143u8, 209u8, 135u8,
-                    208u8, 184u8, 6u8, 0u8, 32u8, 208u8, 188u8, 208u8, 184u8, 208u8, 187u8,
-                    208u8, 187u8, 208u8, 184u8, 208u8, 190u8, 208u8, 189u8, 6u8, 0u8, 32u8,
-                    208u8, 188u8, 208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8,
-                    208u8, 190u8, 208u8, 189u8, 208u8, 190u8, 208u8, 178u8, 6u8, 0u8, 32u8,
-                    208u8, 188u8, 208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8,
-                    208u8, 190u8, 208u8, 189u8, 208u8, 176u8, 9u8, 0u8, 32u8, 208u8, 188u8,
-                    208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8, 208u8, 176u8,
-                    209u8, 128u8, 208u8, 180u8, 9u8, 0u8, 32u8, 208u8, 188u8, 208u8, 184u8,
-                    208u8, 187u8, 208u8, 187u8, 208u8, 184u8, 208u8, 176u8, 209u8, 128u8,
-                    208u8, 180u8, 208u8, 190u8, 208u8, 178u8, 9u8, 0u8, 32u8, 208u8, 188u8,
-                    208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8, 208u8, 176u8,
-                    209u8, 128u8, 208u8, 180u8, 208u8, 176u8, 12u8, 0u8, 32u8, 209u8, 130u8,
-                    209u8, 128u8, 208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8,
-                    208u8, 190u8, 208u8, 189u8, 12u8, 0u8, 32u8, 209u8, 130u8, 209u8, 128u8,
-                    208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8, 208u8, 190u8,
-                    208u8, 189u8, 208u8, 190u8, 208u8, 178u8, 12u8, 0u8, 32u8, 209u8, 130u8,
-                    209u8, 128u8, 208u8, 184u8, 208u8, 187u8, 208u8, 187u8, 208u8, 184u8,
-                    208u8, 190u8, 208u8, 189u8, 208u8, 176u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x0C\0\0\0\0\0\x0F\0\x1C\0+\0<\0Q\0d\0w\0\x8E\0\xA3\0\xB6\0\xCD\0\x03\0 \xD1\x82\xD1\x8B\xD1\x81\xD1\x8F\xD1\x87\xD0\xB0\x03\0 \xD1\x82\xD1\x8B\xD1\x81\xD1\x8F\xD1\x87\x03\0 \xD1\x82\xD1\x8B\xD1\x81\xD1\x8F\xD1\x87\xD0\xB8\x06\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\x06\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\xD0\xBE\xD0\xB2\x06\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\xD0\xB0\t\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xB0\xD1\x80\xD0\xB4\t\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xB0\xD1\x80\xD0\xB4\xD0\xBE\xD0\xB2\t\0 \xD0\xBC\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xB0\xD1\x80\xD0\xB4\xD0\xB0\x0C\0 \xD1\x82\xD1\x80\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\x0C\0 \xD1\x82\xD1\x80\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\xD0\xBE\xD0\xB2\x0C\0 \xD1\x82\xD1\x80\xD0\xB8\xD0\xBB\xD0\xBB\xD0\xB8\xD0\xBE\xD0\xBD\xD0\xB0")
             },
         )
     },

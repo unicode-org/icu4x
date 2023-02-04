@@ -62,7 +62,7 @@ const POSTCARD_HASHMAP: [u8; 176] = [
 fn generate() {
     let map = build_zeromap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 /// Run this function to print new data to the console.
@@ -71,7 +71,7 @@ fn generate() {
 fn generate_hashmap() {
     let map = build_hashmap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[cfg(feature = "generate")]
@@ -105,7 +105,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(indexify(&format!("{}{}", key, n)), indexify(value));
+                map.insert(indexify(&format!("{key}{n}")), indexify(value));
             }
         } else {
             map.insert(indexify(key), indexify(value));
@@ -185,7 +185,7 @@ fn build_hashmap(large: bool) -> HashMap<String, String> {
     for &(key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_owned());
+                map.insert(format!("{key}{n}"), value.to_owned());
             }
         } else {
             map.insert(key.to_owned(), value.to_owned());

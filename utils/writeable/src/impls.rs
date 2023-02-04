@@ -29,6 +29,7 @@ macro_rules! impl_write_num {
             }
 
             fn writeable_length_hint(&self) -> $crate::LengthHint {
+                #[allow(unstable_name_collisions)] // that's the idea
                 LengthHint::exact(self.checked_ilog10().unwrap_or(0) as usize + 1)
             }
         }
@@ -176,7 +177,7 @@ impl Writeable for String {
     }
 }
 
-impl<'a, T: Writeable + ?Sized> Writeable for &T {
+impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         (*self).write_to(sink)

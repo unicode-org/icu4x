@@ -26,12 +26,16 @@ struct CldrJsonDownloader<'a> {
     pub client: &'a reqwest::Client,
 }
 
-fn expand_paths(in_paths: &[&str]) -> Vec<String> {
+fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> Vec<String> {
     let mut paths = vec![];
     for pattern in in_paths {
         if pattern.contains("$LOCALES") {
             for locale in icu_testdata::locales().iter() {
-                paths.push(pattern.replace("$LOCALES", &locale.to_string()));
+                let mut string = locale.to_string();
+                if replace_hyphen_by_underscore {
+                    string = string.replace('-', "_");
+                }
+                paths.push(pattern.replace("$LOCALES", &string));
             }
             // Also add "root" for older CLDRs
             paths.push(pattern.replace("$LOCALES", "root"));
@@ -122,10 +126,10 @@ struct IcuExportDataUnzipper {
 
 impl IcuExportDataUnzipper {
     pub async fn unzip(&mut self, path: &str) -> eyre::Result<()> {
-        let mut zip_file = self
-            .zip_archive
-            .by_name(path)
-            .with_context(|| format!("Did not find file in zip: {:?}", &path))?;
+        let mut zip_file = match self.zip_archive.by_name(path) {
+            Ok(z) => z,
+            _ => return Ok(()), // the file might not exist for the locale
+        };
         let local_path = self.root_dir.join(path);
         fs::create_dir_all(local_path.parent().unwrap())
             .await
@@ -230,7 +234,7 @@ async fn main() -> eyre::Result<()> {
             )
         })?;
 
-    stream::iter(expand_paths(CLDR_JSON_GLOB))
+    stream::iter(expand_paths(CLDR_JSON_GLOB, false))
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {
             log::info!("Downloading: {}", path);
@@ -254,7 +258,7 @@ async fn main() -> eyre::Result<()> {
 
     let mut icued_unzipper = icued_downloader.download(&client).await?;
 
-    let all_paths = expand_paths(ICUEXPORTDATA_GLOB);
+    let all_paths = expand_paths(ICUEXPORTDATA_GLOB, true);
     for path in all_paths {
         log::info!("Unzipping: {}", path);
         icued_unzipper.unzip(&path).await?;
