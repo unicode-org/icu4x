@@ -15,7 +15,7 @@ struct DepSpec {
     crate_version: String,
 }
 
-/// Get the dependency list produced by `cargo tree -p {package} -e {edge_kind}`
+/// Get the deep (fully resolved) dependency list produced by `cargo tree -p {package} -e {edge_kind}`
 fn get_dep_list(package: &str, edge_kind: &str, extra_args: &str) -> Vec<DepSpec> {
     let mut cmd = Command::new("cargo");
     cmd.arg("tree")
