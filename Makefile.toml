@@ -29,16 +29,17 @@ category = "ICU4X Development"
 dependencies = [
     "ci-job-check",
     "check-no-features",
-    "fmt-check",
-    "clippy-all",
+    "ci-job-fmt",
+    "ci-job-clippy",
     "ci-job-tidy",
+    "ci-job-doc",
 ]
 
 [tasks.tidy]
 description = "Run fmt and other tidy checks"
 category = "ICU4X Development"
 dependencies = [
-    "fmt-check",
+    "ci-job-fmt",
     "ci-job-tidy",
 ]
 
@@ -76,9 +77,6 @@ dependencies = [
 ]
 
 [tasks.ci-job-full-datagen]
-# Note: ci-job-full-datagen is not actually invoked by CI and instead exists
-# for symmetry and predictability. CI instead uses a custom GitHub action
-# that allows it to download and cache the CLDR releases efficiently
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
@@ -112,7 +110,6 @@ category = "CI"
 dependencies = [
     "verify-gn-gen",
 ]
-
 
 [tasks.ci-job-features]
 description = "Run all tests for the CI 'features' job"
@@ -155,22 +152,38 @@ dependencies = [
     "clippy-all",
 ]
 
+[tasks.ci-job-doc]
+description = "Runs rustdoc generation for the CI 'doc' job"
+category = "CI"
+env = { RUSTFLAGS = "-Dwarnings" }
+command = "cargo"
+args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib"]
+
 [tasks.ci-all]
 # Note that updating this list will not update what is run on CI,
 # it simply exists as a shortcut to run everything locally
 description = "Locally run all CI jobs"
 category = "ICU4X Development"
 dependencies = [
+    # make quick
     "ci-job-check",
-    "ci-job-tidy",
     "ci-job-fmt",
-    "ci-job-features",
-    "ci-job-test",
-    "ci-job-wasm",
-
-    # Note: CI doesn't call these directly
     "ci-job-clippy",
-    "ci-job-full-data",
+    "ci-job-tidy",
+    "ci-job-doc",
+
+    # Get a coffee
+    "ci-job-test",
+    "ci-job-test-docs",
+    "ci-job-testdata",
+    "ci-job-features",
+    "ci-job-full-datagen",
+
+    # Needs tools other than Cargo to be installed
+    "ci-job-ffi",
+    "ci-job-wasm",
+    "ci-job-verify-ffi",
+    "ci-job-gn",
 
     # benchmarking and coverage jobs not included
 ]
