@@ -101,7 +101,3 @@ required-features = ["bin"]
 [[test]]
 name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
-
-[package.metadata.cargo-all-features]
-# Disable check-all-features, as the bin feature is purely additive.
-skip_feature_sets = [[]]

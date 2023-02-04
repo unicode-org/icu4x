@@ -33,10 +33,6 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  GCP_PROJECT_ID: "dev-infra-273822"
-  GCP_BUCKET_ID: "icu4x-pr-artifacts"
-
 jobs:
   credentials:
     name: "Check Credentials"
@@ -51,11 +47,13 @@ jobs:
           echo "GCP key not found. Docs previews will not be uploaded. If you are a frequent contributor, you may add the key to your fork; for instructions, see 'artifacts-build.yml'"
           exit 1;
         fi
-
   docs:
     name: "Docs Preview"
     needs: credentials
     runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
     - uses: actions/checkout@v3
     - name: Load the default Rust toolchain via the rust-toolchain file.
@@ -94,6 +92,9 @@ jobs:
     name: "FFI Preview"
     needs: credentials
     runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
     - uses: actions/checkout@v3
     - name: Authenticate to Google Cloud
@@ -135,12 +136,12 @@ jobs:
         echo "::endgroup::"
 
   webpack:
-    # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
     - uses: actions/checkout@v3
 
@@ -193,3 +194,43 @@ jobs:
         echo "::group::Wasm Demo Preview"
         echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
         echo "::endgroup::"
+
+  gh-pages:
+    name: "Copy artifacts to gh-pages branch"
+    needs: [docs, ffi-docs, webpack]
+    # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
+    if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
+    runs-on: 'ubuntu-latest'
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      # We cannot block this job on the benchmark jobs, so the benchmarks might be
+      # from the previous commit.
+      - uses: actions/checkout@v3
+        with:
+          ref: merged-bench-data
+      - name: Copy benchmark data
+        run: cp -r benchmarks ..
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+      - name: Copy benchmark data
+        run: mv ../benchmarks/* tools/website-skeleton/benchmarks/
+      - name: Download artifacts
+        run: |
+          gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
+          mkdir -p tools/website-skeleton/docs/ffi
+          gsutil -m cp -r  gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo tools/website-skeleton/ || true
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'tools/website-skeleton'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

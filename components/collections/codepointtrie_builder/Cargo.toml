@@ -56,7 +56,3 @@ features = [
 
 [dev-dependencies]
 icu = { path = "../../icu" }
-
-[package.metadata.cargo-all-features]
-# No features, so disable cargo-all-features
-skip_feature_sets = [[]]
