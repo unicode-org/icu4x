@@ -147,7 +147,13 @@ fn main() {
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
     // will be accurate, i.e. each test tests at most one extra array of data compared to the
     // previous ones, so if a test fails it's obvious which array to update.
-    test_dep_list("icu", "normal,no-proc-macro", "", &[&basic_runtime], "`BASIC_RUNTIME_DEPS`");
+    test_dep_list(
+        "icu",
+        "normal,no-proc-macro",
+        "",
+        &[&basic_runtime],
+        "`BASIC_RUNTIME_DEPS`",
+    );
     test_dep_list("icu", "normal", "", &[&basic], "`BASIC_BUILD_DEPS`");
     test_dep_list(
         "icu",
@@ -198,14 +204,7 @@ fn main() {
         "icu_capi",
         "normal",
         "",
-        &[
-            &basic,
-            &serde,
-            &experimental,
-            &lstm,
-            &ryu,
-            &capi,
-        ],
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi],
         "`EXTRA_CAPI_BUILD_DEPS`",
     );
 
@@ -213,15 +212,7 @@ fn main() {
         "icu_capi",
         "normal",
         "--features buffer_provider",
-        &[
-            &basic,
-            &serde,
-            &experimental,
-            &lstm,
-            &ryu,
-            &capi,
-            &blob,
-        ],
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &blob],
         "`EXTRA_BLOB_DEPS`",
     );
     test_dep_list(
@@ -244,15 +235,7 @@ fn main() {
         "icu_capi",
         "normal",
         "--features provider_test",
-        &[
-            &basic,
-            &serde,
-            &experimental,
-            &lstm,
-            &ryu,
-            &capi,
-            &test,
-        ],
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &test],
         "`EXTRA_TEST_DEPS`",
     );
     test_dep_list(
