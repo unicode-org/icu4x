@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675477163475,
+  "lastUpdate": 1675531694855,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35273,6 +35273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/241833f435ac19f97497229226bd4f6eea9590fd"
         },
         "date": 1675477080368,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "50e0544e25b9602ee8ea2ee6ebad0be4ceed07b0",
+          "message": "Revert \"CI goes vroom (#3070)\" (#3084)\n\nThis reverts commit 0054b3675ea90c6865781650d2eb84e2c44ebeab.",
+          "timestamp": "2023-02-04T09:25:00-08:00",
+          "tree_id": "0045628ac683db9bda50760c8dc5a573244092d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/50e0544e25b9602ee8ea2ee6ebad0be4ceed07b0"
+        },
+        "date": 1675531597688,
         "tool": "ndjson",
         "benches": [
           {
