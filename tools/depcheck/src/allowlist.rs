@@ -5,11 +5,10 @@
 //! These arrays all list dependencies that are allowed in various contexts
 //!
 
-/// Dependencies that are always allowed
+/// Dependencies that are always allowed as runtime dependencies
 /// In general it is fine to add new ICU4X components or utils here
 /// For other crates, please get approval from @unicode-org/icu4x-owners
-pub const BASIC_DEPS: &[&str] = &[
-    "displaydoc",
+pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "either",
     "fixed_decimal",
     "icu",
@@ -25,30 +24,37 @@ pub const BASIC_DEPS: &[&str] = &[
     "icu_plurals",
     "icu_properties",
     "icu_provider",
-    "icu_provider_adapters",
-    "icu_provider_macros",
+    "icu_provider_adapters", // not included in icu, but needed generally
     "icu_timezone",
     "litemap",
     "memchr",
-    "proc-macro2",
-    "quote",
     "regex-automata",
     "smallvec",
     "stable_deref_trait",
-    "syn",
-    "synstructure",
     "tinystr",
-    "unicode-ident",
-    "unicode-xid",
     "utf16_iter",
     "utf8_iter",
     "write16",
     "writeable",
     "yoke",
-    "yoke-derive",
     "zerofrom",
-    "zerofrom-derive",
     "zerovec",
+];
+
+/// Dependencies that are always allowed as buildtime dependencies
+/// In general it is fine to add new ICU4X components or utils here
+/// For other crates, please get approval from @unicode-org/icu4x-owners
+pub const BASIC_BUILD_DEPS: &[&str] = &[
+    "displaydoc",
+    "icu_provider_macros",
+    "proc-macro2",
+    "quote",
+    "syn",
+    "synstructure",
+    "unicode-ident",
+    "unicode-xid",
+    "yoke-derive",
+    "zerofrom-derive",
     "zerovec-derive",
 ];
 

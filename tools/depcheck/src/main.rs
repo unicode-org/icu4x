@@ -130,18 +130,22 @@ fn test_dep_list(
 }
 
 fn main() {
-    let basic: BTreeSet<_> = BASIC_DEPS.iter().copied().collect();
+    let basic_runtime: BTreeSet<_> = BASIC_RUNTIME_DEPS.iter().copied().collect();
+    let basic_build: BTreeSet<_> = BASIC_BUILD_DEPS.iter().copied().collect();
+    let basic: BTreeSet<_> = basic_runtime.union(&basic_build).copied().collect();
     let serde: BTreeSet<_> = EXTRA_SERDE_DEPS.iter().copied().collect();
     let experimental: BTreeSet<_> = EXTRA_EXPERIMENTAL_DEPS.iter().copied().collect();
     let lstm: BTreeSet<_> = EXTRA_LSTM_DEPS.iter().copied().collect();
     let ryu: BTreeSet<_> = EXTRA_RYU_DEPS.iter().copied().collect();
-    let capi: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
+    let capi_runtime: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
     let capi_build: BTreeSet<_> = EXTRA_CAPI_BUILD_DEPS.iter().copied().collect();
+    let capi: BTreeSet<_> = capi_runtime.union(&capi_build).copied().collect();
     let capi_logging: BTreeSet<_> = EXTRA_CAPI_LOGGING_DEPS.iter().copied().collect();
     let blob: BTreeSet<_> = EXTRA_BLOB_DEPS.iter().copied().collect();
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
     let test: BTreeSet<_> = EXTRA_TEST_DEPS.iter().copied().collect();
-    test_dep_list("icu", "normal", "", &[&basic], "`BASIC_DEPS`");
+    test_dep_list("icu", "normal,no-proc-macro", "", &[&basic_runtime], "`BASIC_RUNTIME_DEPS`");
+    test_dep_list("icu", "normal", "", &[&basic], "`BASIC_BUILD_DEPS`");
     test_dep_list(
         "icu",
         "normal",
@@ -183,7 +187,7 @@ fn main() {
         "normal,no-proc-macro",
         "",
         // capi should NOT pull in serde or capi-build when the proc macro is disabled
-        &[&basic, &experimental, &lstm, &ryu, &capi],
+        &[&basic, &experimental, &lstm, &ryu, &capi_runtime],
         "`EXTRA_CAPI_DEPS`",
     );
 
@@ -198,7 +202,6 @@ fn main() {
             &lstm,
             &ryu,
             &capi,
-            &capi_build,
         ],
         "`EXTRA_CAPI_BUILD_DEPS`",
     );
@@ -214,7 +217,6 @@ fn main() {
             &lstm,
             &ryu,
             &capi,
-            &capi_build,
             &blob,
         ],
         "`EXTRA_BLOB_DEPS`",
@@ -230,7 +232,6 @@ fn main() {
             &lstm,
             &ryu,
             &capi,
-            &capi_build,
             &blob,
             &fs,
         ],
@@ -247,7 +248,6 @@ fn main() {
             &lstm,
             &ryu,
             &capi,
-            &capi_build,
             &test,
         ],
         "`EXTRA_TEST_DEPS`",
@@ -263,7 +263,6 @@ fn main() {
             &lstm,
             &ryu,
             &capi,
-            &capi_build,
             &capi_logging,
         ],
         "`EXTRA_CAPI_LOGGING_DEPS`",
