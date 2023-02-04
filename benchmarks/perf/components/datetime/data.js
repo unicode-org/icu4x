@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675462243020,
+  "lastUpdate": 1675477744026,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -96335,6 +96335,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5402,
             "range": "± 18",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "241833f435ac19f97497229226bd4f6eea9590fd",
+          "message": "Add dependency checker (#3079)\n\n* Add depcheck\n\n* split build/runtime\n\n* test order\n\n* Update tools/depcheck/src/main.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* fmt\n\n---------\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2023-02-03T18:16:36-08:00",
+          "tree_id": "0045628ac683db9bda50760c8dc5a573244092d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/241833f435ac19f97497229226bd4f6eea9590fd"
+        },
+        "date": 1675477661069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 68045,
+            "range": "± 628",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 109445,
+            "range": "± 195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 62397,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 70359,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 68369,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 74961,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 71186,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 104784,
+            "range": "± 419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 117968,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109878,
+            "range": "± 142",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 120986,
+            "range": "± 96",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 118284,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5358,
+            "range": "± 26",
             "unit": "ns/iter"
           }
         ]
