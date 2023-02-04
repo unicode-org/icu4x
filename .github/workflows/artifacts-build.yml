@@ -69,6 +69,8 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
     - name: Print Gcloud auth info
       run: 'gcloud auth list --filter=status:ACTIVE --format="value(account)"'
+    - name: Run a Gcloud command
+      run: 'gsutil cat gs://${{ env.GCP_BUCKET_ID }}/HelloWorld.txt'
     - name: Build docs
       uses: actions-rs/cargo@v1
       with:
