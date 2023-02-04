@@ -135,6 +135,7 @@ dependencies = [
     "license-header-check",
     "generated-readme-check",
     "license-file-check",
+    "depcheck",
 ]
 
 [tasks.ci-job-wasm]

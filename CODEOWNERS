@@ -34,6 +34,8 @@ provider/macros/                  @Manishearth @sffc
 tools/benchmark/binsize/          @gnrunge
 tools/benchmark/macros/           @gregtatum
 tools/benchmark/memory/           @gregtatum
+tools/depcheck/                   @Manishearth
+tools/depcheck/src/allowlist.rs   @unicode-org/icu4x-owners
 tools/make/                       @Manishearth @sffc
 utils/databake                    @robertbastian @Manishearth
 utils/deduplicating_array         @robertbastian
