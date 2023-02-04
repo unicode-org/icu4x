@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675461662552,
+  "lastUpdate": 1675477163475,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35243,6 +35243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cf3635003ef57265a5c485bd511ecdf3085cbe18"
         },
         "date": 1675461569807,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "241833f435ac19f97497229226bd4f6eea9590fd",
+          "message": "Add dependency checker (#3079)\n\n* Add depcheck\n\n* split build/runtime\n\n* test order\n\n* Update tools/depcheck/src/main.rs\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>\n\n* fmt\n\n---------\n\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2023-02-03T18:16:36-08:00",
+          "tree_id": "0045628ac683db9bda50760c8dc5a573244092d7",
+          "url": "https://github.com/unicode-org/icu4x/commit/241833f435ac19f97497229226bd4f6eea9590fd"
+        },
+        "date": 1675477080368,
         "tool": "ndjson",
         "benches": [
           {
