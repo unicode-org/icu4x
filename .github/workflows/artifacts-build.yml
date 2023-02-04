@@ -65,6 +65,11 @@ jobs:
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
         project_id: ${{ env.GCP_PROJECT_ID }}
+    - name: Upload a file to Gcloud
+      uses: google-github-actions/upload-cloud-storage@v1
+      with:
+        path: Cargo.toml
+        destination: '${{ env.GCP_BUCKET_ID }}/Cargo.toml'
     - name: Setup Gcloud
       uses: google-github-actions/setup-gcloud@v1
     - name: Print Gcloud auth info
