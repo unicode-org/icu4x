@@ -293,21 +293,32 @@ dt_unit!(
     IsoHour,
     u8,
     24,
-    "An ISO-8601 hour component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 24]`."
+    "An ISO-8601 hour component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 24]`. The value could be equal to 24 to
+indicate the end of a day, with the writing 24:00:00."
 );
 
 dt_unit!(
     IsoMinute,
     u8,
     60,
-    "An ISO-8601 minute component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 60]`."
+    "An ISO-8601 minute component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 60]`. The value could be equal to 60 to
+indicate the end of an hour, with the writing 12:60:00."
 );
 
 dt_unit!(
     IsoSecond,
     u8,
-    61,
-    "An ISO-8601 second component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 61]`."
+    70,
+    "An ISO-8601 second component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 70]`. `69` accomodates for the time, just
+before Jan 1, 1972, where there were 10 leap seconds in a row according to some
+time accounting schemes. The value could also be equal to 70 to indicate the end
+of that leap second, with the writing `23:59:70.000000000Z`."
 );
 
 dt_unit!(
@@ -372,7 +383,7 @@ fn test_iso_minute_arithmetic() {
 
 #[test]
 fn test_iso_second_arithmetic() {
-    const SECOND_MAX: u8 = 61;
+    const SECOND_MAX: u8 = 70;
     const SECOND_VALUE: u8 = 5;
     let second = IsoSecond(SECOND_VALUE);
 
