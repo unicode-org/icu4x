@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675531694855,
+  "lastUpdate": 1675700477298,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35303,6 +35303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/50e0544e25b9602ee8ea2ee6ebad0be4ceed07b0"
         },
         "date": 1675531597688,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d7a71f5a7f250bed0df32b7ae0e1bc7a55ca4540",
+          "message": "Switch toolchain to 1.67 (#3078)",
+          "timestamp": "2023-02-06T17:18:25+01:00",
+          "tree_id": "cacd2ce66199468ab4f3faa1acddd41bb19cf0c7",
+          "url": "https://github.com/unicode-org/icu4x/commit/d7a71f5a7f250bed0df32b7ae0e1bc7a55ca4540"
+        },
+        "date": 1675700392656,
         "tool": "ndjson",
         "benches": [
           {
