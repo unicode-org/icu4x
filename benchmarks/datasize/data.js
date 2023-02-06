@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675700477298,
+  "lastUpdate": 1675700625400,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35338,6 +35338,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4417120,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "Sanket Desai",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f313b00c0b9f48e4be986a5a74a11b362b03f03",
+          "message": "Adding support for variants for Language_displaynames (#3058)",
+          "timestamp": "2023-02-06T08:20:43-08:00",
+          "tree_id": "34029a76fd0fea67a9291009a21b8eecc6a8a0fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f313b00c0b9f48e4be986a5a74a11b362b03f03"
+        },
+        "date": 1675700532061,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
             "unit": "bytes",
             "biggerIsBetter": false
           }
