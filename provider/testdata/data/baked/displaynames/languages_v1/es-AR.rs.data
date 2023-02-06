@@ -10,4 +10,43 @@
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\x07\0azen-GBen-US",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x06\0\x12\0azer\xC3\xADingl\xC3\xA9s (RU)ingl\xC3\xA9s (EE. UU.)")
+            },
+        )
+    },
+    long_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x07\0zh-Hanszh-Hant",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x1C\0chino mandar\xC3\xADn simplificadochino mandar\xC3\xADn tradicional")
+            },
+        )
+    },
+    menu_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x03\0\x06\0ckbyuezh",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x0C\0\x1B\0kurdo soranichino canton\xC3\xA9schino mandar\xC3\xADn")
+            },
+        )
+    },
 }

@@ -47,6 +47,7 @@ pub enum Style {
     Narrow,
     Short,
     Long,
+    Menu,
 }
 
 impl Default for Style {

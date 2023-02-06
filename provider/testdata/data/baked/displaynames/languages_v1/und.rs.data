@@ -10,4 +10,49 @@
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\x07\0azen-GBen-US",
+                )
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\t\0azen (GB)en (US)",
+                )
+            },
+        )
+    },
+    long_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x07\0zh-Hanszh-Hant",
+                )
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\t\0zh (Hans)zh (Hant)",
+                )
+            },
+        )
+    },
+    menu_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x03\0\x06\0ckbyuezh",
+                )
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x03\0\x06\0ckbyuezh",
+                )
+            },
+        )
+    },
 }

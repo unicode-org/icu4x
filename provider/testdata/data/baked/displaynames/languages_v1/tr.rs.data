@@ -10,4 +10,43 @@
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\x07\0azen-GBen-US",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x0F\0.\0Azerbaycan diliBirle\xC5\x9Fik Krall\xC4\xB1k \xC4\xB0ngilizcesiABD \xC4\xB0ngilizcesi")
+            },
+        )
+    },
+    long_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x07\0zh-Hanszh-Hant",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0$\0Basitle\xC5\x9Ftirilmi\xC5\x9F \xC3\x87ince (Mandarin)Geleneksel \xC3\x87ince (Mandarin)")
+            },
+        )
+    },
+    menu_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x04\0\0\0\0\0\x03\0\x06\0\t\0arsckbyuezh",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x04\0\0\0\0\0\r\0\x1B\0+\0Arap\xC3\xA7a, NecdK\xC3\xBCrt\xC3\xA7e, Orta\xC3\x87ince, Kantonca\xC3\x87ince, Mandarin")
+            },
+        )
+    },
 }

@@ -436,5 +436,19 @@
     "zun": "zun",
     "zxx": "zxx",
     "zza": "zza"
+  },
+  "short_names": {
+    "az": "az",
+    "en-GB": "en (GB)",
+    "en-US": "en (US)"
+  },
+  "long_names": {
+    "zh-Hans": "zh (Hans)",
+    "zh-Hant": "zh (Hant)"
+  },
+  "menu_names": {
+    "ckb": "ckb",
+    "yue": "yue",
+    "zh": "zh"
   }
 }

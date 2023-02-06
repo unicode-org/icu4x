@@ -10,4 +10,43 @@
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\x07\0azen-GBen-US",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x0F\0\x1D\0\xE3\x82\xA2\xE3\x82\xBC\xE3\x83\xAA\xE3\x83\xBC\xE8\xAA\x9E\xE8\x8B\xB1\xE8\xAA\x9E(\xE8\x8B\xB1\xE5\x9B\xBD)\xE8\x8B\xB1\xE8\xAA\x9E(\xE7\xB1\xB3\xE5\x9B\xBD)")
+            },
+        )
+    },
+    long_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x07\0zh-Hanszh-Hant",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x1B\0\xE6\xA8\x99\xE6\xBA\x96\xE4\xB8\xAD\xE5\x9B\xBD\xE8\xAA\x9E (\xE7\xB0\xA1\xE4\xBD\x93\xE5\xAD\x97)\xE6\xA8\x99\xE6\xBA\x96\xE4\xB8\xAD\xE5\x9B\xBD\xE8\xAA\x9E (\xE7\xB9\x81\xE4\xBD\x93\xE5\xAD\x97)")
+            },
+        )
+    },
+    menu_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x04\0\0\0\0\0\x03\0\x06\0\t\0arsckbyuezh",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x04\0\0\0\0\0'\0?\0T\0\xE3\x82\xA2\xE3\x83\xA9\xE3\x83\x93\xE3\x82\xA2\xE8\xAA\x9E\xEF\xBC\x88\xE3\x83\x8A\xE3\x82\xB8\xE3\x83\xA5\xE3\x83\x89\xE5\x9C\xB0\xE6\x96\xB9\xEF\xBC\x89\xE3\x82\xAF\xE3\x83\xAB\xE3\x83\x89\xE8\xAA\x9E\xEF\xBC\x88\xE4\xB8\xAD\xE5\xA4\xAE\xEF\xBC\x89\xE4\xB8\xAD\xE5\x9B\xBD\xE8\xAA\x9E (\xE5\xBA\x83\xE6\x9D\xB1\xE8\xAA\x9E)\xE4\xB8\xAD\xE5\x9B\xBD\xE8\xAA\x9E (\xE6\xA8\x99\xE6\xBA\x96\xE8\xAA\x9E)")
+            },
+        )
+    },
 }

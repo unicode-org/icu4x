@@ -10,4 +10,45 @@
             },
         )
     },
+    short_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x02\0\x07\0azen-GBen-US",
+                )
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x07\0\x14\0azerskiengleski (UK)engleski (SAD)",
+                )
+            },
+        )
+    },
+    long_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x07\0zh-Hanszh-Hant",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0$\0pojednostavljeni mandarinski kineskitradicionalni mandarinski kineski")
+            },
+        )
+    },
+    menu_names: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x03\0\x06\0ckbyuezh",
+                )
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x11\0\"\0centralni kurdskikantonski kineskimandarinski kineski")
+            },
+        )
+    },
 }
