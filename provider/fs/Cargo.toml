@@ -38,7 +38,7 @@ bincode = { version = "1.3", optional = true }
 crlify = { version = "1.0.1", path = "../../utils/crlify", optional = true }
 log = { version = "0.4", optional = true }
 postcard = { version = "1.0.0", features = ["use-std"], default_features = false, optional = true }
-serde_json = { version = "1.0", optional = true }
+serde_json = { version = "1.0", default_features = false, features = ["alloc"], optional = true }
 sha2 = { version = "0.10.2", optional = true }
 
 [dev-dependencies]
