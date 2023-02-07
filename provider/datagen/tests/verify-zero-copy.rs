@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
+use icu_datagen::{all_keys_with_experimental, CldrLocaleSubset, DatagenProvider, SourceData};
 use std::cmp;
 use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
@@ -46,7 +46,16 @@ fn main() {
     let selected_locales = icu_testdata::locales();
 
     let converter = DatagenProvider {
-        source: SourceData::internal_offline_latest_tested_subset(),
+        source: SourceData::default()
+            .with_cldr(
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
+                CldrLocaleSubset::Full,
+            )
+            .unwrap()
+            .with_icuexport(
+                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/icuexport").into(),
+            )
+            .unwrap(),
     }
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);

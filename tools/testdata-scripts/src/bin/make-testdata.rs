@@ -23,6 +23,25 @@ fn main() {
         "/../../provider/testdata/data/"
     ));
 
+    let source = SourceData::default()
+        .with_cldr(
+            concat!(
+                core::env!("CARGO_MANIFEST_DIR"),
+                "/../../provider/datagen/tests/data/cldr"
+            )
+            .into(),
+            CldrLocaleSubset::Full,
+        )
+        .unwrap()
+        .with_icuexport(
+            concat!(
+                core::env!("CARGO_MANIFEST_DIR"),
+                "/../../provider/datagen/tests/data/icuexport"
+            )
+            .into(),
+        )
+        .unwrap();
+
     let json_out = Out::Fs {
         output_path: out_dir.join("json"),
         serializer: Box::new(syntax::Json::pretty()),
@@ -58,7 +77,7 @@ fn main() {
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))
             .collect::<Vec<_>>(),
-        &SourceData::internal_offline_latest_tested_subset(),
+        &source,
         vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();
@@ -80,7 +99,7 @@ fn main() {
         .unwrap();
 
     let locales = databake::Bake::bake(LOCALES, &Default::default());
-    // `SourceData::internal_offline_latest_tested_subset()` corresponds to these tags.
+    // /provider/datagen/tests/data corresponds to these tags.
     let cldr_tag = SourceData::LATEST_TESTED_CLDR_TAG;
     let icu_tag = SourceData::LATEST_TESTED_ICUEXPORT_TAG;
 

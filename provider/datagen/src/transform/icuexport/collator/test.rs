@@ -285,7 +285,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let provider = DatagenProvider {
-            source: SourceData::internal_offline_latest_tested_subset().with_collations(
+            source: SourceData::offline_latest_tested_subset().with_collations(
                 cas.include_collations
                     .iter()
                     .copied()

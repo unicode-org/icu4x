@@ -69,13 +69,10 @@ impl SourceData {
             .unwrap()
     }
 
-    #[doc(hidden)]
-    // This is meant to be equivalent to `latest_tested` for the exact code paths that we need in testing:
-    // * Unit tests in this crate
-    // * The verify-zero-copy integration test in this crate
-    // * The make-testdata binary
+    #[cfg(test)]
+    // This is meant to be equivalent to `latest_tested` for the exact code paths that we need in testing.
     // This equivalence is not enforced anywhere.
-    pub fn internal_offline_latest_tested_subset() -> Self {
+    pub fn offline_latest_tested_subset() -> Self {
         Self::default()
             .with_cldr(
                 concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
