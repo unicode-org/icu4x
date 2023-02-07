@@ -217,22 +217,12 @@ impl SourceData {
         &self.collations
     }
 
-    /// List the locales for the given subsets
+    /// List the locales for the given CLDR coverage level
     pub fn locales(
         &self,
         levels: &[CoverageLevel],
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
-        Ok(self
-            .cldr()?
-            .0
-            .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
-                "cldr-core/coverageLevels.json",
-            )?
-            .coverage_levels
-            .iter()
-            .filter_map(|(locale, c)| levels.contains(c).then(|| locale))
-            .cloned()
-            .collect())
+        self.cldr()?.locales(levels)
     }
 }
 
@@ -344,7 +334,7 @@ impl SerdeCache {
         })
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
 }
@@ -439,12 +429,12 @@ impl AbstractFs {
         }
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(&root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
-                .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
+                .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
                 .collect::<Result<HashSet<_>, DataError>>()
                 .map(HashSet::into_iter)?,
             Self::Zip(zip) => zip
@@ -456,7 +446,7 @@ impl AbstractFs {
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(PathBuf::from)
+                .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
         })

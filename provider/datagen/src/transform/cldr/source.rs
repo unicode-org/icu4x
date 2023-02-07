@@ -32,11 +32,11 @@ impl CldrCache {
     }
 
     pub fn numbers(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-numbers-full/main".to_owned())
+        CldrDirLang(&self.0, "cldr-numbers".to_owned())
     }
 
     pub fn misc(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-misc-full/main".to_owned())
+        CldrDirLang(&self.0, "cldr-misc".to_owned())
     }
 
     pub fn bcp47(&self) -> CldrDirNoLang<'_> {
@@ -44,18 +44,34 @@ impl CldrCache {
     }
 
     pub fn displaynames(&self) -> CldrDirLang<'_> {
-        CldrDirLang(&self.0, "cldr-localenames-full/main".to_owned())
+        CldrDirLang(&self.0, "cldr-localenames".to_owned())
     }
 
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.0,
             if cal == "gregorian" {
-                "cldr-dates-full/main".to_owned()
+                "cldr-dates".to_owned()
             } else {
-                format!("cldr-cal-{}-full/main", cal)
+                format!("cldr-cal-{}", cal)
             },
         )
+    }
+
+    pub fn locales(
+        &self,
+        levels: &[CoverageLevel],
+    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        Ok(self
+            .0
+            .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
+                "cldr-core/coverageLevels.json",
+            )?
+            .coverage_levels
+            .iter()
+            .filter_map(|(locale, c)| levels.contains(c).then(|| locale))
+            .cloned()
+            .collect())
     }
 }
 
@@ -83,12 +99,24 @@ impl<'a> CldrDirLang<'a> {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.0
-            .read_and_parse_json(&format!("{}/{}/{}", self.1, lang, file_name))
+            .read_and_parse_json(&format!("{}/{}/{}", self.dir()?, lang, file_name))
     }
 
     pub fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
-        Ok(self.0.list(&self.1)?.into_iter().map(|path| {
-            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap()
-        }))
+        Ok(self
+            .0
+            .list(&self.dir()?)?
+            .into_iter()
+            .map(|path| LanguageIdentifier::from_str(&path).unwrap()))
+    }
+
+    fn dir(&self) -> Result<String, DataError> {
+        let mut dir = self
+            .0
+            .list("")?
+            .find(|dir| dir.starts_with(self.1.as_str()))
+            .unwrap_or_else(|| format!("{}-full", self.1));
+        dir.push_str("/main");
+        Ok(dir)
     }
 }
