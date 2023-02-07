@@ -185,20 +185,34 @@ pub fn buffer() -> impl BufferProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+///
+/// This caches the buffer in a static if the `"std"` feature is enabled.
 #[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
-    lazy_static::lazy_static! {
-        static ref POSTCARD: icu_provider_blob::BlobDataProvider = {
-            // The statically compiled data file is valid.
-            #[allow(clippy::unwrap_used)]
-            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-                env!("CARGO_MANIFEST_DIR"),
-                "/data/testdata.postcard"
-            )))
-            .unwrap()
-        };
+    #[cfg(feature = "std")]
+    {
+        lazy_static::lazy_static! {
+            static ref POSTCARD: icu_provider_blob::BlobDataProvider = {
+                // The statically compiled data file is valid.
+                #[allow(clippy::unwrap_used)]
+                icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/data/testdata.postcard"
+                )))
+                .unwrap()
+            };
+        }
+        POSTCARD.clone()
     }
-    POSTCARD.clone()
+    #[cfg(not(feature = "std"))]
+    {
+        #[allow(clippy::unwrap_used)]
+        icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/data/testdata.postcard"
+        )))
+        .unwrap()
+    }
 }
 
 #[doc(hidden)]

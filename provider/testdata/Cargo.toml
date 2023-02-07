@@ -37,7 +37,7 @@ icu_provider_adapters = { version = "1.1.0", path = "../adapters" }
 
 # buffer feature
 icu_provider_blob = { version = "1.1.0", path = "../blob", optional = true }
-lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
+lazy_static = { version = "1", optional = true }
 
 # databake deps
 icu_locid = { version = "1.1.0", path = "../../components/locid" }
@@ -83,8 +83,8 @@ default = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
-buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "dep:lazy_static"]
-std = []
+buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde"]
+std = ["dep:lazy_static"]
 # Deactivates baked in case it doesn't build
 internal_ignore_baked = []
 # Excludes `internal_ignore_baked` from `--all-features` 
