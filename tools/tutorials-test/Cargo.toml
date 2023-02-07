@@ -6,7 +6,7 @@
 name = "tutorials-test"
 publish = false
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [dev-dependencies]
 databake = { path = "../../utils/databake", features = ["derive"] }

@@ -226,9 +226,10 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for ListJoinerPattern<'data> {
 impl<'a> ListJoinerPattern<'a> {
     /// Constructs a [`ListJoinerPattern`] from raw parts. Used by databake.
     ///
-    /// # Safety
-    /// index_1 may be at most string.len()
-    pub const unsafe fn from_parts_unchecked(string: &'a str, index_1: u8) -> Self {
+    /// # Panics
+    /// If `string[..index_1]` panics.
+    pub const fn from_parts(string: &'a str, index_1: u8) -> Self {
+        assert!(string.len() <= 255 && index_1 <= string.len() as u8);
         Self {
             string: Cow::Borrowed(string),
             index_0: 0,
@@ -243,10 +244,9 @@ impl databake::Bake for ListJoinerPattern<'_> {
         env.insert("icu_list");
         let string = (&*self.string).bake(env);
         let index_1 = self.index_1.bake(env);
-        // Safe because our own data is safe
-        databake::quote! { unsafe {
-            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(#string, #index_1)
-        }}
+        databake::quote! {
+            ::icu_list::provider::ListJoinerPattern::from_parts(#string, #index_1)
+        }
     }
 }
 
@@ -255,7 +255,7 @@ impl databake::Bake for ListJoinerPattern<'_> {
 fn databake() {
     databake::test_bake!(
         ListJoinerPattern,
-        const: unsafe { crate::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8) },
+        const: crate::provider::ListJoinerPattern::from_parts(", ", 2u8),
         icu_list
     );
 }

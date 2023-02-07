@@ -1553,7 +1553,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "cached-path",
  "clap",
@@ -1656,6 +1656,10 @@ dependencies = [
  "serde",
  "writeable",
 ]
+
+[[package]]
+name = "icu_depcheck"
+version = "0.1.0"
 
 [[package]]
 name = "icu_displaynames"
@@ -1933,7 +1937,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "criterion",
  "icu",
@@ -4438,7 +4442,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.2"
+version = "0.9.3"
 dependencies = [
  "bincode",
  "proc-macro2",

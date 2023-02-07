@@ -6,26 +6,6 @@ use icu_datagen::prelude::*;
 use icu_testdata::paths;
 use std::fs::File;
 
-// icuexport test data isn't complete, so we don't test these keys.
-const IGNORED_KEYS: &[&str] = &[
-    "props/alnum@1",
-    "props/blank@1",
-    "props/Comp_Ex@1",
-    "props/CWCM@1",
-    "props/Gr_Link@1",
-    "props/graph@1",
-    "props/Hyphen@1",
-    "props/nfcinert@1",
-    "props/nfdinert@1",
-    "props/nfkcinert@1",
-    "props/nfkdinert@1",
-    "props/PCM@1",
-    "props/print@1",
-    "props/segstart@1",
-    "props/Sensitive@1",
-    "props/xdigit@1",
-];
-
 fn main() {
     simple_logger::SimpleLogger::new()
         .env()
@@ -48,7 +28,7 @@ fn main() {
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
-        serializer: Box::new(syntax::Postcard::default()),
+        serializer: Box::<syntax::Postcard>::default(),
         overwrite: true,
         fingerprint: true,
     };
@@ -70,7 +50,6 @@ fn main() {
         Some(&icu_testdata::locales()),
         &icu_datagen::all_keys_with_experimental()
             .into_iter()
-            .filter(|k| !IGNORED_KEYS.contains(&&*k.path()))
             .chain(core::iter::once(
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))

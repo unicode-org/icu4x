@@ -10,7 +10,7 @@ use std::io::BufReader;
 
 #[allow(dead_code)]
 pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
-    let file = File::open(format!("./benches/fixtures/tests/{}.json", name))?;
+    let file = File::open(format!("./benches/fixtures/tests/{name}.json"))?;
     let reader = BufReader::new(file);
 
     Ok(serde_json::from_reader(reader)?)

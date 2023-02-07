@@ -45,7 +45,7 @@ const POSTCARD: [u8; 176] = [
 fn generate() {
     let map = build_litemap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[cfg(feature = "generate")]
@@ -73,7 +73,7 @@ fn build_litemap(large: bool) -> LiteMap<String, String> {
     for (key, value) in DATA.into_iter() {
         if large {
             for n in 0..8192 {
-                map.insert(format!("{}{}", key, n), value.to_owned());
+                map.insert(format!("{key}{n}"), value.to_owned());
             }
         } else {
             map.insert(key.to_owned(), value.to_owned());
