@@ -1923,7 +1923,6 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
- "lazy_static",
  "litemap",
  "tinystr 0.7.1",
  "zerovec",
