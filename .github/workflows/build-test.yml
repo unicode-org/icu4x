@@ -1171,7 +1171,7 @@ jobs:
     
     # Skipped tasks: benchmark, memory, datasize, binsize
     needs: [check-msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, features, wasm, fmt, tidy, clippy, doc, ]
-    if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
+    if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' && github.ref_name == 'main') }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify slack of failure
