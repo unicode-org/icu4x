@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675848788807,
+  "lastUpdate": 1675897430835,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -97049,6 +97049,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4843,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81baebaf9a8b0796c535cc392c1f9d932da310de",
+          "message": "Make crlify work on CRLF files. (#3095)",
+          "timestamp": "2023-02-08T23:49:54+01:00",
+          "tree_id": "c44dfe7c7e3ea5495c5b3b9485d42bb96ace0e06",
+          "url": "https://github.com/unicode-org/icu4x/commit/81baebaf9a8b0796c535cc392c1f9d932da310de"
+        },
+        "date": 1675897328060,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 77960,
+            "range": "± 7470",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 126374,
+            "range": "± 10681",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 70683,
+            "range": "± 4927",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 77290,
+            "range": "± 7258",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 77869,
+            "range": "± 9296",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 87994,
+            "range": "± 5891",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 81050,
+            "range": "± 6083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 124292,
+            "range": "± 8770",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 137513,
+            "range": "± 14534",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 132214,
+            "range": "± 7183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 148669,
+            "range": "± 13115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 146080,
+            "range": "± 16435",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6529,
+            "range": "± 522",
             "unit": "ns/iter"
           }
         ]
