@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675826089904,
+  "lastUpdate": 1675848181720,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35393,6 +35393,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/79e2bcdccb09f92e6f76890b03150c10eb52d2b7"
         },
         "date": 1675825996855,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2782be936a926b42ec1458b7f2fb55171572820f",
+          "message": "Fix coverage (#3093)\n\n#2873",
+          "timestamp": "2023-02-08T10:19:51+01:00",
+          "tree_id": "3d435871e7ee25fe12e8779d151c3e92c820a181",
+          "url": "https://github.com/unicode-org/icu4x/commit/2782be936a926b42ec1458b7f2fb55171572820f"
+        },
+        "date": 1675848087012,
         "tool": "ndjson",
         "benches": [
           {
