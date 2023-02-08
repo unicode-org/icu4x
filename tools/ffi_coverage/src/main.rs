@@ -6,7 +6,7 @@ use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fmt;
-use std::fs::File;
+use std::fs;
 use std::path::PathBuf;
 /// RustLink but without display information
 #[derive(PartialEq, Eq, Debug, Clone, PartialOrd, Ord, Hash)]
@@ -519,7 +519,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             eprintln!("Attempting to load {path:?}");
             CRATES.insert(
                 krate.to_owned(),
-                serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
+                serde_json::from_slice(&fs::read(&path).unwrap()).unwrap(),
             );
         }
         CRATES.get(krate).unwrap()
