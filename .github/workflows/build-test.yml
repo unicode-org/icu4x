@@ -78,21 +78,14 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
-    # Toolchain boilerplate
-    - name: Set toolchain to MSRV
-      run: rustup override set 1.61
-    - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
-    - name: Show the selected Rust toolchain
-      run: rustup show
+    # No toolchain boilerplate as this runs on MSRV
 
     # Actual job
     - name: Check
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-${{ matrix.behavior }}
+        args: ci-job-msrv-${{ matrix.behavior }}
 
   # ci-job-test
   test:
