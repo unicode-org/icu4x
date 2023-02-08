@@ -453,5 +453,19 @@
     "zun": "Zuni",
     "zxx": "Walang nilalaman na ukol sa wika",
     "zza": "Zaza"
+  },
+  "short_names": {
+    "az": "Azeri",
+    "en-GB": "Ingles sa UK",
+    "en-US": "Ingles sa US"
+  },
+  "long_names": {
+    "zh-Hans": "Pinasimpleng Mandarin Chinese",
+    "zh-Hant": "Tradisyonal na Mandarin Chinese"
+  },
+  "menu_names": {
+    "ckb": "Kurdish, Central",
+    "yue": "Chinese, Cantonese",
+    "zh": "Chinese, Mandarin"
   }
 }

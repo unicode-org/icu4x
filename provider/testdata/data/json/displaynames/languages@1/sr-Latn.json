@@ -555,5 +555,19 @@
     "zun": "zuni",
     "zxx": "bez lingvističkog sadržaja",
     "zza": "zaza"
+  },
+  "short_names": {
+    "az": "azerski",
+    "en-GB": "engleski (UK)",
+    "en-US": "engleski (SAD)"
+  },
+  "long_names": {
+    "zh-Hans": "pojednostavljeni mandarinski kineski",
+    "zh-Hant": "tradicionalni mandarinski kineski"
+  },
+  "menu_names": {
+    "ckb": "centralni kurdski",
+    "yue": "kantonski kineski",
+    "zh": "mandarinski kineski"
   }
 }

@@ -154,6 +154,9 @@ pub fn any_no_fallback() -> impl AnyProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+///
+/// This deserializes a large data blob from static memory, please cache the result if you
+/// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
@@ -162,20 +165,17 @@ pub fn buffer() -> impl BufferProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+///
+/// This deserializes a large data blob from static memory, please cache the result if you
+/// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
-    lazy_static::lazy_static! {
-        static ref POSTCARD: icu_provider_blob::BlobDataProvider = {
-            // The statically compiled data file is valid.
-            #[allow(clippy::unwrap_used)]
-            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-                env!("CARGO_MANIFEST_DIR"),
-                "/data/testdata.postcard"
-            )))
-            .unwrap()
-        };
-    }
-    POSTCARD.clone()
+    #[allow(clippy::unwrap_used)] // The statically compiled data file is valid.
+    icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/data/testdata.postcard"
+    )))
+    .unwrap()
 }
 
 #[doc(hidden)]

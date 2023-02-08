@@ -10,13 +10,13 @@ use std::io::BufReader;
 use self::structs::{dayperiods::DayPeriodTests, time_zones::TimeZoneTests};
 
 pub fn get_dayperiod_tests(name: &str) -> std::io::Result<DayPeriodTests> {
-    let file = File::open(format!("./tests/patterns/tests/{}.json", name))?;
+    let file = File::open(format!("./tests/patterns/tests/{name}.json"))?;
     let reader = BufReader::new(file);
     Ok(serde_json::from_reader(reader)?)
 }
 
 pub fn get_time_zone_tests(name: &str) -> std::io::Result<TimeZoneTests> {
-    let file = File::open(format!("./tests/patterns/tests/{}.json", name))?;
+    let file = File::open(format!("./tests/patterns/tests/{name}.json"))?;
     let reader = BufReader::new(file);
     Ok(serde_json::from_reader(reader)?)
 }

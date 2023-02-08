@@ -2,16 +2,9 @@
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFE\xFF\0\x01\x02") },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 21u8, 0u8, 28u8, 0u8, 40u8, 0u8, 45u8, 0u8,
-                    65u8, 114u8, 97u8, 119u8, 32u8, 98u8, 97u8, 103u8, 111u8, 32u8, 97u8,
-                    110u8, 103u8, 32u8, 107u8, 97u8, 104u8, 97u8, 112u8, 111u8, 110u8, 107u8,
-                    97u8, 104u8, 97u8, 112u8, 111u8, 110u8, 110u8, 103u8, 97u8, 121u8, 111u8,
-                    110u8, 103u8, 32u8, 97u8, 114u8, 97u8, 119u8, 98u8, 117u8, 107u8, 97u8,
-                    115u8, 83u8, 97u8, 109u8, 97u8, 107u8, 97u8, 108u8, 97u8, 119u8, 97u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x05\0\0\0\0\0\x15\0\x1C\0(\0-\0Araw bago ang kahaponkahaponngayong arawbukasSamakalawa")
             },
         )
     },

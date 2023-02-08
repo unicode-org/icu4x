@@ -100,8 +100,7 @@ where
                     // which makes the assume_init_ref safe
                     if j >= i {
                         return Err(D::Error::custom(format!(
-                            "Illegal forward fallback {}->{}",
-                            i, j
+                            "Illegal forward fallback {i}->{j}",
                         )));
                     }
                     #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
@@ -123,8 +122,7 @@ where
                     // which makes the assume_init_ref safe
                     if j >= i {
                         return Err(D::Error::custom(format!(
-                            "Illegal forward fallback {}->{}",
-                            i, j
+                            "Illegal forward fallback {i}->{j}",
                         )));
                     }
                     #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate

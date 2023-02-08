@@ -40,6 +40,7 @@ members = [
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",
+    "tools/depcheck",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
     "tools/tutorials-test",

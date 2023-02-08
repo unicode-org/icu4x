@@ -226,3 +226,9 @@ for path in ${handle}
     end
 end
 '''
+
+[tasks.depcheck]
+description = "Run the dependency checker"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "-p", "icu_depcheck"]

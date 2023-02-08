@@ -209,8 +209,7 @@ impl<'data> PatternPlurals<'data> {
                 // Potentially change to log::warn! in #2648
                 debug_assert!(
                     false,
-                    "expect_pattern called with bad data (falling back to `other` pattern): {}",
-                    msg
+                    "expect_pattern called with bad data (falling back to `other` pattern): {msg}"
                 );
                 patterns.other
             }

@@ -113,7 +113,7 @@ impl<T: TrieValue> TryFrom<&CodePointTrieToml> for CodePointTrie<'static, T> {
         let data: Result<ZeroVec<'static, T>, T::TryFromU32Error> = match cpt_data.data_slice()? {
             U8(s) => s.iter().map(|i| T::try_from_u32(*i as u32)).collect(),
             U16(s) => s.iter().map(|i| T::try_from_u32(*i as u32)).collect(),
-            U32(s) => s.iter().map(|i| T::try_from_u32(*i as u32)).collect(),
+            U32(s) => s.iter().map(|i| T::try_from_u32(*i)).collect(),
         };
 
         let data = data.map_err(|_| Error::FromDeserialized {

@@ -51,7 +51,7 @@ pub struct HasTuples<'data> {
     pub bar: (&'data str, &'data str),
 }
 
-pub fn assert_zf_tuples<'b, 'data>(x: &'b HasTuples<'data>) -> HasTuples<'b> {
+pub fn assert_zf_tuples<'b>(x: &'b HasTuples) -> HasTuples<'b> {
     HasTuples::zero_from(x)
 }
 pub fn assert_zf_generics<'a, 'b>(
@@ -65,9 +65,7 @@ pub struct ZeroMapGenericExample<'a, T: for<'b> ZeroMapKV<'b> + ?Sized> {
     map: ZeroMap<'a, str, T>,
 }
 
-pub fn assert_zf_map<'a, 'b>(
-    x: &'b ZeroMapGenericExample<'a, str>,
-) -> ZeroMapGenericExample<'b, str> {
+pub fn assert_zf_map<'b>(x: &'b ZeroMapGenericExample<str>) -> ZeroMapGenericExample<'b, str> {
     ZeroMapGenericExample::zero_from(x)
 }
 

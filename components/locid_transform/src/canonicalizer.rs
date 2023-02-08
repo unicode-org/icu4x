@@ -492,8 +492,7 @@ fn test_uts35_rule_matches() {
                 rule.variants.iter().map(Variant::as_str),
             ),
             result,
-            "{}",
-            source
+            "{source}"
         );
     }
 }

@@ -132,8 +132,7 @@ impl SourceData {
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache {
                 cache: SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                    tag, tag, locale_subset
+                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-{locale_subset}.zip"
                 ))),
                 locale_subset,
             })),
@@ -152,8 +151,7 @@ impl SourceData {
         Ok(Self {
             icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
                 format!(
-                    "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-                    tag,
+                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                     tag.replace('/', "-")
                 ),
             )))),
@@ -407,7 +405,7 @@ impl AbstractFs {
                 let root = CACHE
                     .cached_path(resource)
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(&root)?))
+                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())
             }
@@ -420,7 +418,7 @@ impl AbstractFs {
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
-                std::fs::read(&root.join(path))
+                std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
@@ -446,7 +444,7 @@ impl AbstractFs {
     fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
         self.init()?;
         Ok(match self {
-            Self::Fs(root) => std::fs::read_dir(&root.join(path))
+            Self::Fs(root) => std::fs::read_dir(root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
                 .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
                 .collect::<Result<HashSet<_>, DataError>>()

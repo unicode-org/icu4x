@@ -606,7 +606,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.2"
+version = "0.9.3"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -615,7 +615,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.2"
+version = "0.9.3"
 dependencies = [
  "proc-macro2",
  "quote",

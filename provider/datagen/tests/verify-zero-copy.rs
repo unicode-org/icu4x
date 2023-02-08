@@ -111,5 +111,5 @@ fn main() {
         If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
         If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
         to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_violations, EXPECTED_TOTAL_VIOLATIONS, total_violations)
+        Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}")
 }

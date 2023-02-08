@@ -6,7 +6,7 @@
 name = "icu_collator-fuzz"
 publish = false
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [package.metadata]
 cargo-fuzz = true
