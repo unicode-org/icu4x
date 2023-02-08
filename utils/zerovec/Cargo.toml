@@ -49,7 +49,7 @@ criterion = "0.3.4"
 getrandom = { version = "0.2", features = ["js"] }
 iai = "0.1"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-postcard = { version = "1.0.0", features = ["use-std"], default_features = false }
+postcard = { version = "1.0.0", features = ["use-std"] }
 rand = "0.8"
 rand_distr = "0.4"
 rand_pcg = "0.3"
