@@ -302,7 +302,7 @@ fn main() -> eyre::Result<()> {
 
     let raw_locales = matches.values_of("LOCALES").unwrap().collect::<Vec<_>>();
 
-    let locales = if raw_locales == ["none"] || selected_keys.is_empty() {
+    let selected_locales = if raw_locales == ["none"] || selected_keys.is_empty() {
         Some(vec![])
     } else if raw_locales == ["full"] || matches.is_present("ALL_LOCALES") {
         None
@@ -382,6 +382,11 @@ fn main() -> eyre::Result<()> {
         _ => unreachable!(),
     };
 
-    icu_datagen::datagen(locales.as_deref(), &selected_keys, &source_data, vec![out])
-        .map_err(eyre::ErrReport::from)
+    icu_datagen::datagen(
+        selected_locales.as_deref(),
+        &selected_keys,
+        &source_data,
+        vec![out],
+    )
+    .map_err(eyre::ErrReport::from)
 }

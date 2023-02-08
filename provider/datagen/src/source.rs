@@ -212,7 +212,7 @@ impl SourceData {
         &self.collations
     }
 
-    /// List the locales for the given CLDR coverage level
+    /// List the locales for the given CLDR coverage levels
     pub fn locales(
         &self,
         levels: &[CoverageLevel],
