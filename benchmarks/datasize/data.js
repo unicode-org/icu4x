@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675848181720,
+  "lastUpdate": 1675848199908,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35423,6 +35423,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/2782be936a926b42ec1458b7f2fb55171572820f"
         },
         "date": 1675848087012,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6db157566f748ccabf960ba124c86437e57571a0",
+          "message": "Notifying Slack for main CI failures. (#3092)",
+          "timestamp": "2023-02-08T10:20:16+01:00",
+          "tree_id": "49351347f8b930d299e825822a83c41fec93dc6f",
+          "url": "https://github.com/unicode-org/icu4x/commit/6db157566f748ccabf960ba124c86437e57571a0"
+        },
+        "date": 1675848114985,
         "tool": "ndjson",
         "benches": [
           {
