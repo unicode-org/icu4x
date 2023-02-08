@@ -193,7 +193,7 @@ pub fn buffer() -> impl BufferProvider {
 /// are calling this repeatedly and care about performance
 #[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
-    #[allow(clippy::unwrap_used)]
+    #[allow(clippy::unwrap_used)] // The statically compiled data file is valid.
     icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/data/testdata.postcard"
