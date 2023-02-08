@@ -120,7 +120,7 @@ category = "CI"
 script_runner = "@duckscript"
 script = '''
 exec rustup install 1.61 --profile minimal
-exec cargo +1.61 check-all-features
+exec cargo +1.61 make check-all-features
 '''
 
 [tasks.ci-job-fmt]

@@ -373,7 +373,7 @@ jobs:
         command: make
         args: ci-job-verify-ffi
 
-  # ci-job-gn
+  # ci-job-verify-gn, ci-job-gn
   gn:
     runs-on: ubuntu-latest
 
