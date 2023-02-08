@@ -53,7 +53,7 @@ impl CldrCache {
             if cal == "gregorian" {
                 "cldr-dates".to_owned()
             } else {
-                format!("cldr-cal-{}", cal)
+                format!("cldr-cal-{cal}")
             },
         )
     }
