@@ -57,6 +57,4 @@ const LOCALES: &[LanguageIdentifier] = &[
     // Turkish:
     // - Interesting case-mappings
     langid!("tr"),
-    // Root data
-    langid!("und"),
 ];

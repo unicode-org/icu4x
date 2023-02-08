@@ -22,7 +22,6 @@ pub const LOCALES: &[icu_locid::LanguageIdentifier] = &[
     icu_locid::langid!("sr-Latn"),
     icu_locid::langid!("th"),
     icu_locid::langid!("tr"),
-    icu_locid::langid!("und"),
 ];
 pub const CLDR_TAG: &str = "42.0.0";
 pub const ICUEXPORT_TAG: &str = "release-72-1";

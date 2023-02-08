@@ -39,6 +39,7 @@ fn expand_paths(in_paths: &[&str], replace_hyphen_by_underscore: bool) -> Vec<St
                 }
                 paths.push(pattern.replace("$LOCALES", &string));
             }
+            paths.push(pattern.replace("$LOCALES", "und"));
             // Also add "root" for older CLDRs
             paths.push(pattern.replace("$LOCALES", "root"));
         } else {
