@@ -13,7 +13,7 @@ args = ["-p", "wasmpkg"]
 [tasks.wasm-wasm-examples]
 description = "Copy the WASM files from examples into wasmpkg"
 category = "ICU4X WASM"
-dependencies = ["wasm-dir"]
+dependencies = ["wasm-dir", "install-nightly", "install-wasm"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true

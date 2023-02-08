@@ -109,6 +109,7 @@ description = "Build the GN version of ICU4X for the host platform"
 category = "ICU4X Development"
 dependencies = [
     "gn-vendor",
+    "install-nightly",
 ]
 script_runner = "@duckscript"
 script = '''
@@ -128,6 +129,7 @@ description = "Build the GN version of ICU4X for wasm32-wasi"
 category = "ICU4X Development"
 dependencies = [
     "gn-vendor",
+    "install-nightly",
 ]
 script_runner = "@duckscript"
 script = '''
@@ -137,6 +139,8 @@ third_party_tools = is_path_exists ffi/gn/third_party_tools
 assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
 
 cd ffi/gn
+
+exec rustup target add wasm32-wasi
 
 exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_os="wasi" out/wasi
 exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/wasi

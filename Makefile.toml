@@ -193,6 +193,22 @@ dependencies = [
     # benchmarking and coverage jobs not included
 ]
 
+[tasks.install-nightly]
+description = "Installs $ICU4X_NIGHTLY_TOOLCHAIN"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exec rustup install ${ICU4X_NIGHTLY_TOOLCHAIN} --profile minimal
+exec rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+'''
+
+# For the nightly CI, we set three environment variables, and set a rustup override to nightly.
+# Each env var has a different purpose:
+# - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by this makefile
+# - ICU4X_BUILDING_WITH_FORCED_NIGHTLY: This lets tests know that we're building with forced nightly, in case of tests testing the behavior of specific Rust versions.
+# - `RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY`: Same as previously, but works for disabling doctests. Use ICU4X_BUILDING_WITH_FORCED_NIGHTLY where possible.
+#
+# When updating the toolchain, please audit all cases of ICU4X_BUILDING_WITH_FORCED_NIGHTLY and remove cfgs where necessary.
 [tasks.set-nightly-version-for-ci]
 description = "Set all nightly version env vars for CI"
 category = "CI"
@@ -212,23 +228,20 @@ if not ${event_name}
     exit 1
 end
 
-is_schedule = eq "${event_name}" "schedule"
-is_dispatch = eq "${event_name}" "workflow_dispatch"
-dispatch_needs_nightly = set false
+needs_nightly = eq "${event_name}" "schedule"
 
-if is_dispatch
+if eq "${event_name}" "workflow_dispatch"
     event_path = get_env GITHUB_EVENT_PATH
     event_file = readfile ${event_path}
     event_json = json_parse ${event_file}
     if ${event_json.inputs.nightly}
-        dispatch_needs_nightly = set true
+        needs_nightly = set true
     end
 end
 
-if ${is_schedule} or ${dispatch_needs_nightly}
+if ${needs_nightly}
     echo "Setting up CI environment for forced-nightly Rust build"
     appendfile ${env_file} "ICU4X_NIGHTLY_TOOLCHAIN=nightly\n"
-    appendfile ${env_file} "INSTALLED_NIGHTLY_VERSION=nightly\n"
     appendfile ${env_file} "ICU4X_BUILDING_WITH_FORCED_NIGHTLY=1\n"
     appendfile ${env_file} "RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY\n"
     exec rustup override set nightly

@@ -158,11 +158,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
-    - name: Install Rust nightly
-      run: |
-        rustup toolchain install nightly-2022-04-05
-        rustup +nightly-2022-04-05 component add rust-src
-
     - name: Init node package
       run: |
         cd ffi/diplomat/js/examples/node

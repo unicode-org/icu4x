@@ -29,20 +29,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-# For the nightly CI, we set four environment variables, and set a rustup override to nightly.
-# Each env var has a different purpose:
-# - ICU4X_NIGHTLY_TOOLCHAIN: This overrides the nightly used by ICU4X FFI/etc tasks
-# - INSTALLED_NIGHTLY_VERSION: This overrides the nightly used in this build-test.yml file when installing components
-#                              We do not reuse ICU4X_NIGHTLY_TOOLCHAIN because we want the *default* CI experience to be
-#                              as close to running locally as possible, and we want to avoid there being a bug that only occurs
-#                              on pull request CI because it is always run with ICU4X_NIGHTLY_TOOLCHAIN=... . Basically, 
-#                              ICU4X_NIGHTLY_TOOLCHAIN affects the makefile, and INSTALLED_NIGHTLY_VERSION affects this Actions file only
-# - ICU4X_BUILDING_WITH_FORCED_NIGHTLY: This lets tests know that we're building with forced nightly, in case of tests testing the behavior of specific Rust versions.
-# - `RUSTDOCFLAGS=--cfg ICU4X_BUILDING_WITH_FORCED_NIGHTLY`: Same as previously, but works for disabling doctests. Use ICU4X_BUILDING_WITH_FORCED_NIGHTLY where possible.
-#
-# When updating the CI stable version, please audit all cases of ICU4X_BUILDING_WITH_FORCED_NIGHTLY and remove cfgs where necessary.
 env:
-  INSTALLED_NIGHTLY_VERSION: nightly-2022-04-05
   RUST_CACHED_PATH_ROOT: /tmp/icu4x
 
 jobs:
@@ -292,14 +279,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Load cortex target for no_std build.
-      run: |
-        rustup install $INSTALLED_NIGHTLY_VERSION
-        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
-        rustup target add thumbv7m-none-eabi --toolchain $INSTALLED_NIGHTLY_VERSION
-        rustup target add thumbv8m.main-none-eabihf --toolchain $INSTALLED_NIGHTLY_VERSION
-        rustup target add x86_64-unknown-linux-gnu --toolchain $INSTALLED_NIGHTLY_VERSION
-        rustup target add wasm32-unknown-unknown --toolchain $INSTALLED_NIGHTLY_VERSION
     - name: Set up Clang-14
       run: |
         wget https://apt.llvm.org/llvm.sh
@@ -362,9 +341,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Load nightly for rustdoc-json
-      run: |
-        rustup install nightly-2022-08-25
     - name: Run diplomat-get-rev to ensure it works
       id: diplomat-getrev-check
       run: cargo make --loglevel error diplomat-get-rev
@@ -430,12 +406,6 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Load wasi for gn.
-      run: |
-        rustup install $INSTALLED_NIGHTLY_VERSION
-        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
-        rustup target add wasm32-wasi --toolchain $INSTALLED_NIGHTLY_VERSION
-
     - name: Attempt to load cached GN Third-Party Tools
       uses: actions/cache@v3
       id: gn-third-party-tools-cache
