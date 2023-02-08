@@ -261,7 +261,7 @@ fn main() -> eyre::Result<()> {
 
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Ignored)?;
+        source_data = source_data.with_cldr(PathBuf::from(path), Default::default())?;
     } else {
         source_data = source_data.with_cldr_for_tag(
             if Some("latest") == matches.value_of("CLDR_TAG") {
@@ -269,7 +269,7 @@ fn main() -> eyre::Result<()> {
             } else {
                 matches.value_of("CLDR_TAG").unwrap()
             },
-            CldrLocaleSubset::Ignored,
+            Default::default(),
         )?
     }
 

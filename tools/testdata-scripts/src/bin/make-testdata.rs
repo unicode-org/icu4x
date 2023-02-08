@@ -14,7 +14,7 @@ fn main() {
         .unwrap();
 
     let source_data = SourceData::default()
-        .with_cldr(paths::cldr_json_root(), CldrLocaleSubset::Ignored)
+        .with_cldr(paths::cldr_json_root(), Default::default())
         .unwrap()
         .with_icuexport(paths::icuexport_toml_root())
         .unwrap();

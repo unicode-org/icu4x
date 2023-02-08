@@ -80,6 +80,12 @@ pub enum CldrLocaleSubset {
     Ignored,
 }
 
+impl Default for CldrLocaleSubset {
+    fn default() -> Self {
+        Self::Ignored
+    }
+}
+
 impl CldrLocaleSubset {
     #[allow(non_upper_case_globals)]
     pub const Full: Self = Self::Ignored;

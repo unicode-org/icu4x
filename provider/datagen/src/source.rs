@@ -61,10 +61,7 @@ impl SourceData {
     #[cfg(test)]
     pub fn for_test() -> Self {
         Self::default()
-            .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
-                crate::CldrLocaleSubset::Ignored,
-            )
+            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .expect("testdata is valid")
@@ -78,7 +75,7 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _unused_locale_subset: crate::CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
         Ok(Self {
@@ -104,7 +101,7 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        _unused_locale_subset: crate::CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
             cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
@@ -141,9 +138,9 @@ impl SourceData {
     /// Deprecated
     pub fn with_cldr_latest(
         self,
-        _unused_locale_subset: crate::CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, _unused_locale_subset)
+        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
     }
 
     #[deprecated(
