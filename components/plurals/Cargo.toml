@@ -43,7 +43,7 @@ icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider = { path = "../../provider/core" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
+serde_json = "1.0"
 
 [features]
 std = ["fixed_decimal/std", "icu_locid/std", "icu_provider/std"]

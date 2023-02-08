@@ -43,7 +43,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 criterion = "0.3.3"
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_locid_transform"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
+serde_json = "1.0"
 icu = { path = "../icu" }
 writeable = { path = "../../utils/writeable" }
 
