@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675848751983,
+  "lastUpdate": 1675897353894,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -71471,6 +71471,120 @@ window.BENCHMARK_DATA = {
             "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
             "value": 197579,
             "range": "± 1177",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81baebaf9a8b0796c535cc392c1f9d932da310de",
+          "message": "Make crlify work on CRLF files. (#3095)",
+          "timestamp": "2023-02-08T23:49:54+01:00",
+          "tree_id": "c44dfe7c7e3ea5495c5b3b9485d42bb96ace0e06",
+          "url": "https://github.com/unicode-org/icu4x/commit/81baebaf9a8b0796c535cc392c1f9d932da310de"
+        },
+        "date": 1675897260990,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 101413,
+            "range": "± 562",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20343,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67593,
+            "range": "± 248",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/22.50",
+            "value": 43,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 183,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/22.50",
+            "value": 27,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0012.3400",
+            "value": 43,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00.0012216734340",
+            "value": 91,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00002342561123400.0",
+            "value": 100,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/-00123400",
+            "value": 36,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/922337203685477580898230948203840239384.9823094820384023938423424",
+            "value": 392,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0.000000001",
+            "value": 44,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
+            "value": 157983,
+            "range": "± 78",
             "unit": "ns/iter"
           }
         ]
