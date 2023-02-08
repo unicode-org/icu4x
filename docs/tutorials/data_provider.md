@@ -133,9 +133,8 @@ where
 }
 
 // Usage example:
-let lru_capacity = 100usize.try_into().unwrap();
 let provider = LruDataCache {
-    cache: Mutex::new(LruCache::new(NonZeroUsize::new(100).unwrap())),
+    cache: Mutex::new(LruCache::new(100usize.try_into().unwrap())),
     provider: HelloWorldProvider,
 };
 

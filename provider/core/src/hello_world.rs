@@ -19,7 +19,10 @@ use writeable::Writeable;
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(any(feature = "deserialize_json", feature = "datagen"), derive(serde::Serialize))]
+#[cfg_attr(
+    any(feature = "deserialize_json", feature = "datagen"),
+    derive(serde::Serialize)
+)]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
