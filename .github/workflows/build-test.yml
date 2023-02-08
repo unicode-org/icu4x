@@ -1171,7 +1171,7 @@ jobs:
     
     # Skipped tasks: benchmark, memory, datasize, binsize
     needs: [check-msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, features, wasm, fmt, tidy, clippy, doc, ]
-    if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify slack of failure
@@ -1180,7 +1180,7 @@ jobs:
           notify_when: failure
           status: failure # We do the filtering earlier
           notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Nightly' || 'Manually dispatched')) }}
+          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Nightly' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
