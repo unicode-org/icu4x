@@ -70,8 +70,7 @@ impl SourceData {
     }
 
     #[cfg(test)]
-    // This is meant to be equivalent to `latest_tested` for the exact code paths that we need in testing.
-    // This equivalence is not enforced anywhere.
+    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn offline_latest_tested_subset() -> Self {
         Self::default()
             .with_cldr(
