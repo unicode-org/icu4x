@@ -54,7 +54,7 @@
 //!
 //! Examples of AnyProviders:
 //!
-//! - [`DatagenProvider] reads structured data from CLDR source files and returns ICU4X data structs.
+//! - [`DatagenProvider`] reads structured data from CLDR source files and returns ICU4X data structs.
 //! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
 //! - The `BakedDataProvider` which encodes structured data directly in Rust source
 //!
