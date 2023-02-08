@@ -81,8 +81,10 @@ fn main() -> eyre::Result<()> {
                 fs::create_dir_all(path.parent().unwrap())?;
                 io::copy(
                     &mut file,
-                    &mut File::create(&path)
-                        .with_context(|| format!("Failed to create file {:?}", &path))?,
+                    &mut crlify::BufWriterWithLineEndingFix::new(
+                        File::create(&path)
+                            .with_context(|| format!("Failed to create file {:?}", &path))?,
+                    ),
                 )
                 .with_context(|| format!("Failed to write file {:?}", &path))?;
             }
