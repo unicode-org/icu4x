@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675700625400,
+  "lastUpdate": 1675826089904,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35363,6 +35363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4f313b00c0b9f48e4be986a5a74a11b362b03f03"
         },
         "date": 1675700532061,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "79e2bcdccb09f92e6f76890b03150c10eb52d2b7",
+          "message": "Remove all dependencies on `spin`, bump icu_testdata to 1.1.2 (#3091)\n\n\r\n* Remove lazy_static dep of testdata\r\n\r\n* Bump icu_testdata to 1.1.2",
+          "timestamp": "2023-02-08T03:11:36Z",
+          "tree_id": "4148d9c0556fdfb74b41243e03c64d1f8f9baa15",
+          "url": "https://github.com/unicode-org/icu4x/commit/79e2bcdccb09f92e6f76890b03150c10eb52d2b7"
+        },
+        "date": 1675825996855,
         "tool": "ndjson",
         "benches": [
           {
