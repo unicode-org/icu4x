@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675848199908,
+  "lastUpdate": 1675896770791,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35453,6 +35453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6db157566f748ccabf960ba124c86437e57571a0"
         },
         "date": 1675848114985,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81baebaf9a8b0796c535cc392c1f9d932da310de",
+          "message": "Make crlify work on CRLF files. (#3095)",
+          "timestamp": "2023-02-08T23:49:54+01:00",
+          "tree_id": "c44dfe7c7e3ea5495c5b3b9485d42bb96ace0e06",
+          "url": "https://github.com/unicode-org/icu4x/commit/81baebaf9a8b0796c535cc392c1f9d932da310de"
+        },
+        "date": 1675896686327,
         "tool": "ndjson",
         "benches": [
           {
