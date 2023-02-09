@@ -53,7 +53,8 @@ impl DataMarker for BufferMarker {
 ///         buffer_provider
 ///             .load_buffer(HelloWorldV1Marker::KEY, req)
 ///             .expect("load should succeed")
-///             .take_payload().unwrap()
+///             .take_payload()
+///             .unwrap()
 ///             .get()
 ///     )
 ///     .expect("should deserialize"),
@@ -70,7 +71,8 @@ impl DataMarker for BufferMarker {
 ///     deserializing_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload().unwrap()
+///         .take_payload()
+///         .unwrap()
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),

@@ -18,6 +18,9 @@ use crate::helpers::result_is_err_missing_data_options;
 ///
 /// # let provider = icu_provider_adapters::fork::ForkByKeyProvider::new(HelloWorldProvider.into_any_provider(), icu_testdata::any());
 /// # let HelloWorldAndFallbackProvider = provider.as_downcasting();
+/// // This data provider contains both the data we want (`HelloWorldV1`),
+/// // as well as the fallback data (`LocaleFallbackLikelySubtagsV1`,
+/// // `LocaleFallbackParentsV1`, `CollationFallbackSupplementV1`).
 /// let provider = HelloWorldAndFallbackProvider;
 ///
 /// let req = DataRequest {
@@ -34,7 +37,8 @@ use crate::helpers::result_is_err_missing_data_options;
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
 /// let response =
-///   DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect("successful with vertical fallback");
+///   DataProvider::<HelloWorldV1Marker>::load(&provider, req)
+///     .expect("successful with vertical fallback");
 ///
 /// assert_eq!(
 ///     response.metadata.locale.unwrap(),

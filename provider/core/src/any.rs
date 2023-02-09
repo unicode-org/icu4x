@@ -315,7 +315,8 @@ where
 ///         .expect("load should succeed")
 ///         .downcast::<HelloWorldV1Marker>()
 ///         .expect("types should match")
-///         .take_payload().unwrap()
+///         .take_payload()
+///         .unwrap()
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
@@ -330,7 +331,8 @@ where
 ///     downcasting_provider
 ///         .load(req)
 ///         .expect("load should succeed")
-///         .take_payload().unwrap()
+///         .take_payload()
+///         .unwrap()
 ///         .get(),
 ///     &HelloWorldV1 {
 ///         message: Cow::Borrowed("Hallo Welt"),
