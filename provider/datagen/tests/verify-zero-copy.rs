@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys_with_experimental, CldrLocaleSubset, DatagenProvider, SourceData};
+use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
 use std::cmp;
 use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
@@ -49,7 +49,7 @@ fn main() {
         source: SourceData::default()
             .with_cldr(
                 concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
-                CldrLocaleSubset::Full,
+                Default::default(),
             )
             .unwrap()
             .with_icuexport(

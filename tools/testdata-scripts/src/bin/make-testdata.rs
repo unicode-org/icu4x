@@ -30,7 +30,7 @@ fn main() {
                 "/../../provider/datagen/tests/data/cldr"
             )
             .into(),
-            CldrLocaleSubset::Full,
+            Default::default(),
         )
         .unwrap()
         .with_icuexport(

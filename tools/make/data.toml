@@ -31,7 +31,7 @@ output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
-    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata`:"
+    array_push ${msg} "Test data needs to be updated. Please run `cargo make testdata` and `cargo make testdata-hello-world:"
     array_push ${msg} ""
     array_push ${msg} "${output.stdout}"
     msg = array_join ${msg} "\n"
