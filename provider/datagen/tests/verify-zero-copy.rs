@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys, CldrLocaleSubset, DatagenProvider, SourceData};
+use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
 use std::cmp;
 use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
@@ -43,17 +43,11 @@ fn main() {
     // manually drop to avoid dhat from printing stats at the end
     let _profiler = ManuallyDrop::new(dhat::Profiler::new_heap());
 
-    let selected_locales = icu_testdata::metadata::load()
-        .unwrap()
-        .package_metadata
-        .locales;
+    let selected_locales = icu_testdata::locales();
 
     let converter = DatagenProvider {
         source: SourceData::default()
-            .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Full,
-            )
+            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
             .unwrap()
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .unwrap(),
@@ -68,7 +62,7 @@ fn main() {
     // violations for total_bytes_allocated (but not net_bytes_allocated)
     let mut total_violations = BTreeSet::new();
 
-    for key in all_keys().into_iter() {
+    for key in all_keys_with_experimental().into_iter() {
         let mut max_total_violation = 0;
         let mut max_net_violation = 0;
 
@@ -112,5 +106,5 @@ fn main() {
         If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
         If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
         to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_violations, EXPECTED_TOTAL_VIOLATIONS, total_violations)
+        Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}")
 }

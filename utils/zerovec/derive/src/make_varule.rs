@@ -115,7 +115,6 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq, Eq)]
         #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
@@ -140,6 +139,19 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         &ule_name,
         lt,
         input.span(),
+    );
+
+    let eq_impl = quote!(
+        impl core::cmp::PartialEq for #ule_name {
+            fn eq(&self, other: &Self) -> bool {
+                // The VarULE invariants allow us to assume that equality is byte equality
+                // in non-safety-critical contexts
+                <Self as zerovec::ule::VarULE>::as_byte_slice(&self)
+                == <Self as zerovec::ule::VarULE>::as_byte_slice(&other)
+            }
+        }
+
+        impl core::cmp::Eq for #ule_name {}
     );
 
     let zerofrom_fq_path =
@@ -246,6 +258,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #derived
 
         #maybe_ord_impls
+
+        #eq_impl
 
         #zmkv
 

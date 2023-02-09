@@ -163,7 +163,7 @@ where
                 )
             }
             _ => {
-                debug_assert!(false, "{:?}", e);
+                debug_assert!(false, "{e:?}");
                 Err(core::fmt::Error)
             }
         }

@@ -180,7 +180,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
     // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser.
-    let ch_for_json = format!("x=\"{}\"", char_block);
+    let ch_for_json = format!("x=\"{char_block}\"");
 
     // Workaround for literal values like "\\-"" that cause problems for the TOML parser.
     // In such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character.
@@ -200,7 +200,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     let ch_for_json = ch_vec.iter().collect::<String>();
 
     let ch_lite_t_val: toml::Value =
-        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{:?}", char_block));
+        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{char_block:?}"));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
         if let Some(toml::Value::String(s)) = t.get("x") {
             s.to_owned()

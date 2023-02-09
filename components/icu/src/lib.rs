@@ -128,7 +128,7 @@
 #[doc(inline)]
 pub use icu_calendar as calendar;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "icu_casemapping")]
 #[doc(inline)]
 pub use icu_casemapping as casemapping;
 
@@ -162,17 +162,17 @@ pub use icu_properties as properties;
 #[doc(inline)]
 pub use icu_collections as collections;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "icu_segmenter")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
 
 #[doc(inline)]
 pub use icu_timezone as timezone;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "icu_displaynames")]
 #[doc(inline)]
 pub use icu_displaynames as displaynames;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "icu_relativetime")]
 #[doc(inline)]
 pub use icu_relativetime as relativetime;

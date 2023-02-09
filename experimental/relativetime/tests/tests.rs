@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use fixed_decimal::FixedDecimal;
-use icu_locid::locale;
+use icu::locid::locale;
 use icu_relativetime::{options::Numeric, RelativeTimeFormatter, RelativeTimeFormatterOptions};
 use writeable::assert_writeable_eq;
 

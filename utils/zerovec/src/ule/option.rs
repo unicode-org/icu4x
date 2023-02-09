@@ -32,7 +32,7 @@ use core::mem::{self, MaybeUninit};
 pub struct OptionULE<U>(bool, MaybeUninit<U>);
 
 impl<U: Copy> OptionULE<U> {
-    /// Obtain this as an Option<T>
+    /// Obtain this as an `Option<T>`
     pub fn get(self) -> Option<U> {
         if self.0 {
             unsafe {
@@ -44,7 +44,7 @@ impl<U: Copy> OptionULE<U> {
         }
     }
 
-    /// Construct an OptionULE<U> from an equivalent Option<T>
+    /// Construct an `OptionULE<U>` from an equivalent `Option<T>`
     pub fn new(opt: Option<U>) -> Self {
         if let Some(inner) = opt {
             Self(true, MaybeUninit::new(inner))

@@ -5,7 +5,13 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-//! Data provider struct definitions for this ICU4X component.
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -25,6 +31,12 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -45,6 +57,12 @@ pub enum PropertyCodePointSetV1<'data> {
 ///
 /// This data enum is extensible, more backends may be added in the future.
 /// Old data can be used with newer code but not vice versa.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -62,6 +80,12 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 }
 
 /// A set of characters and strings which share a particular property value.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -130,6 +154,12 @@ impl<'data> PropertyUnicodeSetV1<'data> {
 }
 
 /// A struct that efficiently stores `Script` and `Script_Extensions` property data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(

@@ -14,7 +14,7 @@
 //!
 //! # Examples
 //!
-//! ## Format a number with Bengali digits
+//! ## Format a number with Bangla digits
 //!
 //! ```
 //! use fixed_decimal::FixedDecimal;

@@ -66,13 +66,13 @@ impl crate::DatagenProvider {
                 .get(era_id)
                 .ok_or_else(|| {
                     DataError::custom("calendarData.json is missing data for a japanese era")
-                        .with_display_context(&format!("era index {}", era_id))
+                        .with_display_context(&format!("era index {era_id}"))
                 })?
                 .start;
 
             let start_date = EraStartDate::from_str(date).map_err(|_| {
                 DataError::custom("calendarData.json contains unparseable data for a japanese era")
-                    .with_display_context(&format!("era index {}", era_id))
+                    .with_display_context(&format!("era index {era_id}"))
             })?;
 
             let code = era_to_code(era_name, start_date.year)
@@ -155,31 +155,27 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     let name = original
         .split(' ')
         .next()
-        .ok_or_else(|| format!("Era name {} doesn't contain any text", original))?;
+        .ok_or_else(|| format!("Era name {original} doesn't contain any text"))?;
     let name = name
-        .replace(&['ō', 'Ō'], "o")
-        .replace(&['ū', 'Ū'], "u")
-        .replace(&['-', '\'', '’'], "")
+        .replace(['ō', 'Ō'], "o")
+        .replace(['ū', 'Ū'], "u")
+        .replace(['-', '\'', '’'], "")
         .to_lowercase();
     if !name.is_ascii() {
         return Err(format!(
-            "Era name {} (parsed from {}) contains non-ascii characters",
-            name, original
+            "Era name {name} (parsed from {original}) contains non-ascii characters"
         ));
     }
 
     let code = if year >= 1868 {
         name
     } else {
-        format!("{}-{}", name, year)
+        format!("{name}-{year}")
     };
 
     // In case of future or past eras that do not fit, we may need to introduce a truncation scheme
     let code = code.parse().map_err(|e| {
-        format!(
-            "Era code {} (parsed from {}) does not fit into a TinyStr16: {}",
-            code, original, e
-        )
+        format!("Era code {code} (parsed from {original}) does not fit into a TinyStr16: {e}")
     })?;
     Ok(code)
 }

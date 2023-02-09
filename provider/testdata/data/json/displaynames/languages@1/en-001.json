@@ -660,5 +660,26 @@
     "zun": "Zuni",
     "zxx": "No linguistic content",
     "zza": "Zaza"
+  },
+  "short_names": {
+    "az": "Azeri",
+    "en-GB": "UK English",
+    "en-US": "US English"
+  },
+  "long_names": {
+    "zh": "Mandarin Chinese",
+    "zh-Hans": "Simplified Mandarin Chinese",
+    "zh-Hant": "Traditional Mandarin Chinese"
+  },
+  "menu_names": {
+    "ars": "Arabic, Najdi",
+    "ckb": "Kurdish, Central",
+    "se": "Sami, Northern",
+    "sma": "Sami, Southern",
+    "smj": "Sami, Lule",
+    "smn": "Sami, Inari",
+    "sms": "Sami, Skolt",
+    "yue": "Chinese, Cantonese",
+    "zh": "Chinese, Mandarin"
   }
 }

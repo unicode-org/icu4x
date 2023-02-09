@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Relative time formatting
+//! 🚧 \[Experimental\] Compact decimal
 //!
 //! This module is published as its own crate ([`icu_compactdecimal`](https://docs.rs/icu_compactdecimal/latest/icu_compactdecimal/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
@@ -12,7 +12,6 @@
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! </div>
-//!
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(test), no_std)]

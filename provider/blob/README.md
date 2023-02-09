@@ -3,15 +3,10 @@
 `icu_provider_blob` contains [`BlobDataProvider`], a [`BufferProvider`] implementation that
 supports loading data from a single serialized blob.
 
-To build blob data, use the `--format blob` option of [`icu_datagen`]. For example, to build
-"hello world" data, run:
+To build blob data, use the `--format blob` option of [`icu_datagen`]:
 
 ```bash
-$ cargo run --features bin -p icu_datagen -- \
-    --format blob \
-    --hello-world-key \
-    --all-locales \
-    --out hello_world.postcard
+$ icu4x-datagen --keys all --locales full --format blob --out data.postcard
 ```
 
 For examples, see the specific data providers.

@@ -42,14 +42,23 @@ void iterate_breakpoints(Iterator& iterator) {
 
 void test_line(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XLineSegmenter::create(provider).ok().value();
-    cout << "Finding line breakpoints in string:" << endl
-         << str << endl;
-    print_ruler(str.size());
+    const auto segmenter_auto =
+        ICU4XLineSegmenter::create_auto(provider).ok().value();
+    const auto segmenter_lstm =
+        ICU4XLineSegmenter::create_lstm(provider).ok().value();
+    const auto segmenter_dictionary =
+        ICU4XLineSegmenter::create_dictionary(provider).ok().value();
 
-    cout << "Line breakpoints:";
-    auto iterator = segmenter.segment_utf8(str);
-    iterate_breakpoints(iterator);
+    const ICU4XLineSegmenter* segmenters[] = {&segmenter_auto, &segmenter_lstm,
+                                              &segmenter_dictionary};
+    for (const auto* segmenter : segmenters) {
+        cout << "Finding line breakpoints in string:" << endl << str << endl;
+        print_ruler(str.size());
+
+        cout << "Line breakpoints:";
+        auto iterator = segmenter->segment_utf8(str);
+        iterate_breakpoints(iterator);
+    }
 }
 
 void test_grapheme(const std::string_view& str) {
@@ -66,14 +75,23 @@ void test_grapheme(const std::string_view& str) {
 
 void test_word(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XWordSegmenter::create(provider).ok().value();
-    cout << "Finding word breakpoints in string:" << endl
-         << str << endl;
-    print_ruler(str.size());
+    const auto segmenter_auto =
+        ICU4XWordSegmenter::create_auto(provider).ok().value();
+    const auto segmenter_lstm =
+        ICU4XWordSegmenter::create_lstm(provider).ok().value();
+    const auto segmenter_dictionary =
+        ICU4XWordSegmenter::create_dictionary(provider).ok().value();
 
-    cout << "Word breakpoints:";
-    auto iterator = segmenter.segment_utf8(str);
-    iterate_breakpoints(iterator);
+    const ICU4XWordSegmenter* segmenters[] = {&segmenter_auto, &segmenter_lstm,
+                                              &segmenter_dictionary};
+    for (const auto* segmenter : segmenters) {
+        cout << "Finding word breakpoints in string:" << endl << str << endl;
+        print_ruler(str.size());
+
+        cout << "Word breakpoints:";
+        auto iterator = segmenter->segment_utf8(str);
+        iterate_breakpoints(iterator);
+    }
 }
 
 void test_sentence(const std::string_view& str) {

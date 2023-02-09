@@ -33,6 +33,7 @@ Document | Summary
 [triaging.md](process/triaging.md) | ICU4X uses GitHub for tracking feature requests and work items.
 [ci_build.md](process/ci_build.md) | An overview of continuous integration setup in ICU4X.
 [rust_versions.md](process/rust_versions.md) | An overview of ICU4X's Rust version policy.
+[data_versioning.md](process/data_versioning.md) | An overview of ICU4X's data version policy.
 
 ## Design
 

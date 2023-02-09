@@ -65,13 +65,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
-        const _: () = ();
-        core::mem::transmute((bytes.as_ptr(), bytes.len() / core::mem::size_of::<T::ULE>()))
+        Self::from_ule_slice(core::mem::transmute((
+            bytes.as_ptr(),
+            bytes.len() / core::mem::size_of::<T::ULE>(),
+        )))
     }
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
@@ -513,7 +510,7 @@ where
     }
 }
 
-impl<'a, T: AsULE + PartialOrd> PartialOrd for ZeroSlice<T> {
+impl<T: AsULE + PartialOrd> PartialOrd for ZeroSlice<T> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.iter().partial_cmp(other.iter())
     }
@@ -527,13 +524,13 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
 
 impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        ZeroSlice::<T>::from_ule_slice(&**self)
+        ZeroSlice::<T>::from_ule_slice(self)
     }
 }
 
 impl<T: AsULE> AsRef<ZeroSlice<T>> for &[T::ULE] {
     fn as_ref(&self) -> &ZeroSlice<T> {
-        ZeroSlice::<T>::from_ule_slice(&**self)
+        ZeroSlice::<T>::from_ule_slice(self)
     }
 }
 

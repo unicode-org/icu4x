@@ -1237,11 +1237,7 @@ where
                 }
             }
         };
-        let start = if c.decomposition_starts_with_non_starter() {
-            0
-        } else {
-            1
-        };
+        let start = c.decomposition_starts_with_non_starter() as usize;
         self.upcoming.insert(0, c);
         // Indices in range by construction
         #[allow(clippy::indexing_slicing)]

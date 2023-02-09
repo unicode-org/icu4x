@@ -9,29 +9,9 @@
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 0u8, 123u8, 48u8, 125u8, 32u8, 240u8,
-                    145u8, 132u8, 152u8, 240u8, 145u8, 132u8, 168u8, 240u8, 145u8, 132u8,
-                    157u8, 240u8, 145u8, 132u8, 170u8, 240u8, 145u8, 132u8, 140u8, 240u8,
-                    145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 142u8, 240u8, 145u8, 132u8,
-                    179u8, 240u8, 145u8, 132u8, 160u8, 32u8, 240u8, 145u8, 132u8, 131u8, 240u8,
-                    145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8,
-                    180u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8, 132u8, 167u8, 240u8,
-                    145u8, 132u8, 150u8, 240u8, 145u8, 132u8, 180u8, 123u8, 48u8, 125u8, 32u8,
-                    240u8, 145u8, 132u8, 159u8, 240u8, 145u8, 132u8, 154u8, 240u8, 145u8,
-                    132u8, 167u8, 240u8, 145u8, 132u8, 135u8, 240u8, 145u8, 132u8, 180u8, 32u8,
-                    240u8, 145u8, 132u8, 131u8, 240u8, 145u8, 132u8, 167u8, 240u8, 145u8,
-                    132u8, 135u8, 240u8, 145u8, 132u8, 180u8, 240u8, 145u8, 132u8, 150u8,
-                    240u8, 145u8, 132u8, 167u8, 240u8, 145u8, 132u8, 150u8, 240u8, 145u8,
-                    132u8, 180u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0I\0{0} \xF0\x91\x84\x98\xF0\x91\x84\xA8\xF0\x91\x84\x9D\xF0\x91\x84\xAA\xF0\x91\x84\x8C\xF0\x91\x84\xB4\xF0\x91\x84\x8E\xF0\x91\x84\xB3\xF0\x91\x84\xA0 \xF0\x91\x84\x83\xF0\x91\x84\xA7\xF0\x91\x84\x87\xF0\x91\x84\xB4\xF0\x91\x84\x96\xF0\x91\x84\xA7\xF0\x91\x84\x96\xF0\x91\x84\xB4{0} \xF0\x91\x84\x9F\xF0\x91\x84\x9A\xF0\x91\x84\xA7\xF0\x91\x84\x87\xF0\x91\x84\xB4 \xF0\x91\x84\x83\xF0\x91\x84\xA7\xF0\x91\x84\x87\xF0\x91\x84\xB4\xF0\x91\x84\x96\xF0\x91\x84\xA7\xF0\x91\x84\x96\xF0\x91\x84\xB4")
             },
         )
     },

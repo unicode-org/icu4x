@@ -13,7 +13,7 @@ enum Element {
 impl Display for Element {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Token(n) => write!(f, "{}", n),
+            Self::Token(n) => write!(f, "{n}"),
         }
     }
 }

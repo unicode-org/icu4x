@@ -80,7 +80,7 @@ fn overview_bench(c: &mut Criterion) {
 
 #[cfg(feature = "bench")]
 fn lang_bench(c: &mut Criterion, cpt: &CodePointTrie<u8>, lid: &str, sample_str: &str) {
-    let bench_name = format!("cpt/get/{}", lid);
+    let bench_name = format!("cpt/get/{lid}");
     let s = one_hundred_code_points(sample_str);
 
     c.bench_function(&bench_name, |b| {

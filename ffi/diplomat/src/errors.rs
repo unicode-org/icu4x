@@ -134,32 +134,36 @@ pub mod ffi {
     }
 }
 
-#[cfg(feature = "logging")]
-#[inline]
-pub(crate) fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
-    use core::any;
-    log::warn!(
-        "Returning ICU4XError::{:?} based on original {}: {}",
-        ffi_error,
-        any::type_name::<T>(),
-        e
-    );
-}
+impl ICU4XError {
+    #[cfg(feature = "logging")]
+    #[inline]
+    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, e: &T) -> Self {
+        use core::any;
+        log::warn!(
+            "Returning ICU4XError::{:?} based on original {}: {}",
+            self,
+            any::type_name::<T>(),
+            e
+        );
+        self
+    }
 
-#[cfg(not(feature = "logging"))]
-#[inline]
-pub(crate) fn log_conversion<T: core::fmt::Display>(_e: &T, _ffi_error: ICU4XError) {}
+    #[cfg(not(feature = "logging"))]
+    #[inline]
+    pub(crate) fn log_original<T: core::fmt::Display + ?Sized>(self, _e: &T) -> Self {
+        self
+    }
+}
 
 impl From<fmt::Error> for ICU4XError {
     fn from(e: fmt::Error) -> Self {
-        log_conversion(&e, ICU4XError::WriteableError);
-        ICU4XError::WriteableError
+        ICU4XError::WriteableError.log_original(&e)
     }
 }
 
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
-        let ret = match e.kind {
+        match e.kind {
             DataErrorKind::MissingDataKey => ICU4XError::DataMissingDataKeyError,
             DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
@@ -180,43 +184,40 @@ impl From<DataError> for ICU4XError {
                 ICU4XError::DataUnavailableBufferFormatError
             }
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<CollatorError> for ICU4XError {
     fn from(e: CollatorError) -> Self {
-        let ret = match e {
+        match e {
             CollatorError::NotFound => ICU4XError::DataMissingPayloadError,
             CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
             CollatorError::Data(_) => ICU4XError::DataIoError,
             _ => ICU4XError::DataIoError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<PropertiesError> for ICU4XError {
     fn from(e: PropertiesError) -> Self {
-        let ret = match e {
+        match e {
             PropertiesError::PropDataLoad(e) => e.into(),
             PropertiesError::UnknownScriptId(..) => ICU4XError::PropertyUnknownScriptIdError,
             PropertiesError::UnknownGeneralCategoryGroup(..) => {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<CalendarError> for ICU4XError {
     fn from(e: CalendarError) -> Self {
-        let ret = match e {
+        match e {
             CalendarError::Parse => ICU4XError::CalendarParseError,
             CalendarError::Overflow { field: _, max: _ } => ICU4XError::CalendarOverflowError,
             CalendarError::Underflow { field: _, min: _ } => ICU4XError::CalendarUnderflowError,
@@ -228,15 +229,14 @@ impl From<CalendarError> for ICU4XError {
             CalendarError::MissingCalendar => ICU4XError::CalendarMissingError,
             CalendarError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
-        let ret = match e {
+        match e {
             DateTimeError::Pattern(_) => ICU4XError::DateTimePatternError,
             DateTimeError::Format(err) => err.into(),
             DateTimeError::Data(err) => err.into(),
@@ -255,127 +255,116 @@ impl From<DateTimeError> for ICU4XError {
                 ICU4XError::DateTimeMismatchedCalendarError
             }
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<FixedDecimalError> for ICU4XError {
     fn from(e: FixedDecimalError) -> Self {
-        let ret = match e {
+        match e {
             FixedDecimalError::Limit => ICU4XError::FixedDecimalLimitError,
             FixedDecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<PluralsError> for ICU4XError {
     fn from(e: PluralsError) -> Self {
-        let ret = match e {
+        match e {
             PluralsError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
-        let ret = match e {
+        match e {
             DecimalError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<LocaleTransformError> for ICU4XError {
     fn from(e: LocaleTransformError) -> Self {
-        let ret = match e {
+        match e {
             LocaleTransformError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<SegmenterError> for ICU4XError {
     fn from(e: SegmenterError) -> Self {
-        let ret = match e {
+        match e {
             SegmenterError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<ListError> for ICU4XError {
     fn from(e: ListError) -> Self {
-        let ret = match e {
+        match e {
             ListError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<ParserError> for ICU4XError {
     fn from(e: ParserError) -> Self {
-        let ret = match e {
+        match e {
             ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<TinyStrError> for ICU4XError {
     fn from(e: TinyStrError) -> Self {
-        let ret = match e {
+        match e {
             TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
             TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
             TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<TimeZoneError> for ICU4XError {
     fn from(e: TimeZoneError) -> Self {
-        let ret = match e {
+        match e {
             TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
             TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
             TimeZoneError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
 
 impl From<NormalizerError> for ICU4XError {
     fn from(e: NormalizerError) -> Self {
-        let ret = match e {
+        match e {
             NormalizerError::FutureExtension => ICU4XError::NormalizerFutureExtensionError,
             NormalizerError::ValidationError => ICU4XError::NormalizerValidationError,
             NormalizerError::Data(err) => err.into(),
             _ => ICU4XError::UnknownError,
-        };
-        log_conversion(&e, ret);
-        ret
+        }
+        .log_original(&e)
     }
 }
