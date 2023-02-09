@@ -100,7 +100,7 @@ fn generate_hashmap() {
 fn generate_zerohashmap() {
     let map = build_zerohashmap(false);
     let buf = postcard::to_stdvec(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[cfg(feature = "generate")]
@@ -299,7 +299,7 @@ fn build_zerohashmap(large: bool) -> ZeroHashMap<'static, Index32Str, Index32Str
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                kv.push((format!("{}{}", key, n), indexify(value)));
+                kv.push((format!("{key}{n}"), indexify(value)));
             }
         } else {
             kv.push((key.to_string(), indexify(value)));
