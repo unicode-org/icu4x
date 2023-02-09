@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675966099177,
+  "lastUpdate": 1675970644893,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35543,6 +35543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1c29d57e9e6886fb58f61adcb0708381b71c1b02"
         },
         "date": 1675966005447,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c6c67a180107b5c7ec803ebacd10ee4fe2f3ad2d",
+          "message": "Less ZeroMap mutation in datagen (#3098)",
+          "timestamp": "2023-02-09T20:20:57+01:00",
+          "tree_id": "5db2d9285752083c3f42bb88de4eda6d3384c73b",
+          "url": "https://github.com/unicode-org/icu4x/commit/c6c67a180107b5c7ec803ebacd10ee4fe2f3ad2d"
+        },
+        "date": 1675970551501,
         "tool": "ndjson",
         "benches": [
           {
