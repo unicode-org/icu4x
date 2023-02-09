@@ -20,7 +20,6 @@ use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
-use zerovec::{ZeroMap, ZeroMap2d};
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -241,7 +240,7 @@ macro_rules! long_short_impls {
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
-                        None => ZeroMap::new(),
+                        None => Default::default(),
                         Some(metazones) => metazones
                             .0
                             .iter()
@@ -328,7 +327,7 @@ macro_rules! long_short_impls {
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
-                        None => ZeroMap2d::new(),
+                        None => Default::default(),
                         Some(metazones) => metazones
                             .0
                             .iter()
