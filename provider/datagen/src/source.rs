@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::source::CldrCache;
-pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
+pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
@@ -61,10 +61,7 @@ impl SourceData {
     #[cfg(test)]
     pub fn for_test() -> Self {
         Self::default()
-            .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Full,
-            )
+            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
             .expect("testdata is valid")
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .expect("testdata is valid")
@@ -78,19 +75,11 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _locale_subset: CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
-        let locale_subset = if root.list("cldr-misc-full").is_ok() {
-            CldrLocaleSubset::Full
-        } else {
-            CldrLocaleSubset::Modern
-        };
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(root),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(root)))),
             ..self
         })
     }
@@ -112,15 +101,13 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        locale_subset: CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-{locale_subset}.zip"
-                ))),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
+                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
+                )))
+            ))),
             ..self
         })
     }
@@ -149,8 +136,11 @@ impl SourceData {
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     /// Deprecated
-    pub fn with_cldr_latest(self, locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, locale_subset)
+    pub fn with_cldr_latest(
+        self,
+        _use_default_here: crate::CldrLocaleSubset,
+    ) -> Result<Self, DataError> {
+        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
     }
 
     #[deprecated(
@@ -220,6 +210,14 @@ impl SourceData {
 
     pub(crate) fn collations(&self) -> &[String] {
         &self.collations
+    }
+
+    /// List the locales for the given CLDR coverage levels
+    pub fn locales(
+        &self,
+        levels: &[CoverageLevel],
+    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        self.cldr()?.locales(levels)
     }
 }
 
@@ -331,7 +329,7 @@ impl SerdeCache {
         })
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
 }
@@ -426,12 +424,12 @@ impl AbstractFs {
         }
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.init()?;
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
-                .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
+                .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
                 .collect::<Result<HashSet<_>, DataError>>()
                 .map(HashSet::into_iter)?,
             Self::Zip(zip) => zip
@@ -443,7 +441,7 @@ impl AbstractFs {
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(PathBuf::from)
+                .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
         })
