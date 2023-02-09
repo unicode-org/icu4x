@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675896770791,
+  "lastUpdate": 1675929927907,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35483,6 +35483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/81baebaf9a8b0796c535cc392c1f9d932da310de"
         },
         "date": 1675896686327,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "530d721504e65c9308b9a9b871dada7c1c2e028a",
+          "message": "Supporting CLDR coverage levels in datagen (#3035)",
+          "timestamp": "2023-02-09T09:02:08+01:00",
+          "tree_id": "b29cf64644f5daebbee8269550283dd3c49fcec4",
+          "url": "https://github.com/unicode-org/icu4x/commit/530d721504e65c9308b9a9b871dada7c1c2e028a"
+        },
+        "date": 1675929830223,
         "tool": "ndjson",
         "benches": [
           {
