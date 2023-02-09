@@ -11,6 +11,9 @@ use core::hash::Hash;
 pub mod algorithms;
 use algorithms::*;
 
+#[cfg(feature = "serde")]
+mod serde;
+
 /// A perfect zerohashmap optimized for lookups over immutable keys.
 ///
 /// # Examples
@@ -23,7 +26,7 @@ use algorithms::*;
 /// assert_eq!(hashmap.get(&2), Some("c"));
 /// assert_eq!(hashmap.get(&4), None);
 /// ```
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Debug)]
 pub struct ZeroHashMap<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
@@ -34,7 +37,6 @@ where
     /// The ith index of the array splits the keys with first level hash i.
     /// If no key with first level hash is found in the original keys, (0, 0) is used as an empty
     /// placeholder.
-    #[cfg_attr(feature = "serde", serde(borrow))]
     displacements: ZeroVec<'a, (u32, u32)>,
     keys: K::Container,
     values: V::Container,
