@@ -37,13 +37,11 @@ pub fn compute_hash<K: Hash + ?Sized>(key: &K) -> u64 {
 /// Calculate the index using (f0, f1), (d0, d1) in modulo m.
 /// Returns [`None`] if d is (0, 0) or modulo is 0
 /// else returns the index computed using (f0 + f1 * d0 + d1) mod m.
-pub fn compute_index(f: (u32, u32), d: (u32, u32), m: usize) -> Option<usize> {
+pub fn compute_index(f: (u32, u32), d: (u32, u32), m: u32) -> Option<usize> {
     if d == (0, 0) || m == 0 {
         None
     } else {
-        // f.0, f.1 are 24bits
-        let r = (f.1 as u64 * d.0 as u64) + (f.0 + d.1) as u64;
-        Some((r % m as u64) as usize)
+        Some((f.1.wrapping_mul(d.0).wrapping_add(f.0).wrapping_add(d.1) % m) as usize)
     }
 }
 
@@ -131,7 +129,7 @@ pub fn compute_displacements(
                 generation += 1;
 
                 for ((_, f0, f1), _) in buckets {
-                    let displacement_idx = compute_index((*f0, *f1), (d0, d1), len).unwrap();
+                    let displacement_idx = compute_index((*f0, *f1), (d0, d1), len as u32).unwrap();
 
                     // displacement_idx is always within bounds
                     if occupied[displacement_idx] || assignments[displacement_idx] == generation {
