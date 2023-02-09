@@ -211,11 +211,11 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
             .collect::<Vec<_>>();
 
         Self {
-            language_variants: language_variants.into(),
+            language_variants: language_variants.as_slice().into(),
             sgn_region: sgn_region.into_iter().collect(),
             language_len2: language_len2.into_iter().collect(),
             language_len3: language_len3.into_iter().collect(),
-            language: language.into(),
+            language: language.as_slice().into(),
 
             script: script.into_iter().collect(),
 
