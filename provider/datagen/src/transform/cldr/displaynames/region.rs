@@ -62,7 +62,7 @@ impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV
                 if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
                     short_names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
                 } else if !region.contains(ALT_SUBSTRING) {
-                    names.insert(TinyAsciiStr::from_str(&region)?, value.as_ref());
+                    names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
                 }
             }
         }
