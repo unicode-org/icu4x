@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675929927907,
+  "lastUpdate": 1675966099177,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35513,6 +35513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/530d721504e65c9308b9a9b871dada7c1c2e028a"
         },
         "date": 1675929830223,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1c29d57e9e6886fb58f61adcb0708381b71c1b02",
+          "message": "Fix nightly doc breakage (#3099)",
+          "timestamp": "2023-02-09T10:05:08-08:00",
+          "tree_id": "8d9623457fb33f06aedb29e79cae0cc515249467",
+          "url": "https://github.com/unicode-org/icu4x/commit/1c29d57e9e6886fb58f61adcb0708381b71c1b02"
+        },
+        "date": 1675966005447,
         "tool": "ndjson",
         "benches": [
           {
