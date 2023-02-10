@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1675970644893,
+  "lastUpdate": 1676044564841,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35573,6 +35573,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c6c67a180107b5c7ec803ebacd10ee4fe2f3ad2d"
         },
         "date": 1675970551501,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a9465657f49e5eb781177d6849950726013488ff",
+          "message": "Fix GN (#3100)",
+          "timestamp": "2023-02-10T16:53:05+01:00",
+          "tree_id": "e663dd2830fc14ccce51786b91d2732e0c3d62f5",
+          "url": "https://github.com/unicode-org/icu4x/commit/a9465657f49e5eb781177d6849950726013488ff"
+        },
+        "date": 1676044480207,
         "tool": "ndjson",
         "benches": [
           {
