@@ -59,9 +59,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Load the default Rust toolchain via the rust-toolchain file.
-      run: rustup show
-
     - name: Build docs
       uses: actions-rs/cargo@v1
       with:
@@ -199,9 +196,6 @@ jobs:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
-    concurrency:
-      # Allow one run at a time to include the previous run's results
-      group: bench-perf
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -211,6 +205,9 @@ jobs:
           - components/datetime
           - components/collections
           - utils/fixed_decimal
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-perf-${{ matrix.component }}
 
     # If you are modifying and debugging is required, don't be afraid to get
     # messy in a personal fork, if no better way to do it.
@@ -252,7 +249,7 @@ jobs:
       run: |
         mkdir -p benchmarks/perf
         # The previous run is either the parent (if we're on main) or the branch point (if we're not)
-        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
@@ -295,9 +292,6 @@ jobs:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
-    concurrency:
-      # Allow one run at a time to include the previous run's results
-      group: bench-memory
     strategy:
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
@@ -326,8 +320,10 @@ jobs:
               fixed_decimal/permyriad
               writeable/writeable_message
               litemap/language_names_lite_map
-
     runs-on: ${{ matrix.os }}
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-memory-${{ matrix.ox }}
 
     steps:
     - uses: actions/checkout@v3
@@ -360,7 +356,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/memory
-        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
@@ -394,13 +390,14 @@ jobs:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
-    concurrency:
-      # Allow one run at a time to include the previous run's results
-      group: bench-binsize
     strategy:
       matrix:
         type: [wasm, gz]
     runs-on: ubuntu-latest
+    concurrency:
+      # Allow one run at a time to include the previous run's results
+      group: bench-binsize-${{ matrix.type }}
+
     steps:
     - uses: actions/checkout@v3
 
@@ -423,12 +420,6 @@ jobs:
       run: cargo +stable install cargo-make
 
     # Job-specific dependencies
-    - name: Install prerequisites for wasm build
-      run: |
-        rustup toolchain list
-        rustup toolchain install $INSTALLED_NIGHTLY_VERSION
-        rustup component add --toolchain $INSTALLED_NIGHTLY_VERSION rust-src
-
     - name: Install Node.js v16.18.0
       uses: actions/setup-node@v3
       with:
@@ -475,7 +466,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
 
     - name: Store benchmark result & create dashboard
@@ -525,7 +516,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
