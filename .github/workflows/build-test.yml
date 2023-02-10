@@ -69,10 +69,7 @@ jobs:
 
     # Actual job
     - name: Check
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-msrv-${{ matrix.behavior }}
+      run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
   # ci-job-test
   test:
@@ -111,10 +108,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-test
+      run: cargo make ci-job-test
 
   # ci-job-testdata
   testdata:
@@ -157,10 +151,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-testdata
+      run: cargo make ci-job-testdata
 
   # ci-job-test-docs
   test-docs:
@@ -195,10 +186,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-docs`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-test-docs
+      run: cargo make ci-job-test-docs
 
   # ci-job-full-datagen
   full-datagen:
@@ -241,10 +229,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-full-datagen`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-full-datagen
+      run: cargo make ci-job-full-datagen
 
   # ci-job-ffi
   ffi:
@@ -302,10 +287,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-ffi`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-ffi
+      run: cargo make ci-job-ffi
       env:
         CXX: "g++-10"
 
@@ -368,10 +350,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-verify-ffi`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-verify-ffi
+      run: cargo make ci-job-verify-ffi
 
   # ci-job-verify-gn, ci-job-gn
   gn:
@@ -415,22 +394,13 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'ffi/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: gn-install
+      run: cargo make gn-install
 
     # Actual job
     - name: Run `cargo make ci-job-verify-gn`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-verify-gn
+      run: cargo make ci-job-verify-gn
     - name: Run `cargo make ci-job-gn`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-gn
+      run: cargo make ci-job-gn
 
   # ci-job-wasm
   wasm:
@@ -521,10 +491,7 @@ jobs:
 
     # Actual job
     - name: Check Format
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-fmt
+      run: cargo make ci-job-fmt
 
   # ci-job-tidy
   tidy:
@@ -580,10 +547,7 @@ jobs:
 
     # Actual job
     - name: Tidy
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-tidy
+      run: cargo make ci-job-tidy
 
   # ci-job-clippy
   clippy:
@@ -665,10 +629,7 @@ jobs:
 
     # Actual job
     - name: Cargo doc
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-doc
+      run: cargo make ci-job-doc
 
 
   # Notify on slack  
