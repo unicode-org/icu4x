@@ -43,7 +43,7 @@ description = "Installs nightly-2022-08-25"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-exec rustup install nightly-2022-08-25 --profile minimal
+exec --fail-on-error rustup install nightly-2022-08-25 --profile minimal
 '''
 
 [tasks.diplomat-coverage]
@@ -114,7 +114,7 @@ category = "ICU4X Development"
 dependencies = ["install-nightly"]
 script_runner = "@duckscript"
 script = '''
-exec rustup target add x86_64-unknown-linux-gnu --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+exec --fail-on-error rustup target add x86_64-unknown-linux-gnu --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 '''
 
 [tasks.test-c-tiny]
@@ -163,7 +163,7 @@ category = "ICU4X Development"
 dependencies = ["install-nightly"]
 script_runner = "@duckscript"
 script = '''
-exec rustup target add wasm32-unknown-emscripten --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+exec --fail-on-error rustup target add wasm32-unknown-emscripten --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 '''
 
 [tasks.install-wasm]
@@ -172,7 +172,7 @@ category = "ICU4X Development"
 dependencies = ["install-nightly"]
 script_runner = "@duckscript"
 script = '''
-exec rustup target add wasm32-unknown-unknown --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+exec --fail-on-error rustup target add wasm32-unknown-unknown --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 '''
 
 [tasks.test-cpp-emscripten]
@@ -374,14 +374,14 @@ dependencies = [ "cargo-make-min-version" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-rev = exec cargo make --loglevel error diplomat-get-rev
+rev = exec --fail-on-error cargo make --loglevel error diplomat-get-rev
 rev = trim ${rev.stdout}
 if contains ${rev} "."
     echo "Installing Diplomat version ${rev}"
-    exec cargo install --version ${rev} diplomat-tool -f
+    exec --fail-on-error cargo install --version ${rev} diplomat-tool -f
 
 else
     echo "Installing Diplomat rev ${rev}"
-    exec cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
+    exec --fail-on-error cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
 end
 '''
