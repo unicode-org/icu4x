@@ -252,7 +252,8 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin main
+          git fetch origin
+          git pull
           export BASELINE=$(git merge-base HEAD origin/main)
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
@@ -364,7 +365,8 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin main
+          git fetch origin
+          git pull
           export BASELINE=$(git merge-base HEAD origin/main)
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
@@ -479,7 +481,8 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin main
+          git fetch origin
+          git pull
           export BASELINE=$(git merge-base HEAD origin/main)
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
@@ -534,7 +537,7 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin main
+          git fetch origin
           export BASELINE=$(git merge-base HEAD origin/main)
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks

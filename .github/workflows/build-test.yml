@@ -435,7 +435,6 @@ jobs:
   # ci-job-wasm
   wasm:
     runs-on: ubuntu-latest
-    needs: [clippy]
 
     steps:
     - uses: actions/checkout@v3
