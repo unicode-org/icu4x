@@ -249,7 +249,12 @@ jobs:
       run: |
         mkdir -p benchmarks/perf
         # The previous run is either the parent (if we're on main) or the branch point (if we're not)
-        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        if [ ${{ github.ref }} == "refs/heads/main" ]; then
+          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        else
+          git fetch origin main
+          export BASELINE=$(git merge-base HEAD main)
+        fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
@@ -356,7 +361,12 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/memory
-        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        if [ ${{ github.ref }} == "refs/heads/main" ]; then
+          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        else
+          git fetch origin main
+          export BASELINE=$(git merge-base HEAD main)
+        fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
@@ -466,7 +476,12 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        if [ ${{ github.ref }} == "refs/heads/main" ]; then
+          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        else
+          git fetch origin main
+          export BASELINE=$(git merge-base HEAD main)
+        fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
 
     - name: Store benchmark result & create dashboard
@@ -516,7 +531,12 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        if [ ${{ github.ref }} == "refs/heads/main" ]; then
+          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        else
+          git fetch origin main
+          export BASELINE=$(git merge-base HEAD main)
+        fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
