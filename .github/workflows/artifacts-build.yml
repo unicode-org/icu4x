@@ -252,10 +252,6 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin
-          git status
-          git pull
-          git merge-base HEAD origin/main || true
           export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
@@ -270,6 +266,7 @@ jobs:
         # Show alert with commit comment on detecting possible performance regression
         alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
         fail-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
@@ -367,10 +364,6 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin
-          git status
-          git pull
-          git merge-base HEAD origin/main || true
           export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
@@ -388,6 +381,7 @@ jobs:
         output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
         alert-threshold: '200%'
         fail-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
@@ -485,10 +479,6 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin
-          git status
-          git pull
-          git merge-base HEAD origin/main || true
           export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
@@ -504,6 +494,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
@@ -543,10 +534,6 @@ jobs:
         if [ ${{ github.ref }} == "refs/heads/main" ]; then
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
-          git fetch origin
-          git status
-          git pull
-          git merge-base HEAD origin/main || true
           export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
@@ -561,6 +548,7 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
         fail-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
