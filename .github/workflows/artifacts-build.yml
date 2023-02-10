@@ -143,7 +143,7 @@ jobs:
   webpack:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
@@ -198,7 +198,7 @@ jobs:
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-perf
@@ -294,7 +294,7 @@ jobs:
   bench-memory:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-memory
@@ -393,7 +393,7 @@ jobs:
   bench-binsize:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-binsize
@@ -506,7 +506,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
