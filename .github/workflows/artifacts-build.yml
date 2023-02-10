@@ -253,8 +253,9 @@ jobs:
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
           git fetch origin
-          git pull
-          export BASELINE=$(git merge-base HEAD origin/main)
+          git status
+          git merge-base HEAD origin/main
+          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
@@ -366,8 +367,9 @@ jobs:
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
           git fetch origin
-          git pull
-          export BASELINE=$(git merge-base HEAD origin/main)
+          git status
+          git merge-base HEAD origin/main
+          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
@@ -482,8 +484,9 @@ jobs:
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
           git fetch origin
-          git pull
-          export BASELINE=$(git merge-base HEAD origin/main)
+          git status
+          git merge-base HEAD origin/main
+          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
 
@@ -538,7 +541,9 @@ jobs:
           export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         else
           git fetch origin
-          export BASELINE=$(git merge-base HEAD origin/main)
+          git status
+          git merge-base HEAD origin/main
+          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         fi
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
