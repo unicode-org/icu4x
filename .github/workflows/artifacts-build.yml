@@ -266,8 +266,9 @@ jobs:
         # Show alert with commit comment on detecting possible performance regression
         alert-threshold: '200%'  # If for nothing else, enabling the possibility of alerts with meaningful thresholds requires this job to be done per-component
         fail-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
@@ -381,8 +382,9 @@ jobs:
         output-file-path: ./benchmarks/memory/${{ matrix.os }}/output.ndjson
         alert-threshold: '200%'
         fail-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
@@ -494,8 +496,9 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
@@ -548,8 +551,9 @@ jobs:
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
         fail-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
