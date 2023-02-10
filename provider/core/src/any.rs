@@ -301,7 +301,7 @@ where
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let any_provider = HelloWorldProvider.into_any_provider();
+/// let any_provider = HelloWorldProvider.as_any_provider();
 ///
 /// let req = DataRequest {
 ///     locale: &icu_locid::locale!("de").into(),

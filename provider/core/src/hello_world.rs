@@ -105,11 +105,6 @@ impl HelloWorldProvider {
     pub fn into_json_provider(self) -> HelloWorldJsonProvider {
         HelloWorldJsonProvider
     }
-
-    /// Converts this provider into an [`AnyProvider`].
-    pub fn into_any_provider(self) -> HelloWorldAnyProvider {
-        HelloWorldAnyProvider
-    }
 }
 
 impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
@@ -135,15 +130,9 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-/// An AnyProvider supporting the `HelloWorldV1` key.
-pub struct HelloWorldAnyProvider;
-
-impl AnyProvider for HelloWorldAnyProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        key.match_key(HelloWorldV1Marker::KEY)?;
-        Ok(HelloWorldProvider.load(req)?.wrap_into_any_response())
-    }
-}
+// AnyProvider support.
+#[cfg(not(feature = "datagen"))]
+impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
