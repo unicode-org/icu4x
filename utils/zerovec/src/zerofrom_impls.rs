@@ -41,14 +41,14 @@ where
 impl<'zf> ZeroFrom<'zf, FlexZeroVec<'_>> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroVec<'_>) -> Self {
-        FlexZeroVec::Borrowed(&*other)
+        FlexZeroVec::Borrowed(other)
     }
 }
 
 impl<'zf> ZeroFrom<'zf, FlexZeroSlice> for FlexZeroVec<'zf> {
     #[inline]
     fn zero_from(other: &'zf FlexZeroSlice) -> Self {
-        FlexZeroVec::Borrowed(&*other)
+        FlexZeroVec::Borrowed(other)
     }
 }
 

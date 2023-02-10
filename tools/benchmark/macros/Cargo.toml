@@ -6,7 +6,7 @@
 name = "icu_benchmark_macros"
 publish = false
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 dhat = { version = "0.3", optional = true }

@@ -620,8 +620,8 @@ fn test_from_minute_with_remainder_days() {
     ];
     for cas in cases {
         let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
-        assert_eq!(actual_time, cas.expected_time, "{:?}", cas);
-        assert_eq!(actual_remainder, cas.expected_remainder, "{:?}", cas);
+        assert_eq!(actual_time, cas.expected_time, "{cas:?}");
+        assert_eq!(actual_remainder, cas.expected_remainder, "{cas:?}");
     }
 }
 

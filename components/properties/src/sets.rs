@@ -1889,7 +1889,7 @@ mod tests {
                 }
             }
             let combined_set = builder.build();
-            println!("{:?} {:?}", category, subcategories);
+            println!("{category:?} {subcategories:?}");
             assert_eq!(
                 category_set.get_inversion_list_vec(),
                 combined_set.get_inversion_list_vec()

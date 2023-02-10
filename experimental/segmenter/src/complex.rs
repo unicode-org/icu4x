@@ -157,7 +157,7 @@ pub fn complex_language_segment_utf16(
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
     for str_per_lang in lang_iter {
-        if let Some(first_ch) = str_per_lang.get(0) {
+        if let Some(first_ch) = str_per_lang.first() {
             #[cfg(feature = "lstm")]
             if let Some(lstm) = lstm {
                 if let Some(model) = lstm.best(*first_ch as u32) {

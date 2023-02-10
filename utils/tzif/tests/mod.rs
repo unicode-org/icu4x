@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 fn parse_tzif_file<P: AsRef<Path>>(path: P) -> Result<(), tzif::error::Error> {
     println!("parsing {:?}", path.as_ref().to_str());
     let parsed = tzif::parse_tzif_file(path)?;
-    println!("{:#?}", parsed);
+    println!("{parsed:#?}");
     Ok(())
 }
 

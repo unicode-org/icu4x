@@ -13,9 +13,10 @@ use icu_locid::{
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
-
+use std::collections::BTreeMap;
+use tinystr::TinyAsciiStr;
 use writeable::Writeable;
-use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr, ZeroMap};
+use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 
 impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(
@@ -119,9 +120,9 @@ impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::Datage
 
 impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtagsV1<'static> {
     fn from(source_data: &cldr_serde::likely_subtags::Resource) -> Self {
-        let mut l2s = ZeroMap::new();
+        let mut l2s = BTreeMap::<TinyAsciiStr<3>, _>::new();
         let mut lr2s = ZeroMap2d::new();
-        let mut l2r = ZeroMap::new();
+        let mut l2r = BTreeMap::<TinyAsciiStr<3>, _>::new();
         let mut ls2r = ZeroMap2d::new();
 
         // First collect the l2s and l2r maps
@@ -138,10 +139,10 @@ impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtags
             let script = maximized.script.expect("maximized");
             let region = maximized.region.expect("maximized");
             if script != DEFAULT_SCRIPT {
-                l2s.insert(&language.into(), &script);
+                l2s.insert(language.into(), script);
             }
             if region != DEFAULT_REGION {
-                l2r.insert(&language.into(), &region);
+                l2r.insert(language.into(), region);
             }
         }
 
@@ -159,15 +160,15 @@ impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtags
             let script = maximized.script.expect("maximized");
             let region = maximized.region.expect("maximized");
             if minimized.script.is_some() {
-                assert!(minimized.region.is_none(), "{:?}", minimized);
-                let region_for_lang = l2r.get_copied(&language.into()).unwrap_or(DEFAULT_REGION);
+                assert!(minimized.region.is_none(), "{minimized:?}");
+                let region_for_lang = l2r.get(&language.into()).copied().unwrap_or(DEFAULT_REGION);
                 if region != region_for_lang {
                     ls2r.insert(&language.into(), &script.into(), &region);
                 }
                 continue;
             }
             if minimized.region.is_some() {
-                let script_for_lang = l2s.get_copied(&language.into()).unwrap_or(DEFAULT_SCRIPT);
+                let script_for_lang = l2s.get(&language.into()).copied().unwrap_or(DEFAULT_SCRIPT);
                 if script != script_for_lang {
                     lr2s.insert(&language.into(), &region.into(), &script);
                 }
@@ -177,9 +178,9 @@ impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtags
         }
 
         LocaleFallbackLikelySubtagsV1 {
-            l2s,
+            l2s: l2s.into_iter().collect(),
             lr2s,
-            l2r,
+            l2r: l2r.into_iter().collect(),
             ls2r,
         }
     }
@@ -187,7 +188,7 @@ impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtags
 
 impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'static> {
     fn from(source_data: &cldr_serde::parent_locales::Resource) -> Self {
-        let mut parents = ZeroMap::new();
+        let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
             assert!(!source.language.is_empty());
@@ -198,10 +199,15 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
                 // We always fall back from language-script to und
                 continue;
             }
-            parents.insert((&*source.write_to_string()).into(), &target.into());
+            parents.insert(source.write_to_string(), target.into());
         }
 
-        LocaleFallbackParentsV1 { parents }
+        LocaleFallbackParentsV1 {
+            parents: parents
+                .iter()
+                .map(|(k, v)| (<&UnvalidatedStr>::from(k.as_ref()), v))
+                .collect(),
+        }
     }
 }
 

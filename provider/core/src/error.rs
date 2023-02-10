@@ -110,10 +110,10 @@ impl fmt::Display for DataError {
             write!(f, ": {}", self.kind)?;
         }
         if let Some(key) = self.key {
-            write!(f, " (key: {})", key)?;
+            write!(f, " (key: {key})")?;
         }
         if let Some(str_context) = self.str_context {
-            write!(f, ": {}", str_context)?;
+            write!(f, ": {str_context}")?;
         }
         Ok(())
     }

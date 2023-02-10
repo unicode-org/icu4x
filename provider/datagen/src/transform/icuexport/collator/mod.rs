@@ -32,7 +32,7 @@ fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
     source
         .icuexport()
         .and_then(|i| i.list(&format!("collation/{}", source.collation_han_database())))
-        .map(|mut iter| iter.any(|s| s.as_os_str() == "sv_reformed_meta.toml"))
+        .map(|mut iter| iter.any(|s| s == "sv_reformed_meta.toml"))
         .unwrap_or(false)
 }
 
@@ -168,14 +168,12 @@ macro_rules! collation_provider {
                             "collation/{}",
                             self.source.collation_han_database()
                         ))?
-                        .filter_map(|entry| {
-                            entry
-                                .file_stem()
-                                .unwrap()
-                                .to_string_lossy()
-                                .into_owned()
-                                .strip_suffix($suffix)
-                                .map(ToString::to_string)
+                        .filter_map(|mut file_name| {
+                            file_name.truncate(file_name.len() - ".toml".len());
+                            file_name.ends_with($suffix).then(|| {
+                                file_name.truncate(file_name.len() - $suffix.len());
+                                file_name
+                            })
                         })
                         .filter_map(|s| file_name_to_locale(&s, has_legacy_swedish_variants(&self.source)))
                         .filter(|locale| {

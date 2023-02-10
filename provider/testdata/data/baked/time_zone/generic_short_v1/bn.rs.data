@@ -2,27 +2,15 @@
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[105u8, 110u8, 100u8, 105u8]) },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 83u8, 84u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"indi") },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0IST") },
         )
     },
     overrides: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    117u8, 116u8, 99u8, 0u8, 0u8, 0u8, 0u8, 0u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") },
         )
     },
 }
