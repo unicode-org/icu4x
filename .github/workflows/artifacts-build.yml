@@ -279,6 +279,7 @@ jobs:
         export_default_credentials: true
     - name: Upload new benchmark data
       run: |
+          git checkout empty
           gsutil -m cp -r benchmarks/perf/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
@@ -395,6 +396,7 @@ jobs:
         export_default_credentials: true
     - name: Upload new benchmark data
       run: |
+          git checkout empty
           gsutil -m cp -r benchmarks/memory/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
@@ -509,6 +511,7 @@ jobs:
         export_default_credentials: true
     - name: Upload new benchmark data
       run: |
+          git checkout empty
           gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
 
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
@@ -564,6 +567,7 @@ jobs:
         export_default_credentials: true
     - name: Upload new benchmark data
       run: |
+          git checkout empty
           gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
 
   gh-pages:
