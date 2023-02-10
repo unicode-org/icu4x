@@ -136,7 +136,7 @@ jobs:
 
   webpack:
     # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
+    # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
@@ -191,7 +191,7 @@ jobs:
 
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
+    # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
@@ -245,7 +245,9 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/perf
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/perf/${{ matrix.component }} benchmarks/perf
+        # The previous run is either the parent (if we're on main) or the branch point (if we're not)
+        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
@@ -279,7 +281,7 @@ jobs:
 
   bench-memory:
     # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
+    # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
@@ -346,7 +348,8 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/memory
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -371,7 +374,7 @@ jobs:
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
     # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
+    # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
@@ -454,7 +457,8 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
+        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
 
     - name: Store benchmark result & create dashboard
       # Only for PRs that merge into the ICU4X mainline.
@@ -477,7 +481,7 @@ jobs:
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
-    # Remove this line to debug.
+    # Comment this out to run on a PR.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
@@ -497,7 +501,8 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$(git log --pretty=format:'%H' -1 -r HEAD^)/benchmarks/datasize benchmarks
+        export BASELINE=${github.ref == 'refs/heads/main'} && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
