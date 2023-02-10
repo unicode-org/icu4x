@@ -419,8 +419,6 @@ jobs:
       with:
         command: make
         args: gn-install
-    - name: Install ninja
-      run: sudo apt-get install ninja-build
 
     # Actual job
     - name: Run `cargo make ci-job-verify-gn`
