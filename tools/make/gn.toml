@@ -20,7 +20,10 @@ cd ffi/gn/third_party_tools
 if is_path_exists depot_tools
     echo "NOTE: depot_tools already exists"
 else
-    exec --fail-on-error git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+    exec --fail-on-error git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+    cd depot_tools
+    exec --fail-on-error git checkout 1f511020737b695f4cbb3260fdaef78a29acdd35
+    cd ..
 end
 
 # Write an "ensure file", which is used as input to cipd
