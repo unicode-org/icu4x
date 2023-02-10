@@ -23,6 +23,7 @@ else
     exec --fail-on-error git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
     cd depot_tools
     exec --fail-on-error git checkout 1f511020737b695f4cbb3260fdaef78a29acdd35
+    rm -rf .git
     cd ..
 end
 
@@ -34,7 +35,8 @@ exec --fail-on-error depot_tools/cipd ensure -root bin -ensure-file ensure_file
 if is_path_exists fuchsia
     echo "NOTE: fuchsia already exists"
 else
-    exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia
+    exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia --branch releases/f8
+    rm -rf fuchsia/.git
     exec --fail-on-error ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
 end
 
@@ -43,7 +45,7 @@ end
 mkdir .cargo
 writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources', vendored-sources.directory = 'vendor' }"
 exec --fail-on-error cargo vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
-exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root .
+exec --fail-on-error cargo install --path fuchsia/tools/cargo-gnaw --root . --offline
 
 # Ensure everything works
 exec --fail-on-error ./bin/gn --version
