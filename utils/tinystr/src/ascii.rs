@@ -152,9 +152,9 @@ impl<const N: usize> TinyAsciiStr<N> {
 
     #[inline]
     #[must_use]
-    /// Resizes a TinyAsciiStr<N> to a TinyAsciiStr<M>.
+    /// Resizes a `TinyAsciiStr<N>` to a `TinyAsciiStr<M>`.
     ///
-    /// If M < len() the string gets truncated, otherwise only the
+    /// If `M < len()` the string gets truncated, otherwise only the
     /// memory representation changes.
     pub const fn resize<const M: usize>(self) -> TinyAsciiStr<M> {
         let mut bytes = [0; M];
@@ -729,7 +729,7 @@ mod test {
             };
             let expected = reference_f(&s);
             let actual = tinystr_f(t);
-            assert_eq!(expected, actual, "TinyAsciiStr<{}>: {:?}", N, s);
+            assert_eq!(expected, actual, "TinyAsciiStr<{N}>: {s:?}");
         }
     }
 

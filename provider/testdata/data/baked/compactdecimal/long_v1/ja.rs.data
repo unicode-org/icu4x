@@ -2,20 +2,15 @@
     patterns: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[4u8, 8u8, 12u8, 16u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x08\x0C\x10") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8,
-                    0u8,
-                ])
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0",
+                )
             },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[5u8, 5u8, 5u8, 5u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    4u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 15u8, 0u8, 4u8, 0u8,
-                    228u8, 184u8, 135u8, 8u8, 0u8, 229u8, 132u8, 132u8, 12u8, 0u8, 229u8,
-                    133u8, 134u8, 16u8, 0u8, 228u8, 186u8, 172u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x04\0\0\0\0\0\x05\0\n\0\x0F\0\x04\0\xE4\xB8\x87\x08\0\xE5\x84\x84\x0C\0\xE5\x85\x86\x10\0\xE4\xBA\xAC")
             },
         )
     },

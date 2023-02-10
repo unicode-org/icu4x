@@ -279,14 +279,14 @@ mod test {
 
     #[test]
     fn test_pattern_item_as_ule() {
-        let samples = &[
+        let samples = [
             (
                 PatternItem::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                &[0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                [0x80, FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
             ),
             (
                 PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
-                &[
+                [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
                     FieldLength::Wide.idx(),
@@ -294,7 +294,7 @@ mod test {
             ),
             (
                 PatternItem::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
-                &[
+                [
                     0x80,
                     FieldSymbol::Year(Year::WeekOf).idx(),
                     FieldLength::Wide.idx(),
@@ -302,39 +302,39 @@ mod test {
             ),
             (
                 PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
-                &[
+                [
                     0x80,
                     FieldSymbol::Second(Second::Millisecond).idx(),
                     FieldLength::One.idx(),
                 ],
             ),
-            (PatternItem::from('z'), &[0x00, 0x00, 0x7a]),
+            (PatternItem::from('z'), [0x00, 0x00, 0x7a]),
         ];
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
             let pattern = PatternItem::from_unaligned(ule);
-            assert_eq!(pattern, *ref_pattern);
+            assert_eq!(pattern, ref_pattern);
         }
     }
 
     #[test]
     fn test_pattern_item_ule() {
-        let samples = &[(
-            &[
+        let samples = [(
+            [
                 PatternItem::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
                 PatternItem::from('z'),
                 PatternItem::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
             ],
-            &[
-                &[
+            [
+                [
                     0x80,
                     FieldSymbol::Year(Year::Calendar).idx(),
                     FieldLength::Wide.idx(),
                 ],
-                &[0x00, 0x00, 0x7a],
-                &[
+                [0x00, 0x00, 0x7a],
+                [
                     0x80,
                     FieldSymbol::Second(Second::Millisecond).idx(),
                     FieldLength::One.idx(),
@@ -351,7 +351,7 @@ mod test {
 
             let mut bytes2: Vec<u8> = vec![];
             for seq in ref_bytes.iter() {
-                bytes2.extend_from_slice(*seq);
+                bytes2.extend_from_slice(seq);
             }
 
             assert!(PatternItemULE::validate_byte_slice(&bytes).is_ok());
@@ -361,17 +361,17 @@ mod test {
 
     #[test]
     fn test_generic_pattern_item_as_ule() {
-        let samples = &[
-            (GenericPatternItem::Placeholder(4), &[0x80, 0x00, 4]),
-            (GenericPatternItem::Placeholder(0), &[0x80, 0x00, 0]),
-            (GenericPatternItem::from('z'), &[0x00, 0x00, 0x7a]),
+        let samples = [
+            (GenericPatternItem::Placeholder(4), [0x80, 0x00, 4]),
+            (GenericPatternItem::Placeholder(0), [0x80, 0x00, 0]),
+            (GenericPatternItem::from('z'), [0x00, 0x00, 0x7a]),
         ];
 
         for (ref_pattern, ref_bytes) in samples {
             let ule = ref_pattern.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
             let pattern = GenericPatternItem::from_unaligned(ule);
-            assert_eq!(pattern, *ref_pattern);
+            assert_eq!(pattern, ref_pattern);
         }
     }
 }

@@ -120,7 +120,7 @@ impl<'a> Default for &'a DataLocale {
 
 impl fmt::Debug for DataLocale {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "DataLocale{{{}}}", self)
+        write!(f, "DataLocale{{{self}}}")
     }
 }
 

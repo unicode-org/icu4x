@@ -15,9 +15,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -51,10 +49,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80@\x01\0\0/\x80 \x01\0\0/\x80\x10\x01\0\0 \x80\0\x05",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -82,10 +79,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -119,10 +115,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80@\x01\0\0 \x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -162,11 +157,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -194,10 +185,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -231,12 +221,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8,
-                        0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -276,12 +261,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -297,9 +277,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -315,9 +293,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -341,10 +317,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 5u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80 \x01\0\0/\x80\x10\x01\0\0 \x80\0\x05",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -374,10 +349,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80@\x01\0\0/\x80 \x01\0\0/\x80\x10\x01\0\0 \x80\0\x05",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -413,11 +387,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0/\x80 \x01\0\0/\x80\x10\x01\0\0 \x80\0\x05")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -441,10 +411,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8,
-                        128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -474,10 +443,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8,
-                        128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80@\x01\0\0 \x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -513,11 +481,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \x80 \x03\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -541,10 +505,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -574,12 +537,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8,
-                        0u8, 101u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8,
-                        0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -615,12 +573,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04\0\0 \0\0d\0\0e\0\0 \x80\x10\x01\0\0 \x80\0\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -635,7 +588,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 33u8, 1u8]) },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80!\x01") },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
         ),
@@ -658,9 +611,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0/\x80 \x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -690,10 +641,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 47u8, 128u8, 32u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0/\x80 \x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -708,7 +658,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 33u8, 3u8]) },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80!\x03") },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
         ),
@@ -731,9 +681,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0 \x80 \x03")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -763,10 +711,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 3u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \x80 \x03",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -790,10 +737,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8,
-                        0u8, 0u8, 32u8, 128u8, 32u8, 4u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -823,11 +769,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                        0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8, 32u8,
-                        128u8, 32u8, 4u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0,\0\0 \x80@\x01\0\0 \0\0d\0\0e\0\0 \x80 \x04",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -842,7 +786,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 64u8, 1u8]) },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01") },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
         ),
@@ -865,9 +809,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80P\x01\0\0 \x80@\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
@@ -882,7 +824,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 82u8, 3u8]) },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80R\x03") },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
             },
         ),
@@ -909,10 +851,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0 \x80q\x01\0\0:\x80\x80\x02\0 /\x80`\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -946,11 +887,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 113u8, 1u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8, 0u8, 32u8, 47u8,
-                        128u8, 96u8, 1u8,
-                    ])
+                    :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80P\x01\0\0 \x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
@@ -978,10 +915,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0 \x80r\x02\0\0:\x80\x80\x02",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1015,10 +951,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 80u8, 1u8, 0u8, 0u8, 32u8, 128u8, 114u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80P\x01\0\0 \x80r\x02\0\0:\x80\x80\x02\0\0:\x80\x90\x02",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
@@ -1034,9 +969,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80q\x01\0 /\x80`\x01")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
             },
@@ -1058,10 +991,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 32u8, 47u8,
-                        128u8, 96u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80q\x01\0\0:\x80\x80\x02\0 /\x80`\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1089,10 +1021,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 113u8, 1u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8, 0u8, 32u8, 47u8, 128u8, 96u8, 1u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
@@ -1107,9 +1038,7 @@
         }],
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[128u8, 114u8, 2u8])
-                },
+                items: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80r\x02") },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Hours,
             },
         ),
@@ -1130,9 +1059,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80r\x02\0\0:\x80\x80\x02")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
             },
@@ -1160,10 +1087,9 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 114u8, 2u8, 0u8, 0u8, 58u8, 128u8, 128u8, 2u8, 0u8, 0u8, 58u8,
-                        128u8, 144u8, 2u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(
+                        b"\x80r\x02\0\0:\x80\x80\x02\0\0:\x80\x90\x02",
+                    )
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },
@@ -1185,9 +1111,7 @@
         ::icu_datetime::pattern::runtime::PatternPlurals::SinglePattern(
             ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        128u8, 128u8, 2u8, 0u8, 0u8, 58u8, 128u8, 144u8, 2u8,
-                    ])
+                    ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80\x80\x02\0\0:\x80\x90\x02")
                 },
                 time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
             },

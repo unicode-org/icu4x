@@ -92,45 +92,33 @@
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
-                    ])
-                },
-                unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB",
+                    )
                 },
             )
         },
         abbr: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
-                    ])
-                },
-                unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB",
+                    )
                 },
             )
         },
         narrow: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
+                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
-                    ])
-                },
-                unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0\xE3\x82\xB5\xE3\x82\xAB",
+                    )
                 },
             )
         },

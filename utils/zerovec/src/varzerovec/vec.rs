@@ -248,7 +248,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// assert!(vzv.is_empty());
     /// ```
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(VarZeroSlice::new_empty())
     }
 
@@ -354,7 +354,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
     pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         match *self {
-            VarZeroVec::Owned(ref owned) => &**owned,
+            VarZeroVec::Owned(ref owned) => owned,
             VarZeroVec::Borrowed(b) => b,
         }
     }
@@ -413,8 +413,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 
@@ -439,8 +438,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
-        VarZeroVecOwned::try_from_elements(elements).unwrap().into()
+        Self::from(elements.as_slice())
     }
 }
 

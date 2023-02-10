@@ -117,28 +117,28 @@ mod test {
 
     #[test]
     fn test_field_as_ule() {
-        let samples = &[
+        let samples = [
             (
                 Field::from((FieldSymbol::Minute, FieldLength::TwoDigit)),
-                &[FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
+                [FieldSymbol::Minute.idx(), FieldLength::TwoDigit.idx()],
             ),
             (
                 Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
-                &[
+                [
                     FieldSymbol::Year(Year::Calendar).idx(),
                     FieldLength::Wide.idx(),
                 ],
             ),
             (
                 Field::from((FieldSymbol::Year(Year::WeekOf), FieldLength::Wide)),
-                &[
+                [
                     FieldSymbol::Year(Year::WeekOf).idx(),
                     FieldLength::Wide.idx(),
                 ],
             ),
             (
                 Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
-                &[
+                [
                     FieldSymbol::Second(Second::Millisecond).idx(),
                     FieldLength::One.idx(),
                 ],
@@ -147,25 +147,25 @@ mod test {
 
         for (ref_field, ref_bytes) in samples {
             let ule = ref_field.to_unaligned();
-            assert_eq!(ULE::as_byte_slice(&[ule]), *ref_bytes);
+            assert_eq!(ULE::as_byte_slice(&[ule]), ref_bytes);
             let field = Field::from_unaligned(ule);
-            assert_eq!(field, *ref_field);
+            assert_eq!(field, ref_field);
         }
     }
 
     #[test]
     fn test_field_ule() {
-        let samples = &[(
-            &[
+        let samples = [(
+            [
                 Field::from((FieldSymbol::Year(Year::Calendar), FieldLength::Wide)),
                 Field::from((FieldSymbol::Second(Second::Millisecond), FieldLength::One)),
             ],
-            &[
-                &[
+            [
+                [
                     FieldSymbol::Year(Year::Calendar).idx(),
                     FieldLength::Wide.idx(),
                 ],
-                &[
+                [
                     FieldSymbol::Second(Second::Millisecond).idx(),
                     FieldLength::One.idx(),
                 ],
@@ -181,7 +181,7 @@ mod test {
 
             let mut bytes2: Vec<u8> = vec![];
             for seq in ref_bytes.iter() {
-                bytes2.extend_from_slice(*seq);
+                bytes2.extend_from_slice(seq);
             }
 
             assert!(FieldULE::validate_byte_slice(&bytes).is_ok());

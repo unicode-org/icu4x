@@ -14,7 +14,7 @@ fn main() {
         .unwrap();
 
     let source_data = SourceData::default()
-        .with_cldr(paths::cldr_json_root(), CldrLocaleSubset::Full)
+        .with_cldr(paths::cldr_json_root(), Default::default())
         .unwrap()
         .with_icuexport(paths::icuexport_toml_root())
         .unwrap();
@@ -28,7 +28,7 @@ fn main() {
 
     let postcard_out = Out::Fs {
         output_path: paths::data_root().join("postcard"),
-        serializer: Box::new(syntax::Postcard::default()),
+        serializer: Box::<syntax::Postcard>::default(),
         overwrite: true,
         fingerprint: true,
     };
