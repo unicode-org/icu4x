@@ -140,7 +140,7 @@ jobs:
   webpack:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
@@ -195,7 +195,7 @@ jobs:
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -249,7 +249,7 @@ jobs:
       run: |
         mkdir -p benchmarks/perf
         # The previous run is either the parent (if we're on main) or the branch point (if we're not)
-        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
@@ -291,7 +291,7 @@ jobs:
   bench-memory:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
@@ -323,7 +323,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     concurrency:
       # Allow one run at a time to include the previous run's results
-      group: bench-memory-${{ matrix.ox }}
+      group: bench-memory-${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
@@ -356,7 +356,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/memory
-        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
@@ -389,7 +389,7 @@ jobs:
   bench-binsize:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       matrix:
         type: [wasm, gz]
@@ -466,7 +466,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
 
     - name: Store benchmark result & create dashboard
@@ -497,7 +497,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # Comment this out to run on a PR.
-    if: github.ref == 'refs/heads/main' # && github.repository == 'unicode-org/icu4x'
+    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
@@ -516,7 +516,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        export BASELINE=`[ ${github.ref} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
+        export BASELINE=`[ ${{ github.ref }} == "refs/heads/main" ] && git log --pretty=format:'%H' -1 -r HEAD^ || git merge-base HEAD main`
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
