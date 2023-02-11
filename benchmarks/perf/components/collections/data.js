@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676045195320,
+  "lastUpdate": 1676083603809,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49775,6 +49775,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 43224542,
             "range": "± 74631",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c99f0b96dc3ed71e3e11af2b67f871a15d08012c",
+          "message": "Document style around visible and invisible code points (#3102)",
+          "timestamp": "2023-02-10T20:32:49-06:00",
+          "tree_id": "c44ce8ac313994ef9c8b442954f358f1580e5115",
+          "url": "https://github.com/unicode-org/icu4x/commit/c99f0b96dc3ed71e3e11af2b67f871a15d08012c"
+        },
+        "date": 1676083507917,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 544,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 423,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 453,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 495,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 872,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 899,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 433,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 439,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 516,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 527,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 902,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 36533494,
+            "range": "± 1862552",
             "unit": "ns/iter"
           },
           {
