@@ -11,6 +11,26 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Grapheme_Cluster_Break"
 short_name = "GCB"
+values = [
+  {discr = 0, long = "Other", short = "XX"},
+  {discr = 1, long = "Control", short = "CN"},
+  {discr = 2, long = "CR", short = "CR"},
+  {discr = 3, long = "Extend", short = "EX"},
+  {discr = 4, long = "L", short = "L"},
+  {discr = 5, long = "LF", short = "LF"},
+  {discr = 6, long = "LV", short = "LV"},
+  {discr = 7, long = "LVT", short = "LVT"},
+  {discr = 8, long = "T", short = "T"},
+  {discr = 9, long = "V", short = "V"},
+  {discr = 10, long = "SpacingMark", short = "SM"},
+  {discr = 11, long = "Prepend", short = "PP"},
+  {discr = 12, long = "Regional_Indicator", short = "RI"},
+  {discr = 13, long = "E_Base", short = "EB"},
+  {discr = 14, long = "E_Base_GAZ", short = "EBG"},
+  {discr = 15, long = "E_Modifier", short = "EM"},
+  {discr = 16, long = "Glue_After_Zwj", short = "GAZ"},
+  {discr = 17, long = "ZWJ", short = "ZWJ"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x9, v=1, name="CN"},

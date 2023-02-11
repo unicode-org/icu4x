@@ -11,6 +11,14 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "East_Asian_Width"
 short_name = "ea"
+values = [
+  {discr = 0, long = "Neutral", short = "N"},
+  {discr = 1, long = "Ambiguous", short = "A"},
+  {discr = 2, long = "Halfwidth", short = "H"},
+  {discr = 3, long = "Fullwidth", short = "F"},
+  {discr = 4, long = "Narrow", short = "Na"},
+  {discr = 5, long = "Wide", short = "W"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x1f, v=0, name="N"},

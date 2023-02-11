@@ -11,6 +11,31 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Word_Break"
 short_name = "WB"
+values = [
+  {discr = 0, long = "Other", short = "XX"},
+  {discr = 1, long = "ALetter", short = "LE"},
+  {discr = 2, long = "Format", short = "FO"},
+  {discr = 3, long = "Katakana", short = "KA"},
+  {discr = 4, long = "MidLetter", short = "ML"},
+  {discr = 5, long = "MidNum", short = "MN"},
+  {discr = 6, long = "Numeric", short = "NU"},
+  {discr = 7, long = "ExtendNumLet", short = "EX"},
+  {discr = 8, long = "CR", short = "CR"},
+  {discr = 9, long = "Extend", short = "Extend"},
+  {discr = 10, long = "LF", short = "LF"},
+  {discr = 11, long = "MidNumLet", short = "MB"},
+  {discr = 12, long = "Newline", short = "NL"},
+  {discr = 13, long = "Regional_Indicator", short = "RI"},
+  {discr = 14, long = "Hebrew_Letter", short = "HL"},
+  {discr = 15, long = "Single_Quote", short = "SQ"},
+  {discr = 16, long = "Double_Quote", short = "DQ"},
+  {discr = 17, long = "E_Base", short = "EB"},
+  {discr = 18, long = "E_Base_GAZ", short = "EBG"},
+  {discr = 19, long = "E_Modifier", short = "EM"},
+  {discr = 20, long = "Glue_After_Zwj", short = "GAZ"},
+  {discr = 21, long = "ZWJ", short = "ZWJ"},
+  {discr = 22, long = "WSegSpace", short = "WSegSpace"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x9, v=0, name="XX"},
