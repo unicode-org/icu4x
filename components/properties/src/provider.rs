@@ -18,14 +18,17 @@
 use crate::script::ScriptWithExt;
 use crate::Script;
 
+use core::cmp::Ordering;
+use core::fmt;
 use core::ops::RangeInclusive;
+use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
-use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
+use zerovec::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVecError};
 
 /// A set of characters which share a particular property value.
 ///
@@ -311,11 +314,128 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 }
 
+/// `NormalizedPropertyNameBorrowed` is a fake type enabling us to use `#[zerovec::make_varule]`
+/// conveniently.
+/// This is a property name that can be "loose matched" as according to
+/// https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt
+///
+/// (matched case-insensitively in ASCII, ignoring underscores, whitespace, and hyphens)
+///
+/// This is expected to be ASCII, but we do not rely on this invariant anywhere except during
+/// datagen.
+#[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
+#[zerovec::make_varule(NormalizedPropertyName)]
+#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
+#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
+#[zerovec::skip_derive(Ord)]
+pub struct NormalizedPropertyNameBorrowed<'a>(&'a [u8]);
+
+#[cfg(feature = "datagen")]
+impl<'a> serde::Serialize for NormalizedPropertyNameBorrowed<'a> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::Error;
+        if serializer.is_human_readable() {
+            let s = str::from_utf8(self.0)
+                .map_err(|_| S::Error::custom("Attempted to datagen invalid string property"))?;
+            s.serialize(serializer)
+        } else {
+            self.0.serialize(serializer)
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de: 'a, 'a> serde::Deserialize<'de> for NormalizedPropertyNameBorrowed<'a> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            <&str>::deserialize(deserializer).map(|s| Self(s.as_bytes()))
+        } else {
+            <&[u8]>::deserialize(deserializer).map(Self)
+        }
+    }
+}
+
+impl PartialOrd for NormalizedPropertyName {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+/// Normalize a character based on the "loose matching" described in PropertyValueAliases.txt,
+/// returning None for skippable characters
+///
+/// ICU has [code for this][1] (and [during property lookup][2]) which we emulate.
+/// In particular, ICU only does normalization within ASCII, which makes sense since character names
+/// seem to be only ASCII.
+///
+/// [1]: https://github.com/unicode-org/icu/blob/288c4c7555915ce7b1fb675d94ddd495058fc039/icu4c/source/common/propname.cpp#L35
+/// [2]: https://github.com/unicode-org/icu/blob/288c4c7555915ce7b1fb675d94ddd495058fc039/icu4c/source/common/propname.cpp#L226-L230
+fn normalize_char(ch: u8) -> Option<u8> {
+    match ch {
+        b'a'..=b'z' => Some(ch),
+        b'A'..=b'Z' => Some(ch | 0x20), // Uppercase by setting last bit
+        // underscores, hyphens, and all ASCII whitespace
+        b'_' | b'-' | b' ' | 0x09..=0x0d => None,
+        _ => Some(ch),
+    }
+}
+
+impl Ord for NormalizedPropertyName {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let self_iter = self.0.iter().copied().filter_map(normalize_char);
+        let other_iter = other.0.iter().copied().filter_map(normalize_char);
+        self_iter.cmp(other_iter)
+    }
+}
+
+impl fmt::Debug for NormalizedPropertyName {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if let Ok(s) = str::from_utf8(&self.0) {
+            f.write_str(s)
+        } else {
+            f.write_str("(invalid utf8)")
+        }
+    }
+}
+
+impl NormalizedPropertyName {
+    #[cfg(feature = "datagen")]
+    /// Get a Box<NormalizedPropertyName> from a byte slice
+    pub fn from_bytes(b: &[u8]) -> alloc::boxed::Box<Self> {
+        use zerovec::ule::VarULE;
+        #[allow(clippy::expect_used)] // Only used from datagen
+        let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");
+
+        zerovec::ule::encode_varule_to_box(&this)
+    }
+}
+
+/// A set of characters and strings which share a particular property value.
+#[derive(Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct PropertyValueNameMapV1<'data> {
+    /// A map from names to their value discriminant
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, NormalizedPropertyName, u16>,
+}
+
 macro_rules! expand {
     (
         ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
         ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
-        ($(($code_point_map_marker:ident, $enum_s:literal, $value_ty:ident),)+)
+        ($(($code_point_map_marker:ident, $value_name_marker:ident, $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
             // Data keys that return code point sets (represented as CodePointSetData).
@@ -404,6 +524,32 @@ macro_rules! expand {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
                         databake::quote!{ ::icu_properties::provider::$code_point_map_marker }
+                    }
+                }
+
+                #[doc = core::concat!("Data marker for the names of the values of the '", $enum_s, "' Unicode property")]
+                pub struct $value_name_marker;
+
+                impl DataMarker for $value_name_marker {
+                    type Yokeable = PropertyValueNameMapV1<'static>;
+                }
+
+                impl KeyedDataMarker for $value_name_marker {
+                    const KEY: DataKey = data_key!(concat!("props/names/", $enum_s, "@1"));
+                }
+
+                #[cfg(feature = "datagen")]
+                impl Default for $value_name_marker {
+                    fn default() -> Self {
+                        Self
+                    }
+                }
+
+                #[cfg(feature = "datagen")]
+                impl databake::Bake for $value_name_marker {
+                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                        env.insert("icu_properties");
+                        databake::quote!{ ::icu_properties::provider::$value_name_marker }
                     }
                 }
             )+
@@ -498,16 +644,37 @@ expand!(
         // code point maps
         (
             CanonicalCombiningClassV1Marker,
+            CanonicalCombiningClassNamesV1Marker,
             "ccc",
             CanonicalCombiningClass
         ),
-        (GeneralCategoryV1Marker, "gc", GeneralCategory),
-        (BidiClassV1Marker, "bc", BidiClass),
-        (ScriptV1Marker, "sc", Script),
-        (EastAsianWidthV1Marker, "ea", EastAsianWidth),
-        (LineBreakV1Marker, "lb", LineBreak),
-        (GraphemeClusterBreakV1Marker, "GCB", GraphemeClusterBreak),
-        (WordBreakV1Marker, "WB", WordBreak),
-        (SentenceBreakV1Marker, "SB", SentenceBreak),
+        (
+            GeneralCategoryV1Marker,
+            GeneralCategoryNamesV1Marker,
+            "gc",
+            GeneralCategory
+        ),
+        (BidiClassV1Marker, BidiClassNamesV1Marker, "bc", BidiClass),
+        (ScriptV1Marker, ScriptValuesNameV1Marker, "sc", Script),
+        (
+            EastAsianWidthV1Marker,
+            EastAsianWidthNamesV1Marker,
+            "ea",
+            EastAsianWidth
+        ),
+        (LineBreakV1Marker, LineBreakNamesV1Marker, "lb", LineBreak),
+        (
+            GraphemeClusterBreakV1Marker,
+            GraphemeClusterBreakNamesV1Marker,
+            "GCB",
+            GraphemeClusterBreak
+        ),
+        (WordBreakV1Marker, WordBreakNamesV1Marker, "WB", WordBreak),
+        (
+            SentenceBreakV1Marker,
+            SentenceBreakNamesV1Marker,
+            "SB",
+            SentenceBreak
+        ),
     )
 );
