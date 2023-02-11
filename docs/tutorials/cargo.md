@@ -8,14 +8,14 @@ The most basic Cargo.toml to get you off the ground is the following:
 
 ```toml
 [package]
-name = "demo"
+name = "demo_testdata"
 version = "0.1.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.0"
-icu_testdata = "1.0"
+icu = "1.1"
+icu_testdata = "1.1"
 ```
 
 In your main.rs, you can use most functionality of ICU4X.
@@ -28,14 +28,14 @@ If you wish to use an experimental feature, such as `icu_segmenter`, set up your
 
 ```toml
 [package]
-name = "demo"
+name = "demo_experimental"
 version = "0.1.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.0", features = ["experimental"] }
-icu_testdata = { version = "1.0", features = ["icu_segmenter"] }
+icu = { version = "1.1", features = ["experimental"] }
+icu_testdata = { version = "1.1", features = ["icu_segmenter"] }
 ```
 
 In your main.rs, you can now use experimental features.
@@ -48,14 +48,14 @@ If you wish to generate your own data in blob format and pass it into ICU4X, ena
 
 ```toml
 [package]
-name = "demo"
+name = "demo_buffer"
 version = "0.1.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.0", features = ["serde"] }
-icu_provider_blob = "1.0"
+icu = { version = "1.1", features = ["serde"] }
+icu_provider_blob = "1.1"
 ```
 
 To learn about building ICU4X data, including whether to check in the postcard file to your repository, see [data_management.md](./data_management.md).
@@ -68,22 +68,22 @@ If you wish to use baked data for ICU4X, add some additional dependencies as fol
 
 ```toml
 [package]
-name = "demo"
+name = "demo_baked"
 version = "0.1.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.0"
-icu_provider = "1.0" # for databake
+icu = "1.1"
+icu_provider = "1.1" # for databake
 litemap = "0.6" # for databake
 zerovec = "0.9" # for databake
 
 # for build.rs:
 [build-dependencies]
-icu = "1.0"
-icu_datagen = "1.0"
-icu_provider = "1.0"
+icu = "1.1"
+icu_datagen = "1.1"
+icu_provider = "1.1"
 ```
 
 This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
@@ -98,7 +98,7 @@ If you wish to share ICU4X objects between threads, you must enable the `"sync"`
 
 ```toml
 [package]
-name = "demo"
+name = "demo_lazy_static"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -106,9 +106,9 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-icu = "1.0"
-icu_testdata = "1.0"
-icu_provider = { version = "1.0", features = ["sync"] }
+icu = "1.1"
+icu_testdata = "1.1"
+icu_provider = { version = "1.1", features = ["sync"] }
 lazy_static = "1.4"
 ```
 
