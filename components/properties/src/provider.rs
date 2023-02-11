@@ -655,7 +655,7 @@ expand!(
             GeneralCategory
         ),
         (BidiClassV1Marker, BidiClassNamesV1Marker, "bc", BidiClass),
-        (ScriptV1Marker, ScriptValuesNameV1Marker, "sc", Script),
+        (ScriptV1Marker, ScriptNamesV1Marker, "sc", Script),
         (
             EastAsianWidthV1Marker,
             EastAsianWidthNamesV1Marker,

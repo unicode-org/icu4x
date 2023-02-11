@@ -7,6 +7,7 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
 fn get_enumerated_prop<'a>(
@@ -26,7 +27,7 @@ fn get_enumerated_prop<'a>(
 }
 
 macro_rules! expand {
-    ($(($marker:ident, $prop_name:literal)),+,) => {
+    ($(($marker:ident, $names_marker:ident, $prop_name:literal)),+,) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider
             {
@@ -52,20 +53,60 @@ macro_rules! expand {
                     Ok(vec![Default::default()])
                 }
             }
+
+            impl DataProvider<$names_marker> for crate::DatagenProvider
+            {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
+                    let data = get_enumerated_prop(&self.source, $prop_name)?;
+                    let mut map = BTreeMap::new();
+                    for value in &data.values {
+                        let discr = value.discr;
+                        map.insert(NormalizedPropertyName::from_bytes(value.long.as_bytes()), discr);
+                        if let Some(ref short) = value.short {
+                            map.insert(NormalizedPropertyName::from_bytes(short.as_bytes()), discr);
+                        }
+                        for alias in &value.aliases {
+                            map.insert(NormalizedPropertyName::from_bytes(alias.as_bytes()), discr);
+                        }
+                    }
+                    let data_struct = PropertyValueNameMapV1 { map: map.into_iter().collect() };
+                    Ok(DataResponse {
+                        metadata: DataResponseMetadata::default(),
+                        payload: Some(DataPayload::from_owned(data_struct)),
+                    })
+                }
+            }
+
+            impl IterableDataProvider<$names_marker> for crate::DatagenProvider {
+                fn supported_locales(
+                    &self,
+                ) -> Result<Vec<DataLocale>, DataError> {
+                    get_enumerated_prop(&self.source, $prop_name)?;
+                    Ok(vec![Default::default()])
+                }
+            }
         )+
     };
 }
 
 expand!(
-    (CanonicalCombiningClassV1Marker, "ccc"),
-    (GeneralCategoryV1Marker, "gc"),
-    (BidiClassV1Marker, "bc"),
-    (ScriptV1Marker, "sc"),
-    (EastAsianWidthV1Marker, "ea"),
-    (LineBreakV1Marker, "lb"),
-    (GraphemeClusterBreakV1Marker, "GCB"),
-    (WordBreakV1Marker, "WB"),
-    (SentenceBreakV1Marker, "SB"),
+    (
+        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClassNamesV1Marker,
+        "ccc"
+    ),
+    (GeneralCategoryV1Marker, GeneralCategoryNamesV1Marker, "gc"),
+    (BidiClassV1Marker, BidiClassNamesV1Marker, "bc"),
+    (ScriptV1Marker, ScriptNamesV1Marker, "sc"),
+    (EastAsianWidthV1Marker, EastAsianWidthNamesV1Marker, "ea"),
+    (LineBreakV1Marker, LineBreakNamesV1Marker, "lb"),
+    (
+        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreakNamesV1Marker,
+        "GCB"
+    ),
+    (WordBreakV1Marker, WordBreakNamesV1Marker, "WB"),
+    (SentenceBreakV1Marker, SentenceBreakNamesV1Marker, "SB"),
 );
 
 #[cfg(test)]

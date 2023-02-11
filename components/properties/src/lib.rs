@@ -84,7 +84,6 @@ pub mod bidi;
 
 mod error;
 pub mod maps;
-pub mod names;
 
 // NOTE: The Pernosco debugger has special knowledge
 // of the `CanonicalCombiningClass` struct inside the `props`
