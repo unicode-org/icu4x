@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676044564841,
+  "lastUpdate": 1676082972785,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -35603,6 +35603,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a9465657f49e5eb781177d6849950726013488ff"
         },
         "date": 1676044480207,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4422738,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c99f0b96dc3ed71e3e11af2b67f871a15d08012c",
+          "message": "Document style around visible and invisible code points (#3102)",
+          "timestamp": "2023-02-10T20:32:49-06:00",
+          "tree_id": "c44ce8ac313994ef9c8b442954f358f1580e5115",
+          "url": "https://github.com/unicode-org/icu4x/commit/c99f0b96dc3ed71e3e11af2b67f871a15d08012c"
+        },
+        "date": 1676082873049,
         "tool": "ndjson",
         "benches": [
           {
