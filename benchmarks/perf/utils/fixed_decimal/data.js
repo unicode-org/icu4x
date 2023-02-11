@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676045201954,
+  "lastUpdate": 1676083502687,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -72041,6 +72041,120 @@ window.BENCHMARK_DATA = {
             "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
             "value": 131257,
             "range": "± 1659",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c99f0b96dc3ed71e3e11af2b67f871a15d08012c",
+          "message": "Document style around visible and invisible code points (#3102)",
+          "timestamp": "2023-02-10T20:32:49-06:00",
+          "tree_id": "c44ce8ac313994ef9c8b442954f358f1580e5115",
+          "url": "https://github.com/unicode-org/icu4x/commit/c99f0b96dc3ed71e3e11af2b67f871a15d08012c"
+        },
+        "date": 1676083419016,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107985,
+            "range": "± 1166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23905,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63515,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/22.50",
+            "value": 45,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/22.50",
+            "value": 34,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0012.3400",
+            "value": 41,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00.0012216734340",
+            "value": 85,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/00002342561123400.0",
+            "value": 93,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/-00123400",
+            "value": 37,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/922337203685477580898230948203840239384.9823094820384023938423424",
+            "value": 375,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0.000000001",
+            "value": 41,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000...",
+            "value": 109800,
+            "range": "± 429",
             "unit": "ns/iter"
           }
         ]
