@@ -137,10 +137,10 @@ jobs:
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
         echo "::endgroup::"
 
-  webpack:
+  wasm-demo:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
@@ -181,7 +181,7 @@ jobs:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
-    - name: Upload Webpack bundle to Google Cloud Storage
+    - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
         # gsutil cors set ffi/diplomat/js/examples/wasm-demo/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
         gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
@@ -329,12 +329,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-      with:
-        version: '>= 363.0.0'
-        skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
-
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
@@ -359,11 +353,24 @@ jobs:
       run: |
         cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        version: '>= 417.0.0'
+        skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
+
     - name:  Download previous benchmark data
+      if: ${{ matrix.os }} != "windows-latest"
       run: |
         # We're on main, so the previous run is the parent.
-        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+
+    - name:  Download previous benchmark data
+      if: ${{ matrix.os }} == "windows-latest"
+      run: |
+        # We're on main, so the previous run is the parent.
+        $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
@@ -579,7 +586,7 @@ jobs:
 
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
-    needs: [docs, ffi-docs, webpack, bench-perf, bench-binsize, bench-memory, bench-datasize]
+    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-binsize, bench-memory, bench-datasize]
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
