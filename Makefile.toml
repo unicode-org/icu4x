@@ -63,7 +63,7 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
-    "test-cargo-tutorial",
+    "test-cargo-tutorial-local",
 ]
 
 [tasks.ci-job-testdata]

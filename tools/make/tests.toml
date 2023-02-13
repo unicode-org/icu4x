@@ -32,17 +32,41 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc", "--no-fail-fast"]
 
-[tasks.test-cargo-tutorial]
-description = "Build the Cargo tutorial projects"
+[tasks.test-cargo-tutorial-local]
+description = "Build the Cargo tutorial projects based on local crates"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
 cd docs/tutorials/cargo_tests
+rm -f Cargo.lock
 
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
+
+exec --fail-on-error cargo --config patch.toml run --manifest-path=baked/Cargo.toml
+exec --fail-on-error make -C buffer
+exec --fail-on-error cargo --config patch.toml run --manifest-path=buffer/Cargo.toml
+exec --fail-on-error cargo --config patch.toml run --manifest-path=experimental/Cargo.toml
+exec --fail-on-error cargo --config patch.toml run --manifest-path=lazy_static/Cargo.toml
+exec --fail-on-error cargo --config patch.toml run --manifest-path=testdata/Cargo.toml
+'''
+
+[tasks.test-cargo-tutorial-cratesio]
+description = "Build the Cargo tutorial projects based on crates.io"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+cd docs/tutorials/cargo_tests
+rm -f Cargo.lock
+
+pwd = pwd
+set_env CARGO_TARGET_DIR ${pwd}/target
+
+# Note: This uses the --release profile to distinguish build artifacts from the local job
 
 exec --fail-on-error cargo run --release --manifest-path=baked/Cargo.toml
 exec --fail-on-error make -C buffer
