@@ -46,9 +46,13 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 set_env CARGO "cargo --config=../patch.toml"
 
-exec --fail-on-error cargo --config patch.toml run --release -p demo_baked
+# Build the postcard file
 exec --fail-on-error cargo --config patch.toml build --release -p demo_buffer
+exec --fail-on-error cargo --config patch.toml install --path ../../../provider/datagen --root .
 exec --fail-on-error make -C buffer
+
+# Run the 5 projects
+exec --fail-on-error cargo --config patch.toml run --release -p demo_baked
 exec --fail-on-error cargo --config patch.toml run --release -p demo_buffer
 exec --fail-on-error cargo --config patch.toml run --release -p demo_experimental
 exec --fail-on-error cargo --config patch.toml run --release -p demo_lazy_static
@@ -68,9 +72,13 @@ rm -f Cargo.lock
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
-exec --fail-on-error cargo run --release -p demo_baked
+# Build the postcard file
 exec --fail-on-error cargo build --release -p demo_buffer
+# Let the Makefile install icu_datagen since we're pulling it from crates.io
 exec --fail-on-error make -C buffer
+
+# Run the 5 projects
+exec --fail-on-error cargo run --release -p demo_baked
 exec --fail-on-error cargo run --release -p demo_buffer
 exec --fail-on-error cargo run --release -p demo_experimental
 exec --fail-on-error cargo run --release -p demo_lazy_static

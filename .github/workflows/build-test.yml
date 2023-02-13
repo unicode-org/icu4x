@@ -120,7 +120,8 @@ jobs:
   test-cargo:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        # TODO(#3109): Enable windows-latest
+        os: [ ubuntu-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
 
     steps:
