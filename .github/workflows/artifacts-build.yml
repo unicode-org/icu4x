@@ -349,9 +349,9 @@ jobs:
 
     # Actual job
 
-    # - name: Run the example with dhat-rs to collect memory information
-    #   run: |
-    #     cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+    - name: Run the example with dhat-rs to collect memory information
+      run: |
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
