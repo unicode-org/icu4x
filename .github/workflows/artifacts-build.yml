@@ -363,16 +363,14 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
-        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        export BASELINE=6de6825a4b324425e80cfd43be5e2ed41b2d7fca
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name:  Download previous benchmark data
       if: matrix.os == 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
-        # $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
-        $BASELINE = "6de6825a4b324425e80cfd43be5e2ed41b2d7fca"
+        $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
