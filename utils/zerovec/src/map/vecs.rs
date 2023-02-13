@@ -218,11 +218,9 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         self
     }
-
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
@@ -274,7 +272,6 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         self
     }

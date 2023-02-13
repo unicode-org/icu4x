@@ -183,9 +183,21 @@ Hopefully self explanatory. The less time we spend worrying about formatting and
 
 There are bound to be some cases where the linter makes suggestion we don't want to follow, but these should be rare. Any such false-positives should be [suppressed](https://github.com/rust-lang/rust-clippy#allowingdenying-lints) and commented for future maintainers.
 
-**Open Question**: Should we prohibit un-suppressed warnings as a github check?
+GitHub CI enforces ICU4X's clippy standards.
 
-**Open Question**: Is this including all the pedantic warnings?
+### Render visible characters in docs and code :: suggested
+
+Often in internationalization, we deal with code points from other scripts. It is suggested to put those code points directly into the file, _instead of_ using escape syntax such as `\u{1234}`. Exceptions may include:
+
+- If directly rendering the characters could cause confusion due to the bidi algorithm
+- If the test cares more about the code point values than the characters they represent
+
+### Render invisible characters in docs but escape them in code :: suggested
+
+There are several types of invisible code points in Unicode, including whitespace, zero-width characters, and bidi marks. The policy surrounding these characters is:
+
+- In docs tests: users are more interested in the end result, so favor rendering the invisible characters. When invisible characters could cause confusion, it is suggested to leave an unrendered docs comment, such as `# // The following line contains an invisible code point.`
+- In source code and unit tests: being explicit about invisible characters makes reading and modifying code more explicit for ICU4X developers, so favor using escape sequences.
 
 # Structs and Traits
 
