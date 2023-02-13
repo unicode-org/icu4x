@@ -13,8 +13,8 @@ on:
   push
 
 jobs:
-  test-cargo-tutorial:
-    name: "Test Release via the Cargo tutorials"
+  test-cratesio:
+    name: "Test crates.io versions of ICU4X via the Cargo tutorials"
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v3
@@ -52,4 +52,4 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: test-cargo-tutorial
+        args: test-cargo-tutorial-cratesio
