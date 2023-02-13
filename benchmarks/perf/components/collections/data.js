@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676083603809,
+  "lastUpdate": 1676281285898,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49895,6 +49895,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 36533494,
             "range": "± 1862552",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6de6825a4b324425e80cfd43be5e2ed41b2d7fca",
+          "message": "Add initial ZeroHashMap (#2579)\n\n* add core functionality of ZeroHashMap based on CHD algorithm\r\n\r\n* remove keys from HashIndex,\r\nrename iter -> keys\r\nchange return type of compute hash\r\nchange container to FlexZeroVec\r\n\r\n* rename variables, use vec! macro\r\n\r\n* remove #[macro_use] and directly import macro\r\n\r\n* add benchmarks for zerohashmap\r\nadd #[zerovec::derive(Hash)] which derives byte hash of the ule\r\nfix some function signatures\r\n\r\n* make functions inline\r\nremove duplicate casts\r\nsupport only one `build_from_exact_iter` function\r\n\r\n* add hashmap feature for ZeroHashMapStatic\r\n\r\n* remove unnecessary Iterator impl\r\n\r\n* Apply reverse permutation in HashIndex bulding using zvl_permute\r\n\r\n* Derive serde for HashIndex, ZeroHashMapStatic\r\nChange benches to read data from `large_zerohashmap.postcard`\r\n\r\n* modify generation algorithm using hashing only once\r\n\r\n* replace ahash with wyhash\r\n\r\n* Move zerohashmap into a separate module\r\n\r\n* move everything to mod.rs\r\n\r\n* Use t1ha hash function\r\n\r\n* s/ZeroHashMapStatic/ZeroHashMap\r\n\r\n* Add docs, fix zhm lookup bench, add zhm deserialize bench\r\n\r\n* add zhm deserialize benches\r\n\r\n* remove hashindex and refactor code\r\n\r\n* move common functions to algorithms module\r\n\r\n* impl FromIterator for zhm\r\n\r\n* Update utils/zerovec/src/hashmap/mod.rs\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\n* remove borrow, pub changes\r\n\r\n* add Hash to make_ule\r\n\r\n* add contains_key, iter_keys, iter_values, iter\r\nmove key equality check to index method\r\n\r\n* minor benchmark refactor\r\n\r\n* pass m as usize\r\n\r\n* fix maths\r\n\r\n* remove inlining\r\ncompute_index in u64\r\nshift back to (usize, u32, u32) from split_hash64\r\n\r\n* custom serde for zerohashmap to bake in length validations\r\n\r\n* revert back to u32 arithmetic\r\n\r\n* fix clippy errors\r\n\r\n* add derive Hash to make_ule\r\n\r\n---------\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2023-02-13T14:57:14+05:30",
+          "tree_id": "c72a27ebd433610720a0d3d94c6e550bb1adb5f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6de6825a4b324425e80cfd43be5e2ed41b2d7fca"
+        },
+        "date": 1676281187858,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 564,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 420,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 466,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 493,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 838,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 890,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 421,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 465,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 520,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 540,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 885,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 35385195,
+            "range": "± 1938664",
             "unit": "ns/iter"
           },
           {
