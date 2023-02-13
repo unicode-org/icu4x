@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676083628082,
+  "lastUpdate": 1676281317254,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -141323,6 +141323,150 @@ window.BENCHMARK_DATA = {
             "name": "locale/canonicalize/locale",
             "value": 3089,
             "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 179,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 133,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 151,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 191,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6de6825a4b324425e80cfd43be5e2ed41b2d7fca",
+          "message": "Add initial ZeroHashMap (#2579)\n\n* add core functionality of ZeroHashMap based on CHD algorithm\r\n\r\n* remove keys from HashIndex,\r\nrename iter -> keys\r\nchange return type of compute hash\r\nchange container to FlexZeroVec\r\n\r\n* rename variables, use vec! macro\r\n\r\n* remove #[macro_use] and directly import macro\r\n\r\n* add benchmarks for zerohashmap\r\nadd #[zerovec::derive(Hash)] which derives byte hash of the ule\r\nfix some function signatures\r\n\r\n* make functions inline\r\nremove duplicate casts\r\nsupport only one `build_from_exact_iter` function\r\n\r\n* add hashmap feature for ZeroHashMapStatic\r\n\r\n* remove unnecessary Iterator impl\r\n\r\n* Apply reverse permutation in HashIndex bulding using zvl_permute\r\n\r\n* Derive serde for HashIndex, ZeroHashMapStatic\r\nChange benches to read data from `large_zerohashmap.postcard`\r\n\r\n* modify generation algorithm using hashing only once\r\n\r\n* replace ahash with wyhash\r\n\r\n* Move zerohashmap into a separate module\r\n\r\n* move everything to mod.rs\r\n\r\n* Use t1ha hash function\r\n\r\n* s/ZeroHashMapStatic/ZeroHashMap\r\n\r\n* Add docs, fix zhm lookup bench, add zhm deserialize bench\r\n\r\n* add zhm deserialize benches\r\n\r\n* remove hashindex and refactor code\r\n\r\n* move common functions to algorithms module\r\n\r\n* impl FromIterator for zhm\r\n\r\n* Update utils/zerovec/src/hashmap/mod.rs\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\n* remove borrow, pub changes\r\n\r\n* add Hash to make_ule\r\n\r\n* add contains_key, iter_keys, iter_values, iter\r\nmove key equality check to index method\r\n\r\n* minor benchmark refactor\r\n\r\n* pass m as usize\r\n\r\n* fix maths\r\n\r\n* remove inlining\r\ncompute_index in u64\r\nshift back to (usize, u32, u32) from split_hash64\r\n\r\n* custom serde for zerohashmap to bake in length validations\r\n\r\n* revert back to u32 arithmetic\r\n\r\n* fix clippy errors\r\n\r\n* add derive Hash to make_ule\r\n\r\n---------\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2023-02-13T14:57:14+05:30",
+          "tree_id": "c72a27ebd433610720a0d3d94c6e550bb1adb5f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6de6825a4b324425e80cfd43be5e2ed41b2d7fca"
+        },
+        "date": 1676281232601,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 2870,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 876,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 942,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 495,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 88,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 866,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 271,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2038,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 3926,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1904,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1203,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 872,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 136,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 1987,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 498,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3059,
+            "range": "± 5",
             "unit": "ns/iter"
           },
           {
