@@ -20,7 +20,7 @@ use icu_provider_blob::BlobDataProvider;
 
 fn main() {
     let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/buffer_data.postcard",))
-        .expect("Reading pre-computed postcard buffer");
+        .expect("Pre-computed postcard buffer should exist");
 
     let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
         .expect("Deserialization should succeed");
@@ -30,7 +30,7 @@ fn main() {
         &locale!("my").into(),
         Default::default(),
     )
-    .expect("Locale 'my' is present in testdata");
+    .expect("Locale 'my' should be present in testdata");
 
     let datetime = DateTime::try_new_iso_datetime(2022, 12, 23, 12, 54, 29)
         .expect("Valid constant ISO datetime");

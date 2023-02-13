@@ -18,7 +18,7 @@ lazy_static! {
             &locale!("es").into(),
             ListLength::Wide
         )
-        .expect("Locale 'es' is present in testdata");
+        .expect("Locale 'es' should be present in testdata");
 }
 
 fn main() {

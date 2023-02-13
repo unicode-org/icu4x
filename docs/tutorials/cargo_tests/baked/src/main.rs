@@ -20,7 +20,7 @@ mod baked {
 fn main() {
     let rules =
         PluralRules::try_new_cardinal_unstable(&BakedProvider, &locale!("ru").into())
-            .expect("Locale 'ru' is present in the databake");
+            .expect("Locale 'ru' should be present in the databake");
     let result = rules.category_for(&3.into());
     assert_eq!(result, PluralCategory::Few);
     println!("{:?}", result);
