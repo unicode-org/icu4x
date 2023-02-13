@@ -11,5 +11,3 @@ members = [
     "lazy_static",
     "testdata",
 ]
-exclude = [
-]
