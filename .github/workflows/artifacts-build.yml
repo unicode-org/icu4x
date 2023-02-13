@@ -360,7 +360,7 @@ jobs:
         skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
 
     - name:  Download previous benchmark data
-      if: matrix.os != "windows-latest"
+      if: matrix.os != 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
         # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
@@ -368,7 +368,7 @@ jobs:
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name:  Download previous benchmark data
-      if: matrix.os == "windows-latest"
+      if: matrix.os == 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
         # $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
