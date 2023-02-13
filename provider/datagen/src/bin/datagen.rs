@@ -236,35 +236,6 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let mut cldr_locales = CldrLocaleSubset::Full;
-
-    let selected_locales = if matches.is_present("ALL_LOCALES") {
-        None
-    } else {
-        match matches
-            .values_of("LOCALES")
-            .unwrap()
-            .collect::<Vec<_>>()
-            .as_slice()
-        {
-            ["full"] => None,
-            ["modern"] => {
-                cldr_locales = CldrLocaleSubset::Modern;
-                None
-            }
-            ["none"] => Some(vec![]),
-            locales => Some(
-                locales
-                    .iter()
-                    .map(|s| {
-                        s.parse::<LanguageIdentifier>()
-                            .with_context(|| s.to_string())
-                    })
-                    .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
-            ),
-        }
-    };
-
     let selected_keys = if matches.is_present("ALL_KEYS") {
         icu_datagen::all_keys()
     } else if let Some(paths) = matches.values_of("KEYS") {
@@ -290,21 +261,28 @@ fn main() -> eyre::Result<()> {
 
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Full)?;
-    } else if Some("latest") == matches.value_of("CLDR_TAG") {
-        source_data =
-            source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, cldr_locales)?;
-    } else if let Some(tag) = matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
+        source_data = source_data.with_cldr(PathBuf::from(path), Default::default())?;
+    } else {
+        source_data = source_data.with_cldr_for_tag(
+            if Some("latest") == matches.value_of("CLDR_TAG") {
+                SourceData::LATEST_TESTED_CLDR_TAG
+            } else {
+                matches.value_of("CLDR_TAG").unwrap()
+            },
+            Default::default(),
+        )?
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
         source_data = source_data.with_icuexport(PathBuf::from(path))?;
-    } else if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
-        source_data =
-            source_data.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?;
-    } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
-        source_data = source_data.with_icuexport_for_tag(tag)?;
+    } else {
+        source_data = source_data.with_icuexport_for_tag(
+            if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+                SourceData::LATEST_TESTED_ICUEXPORT_TAG
+            } else {
+                matches.value_of("ICUEXPORT_TAG").unwrap()
+            },
+        )?;
     }
 
     if matches.value_of("TRIE_TYPE") == Some("fast") {
@@ -321,6 +299,35 @@ fn main() -> eyre::Result<()> {
         source_data =
             source_data.with_collations(collations.into_iter().map(String::from).collect());
     }
+
+    let raw_locales = matches.values_of("LOCALES").unwrap().collect::<Vec<_>>();
+
+    let selected_locales = if raw_locales == ["none"] || selected_keys.is_empty() {
+        Some(vec![])
+    } else if raw_locales == ["full"] || matches.is_present("ALL_LOCALES") {
+        None
+    } else if let Some(locale_subsets) = raw_locales
+        .iter()
+        .map(|&s| match s {
+            "basic" => Some(CoverageLevel::Basic),
+            "moderate" => Some(CoverageLevel::Moderate),
+            "modern" => Some(CoverageLevel::Modern),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+    {
+        Some(source_data.locales(&locale_subsets)?)
+    } else {
+        Some(
+            raw_locales
+                .into_iter()
+                .map(|s| {
+                    s.parse::<LanguageIdentifier>()
+                        .with_context(|| s.to_string())
+                })
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
+        )
+    };
 
     let out = match matches.value_of("FORMAT").expect("required") {
         v @ ("dir" | "deprecated-default") => {

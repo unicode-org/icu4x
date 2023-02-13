@@ -326,7 +326,7 @@ fn adjust_pattern_field_lengths(fields: &[Field], pattern: &mut runtime::Pattern
 /// skeleton included seconds but not fractional seconds, then the seconds field of the corresponding
 /// pattern should be adjusted by appending the locale’s decimal separator, followed by the sequence
 /// of ‘S’ characters from the requested skeleton.
-/// (see https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons)
+/// (see <https://unicode.org/reports/tr35/tr35-dates.html#Matching_Skeletons>)
 fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
     if let Some(requested_field) = fields
         .iter()

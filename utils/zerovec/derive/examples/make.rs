@@ -13,6 +13,15 @@ struct Struct {
     c: Option<char>,
 }
 
+#[make_ule(HashedStructULE)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[zerovec::derive(Debug, Hash)]
+struct HashedStruct {
+    a: u64,
+    b: i16,
+    c: Option<char>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[make_ule(TupleStructULE)]
 struct TupleStruct(u8, char);
@@ -20,7 +29,7 @@ struct TupleStruct(u8, char);
 #[make_ule(EnumULE)]
 #[repr(u8)]
 #[derive(Copy, Clone, PartialEq, Eq, Ord, PartialOrd, Debug)]
-#[zerovec::derive(Debug)]
+#[zerovec::derive(Debug, Hash)]
 enum Enum {
     A = 0,
     B = 1,

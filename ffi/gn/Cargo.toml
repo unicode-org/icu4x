@@ -47,3 +47,7 @@ rustflags = []
 
 [gn.package.num-complex."0.4.3"]
 rustflags = ["--cfg=has_i128"]
+
+# Build cargo-gnaw with the checked-in lockfile
+[workspace]
+members = ["third_party_tools/fuchsia/tools/cargo-gnaw"]
