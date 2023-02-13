@@ -63,7 +63,7 @@ icu_provider = "1.1"
 
 This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
 
-Use caution with the build.rs approach since it will make your build.rs file access the network and therefore be potentially non-deterministic. As an alternative, you can remove the `build-dependencies` section,  invoke `icu4x-datagen` manually, and potentially check in the output to your version control. See [data_management.md](./data_management.md) for more information.
+Use caution with the build.rs approach since it will make your build.rs file access the network and therefore be potentially non-deterministic. As an alternative, you can remove the `build-dependencies` section,  invoke `icu4x-datagen` manually, and check in the output to your version control. See [data_management.md](./data_management.md) for more information.
 
 [« Fully Working Example »](./cargo_tests/baked)
 
