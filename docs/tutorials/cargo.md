@@ -79,6 +79,6 @@ icu_provider = { version = "1.1", features = ["sync"] }
 lazy_static = "1.4"
 ```
 
-You can now, for example, persist a particular ICU4X object in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
+You can now use most ICU4X types when `Send + Sync` are required, for example to persist them in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
 
 [« Fully Working Example »](./cargo_tests/lazy_static)
