@@ -1669,30 +1669,25 @@ impl FixedDecimal {
         // magnitude invariants:
         debug_assert!(
             self.upper_magnitude >= self.magnitude,
-            "Upper magnitude too small {:?}",
-            self
+            "Upper magnitude too small {self:?}"
         );
         debug_assert!(
             self.lower_magnitude <= self.magnitude,
-            "Lower magnitude too large {:?}",
-            self
+            "Lower magnitude too large {self:?}"
         );
         debug_assert!(
             self.upper_magnitude >= 0,
-            "Upper magnitude below zero {:?}",
-            self
+            "Upper magnitude below zero {self:?}"
         );
         debug_assert!(
             self.lower_magnitude <= 0,
-            "Lower magnitude above zero {:?}",
-            self
+            "Lower magnitude above zero {self:?}",
         );
 
         // digits invariants:
         debug_assert!(
             self.digits.len() <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
-            "{:?}",
-            self
+            "{self:?}"
         );
         if !self.digits.is_empty() {
             debug_assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
@@ -1737,8 +1732,8 @@ impl writeable::Writeable for FixedDecimal {
     fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
-            + (if self.sign == Sign::None { 0 } else { 1 })
-            + (if self.lower_magnitude < 0 { 1 } else { 0 })
+            + (self.sign != Sign::None) as usize
+            + (self.lower_magnitude < 0) as usize
     }
 }
 
@@ -2504,14 +2499,13 @@ fn test_from_str() {
         assert_eq!(
             fd.magnitude_range(),
             cas.magnitudes[3]..=cas.magnitudes[0],
-            "{:?}",
-            cas
+            "{cas:?}"
         );
-        assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{:?}", cas);
-        assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{:?}", cas);
+        assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{cas:?}");
+        assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{cas:?}");
         let input_str_roundtrip = fd.to_string();
         let output_str = cas.output_str.unwrap_or(cas.input_str);
-        assert_eq!(output_str, input_str_roundtrip, "{:?}", cas);
+        assert_eq!(output_str, input_str_roundtrip, "{cas:?}");
     }
 }
 
@@ -2686,11 +2680,11 @@ fn test_zero_str_bounds() {
         }
         match FixedDecimal::from_str(&input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }
@@ -2760,11 +2754,11 @@ fn test_syntax_error() {
     for cas in &cases {
         match FixedDecimal::from_str(cas.input_str) {
             Ok(dec) => {
-                assert_eq!(cas.expected_err, None, "{:?}", cas);
-                assert_eq!(cas.input_str, dec.to_string(), "{:?}", cas);
+                assert_eq!(cas.expected_err, None, "{cas:?}");
+                assert_eq!(cas.input_str, dec.to_string(), "{cas:?}");
             }
             Err(err) => {
-                assert_eq!(cas.expected_err, Some(err), "{:?}", cas);
+                assert_eq!(cas.expected_err, Some(err), "{cas:?}");
             }
         }
     }
@@ -3451,10 +3445,10 @@ fn test_concatenate() {
         let fd2 = FixedDecimal::from_str(cas.input_2).unwrap();
         match fd1.concatenated_end(fd2) {
             Ok(fd) => {
-                assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{:?}", cas);
+                assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{cas:?}");
             }
             Err(_) => {
-                assert!(cas.expected.is_none(), "{:?}", cas);
+                assert!(cas.expected.is_none(), "{cas:?}");
             }
         }
     }

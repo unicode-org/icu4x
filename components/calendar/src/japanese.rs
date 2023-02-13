@@ -791,10 +791,7 @@ mod tests {
 
         let date =
             Date::try_new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
-                panic!(
-                    "Failed to construct date with {:?}, {}, {}, {}: {}",
-                    era, year, month, day, e
-                )
+                panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e}")
             });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);
@@ -815,10 +812,7 @@ mod tests {
 
         let date = Date::try_new_japanese_extended_date(era, year, month, day, calendar)
             .unwrap_or_else(|e| {
-                panic!(
-                    "Failed to construct date with {:?}, {}, {}, {}: {}",
-                    era, year, month, day, e
-                )
+                panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e}")
             });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);
@@ -844,17 +838,13 @@ mod tests {
         let expected = Date::try_new_japanese_extended_date(era2, year2, month, day, calendar)
             .unwrap_or_else(|e| {
                 panic!(
-                    "Failed to construct expectation date with {:?}, {}, {}, {}: {}",
-                    era2, year2, month, day, e
+                    "Failed to construct expectation date with {era2:?}, {year2}, {month}, {day}: {e}"
                 )
             });
 
         let date = Date::try_new_japanese_extended_date(era, year, month, day, calendar)
             .unwrap_or_else(|e| {
-                panic!(
-                    "Failed to construct date with {:?}, {}, {}, {}: {}",
-                    era, year, month, day, e
-                )
+                panic!("Failed to construct date with {era:?}, {year}, {month}, {day}: {e}")
             });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);

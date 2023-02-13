@@ -14,17 +14,17 @@ fn check_with_options(
     options: LineBreakOptions,
 ) {
     let segmenter =
-        LineSegmenter::try_new_with_options_unstable(&icu_testdata::unstable(), options)
+        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
 
     let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf8, result, "{}", s);
+    assert_eq!(expect_utf8, result, "{s}");
 
     let s_utf16: Vec<u16> = s.encode_utf16().collect();
     let iter = segmenter.segment_utf16(&s_utf16);
     let result: Vec<usize> = iter.collect();
-    assert_eq!(expect_utf16, result, "{}", s);
+    assert_eq!(expect_utf16, result, "{s}");
 }
 
 fn break_all(s: &str, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {

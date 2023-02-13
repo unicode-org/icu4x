@@ -134,7 +134,7 @@ impl<'a> FlexZeroVec<'a> {
     /// let zv: FlexZeroVec = FlexZeroVec::new();
     /// assert!(zv.is_empty());
     /// ```
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self::Borrowed(FlexZeroSlice::new_empty())
     }
 

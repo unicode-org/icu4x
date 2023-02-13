@@ -14,8 +14,8 @@ use crate::codepointinvlist::utils::deconstruct_range;
 use crate::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use zerovec::ZeroVec;
 
-fn try_from_range<'data, 'r>(
-    range: &'r impl RangeBounds<char>,
+fn try_from_range<'data>(
+    range: &impl RangeBounds<char>,
 ) -> Result<CodePointInversionList<'data>, CodePointInversionListError> {
     let (from, till) = deconstruct_range(range);
     if from < till {

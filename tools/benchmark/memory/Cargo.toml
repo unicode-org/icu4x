@@ -6,7 +6,7 @@
 name = "icu_benchmark_memory"
 version = "0.0.0"
 publish = false
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }

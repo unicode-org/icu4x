@@ -6,7 +6,7 @@
 name = "icu_capi_gn"
 publish = false
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.
@@ -35,3 +35,19 @@ rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
 
 [gn.package.syn."1.0.81"]
 rustflags = []
+
+[gn.package.num-traits."0.2.15"]
+rustflags = ["--cfg=has_i128"]
+
+[gn.package.libm."0.2.6"]
+rustflags = []
+
+[gn.package.num-integer."0.1.45"]
+rustflags = []
+
+[gn.package.num-complex."0.4.3"]
+rustflags = ["--cfg=has_i128"]
+
+# Build cargo-gnaw with the checked-in lockfile
+[workspace]
+members = ["third_party_tools/fuchsia/tools/cargo-gnaw"]

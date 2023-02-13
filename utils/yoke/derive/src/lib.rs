@@ -110,7 +110,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             structure.bind_with(|_| synstructure::BindStyle::Move);
             let owned_body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
-                    let binding = format!("__binding_{}", i);
+                    let binding = format!("__binding_{i}");
                     let field = Ident::new(&binding, Span::call_site());
                     let fty_static = replace_lifetime(&f.ty, static_lt());
 

@@ -1,6 +1,6 @@
 ::icu_collator::provider::CollationSpecialPrimariesV1 {
     last_primaries: unsafe {
-        ::zerovec::ZeroVec::from_bytes_unchecked(&[6u8, 5u8, 0u8, 12u8, 138u8, 13u8, 0u8, 14u8])
+        ::zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E")
     },
     numeric_primary: 15u8,
 }

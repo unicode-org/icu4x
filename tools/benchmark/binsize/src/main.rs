@@ -38,8 +38,7 @@ fn any_file_size(filepath: &str) -> Result<bool, std::io::Error> {
     if exists {
         let fsize = fs::metadata(filepath)?.len();
         println!(
-            "{{\"biggerIsBetter\":false,\"name\":{:?},\"unit\":\"bytes\",\"value\":{}}}",
-            filepath, fsize
+            "{{\"biggerIsBetter\":false,\"name\":{filepath:?},\"unit\":\"bytes\",\"value\":{fsize}}}"
         );
     }
     Ok(exists)
@@ -55,19 +54,19 @@ fn main() {
     let path_type = &args[2];
 
     if path_type != "wasm" && path_type != "gz" && path_type != "file" {
-        eprintln!("Invalid path type {}, use wasm or gz", path_type);
+        eprintln!("Invalid path type {path_type}, use wasm or gz");
         process::exit(1);
     }
 
     if path_type == "file" {
         let rc = any_file_size(path);
         if !rc.unwrap() {
-            eprintln!("File {} not found", path);
+            eprintln!("File {path} not found");
         }
     } else {
         let count = wasm_filesize(path, path_type);
         if count.unwrap() == 0 {
-            eprintln!("No wasm binaries found in directory {}", path);
+            eprintln!("No wasm binaries found in directory {path}");
             process::exit(1);
         }
     }

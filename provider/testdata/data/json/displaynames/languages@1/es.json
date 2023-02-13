@@ -571,5 +571,19 @@
     "zun": "zuñi",
     "zxx": "sin contenido lingüístico",
     "zza": "zazaki"
+  },
+  "short_names": {
+    "az": "azerí",
+    "en-GB": "inglés (RU)",
+    "en-US": "inglés (EE. UU.)"
+  },
+  "long_names": {
+    "zh-Hans": "chino mandarín simplificado",
+    "zh-Hant": "chino mandarín tradicional"
+  },
+  "menu_names": {
+    "ckb": "kurdo sorani",
+    "yue": "chino cantonés",
+    "zh": "chino mandarín"
   }
 }

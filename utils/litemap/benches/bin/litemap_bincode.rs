@@ -49,7 +49,7 @@ fn generate() {
     }
 
     let buf = bincode::serialize(&map).unwrap();
-    println!("{:?}", buf);
+    println!("{buf:?}");
 }
 
 #[no_mangle]

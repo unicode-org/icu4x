@@ -6,7 +6,7 @@ use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fmt;
-use std::fs::File;
+use std::fs;
 use std::path::PathBuf;
 /// RustLink but without display information
 #[derive(PartialEq, Eq, Debug, Clone, PartialOrd, Ord, Hash)]
@@ -48,7 +48,7 @@ fn main() {
         std::env!("CARGO_MANIFEST_DIR"),
         "/../../ffi/diplomat/src/lib.rs"
     ));
-    eprintln!("Loading icu_capi crate from {:?}", diplomat_crate);
+    eprintln!("Loading icu_capi crate from {diplomat_crate:?}");
     let diplomat_types =
         ast::File::from(&syn_inline_mod::parse_and_inline_modules(&diplomat_crate))
             .all_rust_links()
@@ -494,7 +494,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
             let output = std::process::Command::new("rustup")
-                .args(&[
+                .args([
                     "run",
                     "nightly-2022-08-25",
                     "cargo",
@@ -510,16 +510,16 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 .output()
                 .expect("failed to execute rustdoc");
             if !output.status.success() {
-                panic!("Rustdoc build failed with {:?}", output);
+                panic!("Rustdoc build failed with {output:?}");
             }
             let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
                 .join("../../target/doc")
                 .join(krate)
                 .with_extension("json");
-            eprintln!("Attempting to load {:?}", path);
+            eprintln!("Attempting to load {path:?}");
             CRATES.insert(
                 krate.to_owned(),
-                serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
+                serde_json::from_slice(&fs::read(&path).unwrap()).unwrap(),
             );
         }
         CRATES.get(krate).unwrap()
@@ -617,7 +617,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     recurse(item, external_crate, types, path, true, None);
                 } else {
-                    eprintln!("{:?} should be in either index or paths", path);
+                    eprintln!("{path:?} should be in either index or paths");
                 }
             }
             _ => {
