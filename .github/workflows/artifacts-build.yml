@@ -247,6 +247,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         # We're on main, so the previous run is the parent.
+        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
@@ -363,6 +364,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
+        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
@@ -487,6 +489,7 @@ jobs:
       run: |
         mkdir -p benchmarks/binsize
         # We're on main, so the previous run is the parent.
+        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
 
@@ -555,6 +558,7 @@ jobs:
       run: |
         mkdir -p benchmarks
         # We're on main, so the previous run is the parent.
+        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
