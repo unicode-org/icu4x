@@ -62,6 +62,7 @@ members = [
 ]
 exclude = [
     # Examples for how to set up an independent Cargo.toml file
+    # Note: This has its own [workspace] definition, so it may not need to be explicitly excluded here.
     "docs/tutorials/cargo_tests",
     # This crate uses datagen which requires downloading ZIP files during build,
     # so we don't want to build it as part of the workspace.

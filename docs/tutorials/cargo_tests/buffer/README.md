@@ -1,6 +1,8 @@
-# demo [![crates.io](https://img.shields.io/crates/v/demo)](https://crates.io/crates/demo)
+# demo_buffer [![crates.io](https://img.shields.io/crates/v/demo_buffer)](https://crates.io/crates/demo_buffer)
 
 This is a demo project using blob data.
+
+This project requires a postcard data file. To generate it, please run `make`.
 
 For more information, see the tutorial [cargo.md](../../cargo.md).
 

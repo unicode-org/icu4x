@@ -5,7 +5,7 @@
 use icu::locid::langid;
 use icu_datagen::CldrLocaleSubset;
 use icu_datagen::SourceData;
-use icu_provider::marker::KeyedDataMarker;
+use icu_datagen::prelude::*;
 use std::path::PathBuf;
 
 fn main() {
@@ -22,6 +22,8 @@ fn main() {
             .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Modern)
             .expect("Source data should download successfully"),
         vec![icu_datagen::Out::Module {
+            // For more information on these options, see:
+            // <https://icu4x.unicode.org/doc/icu_datagen/enum.Out.html#variant.Module>
             mod_directory,
             pretty: true,
             insert_feature_gates: false,

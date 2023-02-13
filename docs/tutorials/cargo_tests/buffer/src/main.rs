@@ -3,7 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This is a demo project using blob data.
-//! 
+//!
+//! This project requires a postcard data file. To generate it, please run `make`.
+//!
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::calendar::DateTime;

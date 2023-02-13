@@ -20,6 +20,6 @@ buffer_data.postcard: bin/icu4x-datagen bin/demo_buffer
 		--format blob \
 		--keys-for-bin bin/demo_buffer \
 		--locales my en-ZA \
-		--cldr-tag 42.0.0 \
+		--cldr-tag latest \
 		--overwrite \
 		--out buffer_data.postcard

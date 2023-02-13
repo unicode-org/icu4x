@@ -1,4 +1,4 @@
-# demo [![crates.io](https://img.shields.io/crates/v/demo)](https://crates.io/crates/demo)
+# demo_baked [![crates.io](https://img.shields.io/crates/v/demo_baked)](https://crates.io/crates/demo_baked)
 
 This is a demo project using baked data.
 

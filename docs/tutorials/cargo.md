@@ -7,18 +7,12 @@ ICU4X makes heavy use of small crates and Cargo features in order to be highly m
 The most basic Cargo.toml to get you off the ground is the following:
 
 ```toml
-[package]
-name = "demo_testdata"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
 [dependencies]
 icu = "1.1"
 icu_testdata = "1.1"
 ```
 
-In your main.rs, you can use most functionality of ICU4X.
+In your main.rs, you can use all stable ICU4X components in the small number of test locales available in `icu_testdata`.
 
 [« Fully Working Example »](./cargo_tests/testdata)
 
@@ -27,12 +21,6 @@ In your main.rs, you can use most functionality of ICU4X.
 If you wish to use an experimental feature, such as `icu_segmenter`, set up your Cargo.toml like this:
 
 ```toml
-[package]
-name = "demo_experimental"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
 [dependencies]
 icu = { version = "1.1", features = ["experimental"] }
 icu_testdata = { version = "1.1", features = ["icu_segmenter"] }
@@ -47,12 +35,6 @@ In your main.rs, you can now use experimental features.
 If you wish to generate your own data in blob format and pass it into ICU4X, enable the "serde" Cargo feature as follows:
 
 ```toml
-[package]
-name = "demo_buffer"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
 [dependencies]
 icu = { version = "1.1", features = ["serde"] }
 icu_provider_blob = "1.1"
@@ -67,16 +49,9 @@ To learn about building ICU4X data, including whether to check in the postcard f
 If you wish to use baked data for ICU4X, add some additional dependencies as follows:
 
 ```toml
-[package]
-name = "demo_baked"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
 [dependencies]
 icu = "1.1"
 icu_provider = "1.1" # for databake
-litemap = "0.6" # for databake
 zerovec = "0.9" # for databake
 
 # for build.rs:
@@ -97,14 +72,6 @@ Use caution with the build.rs approach since it will make your build.rs file acc
 If you wish to share ICU4X objects between threads, you must enable the `"sync"` Cargo feature of the `icu_provider` crate, as follows:
 
 ```toml
-[package]
-name = "demo_lazy_static"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 icu = "1.1"
 icu_testdata = "1.1"
