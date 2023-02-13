@@ -195,7 +195,7 @@ jobs:
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -247,8 +247,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         # We're on main, so the previous run is the parent.
-        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
@@ -330,11 +329,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install gsutil
-      if: ${{ matrix.os }} == "macos-latest"
-      run: |
-        brew install --cask google-cloud-sdk
-        echo "source \"/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc\"" >> ~/.bashrc
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+      with:
+        version: '>= 363.0.0'
+        skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -481,8 +480,7 @@ jobs:
       run: |
         mkdir -p benchmarks/binsize
         # We're on main, so the previous run is the parent.
-        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
 
     - name: Store benchmark result & create dashboard (wasm)
@@ -530,7 +528,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
@@ -550,8 +548,7 @@ jobs:
       run: |
         mkdir -p benchmarks
         # We're on main, so the previous run is the parent.
-        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
+        export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
