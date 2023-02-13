@@ -2,7 +2,12 @@
 
 This is a demo project using blob data.
 
-This project requires a postcard data file. To generate it, please run `make`.
+This project requires a postcard data file. To generate it, please run:
+
+```sh
+$ cargo build --release
+$ make
+```
 
 For more information, see the tutorial [cargo.md](../../cargo.md).
 

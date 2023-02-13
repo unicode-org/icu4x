@@ -44,13 +44,15 @@ rm -f Cargo.lock
 
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
+set_env CARGO "cargo --config=../patch.toml"
 
-exec --fail-on-error cargo --config patch.toml run -p demo_baked
+exec --fail-on-error cargo --config patch.toml run --release -p demo_baked
+exec --fail-on-error cargo --config patch.toml build --release -p demo_buffer
 exec --fail-on-error make -C buffer
-exec --fail-on-error cargo --config patch.toml run -p demo_buffer
-exec --fail-on-error cargo --config patch.toml run -p demo_experimental
-exec --fail-on-error cargo --config patch.toml run -p demo_lazy_static
-exec --fail-on-error cargo --config patch.toml run -p demo_testdata
+exec --fail-on-error cargo --config patch.toml run --release -p demo_buffer
+exec --fail-on-error cargo --config patch.toml run --release -p demo_experimental
+exec --fail-on-error cargo --config patch.toml run --release -p demo_lazy_static
+exec --fail-on-error cargo --config patch.toml run --release -p demo_testdata
 '''
 
 [tasks.test-cargo-tutorial-cratesio]
@@ -64,11 +66,10 @@ cd docs/tutorials/cargo_tests
 rm -f Cargo.lock
 
 pwd = pwd
-set_env CARGO_TARGET_DIR ${pwd}/target
-
-# Note: This uses the --release profile to distinguish build artifacts from the local job
+set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 exec --fail-on-error cargo run --release -p demo_baked
+exec --fail-on-error cargo build --release -p demo_buffer
 exec --fail-on-error make -C buffer
 exec --fail-on-error cargo run --release -p demo_buffer
 exec --fail-on-error cargo run --release -p demo_experimental
