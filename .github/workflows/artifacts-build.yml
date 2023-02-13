@@ -139,7 +139,7 @@ jobs:
 
   webpack:
     # This is too expensive to run on every push, so only run it on main.
-    # Comment this out to run on a PR.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
@@ -194,7 +194,7 @@ jobs:
 
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
-    # Comment this out to run on a PR.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     strategy:
@@ -248,12 +248,9 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/perf
-        # The previous run is either the parent (if we're on main) or the branch point (if we're not)
-        if [ ${{ github.ref }} == "refs/heads/main" ]; then
-          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        else
-          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
-        fi
+        # We're on main, so the previous run is the parent.
+        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
     - name: Store benchmark result & create dashboard
@@ -297,7 +294,7 @@ jobs:
 
   bench-memory:
     # This is too expensive to run on every push, so only run it on main.
-    # Comment this out to run on a PR.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       # Create a matrix of all platforms, and all components. Each job then can run
@@ -402,7 +399,7 @@ jobs:
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
     # This is too expensive to run on every push, so only run it on main.
-    # Comment this out to run on a PR.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       matrix:
@@ -517,7 +514,7 @@ jobs:
   # Data size benchmark: track size of provider/testdata/data/testdata.postcard (total data size).
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
-    # Comment this out to run on a PR.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
