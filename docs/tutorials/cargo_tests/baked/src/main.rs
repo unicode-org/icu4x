@@ -13,7 +13,7 @@ use icu::plurals::PluralRules;
 pub struct BakedProvider;
 
 mod baked {
-    include!("../baked_data/mod.rs");
+    include!(concat!(env!("OUT_DIR"), "/baked_data/mod.rs"));
     impl_data_provider!(super::BakedProvider);
 }
 

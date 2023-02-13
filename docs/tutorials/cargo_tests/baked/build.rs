@@ -9,8 +9,11 @@ use icu_datagen::prelude::*;
 use std::path::PathBuf;
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+
     // TODO(#3046): We shouldn't need to do this since it worked in 1.0
-    let mod_directory = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("baked_data");
+    let out_dir = std::env::var("OUT_DIR").unwrap();
+    let mod_directory = PathBuf::from(out_dir).join("baked_data");
     if mod_directory.exists() {
         std::fs::remove_dir_all(&mod_directory).unwrap();
     }
