@@ -140,7 +140,7 @@ jobs:
   wasm-demo:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: WASM Demo
     needs: credentials
     runs-on: "ubuntu-latest"
@@ -349,9 +349,9 @@ jobs:
 
     # Actual job
 
-    - name: Run the example with dhat-rs to collect memory information
-      run: |
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+    # - name: Run the example with dhat-rs to collect memory information
+    #   run: |
+    #     cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
@@ -360,7 +360,7 @@ jobs:
         skip_install:  ${{ matrix.os }} == "ubuntu-latest" # preinstalled
 
     - name:  Download previous benchmark data
-      if: ${{ matrix.os }} != "windows-latest"
+      if: matrix.os != "windows-latest"
       run: |
         # We're on main, so the previous run is the parent.
         # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
@@ -368,7 +368,7 @@ jobs:
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name:  Download previous benchmark data
-      if: ${{ matrix.os }} == "windows-latest"
+      if: matrix.os == "windows-latest"
       run: |
         # We're on main, so the previous run is the parent.
         # $BASELINE = git log --pretty=format:'%H' -1 -r HEAD^
@@ -537,7 +537,7 @@ jobs:
   bench-datasize:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-datasize
