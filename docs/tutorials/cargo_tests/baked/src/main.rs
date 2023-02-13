@@ -10,15 +10,16 @@ use icu::locid::locale;
 use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 
+pub struct BakedProvider;
+
 mod baked {
     include!("../baked_data/mod.rs");
-    pub struct UnstableProvider;
-    impl_data_provider!(UnstableProvider);
+    impl_data_provider!(super::BakedProvider);
 }
 
 fn main() {
     let rules =
-        PluralRules::try_new_cardinal_unstable(&baked::UnstableProvider, &locale!("ru").into())
+        PluralRules::try_new_cardinal_unstable(&BakedProvider, &locale!("ru").into())
             .expect("Locale 'ru' is present in the databake");
     let result = rules.category_for(&3.into());
     assert_eq!(result, PluralCategory::Few);
