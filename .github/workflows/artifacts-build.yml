@@ -246,7 +246,6 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        mkdir -p benchmarks/perf
         # We're on main, so the previous run is the parent.
         # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
@@ -357,7 +356,6 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        mkdir -p benchmarks/memory
         # We're on main, so the previous run is the parent.
         # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
@@ -452,16 +450,16 @@ jobs:
         args: twiggy --version 0.7.0
 
     # Actual job
-    - name: Setup output data directory
-      run: |
-        mkdir -p benchmarks/binsize/wasm
-        mkdir -p benchmarks/binsize/gz
-
     - name: Build wasm executables
       run: cargo make wasm-examples
 
     - name: gzip wasm executables
       run: (cd wasmpkg/wasm-opt && gzip *+opt.wasm)
+
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/binsize/wasm
+        mkdir -p benchmarks/binsize/gz
 
     - name: Measure size of executables
       run: |
