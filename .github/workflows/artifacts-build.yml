@@ -330,6 +330,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install gsutil
+      if: ${{ matrix.os }} == "macos-latest"
+      run: |
+        brew install --cask google-cloud-sdk
+        echo "source \"/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.bash.inc\"" >> ~/.bashrc
+
     # Cargo-make boilerplate
     - name: Get cargo-make version
       id: cargo-make-version
