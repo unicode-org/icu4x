@@ -33,5 +33,5 @@ all-features = true
 
 [dev-dependencies]
 criterion = "0.3"
-icu_testdata = { path = "../../provider/testdata" }
+icu_testdata = { version = "1.1.0", path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }

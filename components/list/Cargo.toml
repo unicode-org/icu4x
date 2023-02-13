@@ -40,7 +40,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = "1"
 postcard = { version = "1.0.0", features = ["use-std"] }
 icu = { path = "../icu" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_list"] }
+icu_testdata = { version = "1.1.0", path = "../../provider/testdata", default-features = false, features = ["icu_list"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 
 [features]
