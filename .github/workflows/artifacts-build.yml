@@ -292,7 +292,7 @@ jobs:
   bench-memory:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
