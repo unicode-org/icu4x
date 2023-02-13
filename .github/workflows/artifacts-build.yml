@@ -236,14 +236,13 @@ jobs:
 
     # Actual job
 
+    - name: Setup output data directory
+      run: |
+        mkdir -p benchmarks/perf/${{ matrix.component }}
+
     - name: Run benchmark
       run: |
-        pushd $PWD && cd ${{ matrix.component }};
-        export REL_OUTPUT_PATH="`dirs +1`/benchmarks/perf/${{ matrix.component }}";
-        mkdir -p $REL_OUTPUT_PATH;
-        export OUTPUT_PATH_CMD="ls -d $REL_OUTPUT_PATH";
-        export OUTPUT_PATH=$(echo $OUTPUT_PATH_CMD | sh);
-        cargo bench --features bench -- --output-format bencher | tee $OUTPUT_PATH/output.txt;
+        cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
     - name:  Download previous benchmark data
       run: |
@@ -354,17 +353,14 @@ jobs:
 
     - name: Run the example with dhat-rs to collect memory information
       run: |
-        # we use the env. syntax instead of the $ENV syntax because $ENV doesn't work on windows
         cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
 
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/memory
-        if [ ${{ github.ref }} == "refs/heads/main" ]; then
-          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        else
-          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
-        fi
+        # We're on main, so the previous run is the parent.
+        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
     - name: Store benchmark result & create dashboard
@@ -401,13 +397,10 @@ jobs:
     # This is too expensive to run on every push, so only run it on main.
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-    strategy:
-      matrix:
-        type: [wasm, gz]
     runs-on: ubuntu-latest
     concurrency:
       # Allow one run at a time to include the previous run's results
-      group: bench-binsize-${{ matrix.type }}
+      group: bench-binsize
 
     steps:
     - uses: actions/checkout@v3
@@ -461,37 +454,53 @@ jobs:
     # Actual job
     - name: Setup output data directory
       run: |
-        mkdir -p benchmarks/binsize/${{ matrix.type }}
+        mkdir -p benchmarks/binsize/wasm
+        mkdir -p benchmarks/binsize/gz
 
     - name: Build wasm executables
       run: cargo make wasm-examples
 
-    - name: gzip wasm executables if requested
-      if: ${{ matrix.type == 'gz' }}
+    - name: gzip wasm executables
       run: (cd wasmpkg/wasm-opt && gzip *+opt.wasm)
 
     - name: Measure size of executables
       run: |
-        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt ${{ matrix.type }} | tee benchmarks/binsize/${{ matrix.type }}/output.txt
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt wasm | tee benchmarks/binsize/wasm/output.txt
+
+    - name: Measure size of executables
+      run: |
+        cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt gz | tee benchmarks/binsize/gz/output.txt
 
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        if [ ${{ github.ref }} == "refs/heads/main" ]; then
-          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        else
-          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
-        fi
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize/${{ matrix.type }} benchmarks/binsize
+        # We're on main, so the previous run is the parent.
+        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
 
-    - name: Store benchmark result & create dashboard
-      # Only for PRs that merge into the ICU4X mainline.
+    - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
         tool: 'ndjson'
-        output-file-path: benchmarks/binsize/${{ matrix.type }}/output.txt
-        benchmark-data-dir-path: ./benchmarks/binsize/${{ matrix.type }}
+        output-file-path: benchmarks/binsize/wasm/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/wasm
+        # Tentative setting, optimized value to be determined
+        alert-threshold: '200%'
+        fail-on-alert: true
+        comment-on-alert: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: empty
+        alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
+
+    - name: Store benchmark result & create dashboard (gz)
+      # Use gregtatum special feature to process ndjson-formatted benchmark data
+      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
+      with:
+        tool: 'ndjson'
+        output-file-path: benchmarks/binsize/gz/output.txt
+        benchmark-data-dir-path: ./benchmarks/binsize/gz
         # Tentative setting, optimized value to be determined
         alert-threshold: '200%'
         fail-on-alert: true
@@ -534,11 +543,9 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        if [ ${{ github.ref }} == "refs/heads/main" ]; then
-          export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        else
-          export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
-        fi
+        # We're on main, so the previous run is the parent.
+        # export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
+        export BASELINE=6db157566f748ccabf960ba124c86437e57571a0
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
     - name: Store benchmark result & create dashboard
