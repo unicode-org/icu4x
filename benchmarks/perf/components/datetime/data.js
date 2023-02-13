@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1676083518511,
+  "lastUpdate": 1676281199632,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -97661,6 +97661,108 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4861,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6de6825a4b324425e80cfd43be5e2ed41b2d7fca",
+          "message": "Add initial ZeroHashMap (#2579)\n\n* add core functionality of ZeroHashMap based on CHD algorithm\r\n\r\n* remove keys from HashIndex,\r\nrename iter -> keys\r\nchange return type of compute hash\r\nchange container to FlexZeroVec\r\n\r\n* rename variables, use vec! macro\r\n\r\n* remove #[macro_use] and directly import macro\r\n\r\n* add benchmarks for zerohashmap\r\nadd #[zerovec::derive(Hash)] which derives byte hash of the ule\r\nfix some function signatures\r\n\r\n* make functions inline\r\nremove duplicate casts\r\nsupport only one `build_from_exact_iter` function\r\n\r\n* add hashmap feature for ZeroHashMapStatic\r\n\r\n* remove unnecessary Iterator impl\r\n\r\n* Apply reverse permutation in HashIndex bulding using zvl_permute\r\n\r\n* Derive serde for HashIndex, ZeroHashMapStatic\r\nChange benches to read data from `large_zerohashmap.postcard`\r\n\r\n* modify generation algorithm using hashing only once\r\n\r\n* replace ahash with wyhash\r\n\r\n* Move zerohashmap into a separate module\r\n\r\n* move everything to mod.rs\r\n\r\n* Use t1ha hash function\r\n\r\n* s/ZeroHashMapStatic/ZeroHashMap\r\n\r\n* Add docs, fix zhm lookup bench, add zhm deserialize bench\r\n\r\n* add zhm deserialize benches\r\n\r\n* remove hashindex and refactor code\r\n\r\n* move common functions to algorithms module\r\n\r\n* impl FromIterator for zhm\r\n\r\n* Update utils/zerovec/src/hashmap/mod.rs\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\n* remove borrow, pub changes\r\n\r\n* add Hash to make_ule\r\n\r\n* add contains_key, iter_keys, iter_values, iter\r\nmove key equality check to index method\r\n\r\n* minor benchmark refactor\r\n\r\n* pass m as usize\r\n\r\n* fix maths\r\n\r\n* remove inlining\r\ncompute_index in u64\r\nshift back to (usize, u32, u32) from split_hash64\r\n\r\n* custom serde for zerohashmap to bake in length validations\r\n\r\n* revert back to u32 arithmetic\r\n\r\n* fix clippy errors\r\n\r\n* add derive Hash to make_ule\r\n\r\n---------\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2023-02-13T14:57:14+05:30",
+          "tree_id": "c72a27ebd433610720a0d3d94c6e550bb1adb5f6",
+          "url": "https://github.com/unicode-org/icu4x/commit/6de6825a4b324425e80cfd43be5e2ed41b2d7fca"
+        },
+        "date": 1676281114863,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 65017,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 109800,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 61769,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 70288,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 65047,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 73198,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/write_to_string",
+            "value": 70047,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 105722,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 119144,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 109874,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 122858,
+            "range": "± 140",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/write_to_string",
+            "value": 117220,
+            "range": "± 106",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5636,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
