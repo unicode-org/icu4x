@@ -368,6 +368,8 @@ impl DataExporter for BakedDataExporter {
                     format!("{x:?}").parse::<TokenStream>().unwrap()
                 });
 
+                let n_u32 = n as u32;
+
                 self.dependencies.insert("perfect_hash_utils");
                 quote! {
                     pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
@@ -377,7 +379,7 @@ impl DataExporter for BakedDataExporter {
 
                         let (g, f0, f1) = perfect_hash_utils::compute_hash(locale, #n);
                         let (d0, d1) = DISPLACEMENTS.get(g).copied()?;
-                        let i = perfect_hash_utils::compute_index((f0, f1), (d0 as u32, d1 as u32), #n)?;
+                        let i = perfect_hash_utils::compute_index((f0, f1), (d0 as u32, d1 as u32), #n_u32)?;
                         locale.strict_cmp(KEYS.get(i)?.as_bytes()).is_eq().then(|| DATA.get(i).copied()).flatten()
                     }
                 }
