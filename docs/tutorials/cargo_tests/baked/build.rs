@@ -25,7 +25,7 @@ fn main() {
             // For more information on these options, see:
             // <https://icu4x.unicode.org/doc/icu_datagen/enum.Out.html#variant.Module>
             mod_directory,
-            pretty: true,
+            pretty: false,
             insert_feature_gates: false,
             use_separate_crates: false,
         }],
