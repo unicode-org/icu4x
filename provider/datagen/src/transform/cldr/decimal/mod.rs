@@ -77,7 +77,7 @@ impl crate::DatagenProvider {
             .collect())
     }
 
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_for_numbers(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?

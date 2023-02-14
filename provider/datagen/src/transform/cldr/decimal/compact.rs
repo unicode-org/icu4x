@@ -117,13 +117,13 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
 
 impl IterableDataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+        self.supported_locales_for_numbers()
     }
 }
 
 impl IterableDataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        self.supported_locales()
+        self.supported_locales_for_numbers()
     }
 }
 
