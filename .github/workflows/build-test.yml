@@ -117,11 +117,12 @@ jobs:
         args: ci-job-test
 
   # ci-job-test-cargo
-  test-cargo:
+  check-cargo:
     strategy:
       matrix:
-        # TODO(#3109): Enable windows-latest
-        os: [ ubuntu-latest, macos-latest ]
+        # TODO(#3109): Enable windows-latest.
+        # NOTE: We could consider macos-latest but it is very slow on CI.
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -153,11 +154,11 @@ jobs:
       run: rustup show
 
     # Actual job
-    - name: Run `cargo make ci-job-test-cargo`
+    - name: Run `cargo make ci-job-check-cargo`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-test-cargo
+        args: ci-job-check-cargo
 
   # ci-job-testdata
   testdata:

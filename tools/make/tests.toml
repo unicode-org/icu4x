@@ -32,7 +32,7 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc", "--no-fail-fast"]
 
-[tasks.test-cargo-tutorial-local]
+[tasks.check-cargo-tutorial-local]
 description = "Build the Cargo tutorial projects based on local crates"
 category = "ICU4X Development"
 script_runner = "@duckscript"
@@ -44,7 +44,22 @@ rm -f Cargo.lock
 
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
-set_env CARGO "cargo --config=../patch.toml"
+
+exec --fail-on-error cargo --config patch.toml check --all-targets
+'''
+
+[tasks.test-cargo-tutorial-local]
+description = "Build and run the Cargo tutorial projects based on local crates"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+cd docs/tutorials/cargo_tests
+rm -f Cargo.lock
+
+pwd = pwd
+set_env CARGO_TARGET_DIR ${pwd}/target
 
 # Build the postcard file
 exec --fail-on-error cargo --config patch.toml build --release -p demo_buffer
@@ -60,7 +75,7 @@ exec --fail-on-error cargo --config patch.toml run --release -p demo_testdata
 '''
 
 [tasks.test-cargo-tutorial-cratesio]
-description = "Build the Cargo tutorial projects based on crates.io"
+description = "Build and run the Cargo tutorial projects based on crates.io"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
