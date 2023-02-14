@@ -43,6 +43,7 @@
 //! assert_eq!(fallback_iterator.get(), &DataLocale::from(locale!("und")));
 //! ```
 
+use alloc::vec::Vec;
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
@@ -397,6 +398,66 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             },
         }
     }
+
+    /// Sorts the locales from an iterator into a list of levels based on how far they are
+    /// away from the root locale.
+    ///
+    /// Note: Only those locales that were in the input iterator will be present in the output,
+    /// even if one or more of those locales have a parent that is not in the input.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_provider::prelude::*;
+    /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
+    /// use icu_provider_adapters::fallback::LocaleFallbacker;
+    /// use icu_provider::hello_world::HelloWorldV1Marker;
+    ///
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("data");
+    /// let key_fallbacker = fallbacker.for_key(HelloWorldV1Marker::KEY);
+    ///
+    /// let locales = [
+    ///     locale!("en-GB"),
+    ///     locale!("en-IN"),
+    ///     locale!("en-US"),
+    ///     locale!("en"),
+    ///     locale!("hi-Latn-IN"),
+    ///     locale!("und"),
+    ///     locale!("zh-CN"),
+    ///     locale!("zh-TW"),
+    ///     locale!("zh"),
+    /// ];
+    ///
+    /// let grouped_locales = key_fallbacker.sort_locales_into_groups(locales.iter().map(|l| l.into()));
+    ///
+    /// assert_eq!(grouped_locales, vec![
+    ///     vec![locale!("und").into()],
+    ///     vec![locale!("en").into(), locale!("zh").into()],
+    ///     vec![locale!("en-US").into(), locale!("zh-CN").into()],
+    ///     vec![locale!("en-GB").into(), locale!("en-IN").into(), locale!("zh-TW").into()],
+    ///     vec![], // note: hi-Latn is not in the input, so it is not in the output
+    ///     vec![locale!("hi-Latn-IN").into()]
+    /// ])
+    /// ```
+    pub fn sort_locales_into_groups(
+        &self,
+        locales: impl Iterator<Item = DataLocale>,
+    ) -> Vec<Vec<DataLocale>> {
+        let mut result = Vec::new();
+        for locale in locales {
+            let level = self.fallback_for(locale.clone()).consume_len();
+            if level >= result.len() {
+                result.resize_with(level + 1, || Vec::new());
+            }
+            // The previous statement ensures that the vector is long enough
+            #[allow(clippy::indexing_slicing)]
+            result[level].push(locale);
+        }
+        result
+    }
 }
 
 impl LocaleFallbackIterator<'_, '_> {
@@ -416,5 +477,17 @@ impl LocaleFallbackIterator<'_, '_> {
     pub fn step(&mut self) -> &mut Self {
         self.inner.step(&mut self.current);
         self
+    }
+
+    /// Counts the number of steps to reach `und`.
+    pub(crate) fn consume_len(&mut self) -> usize {
+        let mut n = 0;
+        loop {
+            if self.current.is_empty() {
+                return n;
+            }
+            self.step();
+            n += 1;
+        }
     }
 }
