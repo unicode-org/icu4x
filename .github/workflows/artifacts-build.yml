@@ -215,6 +215,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -247,7 +249,6 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         # We're on main, so the previous run is the parent.
-        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
 
@@ -329,6 +330,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -364,7 +367,6 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         # We're on main, so the previous run is the parent.
-        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/memory/${{ matrix.os }} benchmarks/memory
 
@@ -418,6 +420,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -489,7 +493,6 @@ jobs:
       run: |
         mkdir -p benchmarks/binsize
         # We're on main, so the previous run is the parent.
-        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/binsize benchmarks/binsize
 
@@ -545,6 +548,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     - name: Setup output data directory
       run: |
@@ -558,7 +563,6 @@ jobs:
       run: |
         mkdir -p benchmarks
         # We're on main, so the previous run is the parent.
-        git fetch origin
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
         gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/datasize benchmarks
 
