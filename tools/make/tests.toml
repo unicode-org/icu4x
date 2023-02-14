@@ -45,7 +45,11 @@ rm -f Cargo.lock
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-exec --fail-on-error cargo --config patch.toml check --all-targets
+exec --fail-on-error cargo --config patch.toml check -p demo_baked
+exec --fail-on-error cargo --config patch.toml check -p demo_buffer
+exec --fail-on-error cargo --config patch.toml check -p demo_experimental
+exec --fail-on-error cargo --config patch.toml check -p demo_lazy_static
+exec --fail-on-error cargo --config patch.toml check -p demo_testdata
 '''
 
 [tasks.test-cargo-tutorial-local]
