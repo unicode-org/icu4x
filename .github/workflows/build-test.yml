@@ -118,13 +118,7 @@ jobs:
 
   # ci-job-test-cargo
   check-cargo:
-    strategy:
-      matrix:
-        # TODO(#3109): Enable windows-latest.
-        # NOTE: We could consider macos-latest but it is very slow on CI.
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 

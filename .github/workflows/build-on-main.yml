@@ -19,7 +19,11 @@ on:
 jobs:
   test-cargo-cratesio:
     name: "Test crates.io versions of ICU4X via the Cargo tutorials"
-    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        # TODO(#3109): Enable windows-latest.
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
 
@@ -56,7 +60,11 @@ jobs:
 
   test-cargo-local:
     name: "Test local versions of ICU4X via the Cargo tutorials"
-    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        # TODO(#3109): Enable windows-latest.
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
 
