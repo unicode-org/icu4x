@@ -40,6 +40,12 @@ icu::displaynames::provider::LanguageDisplayNamesV1#Struct
 icu::displaynames::provider::LanguageDisplayNamesV1Marker#Struct
 icu::displaynames::provider::RegionDisplayNamesV1#Struct
 icu::displaynames::provider::RegionDisplayNamesV1Marker#Struct
+icu::properties::PropertyValueLookup#Struct
+icu::properties::PropertyValueLookup::from_data#FnInStruct
+icu::properties::PropertyValueLookup::get_loose#FnInStruct
+icu::properties::PropertyValueLookup::get_loose_u16#FnInStruct
+icu::properties::PropertyValueLookup::get_strict#FnInStruct
+icu::properties::PropertyValueLookup::get_strict_u16#FnInStruct
 icu::properties::exemplar_chars::load_exemplars_auxiliary#Fn
 icu::properties::exemplar_chars::load_exemplars_index#Fn
 icu::properties::exemplar_chars::load_exemplars_main#Fn
