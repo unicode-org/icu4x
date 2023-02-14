@@ -50,4 +50,4 @@ cpp_default = ["icu_capi/cpp_default"]
 
 [package.metadata.cargo-all-features]
 # Tested by icu_capi
-allowlist = []
+skip_feature_sets = [[]]

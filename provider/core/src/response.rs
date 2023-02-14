@@ -95,7 +95,7 @@ unsafe impl stable_deref_trait::StableDeref for Cart {}
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
-    /// Creates a Yoke<Y, Option<Cart>> from owned bytes by applying f.
+    /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
     pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,

@@ -8,7 +8,6 @@ use icu_datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
-use zerovec::ZeroMap;
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
@@ -222,7 +221,7 @@ impl cldr_serde::ca::months::Symbols {
             }
             months::SymbolsV1::SolarTwelve(arr)
         } else {
-            let mut map: ZeroMap<MonthCode, str> = ZeroMap::default();
+            let mut map = BTreeMap::new();
             for (k, v) in self.0.iter() {
                 let index: usize = k
                     .parse()
@@ -234,9 +233,9 @@ impl cldr_serde::ca::months::Symbols {
                     .get(index - 1)
                     .expect("Found out of bounds month index for calendar");
 
-                map.insert(&MonthCode(*code), v);
+                map.insert(MonthCode(*code), v.as_ref());
             }
-            months::SymbolsV1::Other(map)
+            months::SymbolsV1::Other(map.into_iter().collect())
         }
     }
 }

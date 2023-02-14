@@ -61,7 +61,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder" }
 icu_collections = { version = "1.1.0", path = "../../components/collections", features = ["serde"] }
-icu_locid = { version = "1.1.0", path = "../../components/locid", features = ["std"] }
+icu_locid = { version = "1.1.0", path = "../../components/locid", features = ["std", "serde"] }
 itertools = "0.10"
 lazy_static = "1"
 log = "0.4"
@@ -101,3 +101,7 @@ required-features = ["bin"]
 [[test]]
 name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
+
+[package.metadata.cargo-all-features]
+# Disable check-all-features, as the bin feature is purely additive.
+skip_feature_sets = [[]]
