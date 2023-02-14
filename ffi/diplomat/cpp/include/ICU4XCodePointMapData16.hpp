@@ -30,11 +30,11 @@ struct ICU4XCodePointMapData16Deleter {
  * 
  * For properties whose values fit into 16 bits.
  * 
- * See the [Rust documentation for `properties`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
  * 
- * See the [Rust documentation for `CodePointMapData`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapData.html) for more information.
  * 
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
  */
 class ICU4XCodePointMapData16 {
  public:
@@ -42,7 +42,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   uint16_t get(char32_t cp) const;
 
@@ -54,14 +54,14 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
    * 
-   * See the [Rust documentation for `get_set_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+   * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
    */
   ICU4XCodePointSetData get_set_for_value(uint16_t value) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html) for more information.
+   * See the [Rust documentation for `load_script`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> load_script(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

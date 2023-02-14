@@ -28,7 +28,7 @@ struct ICU4XBidiDeleter {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  * 
- * See the [Rust documentation for `BidiClassAdapter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
+ * See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
  */
 class ICU4XBidi {
  public:
@@ -36,7 +36,7 @@ class ICU4XBidi {
   /**
    * Creates a new [`ICU4XBidi`] from locale data.
    * 
-   * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
   static diplomat::result<ICU4XBidi, ICU4XError> create(const ICU4XDataProvider& provider);
 
@@ -45,7 +45,7 @@ class ICU4XBidi {
    * 
    * Takes in a Level for the default level, if it is an invalid value it will default to LTR
    * 
-   * See the [Rust documentation for `new_with_data_source`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+   * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    * 
    * Lifetimes: `text` must live at least as long as the output.
    */
@@ -56,7 +56,7 @@ class ICU4XBidi {
    * 
    * Invalid levels (numbers greater than 125) will be assumed LTR
    * 
-   * See the [Rust documentation for `is_rtl`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+   * See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
    */
   static bool level_is_rtl(uint8_t level);
 
@@ -65,21 +65,21 @@ class ICU4XBidi {
    * 
    * Invalid levels (numbers greater than 125) will be assumed LTR
    * 
-   * See the [Rust documentation for `is_ltr`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+   * See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
    */
   static bool level_is_ltr(uint8_t level);
 
   /**
    * Get a basic RTL Level value
    * 
-   * See the [Rust documentation for `rtl`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl) for more information.
+   * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
    */
   static uint8_t level_rtl();
 
   /**
    * Get a simple LTR Level value
    * 
-   * See the [Rust documentation for `ltr`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.ltr) for more information.
+   * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
    */
   static uint8_t level_ltr();
   inline const capi::ICU4XBidi* AsFFI() const { return this->inner.get(); }

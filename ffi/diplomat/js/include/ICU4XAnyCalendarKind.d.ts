@@ -6,7 +6,7 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
  * The various calendar types currently supported by {@link ICU4XCalendar `ICU4XCalendar`}
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html Rust documentation for `AnyCalendarKind`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html Rust documentation for `AnyCalendarKind`} for more information.
  */
 export enum ICU4XAnyCalendarKind {
   /**

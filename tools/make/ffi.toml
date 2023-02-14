@@ -242,7 +242,7 @@ mkdir ./cpp/include
 rm -r ./cpp/docs/source
 mkdir ./cpp/docs/source
 writefile ./cpp/docs/source/conf.py ${conf_py}
-exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/ 
+exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
 '''
 
 [tasks.diplomat-gen-js]
@@ -262,7 +262,7 @@ rm -r ./js/docs/source
 mkdir ./js/docs/source
 echo "$conf_py" > ./js/docs/source/conf.py
 
-diplomat-tool js ./js/include/ --docs ./js/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+diplomat-tool js ./js/include/ --docs ./js/docs/source
 
 # TODO: Fix diplomat bug
 find ./js/docs/source -type f -exec sed -i  {} -e 's/staticfunction/function/g' \;

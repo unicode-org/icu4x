@@ -10,7 +10,7 @@ import { ICU4XPluralOperands } from "./ICU4XPluralOperands";
 
  * FFI version of `PluralRules`.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html Rust documentation for `PluralRules`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html Rust documentation for `PluralRules`} for more information.
  */
 export class ICU4XPluralRules {
 
@@ -18,7 +18,7 @@ export class ICU4XPluralRules {
 
    * Construct an {@link ICU4XPluralRules `ICU4XPluralRules`} for the given locale, for cardinal numbers
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable Rust documentation for `try_new_cardinal_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable Rust documentation for `try_new_cardinal_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_cardinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;
@@ -27,7 +27,7 @@ export class ICU4XPluralRules {
 
    * Construct an {@link ICU4XPluralRules `ICU4XPluralRules`} for the given locale, for ordinal numbers
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable Rust documentation for `try_new_ordinal_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable Rust documentation for `try_new_ordinal_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_ordinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;
@@ -36,7 +36,7 @@ export class ICU4XPluralRules {
 
    * Get the category for a given number represented as operands
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.category_for Rust documentation for `category_for`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for Rust documentation for `category_for`} for more information.
    */
   category_for(op: ICU4XPluralOperands): ICU4XPluralCategory;
 
@@ -44,7 +44,7 @@ export class ICU4XPluralRules {
 
    * Get all of the categories needed in the current locale
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.categories Rust documentation for `categories`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories Rust documentation for `categories`} for more information.
    */
   categories(): ICU4XPluralCategories;
 }

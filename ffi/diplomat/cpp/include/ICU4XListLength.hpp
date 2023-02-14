@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `ListLength`](https://unicode-org.github.io/icu4x-docs/doc/icu/list/enum.ListLength.html) for more information.
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
  */
 enum struct ICU4XListLength {
   Wide = 0,

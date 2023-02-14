@@ -117,21 +117,18 @@ Also, part of your testing-appropriate changes can be as primitive-yet-sufficien
 
 _Note: the `*.yml` workflow files should should provide detailed documentation for the individual steps. These are only broad examples of what the GitHub Actions can do._
 
-### Copy API docs to separate repo
+### Publish artifacts to GitHub pages
 
-We maintain a separate repo to store API docs. This allows the generated output HTML, which is usually larger in size than the source code it is generate from, to be under version control without swelling up the size of the main repo. Also, changes to the APIs will cause larger diffs in the HTML.
-The separate repo for `unicode-org/icu4x` is in `unicode-org/icu4x-docs`, similar to how `unicode-org/icu-docs` is used for API docs for `unicode-org/icu`.
-We use the [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages) action to copy files destined for [Github Pages](https://pages.github.com/), which is Github's built-in HTML/website serving functionality. The action allows for copying to remote repos and handles permissions for doing so (default & user Github tokens, etc.).
-After commits are pushed to the branch that is configured to hold Github Pages content in `unicode-org/icu4x-docs`, the results are visible in https://unicode-org.github.io/icu4x-docs/.
+API docs, the WASM demo, and benchmarking graphs are uploaded to a Google Cloud Storage bucket (accessible by Git ref), and published to this repository's
+[GitHub Pages](https://unicode-org.github.io/icu4x) after each commit to `main`.
 
 ### Benchmarking
 
 We use the [rhysd/github-action-benchmark](https://github.com/rhysd/github-action-benchmark). It does the following:
   1. For a handful of programming languages (including Rust), it runs the most common benchmark tool
   1. It converts the benchmark tool's output into a JSON file
-  1. It stores the JSON file in a separate branch. It produces a static HTML that renders the JSON file as a dashboard.
-  1. It commits the output JSON + HTML as a commit in a separate branch. This preserves the data for future invocations, when conversion of benchmark output to JSON is appended to the previous JSON to create the new JSON data file.
-We copy the benchmark dashboards along with the API docs in `unicode-org/icu4x-docs`. This allows the GH Pages for the main repo to be used for general purposes, if needed (ex: landing page, blog, etc.).
+  1. We upload the JSON file and the generated HTML dashboard to our GCS bucket
+  1. The graphs then get published on GitHub Pages
 
 ### Run CI checks locally
 
