@@ -24,6 +24,7 @@ pub mod options;
 pub mod provider;
 
 pub use displaynames::DisplayNames;
+pub use displaynames::DisplayNamesType;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;

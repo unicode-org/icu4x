@@ -5,10 +5,12 @@
 //! This module contains types and implementations for the Displaynames component.
 
 use crate::options::*;
+use crate::provider::LanguageDisplayNamesV1Marker;
 use crate::provider::RegionDisplayNamesV1Marker;
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 use tinystr::TinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
 
 /// Lookup of the terrritory display names by region code.
 ///
@@ -31,13 +33,34 @@ use tinystr::TinyAsciiStr;
 /// let region_code = "AE";
 /// assert_eq!(display_name.of(&region_code), Some("United Arab Emirates"));
 /// ```
+///
+/// ```
+/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_displaynames::options::DisplayNamesOptions;
+/// use icu_locid::locale;
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = DisplayNames::try_new_language_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// let language_code = "aa";
+/// assert_eq!(display_name.of(&language_code), Some("Afar"));
+/// ```
+#[derive(Default)]
 pub struct DisplayNames {
     options: DisplayNamesOptions,
-    data: DataPayload<RegionDisplayNamesV1Marker>,
+    region_data: DataPayload<RegionDisplayNamesV1Marker>,
+    language_data: DataPayload<LanguageDisplayNamesV1Marker>,
+    displaynames_type: DisplayNamesType,
 }
 
 impl DisplayNames {
-    /// Creates a new [`DisplayNames`] from locale data and an options bag.
+    /// Creates a new [`DisplayNames`] from locale data and an options bag for type [`RegionDisplayNames`].
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
@@ -48,13 +71,45 @@ impl DisplayNames {
         locale: &DataLocale,
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError> {
-        let data = data_provider
+        let region_data = data_provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        Ok(Self { options, data })
+
+        Ok(Self {
+            options,
+            region_data,
+            displaynames_type: DisplayNamesType::RegionDisplayNames,
+            ..Default::default()
+        })
+    }
+
+    /// Creates a new [`DisplayNames`] from locale data and an options bag for type [`LanguageDisplayNames`].
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_language_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DisplayNamesOptions,
+    ) -> Result<Self, DataError> {
+        let language_data = data_provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self {
+            options,
+            language_data,
+            displaynames_type: DisplayNamesType::LanguageDisplayNames,
+            ..Default::default()
+        })
     }
 
     icu_provider::gen_any_buffer_constructors!(
@@ -68,18 +123,45 @@ impl DisplayNames {
         ]
     );
 
-    /// Returns the display name of the region for a given string.
+    /// Returns the locale specific display name of a region or a language for a given string.
     /// This function is locale-sensitive.
-    pub fn of(&self, region_code: &str) -> Option<&str> {
-        match <TinyAsciiStr<3>>::from_str(region_code) {
-            Ok(key) => {
-                let data = self.data.get();
+    pub fn of(&self, code: &str) -> Option<&str> {
+        match self.displaynames_type {
+            DisplayNamesType::RegionDisplayNames => match <TinyAsciiStr<3>>::from_str(code) {
+                Ok(key) => {
+                    let data = self.region_data.get();
+                    match self.options.style {
+                        Style::Short => data.short_names.get(&key),
+                        _ => data.names.get(&key),
+                    }
+                }
+                Err(_) => None,
+            },
+            DisplayNamesType::LanguageDisplayNames => {
+                let key = UnvalidatedStr::from_str(code);
+                let data = self.language_data.get();
                 match self.options.style {
                     Style::Short => data.short_names.get(&key),
+                    Style::Long => data.long_names.get(&key),
+                    Style::Menu => data.menu_names.get(&key),
                     _ => data.names.get(&key),
                 }
             }
-            Err(_) => None,
         }
+    }
+}
+
+/// An enum for the type of the display names.
+#[allow(missing_docs)] // The variants are self explanotory.
+#[non_exhaustive]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum DisplayNamesType {
+    LanguageDisplayNames,
+    RegionDisplayNames,
+}
+
+impl Default for DisplayNamesType {
+    fn default() -> Self {
+        Self::RegionDisplayNames
     }
 }

@@ -26,6 +26,25 @@
 ///
 /// let region_code = "BA";
 /// assert_eq!(display_name.of(&region_code), Some("Bosnia"));
+/// 
+/// ```
+/// use icu_displaynames::options::{DisplayNamesOptions, Style};
+/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_locid::locale;
+///
+/// let locale = locale!("en-001");
+/// let mut options: DisplayNamesOptions = Default::default();
+/// options.style = Style::Short;
+/// let display_name = DisplayNames::try_new_language_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// let language_code = "az";
+/// assert_eq!(display_name.of(&language_code), Some("Azeri"));
+/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {
