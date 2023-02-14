@@ -103,7 +103,6 @@ fn main() -> eyre::Result<()> {
                     }
                     paths.push(pattern.replace("$LOCALES", &string));
                 }
-                paths.push(pattern.replace("$LOCALES", "und"));
                 // Also add "root" for older CLDRs
                 paths.push(pattern.replace("$LOCALES", "root"));
             } else {
