@@ -81,8 +81,7 @@ fn any_bench(c: &mut Criterion) {
                         locale: &langid!("ru").into(),
                         metadata: Default::default(),
                     })
-                    .expect("The data should be valid")
-                    .take_payload()
+                    .and_then(DataResponse::take_payload)
                     .expect("Loading was successful");
         });
     });
