@@ -594,7 +594,7 @@ jobs:
 
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
-    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-binsize, bench-memory, bench-datasize]
+    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
