@@ -424,6 +424,7 @@ pub fn datagen(
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
+        // TODO: Iterate over the locales in groups, then intelligently strip out unnecessary locales
         let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
                 locale: &locale,
