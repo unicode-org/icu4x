@@ -7,13 +7,37 @@ use crate::prelude::*;
 use crate::yoke::*;
 use alloc::boxed::Box;
 use databake::{Bake, CrateEnv, TokenStream};
+use std::io::Write;
 
 trait ExportableYoke {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
+
     fn serialize_yoke(
         &self,
         serializer: &mut dyn erased_serde::Serializer,
     ) -> Result<(), DataError>;
+
+    /// Returns whether this `ExportableYoke` equals another `ExportableYoke`.
+    /// Currently, this compares the output of the two Bake impls.
+    ///
+    /// The `buffer` argument is for temporary storage during the comparison operation.
+    fn content_equals(&self, other: &dyn ExportableYoke, buffer: &mut Vec<u8>) -> bool {
+        let mut iter2 = other.bake_yoke(&Default::default()).into_iter();
+        for tt1 in self.bake_yoke(&Default::default()) {
+            let tt2 = match iter2.next() {
+                Some(v) => v,
+                None => return false
+            };
+            buffer.clear();
+            write!(buffer, "{}", tt1).unwrap();
+            let mid = buffer.len();
+            write!(buffer, "{}", tt2).unwrap();
+            if buffer.get(0..mid) != buffer.get(mid..) {
+                return false;
+            }
+        }
+        iter2.next().is_none()
+    }
 }
 
 impl<Y, C> ExportableYoke for Yoke<Y, C>
