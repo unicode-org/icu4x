@@ -582,13 +582,13 @@ impl crate::DatagenProvider {
         let complex_property = get_index_from_name(&properties_names, "SA").unwrap_or(127);
 
         // Generate a CodePointTrie from properties_map
-        let property_trie: CodePointTrie<u8> = CodePointTrieBuilder {
-            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-            default_value: 0,
-            error_value: 0,
-            trie_type: self.source.trie_type().to_internal(),
-        }
-        .build();
+        let property_trie: CodePointTrie<u8> =
+            self.source.build_codepointtrie(CodePointTrieBuilder {
+                data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+                default_value: 0,
+                error_value: 0,
+                trie_type: self.source.trie_type().to_internal(),
+            })?;
 
         if segmenter.segmenter_type == "line" {
             // Note: The following match statement had been used in line.rs:

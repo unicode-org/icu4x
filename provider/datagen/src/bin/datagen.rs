@@ -221,6 +221,11 @@ fn main() -> eyre::Result<()> {
             .long("use-separate-crates")
             .help("--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate.")
         )
+        .arg(Arg::with_name("LIST_TO_UCPTRIE_BINARY")
+            .long("list-to-ucptrie-binary")
+                .takes_value(true)
+            .help("A path to a list_to_ucptrie binary to run when generating segmentation data. Defaults to using a builtin wasm program instead.")
+)
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -328,6 +333,12 @@ fn main() -> eyre::Result<()> {
                 .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
         )
     };
+
+    if let Some(val) = matches.value_of("LIST_TO_UCPTRIE_BINARY") {
+        source_data = source_data.with_list_to_ucptrie_binary(val.try_into()?);
+    } else if !cfg!(feature = "wasm_cptbuilder") {
+        eyre::bail!("Datagen must be built with the `wasm_cptbuilder` feature or be provided --list-to-ucptrie-binary");
+    }
 
     let out = match matches.value_of("FORMAT").expect("required") {
         v @ ("dir" | "deprecated-default") => {

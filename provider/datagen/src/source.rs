@@ -5,6 +5,8 @@
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
+use icu_codepointtrie_builder::CodePointTrieBuilder;
+use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::DataError;
 use std::any::Any;
 use std::collections::HashSet;
@@ -29,6 +31,7 @@ pub struct SourceData {
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
     collations: Vec<String>,
+    list_to_ucptrie_binary: Option<PathBuf>,
 }
 
 impl Default for SourceData {
@@ -47,6 +50,7 @@ impl Default for SourceData {
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: vec![],
+            list_to_ucptrie_binary: None,
         }
     }
 }
@@ -177,6 +181,17 @@ impl SourceData {
         Self { collations, ..self }
     }
 
+    /// A path to a list_to_ucptrie binary (See the `icu_codepointtrie_builder` crate)
+    /// for building segmentation data. By default an internal version will be used, as long as
+    /// datagen is built with the `"wasm_cptbuilder"` feature.
+    pub fn with_list_to_ucptrie_binary(self, list_to_ucptrie_binary: PathBuf) -> Self {
+        let list_to_ucptrie_binary = Some(list_to_ucptrie_binary);
+        Self {
+            list_to_ucptrie_binary,
+            ..self
+        }
+    }
+
     /// Paths to CLDR source data.
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
@@ -210,6 +225,28 @@ impl SourceData {
 
     pub(crate) fn collations(&self) -> &[String] {
         &self.collations
+    }
+
+    pub(crate) fn build_codepointtrie<T>(
+        &self,
+        builder: CodePointTrieBuilder<T>,
+    ) -> Result<CodePointTrie<'static, T>, DataError>
+    where
+        T: TrieValue + Into<u32>,
+    {
+        if let Some(ref path) = self.list_to_ucptrie_binary {
+            Ok(builder.build_using_executable(path))
+        } else {
+            #[cfg(feature = "wasm_cptbuilder")]
+            {
+                Ok(builder.build())
+            }
+            #[cfg(not(feature = "wasm_cptbuilder"))]
+            {
+                Err(DataError::custom("Attempted to build CodePointTrie without a valid builder: please enable the \
+                    `wasm_cptbuilder` feature on datagen or supply a builder via the --list-to-ucptrie flag."))
+            }
+        }
     }
 
     /// List the locales for the given CLDR coverage levels
