@@ -324,7 +324,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 /// This is expected to be ASCII, but we do not rely on this invariant anywhere except during
 /// datagen.
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
-#[zerovec::make_varule(NormalizedPropertyName)]
+#[zerovec::make_varule(NormalizedPropertyNameStr)]
 #[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
 #[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
 #[zerovec::skip_derive(Ord)]
@@ -361,7 +361,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for NormalizedPropertyNameBorrowed<'a>
     }
 }
 
-impl PartialOrd for NormalizedPropertyName {
+impl PartialOrd for NormalizedPropertyNameStr {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
@@ -386,7 +386,7 @@ fn normalize_char(ch: u8) -> Option<u8> {
     }
 }
 
-impl Ord for NormalizedPropertyName {
+impl Ord for NormalizedPropertyNameStr {
     fn cmp(&self, other: &Self) -> Ordering {
         let self_iter = self.0.iter().copied().filter_map(normalize_char);
         let other_iter = other.0.iter().copied().filter_map(normalize_char);
@@ -394,7 +394,7 @@ impl Ord for NormalizedPropertyName {
     }
 }
 
-impl fmt::Debug for NormalizedPropertyName {
+impl fmt::Debug for NormalizedPropertyNameStr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if let Ok(s) = str::from_utf8(&self.0) {
             f.write_str(s)
@@ -404,7 +404,7 @@ impl fmt::Debug for NormalizedPropertyName {
     }
 }
 
-impl NormalizedPropertyName {
+impl NormalizedPropertyNameStr {
     #[cfg(feature = "datagen")]
     /// Get a Box<NormalizedPropertyName> from a byte slice
     pub fn from_bytes(b: &[u8]) -> alloc::boxed::Box<Self> {
@@ -428,7 +428,7 @@ impl NormalizedPropertyName {
 pub struct PropertyValueNameMapV1<'data> {
     /// A map from names to their value discriminant
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, NormalizedPropertyName, u16>,
+    pub map: ZeroMap<'data, NormalizedPropertyNameStr, u16>,
 }
 
 macro_rules! expand {

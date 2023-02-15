@@ -142,7 +142,7 @@ impl<T: TrieValue> PropertyValueLookup<T> {
 fn get_strict_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
-    let name = NormalizedPropertyName::parse_byte_slice(name.as_bytes()).ok()?;
+    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
     map.get().map.get_copied_by(|p| {
         let cmp = p.cmp(name);
         // For strict matching, use the same comparator but
@@ -166,7 +166,7 @@ fn get_strict_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u
 fn get_loose_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
-    let name = NormalizedPropertyName::parse_byte_slice(name.as_bytes()).ok()?;
+    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
     map.get().map.get_copied(name)
 }
 
