@@ -466,10 +466,7 @@ jobs:
         key: ${{ runner.os }}-twiggy-0.7
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: install
-        args: twiggy --version 0.7.0
+      run: cargo install twiggy --version 0.7.0
 
     # Actual job
     - name: Build wasm executables
