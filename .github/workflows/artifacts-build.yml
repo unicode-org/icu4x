@@ -198,6 +198,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         component:
           - components/locid
@@ -296,6 +297,7 @@ jobs:
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
+      fail-fast: false
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
       # list of the name of the examples. The examples are assumed to be in the
