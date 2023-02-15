@@ -251,7 +251,7 @@ jobs:
       run: |
         # We're on main, so the previous run is the parent.
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
