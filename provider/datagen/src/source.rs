@@ -183,7 +183,7 @@ impl SourceData {
 
     /// A path to a list_to_ucptrie binary (See the `icu_codepointtrie_builder` crate)
     /// for building segmentation data. By default an internal version will be used, as long as
-    /// datagen is built with the `"wasm_cptbuilder"` feature.
+    /// datagen is built with the `"wasm"` feature.
     pub fn with_list_to_ucptrie_binary(self, list_to_ucptrie_binary: PathBuf) -> Self {
         let list_to_ucptrie_binary = Some(list_to_ucptrie_binary);
         Self {
@@ -237,14 +237,14 @@ impl SourceData {
         if let Some(ref path) = self.list_to_ucptrie_binary {
             Ok(builder.build_using_executable(path))
         } else {
-            #[cfg(feature = "wasm_cptbuilder")]
+            #[cfg(feature = "wasm")]
             {
                 Ok(builder.build())
             }
-            #[cfg(not(feature = "wasm_cptbuilder"))]
+            #[cfg(not(feature = "wasm"))]
             {
                 Err(DataError::custom("Attempted to build CodePointTrie without a valid builder: please enable the \
-                    `wasm_cptbuilder` feature on datagen or supply a builder via the --list-to-ucptrie flag."))
+                    `wasm` feature on datagen or supply a builder via the --list-to-ucptrie flag."))
             }
         }
     }

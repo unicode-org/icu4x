@@ -90,9 +90,9 @@ icu = { path = "../../components/icu" }
 icu_testdata = { path = "../testdata", features = ["buffer", "std"] }
 
 [features]
-default = ["bin", "wasm_cptbuilder"]
+default = ["bin", "wasm"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
-wasm_cptbuilder = ["icu_codepointtrie_builder/wasm"]
+wasm = ["icu_codepointtrie_builder/wasm"]
 
 [[bin]]
 name = "icu4x-datagen"

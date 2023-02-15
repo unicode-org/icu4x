@@ -336,8 +336,8 @@ fn main() -> eyre::Result<()> {
 
     if let Some(val) = matches.value_of("LIST_TO_UCPTRIE_BINARY") {
         source_data = source_data.with_list_to_ucptrie_binary(val.try_into()?);
-    } else if !cfg!(feature = "wasm_cptbuilder") {
-        eyre::bail!("Datagen must be built with the `wasm_cptbuilder` feature or be provided --list-to-ucptrie-binary");
+    } else if !cfg!(feature = "wasm") {
+        eyre::bail!("Datagen must be built with the `wasm` feature or be provided --list-to-ucptrie-binary");
     }
 
     let out = match matches.value_of("FORMAT").expect("required") {
