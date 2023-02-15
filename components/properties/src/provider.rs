@@ -340,9 +340,9 @@ impl<'a> serde::Serialize for NormalizedPropertyNameBorrowed<'a> {
         if serializer.is_human_readable() {
             let s = str::from_utf8(self.0)
                 .map_err(|_| S::Error::custom("Attempted to datagen invalid string property"))?;
-            s.serialize(serializer)
+            serializer.serialize_str(s)
         } else {
-            self.0.serialize(serializer)
+            serializer.serialize_bytes(self.0)
         }
     }
 }
