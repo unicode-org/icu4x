@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::CodePointTrieBuilder;
-use crate::CodePointTrieBuilderData;
-use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use lazy_static::lazy_static;
 use wasmer::{Instance, Module, Store};
@@ -22,20 +20,11 @@ where
     T: TrieValue + Into<u32>,
 {
     // Set up the execution environment with a WasiState
-    let args = &[
-        format!("{}", builder.default_value.into()),
-        format!("{}", builder.error_value.into()),
-        match builder.trie_type {
-            TrieType::Fast => "fast",
-            TrieType::Small => "small",
-        }
-        .to_owned(),
-        format!("{}", std::mem::size_of::<T::ULE>() * 8),
-    ];
+    let args = builder.args();
     let mut wasi_env = WasiState::new("list_to_ucptrie")
         .stdin(Box::new(Pipe::new()))
         .stdout(Box::new(Pipe::new()))
-        .args(args)
+        .args(&args)
         .finalize()
         .expect("valid arguments + in-memory filesystem");
 
@@ -55,14 +44,7 @@ where
             .expect("valid pipe")
             .as_mut()
             .expect("valid pipe");
-        // Write each value to the pipe
-        let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
-        writeln!(wasi_stdin, "{}", values.len()).expect("valid pipe");
-
-        for value in values {
-            let num: u32 = (*value).into();
-            writeln!(wasi_stdin, "{num}").expect("valid pipe");
-        }
+        builder.write_to_stdin(wasi_stdin);
     }
 
     // Call the `_start` function to run the tool

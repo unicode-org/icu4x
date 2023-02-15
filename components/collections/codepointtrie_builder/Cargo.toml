@@ -27,14 +27,19 @@ include = [
 [package.metadata.workspaces]
 independent = true
 
+[features]
+default = ["wasm"]
+wasm = ["dep:wasmer", "dep:wasmer-wasi", "dep:lazy_static"]
+
 [dependencies]
 icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
-lazy_static = "1.4.0"
+lazy_static = { version = "1.4.0", optional = true }
 toml = "0.5"
 
 [dependencies.wasmer]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -47,6 +52,7 @@ features = [
 [dependencies.wasmer-wasi]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -58,5 +64,3 @@ features = [
 icu = { path = "../../icu" }
 
 [package.metadata.cargo-all-features]
-# No features, so disable cargo-all-features
-skip_feature_sets = [[]]

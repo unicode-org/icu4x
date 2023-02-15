@@ -64,7 +64,11 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use std::convert::TryInto;
-
+use std::io::Write;
+use std::path::Path;
+use std::process::{Command, Stdio};
+use std::str;
+#[cfg(feature = "wasm")]
 mod wasm;
 
 /// Wrapper over the data to be encoded into a CodePointTrie.
@@ -99,12 +103,73 @@ where
     /// Build the [`CodePointTrie`].
     ///
     /// Under the hood, this function runs ICU4C code compiled into WASM.
+    ///
+    /// Requires the `"wasm"` feature (enabled by default)
+    #[cfg(feature = "wasm")]
     pub fn build(self) -> CodePointTrie<'static, T> {
         let toml_str = wasm::run_wasm(&self);
+        Self::from_toml(&toml_str)
+    }
+
+    /// Build the [`CodePointTrie`] using a `list_to_ucptrie` binary
+    /// built against ICU4C.
+    ///
+    /// If you don't want to build ICU4C, consider using [`Self::build()`] by enabling
+    /// the `"wasm"` feature.
+    pub fn build_using_executable(self, exe_path: &Path) -> CodePointTrie<'static, T> {
+        let args = self.args();
+        let mut command = Command::new(exe_path);
+        command.stdin(Stdio::piped()).stdout(Stdio::piped());
+        for arg in args {
+            command.arg(arg);
+        }
+        let mut child = command.spawn().expect("Running binary failed");
+
+        let mut stdin = child.stdin.take().expect("Process must have stdin");
+        self.write_to_stdin(&mut stdin);
+
+        let output = child
+            .wait_with_output()
+            .expect("Running list_to_ucptrie should succeed");
+        if !output.status.success() {
+            panic!("list_to_ucptrie failed with a nonzero exit status")
+        }
+        let toml_str =
+            str::from_utf8(&output.stdout).expect("list_to_ucptrie should produce UTF-8 output");
+
+        Self::from_toml(&toml_str)
+    }
+
+    /// Get the arguments to pass to `list_to_ucptrie`
+    fn args(&self) -> Vec<String> {
+        vec![
+            format!("{}", self.default_value.into()),
+            format!("{}", self.error_value.into()),
+            match self.trie_type {
+                TrieType::Fast => "fast",
+                TrieType::Small => "small",
+            }
+            .to_owned(),
+            format!("{}", std::mem::size_of::<T::ULE>() * 8),
+        ]
+    }
+
+    fn from_toml(toml_str: &str) -> CodePointTrie<'static, T> {
         let toml_obj: CodePointTrieToml =
-            toml::from_str(&toml_str).expect("the tool should produce valid TOML");
+            toml::from_str(toml_str).expect("the tool should produce valid TOML");
         (&toml_obj)
             .try_into()
             .expect("the toml should be a valid CPT")
+    }
+
+    fn write_to_stdin<W: Write>(&self, stdin: &mut W) {
+        // Write each value to the pipe
+        let CodePointTrieBuilderData::ValuesByCodePoint(values) = self.data;
+        writeln!(stdin, "{}", values.len()).expect("valid pipe");
+
+        for value in values {
+            let num: u32 = (*value).into();
+            writeln!(stdin, "{num}").expect("valid pipe");
+        }
     }
 }
