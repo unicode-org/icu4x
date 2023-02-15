@@ -243,8 +243,10 @@ impl SourceData {
             }
             #[cfg(not(feature = "wasm"))]
             {
-                Err(DataError::custom("Attempted to build CodePointTrie without a valid builder: please enable the \
-                    `wasm` feature on datagen or supply a builder via the --list-to-ucptrie flag."))
+                Err(DataError::custom(
+                    "Attempted to build CodePointTrie without a valid builder: please enable the \
+                    `wasm` feature on datagen or supply a builder via the --list-to-ucptrie flag.",
+                ))
             }
         }
     }
