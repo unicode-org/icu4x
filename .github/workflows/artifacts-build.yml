@@ -276,7 +276,7 @@ jobs:
     - name: Upload new benchmark data
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -404,7 +404,7 @@ jobs:
     - name: Upload new benchmark data
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
