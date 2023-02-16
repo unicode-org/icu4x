@@ -1,4 +1,4 @@
-::icu_properties::provider::PropertyValueNameMapV1 {
+::icu_properties::provider::PropertyValueNameToEnumMapV1 {
     map: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

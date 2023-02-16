@@ -37,9 +37,9 @@ icu::displaynames::options::Fallback#Enum
 icu::displaynames::options::LanguageDisplay#Enum
 icu::displaynames::options::Style#Enum
 icu::displaynames::provider::LanguageDisplayNamesV1#Struct
-icu::displaynames::provider::LanguageDisplayNamesV1Marker#Struct
+icu::displaynames::provider::LanguageDisplayNameToValueV1Marker#Struct
 icu::displaynames::provider::RegionDisplayNamesV1#Struct
-icu::displaynames::provider::RegionDisplayNamesV1Marker#Struct
+icu::displaynames::provider::RegionDisplayNameToValueV1Marker#Struct
 icu::properties::PropertyValueLookup#Struct
 icu::properties::PropertyValueLookup::from_data#FnInStruct
 icu::properties::PropertyValueLookup::get_loose#FnInStruct

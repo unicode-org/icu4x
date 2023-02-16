@@ -10,11 +10,11 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<LanguageDisplayNameToValueV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
+    ) -> Result<DataResponse<LanguageDisplayNameToValueV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::language_displaynames::Resource = self
@@ -34,7 +34,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LanguageDisplayNameToValueV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -96,7 +96,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -118,7 +118,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -140,7 +140,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -162,7 +162,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),

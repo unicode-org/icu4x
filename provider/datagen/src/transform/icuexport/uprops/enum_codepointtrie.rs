@@ -69,7 +69,7 @@ macro_rules! expand {
                             map.insert(NormalizedPropertyNameStr::from_bytes(alias.as_bytes()), discr);
                         }
                     }
-                    let data_struct = PropertyValueNameMapV1 { map: map.into_iter().collect() };
+                    let data_struct = PropertyValueNameToEnumMapV1 { map: map.into_iter().collect() };
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
@@ -92,21 +92,33 @@ macro_rules! expand {
 expand!(
     (
         CanonicalCombiningClassV1Marker,
-        CanonicalCombiningClassNamesV1Marker,
+        CanonicalCombiningClassNameToValueV1Marker,
         "ccc"
     ),
-    (GeneralCategoryV1Marker, GeneralCategoryNamesV1Marker, "gc"),
-    (BidiClassV1Marker, BidiClassNamesV1Marker, "bc"),
-    (ScriptV1Marker, ScriptNamesV1Marker, "sc"),
-    (EastAsianWidthV1Marker, EastAsianWidthNamesV1Marker, "ea"),
-    (LineBreakV1Marker, LineBreakNamesV1Marker, "lb"),
+    (
+        GeneralCategoryV1Marker,
+        GeneralCategoryNameToValueV1Marker,
+        "gc"
+    ),
+    (BidiClassV1Marker, BidiClassNameToValueV1Marker, "bc"),
+    (ScriptV1Marker, ScriptNameToValueV1Marker, "sc"),
+    (
+        EastAsianWidthV1Marker,
+        EastAsianWidthNameToValueV1Marker,
+        "ea"
+    ),
+    (LineBreakV1Marker, LineBreakNameToValueV1Marker, "lb"),
     (
         GraphemeClusterBreakV1Marker,
-        GraphemeClusterBreakNamesV1Marker,
+        GraphemeClusterBreakNameToValueV1Marker,
         "GCB"
     ),
-    (WordBreakV1Marker, WordBreakNamesV1Marker, "WB"),
-    (SentenceBreakV1Marker, SentenceBreakNamesV1Marker, "SB"),
+    (WordBreakV1Marker, WordBreakNameToValueV1Marker, "WB"),
+    (
+        SentenceBreakV1Marker,
+        SentenceBreakNameToValueV1Marker,
+        "SB"
+    ),
 );
 
 #[cfg(test)]

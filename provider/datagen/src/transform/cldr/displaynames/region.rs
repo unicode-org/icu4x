@@ -11,11 +11,11 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use tinystr::TinyStrError;
 
-impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<RegionDisplayNameToValueV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
+    ) -> Result<DataResponse<RegionDisplayNameToValueV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::region_displaynames::Resource =
@@ -35,7 +35,7 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<RegionDisplayNameToValueV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -83,7 +83,7 @@ mod tests {
     fn test_basic() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -102,7 +102,7 @@ mod tests {
     fn test_basic_short_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
+        let data: DataPayload<RegionDisplayNameToValueV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),

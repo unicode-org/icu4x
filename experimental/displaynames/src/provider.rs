@@ -20,7 +20,7 @@ use zerovec::ZeroMap;
 // become inaccessible).
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
-#[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
+#[icu_provider::data_struct(RegionDisplayNameToValueV1Marker = "displaynames/regions@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -39,7 +39,7 @@ pub struct RegionDisplayNamesV1<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
+#[icu_provider::data_struct(LanguageDisplayNameToValueV1Marker = "displaynames/languages@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(

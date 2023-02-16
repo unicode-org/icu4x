@@ -440,7 +440,7 @@ impl NormalizedPropertyNameStr {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyValueNameMapV1<'data> {
+pub struct PropertyValueNameToEnumMapV1<'data> {
     /// A map from names to their value discriminant
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroMap<'data, NormalizedPropertyNameStr, u16>,
@@ -546,7 +546,7 @@ macro_rules! expand {
                 pub struct $value_name_marker;
 
                 impl DataMarker for $value_name_marker {
-                    type Yokeable = PropertyValueNameMapV1<'static>;
+                    type Yokeable = PropertyValueNameToEnumMapV1<'static>;
                 }
 
                 impl KeyedDataMarker for $value_name_marker {
@@ -659,35 +659,50 @@ expand!(
         // code point maps
         (
             CanonicalCombiningClassV1Marker,
-            CanonicalCombiningClassNamesV1Marker,
+            CanonicalCombiningClassNameToValueV1Marker,
             "ccc",
             CanonicalCombiningClass
         ),
         (
             GeneralCategoryV1Marker,
-            GeneralCategoryNamesV1Marker,
+            GeneralCategoryNameToValueV1Marker,
             "gc",
             GeneralCategory
         ),
-        (BidiClassV1Marker, BidiClassNamesV1Marker, "bc", BidiClass),
-        (ScriptV1Marker, ScriptNamesV1Marker, "sc", Script),
+        (
+            BidiClassV1Marker,
+            BidiClassNameToValueV1Marker,
+            "bc",
+            BidiClass
+        ),
+        (ScriptV1Marker, ScriptNameToValueV1Marker, "sc", Script),
         (
             EastAsianWidthV1Marker,
-            EastAsianWidthNamesV1Marker,
+            EastAsianWidthNameToValueV1Marker,
             "ea",
             EastAsianWidth
         ),
-        (LineBreakV1Marker, LineBreakNamesV1Marker, "lb", LineBreak),
+        (
+            LineBreakV1Marker,
+            LineBreakNameToValueV1Marker,
+            "lb",
+            LineBreak
+        ),
         (
             GraphemeClusterBreakV1Marker,
-            GraphemeClusterBreakNamesV1Marker,
+            GraphemeClusterBreakNameToValueV1Marker,
             "GCB",
             GraphemeClusterBreak
         ),
-        (WordBreakV1Marker, WordBreakNamesV1Marker, "WB", WordBreak),
+        (
+            WordBreakV1Marker,
+            WordBreakNameToValueV1Marker,
+            "WB",
+            WordBreak
+        ),
         (
             SentenceBreakV1Marker,
-            SentenceBreakNamesV1Marker,
+            SentenceBreakNameToValueV1Marker,
             "SB",
             SentenceBreak
         ),

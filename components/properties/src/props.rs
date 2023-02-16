@@ -54,7 +54,7 @@ enum EnumeratedProperty {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedValueNameMap;
 impl DataMarker for ErasedValueNameMap {
-    type Yokeable = PropertyValueNameMapV1<'static>;
+    type Yokeable = PropertyValueNameToEnumMapV1<'static>;
 }
 
 /// A struct capable of looking up a property value from a string name
@@ -129,7 +129,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     /// (like [`Script::lookup_values()`]) instead.
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = PropertyValueNameMapV1<'static>>,
+        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
             map: data.map_project(|m, _| m),
@@ -255,7 +255,7 @@ impl BidiClass {
 }
 
 impl_value_getter! {
-    marker: BidiClassNamesV1Marker;
+    marker: BidiClassNameToValueV1Marker;
     impl BidiClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Bidi_Class` enumerated property
@@ -370,7 +370,7 @@ pub enum GeneralCategory {
 }
 
 impl_value_getter! {
-    marker: GeneralCategoryNamesV1Marker;
+    marker: GeneralCategoryNameToValueV1Marker;
     impl GeneralCategory {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `General_Category` enumerated property
@@ -782,7 +782,7 @@ impl Script {
 }
 
 impl_value_getter! {
-    marker: ScriptNamesV1Marker;
+    marker: ScriptNameToValueV1Marker;
     impl Script {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Script` enumerated property
@@ -838,7 +838,7 @@ impl EastAsianWidth {
 }
 
 impl_value_getter! {
-    marker: EastAsianWidthNamesV1Marker;
+    marker: EastAsianWidthNameToValueV1Marker;
     impl EastAsianWidth {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `East_Asian_Width` enumerated property
@@ -931,7 +931,7 @@ impl LineBreak {
 }
 
 impl_value_getter! {
-    marker: LineBreakNamesV1Marker;
+    marker: LineBreakNameToValueV1Marker;
     impl LineBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Line_Break` enumerated property
@@ -1004,7 +1004,7 @@ impl GraphemeClusterBreak {
 }
 
 impl_value_getter! {
-    marker: GraphemeClusterBreakNamesV1Marker;
+    marker: GraphemeClusterBreakNameToValueV1Marker;
     impl GraphemeClusterBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Grapheme_Cluster_Break` enumerated property
@@ -1082,7 +1082,7 @@ impl WordBreak {
 }
 
 impl_value_getter! {
-    marker: WordBreakNamesV1Marker;
+    marker: WordBreakNameToValueV1Marker;
     impl WordBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Word_Break` enumerated property
@@ -1147,7 +1147,7 @@ impl SentenceBreak {
 }
 
 impl_value_getter! {
-    marker: SentenceBreakNamesV1Marker;
+    marker: SentenceBreakNameToValueV1Marker;
     impl SentenceBreak {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Sentence_Break` enumerated property
@@ -1260,7 +1260,7 @@ impl CanonicalCombiningClass {
 }
 
 impl_value_getter! {
-    marker: CanonicalCombiningClassNamesV1Marker;
+    marker: CanonicalCombiningClassNameToValueV1Marker;
     impl CanonicalCombiningClass {
         /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Canonical_Combining_Class` enumerated property
