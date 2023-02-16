@@ -269,12 +269,14 @@ jobs:
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
+      if: success() || failure()
       uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
@@ -398,12 +400,14 @@ jobs:
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
+      if: success() || failure()
       uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
@@ -511,6 +515,7 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Store benchmark result & create dashboard (gz)
+      if: success() || failure()
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
@@ -526,12 +531,14 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
+      if: success() || failure()
       uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
@@ -581,12 +588,14 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
+      if: success() || failure()
       uses: google-github-actions/setup-gcloud@v0.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
