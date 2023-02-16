@@ -9,6 +9,18 @@ use crate::symbols::*;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 
+/// The category tag that is returned by rule_status.
+#[non_exhaustive]
+#[derive(PartialEq, Debug)]
+pub enum RuleStatusType {
+    /// No category tag
+    None = 0,
+    /// Number category tag
+    Number = 1,
+    /// Letter category tag, including CJK.
+    Letter = 2,
+}
+
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
 pub trait RuleBreakType<'l, 's> {
@@ -49,6 +61,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) dictionary: Option<&'l Dictionary>,
     pub(crate) lstm: Option<&'l LstmPayloads>,
     pub(crate) grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    pub(crate) boundary_property: u8,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {
@@ -77,6 +90,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             // SOT x anything
             let right_prop = self.get_current_break_property()?;
             if self.is_break_from_table(self.data.sot_property, right_prop) {
+                self.boundary_property = 0; // SOT is special type
                 return self.get_current_position();
             }
         }
@@ -92,6 +106,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             let right_prop = if let Some(right_prop) = self.get_current_break_property() {
                 right_prop
             } else {
+                self.boundary_property = left_prop;
                 return Some(self.len);
             };
 
@@ -100,6 +115,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             if right_prop == self.data.complex_property {
                 if left_prop != self.data.complex_property {
                     // break before SA
+                    self.boundary_property = left_prop;
                     return self.get_current_position();
                 }
                 let break_offset = Y::handle_complex_language(self, left_codepoint);
@@ -115,6 +131,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                 // This isn't simple rule set. We need marker to restore iterator to previous position.
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
+                let mut previous_left_prop = left_prop;
 
                 loop {
                     self.advance_iter();
@@ -125,6 +142,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                         prop
                     } else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
+                        self.boundary_property = break_state as u8;
                         if self
                             .get_break_state_from_table(break_state as u8, self.data.eot_property)
                             == NOT_MATCH_RULE
@@ -148,17 +166,20 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
                         // Move marker
                         previous_iter = self.iter.clone();
                         previous_pos_data = self.current_pos_data;
+                        previous_left_prop = break_state as u8;
                     }
                     if (break_state & INTERMEDIATE_MATCH_RULE) != 0 {
                         break_state -= INTERMEDIATE_MATCH_RULE;
                         previous_iter = self.iter.clone();
                         previous_pos_data = self.current_pos_data;
+                        previous_left_prop = break_state as u8;
                     }
                 }
                 if break_state == KEEP_RULE {
                     continue;
                 }
                 if break_state == NOT_MATCH_RULE {
+                    self.boundary_property = previous_left_prop;
                     self.iter = previous_iter;
                     self.current_pos_data = previous_pos_data;
                     return self.get_current_position();
@@ -167,6 +188,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
             }
 
             if self.is_break_from_table(left_prop, right_prop) {
+                self.boundary_property = left_prop;
                 return self.get_current_position();
             }
         }
@@ -216,6 +238,39 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
             return false;
         }
         true
+    }
+
+    /// Return the status value of break boundary.
+    /// If segmenter isn't word, always return RuleStatusType::None
+    pub fn rule_status(&self) -> RuleStatusType {
+        if self.result_cache.first().is_some() {
+            // Dictionary type (CJ and East Asian) is letter.
+            return RuleStatusType::Letter;
+        }
+        if self.boundary_property == 0 {
+            // break position is SOT / Any
+            return RuleStatusType::None;
+        }
+        if let Some(value) = self
+            .data
+            .rule_status_table
+            .0
+            .get((self.boundary_property - 1) as usize)
+        {
+            match value {
+                1 => RuleStatusType::Number,
+                2 => RuleStatusType::Letter,
+                _ => RuleStatusType::None,
+            }
+        } else {
+            RuleStatusType::None
+        }
+    }
+
+    /// Return true when break boundary is word-like such as letter/number/CJK
+    /// If segmenter isn't word, return false
+    pub fn is_word_like(&self) -> bool {
+        self.rule_status() != RuleStatusType::None
     }
 }
 

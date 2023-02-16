@@ -102,6 +102,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 
@@ -121,6 +122,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -137,6 +139,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 
@@ -162,6 +165,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 }

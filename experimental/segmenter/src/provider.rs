@@ -40,6 +40,10 @@ pub struct RuleBreakDataV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub break_state_table: RuleBreakStateTable<'data>,
 
+    /// Rule status table for rule-based breaking.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rule_status_table: RuleStatusTable<'data>,
+
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
 
@@ -80,6 +84,18 @@ pub struct RuleBreakPropertyTable<'data>(
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
+);
+
+/// Rules status data
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct RuleStatusTable<'data>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, u8>,
 );
 
 /// char16trie data for dictionary break

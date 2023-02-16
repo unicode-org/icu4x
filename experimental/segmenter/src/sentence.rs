@@ -88,6 +88,7 @@ impl SentenceSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
     /// Create a sentence break iterator for a potentially ill-formed UTF8 string
@@ -106,6 +107,7 @@ impl SentenceSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
@@ -122,6 +124,7 @@ impl SentenceSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 
@@ -136,6 +139,7 @@ impl SentenceSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 }
