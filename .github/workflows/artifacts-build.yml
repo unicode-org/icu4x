@@ -76,7 +76,7 @@ jobs:
           --exclude zerovec-derive
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -120,7 +120,7 @@ jobs:
         cd ../../../..
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -178,7 +178,7 @@ jobs:
 
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -272,7 +272,7 @@ jobs:
 
     - name: Authenticate to Google Cloud
       if: success() || failure()
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -403,7 +403,7 @@ jobs:
 
     - name: Authenticate to Google Cloud
       if: success() || failure()
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -534,7 +534,7 @@ jobs:
 
     - name: Authenticate to Google Cloud
       if: success() || failure()
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -591,7 +591,7 @@ jobs:
 
     - name: Authenticate to Google Cloud
       if: success() || failure()
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
