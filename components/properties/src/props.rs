@@ -49,7 +49,7 @@ enum EnumeratedProperty {
     InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
 }
 
-/// Private marker type for PropertyValueLookup
+/// Private marker type for PropertyValueNameToEnumMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedValueNameMap;
@@ -86,12 +86,12 @@ impl DataMarker for ErasedValueNameMap {
 /// // fake property
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
-pub struct PropertyValueLookup<T> {
+pub struct PropertyValueNameToEnumMapper<T> {
     map: DataPayload<ErasedValueNameMap>,
     marker: PhantomData<fn() -> T>,
 }
 
-impl<T: TrieValue> PropertyValueLookup<T> {
+impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     /// Get the property value as a u16, doing a strict search looking for
     /// names that match exactly
     #[inline]
@@ -183,8 +183,8 @@ macro_rules! impl_value_getter {
             $(#[$attr])*
             $vis fn $name(
                 provider: &(impl DataProvider<$marker> + ?Sized)
-            ) -> Result<PropertyValueLookup<$ty>, PropertiesError> {
-                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueLookup::from_data)?)
+            ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
+                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)?)
             }
         }
     }
@@ -257,7 +257,7 @@ impl BidiClass {
 impl_value_getter! {
     marker: BidiClassNamesV1Marker;
     impl BidiClass {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Bidi_Class` enumerated property
         ///
         /// # Example
@@ -280,7 +280,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -372,7 +372,7 @@ pub enum GeneralCategory {
 impl_value_getter! {
     marker: GeneralCategoryNamesV1Marker;
     impl GeneralCategory {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `General_Category` enumerated property
         ///
         /// # Example
@@ -395,7 +395,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -784,7 +784,7 @@ impl Script {
 impl_value_getter! {
     marker: ScriptNamesV1Marker;
     impl Script {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Script` enumerated property
         ///
         /// # Example
@@ -807,7 +807,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -840,7 +840,7 @@ impl EastAsianWidth {
 impl_value_getter! {
     marker: EastAsianWidthNamesV1Marker;
     impl EastAsianWidth {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `East_Asian_Width` enumerated property
         ///
         /// # Example
@@ -863,7 +863,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -933,7 +933,7 @@ impl LineBreak {
 impl_value_getter! {
     marker: LineBreakNamesV1Marker;
     impl LineBreak {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Line_Break` enumerated property
         ///
         /// # Example
@@ -956,7 +956,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -1006,7 +1006,7 @@ impl GraphemeClusterBreak {
 impl_value_getter! {
     marker: GraphemeClusterBreakNamesV1Marker;
     impl GraphemeClusterBreak {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Grapheme_Cluster_Break` enumerated property
         ///
         /// # Example
@@ -1029,7 +1029,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -1084,7 +1084,7 @@ impl WordBreak {
 impl_value_getter! {
     marker: WordBreakNamesV1Marker;
     impl WordBreak {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Word_Break` enumerated property
         ///
         /// # Example
@@ -1107,7 +1107,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -1149,7 +1149,7 @@ impl SentenceBreak {
 impl_value_getter! {
     marker: SentenceBreakNamesV1Marker;
     impl SentenceBreak {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Sentence_Break` enumerated property
         ///
         /// # Example
@@ -1172,7 +1172,7 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }
 /// Property Canonical_Combining_Class.
@@ -1262,7 +1262,7 @@ impl CanonicalCombiningClass {
 impl_value_getter! {
     marker: CanonicalCombiningClassNamesV1Marker;
     impl CanonicalCombiningClass {
-        /// Return a [`PropertyValueLookup`], capable of looking up values
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
         /// from strings for the the `Canonical_Combining_Class` enumerated property
         ///
         /// # Example
@@ -1286,6 +1286,6 @@ impl_value_getter! {
         /// // fake property
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
-        pub fn lookup_values();
+        pub fn get_name_to_enum_mapper();
     }
 }

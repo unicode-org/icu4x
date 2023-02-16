@@ -100,7 +100,8 @@ mod trievalue;
 
 pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, PropertyValueLookup, Script, SentenceBreak, WordBreak,
+    GraphemeClusterBreak, LineBreak, PropertyValueNameToEnumMapper, Script, SentenceBreak,
+    WordBreak,
 };
 
 pub use error::PropertiesError;
