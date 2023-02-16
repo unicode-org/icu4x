@@ -116,12 +116,14 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
+use icu_provider_adapters::fallback::LocaleFallbacker;
 use icu_provider_fs::export::serializers::AbstractSerializer;
 use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
+use once_cell::sync::Lazy;
 
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
@@ -420,10 +422,21 @@ pub fn datagen(
 
     let keys: HashSet<_> = keys.iter().collect();
 
+    let fallbacker: Lazy<Result<LocaleFallbacker, DataError>> = Lazy::new(|| {
+        LocaleFallbacker::try_new_unstable(&DatagenProvider {
+            source: source.clone()
+        })
+    });
+
     keys.into_par_iter().try_for_each(|&key| {
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
+        let grouped_locales = if locales.len() <= 1 {
+            vec![locales]
+        } else {
+            (*fallbacker)?.for_key(key).sort_locales_into_groups(locales.iter().map(Clone::clone))
+        };
         // TODO: Iterate over the locales in groups, then intelligently strip out unnecessary locales
         let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {

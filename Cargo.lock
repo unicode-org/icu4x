@@ -1675,6 +1675,7 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
+ "once_cell",
  "proc-macro2",
  "quote",
  "rayon",
