@@ -18,6 +18,7 @@
 use crate::script::ScriptWithExt;
 use crate::Script;
 
+use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::fmt;
 use core::ops::RangeInclusive;
@@ -28,7 +29,9 @@ use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 
-use zerovec::{VarZeroVec, ZeroMap, ZeroSlice, ZeroVecError};
+use zerovec::{
+    maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap, ZeroSlice, ZeroVecError,
+};
 
 /// A set of characters which share a particular property value.
 ///
@@ -314,8 +317,6 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 }
 
-/// `NormalizedPropertyNameBorrowed` is a fake type enabling us to use `#[zerovec::make_varule]`
-/// conveniently.
 /// This is a property name that can be "loose matched" as according to
 /// https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt
 ///
@@ -324,41 +325,55 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 /// This is expected to be ASCII, but we do not rely on this invariant anywhere except during
 /// datagen.
 #[derive(PartialEq, Eq)] // VarULE wants these to be byte equality
-#[zerovec::make_varule(NormalizedPropertyNameStr)]
-#[cfg_attr(feature = "datagen", zerovec::derive(Serialize))]
-#[cfg_attr(feature = "serde", zerovec::derive(Deserialize))]
-#[zerovec::skip_derive(Ord)]
-pub struct NormalizedPropertyNameBorrowed<'a>(&'a [u8]);
+#[derive(VarULE)]
+#[repr(transparent)]
+pub struct NormalizedPropertyNameStr([u8]);
 
 #[cfg(feature = "datagen")]
-impl<'a> serde::Serialize for NormalizedPropertyNameBorrowed<'a> {
+impl serde::Serialize for NormalizedPropertyNameStr {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
         use serde::ser::Error;
         if serializer.is_human_readable() {
-            let s = str::from_utf8(self.0)
+            let s = str::from_utf8(&self.0)
                 .map_err(|_| S::Error::custom("Attempted to datagen invalid string property"))?;
             serializer.serialize_str(s)
         } else {
-            serializer.serialize_bytes(self.0)
+            serializer.serialize_bytes(&self.0)
         }
     }
 }
 
 #[cfg(feature = "serde")]
-impl<'de: 'a, 'a> serde::Deserialize<'de> for NormalizedPropertyNameBorrowed<'a> {
+impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        if deserializer.is_human_readable() {
-            <&str>::deserialize(deserializer).map(|s| Self(s.as_bytes()))
+        use alloc::borrow::Cow;
+        let s; // lifetime lengthening
+        let b;
+        // Can be improved with https://github.com/unicode-org/icu4x/issues/2310
+        // the allocations here are fine, in normal ICU4X code they'll only get hit
+        // during human-readable deserialization
+        let bytes = if deserializer.is_human_readable() {
+            s = <Cow<str>>::deserialize(deserializer)?;
+            s.as_bytes()
         } else {
-            <&[u8]>::deserialize(deserializer).map(Self)
-        }
+            b = <Cow<[u8]>>::deserialize(deserializer)?;
+            &b
+        };
+        Ok(NormalizedPropertyNameStr::from_bytes(bytes))
     }
+}
+
+impl<'a> ZeroMapKV<'a> for NormalizedPropertyNameStr {
+    type Container = VarZeroVec<'a, NormalizedPropertyNameStr>;
+    type Slice = VarZeroSlice<NormalizedPropertyNameStr>;
+    type GetType = NormalizedPropertyNameStr;
+    type OwnedType = Box<NormalizedPropertyNameStr>;
 }
 
 impl PartialOrd for NormalizedPropertyNameStr {
@@ -405,11 +420,11 @@ impl fmt::Debug for NormalizedPropertyNameStr {
 }
 
 impl NormalizedPropertyNameStr {
-    #[cfg(feature = "datagen")]
+    #[cfg(feature = "serde")]
     /// Get a Box<NormalizedPropertyName> from a byte slice
-    pub fn from_bytes(b: &[u8]) -> alloc::boxed::Box<Self> {
-        use zerovec::ule::VarULE;
-        #[allow(clippy::expect_used)] // Only used from datagen
+    pub fn from_bytes(b: &[u8]) -> Box<Self> {
+        #[allow(clippy::expect_used)] // Self has no invariants
+        // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
         let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");
 
         zerovec::ule::encode_varule_to_box(&this)
