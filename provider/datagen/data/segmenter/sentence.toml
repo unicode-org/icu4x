@@ -507,6 +507,15 @@ right = [ "SContinue", "ATerm", "STerm" ]
 break_state = false
 
 [[rules]]
+# SB10
+left = [
+  "Lower_ATerm",
+  "Upper_ATerm"
+]
+right = [ "Sep", "CR", "LF" ]
+break_state = false
+
+[[rules]]
 # SB11
 left = [ "ATerm_Close_Sp_ParaSep", "STerm_Close_Sp_ParaSep" ]
 right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm" ]
