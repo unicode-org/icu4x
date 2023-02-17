@@ -11,12 +11,12 @@ use std::path::PathBuf;
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
-    // TODO(#3046): We shouldn't need to do this since it worked in 1.0
-    let out_dir = std::env::var("OUT_DIR").unwrap();
+    let out_dir = std::env::var_os("OUT_DIR").unwrap();
     let mod_directory = PathBuf::from(out_dir).join("baked_data");
-    if mod_directory.exists() {
-        std::fs::remove_dir_all(&mod_directory).unwrap();
-    }
+    
+    // TODO(#3046): We shouldn't need to do this since it worked in 1.0
+    let _ = std::fs::remove_dir_all(&mod_directory);
+
 
     icu_datagen::datagen(
         Some(&[langid!("ru")]),
