@@ -100,9 +100,13 @@ mod trievalue;
 
 pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, PropertyValueNameToEnumMapper, Script, SentenceBreak,
-    WordBreak,
+    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+
+/// Module for working with the names of property values
+pub mod names {
+    pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
+}
 
 pub use error::PropertiesError;
 

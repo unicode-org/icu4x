@@ -56,7 +56,9 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
     type Yokeable = PropertyValueNameToEnumMapV1<'static>;
 }
 
-/// A struct capable of looking up a property value from a string name
+/// A struct capable of looking up a property value from a string name.
+/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
+/// [`PropertyValueNameToEnumMapperBorrowed`]/
 ///
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
@@ -72,6 +74,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 ///
 /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
 ///                  .expect("The data should be valid");
+/// let lookup = lookup.as_borrowed();
 /// // short name for value
 /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
 /// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
@@ -90,35 +93,24 @@ pub struct PropertyValueNameToEnumMapper<T> {
     marker: PhantomData<fn() -> T>,
 }
 
+/// A borrowed wrapper around property value name-to-enum data, returned by
+/// [`ErasedNameToEnumMapV1Marker::as_borrowed()`]. More efficient to query.
+pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
+    map: &'a PropertyValueNameToEnumMapV1<'a>,
+    marker: PhantomData<fn() -> T>,
+}
+
 impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
-    /// Get the property value as a u16, doing a strict search looking for
-    /// names that match exactly
+    /// Construct a borrowed version of this type that can be queried.
+    ///
+    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
+    /// up front.
     #[inline]
-    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
-        get_strict_u16(&self.map, name)
-    }
-
-    /// Get the property value as a `T`, doing a strict search looking for
-    /// names that match exactly
-    #[inline]
-    pub fn get_strict(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
-    }
-
-    /// Get the property value as a u16, doing a loose search looking for
-    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
-    /// whitespaces.
-    #[inline]
-    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
-        get_loose_u16(&self.map, name)
-    }
-
-    /// Get the property value as a `T`, doing a loose search looking for
-    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
-    /// whitespaces.
-    #[inline]
-    pub fn get_loose(&self, name: &str) -> Option<T> {
-        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
+    pub fn as_borrowed(&self) -> PropertyValueNameToEnumMapperBorrowed<'_, T> {
+        PropertyValueNameToEnumMapperBorrowed {
+            map: self.map.get(),
+            marker: PhantomData,
+        }
     }
 
     /// Construct a new one from loaded data
@@ -136,20 +128,52 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     }
 }
 
-/// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(payload: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
-    // NormalizedPropertyName has no invariants so this should be free, but
-    // avoid introducing a panic regardless
-    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.get().map.get_copied(name)
+impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
+    /// Get the property value as a u16, doing a strict search looking for
+    /// names that match exactly
+    #[inline]
+    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
+        get_strict_u16(self.map, name)
+    }
+
+    /// Get the property value as a `T`, doing a strict search looking for
+    /// names that match exactly
+    #[inline]
+    pub fn get_strict(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
+    }
+
+    /// Get the property value as a u16, doing a loose search looking for
+    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
+    /// whitespaces.
+    #[inline]
+    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
+        get_loose_u16(self.map, name)
+    }
+
+    /// Get the property value as a `T`, doing a loose search looking for
+    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
+    /// whitespaces.
+    #[inline]
+    pub fn get_loose(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
+    }
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(payload: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
+fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    payload.get().map.get_copied_by(|p| p.cmp_loose(name))
+    payload.map.get_copied(name)
+}
+
+/// Avoid monomorphizing multiple copies of this function
+fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    // NormalizedPropertyName has no invariants so this should be free, but
+    // avoid introducing a panic regardless
+    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
+    payload.map.get_copied_by(|p| p.cmp_loose(name))
 }
 
 macro_rules! impl_value_getter {
@@ -249,6 +273,7 @@ impl_value_getter! {
         ///
         /// let lookup = BidiClass::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AN"), Some(BidiClass::ArabicNumber));
         /// assert_eq!(lookup.get_strict("NSM"), Some(BidiClass::NonspacingMark));
@@ -364,6 +389,7 @@ impl_value_getter! {
         ///
         /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
         /// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
@@ -776,6 +802,7 @@ impl_value_getter! {
         ///
         /// let lookup = Script::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Brah"), Some(Script::Brahmi));
         /// assert_eq!(lookup.get_strict("Hang"), Some(Script::Hangul));
@@ -832,6 +859,7 @@ impl_value_getter! {
         ///
         /// let lookup = EastAsianWidth::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("N"), Some(EastAsianWidth::Neutral));
         /// assert_eq!(lookup.get_strict("H"), Some(EastAsianWidth::Halfwidth));
@@ -925,6 +953,7 @@ impl_value_getter! {
         ///
         /// let lookup = LineBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("BK"), Some(LineBreak::MandatoryBreak));
         /// assert_eq!(lookup.get_strict("AL"), Some(LineBreak::Alphabetic));
@@ -998,6 +1027,7 @@ impl_value_getter! {
         ///
         /// let lookup = GraphemeClusterBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("EX"), Some(GraphemeClusterBreak::Extend));
         /// assert_eq!(lookup.get_strict("RI"), Some(GraphemeClusterBreak::RegionalIndicator));
@@ -1076,6 +1106,7 @@ impl_value_getter! {
         ///
         /// let lookup = WordBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("KA"), Some(WordBreak::Katakana));
         /// assert_eq!(lookup.get_strict("LE"), Some(WordBreak::ALetter));
@@ -1141,6 +1172,7 @@ impl_value_getter! {
         ///
         /// let lookup = SentenceBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("FO"), Some(SentenceBreak::Format));
         /// assert_eq!(lookup.get_strict("NU"), Some(SentenceBreak::Numeric));
@@ -1254,6 +1286,7 @@ impl_value_getter! {
         ///
         /// let lookup = CanonicalCombiningClass::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AL"), Some(CanonicalCombiningClass::AboveLeft));
         /// assert_eq!(lookup.get_strict("ATBL"), Some(CanonicalCombiningClass::AttachedBelowLeft));
