@@ -52,8 +52,8 @@ enum EnumeratedProperty {
 /// Private marker type for PropertyValueNameToEnumMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedValueNameMap;
-impl DataMarker for ErasedValueNameMap {
+pub(crate) struct ErasedNameToEnumMapV1Marker;
+impl DataMarker for ErasedNameToEnumMapV1Marker {
     type Yokeable = PropertyValueNameToEnumMapV1<'static>;
 }
 
@@ -87,7 +87,7 @@ impl DataMarker for ErasedValueNameMap {
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
 pub struct PropertyValueNameToEnumMapper<T> {
-    map: DataPayload<ErasedValueNameMap>,
+    map: DataPayload<ErasedNameToEnumMapV1Marker>,
     marker: PhantomData<fn() -> T>,
 }
 
@@ -139,7 +139,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u16> {
+fn get_strict_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
@@ -163,7 +163,7 @@ fn get_strict_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(map: &DataPayload<ErasedValueNameMap>, name: &str) -> Option<u16> {
+fn get_loose_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
