@@ -143,23 +143,7 @@ fn get_strict_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) ->
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    map.get().map.get_copied_by(|p| {
-        let cmp = p.cmp(name);
-        // For strict matching, use the same comparator but
-        // in the Equal case make sure to actually check for full equality
-        // (implemented by Eq, as opposed to the Ord impl)
-        if cmp == Ordering::Equal {
-            if p == name {
-                Ordering::Equal
-            } else {
-                // There's no way to signal "unequal, just stop now",
-                // so we pretend that invalid names are always less than the valid ones
-                Ordering::Greater
-            }
-        } else {
-            cmp
-        }
-    })
+    map.get().map.get_copied(name)
 }
 
 /// Avoid monomorphizing multiple copies of this function
@@ -167,7 +151,7 @@ fn get_loose_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> 
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    map.get().map.get_copied(name)
+    map.get().map.get_copied_by(|p| p.cmp_loose(name))
 }
 
 macro_rules! impl_value_getter {

@@ -325,6 +325,9 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 /// This is expected to be ASCII, but we do not rely on this invariant anywhere except during
 /// datagen.
 ///
+/// The Ord impl will sort things using strict equality, but in such a way that all loose-equal items
+/// will sort into the same area, such that the map can be searched for both strict and loose equality.
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
@@ -409,9 +412,13 @@ fn normalize_char(ch: u8) -> Option<u8> {
 
 impl Ord for NormalizedPropertyNameStr {
     fn cmp(&self, other: &Self) -> Ordering {
-        let self_iter = self.0.iter().copied().filter_map(normalize_char);
-        let other_iter = other.0.iter().copied().filter_map(normalize_char);
-        self_iter.cmp(other_iter)
+        let cmp = self.cmp_loose(other);
+        // When loose equality holds, fall back to strict equality
+        if cmp == Ordering::Equal {
+            self.0.cmp(&other.0)
+        } else {
+            cmp
+        }
     }
 }
 
@@ -426,6 +433,11 @@ impl fmt::Debug for NormalizedPropertyNameStr {
 }
 
 impl NormalizedPropertyNameStr {
+    pub(crate) fn cmp_loose(&self, other: &Self) -> Ordering {
+        let self_iter = self.0.iter().copied().filter_map(normalize_char);
+        let other_iter = other.0.iter().copied().filter_map(normalize_char);
+        self_iter.cmp(other_iter)
+    }
     #[cfg(feature = "serde")]
     /// Get a Box<NormalizedPropertyName> from a byte slice
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
