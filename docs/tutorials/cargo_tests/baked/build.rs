@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu::locid::langid;
-use icu_datagen::CldrLocaleSubset;
-use icu_datagen::SourceData;
 use icu_datagen::prelude::*;
 use std::path::PathBuf;
 
