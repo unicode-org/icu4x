@@ -365,7 +365,7 @@ impl<'de> serde::Deserialize<'de> for Box<NormalizedPropertyNameStr> {
             b = <Cow<[u8]>>::deserialize(deserializer)?;
             &b
         };
-        Ok(NormalizedPropertyNameStr::from_bytes(bytes))
+        Ok(NormalizedPropertyNameStr::boxed_from_bytes(bytes))
     }
 }
 
@@ -422,7 +422,7 @@ impl fmt::Debug for NormalizedPropertyNameStr {
 impl NormalizedPropertyNameStr {
     #[cfg(feature = "serde")]
     /// Get a Box<NormalizedPropertyName> from a byte slice
-    pub fn from_bytes(b: &[u8]) -> Box<Self> {
+    pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         #[allow(clippy::expect_used)] // Self has no invariants
         // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
         let this = Self::parse_byte_slice(b).expect("NormalizedPropertyName has no invariants");

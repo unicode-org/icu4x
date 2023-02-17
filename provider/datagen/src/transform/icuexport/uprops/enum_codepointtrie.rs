@@ -61,12 +61,12 @@ macro_rules! expand {
                     let mut map = BTreeMap::new();
                     for value in &data.values {
                         let discr = value.discr;
-                        map.insert(NormalizedPropertyNameStr::from_bytes(value.long.as_bytes()), discr);
+                        map.insert(NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()), discr);
                         if let Some(ref short) = value.short {
-                            map.insert(NormalizedPropertyNameStr::from_bytes(short.as_bytes()), discr);
+                            map.insert(NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()), discr);
                         }
                         for alias in &value.aliases {
-                            map.insert(NormalizedPropertyNameStr::from_bytes(alias.as_bytes()), discr);
+                            map.insert(NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()), discr);
                         }
                     }
                     let data_struct = PropertyValueNameToEnumMapV1 { map: map.into_iter().collect() };
