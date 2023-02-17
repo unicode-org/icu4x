@@ -71,7 +71,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::lookup_values(&icu_testdata::unstable())
+/// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
 ///                  .expect("The data should be valid");
 /// // short name for value
 /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
@@ -126,7 +126,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use methods on individual property value types
-    /// (like [`Script::lookup_values()`]) instead.
+    /// (like [`Script::get_name_to_enum_mapper()`]) instead.
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
@@ -249,7 +249,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::BidiClass;
         ///
-        /// let lookup = BidiClass::lookup_values(&icu_testdata::unstable())
+        /// let lookup = BidiClass::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AN"), Some(BidiClass::ArabicNumber));
@@ -364,7 +364,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GeneralCategory;
         ///
-        /// let lookup = GeneralCategory::lookup_values(&icu_testdata::unstable())
+        /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
@@ -776,7 +776,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::Script;
         ///
-        /// let lookup = Script::lookup_values(&icu_testdata::unstable())
+        /// let lookup = Script::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("Brah"), Some(Script::Brahmi));
@@ -832,7 +832,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::EastAsianWidth;
         ///
-        /// let lookup = EastAsianWidth::lookup_values(&icu_testdata::unstable())
+        /// let lookup = EastAsianWidth::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("N"), Some(EastAsianWidth::Neutral));
@@ -925,7 +925,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::LineBreak;
         ///
-        /// let lookup = LineBreak::lookup_values(&icu_testdata::unstable())
+        /// let lookup = LineBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("BK"), Some(LineBreak::MandatoryBreak));
@@ -998,7 +998,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::GraphemeClusterBreak;
         ///
-        /// let lookup = GraphemeClusterBreak::lookup_values(&icu_testdata::unstable())
+        /// let lookup = GraphemeClusterBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("EX"), Some(GraphemeClusterBreak::Extend));
@@ -1076,7 +1076,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::WordBreak;
         ///
-        /// let lookup = WordBreak::lookup_values(&icu_testdata::unstable())
+        /// let lookup = WordBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("KA"), Some(WordBreak::Katakana));
@@ -1141,7 +1141,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::SentenceBreak;
         ///
-        /// let lookup = SentenceBreak::lookup_values(&icu_testdata::unstable())
+        /// let lookup = SentenceBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("FO"), Some(SentenceBreak::Format));
@@ -1254,7 +1254,7 @@ impl_value_getter! {
         /// ```
         /// use icu::properties::CanonicalCombiningClass;
         ///
-        /// let lookup = CanonicalCombiningClass::lookup_values(&icu_testdata::unstable())
+        /// let lookup = CanonicalCombiningClass::get_name_to_enum_mapper(&icu_testdata::unstable())
         ///                  .expect("The data should be valid");
         /// // short name for value
         /// assert_eq!(lookup.get_strict("AL"), Some(CanonicalCombiningClass::AboveLeft));
