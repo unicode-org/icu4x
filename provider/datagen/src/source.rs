@@ -71,16 +71,11 @@ impl SourceData {
 
     #[cfg(test)]
     // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn offline_latest_tested_subset() -> Self {
+    pub fn repo() -> Self {
         Self::default()
-            .with_cldr(
-                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/cldr").into(),
-                Default::default(),
-            )
+            .with_cldr(repodata::cldr())
             .unwrap()
-            .with_icuexport(
-                concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/icuexport").into(),
-            )
+            .with_icuexport(repodata::icuexport())
             .unwrap()
     }
 

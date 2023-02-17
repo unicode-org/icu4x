@@ -1,0 +1,8 @@
+[package]
+name = "repodata"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[dependencies]
+icu_provider_fs = { path = "../fs" }

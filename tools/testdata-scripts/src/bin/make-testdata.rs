@@ -24,26 +24,15 @@ fn main() {
     ));
 
     let source = SourceData::default()
-        .with_cldr(
-            concat!(
-                core::env!("CARGO_MANIFEST_DIR"),
-                "/../../provider/datagen/tests/data/cldr"
-            )
-            .into(),
-            Default::default(),
+        .with_cldr(repodata::paths::cldr(), CldrLocaleSubset::Ignored
         )
         .unwrap()
-        .with_icuexport(
-            concat!(
-                core::env!("CARGO_MANIFEST_DIR"),
-                "/../../provider/datagen/tests/data/icuexport"
-            )
-            .into(),
+        .with_icuexport(repodata::paths::icuexport(),
         )
         .unwrap();
 
     let json_out = Out::Fs {
-        output_path: out_dir.join("json"),
+        output_path: repodata::paths::json(),
         serializer: Box::new(syntax::Json::pretty()),
         overwrite: true,
         fingerprint: true,

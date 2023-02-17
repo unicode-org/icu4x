@@ -21,7 +21,7 @@ category = "ICU4X Data"
 dependencies = [
     "testdata",
     "testdata-hello-world",
-    "download-test-sources",
+    "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''
@@ -126,15 +126,15 @@ args = [
     "--overwrite",
 ]
 
-[tasks.download-test-sources]
+[tasks.download-repo-sources]
 description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=download-test-sources",
+    "--bin=download-repo-sources",
     "--",
-    "--out=provider/datagen/tests/data",
+    "--out=provider/repodata/data",
     "-v",
 ]
 

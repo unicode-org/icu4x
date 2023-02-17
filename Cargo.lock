@@ -1552,6 +1552,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rayon",
+ "repodata",
  "rust-format",
  "serde",
  "serde-aux",
@@ -1939,6 +1940,7 @@ dependencies = [
  "icu_provider",
  "log",
  "quote",
+ "repodata",
  "rust-format",
  "simple_logger",
  "zip",
@@ -2760,6 +2762,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79af64b4b6362ffba04eef3a4e10829718a4896dac19daa741851c86781edf95"
 dependencies = [
  "bytecheck",
+]
+
+[[package]]
+name = "repodata"
+version = "0.0.0"
+dependencies = [
+ "icu_provider_fs",
 ]
 
 [[package]]
