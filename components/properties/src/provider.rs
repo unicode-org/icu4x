@@ -405,7 +405,7 @@ fn normalize_char(ch: u8) -> Option<u8> {
         // all ascii whitespace
         ch if ch.is_ascii_whitespace() => None,
         // underscores, hyphens
-        b'_' | b'-' | b' ' | 0x09..=0x0d => None,
+        b'_' | b'-' | b' ' => None,
         // ignore case by lowercasing
         ch => Some(ch.to_ascii_lowercase()),
     }
