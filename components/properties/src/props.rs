@@ -393,7 +393,7 @@ impl_value_getter! {
         /// // loose matching of name
         /// assert_eq!(lookup.get_loose("dash-punctuation"), Some(GeneralCategory::DashPunctuation));
         /// // fake property
-        /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
+        /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
     }
