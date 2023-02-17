@@ -12,14 +12,7 @@ fn main() -> eyre::Result<()> {
     let matches = App::new("icu4x-datagen")
         .version(crate_version!())
         .author(crate_authors!())
-        .about(concat!(
-            "Learn more at: https://github.com/unicode-org/icu4x/blob/icu%40", 
-            std::env!("CARGO_PKG_VERSION_MAJOR"), 
-            ".",
-            std::env!("CARGO_PKG_VERSION_MINOR"),
-            ".0", // we don't tag patch releases
-            "/docs/tutorials/data_management.md"
-        ))
+        .about(concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()))
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")
