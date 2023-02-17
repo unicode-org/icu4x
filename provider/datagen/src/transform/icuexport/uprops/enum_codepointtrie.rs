@@ -59,7 +59,7 @@ macro_rules! expand {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
                     let data = get_enumerated_prop(&self.source, $prop_name)
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                                        Are you using a sufficiently recent icuexport?"))?;
+                                                        Are you using a sufficiently recent icuexport? (Must be >72.1)"))?;
                     let mut map = BTreeMap::new();
                     for value in &data.values {
                         let discr = value.discr;
