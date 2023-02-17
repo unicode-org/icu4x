@@ -131,6 +131,20 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// Get the property value as a u16, doing a strict search looking for
     /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_strict_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(lookup.get_strict_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
+    /// ```
     #[inline]
     pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
         get_strict_u16(self.map, name)
@@ -138,6 +152,20 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
 
     /// Get the property value as a `T`, doing a strict search looking for
     /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
+    /// ```
     #[inline]
     pub fn get_strict(&self, name: &str) -> Option<T> {
         T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
@@ -146,6 +174,20 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// Get the property value as a u16, doing a loose search looking for
     /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
     /// whitespaces.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_loose_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(lookup.get_loose_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// // does do loose matching
+    /// assert_eq!(lookup.get_loose_u16("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// ```
     #[inline]
     pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
         get_loose_u16(self.map, name)
@@ -154,6 +196,20 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// Get the property value as a `T`, doing a loose search looking for
     /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
     /// whitespaces.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_loose("Lu"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(lookup.get_loose("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// // does do loose matching
+    /// assert_eq!(lookup.get_loose("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter));
+    /// ```
     #[inline]
     pub fn get_loose(&self, name: &str) -> Option<T> {
         T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
