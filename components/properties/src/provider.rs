@@ -402,11 +402,12 @@ impl PartialOrd for NormalizedPropertyNameStr {
 /// [2]: https://github.com/unicode-org/icu/blob/288c4c7555915ce7b1fb675d94ddd495058fc039/icu4c/source/common/propname.cpp#L226-L230
 fn normalize_char(ch: u8) -> Option<u8> {
     match ch {
-        b'a'..=b'z' => Some(ch),
-        b'A'..=b'Z' => Some(ch | 0x20), // lowercase by setting last bit
-        // underscores, hyphens, and all ASCII whitespace
+        // all ascii whitespace
+        ch if ch.is_ascii_whitespace() => None,
+        // underscores, hyphens
         b'_' | b'-' | b' ' | 0x09..=0x0d => None,
-        _ => Some(ch),
+        // ignore case by lowercasing
+        ch => Some(ch.to_ascii_lowercase()),
     }
 }
 
