@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg, ArgGroup};
+use clap::{App, Arg, ArgGroup, crate_version};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
@@ -10,7 +10,7 @@ use std::path::PathBuf;
 
 fn main() -> eyre::Result<()> {
     let matches = App::new("ICU4X Data Exporter")
-        .version("0.0.1")
+        .version(crate_version!())
         .author("The ICU4X Project Developers")
         .about("Export CLDR JSON into the ICU4X data schema")
         .arg(
