@@ -6,7 +6,6 @@
 
 use crate::provider::*;
 use crate::PropertiesError;
-use core::cmp::Ordering;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;
 use icu_provider::prelude::*;
@@ -103,8 +102,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     /// names that match exactly
     #[inline]
     pub fn get_strict(&self, name: &str) -> Option<T> {
-        self.get_strict_u16(name)
-            .and_then(|u| T::try_from_u32(u as u32).ok())
+        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
     }
 
     /// Get the property value as a u16, doing a loose search looking for
@@ -120,7 +118,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
     /// whitespaces.
     #[inline]
     pub fn get_loose(&self, name: &str) -> Option<T> {
-        get_loose_u16(&self.map, name).and_then(|u| T::try_from_u32(u as u32).ok())
+        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
     }
 
     /// Construct a new one from loaded data
@@ -139,19 +137,19 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_strict_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
+fn get_strict_u16(payload: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    map.get().map.get_copied(name)
+    payload.get().map.get_copied(name)
 }
 
 /// Avoid monomorphizing multiple copies of this function
-fn get_loose_u16(map: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
+fn get_loose_u16(payload: &DataPayload<ErasedNameToEnumMapV1Marker>, name: &str) -> Option<u16> {
     // NormalizedPropertyName has no invariants so this should be free, but
     // avoid introducing a panic regardless
     let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
-    map.get().map.get_copied_by(|p| p.cmp_loose(name))
+    payload.get().map.get_copied_by(|p| p.cmp_loose(name))
 }
 
 macro_rules! impl_value_getter {

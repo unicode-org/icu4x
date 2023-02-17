@@ -403,7 +403,7 @@ impl PartialOrd for NormalizedPropertyNameStr {
 fn normalize_char(ch: u8) -> Option<u8> {
     match ch {
         b'a'..=b'z' => Some(ch),
-        b'A'..=b'Z' => Some(ch | 0x20), // Uppercase by setting last bit
+        b'A'..=b'Z' => Some(ch | 0x20), // lowercase by setting last bit
         // underscores, hyphens, and all ASCII whitespace
         b'_' | b'-' | b' ' | 0x09..=0x0d => None,
         _ => Some(ch),
