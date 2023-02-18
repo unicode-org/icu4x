@@ -7,7 +7,7 @@
 ##########################################
 
 [package]
-name = "demo_testdata"
+name = "tutorial_testdata"
 version = "0.0.0"
 edition = "2021"
 publish = false

@@ -65,7 +65,7 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-check-cargo]
+[tasks.ci-job-check-cargo-tutorial]
 description = "Run all checks for the CI 'test-cargo' job"
 category = "CI"
 dependencies = [

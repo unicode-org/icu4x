@@ -17,7 +17,7 @@ on:
     - cron:  '0 13 * * *'
 
 jobs:
-  test-cargo-cratesio:
+  test-cargo-tutorial-cratesio:
     name: "Test crates.io versions of ICU4X via the Cargo tutorials"
     strategy:
       matrix:
@@ -51,6 +51,13 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
+
     # Actual job
     - name: Run `cargo make test-cargo-tutorial`
       uses: actions-rs/cargo@v1.0.1
@@ -58,7 +65,7 @@ jobs:
         command: make
         args: test-cargo-tutorial-cratesio
 
-  test-cargo-local:
+  test-cargo-tutorial-local:
     name: "Test local versions of ICU4X via the Cargo tutorials"
     strategy:
       matrix:
@@ -91,6 +98,13 @@ jobs:
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
       run: rustup show
+
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
 
     # Actual job
     - name: Run `cargo make test-cargo-tutorial`

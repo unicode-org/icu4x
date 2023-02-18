@@ -45,11 +45,11 @@ rm -f Cargo.lock
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-exec --fail-on-error cargo --config patch.toml check -p demo_baked
-exec --fail-on-error cargo --config patch.toml check -p demo_buffer
-exec --fail-on-error cargo --config patch.toml check -p demo_experimental
-exec --fail-on-error cargo --config patch.toml check -p demo_lazy_static
-exec --fail-on-error cargo --config patch.toml check -p demo_testdata
+exec --fail-on-error cargo --config patch.toml check -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml check -p tutorial_testdata
 '''
 
 [tasks.test-cargo-tutorial-local]
@@ -66,16 +66,16 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
 # Build the postcard file
-exec --fail-on-error cargo --config patch.toml build --release -p demo_buffer
+exec --fail-on-error cargo --config patch.toml build --release -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml install --path ../../../provider/datagen --root .
 exec --fail-on-error make -C buffer
 
 # Run the 5 projects
-exec --fail-on-error cargo --config patch.toml run --release -p demo_baked
-exec --fail-on-error cargo --config patch.toml run --release -p demo_buffer
-exec --fail-on-error cargo --config patch.toml run --release -p demo_experimental
-exec --fail-on-error cargo --config patch.toml run --release -p demo_lazy_static
-exec --fail-on-error cargo --config patch.toml run --release -p demo_testdata
+exec --fail-on-error cargo --config patch.toml run --release -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml run --release -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml run --release -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml run --release -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml run --release -p tutorial_testdata
 '''
 
 [tasks.test-cargo-tutorial-cratesio]
@@ -92,14 +92,14 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 # Build the postcard file
-exec --fail-on-error cargo build --release -p demo_buffer
+exec --fail-on-error cargo build --release -p tutorial_buffer
 # Let the Makefile install icu_datagen since we're pulling it from crates.io
 exec --fail-on-error make -C buffer
 
 # Run the 5 projects
-exec --fail-on-error cargo run --release -p demo_baked
-exec --fail-on-error cargo run --release -p demo_buffer
-exec --fail-on-error cargo run --release -p demo_experimental
-exec --fail-on-error cargo run --release -p demo_lazy_static
-exec --fail-on-error cargo run --release -p demo_testdata
+exec --fail-on-error cargo run --release -p tutorial_baked
+exec --fail-on-error cargo run --release -p tutorial_buffer
+exec --fail-on-error cargo run --release -p tutorial_experimental
+exec --fail-on-error cargo run --release -p tutorial_lazy_static
+exec --fail-on-error cargo run --release -p tutorial_testdata
 '''

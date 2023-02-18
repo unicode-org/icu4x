@@ -17,6 +17,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&[langid!("ru")]),
+        // Note: These are the keys required by `PluralRules::try_new_cardinal_unstable`
         &[icu::plurals::provider::CardinalV1Marker::KEY],
         &SourceData::default()
             .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Modern)

@@ -7,7 +7,7 @@
 ##########################################
 
 [package]
-name = "demo_buffer"
+name = "tutorial_buffer"
 version = "0.0.0"
 edition = "2021"
 publish = false

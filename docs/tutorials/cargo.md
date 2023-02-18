@@ -22,11 +22,11 @@ If you wish to use an experimental feature, such as `icu_segmenter`, set up your
 
 ```toml
 [dependencies]
-icu = { version = "1.1", features = ["experimental"] }
+icu = { version = "1.1", features = ["icu_segmenter"] }
 icu_testdata = { version = "1.1", features = ["icu_segmenter"] }
 ```
 
-In your main.rs, you can now use experimental features.
+In your main.rs, you can now use the experimental `icu::segmenter` module.
 
 [« Fully Working Example »](./cargo_tests/experimental)
 
@@ -40,7 +40,7 @@ icu = { version = "1.1", features = ["serde"] }
 icu_provider_blob = "1.1"
 ```
 
-To learn about building ICU4X data, including whether to check in the postcard file to your repository, see [data_management.md](./data_management.md).
+To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).
 
 [« Fully Working Example »](./cargo_tests/buffer)
 
@@ -58,7 +58,6 @@ zerovec = "0.9" # for databake
 [build-dependencies]
 icu = "1.1"
 icu_datagen = "1.1"
-icu_provider = "1.1"
 ```
 
 This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
@@ -76,7 +75,6 @@ If you wish to share ICU4X objects between threads, you must enable the `"sync"`
 icu = "1.1"
 icu_testdata = "1.1"
 icu_provider = { version = "1.1", features = ["sync"] }
-lazy_static = "1.4"
 ```
 
 You can now use most ICU4X types when `Send + Sync` are required, such as when persisting them in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
