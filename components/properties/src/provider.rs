@@ -404,8 +404,9 @@ fn normalize_char(ch: u8) -> Option<u8> {
     match ch {
         // all ascii whitespace
         ch if ch.is_ascii_whitespace() => None,
-        // underscores, hyphens
-        b'_' | b'-' | b' ' => None,
+        // underscores, hyphens, and the vertical tab character
+        // not covered by is_ascii_whitespace()
+        b'_' | b'-' | 0x0B => None,
         // ignore case by lowercasing
         ch => Some(ch.to_ascii_lowercase()),
     }
