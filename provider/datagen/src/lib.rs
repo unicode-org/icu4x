@@ -289,6 +289,7 @@ pub struct BakedOptions {
     overwrite: bool,
 }
 
+#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
 impl Default for BakedOptions {
     fn default() -> Self {
         Self {
