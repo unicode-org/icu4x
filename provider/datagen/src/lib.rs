@@ -9,7 +9,7 @@
 //! command-line utility.
 //!
 //!
-#![doc = concat!("Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/icu%40", std::env!("CARGO_PKG_VERSION_MAJOR"), ".", std::env!("CARGO_PKG_VERSION_MINOR"), ".0/docs/tutorials/data_management.md)")]
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
 //!
 //! # Examples
 //!
