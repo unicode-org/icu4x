@@ -76,7 +76,7 @@ jobs:
           --exclude zerovec-derive
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -98,7 +98,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
     - name: Install Sphinx
       uses: BSFishy/pip-action@v1
       with:
@@ -118,7 +120,7 @@ jobs:
         cd ../../../..
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -176,7 +178,7 @@ jobs:
 
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
@@ -198,6 +200,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         component:
           - components/locid
@@ -215,6 +218,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -248,7 +253,7 @@ jobs:
       run: |
         # We're on main, so the previous run is the parent.
         export BASELINE=$(git log --pretty=format:'%H' -1 -r HEAD^)
-        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }} benchmarks/perf
+        gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/$BASELINE/benchmarks/perf/${{ matrix.component }}/* benchmarks/perf/${{ matrix.component }}
 
     - name: Store benchmark result & create dashboard
       uses: rhysd/github-action-benchmark@v1.15.0
@@ -266,15 +271,17 @@ jobs:
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -294,6 +301,7 @@ jobs:
     # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     strategy:
+      fail-fast: false
       # Create a matrix of all platforms, and all components. Each job then can run
       # multiple examples in that job. The examples are defined as a space separated
       # list of the name of the examples. The examples are assumed to be in the
@@ -328,6 +336,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -392,15 +402,17 @@ jobs:
         alert-comment-cc-users: '@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -416,6 +428,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -458,10 +472,7 @@ jobs:
         key: ${{ runner.os }}-twiggy-0.7
     - name: Install twiggy
       if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: install
-        args: twiggy --version 0.7.0
+      run: cargo install twiggy --version 0.7.0
 
     # Actual job
     - name: Build wasm executables
@@ -506,6 +517,7 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Store benchmark result & create dashboard (gz)
+      if: success() || failure()
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
       with:
@@ -521,12 +533,14 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/binsize
@@ -542,6 +556,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
 
     - name: Setup output data directory
       run: |
@@ -574,19 +590,21 @@ jobs:
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
-      uses: google-github-actions/setup-gcloud@v0.2
+      if: success() || failure()
+      uses: google-github-actions/setup-gcloud@v0.6.2
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
     - name: Upload new benchmark data
+      if: success() || failure()
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/datasize/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks/datasize
 
   gh-pages:
     name: "Copy artifacts to gh-pages branch"
-    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-binsize, bench-memory, bench-datasize]
+    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
@@ -594,6 +612,7 @@ jobs:
       group: "pages"
       cancel-in-progress: true
     steps:
+      - uses: actions/checkout@v3
       - name: Download artifacts
         run: |
           gsutil -m cp -rn gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/benchmarks tools/website-skeleton/ || true
