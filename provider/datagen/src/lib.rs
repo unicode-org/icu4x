@@ -85,7 +85,9 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{syntax, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
+    pub use super::{
+        syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, Out, SourceData,
+    };
     pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
 }
@@ -255,6 +257,33 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
+/// Options for configuring the output of databake.
+#[non_exhaustive]
+pub struct BakedOptions {
+    /// Whether to run `rustfmt` on the generated files.
+    pub pretty: bool,
+    /// Whether to gate each key on its crate name. This allows using the module
+    /// even if some keys are not required and their dependencies are not included.
+    /// Requires use_separate_crates.
+    pub insert_feature_gates: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    pub use_separate_crates: bool,
+    /// Whether to overwrite existing data. By default, errors if it is present.
+    pub overwrite: bool,
+}
+
+#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
+impl Default for BakedOptions {
+    fn default() -> Self {
+        Self {
+            pretty: false,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+            overwrite: false,
+        }
+    }
+}
+
 /// The output format.
 #[non_exhaustive]
 pub enum Out {
@@ -271,17 +300,20 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a module at the given location.
-    Module {
+    /// Output a module with baked data at the given location.
+    Baked {
         /// The directory of the generated module.
         mod_directory: PathBuf,
-        /// Whether to run `rustfmt` on the generated files.
+        /// Additional options to configure the generated module.
+        options: BakedOptions,
+    },
+    /// Old deprecated configuration for databake.
+    #[doc(hidden)]
+    #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
+    Module {
+        mod_directory: PathBuf,
         pretty: bool,
-        /// Whether to gate each key on its crate name. This allows using the module
-        /// even if some keys are not required and their dependencies are not included.
-        /// Requires use_separate_crates.
         insert_feature_gates: bool,
-        /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
     },
 }
@@ -327,6 +359,11 @@ pub fn datagen(
                 Out::Blob(write) => Box::new(
                     icu_provider_blob::export::BlobExporter::new_with_sink(write),
                 ),
+                Out::Baked {
+                    mod_directory,
+                    options,
+                } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
+                #[allow(deprecated)]
                 Out::Module {
                     mod_directory,
                     pretty,
@@ -334,9 +371,14 @@ pub fn datagen(
                     use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
-                    pretty,
-                    insert_feature_gates,
-                    use_separate_crates,
+                    BakedOptions {
+                        pretty,
+                        insert_feature_gates,
+                        use_separate_crates,
+                        // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                        // 1.1.2 made it an option in Out::Baked.
+                        overwrite: false,
+                    },
                 )?),
             })
         })

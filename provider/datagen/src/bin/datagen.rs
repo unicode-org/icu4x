@@ -360,16 +360,15 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| PathBuf::from("icu4x_data"));
 
-            if mod_directory.exists() && matches.is_present("OVERWRITE") {
-                std::fs::remove_dir_all(&mod_directory)
-                    .with_context(|| mod_directory.to_string_lossy().into_owned())?;
-            }
+            let mut options = BakedOptions::default();
+            options.pretty = matches.is_present("PRETTY");
+            options.insert_feature_gates = matches.is_present("INSERT_FEATURE_GATES");
+            options.use_separate_crates = matches.is_present("USE_SEPARATE_CRATES");
+            options.overwrite = matches.is_present("OVERWRITE");
 
-            icu_datagen::Out::Module {
+            icu_datagen::Out::Baked {
                 mod_directory,
-                pretty: matches.is_present("PRETTY"),
-                insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-                use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
+                options,
             }
         }
         _ => unreachable!(),
