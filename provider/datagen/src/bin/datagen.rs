@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg, ArgGroup};
+use clap::{crate_authors, crate_version, App, Arg, ArgGroup};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
 fn main() -> eyre::Result<()> {
-    let matches = App::new("ICU4X Data Exporter")
-        .version("0.0.1")
-        .author("The ICU4X Project Developers")
-        .about("Export CLDR JSON into the ICU4X data schema")
+    let matches = App::new("icu4x-datagen")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()))
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")

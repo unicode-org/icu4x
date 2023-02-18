@@ -8,6 +8,9 @@
 //! Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 //! command-line utility.
 //!
+//!
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//!
 //! # Examples
 //!
 //! ## `build.rs`
@@ -44,7 +47,6 @@
 //! >    --format blob \
 //! >    --out data.postcard
 //! ```
-
 //! More details can be found by running `--help`.
 
 #![cfg_attr(
