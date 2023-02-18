@@ -390,7 +390,7 @@ pub fn datagen(
                         pretty,
                         insert_feature_gates,
                         use_separate_crates,
-                        overwrite: true,
+                        overwrite: false,
                     },
                 )?),
             })
