@@ -274,6 +274,32 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
+/// Options for configuring the output of databake.
+#[non_exhaustive]
+pub struct BakedOptions {
+    /// Whether to run `rustfmt` on the generated files.
+    pretty: bool,
+    /// Whether to gate each key on its crate name. This allows using the module
+    /// even if some keys are not required and their dependencies are not included.
+    /// Requires use_separate_crates.
+    insert_feature_gates: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    use_separate_crates: bool,
+    /// Whether to overwrite existing data. By default, errors if it is present.
+    overwrite: bool,
+}
+
+impl Default for BakedOptions {
+    fn default() -> Self {
+        Self {
+            pretty: false,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+            overwrite: false,
+        }
+    }
+}
+
 /// The output format.
 #[non_exhaustive]
 pub enum Out {
@@ -290,17 +316,19 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a module at the given location.
-    Module {
+    /// Output a module with baked data at the given location.
+    Baked {
         /// The directory of the generated module.
         mod_directory: PathBuf,
-        /// Whether to run `rustfmt` on the generated files.
+        /// Additional options to configure the generated module.
+        options: BakedOptions,
+    },
+    /// Old deprecated configuration for databake.
+    #[doc(hidden)]
+    Module {
+        mod_directory: PathBuf,
         pretty: bool,
-        /// Whether to gate each key on its crate name. This allows using the module
-        /// even if some keys are not required and their dependencies are not included.
-        /// Requires use_separate_crates.
         insert_feature_gates: bool,
-        /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
     },
 }
@@ -346,6 +374,10 @@ pub fn datagen(
                 Out::Blob(write) => Box::new(
                     icu_provider_blob::export::BlobExporter::new_with_sink(write),
                 ),
+                Out::Baked {
+                    mod_directory,
+                    options,
+                } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
                 Out::Module {
                     mod_directory,
                     pretty,
@@ -353,9 +385,12 @@ pub fn datagen(
                     use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
-                    pretty,
-                    insert_feature_gates,
-                    use_separate_crates,
+                    BakedOptions {
+                        pretty,
+                        insert_feature_gates,
+                        use_separate_crates,
+                        overwrite: true,
+                    },
                 )?),
             })
         })
