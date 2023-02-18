@@ -24,11 +24,9 @@ fn main() {
     ));
 
     let source = SourceData::default()
-        .with_cldr(repodata::paths::cldr(), CldrLocaleSubset::Ignored
-        )
+        .with_cldr(repodata::paths::cldr(), Default::default())
         .unwrap()
-        .with_icuexport(repodata::paths::icuexport(),
-        )
+        .with_icuexport(repodata::paths::icuexport())
         .unwrap();
 
     let json_out = Out::Fs {

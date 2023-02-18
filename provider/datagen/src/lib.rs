@@ -134,7 +134,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::offline_latest_tested_subset(),
+                source: SourceData::repo(),
             };
         }
         TEST_PROVIDER.clone()

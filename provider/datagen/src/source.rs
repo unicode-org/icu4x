@@ -73,9 +73,9 @@ impl SourceData {
     // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn repo() -> Self {
         Self::default()
-            .with_cldr(repodata::cldr())
+            .with_cldr(repodata::paths::cldr(), Default::default())
             .unwrap()
-            .with_icuexport(repodata::icuexport())
+            .with_icuexport(repodata::paths::icuexport())
             .unwrap()
     }
 
