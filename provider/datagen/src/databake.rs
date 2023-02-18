@@ -63,9 +63,13 @@ impl BakedDataExporter {
             overwrite,
         } = options;
 
-        if overwrite && mod_directory.exists() {
-            std::fs::remove_dir_all(&mod_directory)
-                .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+        if mod_directory.exists() {
+            if overwrite {
+                std::fs::remove_dir_all(&mod_directory)
+            } else {
+                std::fs::remove_dir(&mod_directory)
+            }
+            .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
         }
 
         Ok(Self {
