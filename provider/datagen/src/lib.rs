@@ -278,15 +278,15 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 #[non_exhaustive]
 pub struct BakedOptions {
     /// Whether to run `rustfmt` on the generated files.
-    pretty: bool,
+    pub pretty: bool,
     /// Whether to gate each key on its crate name. This allows using the module
     /// even if some keys are not required and their dependencies are not included.
     /// Requires use_separate_crates.
-    insert_feature_gates: bool,
+    pub insert_feature_gates: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate
-    use_separate_crates: bool,
+    pub use_separate_crates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
-    overwrite: bool,
+    pub overwrite: bool,
 }
 
 #[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
