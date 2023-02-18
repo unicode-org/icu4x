@@ -327,6 +327,7 @@ pub enum Out {
     },
     /// Old deprecated configuration for databake.
     #[doc(hidden)]
+    #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
     Module {
         mod_directory: PathBuf,
         pretty: bool,
@@ -380,6 +381,7 @@ pub fn datagen(
                     mod_directory,
                     options,
                 } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
+                #[allow(deprecated)]
                 Out::Module {
                     mod_directory,
                     pretty,
@@ -391,6 +393,8 @@ pub fn datagen(
                         pretty,
                         insert_feature_gates,
                         use_separate_crates,
+                        // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                        // 1.1.2 made it an option in Out::Baked.
                         overwrite: false,
                     },
                 )?),
