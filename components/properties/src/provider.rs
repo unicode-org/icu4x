@@ -326,7 +326,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 /// datagen.
 ///
 /// The Ord impl will sort things using strict equality, but in such a way that all loose-equal items
-/// will sort into the same area, such that the map can be searched for both strict and loose equality.
+/// will sort into the same area, such that a map can be searched for both strict and loose equality.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -385,6 +385,8 @@ impl<'a> ZeroMapKV<'a> for NormalizedPropertyNameStr {
     type OwnedType = Box<NormalizedPropertyNameStr>;
 }
 
+/// The Ord/PartialOrd impl will sort things using strict equality, but in such a way that all loose-equal items
+/// will sort into the same area, such that a map can be searched for both strict and loose equality.
 impl PartialOrd for NormalizedPropertyNameStr {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
@@ -412,6 +414,8 @@ fn normalize_char(ch: u8) -> Option<u8> {
     }
 }
 
+/// The Ord impl will sort things using strict equality, but in such a way that all loose-equal items
+/// will sort into the same area, such that a map can be searched for both strict and loose equality.
 impl Ord for NormalizedPropertyNameStr {
     fn cmp(&self, other: &Self) -> Ordering {
         let cmp = self.cmp_loose(other);
