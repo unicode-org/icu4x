@@ -21,7 +21,7 @@ use crate::yoke::Yokeable;
 /// - `impl ZeroFrom<Self>`
 ///
 /// Also see [`KeyedDataMarker`].
-/// 
+///
 /// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
@@ -73,7 +73,7 @@ pub trait DataMarker: 'static {
 ///
 /// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
 /// because they are not specific to a single key.
-/// 
+///
 /// Note: `KeyedDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
 /// to be unit structs. As this is not something that can be enforced by the type system, we
 /// currently only have a `'static` bound on them (which is needed by a lot of our code).
