@@ -36,11 +36,34 @@ class ICU4XWordSegmenter {
  public:
 
   /**
-   * Construct an [`ICU4XWordSegmenter`].
+   * Construct an [`ICU4XWordSegmenter`] with automatically selecting the best available LSTM
+   * or dictionary payload data.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_unstable) for more information.
+   * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+   * Khmer, Lao, and Thai.
+   * 
+   * See the [Rust documentation for `try_new_auto_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable) for more information.
    */
-  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider);
+
+  /**
+   * Construct an [`ICU4XWordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+   * Thai.
+   * 
+   * Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
+   * Japanese.
+   * 
+   * See the [Rust documentation for `try_new_lstm_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_unstable) for more information.
+   */
+  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
+
+  /**
+   * Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
+   * Burmese, Khmer, Lao, and Thai.
+   * 
+   * See the [Rust documentation for `try_new_dictionary_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_unstable) for more information.
+   */
+  static diplomat::result<ICU4XWordSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
 
   /**
    * Segments a (potentially ill-formed) UTF-8 string.
@@ -83,8 +106,28 @@ class ICU4XWordSegmenter {
 #include "ICU4XWordBreakIteratorUtf16.hpp"
 #include "ICU4XWordBreakIteratorLatin1.hpp"
 
-inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create(provider.AsFFI());
+inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_auto(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_auto(provider.AsFFI());
+  diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_lstm(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_lstm(provider.AsFFI());
+  diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_dictionary(provider.AsFFI());
   diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));

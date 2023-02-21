@@ -21,6 +21,8 @@ a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
 
 ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a: FORCE
+	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
+	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	RUSTFLAGS="-Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 
 web-version.html: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp

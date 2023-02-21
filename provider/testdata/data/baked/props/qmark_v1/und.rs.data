@@ -2,16 +2,7 @@
     #[allow(unused_unsafe)]
     ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
         unsafe {
-            ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                34u8, 0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 39u8, 0u8, 0u8, 0u8, 40u8, 0u8, 0u8,
-                0u8, 171u8, 0u8, 0u8, 0u8, 172u8, 0u8, 0u8, 0u8, 187u8, 0u8, 0u8, 0u8, 188u8,
-                0u8, 0u8, 0u8, 24u8, 32u8, 0u8, 0u8, 32u8, 32u8, 0u8, 0u8, 57u8, 32u8, 0u8,
-                0u8, 59u8, 32u8, 0u8, 0u8, 66u8, 46u8, 0u8, 0u8, 67u8, 46u8, 0u8, 0u8, 12u8,
-                48u8, 0u8, 0u8, 16u8, 48u8, 0u8, 0u8, 29u8, 48u8, 0u8, 0u8, 32u8, 48u8, 0u8,
-                0u8, 65u8, 254u8, 0u8, 0u8, 69u8, 254u8, 0u8, 0u8, 2u8, 255u8, 0u8, 0u8, 3u8,
-                255u8, 0u8, 0u8, 7u8, 255u8, 0u8, 0u8, 8u8, 255u8, 0u8, 0u8, 98u8, 255u8, 0u8,
-                0u8, 100u8, 255u8, 0u8, 0u8,
-            ])
+            :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\"\0\0\0#\0\0\0'\0\0\0(\0\0\0\xAB\0\0\0\xAC\0\0\0\xBB\0\0\0\xBC\0\0\0\x18 \0\0  \0\09 \0\0; \0\0B.\0\0C.\0\0\x0C0\0\0\x100\0\0\x1D0\0\0 0\0\0A\xFE\0\0E\xFE\0\0\x02\xFF\0\0\x03\xFF\0\0\x07\xFF\0\0\x08\xFF\0\0b\xFF\0\0d\xFF\0\0")
         },
         30usize,
     )

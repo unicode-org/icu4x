@@ -8,7 +8,7 @@ use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
 
-use icu_datagen::{all_keys_with_experimental, CldrLocaleSubset, DatagenProvider, SourceData};
+use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
 use std::cmp;
 use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
@@ -47,10 +47,7 @@ fn main() {
 
     let converter = DatagenProvider {
         source: SourceData::default()
-            .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Full,
-            )
+            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
             .unwrap()
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
             .unwrap(),
@@ -109,5 +106,5 @@ fn main() {
         If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
         If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
         to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_violations, EXPECTED_TOTAL_VIOLATIONS, total_violations)
+        Expected (net):\n{EXPECTED_NET_VIOLATIONS:?}\nFound (net):\n{net_violations:?}\nExpected (total):\n{EXPECTED_TOTAL_VIOLATIONS:?}\nFound (total):\n{total_violations:?}")
 }

@@ -763,6 +763,19 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::AlnumV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlnumV1Marker>, DataError> {
+                props::alnum_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::AlnumV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlphabeticV1Marker>, DataError> {
                 props::alpha_v1::lookup(&req.locale)
@@ -841,6 +854,19 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::BlankV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BlankV1Marker>, DataError> {
+                props::blank_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BlankV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassV1Marker>, DataError> {
                 props::ccc_v1::lookup(&req.locale)
@@ -867,6 +893,19 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::CaseSensitiveV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CaseSensitiveV1Marker>, DataError> {
+                props::sensitive_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CaseSensitiveV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::CasedV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CasedV1Marker>, DataError> {
                 props::cased_v1::lookup(&req.locale)
@@ -890,6 +929,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::ChangesWhenCasemappedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasemappedV1Marker>, DataError> {
+                props::cwcm_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1166,6 +1218,19 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::FullCompositionExclusionV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::FullCompositionExclusionV1Marker>, DataError> {
+                props::comp_ex_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::FullCompositionExclusionV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryV1Marker>, DataError> {
                 props::gc_v1::lookup(&req.locale)
@@ -1176,6 +1241,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphV1Marker>, DataError> {
+                props::graph_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1218,6 +1296,19 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphemeLinkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeLinkV1Marker>, DataError> {
+                props::gr_link_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeLinkV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HexDigitV1Marker>, DataError> {
                 props::hex_v1::lookup(&req.locale)
@@ -1228,6 +1319,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::HexDigitV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::HyphenV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HyphenV1Marker>, DataError> {
+                props::hyphen_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::HyphenV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1361,6 +1465,58 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfcInertV1Marker>, DataError> {
+                props::nfcinert_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfcInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfdInertV1Marker>, DataError> {
+                props::nfdinert_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfdInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfkcInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkcInertV1Marker>, DataError> {
+                props::nfkcinert_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfkcInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::NfkdInertV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NfkdInertV1Marker>, DataError> {
+                props::nfkdinert_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::NfkdInertV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NoncharacterCodePointV1Marker>, DataError> {
                 props::nchar_v1::lookup(&req.locale)
@@ -1397,6 +1553,32 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::PrependedConcatenationMarkV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrependedConcatenationMarkV1Marker>, DataError> {
+                props::pcm_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::PrintV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PrintV1Marker>, DataError> {
+                props::print_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::PrintV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1462,6 +1644,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::SegmentStarterV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SegmentStarterV1Marker>, DataError> {
+                props::segstart_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SegmentStarterV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1579,6 +1774,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::XdigitV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XdigitV1Marker>, DataError> {
+                props::xdigit_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::XdigitV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -2354,6 +2562,8 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_plurals")]
                 const ORDINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const ALNUMV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AlnumV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const ALPHABETICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AlphabeticV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const ASCIIHEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.hashed();
@@ -2366,15 +2576,22 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const BIDIMIRROREDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiMirroredV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const BLANKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BlankV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const CASESENSITIVEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseSensitiveV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const CASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CasedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const CHANGESWHENCASEMAPPEDV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::ChangesWhenCasemappedV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.hashed();
@@ -2429,7 +2646,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const EXTENDERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ExtenderV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const FULLCOMPOSITIONEXCLUSIONV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::FullCompositionExclusionV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const GRAPHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2438,7 +2660,11 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const GRAPHEMELINKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeLinkV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const HEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HexDigitV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const HYPHENV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HyphenV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const IDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdContinueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2461,12 +2687,25 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const MATHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::MathV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const NFCINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfcInertV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const NFDINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfdInertV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const NFKCINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfkcInertV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const NFKDINERTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NfkdInertV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const PATTERNSYNTAXV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternSyntaxV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const PATTERNWHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const PREPENDEDCONCATENATIONMARKV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::PrependedConcatenationMarkV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const PRINTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PrintV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const QUOTATIONMARKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::QuotationMarkV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2478,6 +2717,8 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const SEGMENTSTARTERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SegmentStarterV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const SENTENCEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceBreakV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2497,6 +2738,8 @@ macro_rules! impl_any_provider {
                 const WHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WhiteSpaceV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const WORDBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const XDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XdigitV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const XIDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XidContinueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2705,6 +2948,8 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_plurals")]
                     ORDINALV1MARKER => plurals::ordinal_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    ALNUMV1MARKER => props::alnum_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     ALPHABETICV1MARKER => props::alpha_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     ASCIIHEXDIGITV1MARKER => props::ahex_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -2717,13 +2962,19 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     BIDIMIRROREDV1MARKER => props::bidi_m_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    BLANKV1MARKER => props::blank_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     CANONICALCOMBININGCLASSV1MARKER => props::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CASEIGNORABLEV1MARKER => props::ci_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    CASESENSITIVEV1MARKER => props::sensitive_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     CASEDV1MARKER => props::cased_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CHANGESWHENCASEFOLDEDV1MARKER => props::cwcf_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    CHANGESWHENCASEMAPPEDV1MARKER => props::cwcm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CHANGESWHENLOWERCASEDV1MARKER => props::cwl_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2769,7 +3020,11 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     EXTENDERV1MARKER => props::ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    FULLCOMPOSITIONEXCLUSIONV1MARKER => props::comp_ex_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     GENERALCATEGORYV1MARKER => props::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    GRAPHV1MARKER => props::graph_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEBASEV1MARKER => props::gr_base_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2777,7 +3032,11 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEEXTENDV1MARKER => props::gr_ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    GRAPHEMELINKV1MARKER => props::gr_link_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     HEXDIGITV1MARKER => props::hex_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    HYPHENV1MARKER => props::hyphen_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     IDCONTINUEV1MARKER => props::idc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2799,11 +3058,23 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     MATHV1MARKER => props::math_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    NFCINERTV1MARKER => props::nfcinert_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    NFDINERTV1MARKER => props::nfdinert_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    NFKCINERTV1MARKER => props::nfkcinert_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    NFKDINERTV1MARKER => props::nfkdinert_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     NONCHARACTERCODEPOINTV1MARKER => props::nchar_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     PATTERNSYNTAXV1MARKER => props::pat_syn_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     PATTERNWHITESPACEV1MARKER => props::pat_ws_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PREPENDEDCONCATENATIONMARKV1MARKER => props::pcm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    PRINTV1MARKER => props::print_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     QUOTATIONMARKV1MARKER => props::qmark_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2814,6 +3085,8 @@ macro_rules! impl_any_provider {
                     SCRIPTV1MARKER => props::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SCRIPTWITHEXTENSIONSPROPERTYV1MARKER => props::scx_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    SEGMENTSTARTERV1MARKER => props::segstart_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SENTENCEBREAKV1MARKER => props::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2832,6 +3105,8 @@ macro_rules! impl_any_provider {
                     WHITESPACEV1MARKER => props::wspace_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     WORDBREAKV1MARKER => props::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    XDIGITV1MARKER => props::xdigit_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     XIDCONTINUEV1MARKER => props::xidc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -2921,5 +3196,5 @@ macro_rules! impl_any_provider {
         }
     };
 }
-struct BakedDataProvider;
+pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

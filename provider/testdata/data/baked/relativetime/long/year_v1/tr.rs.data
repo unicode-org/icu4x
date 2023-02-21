@@ -2,14 +2,9 @@
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[255u8, 0u8, 1u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 11u8, 0u8, 18u8, 0u8, 103u8, 101u8, 195u8,
-                    167u8, 101u8, 110u8, 32u8, 121u8, 196u8, 177u8, 108u8, 98u8, 117u8, 32u8,
-                    121u8, 196u8, 177u8, 108u8, 103u8, 101u8, 108u8, 101u8, 99u8, 101u8, 107u8,
-                    32u8, 121u8, 196u8, 177u8, 108u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x0B\0\x12\0ge\xC3\xA7en y\xC4\xB1lbu y\xC4\xB1lgelecek y\xC4\xB1l")
             },
         )
     },

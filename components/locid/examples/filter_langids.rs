@@ -51,7 +51,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let _output = filter_input(input);
 
     #[cfg(debug_assertions)]
-    println!("\nInput: {}\nOutput: {}", input, _output);
+    println!("\nInput: {input}\nOutput: {_output}");
 
     0
 }

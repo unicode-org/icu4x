@@ -652,5 +652,20 @@
     "zun": "Zunice",
     "zxx": "Dilbilim içeriği yok",
     "zza": "Zazaca"
+  },
+  "short_names": {
+    "az": "Azerbaycan dili",
+    "en-GB": "Birleşik Krallık İngilizcesi",
+    "en-US": "ABD İngilizcesi"
+  },
+  "long_names": {
+    "zh-Hans": "Basitleştirilmiş Çince (Mandarin)",
+    "zh-Hant": "Geleneksel Çince (Mandarin)"
+  },
+  "menu_names": {
+    "ars": "Arapça, Necd",
+    "ckb": "Kürtçe, Orta",
+    "yue": "Çince, Kantonca",
+    "zh": "Çince, Mandarin"
   }
 }

@@ -2,29 +2,17 @@
     patterns: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\x07\t\x0C\r") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[3u8, 6u8, 7u8, 9u8, 12u8, 13u8])
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x01\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0\x07\0\0\0",
+                )
             },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8,
-                    0u8, 6u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8,
-                ])
+                ::zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x05\x05\x05\x05")
             },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[5u8, 1u8, 5u8, 5u8, 5u8, 5u8, 5u8])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 6u8, 0u8, 16u8, 0u8, 27u8, 0u8, 38u8, 0u8,
-                    53u8, 0u8, 63u8, 0u8, 3u8, 0u8, 32u8, 109u8, 105u8, 108u8, 6u8, 0u8, 32u8,
-                    109u8, 105u8, 108u8, 108u8, 195u8, 179u8, 110u8, 6u8, 0u8, 32u8, 109u8,
-                    105u8, 108u8, 108u8, 111u8, 110u8, 101u8, 115u8, 6u8, 0u8, 32u8, 109u8,
-                    105u8, 108u8, 108u8, 111u8, 110u8, 101u8, 115u8, 9u8, 0u8, 32u8, 109u8,
-                    105u8, 108u8, 32u8, 109u8, 105u8, 108u8, 108u8, 111u8, 110u8, 101u8, 115u8,
-                    12u8, 0u8, 32u8, 98u8, 105u8, 108u8, 108u8, 195u8, 179u8, 110u8, 12u8, 0u8,
-                    32u8, 98u8, 105u8, 108u8, 108u8, 111u8, 110u8, 101u8, 115u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x06\0\x10\0\x1B\0&\05\0?\0\x03\0 mil\x06\0 mill\xC3\xB3n\x06\0 millones\x06\0 millones\t\0 mil millones\x0C\0 bill\xC3\xB3n\x0C\0 billones")
             },
         )
     },

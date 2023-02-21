@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg, ArgGroup};
+use clap::{crate_authors, crate_version, App, Arg, ArgGroup};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
 fn main() -> eyre::Result<()> {
-    let matches = App::new("ICU4X Data Exporter")
-        .version("0.0.1")
-        .author("The ICU4X Project Developers")
-        .about("Export CLDR JSON into the ICU4X data schema")
+    let matches = App::new("icu4x-datagen")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()))
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")
@@ -236,35 +236,6 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let mut cldr_locales = CldrLocaleSubset::Full;
-
-    let selected_locales = if matches.is_present("ALL_LOCALES") {
-        None
-    } else {
-        match matches
-            .values_of("LOCALES")
-            .unwrap()
-            .collect::<Vec<_>>()
-            .as_slice()
-        {
-            ["full"] => None,
-            ["modern"] => {
-                cldr_locales = CldrLocaleSubset::Modern;
-                None
-            }
-            ["none"] => Some(vec![]),
-            locales => Some(
-                locales
-                    .iter()
-                    .map(|s| {
-                        s.parse::<LanguageIdentifier>()
-                            .with_context(|| s.to_string())
-                    })
-                    .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
-            ),
-        }
-    };
-
     let selected_keys = if matches.is_present("ALL_KEYS") {
         icu_datagen::all_keys()
     } else if let Some(paths) = matches.values_of("KEYS") {
@@ -290,21 +261,28 @@ fn main() -> eyre::Result<()> {
 
     let mut source_data = SourceData::default();
     if let Some(path) = matches.value_of("CLDR_ROOT") {
-        source_data = source_data.with_cldr(PathBuf::from(path), CldrLocaleSubset::Full)?;
-    } else if Some("latest") == matches.value_of("CLDR_TAG") {
-        source_data =
-            source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, cldr_locales)?;
-    } else if let Some(tag) = matches.value_of("CLDR_TAG") {
-        source_data = source_data.with_cldr_for_tag(tag, cldr_locales)?;
+        source_data = source_data.with_cldr(PathBuf::from(path), Default::default())?;
+    } else {
+        source_data = source_data.with_cldr_for_tag(
+            if Some("latest") == matches.value_of("CLDR_TAG") {
+                SourceData::LATEST_TESTED_CLDR_TAG
+            } else {
+                matches.value_of("CLDR_TAG").unwrap()
+            },
+            Default::default(),
+        )?
     }
 
     if let Some(path) = matches.value_of("ICUEXPORT_ROOT") {
         source_data = source_data.with_icuexport(PathBuf::from(path))?;
-    } else if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
-        source_data =
-            source_data.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?;
-    } else if let Some(tag) = matches.value_of("ICUEXPORT_TAG") {
-        source_data = source_data.with_icuexport_for_tag(tag)?;
+    } else {
+        source_data = source_data.with_icuexport_for_tag(
+            if Some("latest") == matches.value_of("ICUEXPORT_TAG") {
+                SourceData::LATEST_TESTED_ICUEXPORT_TAG
+            } else {
+                matches.value_of("ICUEXPORT_TAG").unwrap()
+            },
+        )?;
     }
 
     if matches.value_of("TRIE_TYPE") == Some("fast") {
@@ -322,6 +300,35 @@ fn main() -> eyre::Result<()> {
             source_data.with_collations(collations.into_iter().map(String::from).collect());
     }
 
+    let raw_locales = matches.values_of("LOCALES").unwrap().collect::<Vec<_>>();
+
+    let selected_locales = if raw_locales == ["none"] || selected_keys.is_empty() {
+        Some(vec![])
+    } else if raw_locales == ["full"] || matches.is_present("ALL_LOCALES") {
+        None
+    } else if let Some(locale_subsets) = raw_locales
+        .iter()
+        .map(|&s| match s {
+            "basic" => Some(CoverageLevel::Basic),
+            "moderate" => Some(CoverageLevel::Moderate),
+            "modern" => Some(CoverageLevel::Modern),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+    {
+        Some(source_data.locales(&locale_subsets)?)
+    } else {
+        Some(
+            raw_locales
+                .into_iter()
+                .map(|s| {
+                    s.parse::<LanguageIdentifier>()
+                        .with_context(|| s.to_string())
+                })
+                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
+        )
+    };
+
     let out = match matches.value_of("FORMAT").expect("required") {
         v @ ("dir" | "deprecated-default") => {
             if v == "deprecated-default" {
@@ -333,10 +340,10 @@ fn main() -> eyre::Result<()> {
                     .map(PathBuf::from)
                     .unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 serializer: match matches.value_of("SYNTAX") {
-                    Some("bincode") => Box::new(syntax::Bincode::default()),
-                    Some("postcard") => Box::new(syntax::Postcard::default()),
+                    Some("bincode") => Box::<syntax::Bincode>::default(),
+                    Some("postcard") => Box::<syntax::Postcard>::default(),
                     _ if matches.is_present("PRETTY") => Box::new(syntax::Json::pretty()),
-                    _ => Box::new(syntax::Json::default()),
+                    _ => Box::<syntax::Json>::default(),
                 },
                 overwrite: matches.is_present("OVERWRITE"),
                 fingerprint: matches.is_present("FINGERPRINT"),
@@ -360,16 +367,15 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| PathBuf::from("icu4x_data"));
 
-            if mod_directory.exists() && matches.is_present("OVERWRITE") {
-                std::fs::remove_dir_all(&mod_directory)
-                    .with_context(|| mod_directory.to_string_lossy().into_owned())?;
-            }
+            let mut options = BakedOptions::default();
+            options.pretty = matches.is_present("PRETTY");
+            options.insert_feature_gates = matches.is_present("INSERT_FEATURE_GATES");
+            options.use_separate_crates = matches.is_present("USE_SEPARATE_CRATES");
+            options.overwrite = matches.is_present("OVERWRITE");
 
-            icu_datagen::Out::Module {
+            icu_datagen::Out::Baked {
                 mod_directory,
-                pretty: matches.is_present("PRETTY"),
-                insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-                use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
+                options,
             }
         }
         _ => unreachable!(),

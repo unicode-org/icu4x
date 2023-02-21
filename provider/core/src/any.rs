@@ -434,7 +434,7 @@ mod test {
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
             "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
-            format!("{:?}", any_payload)
+            format!("{any_payload:?}")
         );
 
         struct WrongMarker;
@@ -446,7 +446,7 @@ mod test {
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
             "ICU4X data error: Mismatched types: tried to downcast with icu_provider::any::test::test_debug::WrongMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
-            format!("{}", err)
+            format!("{err}")
         );
     }
 
