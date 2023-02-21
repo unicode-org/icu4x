@@ -15,7 +15,7 @@ fn main() {
         &locale!("bn").into(),
         Default::default(),
     )
-    .expect("Locale 'bn' is present in testdata");
+    .expect("Locale 'bn' should be present in testdata");
     let result = formatter.format_to_string(&1000007.into());
     assert_eq!(result, "১০,০০,০০৭");
     println!("{}", result);

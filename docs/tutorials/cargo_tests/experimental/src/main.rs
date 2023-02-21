@@ -12,7 +12,7 @@ fn main() {
     let segmenter = GraphemeClusterSegmenter::try_new_unstable(
         &icu_testdata::unstable(),
     )
-    .expect("Grapheme break data is present in testdata");
+    .expect("Grapheme break data should be present in testdata");
     let breakpoints = segmenter.segment_str("🐻🏴‍☠️🐯").collect::<Vec<usize>>();
     assert_eq!(breakpoints, &[0, 4, 17, 21]);
     println!("{:?}", breakpoints);
