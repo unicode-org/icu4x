@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Get paths to the test data directories.
+//! Get paths to the test data directories. Some of these paths do not
+//! exist anymore, and data should only be accessed through the functions
+//! provided by this crate.
 
 use std::path::PathBuf;
 
