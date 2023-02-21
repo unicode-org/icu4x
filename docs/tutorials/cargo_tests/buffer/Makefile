@@ -26,6 +26,4 @@ buffer_data.postcard: bin/icu4x-datagen bin/tutorial_buffer
 
 .PHONY: clean
 clean:
-	rm -f bin/icu4x-datagen
-	rm -f bin/tutorial_buffer
-	rm -f buffer_data.postcard
+	git clean -xf *
