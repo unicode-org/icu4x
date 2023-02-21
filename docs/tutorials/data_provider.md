@@ -99,7 +99,7 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     // We failed to create the formatter. Load more data for the language.
     let path_buf = 
         Path::new("../../provider/adapters/tests/data/langtest")
-        .join(&*loc.language().write_to_string());
+        .join(&*loc.language().as_str());
     let lang_provider = match FsDataProvider::try_new(&path_buf) {
         Ok(p) => p,
         Err(e) => panic!("Language not available? {:?}", e)
