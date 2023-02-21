@@ -98,7 +98,7 @@ where
     for (k, v) in SORTED_DATA.iter() {
         #[allow(clippy::single_match)] // for clarity
         match map.try_append(*k, *v) {
-            Some(_) => panic!("appending sorted data: {:?} to {:?}", k, map),
+            Some(_) => panic!("appending sorted data: {k:?} to {map:?}"),
             None => (), // OK
         };
     }
@@ -107,7 +107,7 @@ where
         #[allow(clippy::single_match)] // for clarity
         match map.try_append(*k, *v) {
             Some(_) => (), // OK
-            None => panic!("cannot append random data: {:?} to{:?}", k, map),
+            None => panic!("cannot append random data: {k:?} to{map:?}"),
         };
     }
     assert_eq!(10, map.len());

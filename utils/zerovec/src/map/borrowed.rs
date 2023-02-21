@@ -277,8 +277,8 @@ where
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
     #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
     pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
-        let keys = &*self.keys;
-        let values = &*self.values;
+        let keys = &self.keys;
+        let values = &self.values;
         let len = self.keys.zvl_len();
         (0..len).map(move |idx| {
             (

@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "ava",
-    "prepare": "sh ./build.sh"
+    "prepare": "make build"
   },
   "repository": {
     "type": "git",

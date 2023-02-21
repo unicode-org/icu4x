@@ -14,6 +14,8 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use crate::BakedOptions;
+
 macro_rules! move_out {
     ($field:expr) => {{
         let mut tmp = Default::default();
@@ -53,15 +55,21 @@ struct ImplData {
 }
 
 impl BakedDataExporter {
-    pub fn new(
-        mod_directory: PathBuf,
-        pretty: bool,
-        insert_feature_gates: bool,
-        use_separate_crates: bool,
-    ) -> Result<Self, DataError> {
+    pub fn new(mod_directory: PathBuf, options: BakedOptions) -> Result<Self, DataError> {
+        let BakedOptions {
+            pretty,
+            insert_feature_gates,
+            use_separate_crates,
+            overwrite,
+        } = options;
+
         if mod_directory.exists() {
-            std::fs::remove_dir(&mod_directory)
-                .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+            if overwrite {
+                std::fs::remove_dir_all(&mod_directory)
+            } else {
+                std::fs::remove_dir(&mod_directory)
+            }
+            .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
         }
 
         Ok(Self {
@@ -135,7 +143,7 @@ impl BakedDataExporter {
         } else {
             &formatted
         };
-        std::fs::create_dir_all(&path.parent().unwrap())?;
+        std::fs::create_dir_all(path.parent().unwrap())?;
         let mut file = crlify::BufWriterWithLineEndingFix::new(
             File::create(&path).map_err(|e| DataError::from(e).with_path_context(&path))?,
         );
@@ -172,7 +180,7 @@ impl BakedDataExporter {
             .try_for_each(|(path, mods)| {
                 let mods = mods.into_iter().map(|p| p.parse::<TokenStream>().unwrap());
                 self.write_to_file(
-                    &path.join("mod"),
+                    path.join("mod"),
                     quote! {
                         #(
                             pub mod #mods;
@@ -275,7 +283,7 @@ impl DataExporter for BakedDataExporter {
                 syn::parse_str::<syn::Ident>(&file_name.to_ascii_uppercase().replace('-', "_"))
                     .unwrap();
             self.write_to_file(
-                &path.join(file_name),
+                path.join(file_name),
                 payload_bake_string.parse().unwrap(),
                 true,
             )?;
@@ -340,9 +348,11 @@ impl DataExporter for BakedDataExporter {
         let statics = statics.values();
 
         self.write_to_file(
-            &path.join("mod"),
+            path.join("mod"),
             quote! {
                 #feature
+
+                #![allow(clippy::octal_escapes)] // https://github.com/dtolnay/proc-macro2/issues/363
 
                 type DataStruct = #struct_type;
 
@@ -520,7 +530,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
 
-                struct BakedDataProvider;
+                pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },
             false,

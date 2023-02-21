@@ -93,7 +93,9 @@
 extern crate alloc;
 
 mod error;
+mod lazy_automaton;
 mod list_formatter;
+mod patterns;
 
 pub mod provider;
 

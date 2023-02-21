@@ -9,21 +9,9 @@
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 27u8, 0u8, 216u8, 170u8, 217u8, 136u8, 217u8,
-                    130u8, 217u8, 138u8, 216u8, 170u8, 32u8, 123u8, 48u8, 125u8, 32u8, 216u8,
-                    167u8, 217u8, 132u8, 216u8, 181u8, 217u8, 138u8, 217u8, 129u8, 217u8,
-                    138u8, 216u8, 170u8, 217u8, 136u8, 217u8, 130u8, 217u8, 138u8, 216u8,
-                    170u8, 32u8, 123u8, 48u8, 125u8, 32u8, 216u8, 167u8, 217u8, 132u8, 216u8,
-                    177u8, 216u8, 179u8, 217u8, 133u8, 217u8, 138u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x1B\0\xD8\xAA\xD9\x88\xD9\x82\xD9\x8A\xD8\xAA {0} \xD8\xA7\xD9\x84\xD8\xB5\xD9\x8A\xD9\x81\xD9\x8A\xD8\xAA\xD9\x88\xD9\x82\xD9\x8A\xD8\xAA {0} \xD8\xA7\xD9\x84\xD8\xB1\xD8\xB3\xD9\x85\xD9\x8A")
             },
         )
     },

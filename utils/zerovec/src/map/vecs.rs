@@ -195,7 +195,7 @@ where
     where
         T: Ord,
     {
-        let zs: &ZeroSlice<T> = &*self;
+        let zs: &ZeroSlice<T> = self;
         zs.zvl_binary_search_in_range(k, range)
     }
     fn zvl_binary_search_by(
@@ -209,7 +209,7 @@ where
         predicate: impl FnMut(&T) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let zs: &ZeroSlice<T> = &*self;
+        let zs: &ZeroSlice<T> = self;
         zs.zvl_binary_search_in_range_by(predicate, range)
     }
     fn zvl_get(&self, index: usize) -> Option<&T::ULE> {
@@ -218,11 +218,9 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
-        &*self
+        self
     }
-
     #[inline]
     fn zvl_get_as_t<R>(g: &Self::GetType, f: impl FnOnce(&T) -> R) -> R {
         f(&T::from_unaligned(*g))
@@ -274,7 +272,6 @@ where
     fn zvl_len(&self) -> usize {
         ZeroSlice::len(self)
     }
-
     fn zvl_as_borrowed(&self) -> &ZeroSlice<T> {
         self
     }
@@ -565,7 +562,7 @@ impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
     }
 
     fn zvl_as_borrowed(&self) -> &FlexZeroSlice {
-        &*self
+        self
     }
 
     #[inline]

@@ -17,7 +17,7 @@ fn main() {
             icu::plurals::provider::OrdinalV1Marker::KEY,
         ],
         &SourceData::default()
-            .with_cldr_latest(CldrLocaleSubset::Full)
+            .with_cldr_latest(Default::default())
             .unwrap()
             .with_icuexport_latest()
             .unwrap(),

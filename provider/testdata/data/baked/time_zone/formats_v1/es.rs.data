@@ -9,20 +9,9 @@
     region_format_variants: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 24u8, 0u8, 104u8, 111u8, 114u8, 97u8, 114u8,
-                    105u8, 111u8, 32u8, 100u8, 101u8, 32u8, 118u8, 101u8, 114u8, 97u8, 110u8,
-                    111u8, 32u8, 100u8, 101u8, 32u8, 123u8, 48u8, 125u8, 104u8, 111u8, 114u8,
-                    97u8, 114u8, 105u8, 111u8, 32u8, 101u8, 115u8, 116u8, 195u8, 161u8, 110u8,
-                    100u8, 97u8, 114u8, 32u8, 100u8, 101u8, 32u8, 123u8, 48u8, 125u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x18\0horario de verano de {0}horario est\xC3\xA1ndar de {0}")
             },
         )
     },

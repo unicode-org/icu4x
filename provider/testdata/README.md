@@ -11,9 +11,6 @@ in ICU:
 * [`any`], [`any_no_fallback`]
 * [`buffer`], [`buffer_no_fallback`] (`buffer` Cargo feature)
 
-Additionally, the `metadata` Cargo feature exposes the [`versions`] module which contains
-the versions of CLDR and ICU used for this data, as well as the [`locales()`] function.
-
 ## Examples
 
 ```rust

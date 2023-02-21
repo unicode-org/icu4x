@@ -5,6 +5,9 @@
 Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 command-line utility.
 
+
+Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+
 ## Examples
 
 ### `build.rs`
@@ -29,14 +32,7 @@ fn main() {
 The command line interface can be installed with the `bin` Cargo feature.
 
 ```bash
-$ cargo install icu_datagen --features bin
-```
-
-If you need to export keys for experimental components,
-enable the `experimental` Cargo feature:
-
-```bash
-$ cargo install icu_datagen --features bin,experimental
+$ cargo install icu4x-datagen
 ```
 
 Once the tool is installed, you can invoke it like this:

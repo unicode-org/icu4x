@@ -115,7 +115,6 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
-        #[derive(PartialEq, Eq)]
         #[doc = #doc]
         #vis struct #ule_name #field_inits #semi
     );
@@ -140,6 +139,19 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         &ule_name,
         lt,
         input.span(),
+    );
+
+    let eq_impl = quote!(
+        impl core::cmp::PartialEq for #ule_name {
+            fn eq(&self, other: &Self) -> bool {
+                // The VarULE invariants allow us to assume that equality is byte equality
+                // in non-safety-critical contexts
+                <Self as zerovec::ule::VarULE>::as_byte_slice(&self)
+                == <Self as zerovec::ule::VarULE>::as_byte_slice(&other)
+            }
+        }
+
+        impl core::cmp::Eq for #ule_name {}
     );
 
     let zerofrom_fq_path =
@@ -221,6 +233,19 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         quote!()
     };
 
+    let maybe_hash = if attrs.hash {
+        quote!(
+            #[allow(clippy::derive_hash_xor_eq)]
+            impl core::hash::Hash for #ule_name {
+                fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
+                    state.write(<#ule_name as zerovec::ule::VarULE>::as_byte_slice(&self));
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
@@ -234,6 +259,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
         #maybe_ord_impls
 
+        #eq_impl
+
         #zmkv
 
         #maybe_ser
@@ -241,6 +268,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #maybe_de
 
         #maybe_debug
+
+        #maybe_hash
     )
 }
 
