@@ -26,6 +26,38 @@ fn get_enumerated_prop<'a>(
         .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
+fn get_prop_values_map(
+    source: &SourceData,
+    key: &str,
+) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError> {
+    let data = get_enumerated_prop(source, key)
+        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
+                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+    let mut map = BTreeMap::new();
+    for value in &data.values {
+        let discr = value.discr;
+        map.insert(
+            NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
+            discr,
+        );
+        if let Some(ref short) = value.short {
+            map.insert(
+                NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()),
+                discr,
+            );
+        }
+        for alias in &value.aliases {
+            map.insert(
+                NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()),
+                discr,
+            );
+        }
+    }
+    Ok(PropertyValueNameToEnumMapV1 {
+        map: map.into_iter().collect(),
+    })
+}
+
 macro_rules! expand {
     ($(($marker:ident, $names_marker:ident, $prop_name:literal)),+,) => {
         $(
@@ -57,21 +89,7 @@ macro_rules! expand {
             impl DataProvider<$names_marker> for crate::DatagenProvider
             {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
-                    let data = get_enumerated_prop(&self.source, $prop_name)
-                        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-                    let mut map = BTreeMap::new();
-                    for value in &data.values {
-                        let discr = value.discr;
-                        map.insert(NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()), discr);
-                        if let Some(ref short) = value.short {
-                            map.insert(NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()), discr);
-                        }
-                        for alias in &value.aliases {
-                            map.insert(NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()), discr);
-                        }
-                    }
-                    let data_struct = PropertyValueNameToEnumMapV1 { map: map.into_iter().collect() };
+                    let data_struct = get_prop_values_map(&self.source, $prop_name)?;
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
