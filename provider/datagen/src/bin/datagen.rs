@@ -2,17 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg, ArgGroup};
+use clap::{crate_authors, crate_version, App, Arg, ArgGroup};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
 fn main() -> eyre::Result<()> {
-    let matches = App::new("ICU4X Data Exporter")
-        .version("0.0.1")
-        .author("The ICU4X Project Developers")
-        .about("Export CLDR JSON into the ICU4X data schema")
+    let matches = App::new("icu4x-datagen")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()))
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")
@@ -367,16 +367,15 @@ fn main() -> eyre::Result<()> {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| PathBuf::from("icu4x_data"));
 
-            if mod_directory.exists() && matches.is_present("OVERWRITE") {
-                std::fs::remove_dir_all(&mod_directory)
-                    .with_context(|| mod_directory.to_string_lossy().into_owned())?;
-            }
+            let mut options = BakedOptions::default();
+            options.pretty = matches.is_present("PRETTY");
+            options.insert_feature_gates = matches.is_present("INSERT_FEATURE_GATES");
+            options.use_separate_crates = matches.is_present("USE_SEPARATE_CRATES");
+            options.overwrite = matches.is_present("OVERWRITE");
 
-            icu_datagen::Out::Module {
+            icu_datagen::Out::Baked {
                 mod_directory,
-                pretty: matches.is_present("PRETTY"),
-                insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-                use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
+                options,
             }
         }
         _ => unreachable!(),
