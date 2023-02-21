@@ -22,7 +22,7 @@ fn main() {
         &[icu::plurals::provider::CardinalV1Marker::KEY],
         &SourceData::default()
             .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Modern)
-            .expect("Source data should download successfully"),
+            .expect("Infallible"),
         vec![icu_datagen::Out::Baked {
             mod_directory,
             options,
