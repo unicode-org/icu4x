@@ -7,6 +7,7 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
 fn get_enumerated_prop<'a>(
@@ -25,8 +26,40 @@ fn get_enumerated_prop<'a>(
         .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
+fn get_prop_values_map(
+    source: &SourceData,
+    key: &str,
+) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError> {
+    let data = get_enumerated_prop(source, key)
+        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
+                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+    let mut map = BTreeMap::new();
+    for value in &data.values {
+        let discr = value.discr;
+        map.insert(
+            NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
+            discr,
+        );
+        if let Some(ref short) = value.short {
+            map.insert(
+                NormalizedPropertyNameStr::boxed_from_bytes(short.as_bytes()),
+                discr,
+            );
+        }
+        for alias in &value.aliases {
+            map.insert(
+                NormalizedPropertyNameStr::boxed_from_bytes(alias.as_bytes()),
+                discr,
+            );
+        }
+    }
+    Ok(PropertyValueNameToEnumMapV1 {
+        map: map.into_iter().collect(),
+    })
+}
+
 macro_rules! expand {
-    ($(($marker:ident, $prop_name:literal)),+,) => {
+    ($(($marker:ident, $names_marker:ident, $prop_name:literal)),+,) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider
             {
@@ -52,20 +85,60 @@ macro_rules! expand {
                     Ok(vec![Default::default()])
                 }
             }
+
+            impl DataProvider<$names_marker> for crate::DatagenProvider
+            {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
+                    let data_struct = get_prop_values_map(&self.source, $prop_name)?;
+                    Ok(DataResponse {
+                        metadata: DataResponseMetadata::default(),
+                        payload: Some(DataPayload::from_owned(data_struct)),
+                    })
+                }
+            }
+
+            impl IterableDataProvider<$names_marker> for crate::DatagenProvider {
+                fn supported_locales(
+                    &self,
+                ) -> Result<Vec<DataLocale>, DataError> {
+                    get_enumerated_prop(&self.source, $prop_name)?;
+                    Ok(vec![Default::default()])
+                }
+            }
         )+
     };
 }
 
 expand!(
-    (CanonicalCombiningClassV1Marker, "ccc"),
-    (GeneralCategoryV1Marker, "gc"),
-    (BidiClassV1Marker, "bc"),
-    (ScriptV1Marker, "sc"),
-    (EastAsianWidthV1Marker, "ea"),
-    (LineBreakV1Marker, "lb"),
-    (GraphemeClusterBreakV1Marker, "GCB"),
-    (WordBreakV1Marker, "WB"),
-    (SentenceBreakV1Marker, "SB"),
+    (
+        CanonicalCombiningClassV1Marker,
+        CanonicalCombiningClassNameToValueV1Marker,
+        "ccc"
+    ),
+    (
+        GeneralCategoryV1Marker,
+        GeneralCategoryNameToValueV1Marker,
+        "gc"
+    ),
+    (BidiClassV1Marker, BidiClassNameToValueV1Marker, "bc"),
+    (ScriptV1Marker, ScriptNameToValueV1Marker, "sc"),
+    (
+        EastAsianWidthV1Marker,
+        EastAsianWidthNameToValueV1Marker,
+        "ea"
+    ),
+    (LineBreakV1Marker, LineBreakNameToValueV1Marker, "lb"),
+    (
+        GraphemeClusterBreakV1Marker,
+        GraphemeClusterBreakNameToValueV1Marker,
+        "GCB"
+    ),
+    (WordBreakV1Marker, WordBreakNameToValueV1Marker, "WB"),
+    (
+        SentenceBreakV1Marker,
+        SentenceBreakNameToValueV1Marker,
+        "SB"
+    ),
 );
 
 #[cfg(test)]

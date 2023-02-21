@@ -255,7 +255,7 @@ macro_rules! load {
 #[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
 {
     load!();
 }
@@ -263,7 +263,7 @@ where
 #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
     // Necessary workaround bound (see `yoke::trait_hack` docs):
@@ -275,7 +275,7 @@ where
 #[cfg(all(feature = "any_provider", not(feature = "buffer_provider")))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
@@ -286,7 +286,7 @@ where
 #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
