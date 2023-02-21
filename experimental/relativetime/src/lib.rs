@@ -12,7 +12,6 @@
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 //! of the icu meta-crate. Use with caution.
 //! </div>
-//!
 
 #![warn(missing_docs)]
 

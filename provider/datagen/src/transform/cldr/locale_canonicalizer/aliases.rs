@@ -7,8 +7,9 @@ use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
 use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
-use zerovec::{ZeroMap, ZeroSlice};
+use zerovec::ZeroSlice;
 
 impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
@@ -68,28 +69,28 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // a special case, but we retain the catchall language category in case new or
         // customized CLDR data is used.
         let mut language_variants = Vec::new();
-        let mut sgn_region = ZeroMap::new();
-        let mut language_len2 = ZeroMap::new();
-        let mut language_len3 = ZeroMap::new();
+        let mut sgn_region = BTreeMap::<TinyAsciiStr<3>, _>::new();
+        let mut language_len2 = BTreeMap::new();
+        let mut language_len3 = BTreeMap::new();
         let mut language = Vec::new();
 
-        let mut script = ZeroMap::new();
+        let mut script = BTreeMap::new();
 
         // There are many more aliases for numeric region codes than for alphabetic,
         // so by storing them separately, we can minimize comparisons for alphabetic codes.
-        let mut region_alpha = ZeroMap::new();
-        let mut region_num = ZeroMap::new();
+        let mut region_alpha = BTreeMap::new();
+        let mut region_num = BTreeMap::new();
 
         // Complex regions are cases similar to the Soviet Union, where an old region
         // is replaced by multiple new regions. Determining the new region requires using
         // likely subtags. Many implementations preprocess the complex regions into simple
         // regions as part of data import, but that would introduce a dependency between
         // CDLR providers that we're not currently set up to handle.
-        let mut complex_region = ZeroMap::new();
+        let mut complex_region = BTreeMap::new();
 
-        let mut variant = ZeroMap::new();
+        let mut variant = BTreeMap::new();
 
-        let mut subdivision = ZeroMap::new();
+        let mut subdivision = BTreeMap::new();
 
         // Step 2. Capture all languageAlias rules where the type is an invalid languageId
         // into a set of BCP47 LegacyRules. This implementation discards these.
@@ -113,9 +114,9 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                             // common identifiers.
                             let lang: TinyAsciiStr<3> = langid.language.into();
                             if lang.len() == 2 {
-                                language_len2.insert(&lang.resize(), to.replacement.as_str());
+                                language_len2.insert(lang.resize(), to.replacement.as_str());
                             } else {
-                                language_len3.insert(&lang, to.replacement.as_str());
+                                language_len3.insert(lang, to.replacement.as_str());
                             }
                         }
                         // sgn-<region> -> <language>
@@ -126,7 +127,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                                 && replacement.region.is_none()
                                 && replacement.variants.is_empty() =>
                         {
-                            sgn_region.insert(&region.into(), &replacement.language);
+                            sgn_region.insert(region.into(), replacement.language);
                         }
                         _ => language.push((langid, replacement)),
                     }
@@ -146,7 +147,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
             }
 
             if let Ok(to) = to.replacement.parse::<subtags::Script>() {
-                script.insert(from, &to);
+                script.insert(from, to);
             }
         }
 
@@ -159,49 +160,40 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 
             if let Ok(replacement) = to.replacement.parse::<subtags::Region>() {
                 if from.is_ascii_alphabetic() {
-                    region_alpha.insert(&from.resize(), &replacement);
+                    region_alpha.insert(from.resize(), replacement);
                 } else {
-                    region_num.insert(from, &replacement);
+                    region_num.insert(from, replacement);
                 }
             } else {
                 complex_region.insert(
                     from,
-                    ZeroSlice::from_boxed_slice(
-                        to.replacement
-                            .split(' ')
-                            .into_iter()
-                            .filter_map(|r| r.parse::<subtags::Region>().ok())
-                            .collect::<Box<[_]>>(),
-                    )
-                    .as_ref(),
+                    to.replacement
+                        .split(' ')
+                        .into_iter()
+                        .filter_map(|r| r.parse::<subtags::Region>().ok())
+                        .collect::<Box<[_]>>(),
                 );
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.variant_aliases.iter() {
             if let Ok(to) = to.replacement.parse::<subtags::Variant>() {
-                variant.insert(from, &to);
+                variant.insert(from, to);
             }
         }
 
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
-            if let Some(replacement) = to
-                .replacement
-                .split(' ')
-                .into_iter()
-                .filter_map(|r| {
-                    if r.len() == 2 {
-                        // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
-                        // append "zzzz" to make this syntactically correct.
-                        let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
-                        <TinyAsciiStr<7>>::from_bytes(replacement.as_bytes()).ok()
-                    } else {
-                        <TinyAsciiStr<7>>::from_bytes(r.as_bytes()).ok()
-                    }
-                })
-                .next()
-            {
-                subdivision.insert(from, &replacement);
+            if let Some(replacement) = to.replacement.split(' ').into_iter().find_map(|r| {
+                if r.len() == 2 {
+                    // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
+                    // append "zzzz" to make this syntactically correct.
+                    let replacement = r.to_string().to_ascii_lowercase() + "zzzz";
+                    TinyAsciiStr::<7>::from_str(&replacement).ok()
+                } else {
+                    TinyAsciiStr::<7>::from_str(r).ok()
+                }
+            }) {
+                subdivision.insert(from, replacement);
             }
         }
 
@@ -209,42 +201,34 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         language_variants.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
         language.sort_unstable_by_key(|(langid, _)| appendix_c_cmp(langid));
 
-        let language_variants = zerovec::VarZeroVec::Owned(
-            zerovec::vecs::VarZeroVecOwned::try_from_elements(
-                &language_variants
-                    .into_iter()
-                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
-                    .collect::<Vec<_>>(),
-            )
-            .unwrap(),
-        );
-
-        let language = zerovec::VarZeroVec::Owned(
-            zerovec::vecs::VarZeroVecOwned::try_from_elements(
-                &language
-                    .into_iter()
-                    .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
-                    .collect::<Vec<_>>(),
-            )
-            .unwrap(),
-        );
+        let language_variants = language_variants
+            .iter()
+            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+            .collect::<Vec<_>>();
+        let language = language
+            .iter()
+            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+            .collect::<Vec<_>>();
 
         Self {
-            language_variants,
-            sgn_region,
-            language_len2,
-            language_len3,
-            language,
+            language_variants: language_variants.as_slice().into(),
+            sgn_region: sgn_region.into_iter().collect(),
+            language_len2: language_len2.into_iter().collect(),
+            language_len3: language_len3.into_iter().collect(),
+            language: language.as_slice().into(),
 
-            script,
+            script: script.into_iter().collect(),
 
-            region_alpha,
-            region_num,
-            complex_region,
+            region_alpha: region_alpha.into_iter().collect(),
+            region_num: region_num.into_iter().collect(),
+            complex_region: complex_region
+                .into_iter()
+                .map(|(k, v)| (k, ZeroSlice::from_boxed_slice(v)))
+                .collect(),
 
-            variant,
+            variant: variant.into_iter().collect(),
 
-            subdivision,
+            subdivision: subdivision.into_iter().collect(),
         }
     }
 }

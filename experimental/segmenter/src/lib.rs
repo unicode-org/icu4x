@@ -32,9 +32,8 @@
 //!```rust
 //! use icu::segmenter::LineSegmenter;
 //!
-//! let segmenter =
-//!     LineSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//! let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+//!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
@@ -54,9 +53,8 @@
 //!```rust
 //! use icu::segmenter::WordSegmenter;
 //!
-//! let segmenter =
-//!     WordSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//! let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+//!     .expect("Data exists");
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
@@ -105,7 +103,6 @@ pub mod provider;
 #[doc(hidden)]
 pub mod symbols;
 
-// Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]

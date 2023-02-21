@@ -391,7 +391,10 @@ where
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(M::KEY, req)?.downcast()
+        self.0
+            .load_any(M::KEY, req)?
+            .downcast()
+            .map_err(|e| e.with_req(M::KEY, req))
     }
 }
 
@@ -405,7 +408,10 @@ where
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(key, req)?.downcast()
+        self.0
+            .load_any(key, req)?
+            .downcast()
+            .map_err(|e| e.with_req(key, req))
     }
 }
 
@@ -428,7 +434,7 @@ mod test {
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
             "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
-            format!("{:?}", any_payload)
+            format!("{any_payload:?}")
         );
 
         struct WrongMarker;
@@ -440,7 +446,7 @@ mod test {
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
             "ICU4X data error: Mismatched types: tried to downcast with icu_provider::any::test::test_debug::WrongMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
-            format!("{}", err)
+            format!("{err}")
         );
     }
 

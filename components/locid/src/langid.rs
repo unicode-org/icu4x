@@ -307,7 +307,7 @@ impl LanguageIdentifier {
                 return false;
             }
         }
-        iter.next() == None
+        iter.next().is_none()
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

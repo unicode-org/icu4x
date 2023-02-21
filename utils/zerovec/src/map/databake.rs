@@ -43,16 +43,14 @@ fn test_baked_map() {
             #[allow(unused_unsafe)]
             crate::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 97u8,
-                        100u8, 98u8, 99u8,
-                    ])
+                    crate::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\0\0\x02\0\0\0adbc"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 69u8, 82u8,
-                        65u8, 49u8, 69u8, 82u8, 65u8, 48u8,
-                    ])
+                    crate::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\0\0\x04\0\0\0ERA1ERA0"
+                    )
                 },
             )
         },
@@ -68,16 +66,14 @@ fn test_baked_borrowed_map() {
             #[allow(unused_unsafe)]
             crate::maps::ZeroMapBorrowed::from_parts_unchecked(
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 97u8,
-                        100u8, 98u8, 99u8,
-                    ])
+                    crate::VarZeroSlice::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\0\0\x02\0\0\0adbc"
+                    )
                 },
                 unsafe {
-                    crate::VarZeroSlice::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 69u8, 82u8,
-                        65u8, 49u8, 69u8, 82u8, 65u8, 48u8,
-                    ])
+                    crate::VarZeroSlice::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\0\0\x04\0\0\0ERA1ERA0"
+                    )
                 },
             )
         },

@@ -6,7 +6,7 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use diplomat_runtime::{DiplomatResult, DiplomatWriteable};
+    use diplomat_runtime::DiplomatWriteable;
     use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 
     #[diplomat::opaque]
@@ -21,11 +21,10 @@ pub mod ffi {
         )]
         pub fn create_nfc(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XComposingNormalizer>, ICU4XError> {
-            ComposingNormalizer::try_new_nfc_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XComposingNormalizer(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XError> {
+            Ok(Box::new(ICU4XComposingNormalizer(
+                ComposingNormalizer::try_new_nfc_unstable(&provider.0)?,
+            )))
         }
 
         /// Construct a new ICU4XComposingNormalizer instance for NFKC
@@ -35,11 +34,10 @@ pub mod ffi {
         )]
         pub fn create_nfkc(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XComposingNormalizer>, ICU4XError> {
-            ComposingNormalizer::try_new_nfkc_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XComposingNormalizer(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XComposingNormalizer>, ICU4XError> {
+            Ok(Box::new(ICU4XComposingNormalizer(
+                ComposingNormalizer::try_new_nfkc_unstable(&provider.0)?,
+            )))
         }
 
         /// Normalize a (potentially ill-formed) UTF8 string
@@ -57,19 +55,10 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(
-            &self,
-            s: &str,
-            write: &mut DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             let s = s.as_bytes(); // #2520
-            let result = self
-                .0
-                .normalize_utf8_to(s, write)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
+            self.0.normalize_utf8_to(s, write)?;
+            Ok(())
         }
 
         /// Check if a (potentially ill-formed) UTF8 string is normalized
@@ -99,11 +88,10 @@ pub mod ffi {
         )]
         pub fn create_nfd(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
-            DecomposingNormalizer::try_new_nfd_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XDecomposingNormalizer(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
+            Ok(Box::new(ICU4XDecomposingNormalizer(
+                DecomposingNormalizer::try_new_nfd_unstable(&provider.0)?,
+            )))
         }
 
         /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
@@ -113,11 +101,10 @@ pub mod ffi {
         )]
         pub fn create_nfkd(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
-            DecomposingNormalizer::try_new_nfkd_unstable(&provider.0)
-                .map(|o| Box::new(ICU4XDecomposingNormalizer(o)))
-                .map_err(Into::into)
-                .into()
+        ) -> Result<Box<ICU4XDecomposingNormalizer>, ICU4XError> {
+            Ok(Box::new(ICU4XDecomposingNormalizer(
+                DecomposingNormalizer::try_new_nfkd_unstable(&provider.0)?,
+            )))
         }
 
         /// Normalize a (potentially ill-formed) UTF8 string
@@ -139,19 +126,10 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(
-            &self,
-            s: &str,
-            write: &mut DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
+        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             let s = s.as_bytes(); // #2520
-            let result = self
-                .0
-                .normalize_utf8_to(s, write)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
+            self.0.normalize_utf8_to(s, write)?;
+            Ok(())
         }
 
         /// Check if a (potentially ill-formed) UTF8 string is normalized

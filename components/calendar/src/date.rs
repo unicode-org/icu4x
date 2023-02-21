@@ -33,7 +33,7 @@ impl<C: Calendar> AsCalendar for Rc<C> {
     type Calendar = C;
     #[inline]
     fn as_calendar(&self) -> &C {
-        &*self
+        self
     }
 }
 
@@ -41,7 +41,7 @@ impl<C: Calendar> AsCalendar for Arc<C> {
     type Calendar = C;
     #[inline]
     fn as_calendar(&self) -> &C {
-        &*self
+        self
     }
 }
 

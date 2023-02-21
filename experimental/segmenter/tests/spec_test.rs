@@ -107,7 +107,7 @@ impl Iterator for TestContentIterator {
 fn run_line_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
     let segmenter =
-        LineSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -139,7 +139,7 @@ fn run_line_break_test() {
 fn run_word_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
     let segmenter =
-        WordSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

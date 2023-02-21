@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
         GraphemeClusterBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
@@ -34,15 +33,19 @@ pub mod ffi {
     pub struct ICU4XWordBreakIteratorLatin1<'a>(WordBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XWordSegmenter {
-        /// Construct an [`ICU4XWordSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_unstable, FnInStruct)]
-        pub fn create(
+        /// Construct an [`ICU4XWordSegmenter`] with automatically selecting the best available LSTM
+        /// or dictionary payload data.
+        ///
+        /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
+        /// Khmer, Lao, and Thai.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_auto_unstable, FnInStruct)]
+        pub fn create_auto(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XWordSegmenter>, ICU4XError> {
-            Self::try_new_impl(&provider.0)
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+            Self::try_new_auto_impl(&provider.0)
         }
 
-        fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XWordSegmenter>, ICU4XError>
+        fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
@@ -50,10 +53,57 @@ pub mod ffi {
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
-            WordSegmenter::try_new_unstable(provider)
-                .map(|o| Box::new(ICU4XWordSegmenter(o)))
-                .map_err(Into::into)
-                .into()
+            Ok(Box::new(ICU4XWordSegmenter(
+                WordSegmenter::try_new_auto_unstable(provider)?,
+            )))
+        }
+
+        /// Construct an [`ICU4XWordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+        /// Thai.
+        ///
+        /// Warning: [`ICU4XWordSegmenter`] created by this function doesn't handle Chinese or
+        /// Japanese.
+        #[diplomat::rust_link(icu::segmenter::WordSegmenter::try_new_lstm_unstable, FnInStruct)]
+        pub fn create_lstm(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+            Self::try_new_lstm_impl(&provider.0)
+        }
+
+        fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
+        where
+            D: DataProvider<WordBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XWordSegmenter(
+                WordSegmenter::try_new_lstm_unstable(provider)?,
+            )))
+        }
+
+        /// Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
+        /// Burmese, Khmer, Lao, and Thai.
+        #[diplomat::rust_link(
+            icu::segmenter::WordSegmenter::try_new_dictionary_unstable,
+            FnInStruct
+        )]
+        pub fn create_dictionary(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XWordSegmenter>, ICU4XError> {
+            Self::try_new_dictionary_impl(&provider.0)
+        }
+
+        fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
+        where
+            D: DataProvider<WordBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<GraphemeClusterBreakDataV1Marker>
+                + ?Sized,
+        {
+            Ok(Box::new(ICU4XWordSegmenter(
+                WordSegmenter::try_new_dictionary_unstable(provider)?,
+            )))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.

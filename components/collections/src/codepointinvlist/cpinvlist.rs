@@ -72,8 +72,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
                             (Some(single), None, None, None) => (single as u32, single as u32 + 1),
                             (Some(start), Some('-'), Some(end), None) => (start as u32, end as u32 + 1),
                             _ => return Err(Error::custom(format!(
-                                "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
-                                range
+                                "Cannot deserialize invalid inversion list for CodePointInversionList: {range:?}"
                             )))
                         };
                         inv_list.with_mut(|v| {
@@ -89,8 +88,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
         };
         CodePointInversionList::try_from_inversion_list(parsed_inv_list).map_err(|e| {
             Error::custom(format!(
-                "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
-                e
+                "Cannot deserialize invalid inversion list for CodePointInversionList: {e:?}"
             ))
         })
     }
@@ -878,20 +876,19 @@ mod tests {
 
     #[test]
     fn test_uniset_to_inv_list() {
-        let inv_list: Vec<u32> = vec![
+        let inv_list = [
             0x9, 0xE, 0x20, 0x21, 0x85, 0x86, 0xA0, 0xA1, 0x1626, 0x1627, 0x2000, 0x2003, 0x2028,
             0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
-        let inv_list_clone = (&inv_list).clone();
         let s: CodePointInversionList =
-            CodePointInversionList::try_from_inversion_list_slice(&inv_list_clone).unwrap();
+            CodePointInversionList::try_from_inversion_list_slice(&inv_list).unwrap();
         let round_trip_inv_list = s.get_inversion_list_vec();
         assert_eq!(round_trip_inv_list, inv_list);
     }
 
     #[test]
     fn test_serde_serialize() {
-        let inv_list = vec![0x41, 0x46, 0x4B, 0x55];
+        let inv_list = [0x41, 0x46, 0x4B, 0x55];
         let uniset = CodePointInversionList::try_from_inversion_list_slice(&inv_list).unwrap();
         let json_str = serde_json::to_string(&uniset).unwrap();
         assert_eq!(json_str, r#"["A-E","K-T"]"#);
@@ -900,7 +897,7 @@ mod tests {
     #[test]
     fn test_serde_deserialize() {
         let inv_list_str = r#"["A-E","K-T"]"#;
-        let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
+        let exp_inv_list = [0x41, 0x46, 0x4B, 0x55];
         let exp_uniset =
             CodePointInversionList::try_from_inversion_list_slice(&exp_inv_list).unwrap();
         let act_uniset: CodePointInversionList = serde_json::from_str(inv_list_str).unwrap();
@@ -910,7 +907,7 @@ mod tests {
     #[test]
     fn test_serde_deserialize_legacy() {
         let inv_list_str = "[65,70,75,85]";
-        let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
+        let exp_inv_list = [0x41, 0x46, 0x4B, 0x55];
         let exp_uniset =
             CodePointInversionList::try_from_inversion_list_slice(&exp_inv_list).unwrap();
         let act_uniset: CodePointInversionList = serde_json::from_str(inv_list_str).unwrap();
@@ -946,10 +943,9 @@ mod tests {
                 #[allow(unused_unsafe)]
                 crate::codepointinvlist::CodePointInversionList::from_parts_unchecked(
                     unsafe {
-                        ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                            48u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 65u8, 0u8, 0u8, 0u8, 71u8,
-                            0u8, 0u8, 0u8, 97u8, 0u8, 0u8, 0u8, 103u8, 0u8, 0u8, 0u8,
-                        ])
+                        ::zerovec::ZeroVec::from_bytes_unchecked(
+                            b"0\0\0\0:\0\0\0A\0\0\0G\0\0\0a\0\0\0g\0\0\0"
+                        )
                     },
                     22usize,
                 )

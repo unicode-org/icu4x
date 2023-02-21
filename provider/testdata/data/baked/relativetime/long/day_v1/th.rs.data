@@ -2,24 +2,9 @@
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[254u8, 255u8, 0u8, 1u8, 2u8]) },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFE\xFF\0\x01\x02") },
             unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    5u8, 0u8, 0u8, 0u8, 0u8, 0u8, 33u8, 0u8, 57u8, 0u8, 75u8, 0u8, 99u8, 0u8,
-                    224u8, 185u8, 128u8, 224u8, 184u8, 161u8, 224u8, 184u8, 183u8, 224u8,
-                    185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8, 167u8, 224u8, 184u8,
-                    178u8, 224u8, 184u8, 153u8, 224u8, 184u8, 139u8, 224u8, 184u8, 183u8,
-                    224u8, 184u8, 153u8, 224u8, 185u8, 128u8, 224u8, 184u8, 161u8, 224u8,
-                    184u8, 183u8, 224u8, 185u8, 136u8, 224u8, 184u8, 173u8, 224u8, 184u8,
-                    167u8, 224u8, 184u8, 178u8, 224u8, 184u8, 153u8, 224u8, 184u8, 167u8,
-                    224u8, 184u8, 177u8, 224u8, 184u8, 153u8, 224u8, 184u8, 153u8, 224u8,
-                    184u8, 181u8, 224u8, 185u8, 137u8, 224u8, 184u8, 158u8, 224u8, 184u8,
-                    163u8, 224u8, 184u8, 184u8, 224u8, 185u8, 136u8, 224u8, 184u8, 135u8,
-                    224u8, 184u8, 153u8, 224u8, 184u8, 181u8, 224u8, 185u8, 137u8, 224u8,
-                    184u8, 161u8, 224u8, 184u8, 176u8, 224u8, 184u8, 163u8, 224u8, 184u8,
-                    183u8, 224u8, 184u8, 153u8, 224u8, 184u8, 153u8, 224u8, 184u8, 181u8,
-                    224u8, 185u8, 137u8,
-                ])
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x05\0\0\0\0\0!\09\0K\0c\0\xE0\xB9\x80\xE0\xB8\xA1\xE0\xB8\xB7\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\x8B\xE0\xB8\xB7\xE0\xB8\x99\xE0\xB9\x80\xE0\xB8\xA1\xE0\xB8\xB7\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\xA7\xE0\xB8\xB2\xE0\xB8\x99\xE0\xB8\xA7\xE0\xB8\xB1\xE0\xB8\x99\xE0\xB8\x99\xE0\xB8\xB5\xE0\xB9\x89\xE0\xB8\x9E\xE0\xB8\xA3\xE0\xB8\xB8\xE0\xB9\x88\xE0\xB8\x87\xE0\xB8\x99\xE0\xB8\xB5\xE0\xB9\x89\xE0\xB8\xA1\xE0\xB8\xB0\xE0\xB8\xA3\xE0\xB8\xB7\xE0\xB8\x99\xE0\xB8\x99\xE0\xB8\xB5\xE0\xB9\x89")
             },
         )
     },
