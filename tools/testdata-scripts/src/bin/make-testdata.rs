@@ -47,13 +47,14 @@ fn main() {
         File::create(out_dir.join("testdata.postcard")).unwrap(),
     ));
 
-    let _ = std::fs::remove_dir_all(out_dir.join("baked"));
-
-    let mod_out = icu_datagen::Out::Module {
+    let mut options = BakedOptions::default();
+    options.pretty = true;
+    options.insert_feature_gates = true;
+    options.use_separate_crates = true;
+    options.overwrite = true;
+    let mod_out = Out::Baked {
         mod_directory: out_dir.join("baked"),
-        pretty: true,
-        insert_feature_gates: true,
-        use_separate_crates: true,
+        options,
     };
 
     icu_datagen::datagen(
