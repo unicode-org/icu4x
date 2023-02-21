@@ -10,11 +10,9 @@
 name: Build Daily on Main
 
 on:
-  push:
-    branches: [ main ]
   schedule:
-    # Run this CI every day at 13 UTC / 5AM PST / 2PM CET
-    - cron:  '0 13 * * *'
+    # Run this CI every day at 12 UTC / 4AM PST / 1PM CET
+    - cron:  '0 12 * * *'
 
 jobs:
   test-cargo-tutorial-cratesio:
