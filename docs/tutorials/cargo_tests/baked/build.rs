@@ -10,9 +10,10 @@ fn main() {
 
     let out_dir = std::env::var_os("OUT_DIR").unwrap();
     let mod_directory = PathBuf::from(out_dir).join("baked_data");
-    
-    // TODO(#3046): We shouldn't need to do this since it worked in 1.0
-    let _ = std::fs::remove_dir_all(&mod_directory);
+
+    let mut options = BakedOptions::default();
+    // Overwrite the baked data if it was already present:
+    options.overwrite = true;
 
 
     icu_datagen::datagen(
@@ -22,13 +23,9 @@ fn main() {
         &SourceData::default()
             .with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, CldrLocaleSubset::Modern)
             .expect("Source data should download successfully"),
-        vec![icu_datagen::Out::Module {
-            // For more information on these options, see:
-            // <https://icu4x.unicode.org/doc/icu_datagen/enum.Out.html#variant.Module>
+        vec![icu_datagen::Out::Baked {
             mod_directory,
-            pretty: false,
-            insert_feature_gates: false,
-            use_separate_crates: false,
+            options,
         }],
     )
     .expect("Datagen should be successful");
