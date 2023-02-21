@@ -11,6 +11,31 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Bidi_Class"
 short_name = "bc"
+values = [
+  {discr = 0, long = "Left_To_Right", short = "L"},
+  {discr = 1, long = "Right_To_Left", short = "R"},
+  {discr = 2, long = "European_Number", short = "EN"},
+  {discr = 3, long = "European_Separator", short = "ES"},
+  {discr = 4, long = "European_Terminator", short = "ET"},
+  {discr = 5, long = "Arabic_Number", short = "AN"},
+  {discr = 6, long = "Common_Separator", short = "CS"},
+  {discr = 7, long = "Paragraph_Separator", short = "B"},
+  {discr = 8, long = "Segment_Separator", short = "S"},
+  {discr = 9, long = "White_Space", short = "WS"},
+  {discr = 10, long = "Other_Neutral", short = "ON"},
+  {discr = 11, long = "Left_To_Right_Embedding", short = "LRE"},
+  {discr = 12, long = "Left_To_Right_Override", short = "LRO"},
+  {discr = 13, long = "Arabic_Letter", short = "AL"},
+  {discr = 14, long = "Right_To_Left_Embedding", short = "RLE"},
+  {discr = 15, long = "Right_To_Left_Override", short = "RLO"},
+  {discr = 16, long = "Pop_Directional_Format", short = "PDF"},
+  {discr = 17, long = "Nonspacing_Mark", short = "NSM"},
+  {discr = 18, long = "Boundary_Neutral", short = "BN"},
+  {discr = 19, long = "First_Strong_Isolate", short = "FSI"},
+  {discr = 20, long = "Left_To_Right_Isolate", short = "LRI"},
+  {discr = 21, long = "Right_To_Left_Isolate", short = "RLI"},
+  {discr = 22, long = "Pop_Directional_Isolate", short = "PDI"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x8, v=18, name="BN"},

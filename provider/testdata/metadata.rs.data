@@ -67,4 +67,4 @@ pub const LOCALES: &[LanguageIdentifier] = &[
 pub const CLDR_JSON_GITREF: &str = "42.0.0";
 
 // Git tag or sha1 for the ICU data used to generate the testdata.
-pub const ICUEXPORTDATA_GITREF: &str = "release-72-1";
+pub const ICUEXPORTDATA_GITREF: &str = "icu4x/2023-02-09/72.x";

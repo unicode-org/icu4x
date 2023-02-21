@@ -11,6 +11,38 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "General_Category"
 short_name = "gc"
+values = [
+  {discr = 0, long = "Unassigned", short = "Cn"},
+  {discr = 1, long = "Uppercase_Letter", short = "Lu"},
+  {discr = 2, long = "Lowercase_Letter", short = "Ll"},
+  {discr = 3, long = "Titlecase_Letter", short = "Lt"},
+  {discr = 4, long = "Modifier_Letter", short = "Lm"},
+  {discr = 5, long = "Other_Letter", short = "Lo"},
+  {discr = 6, long = "Nonspacing_Mark", short = "Mn"},
+  {discr = 7, long = "Enclosing_Mark", short = "Me"},
+  {discr = 8, long = "Spacing_Mark", short = "Mc"},
+  {discr = 9, long = "Decimal_Number", short = "Nd", aliases = ["digit"]},
+  {discr = 10, long = "Letter_Number", short = "Nl"},
+  {discr = 11, long = "Other_Number", short = "No"},
+  {discr = 12, long = "Space_Separator", short = "Zs"},
+  {discr = 13, long = "Line_Separator", short = "Zl"},
+  {discr = 14, long = "Paragraph_Separator", short = "Zp"},
+  {discr = 15, long = "Control", short = "Cc", aliases = ["cntrl"]},
+  {discr = 16, long = "Format", short = "Cf"},
+  {discr = 17, long = "Private_Use", short = "Co"},
+  {discr = 18, long = "Surrogate", short = "Cs"},
+  {discr = 19, long = "Dash_Punctuation", short = "Pd"},
+  {discr = 20, long = "Open_Punctuation", short = "Ps"},
+  {discr = 21, long = "Close_Punctuation", short = "Pe"},
+  {discr = 22, long = "Connector_Punctuation", short = "Pc"},
+  {discr = 23, long = "Other_Punctuation", short = "Po"},
+  {discr = 24, long = "Math_Symbol", short = "Sm"},
+  {discr = 25, long = "Currency_Symbol", short = "Sc"},
+  {discr = 26, long = "Modifier_Symbol", short = "Sk"},
+  {discr = 27, long = "Other_Symbol", short = "So"},
+  {discr = 28, long = "Initial_Punctuation", short = "Pi"},
+  {discr = 29, long = "Final_Punctuation", short = "Pf"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x1f, v=15, name="Cc"},
