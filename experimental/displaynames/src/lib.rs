@@ -23,8 +23,8 @@ pub mod displaynames;
 pub mod options;
 pub mod provider;
 
-pub use displaynames::DisplayNames;
-pub use displaynames::DisplayNamesType;
+pub use displaynames::LanguageDisplayNames;
+pub use displaynames::RegionDisplayNames;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;

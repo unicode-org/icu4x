@@ -4,20 +4,20 @@
 
 //! Options for [`DisplayNames`](crate::DisplayNames).
 
-/// A bag of options defining how region codes will be translated by
+/// A bag of options defining how region or language codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
 ///
 /// # Example
 ///
 /// ```
 /// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_displaynames::displaynames::RegionDisplayNames;
 /// use icu_locid::locale;
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
 /// options.style = Style::Short;
-/// let display_name = DisplayNames::try_new_region_unstable(
+/// let display_name = RegionDisplayNames::try_new_region_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -26,16 +26,16 @@
 ///
 /// let region_code = "BA";
 /// assert_eq!(display_name.of(&region_code), Some("Bosnia"));
-/// 
+///
 /// ```
 /// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::DisplayNames;
+/// use icu_displaynames::displaynames::LanguageDisplayNames;
 /// use icu_locid::locale;
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
 /// options.style = Style::Short;
-/// let display_name = DisplayNames::try_new_language_unstable(
+/// let display_name = LanguageDisplayNames::try_new_language_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -67,11 +67,12 @@ pub enum Style {
     Short,
     Long,
     Menu,
+    None,
 }
 
 impl Default for Style {
     fn default() -> Self {
-        Self::Long
+        Self::None
     }
 }
 
