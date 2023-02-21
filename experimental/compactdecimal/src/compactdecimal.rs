@@ -485,13 +485,14 @@ impl CompactDecimalFormatter {
     }
 }
 
+#[cfg(feature = "serde")]
 #[cfg(test)]
 mod tests {
     use super::*;
     use icu_locid::locale;
     use writeable::assert_writeable_eq;
 
-    #[cfg(feature = "serde")]
+    #[allow(non_snake_case)]
     #[test]
     fn test_grouping() {
         // https://unicode-org.atlassian.net/browse/ICU-22254
@@ -499,28 +500,45 @@ mod tests {
         struct TestCase<'a> {
             short: bool,
             options: CompactDecimalFormatterOptions,
-            expected: &'a str,
+            expected1T: &'a str,
+            expected10T: &'a str,
         }
         let cases = [
             TestCase {
                 short: true,
                 options: Default::default(),
-                expected: "1000T",
+                expected1T: "1000T",
+                expected10T: "10,000T",
             },
             TestCase {
                 short: true,
                 options: GroupingStrategy::Always.into(),
-                expected: "1,000T",
+                expected1T: "1,000T",
+                expected10T: "10,000T",
+            },
+            TestCase {
+                short: true,
+                options: GroupingStrategy::Never.into(),
+                expected1T: "1000T",
+                expected10T: "10000T",
             },
             TestCase {
                 short: false,
                 options: Default::default(),
-                expected: "1000 trillion",
+                expected1T: "1000 trillion",
+                expected10T: "10,000 trillion",
             },
             TestCase {
                 short: false,
                 options: GroupingStrategy::Always.into(),
-                expected: "1,000 trillion",
+                expected1T: "1,000 trillion",
+                expected10T: "10,000 trillion",
+            },
+            TestCase {
+                short: false,
+                options: GroupingStrategy::Never.into(),
+                expected1T: "1000 trillion",
+                expected10T: "10000 trillion",
             },
         ];
         for case in cases {
@@ -539,8 +557,10 @@ mod tests {
                 )
             }
             .unwrap();
-            let result = formatter.format_i64(1_000_000_000_000_000);
-            assert_writeable_eq!(result, case.expected, "{:?}", case);
+            let result1T = formatter.format_i64(1_000_000_000_000_000);
+            assert_writeable_eq!(result1T, case.expected1T, "{:?}", case);
+            let result10T = formatter.format_i64(10_000_000_000_000_000);
+            assert_writeable_eq!(result10T, case.expected10T, "{:?}", case);
         }
     }
 }
