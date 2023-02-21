@@ -133,6 +133,8 @@ where
 }
 
 // Usage example:
+// While HelloWorldProvider does not need to be cached, more expensive providers, like
+// deserializing BufferProviders, or providers doing I/O, should be.
 let provider = HelloWorldProvider;
 let lru_capacity = 100usize.try_into().unwrap();
 let provider = LruDataCache {

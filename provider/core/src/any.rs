@@ -323,7 +323,7 @@ where
 ///     },
 /// );
 ///
-/// // Downcast automatically
+/// // Downcasting automatically
 /// let downcasting_provider: &dyn DataProvider<HelloWorldV1Marker> =
 ///     &any_provider.as_downcasting();
 ///
