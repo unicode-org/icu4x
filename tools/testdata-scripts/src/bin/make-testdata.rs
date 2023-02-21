@@ -87,7 +87,7 @@ fn main() {
         .unwrap();
 
     let locales = databake::Bake::bake(LOCALES, &Default::default());
-    // /provider/datagen/tests/data corresponds to these tags.
+    // repodata corresponds to these tags.
     let cldr_tag = SourceData::LATEST_TESTED_CLDR_TAG;
     let icu_tag = SourceData::LATEST_TESTED_ICUEXPORT_TAG;
 
