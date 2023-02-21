@@ -1,4 +1,4 @@
-# demo_testdata [![crates.io](https://img.shields.io/crates/v/demo_testdata)](https://crates.io/crates/demo_testdata)
+# tutorial_testdata [![crates.io](https://img.shields.io/crates/v/tutorial_testdata)](https://crates.io/crates/tutorial_testdata)
 
 This is a demo project using test data.
 

@@ -1,4 +1,4 @@
-# demo_buffer [![crates.io](https://img.shields.io/crates/v/demo_buffer)](https://crates.io/crates/demo_buffer)
+# tutorial_buffer [![crates.io](https://img.shields.io/crates/v/tutorial_buffer)](https://crates.io/crates/tutorial_buffer)
 
 This is a demo project using blob data.
 

@@ -183,7 +183,6 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
-
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci

@@ -1,4 +1,4 @@
-# demo_lazy_static [![crates.io](https://img.shields.io/crates/v/demo_lazy_static)](https://crates.io/crates/demo_lazy_static)
+# tutorial_lazy_static [![crates.io](https://img.shields.io/crates/v/tutorial_lazy_static)](https://crates.io/crates/tutorial_lazy_static)
 
 This is a demo project using test data and a lazy_static.
 
