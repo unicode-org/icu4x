@@ -64,9 +64,9 @@ impl AdditiveIdentity {
 
 ## Loading Additional Data at Runtime
 
-A key feature of ICU4X is the ability to download data dynamically. A key use case is to add additional locales at runtime.
+A key feature of ICU4X is the ability to download data dynamically, allowing clients to load additional locales at runtime.
 
-Dynamic data loading can currently be performed in userland. A future core library API may provide this functionality; please submit feedback in [#2985](https://github.com/unicode-org/icu4x/issues/2985).
+Dynamic data loading can currently be performed in user code. A future core library API may provide this functionality; please submit feedback in [#2985](https://github.com/unicode-org/icu4x/issues/2985).
 
 ```rust
 use icu_provider_adapters::either::EitherProvider;
@@ -80,33 +80,16 @@ use icu_provider::DataLocale;
 use icu_provider::hello_world::HelloWorldFormatter;
 use icu::locid::locale;
 use icu::locid::subtags::Language;
-use std::path::PathBuf;
+use std::path::Path;
 use writeable::Writeable;
 
-// Our growable data provider will be a fallback-enabled ForkByKeyProvider forking between a
-// BlobDataProvider with static core data and a MultiForkByErrorProvider with runtime-loaded data.
-type GrowableDataProvider = LocaleFallbackProvider<
-    ForkByKeyProvider<
-        BlobDataProvider,
-        MultiForkByErrorProvider<FsDataProvider, MissingLocalePredicate>
-    >
->;
-
 // Create the empty MultiForkByErrorProvider:
-let multi_lang_provider = MultiForkByErrorProvider::new_with_predicate(
+let mut provider = MultiForkByErrorProvider::new_with_predicate(
     vec![],
     MissingLocalePredicate
 );
 
-// Put together the rest of the data pipeline:
-static CORE_DATA: &[u8] = include_bytes!("../../../provider/adapters/tests/data/fallback.postcard");
-let provider = BlobDataProvider::try_new_from_static_blob(CORE_DATA)
-    .expect("Core data should be valid");
-let provider = ForkByKeyProvider::new(provider, multi_lang_provider);
-let mut provider: GrowableDataProvider = LocaleFallbackProvider::try_new_with_buffer_provider(provider)
-    .expect("Fallback data is in core data");
-
-// Helper function to add data into the GrowableDataProvider on demand:
+// Helper function to add data into the growable provider on demand:
 let mut get_hello_world_formatter = |loc: &DataLocale| {
     // Try to create the formatter a first time with data that has already been loaded.
     if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
@@ -123,19 +106,19 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     };
     println!("Successfully loaded: {:?}", loc);
 
-    // Add the data to the GrowableDataProvider and try creating the formatter a second time.
-    provider.inner_mut().inner_mut().1.push(lang_provider);
+    // Add the data to the growable provider and try creating the formatter a second time.
+    provider.push(lang_provider);
     HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc)
         .expect("Language data should now be available")
 };
 
 // Test that it works:
 assert_eq!(
-    get_hello_world_formatter(&locale!("de-CH").into()).format().write_to_string(),
+    get_hello_world_formatter(&locale!("de").into()).format().write_to_string(),
     "Hallo Welt"
 );
 assert_eq!(
-    get_hello_world_formatter(&locale!("ro-RO").into()).format().write_to_string(),
+    get_hello_world_formatter(&locale!("ro").into()).format().write_to_string(),
     "Salut, lume"
 );
 ```
