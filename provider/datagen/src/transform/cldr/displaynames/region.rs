@@ -83,7 +83,7 @@ mod tests {
     fn test_basic() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<RegionDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -102,7 +102,7 @@ mod tests {
     fn test_basic_short_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<RegionDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),

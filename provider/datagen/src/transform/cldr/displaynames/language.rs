@@ -96,7 +96,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -118,7 +118,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -140,7 +140,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -162,7 +162,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNameToValueV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
