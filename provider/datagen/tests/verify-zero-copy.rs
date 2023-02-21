@@ -47,9 +47,9 @@ fn main() {
 
     let converter = DatagenProvider {
         source: SourceData::default()
-            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
+            .with_cldr(repodata::paths::cldr(), Default::default())
             .unwrap()
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+            .with_icuexport(repodata::paths::icuexport())
             .unwrap(),
     }
     .filterable("icu4x-datagen locales")
