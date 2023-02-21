@@ -11,11 +11,11 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use tinystr::TinyStrError;
 
-impl DataProvider<RegionDisplayNameToValueV1Marker> for crate::DatagenProvider {
+impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<RegionDisplayNameToValueV1Marker>, DataError> {
+    ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::region_displaynames::Resource =
@@ -35,7 +35,7 @@ impl DataProvider<RegionDisplayNameToValueV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<RegionDisplayNameToValueV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source

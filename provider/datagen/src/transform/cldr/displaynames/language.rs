@@ -10,11 +10,11 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LanguageDisplayNameToValueV1Marker> for crate::DatagenProvider {
+impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LanguageDisplayNameToValueV1Marker>, DataError> {
+    ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::language_displaynames::Resource = self
@@ -34,7 +34,7 @@ impl DataProvider<LanguageDisplayNameToValueV1Marker> for crate::DatagenProvider
     }
 }
 
-impl IterableDataProvider<LanguageDisplayNameToValueV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
