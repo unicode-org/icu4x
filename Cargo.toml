@@ -60,7 +60,7 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
-# Note: Workspaces in subdirectories, such as docs/tutorials/cargo_tests, are
+# Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
 # implicitly excluded from the main workspace.
 exclude = [
     # This crate uses datagen which requires downloading ZIP files during build,

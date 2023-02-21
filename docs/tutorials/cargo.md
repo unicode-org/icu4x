@@ -14,7 +14,7 @@ icu_testdata = "1.1"
 
 In your main.rs, you can use all stable ICU4X components in the small number of test locales available in `icu_testdata`.
 
-[« Fully Working Example »](./cargo_tests/testdata)
+[« Fully Working Example »](./crates/testdata)
 
 ## Cargo.toml with experimental testdata
 
@@ -28,7 +28,7 @@ icu_testdata = { version = "1.1", features = ["icu_segmenter"] }
 
 In your main.rs, you can now use the experimental `icu::segmenter` module.
 
-[« Fully Working Example »](./cargo_tests/experimental)
+[« Fully Working Example »](./crates/experimental)
 
 ## Cargo.toml with Buffer Provider
 
@@ -42,7 +42,7 @@ icu_provider_blob = "1.1"
 
 To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).
 
-[« Fully Working Example »](./cargo_tests/buffer)
+[« Fully Working Example »](./crates/buffer)
 
 ## Cargo.toml with Baked Provider and build.rs
 
@@ -64,7 +64,7 @@ This example has an additional section for auto-generating the data in build.rs.
 
 Use caution with the build.rs approach since it will make your build.rs file access the network and therefore be potentially non-deterministic. As an alternative, you can remove the `build-dependencies` section,  invoke `icu4x-datagen` manually, and check in the output to your version control. See [data_management.md](./data_management.md) for more information.
 
-[« Fully Working Example »](./cargo_tests/baked)
+[« Fully Working Example »](./crates/baked)
 
 ## Cargo.toml with Thread Safety (Lazy Static)
 
@@ -79,4 +79,4 @@ icu_provider = { version = "1.1", features = ["sync"] }
 
 You can now use most ICU4X types when `Send + Sync` are required, such as when persisting them in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).
 
-[« Fully Working Example »](./cargo_tests/lazy_static)
+[« Fully Working Example »](./crates/lazy_static)

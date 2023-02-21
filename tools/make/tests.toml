@@ -42,7 +42,7 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd docs/tutorials/cargo_tests
+cd docs/tutorials/crates
 
 exec --fail-on-error cargo --config patch.toml clippy -p tutorial_baked -- -D warnings
 exec --fail-on-error cargo --config patch.toml clippy -p tutorial_buffer -- -D warnings
@@ -63,7 +63,7 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu_datagen
 
-cd docs/tutorials/cargo_tests
+cd docs/tutorials/crates
 
 # Build the postcard file
 # Copy our own icu4x-datagen and tutorial_buffer to speed up the task
@@ -88,7 +88,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials/cargo_tests
+cd docs/tutorials/crates
 
 # Delete the lockfile to make a clean crates.io build
 rm -f Cargo.lock
