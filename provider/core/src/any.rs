@@ -73,7 +73,7 @@ impl DataMarker for AnyMarker {
 
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
@@ -90,7 +90,7 @@ impl AnyPayload {
     /// the type stored in the `AnyPayload`.
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -118,7 +118,7 @@ impl AnyPayload {
     /// Clones and then transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -162,7 +162,7 @@ impl AnyPayload {
 
 impl<M> DataPayload<M>
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Moves this DataPayload to the heap (requiring an allocation) and returns it as an
@@ -200,7 +200,7 @@ impl DataPayload<AnyMarker> {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -247,7 +247,7 @@ impl AnyResponse {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -261,7 +261,7 @@ impl AnyResponse {
     /// Clones and then transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -279,7 +279,7 @@ impl AnyResponse {
 
 impl<M> DataResponse<M>
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
@@ -384,7 +384,7 @@ where
 impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
@@ -401,7 +401,7 @@ where
 impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: DataMarker + 'static,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,

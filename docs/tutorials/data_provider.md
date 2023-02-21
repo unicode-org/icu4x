@@ -104,7 +104,7 @@ impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
 
 impl<M, P> DataProvider<M> for LruDataCache<P>
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: icu_provider::MaybeSendSync,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
