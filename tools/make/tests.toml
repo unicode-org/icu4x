@@ -39,11 +39,11 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials/cargo_tests
-rm -f Cargo.lock
-
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
+
+cd docs/tutorials/cargo_tests
+rm -f Cargo.lock
 
 exec --fail-on-error cargo --config patch.toml clippy -p tutorial_baked -- -D warnings
 exec --fail-on-error cargo --config patch.toml clippy -p tutorial_buffer -- -D warnings
@@ -59,23 +59,28 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
+project_dir = pwd
+set_env CARGO_TARGET_DIR ${project_dir}/target
+
+exec --fail-on-error cargo build -p icu_datagen
+
 cd docs/tutorials/cargo_tests
 rm -f Cargo.lock
 
-pwd = pwd
-set_env CARGO_TARGET_DIR ${pwd}/target
-
 # Build the postcard file
-exec --fail-on-error cargo --config patch.toml build --release -p tutorial_buffer
-exec --fail-on-error cargo --config patch.toml install --path ../../../provider/datagen --root .
-exec --fail-on-error make -C buffer
+# Copy our own icu4x-datagen and tutorial_buffer to speed up the task
+exec --fail-on-error cargo --config patch.toml build -p tutorial_buffer
+mkdir -p buffer/bin
+cp ${project_dir}/target/debug/icu4x-datagen buffer/bin/icu4x-datagen
+cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
+exec --fail-on-error make -C buffer buffer_data.postcard
 
 # Run the 5 projects
-exec --fail-on-error cargo --config patch.toml run --release -p tutorial_baked
-exec --fail-on-error cargo --config patch.toml run --release -p tutorial_buffer
-exec --fail-on-error cargo --config patch.toml run --release -p tutorial_experimental
-exec --fail-on-error cargo --config patch.toml run --release -p tutorial_lazy_static
-exec --fail-on-error cargo --config patch.toml run --release -p tutorial_testdata
+exec --fail-on-error cargo --config patch.toml run -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml run -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml run -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml run -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml run -p tutorial_testdata
 '''
 
 [tasks.test-cargo-tutorial-cratesio]
@@ -92,8 +97,8 @@ pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 # Build the postcard file
+# Use the full Makefile task
 exec --fail-on-error cargo build --release -p tutorial_buffer
-# Let the Makefile install icu_datagen since we're pulling it from crates.io
 exec --fail-on-error make -C buffer
 
 # Run the 5 projects

@@ -4,19 +4,15 @@
 
 export CARGO_TARGET_DIR ?= target
 
-all: buffer_data.postcard
-
-FORCE:
+all: clean buffer_data.postcard
 
 bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo install icu_datagen --root .
 
-# Note: the second `echo` statement below can be replaced by `cargo build --release`.
-# This Makefile does not run it because ICU4X CI requires custom `cargo build` configs.
-bin/tutorial_buffer: FORCE
+bin/tutorial_buffer:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
-	echo "If the following command fails, run cargo build --release first."
+	cargo build --release
 	cp -p "$(CARGO_TARGET_DIR)"/release/tutorial_buffer bin/tutorial_buffer
 
 buffer_data.postcard: bin/icu4x-datagen bin/tutorial_buffer
@@ -27,3 +23,9 @@ buffer_data.postcard: bin/icu4x-datagen bin/tutorial_buffer
 		--cldr-tag latest \
 		--overwrite \
 		--out buffer_data.postcard
+
+.PHONY: clean
+clean:
+	rm -f bin/icu4x-datagen
+	rm -f bin/tutorial_buffer
+	rm -f buffer_data.postcard
