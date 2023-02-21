@@ -1,0 +1,16 @@
+{
+  "map": {
+    "A": 1,
+    "Ambiguous": 1,
+    "F": 3,
+    "Fullwidth": 3,
+    "H": 2,
+    "Halfwidth": 2,
+    "N": 0,
+    "Na": 4,
+    "Narrow": 4,
+    "Neutral": 0,
+    "W": 5,
+    "Wide": 5
+  }
+}

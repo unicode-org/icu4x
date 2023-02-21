@@ -11,6 +11,23 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Sentence_Break"
 short_name = "SB"
+values = [
+  {discr = 0, long = "Other", short = "XX"},
+  {discr = 1, long = "ATerm", short = "AT"},
+  {discr = 2, long = "Close", short = "CL"},
+  {discr = 3, long = "Format", short = "FO"},
+  {discr = 4, long = "Lower", short = "LO"},
+  {discr = 5, long = "Numeric", short = "NU"},
+  {discr = 6, long = "OLetter", short = "LE"},
+  {discr = 7, long = "Sep", short = "SE"},
+  {discr = 8, long = "Sp", short = "SP"},
+  {discr = 9, long = "STerm", short = "ST"},
+  {discr = 10, long = "Upper", short = "UP"},
+  {discr = 11, long = "CR", short = "CR"},
+  {discr = 12, long = "Extend", short = "EX"},
+  {discr = 13, long = "LF", short = "LF"},
+  {discr = 14, long = "SContinue", short = "SC"},
+]
 # Code points `a` through `b` have value `v`, corresponding to `name`.
 ranges = [
   {a=0x0, b=0x8, v=0, name="XX"},

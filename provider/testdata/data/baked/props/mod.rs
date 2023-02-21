@@ -49,6 +49,7 @@ pub mod lb_v1;
 pub mod loe_v1;
 pub mod lower_v1;
 pub mod math_v1;
+pub mod names;
 pub mod nchar_v1;
 pub mod nfcinert_v1;
 pub mod nfdinert_v1;
