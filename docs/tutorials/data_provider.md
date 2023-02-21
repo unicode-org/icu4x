@@ -68,6 +68,8 @@ A key feature of ICU4X is the ability to download data dynamically, allowing cli
 
 Dynamic data loading can currently be performed in user code. A future core library API may provide this functionality; please submit feedback in [#2985](https://github.com/unicode-org/icu4x/issues/2985).
 
+The following example loads additional locales bucketed by language. This means that different script and regional variants of the same language are assumed to be in the same dynamically loaded data file. However, clients should choose a dynamic loading strategy that works best for them.
+
 ```rust
 use icu_provider_adapters::either::EitherProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -99,7 +101,7 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     // We failed to create the formatter. Load more data for the language.
     let path_buf = 
         Path::new("../../provider/adapters/tests/data/langtest")
-        .join(&*loc.language().as_str());
+        .join(loc.language().as_str());
     let lang_provider = match FsDataProvider::try_new(&path_buf) {
         Ok(p) => p,
         Err(e) => panic!("Language not available? {:?}", e)
