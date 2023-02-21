@@ -99,6 +99,8 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     }
 
     // We failed to create the formatter. Load more data for the language.
+    // Note: This assumes data is split by language subtag, which may or may not be the best
+    // strategy for all use cases.
     let path_buf = 
         Path::new("../../provider/adapters/tests/data/langtest")
         .join(loc.language().as_str());
