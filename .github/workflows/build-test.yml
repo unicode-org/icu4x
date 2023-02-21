@@ -143,10 +143,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-cargo-tutorial`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-test-cargo-tutorial
+      run: cargo make ci-job-test-cargo-tutorial
 
   # ci-job-testdata
   testdata:

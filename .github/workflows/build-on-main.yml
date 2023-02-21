@@ -58,7 +58,4 @@ jobs:
 
     # Actual job
     - name: Run `cargo make test-cargo-tutorial`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: test-cargo-tutorial-cratesio
+      run: cargo make test-cargo-tutorial-cratesio
