@@ -86,7 +86,7 @@ pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
 );
 
-/// Rules status data
+/// Rules status data for rule_status and is_word_like of word segmenter.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
