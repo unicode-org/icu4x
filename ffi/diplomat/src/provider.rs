@@ -22,12 +22,6 @@ pub enum ICU4XDataProviderInner {
     Buffer(Box<dyn BufferProvider + 'static>),
 }
 
-impl Default for ICU4XDataProviderInner {
-    fn default() -> Self {
-        Self::Destroyed
-    }
-}
-
 #[diplomat::bridge]
 pub mod ffi {
     use super::ICU4XDataProviderInner;
@@ -130,8 +124,13 @@ pub mod ffi {
         pub fn fork_by_key(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
-            *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
-                (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom("This provider has been destroyed"))?,
+            *self = match (
+                core::mem::replace(&mut self.0, Destroyed),
+                core::mem::replace(&mut other.0, Destroyed),
+            ) {
+                (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
                 (Empty, Empty) => ICU4XDataProvider(ICU4XDataProviderInner::Empty),
                 #[cfg(any(feature = "buffer_provider", feature = "any_provider"))]
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
@@ -144,9 +143,11 @@ pub mod ffi {
                     icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
                 ),
                 #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
-                    "fork_by_key must be passed the same type of provider (Any or Buffer)",
-                ))?,
+                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => {
+                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
+                        "fork_by_key must be passed the same type of provider (Any or Buffer)",
+                    ))?
+                }
             };
             Ok(())
         }
@@ -159,8 +160,13 @@ pub mod ffi {
         pub fn fork_by_locale(&mut self, other: &mut ICU4XDataProvider) -> Result<(), ICU4XError> {
             #[allow(unused_imports)]
             use ICU4XDataProviderInner::*;
-            *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
-                (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom("This provider has been destroyed"))?,
+            *self = match (
+                core::mem::replace(&mut self.0, Destroyed),
+                core::mem::replace(&mut other.0, Destroyed),
+            ) {
+                (Destroyed, _) | (_, Destroyed) => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
                 (Empty, Empty) => ICU4XDataProvider(ICU4XDataProviderInner::Empty),
                 #[cfg(any(feature = "buffer_provider", feature = "any_provider"))]
                 (Empty, b) | (b, Empty) => ICU4XDataProvider(b),
@@ -181,9 +187,11 @@ pub mod ffi {
                     ),
                 ),
                 #[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
-                    "fork_by_locale must be passed the same type of provider (Any or Buffer)",
-                ))?,
+                (Buffer(_), Any(_)) | (Any(_), Buffer(_)) => {
+                    Err(ICU4XError::DataMismatchedAnyBufferError.log_original(
+                        "fork_by_locale must be passed the same type of provider (Any or Buffer)",
+                    ))?
+                }
             };
             Ok(())
         }
@@ -202,8 +210,10 @@ pub mod ffi {
         )]
         pub fn enable_locale_fallback(&mut self) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
-            match core::mem::take(&mut self.0) {
-                Destroyed => Err(icu_provider::DataError::custom("This provider has been destroyed"))?,
+            *self = match core::mem::replace(&mut self.0, Destroyed) {
+                Destroyed => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
                 Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
                 #[cfg(feature = "any_provider")]
                 Any(inner) => {
@@ -232,8 +242,10 @@ pub mod ffi {
             fallbacker: &ICU4XLocaleFallbacker,
         ) -> Result<(), ICU4XError> {
             use ICU4XDataProviderInner::*;
-            *self = match core::mem::take(&mut self.0) {
-                Destroyed => Err(icu_provider::DataError::custom("This provider has been destroyed"))?,
+            *self = match core::mem::replace(&mut self.0, Destroyed) {
+                Destroyed => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
                 Empty => Err(icu_provider::DataErrorKind::MissingDataKey.into_error())?,
                 #[cfg(feature = "any_provider")]
                 Any(inner) => convert_any_provider(LocaleFallbackProvider::new_with_fallbacker(
@@ -255,7 +267,9 @@ macro_rules! load {
         fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
             use ICU4XDataProviderInner::*;
             match self {
-                Destroyed => Err(icu_provider::DataError::custom("This provider has been destroyed"))?,
+                Destroyed => Err(icu_provider::DataError::custom(
+                    "This provider has been destroyed",
+                ))?,
                 Empty => EmptyDataProvider::new().load(req),
                 #[cfg(feature = "any_provider")]
                 Any(any_provider) => any_provider.as_downcasting().load(req),
