@@ -40,8 +40,6 @@ icu_provider_blob = { version = "1.1.0", path = "../blob", optional = true }
 # databake deps
 icu_locid = { version = "1.1.0", path = "../../components/locid" }
 icu_collections = { version = "1.1.0", path = "../../components/collections" }
-litemap = { version = "0.6.1", path = "../../utils/litemap", default-features = false }
-tinystr = { version = "0.7.1", path = "../../utils/tinystr" }
 zerovec = { version = "0.9.2", path = "../../utils/zerovec" }
 
 # databake options
