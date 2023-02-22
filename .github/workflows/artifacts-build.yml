@@ -416,10 +416,9 @@ jobs:
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
-    # TODO(https://github.com/unicode-org/icu4x/issues/2953): Fix this
-    if: false
-    # # This is too expensive to run on every push, so only run it on main.
-    # # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    # This is too expensive to run on every push, so only run it on main.
+    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    # DO NOT SUBMIT
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     concurrency:
@@ -459,38 +458,25 @@ jobs:
 
     - name: Install npm tools
       run: |
-        npm install -g wabt
         npm install -g wasm-opt
     
-    - name: Attempt to load cached twiggy
-      uses: actions/cache@v3
-      id: twiggy-cache
-      with:
-        path: |
-          ~/.cargo/bin/twiggy
-          ~/.cargo/bin/twiggy.exe
-        key: ${{ runner.os }}-twiggy-0.7
-    - name: Install twiggy
-      if: steps.twiggy-cache.outputs.cache-hit != 'true'
-      run: cargo install twiggy --version 0.7.0
-
     # Actual job
     - name: Build wasm executables
-      run: cargo make wasm-examples
+      run: cargo make wasm-opt
 
     - name: gzip wasm executables
-      run: (cd wasmpkg/wasm-opt && gzip *+opt.wasm)
+      run: (cd wasmpkg/wasm-opt && gzip -k *+opt.wasm)
 
     - name: Setup output data directory
       run: |
         mkdir -p benchmarks/binsize/wasm
         mkdir -p benchmarks/binsize/gz
 
-    - name: Measure size of executables
+    - name: Measure size of executables (wasm)
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt wasm | tee benchmarks/binsize/wasm/output.txt
 
-    - name: Measure size of executables
+    - name: Measure size of executables (gz)
       run: |
         cargo run --package icu_benchmark_binsize  -- wasmpkg/wasm-opt gz | tee benchmarks/binsize/gz/output.txt
 
@@ -530,6 +516,7 @@ jobs:
         comment-on-alert: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         gh-pages-branch: empty
+        skip-fetch-gh-pages: true
         alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
 
     - name: Authenticate to Google Cloud
