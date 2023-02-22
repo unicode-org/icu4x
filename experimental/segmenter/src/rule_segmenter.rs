@@ -262,8 +262,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
                 2 => RuleStatusType::Letter,
                 _ => RuleStatusType::None,
             }
-        } else {
-            RuleStatusType::None
+                RuleStatusType::None
         }
     }
 
