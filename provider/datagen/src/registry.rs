@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{DataKey, KeyedDataMarker};
+use icu_provider::prelude::*;
 
 use icu_calendar::provider::*;
 use icu_casemapping::provider::*;
@@ -77,6 +77,23 @@ macro_rules! registry {
             $(
                 if key == $exp_marker::KEY {
                     return $exp_marker.bake(env);
+                }
+            )+
+            unreachable!("unregistered marker")
+        }
+
+        #[doc(hidden)]
+        pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+            $(
+                if key == $marker::KEY {
+                    let _reified_data: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
+                }
+            )+
+            $(
+                if key == $exp_marker::KEY {
+                    let _reified_data: DataPayload<$exp_marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
                 }
             )+
             unreachable!("unregistered marker")

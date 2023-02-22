@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_provider::datagen::IterableDynamicDataProvider;
-use icu_provider::datagen::{DataConverter, HeapStatsMarker};
 use icu_provider_adapters::filter::Filterable;
 
 use icu_provider::prelude::*;
@@ -45,7 +44,8 @@ fn main() {
 
     let selected_locales = icu_testdata::locales();
 
-    let converter = DatagenProvider {
+    // Actual data is only needed to determine included locales.
+    let locale_provider = DatagenProvider {
         source: SourceData::default()
             .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
             .unwrap()
@@ -55,7 +55,7 @@ fn main() {
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
 
-    let provider = icu_testdata::buffer_no_fallback();
+    let postcard_provider = icu_testdata::buffer_no_fallback();
 
     // violations for net_bytes_allocated
     let mut net_violations = BTreeSet::new();
@@ -67,17 +67,11 @@ fn main() {
         let mut max_net_violation = 0;
 
         for locale in
-            match IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_locales_for_key(
-                &converter, key,
-            ) {
-                Err(_) if key.path().starts_with("props/") => {
-                    // uprops keys currently don't all get loaded into the testdata
-                    continue;
-                }
-                r => r.unwrap(),
-            }
+            IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_locales_for_key(
+                &locale_provider, key,
+            ).unwrap()
         {
-            let payload = provider.load_buffer(
+            let payload = postcard_provider.load_buffer(
                 key,
                 DataRequest {
                     locale: &locale,
@@ -85,10 +79,14 @@ fn main() {
                 },
             ).unwrap().take_payload().unwrap();
 
-            let stats: DataPayload<HeapStatsMarker> =
-                converter.convert(key, payload).map_err(|e| e.1).unwrap();
-            let vio_total = stats.get().total_bytes_allocated;
-            let vio_net = stats.get().net_bytes_allocated;
+            let stats_before = dhat::HeapStats::get();
+
+            // We need to generate the stats before the deserialized struct gets dropped, in order
+            // to distinguish between a temporary and permanent allocation.
+            let stats_after = icu_datagen::deserialize_and_discard(key, payload, || dhat::HeapStats::get()).unwrap();
+
+            let vio_total = stats_after.total_bytes - stats_before.total_bytes;
+            let vio_net = stats_after.curr_bytes - stats_before.curr_bytes;
             max_total_violation = cmp::max(vio_total, max_total_violation);
             max_net_violation = cmp::max(vio_net, max_net_violation);
         }
