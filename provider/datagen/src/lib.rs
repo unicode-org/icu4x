@@ -66,6 +66,7 @@
 
 mod databake;
 mod error;
+pub mod options;
 mod registry;
 mod source;
 #[cfg(test)]
@@ -105,10 +106,10 @@ pub mod syntax {
 /// A prelude for using the datagen API
 pub mod prelude {
     pub use super::{
-        syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
+        options, syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
         SourceData,
     };
-    pub use icu_locid::{langid, LanguageIdentifier};
+    pub use icu_locid::{langid, subtags::Region, subtags_region as region, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
 }
 
@@ -119,7 +120,6 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
 use prelude::*;
 use rayon::prelude::*;
-use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
@@ -220,6 +220,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # Ok(())
 /// # }
 /// ```
+#[deprecated]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
@@ -248,6 +249,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// # Ok(())
 /// # }
 /// ```
+#[deprecated]
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
     let mut result = Vec::new();
@@ -338,6 +340,7 @@ pub enum Out {
     },
 }
 
+#[deprecated]
 /// Runs ICU4X datagen.
 ///
 /// The argument are used as follows:
@@ -352,6 +355,29 @@ pub enum Out {
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
     keys: &[DataKey],
+    source: &SourceData,
+    outs: Vec<Out>,
+) -> Result<(), DataError> {
+    use options::*;
+    datagen_with_options(Options {
+        keys: keys.iter().cloned().collect(),
+        locales: LocaleOptions {
+            locales: locales.map(Into::into).map(LocaleInclude::Explicit).unwrap_or(LocaleInclude::All),
+            regions: RegionInclude::All,
+            include_root: true,
+            some_segmenter_flag: false,
+        },
+        fallback: FallbackOptions {
+            variant: FallbackVariant::None,
+        },
+    },
+    source,
+    outs,
+)
+}
+
+pub fn datagen_with_options(
+    options: options::Options,
     source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
@@ -404,23 +430,25 @@ pub fn datagen(
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    let provider: Box<dyn ExportableProvider> = match locales {
-        Some(&[]) => Box::<EmptyDataProvider>::default(),
-        Some(locales) => Box::new(
+    use options::LocaleInclude;
+    let provider: Box<dyn ExportableProvider> = match options.locales.locales.resolved(source)? {
+        LocaleInclude::None => Box::<EmptyDataProvider>::default(),
+        LocaleInclude::Explicit(locales) => Box::new(
             DatagenProvider {
                 source: source.clone(),
             }
             .filterable("icu4x-datagen locales")
-            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
+            .filter_by_langid(move |lid| {
+                (lid.language.is_empty() && options.locales.include_root) || locales.contains(lid)
+            }),
         ),
-        None => Box::new(DatagenProvider {
+        LocaleInclude::All => Box::new(DatagenProvider {
             source: source.clone(),
         }),
+        _ => unreachable!("CLDR levels have been resolved")
     };
 
-    let keys: HashSet<_> = keys.iter().collect();
-
-    keys.into_par_iter().try_for_each(|&key| {
+    options.keys.into_par_iter().try_for_each(|key| {
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
