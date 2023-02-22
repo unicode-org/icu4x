@@ -47,12 +47,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.69"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "224afbd727c3d6e4b90103ece64b8d1b67fbb1973b1046c2281eed3f3803f800"
-
-[[package]]
 name = "arraystring"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1453,10 +1447,10 @@ dependencies = [
  "icu",
  "icu_collections",
  "lazy_static",
- "rust_icu_sys",
  "toml",
  "wasmer",
  "wasmer-wasi",
+ "zerovec",
 ]
 
 [[package]]
@@ -2475,12 +2469,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6448add382c60bbbc64f9dab41309a12ec530c05191601042f911356ac09758c"
 
 [[package]]
-name = "paste"
-version = "1.0.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d01a5bd0424d00070b0098dd17ebca6f961a959dead1dbcbbbc1d1cd8d3deeba"
-
-[[package]]
 name = "percent-encoding"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2850,18 +2838,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60e7c00b6c3bf5e38a880eec01d7e829d12ca682079f8238a464def3c4b31627"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "rust_icu_sys"
-version = "3.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c9f16b72fb360e84f90651180f0621879e5759b9ac4a762c34d782caac38898"
-dependencies = [
- "anyhow",
- "lazy_static",
- "libc",
- "paste",
 ]
 
 [[package]]

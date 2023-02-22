@@ -59,11 +59,9 @@
 #![allow(clippy::panic)]
 #![allow(clippy::expect_used)]
 
-use icu_collections::codepointtrie::toml::CodePointTrieToml;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
-use std::convert::TryInto;
 
 #[cfg(feature = "wasm")]
 mod wasm;
@@ -102,15 +100,28 @@ where
 {
     /// Build the [`CodePointTrie`].
     ///
-    /// Under the hood, this function runs ICU4C code compiled into WASM.
-    #[cfg(feature = "wasm")]
+    /// Under the hood, this function runs ICU4C code compiled into WASM,
+    /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
+    ///
+    /// This function needs either the `"wasm"` or `"icu4c"` feature
     pub fn build(self) -> CodePointTrie<'static, T> {
-        let toml_str = wasm::run_wasm(&self);
-        let toml_obj: CodePointTrieToml =
-            toml::from_str(&toml_str).expect("the tool should produce valid TOML");
-        (&toml_obj)
-            .try_into()
-            .expect("the toml should be a valid CPT")
+        #[cfg(feature = "wasm")]
+        {
+            use icu_collections::codepointtrie::toml::CodePointTrieToml;
+            use std::convert::TryInto;
+
+            let toml_str = wasm::run_wasm(&self);
+            let toml_obj: CodePointTrieToml =
+                toml::from_str(&toml_str).expect("the tool should produce valid TOML");
+            (&toml_obj)
+                .try_into()
+                .expect("the toml should be a valid CPT")
+        }
+
+        #[cfg(all(feature = "icu4c", not(feature = "wasm")))]
+        {
+            native::run_native(&self)
+        }
     }
 }
 
