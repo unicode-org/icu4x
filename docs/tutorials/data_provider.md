@@ -62,6 +62,71 @@ impl AdditiveIdentity {
 }
 ```
 
+## Loading Additional Data at Runtime
+
+A key feature of ICU4X is the ability to download data dynamically, allowing clients to load additional locales at runtime.
+
+Dynamic data loading can currently be performed in user code. A future core library API may provide this functionality; please submit feedback in [#2985](https://github.com/unicode-org/icu4x/issues/2985).
+
+The following example loads additional locales bucketed by language. This means that different script and regional variants of the same language are assumed to be in the same dynamically loaded data file. However, clients should choose a dynamic loading strategy that works best for them.
+
+```rust
+use icu_provider_adapters::either::EitherProvider;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::fork::MultiForkByErrorProvider;
+use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
+use icu_provider_blob::BlobDataProvider;
+use icu_provider_fs::FsDataProvider;
+use icu_provider::DataLocale;
+use icu_provider::hello_world::HelloWorldFormatter;
+use icu::locid::locale;
+use icu::locid::subtags::Language;
+use std::path::Path;
+use writeable::Writeable;
+
+// Create the empty MultiForkByErrorProvider:
+let mut provider = MultiForkByErrorProvider::new_with_predicate(
+    vec![],
+    MissingLocalePredicate
+);
+
+// Helper function to add data into the growable provider on demand:
+let mut get_hello_world_formatter = |loc: &DataLocale| {
+    // Try to create the formatter a first time with data that has already been loaded.
+    if let Ok(formatter) = HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc) {
+        return formatter;
+    }
+
+    // We failed to create the formatter. Load more data for the language.
+    // Note: This assumes data is split by language subtag, which may or may not be the best
+    // strategy for all use cases.
+    let path_buf = 
+        Path::new("../../provider/adapters/tests/data/langtest")
+        .join(loc.language().as_str());
+    let lang_provider = match FsDataProvider::try_new(&path_buf) {
+        Ok(p) => p,
+        Err(e) => panic!("Language not available? {:?}", e)
+    };
+    println!("Successfully loaded: {:?}", loc);
+
+    // Add the data to the growable provider and try creating the formatter a second time.
+    provider.push(lang_provider);
+    HelloWorldFormatter::try_new_with_buffer_provider(&provider, loc)
+        .expect("Language data should now be available")
+};
+
+// Test that it works:
+assert_eq!(
+    get_hello_world_formatter(&locale!("de").into()).format().write_to_string(),
+    "Hallo Welt"
+);
+assert_eq!(
+    get_hello_world_formatter(&locale!("ro").into()).format().write_to_string(),
+    "Salut, lume"
+);
+```
+
 ## Caching Data Provider
 
 ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.

@@ -3638,6 +3638,7 @@ dependencies = [
  "icu",
  "icu_datagen",
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_testdata",
@@ -3647,6 +3648,7 @@ dependencies = [
  "serde",
  "serde-aux",
  "tinystr 0.7.1",
+ "writeable",
  "yoke",
  "zerofrom",
 ]
