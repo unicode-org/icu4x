@@ -61,6 +61,7 @@ icu_timezone = { version = "1.1.0", path = "../../components/timezone", default-
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
+icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
 criterion = "0.3"
 
 [features]
