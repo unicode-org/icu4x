@@ -9,5 +9,4 @@ ffi/diplomat/cpp/docs/** linguist-generated=true
 ffi/diplomat/js/include/** linguist-generated=true
 ffi/diplomat/js/docs/** linguist-generated=true
 *.rs.data linguist-language=Rust
-provider/*/tests/data/**/* linguist-generated=true
 */**/README.md linguist-generated=true
