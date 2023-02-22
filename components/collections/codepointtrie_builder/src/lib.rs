@@ -65,7 +65,11 @@ use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use std::convert::TryInto;
 
+#[cfg(feature = "wasm")]
 mod wasm;
+
+#[cfg(feature = "icu4c")]
+mod native;
 
 /// Wrapper over the data to be encoded into a CodePointTrie.
 ///
@@ -99,6 +103,7 @@ where
     /// Build the [`CodePointTrie`].
     ///
     /// Under the hood, this function runs ICU4C code compiled into WASM.
+    #[cfg(feature = "wasm")]
     pub fn build(self) -> CodePointTrie<'static, T> {
         let toml_str = wasm::run_wasm(&self);
         let toml_obj: CodePointTrieToml =
@@ -112,7 +117,11 @@ where
 #[test]
 fn test_cpt_builder() {
     // Buckets of ten characters for 0 to 100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
-    let values: Vec<u32> = (0..100).map(|x| x / 10).chain((100..0x100).map(|_| 100)).chain((0x100..0x200).map(|x| x % 16)).collect();
+    let values: Vec<u32> = (0..100)
+        .map(|x| x / 10)
+        .chain((100..0x100).map(|_| 100))
+        .chain((0x100..0x200).map(|x| x % 16))
+        .collect();
 
     let builder = CodePointTrieBuilder {
         data: CodePointTrieBuilderData::ValuesByCodePoint(&values),

@@ -27,14 +27,21 @@ include = [
 [package.metadata.workspaces]
 independent = true
 
+[features]
+default = ["wasm"]
+wasm = ["wasmer", "wasmer-wasi"]
+icu4c = ["rust_icu_sys"]
+
 [dependencies]
 icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
 lazy_static = "1.4.0"
+rust_icu_sys = { version = "3.0.0", default-features = false, features = ["renaming"], optional = true}
 toml = "0.5"
 
 [dependencies.wasmer]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -47,6 +54,7 @@ features = [
 [dependencies.wasmer-wasi]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
