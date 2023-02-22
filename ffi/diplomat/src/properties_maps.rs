@@ -21,9 +21,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
-    fn convert_8<P: TrieValue + 'static>(
-        data: maps::CodePointMapData<P>,
-    ) -> Box<ICU4XCodePointMapData8> {
+    fn convert_8<P: TrieValue>(data: maps::CodePointMapData<P>) -> Box<ICU4XCodePointMapData8> {
         #[allow(clippy::expect_used)] // infallible for the chosen properties
         Box::new(ICU4XCodePointMapData8(
             data.try_into_converted()

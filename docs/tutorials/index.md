@@ -8,6 +8,8 @@ It leads in to the [Data management tutorial][data_management.md], which covers 
 
 After going through that, you can take a look at [the ICU4X root docs][icu-crate-docs] and check out the various components, each of which covers some area of internationalization and has usage docs for doing so.
 
+For help setting up your Cargo.toml file to pull in everything you need, see [the ICU4X Cargo tutorial](cargo.md).
+
 
 If you intend to use ICU4X from other languages, check out our tutorials for [C++][cpp.md] and [JS][js.md]. It is recommended one read through the main tutorial first to understand the core concepts; the C++ and JS APIs are rather similar to the Rust ones.
 

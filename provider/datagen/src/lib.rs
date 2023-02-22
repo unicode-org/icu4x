@@ -73,7 +73,7 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::{all_keys, all_keys_with_experimental};
+pub use registry::*;
 pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
 
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
@@ -137,7 +137,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::for_test(),
+                source: SourceData::repo(),
             };
         }
         TEST_PROVIDER.clone()

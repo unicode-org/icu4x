@@ -56,7 +56,7 @@ pub struct AnyPayloadProvider {
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn from_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self
+    pub fn from_owned<M: KeyedDataMarker>(data: M::Yokeable) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
@@ -72,7 +72,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
-    pub fn from_payload<M: KeyedDataMarker + 'static>(payload: DataPayload<M>) -> Self
+    pub fn from_payload<M: KeyedDataMarker>(payload: DataPayload<M>) -> Self
     where
         M::Yokeable: icu_provider::MaybeSendSync,
     {
@@ -83,7 +83,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
-    pub fn from_any_payload<M: KeyedDataMarker + 'static>(payload: AnyPayload) -> Self {
+    pub fn from_any_payload<M: KeyedDataMarker>(payload: AnyPayload) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: payload,
@@ -91,7 +91,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with the default (allocated) version of the data struct.
-    pub fn new_default<M: KeyedDataMarker + 'static>() -> Self
+    pub fn new_default<M: KeyedDataMarker>() -> Self
     where
         M::Yokeable: Default,
         M::Yokeable: icu_provider::MaybeSendSync,
@@ -112,7 +112,7 @@ impl AnyProvider for AnyPayloadProvider {
 
 impl<M> DataProvider<M> for AnyPayloadProvider
 where
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: icu_provider::MaybeSendSync,

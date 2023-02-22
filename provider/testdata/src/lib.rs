@@ -84,7 +84,7 @@
 
 extern crate alloc;
 
-#[path = "../metadata.rs.data"]
+#[path = "../data/metadata.rs.data"]
 mod metadata;
 
 pub mod versions {
@@ -98,7 +98,7 @@ pub mod versions {
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
     pub fn cldr_tag() -> alloc::string::String {
-        alloc::string::String::from(crate::metadata::CLDR_JSON_GITREF)
+        alloc::string::String::from(super::metadata::CLDR_TAG)
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
@@ -109,7 +109,7 @@ pub mod versions {
     /// assert_eq!("icu4x/2023-02-09/72.x", icu_testdata::versions::icu_tag());
     /// ```
     pub fn icu_tag() -> alloc::string::String {
-        alloc::string::String::from(crate::metadata::ICUEXPORTDATA_GITREF)
+        alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
     }
 }
 
@@ -123,10 +123,11 @@ pub mod versions {
 /// assert!(icu_testdata::locales().len() > 10);
 /// ```
 pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
-    alloc::vec::Vec::from(crate::metadata::LOCALES)
+    alloc::vec::Vec::from(metadata::LOCALES)
 }
 
 #[cfg(feature = "std")]
+#[deprecated]
 pub mod paths;
 
 use icu_provider::prelude::*;
@@ -137,10 +138,6 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -157,10 +154,6 @@ pub fn unstable_no_fallback() -> UnstableDataProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn any() -> impl AnyProvider {
     // The baked data is valid.
     #[allow(clippy::unwrap_used)]
@@ -168,10 +161,6 @@ pub fn any() -> impl AnyProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn any_no_fallback() -> impl AnyProvider {
     UnstableDataProvider
 }
@@ -205,10 +194,6 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 #[non_exhaustive]
 pub struct UnstableDataProvider;
 
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     impl_data_provider!(super::UnstableDataProvider);
