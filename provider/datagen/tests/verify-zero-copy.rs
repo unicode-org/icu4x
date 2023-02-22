@@ -83,7 +83,7 @@ fn main() {
 
             // We need to generate the stats before the deserialized struct gets dropped, in order
             // to distinguish between a temporary and permanent allocation.
-            let stats_after = icu_datagen::deserialize_and_discard(key, payload, || dhat::HeapStats::get()).unwrap();
+            let stats_after = icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get).unwrap();
 
             let vio_total = stats_after.total_bytes - stats_before.total_bytes;
             let vio_net = stats_after.curr_bytes - stats_before.curr_bytes;

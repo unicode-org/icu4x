@@ -416,8 +416,10 @@ jobs:
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
-    # This is too expensive to run on every push, so only run it on main.
-    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
+    # TODO(https://github.com/unicode-org/icu4x/issues/2953): Fix this
+    if: false
+    # # This is too expensive to run on every push, so only run it on main.
+    # # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
     # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     runs-on: ubuntu-latest
     concurrency:
