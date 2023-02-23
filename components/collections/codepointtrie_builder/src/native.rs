@@ -147,9 +147,19 @@ where
 
     // safety: we expect ICU4C to give us a valid slice (index, indexLength). The pointer types
     // are already strongly typed, giving the right slice type.
-    let index_slice = unsafe { slice::from_raw_parts(trie.index, trie.indexLength.try_into().expect("got negative number for length")) };
+    let index_slice = unsafe {
+        slice::from_raw_parts(
+            trie.index,
+            trie.indexLength
+                .try_into()
+                .expect("got negative number for length"),
+        )
+    };
     let index_vec = ZeroVec::alloc_from_slice(index_slice);
-    let data_length = trie.dataLength.try_into().expect("got negative number for length");
+    let data_length = trie
+        .dataLength
+        .try_into()
+        .expect("got negative number for length");
     // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
     // ptr type. The ptr types are already strongly typed, giving the right slice type.
     let data_vec: Result<Vec<T>, _> = unsafe {

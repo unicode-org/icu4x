@@ -6,9 +6,29 @@ This crate exposes functionality to build a [`CodePointTrie`] from values provid
 Because it is normally expected for CodePointTrie data to be pre-compiled, this crate is not
 optimized for speed; it should be used during a build phase.
 
-Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`],
-shipped as a WebAssembly module and then JIT-compiled at runtime. For more context, see
-<https://github.com/unicode-org/icu4x/issues/1837>.
+Under the hood, this crate uses the CodePointTrie builder code from ICU4C, [`UMutableCPTrie`].
+For more context, see <https://github.com/unicode-org/icu4x/issues/1837>.
+
+## Build configuration
+
+This crate has two primary modes it can be used in: `"wasm"` and `"icu4c"`, exposed as
+Cargo features. If both are enabled, the code will internally use the wasm codepath.
+
+The `"wasm"` mode uses an included wasm module that was built by linking
+it to ICU4C, run on a wasm runtime. It pulls in a lot of dependencies to do this, but
+it should just work with no further effort.
+
+The `"icu4c"` mode requires some extra effort: it links to a local copy of ICU4C.
+If using Cargo, you can use the `ICU4C_LIB_PATH` environment variable to point this to
+a directory full of ICU4X static or shared libraries, and `ICU4C_LINK_STATICALLY` to use
+static linking (if using dynamic linking you will have to set `[DY]LD_LIBRARY_PATH` at runtime
+as well). If building directly, make sure this path is provided via `-L`, and that the
+CLI requests to link against `icuuc`, `icui18n` and `icudata` via `-l` flags.
+
+By default ICU4C uses *renamed* symbols, where each function is suffixed with a version number.
+This crate by default will link to ICU4C 72 symbols. If you have built it with renaming
+disabled, you can provide the `ICU4C_DISABLE_RENAMING` flag to cargo, or pass `--cfg icu4c_disable_renaming`.
+Versions other than ICU4C 72 are not currently supported.
 
 ## Examples
 
