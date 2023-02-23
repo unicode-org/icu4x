@@ -1,6 +1,7 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
 
@@ -77,6 +78,9 @@ extern "C" {
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 
+// When both `wasm` and `icu4c` features are set, we still want the icu4c portion to be built, we just
+// don't want it to bother the linker. In that case, we leave this unused, and silence the warning
+#[allow(unused)]
 pub(crate) fn run_native<T>(cpt_builder: &CodePointTrieBuilder<T>) -> CodePointTrie<'static, T>
 where
     T: TrieValue + Into<u32>,
@@ -165,7 +169,7 @@ where
                 .collect(),
             4 => slice::from_raw_parts(trie.data.ptr32, trie.dataLength as usize)
                 .iter()
-                .map(|x| TrieValue::try_from_u32(*x as u32))
+                .map(|x| TrieValue::try_from_u32(*x))
                 .collect(),
             other => panic!("Don't know how to make trie with width {other}"),
         }

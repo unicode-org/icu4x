@@ -109,7 +109,6 @@ where
         #[cfg(feature = "wasm")]
         {
             use icu_collections::codepointtrie::toml::CodePointTrieToml;
-            use std::convert::TryInto;
 
             let toml_str = wasm::run_wasm(&self);
             let toml_obj: CodePointTrieToml =
