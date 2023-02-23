@@ -104,6 +104,7 @@ where
     /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
     ///
     /// This function needs either the `"wasm"` or `"icu4c"` feature
+    #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> CodePointTrie<'static, T> {
         #[cfg(feature = "wasm")]
         {

@@ -6,7 +6,6 @@ use std::env;
 
 fn main() {
     if env::var("CARGO_FEATURE_ICU4C").is_ok() && env::var("CARGO_FEATURE_WASM").is_err() {
-
         let lib_path = env::var("ICU4C_LIB_PATH").expect("Must have `ICU4C_LIB_PATH` environment variable set when building icu_codepointtrie_builder with the `icu4c` feature");
         let kind = match env::var("ICU4C_LINK_STATICALLY").is_ok() {
             true => "static",

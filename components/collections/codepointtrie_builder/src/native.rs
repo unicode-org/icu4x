@@ -41,7 +41,10 @@ pub union UCPTrieData {
 }
 
 extern "C" {
-    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_open_72")]
+    #[cfg_attr(
+        not(feature = "icu4c_unsuffixed"),
+        link_name = "umutablecptrie_open_72"
+    )]
     fn umutablecptrie_open(
         initial_value: u32,
         error_value: u32,
@@ -54,7 +57,10 @@ extern "C" {
         value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
-    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_buildImmutable_72")]
+    #[cfg_attr(
+        not(feature = "icu4c_unsuffixed"),
+        link_name = "umutablecptrie_buildImmutable_72"
+    )]
     fn umutablecptrie_buildImmutable(
         trie: *const UMutableCPTrie,
         trie_type: u32,
@@ -64,7 +70,10 @@ extern "C" {
 
     #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "ucptrie_close_72")]
     fn ucptrie_close(trie: *const UCPTrie);
-    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_close_72")]
+    #[cfg_attr(
+        not(feature = "icu4c_unsuffixed"),
+        link_name = "umutablecptrie_close_72"
+    )]
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 
@@ -147,7 +156,11 @@ where
             other => panic!("Don't know how to make trie with width {other}"),
         }
     };
-    let data_vec = ZeroVec::alloc_from_slice(&data_vec.map_err(|_| ()).expect("Failed to parse as TrieValue"));
+    let data_vec = ZeroVec::alloc_from_slice(
+        &data_vec
+            .map_err(|_| ())
+            .expect("Failed to parse as TrieValue"),
+    );
     let built_trie =
         CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct");
     unsafe {
