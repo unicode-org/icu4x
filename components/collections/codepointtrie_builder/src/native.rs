@@ -158,7 +158,7 @@ where
     };
     let data_vec = ZeroVec::alloc_from_slice(
         &data_vec
-            .map_err(|_| ())
+            .map_err(|s| s.to_string())
             .expect("Failed to parse as TrieValue"),
     );
     let built_trie =
