@@ -83,6 +83,8 @@ where
 {
     let mut error = 0;
     let builder = unsafe {
+        // safety: we're passing a valid error pointer
+        // leak-safety: we clean up `builder` except in panicky codepaths
         umutablecptrie_open(
             cpt_builder.default_value.into(),
             cpt_builder.error_value.into(),
@@ -98,6 +100,8 @@ where
 
     for (cp, value) in values.iter().enumerate() {
         unsafe {
+            // safety: builder is a valid UMutableCPTrie
+            // safety: we're passing a valid error pointer
             umutablecptrie_set(builder, cp as u32, (*value).into(), &mut error);
         }
         if error != 0 {
@@ -115,14 +119,20 @@ where
         1 => 2, // UCPTRIE_VALUE_BITS_8
         other => panic!("Don't know how to make trie with width {other}"),
     };
+    // safety: `builder` is a valid UMutableCPTrie
+    // safety: we're passing a valid error pointer
+    // leak-safety: we clean up `built` except in panicky codepaths
     let built = unsafe { umutablecptrie_buildImmutable(builder, trie_type, width, &mut error) };
     if error != 0 {
         panic!("cpt builder returned error code {}", error);
     }
     unsafe {
+        // safety: builder is a valid UMutableCPTrie
+        // safety: we don't use builder after this
         umutablecptrie_close(builder);
     }
 
+    // safety: this is is a valid trie returned by umutablecptrie_buildImmutable (which did not evaluate to an error)
     let trie = unsafe { &*built };
 
     let header = CodePointTrieHeader {
@@ -137,8 +147,12 @@ where
         trie_type: TrieType::try_from(trie.type_ as u8).expect("Found out of range TrieType"),
     };
 
+    // safety: we expect ICU4C to give us a valid slice (index, indexLength). The pointer types
+    // are already strongly typed, giving the right slice type.
     let index_slice = unsafe { slice::from_raw_parts(trie.index, trie.indexLength as usize) };
     let index_vec = ZeroVec::alloc_from_slice(index_slice);
+    // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
+    // ptr type. The ptr types are already strongly typed, giving the right slice type.
     let data_vec: Result<Vec<T>, _> = unsafe {
         match mem::size_of::<T::ULE>() {
             1 => slice::from_raw_parts(trie.data.ptr8, trie.dataLength as usize)
@@ -164,6 +178,8 @@ where
     let built_trie =
         CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct");
     unsafe {
+        // safety: `built` is a valid UCPTrie
+        // safety: `built` isn't used after this
         ucptrie_close(built);
     }
     built_trie
