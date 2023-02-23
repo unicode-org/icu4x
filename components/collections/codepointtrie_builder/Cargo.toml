@@ -24,8 +24,6 @@ include = [
     "list_to_ucptrie.wasm"
 ]
 
-build = true
-
 [package.metadata.workspaces]
 independent = true
 
