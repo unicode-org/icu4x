@@ -68,7 +68,7 @@ extern "C" {
 
     #[cfg_attr(icu4c_enable_renaming, link_name = concat!("ucptrie_close_", env!("ICU4C_RENAME_VERSION")))]
     fn ucptrie_close(trie: *const UCPTrie);
-    #[cfg_attr(not(icu4c_disable_renaming), link_name = concat!("umutablecptrie_close_", env!("ICU4C_RENAME_VERSION")))]
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_close_", env!("ICU4C_RENAME_VERSION")))]
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 

@@ -14,9 +14,6 @@ fn main() {
 
         if env::var("ICU4C_RENAME_VERSION").is_ok() {
             println!("cargo:rustc-cfg=icu4c_enable_renaming");
-        } else {
-            // env!() fails for unset env vars even if used inside a disabled cfg_attr
-            println!("cargo:rustc-env=ICU4C_RENAME_VERSION=setbybuildscriptshouldnotbeseen");
         }
 
         println!("cargo:rustc-link-search={lib_path}");
