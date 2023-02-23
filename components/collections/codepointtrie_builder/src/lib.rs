@@ -16,9 +16,10 @@
 //! This crate has two primary modes it can be used in: `"wasm"` and `"icu4c"`, exposed as
 //! Cargo features. If both are enabled, the code will internally use the wasm codepath.
 //!
-//! The `"wasm"` mode uses an included wasm module that was built by linking
-//! it to ICU4C, run on a wasm runtime. It pulls in a lot of dependencies to do this, but
-//! it should just work with no further effort.
+//! The `"wasm"` mode uses a Wasm module packaged into this Rust crate that contains
+//! pre-compiled ICU4C CodePointTrie builder code. It evaluates the Wasm module using
+//! the Wasmer runtime, which "just works", but it requires a large number of
+//! Rust/Cargo dependencies.
 //!
 //! The `"icu4c"` mode reduces the number of Rust dependencies, but it requires having a local copy
 //! of ICU4C available. To configure `"icu4c"` mode in Cargo, set the following environment variables:
