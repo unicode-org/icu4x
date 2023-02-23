@@ -33,11 +33,9 @@ default = ["wasm"]
 wasm = ["wasmer", "wasmer-wasi"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
-# containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY
+# containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
 # Will be silently disabled if the wasm feature is enabled
 icu4c = ["zerovec"]
-# Use icu4c with unsuffixed APIs (u_foobar instead of u_foobar_72)
-icu4c_unsuffixed = ["icu4c"]
 
 [dependencies]
 icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }

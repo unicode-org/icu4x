@@ -42,16 +42,13 @@ pub union UCPTrieData {
 }
 
 extern "C" {
-    #[cfg_attr(
-        not(feature = "icu4c_unsuffixed"),
-        link_name = "umutablecptrie_open_72"
-    )]
+    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_open_72")]
     fn umutablecptrie_open(
         initial_value: u32,
         error_value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
-    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_set_72")]
+    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_set_72")]
     fn umutablecptrie_set(
         trie: *const UMutableCPTrie,
         cp: u32,
@@ -59,7 +56,7 @@ extern "C" {
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
     #[cfg_attr(
-        not(feature = "icu4c_unsuffixed"),
+        not(icu4c_disable_renaming),
         link_name = "umutablecptrie_buildImmutable_72"
     )]
     fn umutablecptrie_buildImmutable(
@@ -69,12 +66,9 @@ extern "C" {
         error_code: &mut u32,
     ) -> *const UCPTrie;
 
-    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "ucptrie_close_72")]
+    #[cfg_attr(not(icu4c_disable_renaming), link_name = "ucptrie_close_72")]
     fn ucptrie_close(trie: *const UCPTrie);
-    #[cfg_attr(
-        not(feature = "icu4c_unsuffixed"),
-        link_name = "umutablecptrie_close_72"
-    )]
+    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_close_72")]
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 
@@ -153,21 +147,22 @@ where
 
     // safety: we expect ICU4C to give us a valid slice (index, indexLength). The pointer types
     // are already strongly typed, giving the right slice type.
-    let index_slice = unsafe { slice::from_raw_parts(trie.index, trie.indexLength as usize) };
+    let index_slice = unsafe { slice::from_raw_parts(trie.index, trie.indexLength.try_into().expect("got negative number for length")) };
     let index_vec = ZeroVec::alloc_from_slice(index_slice);
+    let data_length = trie.dataLength.try_into().expect("got negative number for length");
     // safety: based on the trie width used we expect (ptr, dataLength) to be valid for the correct
     // ptr type. The ptr types are already strongly typed, giving the right slice type.
     let data_vec: Result<Vec<T>, _> = unsafe {
         match mem::size_of::<T::ULE>() {
-            1 => slice::from_raw_parts(trie.data.ptr8, trie.dataLength as usize)
+            1 => slice::from_raw_parts(trie.data.ptr8, data_length)
                 .iter()
-                .map(|x| TrieValue::try_from_u32(*x as u32))
+                .map(|x| TrieValue::try_from_u32((*x).into()))
                 .collect(),
-            2 => slice::from_raw_parts(trie.data.ptr16, trie.dataLength as usize)
+            2 => slice::from_raw_parts(trie.data.ptr16, data_length)
                 .iter()
-                .map(|x| TrieValue::try_from_u32(*x as u32))
+                .map(|x| TrieValue::try_from_u32((*x).into()))
                 .collect(),
-            4 => slice::from_raw_parts(trie.data.ptr32, trie.dataLength as usize)
+            4 => slice::from_raw_parts(trie.data.ptr32, data_length)
                 .iter()
                 .map(|x| TrieValue::try_from_u32(*x))
                 .collect(),
