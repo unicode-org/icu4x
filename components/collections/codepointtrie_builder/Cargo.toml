@@ -73,5 +73,6 @@ features = [
 icu = { path = "../../icu" }
 
 [package.metadata.cargo-all-features]
-# No features, so disable cargo-all-features
-skip_feature_sets = [[]]
+skip_optional_dependencies = true
+# these need env vars. They still get `cargo check'd` when doing `--all-features`
+denylist = ["icu4c", "icu4c_unsuffixed"]

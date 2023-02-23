@@ -59,7 +59,6 @@
 #![allow(clippy::panic)]
 #![allow(clippy::expect_used)]
 
-use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 
@@ -105,7 +104,7 @@ where
     ///
     /// This function needs either the `"wasm"` or `"icu4c"` feature
     #[cfg(any(feature = "wasm", feature = "icu4c"))]
-    pub fn build(self) -> CodePointTrie<'static, T> {
+    pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {
         #[cfg(feature = "wasm")]
         {
             use icu_collections::codepointtrie::toml::CodePointTrieToml;
