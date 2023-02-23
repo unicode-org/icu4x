@@ -12,8 +12,11 @@ fn main() {
             false => "dylib",
         };
 
-        if env::var("ICU4C_DISABLE_RENAMING").is_ok() {
-            println!("cargo:rustc-cfg=icu4c_disable_renaming");
+        if env::var("ICU4C_RENAME_VERSION").is_ok() {
+            println!("cargo:rustc-cfg=icu4c_enable_renaming");
+        } else {
+            // env!() fails for unset env vars even if used inside a disabled cfg_attr
+            println!("cargo:rustc-env=ICU4C_RENAME_VERSION=setbybuildscriptshouldnotbeseen");
         }
 
         println!("cargo:rustc-link-search={lib_path}");
@@ -23,6 +26,6 @@ fn main() {
         println!("cargo:rustc-link-lib=dylib=stdc++");
         println!("cargo:rerun-if-env-changed=ICU4C_LINK_STATICALLY");
         println!("cargo:rerun-if-env-changed=ICU4C_LIB_PATH");
-        println!("cargo:rerun-if-env-changed=ICU4C_DISABLE_RENAMING");
+        println!("cargo:rerun-if-env-changed=ICU4C_RENAME_VERSION");
     }
 }

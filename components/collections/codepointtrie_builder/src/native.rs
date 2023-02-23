@@ -42,13 +42,13 @@ pub union UCPTrieData {
 }
 
 extern "C" {
-    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_open_72")]
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_open_", env!("ICU4C_RENAME_VERSION")))]
     fn umutablecptrie_open(
         initial_value: u32,
         error_value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
-    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_set_72")]
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("umutablecptrie_set_", env!("ICU4C_RENAME_VERSION")))]
     fn umutablecptrie_set(
         trie: *const UMutableCPTrie,
         cp: u32,
@@ -56,8 +56,8 @@ extern "C" {
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
     #[cfg_attr(
-        not(icu4c_disable_renaming),
-        link_name = "umutablecptrie_buildImmutable_72"
+        icu4c_enable_renaming,
+        link_name = concat!("umutablecptrie_buildImmutable_", env!("ICU4C_RENAME_VERSION"))
     )]
     fn umutablecptrie_buildImmutable(
         trie: *const UMutableCPTrie,
@@ -66,9 +66,9 @@ extern "C" {
         error_code: &mut u32,
     ) -> *const UCPTrie;
 
-    #[cfg_attr(not(icu4c_disable_renaming), link_name = "ucptrie_close_72")]
+    #[cfg_attr(icu4c_enable_renaming, link_name = concat!("ucptrie_close_", env!("ICU4C_RENAME_VERSION")))]
     fn ucptrie_close(trie: *const UCPTrie);
-    #[cfg_attr(not(icu4c_disable_renaming), link_name = "umutablecptrie_close_72")]
+    #[cfg_attr(not(icu4c_disable_renaming), link_name = concat!("umutablecptrie_close_", env!("ICU4C_RENAME_VERSION")))]
     fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 

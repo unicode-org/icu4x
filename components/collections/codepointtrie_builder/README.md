@@ -1,4 +1,4 @@
-# icu_codepointtrie_builder [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie_builder)](https://crates.io/crates/icu_codepointtrie_builder)
+# icu_codepointtrie_builder
 
 `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 
@@ -25,10 +25,10 @@ static linking (if using dynamic linking you will have to set `[DY]LD_LIBRARY_PA
 as well). If building directly, make sure this path is provided via `-L`, and that the
 CLI requests to link against `icuuc`, `icui18n` and `icudata` via `-l` flags.
 
-By default ICU4C uses *renamed* symbols, where each function is suffixed with a version number.
-This crate by default will link to ICU4C 72 symbols. If you have built it with renaming
-disabled, you can provide the `ICU4C_DISABLE_RENAMING` flag to cargo, or pass `--cfg icu4c_disable_renaming`.
-Versions other than ICU4C 72 are not currently supported.
+ICU4C can  *renamed* symbols, where each function is suffixed with a version number.
+This crate by default will link to unrenamed symbols. If you have built it with renaming
+enabled, you can set the `ICU4C_RENAME_VERSION=<version>` env var. When building without Cargo
+this must be paired with `--cfg icu4c_enable_renaming`.
 
 ## Examples
 
@@ -61,6 +61,4 @@ assert_eq!(cpt.get32(u32::MAX), 2); // error value
 [`ICU4X`]: ../icu/index.html
 [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
-## More Information
-
-For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
+License: Unicode-DFS-2016
