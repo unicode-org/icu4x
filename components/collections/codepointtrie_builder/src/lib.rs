@@ -20,17 +20,20 @@
 //! it to ICU4C, run on a wasm runtime. It pulls in a lot of dependencies to do this, but
 //! it should just work with no further effort.
 //!
-//! The `"icu4c"` mode requires some extra effort: it links to a local copy of ICU4C.
-//! If using Cargo, you can use the `ICU4C_LIB_PATH` environment variable to point this to
-//! a directory full of ICU4X static or shared libraries, and `ICU4C_LINK_STATICALLY` to use
-//! static linking (if using dynamic linking you will have to set `[DY]LD_LIBRARY_PATH` at runtime
-//! as well). If building directly, make sure this path is provided via `-L`, and that the
-//! CLI requests to link against `icuuc`, `icui18n` and `icudata` via `-l` flags.
+//! The `"icu4c"` mode reduces the number of Rust dependencies, but it requires having a local copy
+//! of ICU4C available. To configure `"icu4c"` mode in Cargo, set the following environment variables:
 //!
-//! ICU4C can  *renamed* symbols, where each function is suffixed with a version number.
-//! This crate by default will link to unrenamed symbols. If you have built it with renaming
-//! enabled, you can set the `ICU4C_RENAME_VERSION=<version>` env var. When building without Cargo
-//! this must be paired with `--cfg icu4c_enable_renaming`.
+//! - Set `ICU4C_LIB_PATH` to a directory full of ICU4C static or shared libraries.
+//! - Set `ICU4C_LINK_STATICALLY` to any value to use the static libraries.
+//! - Set `ICU4C_RENAME_VERSION` to the integer ICU4C version if ICU4C has renaming
+//!   enabled. By default, we attempt to link non-renamed symbols.
+//!
+//! If using dynamic linking, at runtime, you may need to set `[DY]LD_LIBRARY_PATH`
+//! to the `ICU4C_LIB_PATH`.
+//!
+//! If _not_ using Cargo, make sure to pass `ICU4C_LIB_PATH` to the linker via `-L`, link against
+//! `icuuc`, `icui18n` and `icudata` via `-l` flags, and set `--cfg icu4c_enable_renaming` if you need
+//! renamed ICU4C symbols.
 //!
 //! # Examples
 //!
