@@ -41,26 +41,31 @@ pub union UCPTrieData {
 }
 
 extern "C" {
-    fn umutablecptrie_open_72(
+    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_open_72")]
+    fn umutablecptrie_open(
         initial_value: u32,
         error_value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
-    fn umutablecptrie_set_72(
+    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_set_72")]
+    fn umutablecptrie_set(
         trie: *const UMutableCPTrie,
         cp: u32,
         value: u32,
         error_code: &mut u32,
     ) -> *const UMutableCPTrie;
-    fn umutablecptrie_buildImmutable_72(
+    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_buildImmutable_72")]
+    fn umutablecptrie_buildImmutable(
         trie: *const UMutableCPTrie,
         trie_type: u32,
         width: u32,
         error_code: &mut u32,
     ) -> *const UCPTrie;
 
-    fn ucptrie_close_72(trie: *const UCPTrie);
-    fn umutablecptrie_close_72(builder: *const UMutableCPTrie);
+    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "ucptrie_close_72")]
+    fn ucptrie_close(trie: *const UCPTrie);
+    #[cfg_attr(not(feature = "icu4c_unsuffixed"), link_name = "umutablecptrie_close_72")]
+    fn umutablecptrie_close(builder: *const UMutableCPTrie);
 }
 
 pub(crate) fn run_native<T>(cpt_builder: &CodePointTrieBuilder<T>) -> CodePointTrie<'static, T>
@@ -69,7 +74,7 @@ where
 {
     let mut error = 0;
     let builder = unsafe {
-        umutablecptrie_open_72(
+        umutablecptrie_open(
             cpt_builder.default_value.into(),
             cpt_builder.error_value.into(),
             &mut error,
@@ -84,7 +89,7 @@ where
 
     for (cp, value) in values.iter().enumerate() {
         unsafe {
-            umutablecptrie_set_72(builder, cp as u32, (*value).into(), &mut error);
+            umutablecptrie_set(builder, cp as u32, (*value).into(), &mut error);
         }
         if error != 0 {
             panic!("cpt builder returned error code {}", error);
@@ -101,12 +106,12 @@ where
         1 => 2, // UCPTRIE_VALUE_BITS_8
         other => panic!("Don't know how to make trie with width {other}"),
     };
-    let built = unsafe { umutablecptrie_buildImmutable_72(builder, trie_type, width, &mut error) };
+    let built = unsafe { umutablecptrie_buildImmutable(builder, trie_type, width, &mut error) };
     if error != 0 {
         panic!("cpt builder returned error code {}", error);
     }
     unsafe {
-        umutablecptrie_close_72(builder);
+        umutablecptrie_close(builder);
     }
 
     let trie = unsafe { &*built };
@@ -146,7 +151,7 @@ where
     let built_trie =
         CodePointTrie::try_new(header, index_vec, data_vec).expect("Failed to construct");
     unsafe {
-        ucptrie_close_72(built);
+        ucptrie_close(built);
     }
     built_trie
 }
