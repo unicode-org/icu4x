@@ -1,4 +1,4 @@
-# icu_codepointtrie_builder
+# icu_codepointtrie_builder [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie_builder)](https://crates.io/crates/icu_codepointtrie_builder)
 
 `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 
@@ -65,4 +65,6 @@ assert_eq!(cpt.get32(u32::MAX), 2); // error value
 [`ICU4X`]: ../icu/index.html
 [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
 
-License: Unicode-DFS-2016
+## More Information
+
+For more information on development, authorship, contributing etc. please visit [`ICU4X home page`](https://github.com/unicode-org/icu4x).
