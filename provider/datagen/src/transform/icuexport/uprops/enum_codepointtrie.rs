@@ -26,12 +26,16 @@ fn get_enumerated_prop<'a>(
         .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
-fn get_prop_values_map(
+fn get_prop_values_map<F>(
     values: &[super::uprops_serde::PropertyValue],
-) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError> {
+    transform_u32: F,
+) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError>
+where
+    F: Fn(u32) -> Result<u16, DataError>,
+{
     let mut map = BTreeMap::new();
     for value in values {
-        let discr = value.discr;
+        let discr = transform_u32(value.discr)?;
         map.insert(
             NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
             discr,
@@ -89,7 +93,7 @@ macro_rules! expand {
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
 
-                    let data_struct = get_prop_values_map(&data.values)?;
+                    let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
@@ -109,22 +113,43 @@ macro_rules! expand {
     };
 }
 
-// Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider
-{
-    fn load(&self, _: DataRequest) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-        let data = self.source
+fn get_mask_prop<'a>(
+    source: &'a SourceData,
+    key: &str,
+) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
+    source
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
-            "uprops/{}/gcm.toml",
-            self.source.trie_type(),
+            "uprops/{}/{}.toml",
+            source.trie_type(),
+            key
         ))?
         .mask_property
         .get(0)
-        .ok_or_else(|| DataError::custom("Loading icuexport property data failed: \
-                                            Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+        .ok_or(DataError::custom("Loading icuexport property data failed: \
+                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
+}
+// Special handling for GeneralCategoryMask
+impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+        use icu_properties::GeneralCategoryGroup;
+        use zerovec::ule::AsULE;
 
-        let data_struct = get_prop_values_map(&data.values)?;
+        let data = get_mask_prop(&self.source, "gcm")?;
+        let data_struct = get_prop_values_map(&data.values, |v| {
+            let value: GeneralCategoryGroup = v.into();
+            let ule = value.to_unaligned();
+            let packed = u16::from_unaligned(ule);
+
+            // sentinel value
+            if packed == 0xFF00 {
+                return Err(DataError::custom("Found unknown general category mask value {v}, properties code may need to be updated."));
+            }
+            Ok(packed)
+        })?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
@@ -133,10 +158,8 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
 }
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
-    fn supported_locales(
-        &self,
-    ) -> Result<Vec<DataLocale>, DataError> {
-        get_enumerated_prop(&self.source, "gcm")?;
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        get_mask_prop(&self.source, "gcm")?;
         Ok(vec![Default::default()])
     }
 }

@@ -23,7 +23,7 @@ pub mod binary {
 
 #[derive(serde::Deserialize)]
 pub struct PropertyValue {
-    pub discr: u16,
+    pub discr: u32,
     pub long: String,
     pub short: Option<String>,
     #[serde(default)]
