@@ -137,14 +137,14 @@ unsafe extern "C" fn icu4x_hb_unicode_compose(
         first
     } else {
         // GIGO case
-        assert!(false);
+        debug_assert!(false);
         return false as hb_bool_t;
     };
     let second = if let Some(second) = core::char::from_u32(b) {
         second
     } else {
         // GIGO case
-        assert!(false);
+        debug_assert!(false);
         return false as hb_bool_t;
     };
     if let Some(c) = (*(user_data as *mut CanonicalComposition)).compose(first, second) {
@@ -176,7 +176,7 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose(
         composed
     } else {
         // GIGO case
-        assert!(false);
+        debug_assert!(false);
         return false as hb_bool_t;
     };
     match (*(user_data as *mut CanonicalDecomposition)).decompose(composed) {
