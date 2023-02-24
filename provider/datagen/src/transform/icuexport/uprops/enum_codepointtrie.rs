@@ -27,14 +27,10 @@ fn get_enumerated_prop<'a>(
 }
 
 fn get_prop_values_map(
-    source: &SourceData,
-    key: &str,
+    values: &[super::uprops_serde::PropertyValue],
 ) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError> {
-    let data = get_enumerated_prop(source, key)
-        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let mut map = BTreeMap::new();
-    for value in &data.values {
+    for value in values {
         let discr = value.discr;
         map.insert(
             NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
@@ -89,7 +85,11 @@ macro_rules! expand {
             impl DataProvider<$names_marker> for crate::DatagenProvider
             {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
-                    let data_struct = get_prop_values_map(&self.source, $prop_name)?;
+                    let data = get_enumerated_prop(&self.source, $prop_name)
+                        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
+                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+
+                    let data_struct = get_prop_values_map(&data.values)?;
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
@@ -107,6 +107,38 @@ macro_rules! expand {
             }
         )+
     };
+}
+
+// Special handling for GeneralCategoryMask
+impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider
+{
+    fn load(&self, _: DataRequest) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+        let data = self.source
+        .icuexport()?
+        .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
+            "uprops/{}/gcm.toml",
+            self.source.trie_type(),
+        ))?
+        .mask_property
+        .get(0)
+        .ok_or_else(|| DataError::custom("Loading icuexport property data failed: \
+                                            Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+
+        let data_struct = get_prop_values_map(&data.values)?;
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
+    }
+}
+
+impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+    fn supported_locales(
+        &self,
+    ) -> Result<Vec<DataLocale>, DataError> {
+        get_enumerated_prop(&self.source, "gcm")?;
+        Ok(vec![Default::default()])
+    }
 }
 
 expand!(

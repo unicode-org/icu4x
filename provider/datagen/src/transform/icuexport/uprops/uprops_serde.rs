@@ -39,7 +39,6 @@ pub mod enumerated {
         pub name: String,
     }
 
-
     #[derive(serde::Deserialize)]
     pub struct EnumeratedPropertyMap {
         pub long_name: String,
@@ -53,6 +52,22 @@ pub mod enumerated {
     pub struct Main {
         #[serde(default)]
         pub enum_property: Vec<EnumeratedPropertyMap>,
+    }
+}
+
+pub mod mask {
+    #[derive(serde::Deserialize)]
+    pub struct MaskPropertyMap {
+        pub long_name: String,
+        pub short_name: String,
+        pub mask_for: String,
+        pub values: Vec<super::PropertyValue>,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        #[serde(default)]
+        pub mask_property: Vec<MaskPropertyMap>,
     }
 }
 
