@@ -152,12 +152,14 @@ struct Cli {
                   or 'none' for no keys."
     )]
     keys: Vec<String>,
+
     #[arg(long, value_name = "KEY_FILE")]
     #[arg(
         help = "Path to text file with resource keys to include, one per line. Empty lines \
                   and lines starting with '#' are ignored."
     )]
     key_file: Option<PathBuf>,
+    
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
     keys_for_bin: Option<PathBuf>,
