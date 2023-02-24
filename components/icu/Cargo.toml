@@ -106,7 +106,7 @@ experimental = [
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate
-allowlist = []
+skip_feature_sets = [[]]
 
 [[example]]
 name = "tui"

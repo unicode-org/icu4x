@@ -101,7 +101,7 @@ impl DataPayload<BufferMarker> {
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
-    /// let buffer: &[u8] = b"{\"message\":\"Hallo Welt\"}";
+    /// let buffer: &[u8] = br#"{"message":"Hallo Welt"}"#;
     ///
     /// let buffer_payload = DataPayload::from_owned(buffer);
     /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload

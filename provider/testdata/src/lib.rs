@@ -17,51 +17,36 @@
 //!
 //! ```
 //! use icu::locid::locale;
-//! use icu_provider::hello_world::*;
-//! use icu_provider::prelude::*;
+//! use icu_provider::hello_world::HelloWorldFormatter;
 //!
-//! let req = DataRequest {
-//!     locale: &locale!("en").into(),
-//!     metadata: Default::default(),
-//! };
+//! // Unstable constructor
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     DataProvider::<HelloWorldV1Marker>::load(
-//!         &icu_testdata::unstable(),
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // AnyProvider constructor
+//! HelloWorldFormatter::try_new_with_any_provider(
+//!     &icu_testdata::any(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     BufferProvider::load_buffer(
-//!         &icu_testdata::buffer(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get(),
-//!     &b"\x0bHello World"
-//! );
+//! // BufferProvider constructor (`icu` with `serde` feature, `icu_testdata` with `buffer` feature)
+//! HelloWorldFormatter::try_new_with_buffer_provider(
+//!     &icu_testdata::buffer(),
+//!     &locale!("en-CH").into(),
+//! ).unwrap();
 //!
-//! assert_eq!(
-//!     AnyProvider::load_any(
-//!         &icu_testdata::any(),
-//!         HelloWorldV1Marker::KEY,
-//!         req
-//!     )
-//!     .and_then(AnyResponse::downcast::<HelloWorldV1Marker>)
-//!     .and_then(DataResponse::take_payload)
-//!     .unwrap()
-//!     .get()
-//!     .message,
-//!     "Hello World"
-//! );
+//! // Without fallback the locale match needs to be exact
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("en-CH").into(),
+//! ).is_err();
+//!
+//! HelloWorldFormatter::try_new_unstable(
+//!     &icu_testdata::unstable_no_fallback(),
+//!     &locale!("en").into(),
+//! ).unwrap();
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -84,7 +69,7 @@
 
 extern crate alloc;
 
-#[path = "../metadata.rs.data"]
+#[path = "../data/metadata.rs.data"]
 mod metadata;
 
 pub mod versions {
@@ -98,7 +83,7 @@ pub mod versions {
     /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
     /// ```
     pub fn cldr_tag() -> alloc::string::String {
-        alloc::string::String::from(crate::metadata::CLDR_JSON_GITREF)
+        alloc::string::String::from(super::metadata::CLDR_TAG)
     }
 
     /// Gets the ICU tag used as the test data source (for properties, collator, ...)
@@ -106,10 +91,10 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("release-72-1", icu_testdata::versions::icu_tag());
+    /// assert_eq!("icu4x/2023-02-09/72.x", icu_testdata::versions::icu_tag());
     /// ```
     pub fn icu_tag() -> alloc::string::String {
-        alloc::string::String::from(crate::metadata::ICUEXPORTDATA_GITREF)
+        alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
     }
 }
 
@@ -123,10 +108,11 @@ pub mod versions {
 /// assert!(icu_testdata::locales().len() > 10);
 /// ```
 pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
-    alloc::vec::Vec::from(crate::metadata::LOCALES)
+    alloc::vec::Vec::from(metadata::LOCALES)
 }
 
 #[cfg(feature = "std")]
+#[deprecated]
 pub mod paths;
 
 use icu_provider::prelude::*;
@@ -137,10 +123,6 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -157,10 +139,6 @@ pub fn unstable_no_fallback() -> UnstableDataProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn any() -> impl AnyProvider {
     // The baked data is valid.
     #[allow(clippy::unwrap_used)]
@@ -168,10 +146,6 @@ pub fn any() -> impl AnyProvider {
 }
 
 /// An [`AnyProvider`] backed by baked data.
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 pub fn any_no_fallback() -> impl AnyProvider {
     UnstableDataProvider
 }
@@ -205,10 +179,6 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 #[non_exhaustive]
 pub struct UnstableDataProvider;
 
-#[cfg(any(
-    feature = "internal_all_features_hack",
-    not(feature = "internal_ignore_baked")
-))] // allow accessing metadata even if databake doesn't compile
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     impl_data_provider!(super::UnstableDataProvider);

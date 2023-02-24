@@ -36,6 +36,7 @@ members = [
     "provider/datagen",
     "provider/fs",
     "provider/macros",
+    "provider/repodata",
     "provider/testdata",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
@@ -60,6 +61,8 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
+# Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
+# implicitly excluded from the main workspace.
 exclude = [
     # This crate uses datagen which requires downloading ZIP files during build,
     # so we don't want to build it as part of the workspace.

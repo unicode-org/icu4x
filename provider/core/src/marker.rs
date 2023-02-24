@@ -22,6 +22,10 @@ use crate::yoke::Yokeable;
 ///
 /// Also see [`KeyedDataMarker`].
 ///
+/// Note: `DataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// to be unit structs. As this is not something that can be enforced by the type system, we
+/// currently only have a `'static` bound on them (which is needed by a lot of our code).
+///
 /// # Examples
 ///
 /// Manually implementing DataMarker for a custom type:
@@ -53,7 +57,7 @@ use crate::yoke::Yokeable;
 /// ```
 ///
 /// [`data_struct`]: crate::data_struct
-pub trait DataMarker {
+pub trait DataMarker: 'static {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
@@ -69,6 +73,10 @@ pub trait DataMarker {
 ///
 /// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
 /// because they are not specific to a single key.
+///
+/// Note: `KeyedDataMarker`s are quasi-const-generic compile-time objects, and as such are expected
+/// to be unit structs. As this is not something that can be enforced by the type system, we
+/// currently only have a `'static` bound on them (which is needed by a lot of our code).
 ///
 /// [`data_struct!`]: crate::data_struct
 /// [`DataProvider`]: crate::DataProvider

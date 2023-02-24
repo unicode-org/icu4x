@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{DataKey, KeyedDataMarker};
+use icu_provider::prelude::*;
 
 use icu_calendar::provider::*;
 use icu_casemapping::provider::*;
@@ -81,6 +81,23 @@ macro_rules! registry {
             )+
             unreachable!("unregistered marker")
         }
+
+        #[doc(hidden)]
+        pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+            $(
+                if key == $marker::KEY {
+                    let _reified_data: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
+                }
+            )+
+            $(
+                if key == $exp_marker::KEY {
+                    let _reified_data: DataPayload<$exp_marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
+                }
+            )+
+            unreachable!("unregistered marker")
+        }
     }
 }
 
@@ -92,12 +109,14 @@ registry!(
     AsciiHexDigitV1Marker,
     BasicEmojiV1Marker,
     BidiClassV1Marker,
+    BidiClassNameToValueV1Marker,
     BidiControlV1Marker,
     BidiMirroredV1Marker,
     BlankV1Marker,
     BuddhistDateLengthsV1Marker,
     BuddhistDateSymbolsV1Marker,
     CanonicalCombiningClassV1Marker,
+    CanonicalCombiningClassNameToValueV1Marker,
     CanonicalCompositionsV1Marker,
     CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker,
@@ -128,6 +147,7 @@ registry!(
     DeprecatedV1Marker,
     DiacriticV1Marker,
     EastAsianWidthV1Marker,
+    EastAsianWidthNameToValueV1Marker,
     EmojiComponentV1Marker,
     EmojiModifierBaseV1Marker,
     EmojiModifierV1Marker,
@@ -145,8 +165,10 @@ registry!(
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
     GeneralCategoryV1Marker,
+    GeneralCategoryNameToValueV1Marker,
     GraphemeBaseV1Marker,
     GraphemeClusterBreakV1Marker,
+    GraphemeClusterBreakNameToValueV1Marker,
     GraphemeExtendV1Marker,
     GraphemeLinkV1Marker,
     GraphV1Marker,
@@ -170,6 +192,7 @@ registry!(
     JoinControlV1Marker,
     LikelySubtagsV1Marker,
     LineBreakV1Marker,
+    LineBreakNameToValueV1Marker,
     LocaleFallbackLikelySubtagsV1Marker,
     LocaleFallbackParentsV1Marker,
     LogicalOrderExceptionV1Marker,
@@ -196,9 +219,11 @@ registry!(
     RadicalV1Marker,
     RegionalIndicatorV1Marker,
     ScriptV1Marker,
+    ScriptNameToValueV1Marker,
     ScriptWithExtensionsPropertyV1Marker,
     SegmentStarterV1Marker,
     SentenceBreakV1Marker,
+    SentenceBreakNameToValueV1Marker,
     SentenceTerminalV1Marker,
     SoftDottedV1Marker,
     TerminalPunctuationV1Marker,
@@ -213,6 +238,7 @@ registry!(
     WeekDataV1Marker,
     WhiteSpaceV1Marker,
     WordBreakV1Marker,
+    WordBreakNameToValueV1Marker,
     XdigitV1Marker,
     XidContinueV1Marker,
     XidStartV1Marker,
