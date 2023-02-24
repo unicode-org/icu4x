@@ -27,14 +27,26 @@ include = [
 [package.metadata.workspaces]
 independent = true
 
+[features]
+# Use the wasm builder
+default = ["wasm"]
+wasm = ["wasmer", "wasmer-wasi"]
+# Use the ICU4C builder
+# needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
+# containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
+# Will be silently disabled if the wasm feature is enabled
+icu4c = ["zerovec"]
+
 [dependencies]
 icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
+zerovec = { version = "0.9.2", path = "../../../utils/zerovec", optional = true }
 lazy_static = "1.4.0"
 toml = "0.5"
 
 [dependencies.wasmer]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -47,6 +59,7 @@ features = [
 [dependencies.wasmer-wasi]
 version = "2.2.1"
 default-features = false
+optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
@@ -56,3 +69,8 @@ features = [
 
 [dev-dependencies]
 icu = { path = "../../icu" }
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# these need env vars. They still get `cargo check'd` when doing `--all-features`
+denylist = ["icu4c"]

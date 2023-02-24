@@ -1,0 +1,32 @@
+{
+  "map": {
+    "AT": 1,
+    "ATerm": 1,
+    "CL": 2,
+    "Close": 2,
+    "CR": 11,
+    "EX": 12,
+    "Extend": 12,
+    "FO": 3,
+    "Format": 3,
+    "LE": 6,
+    "LF": 13,
+    "LO": 4,
+    "Lower": 4,
+    "NU": 5,
+    "Numeric": 5,
+    "OLetter": 6,
+    "Other": 0,
+    "SC": 14,
+    "SContinue": 14,
+    "SE": 7,
+    "Sep": 7,
+    "SP": 8,
+    "Sp": 8,
+    "ST": 9,
+    "STerm": 9,
+    "UP": 10,
+    "Upper": 10,
+    "XX": 0
+  }
+}

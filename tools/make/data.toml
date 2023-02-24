@@ -21,12 +21,13 @@ category = "ICU4X Data"
 dependencies = [
     "testdata",
     "testdata-hello-world",
+    "download-repo-sources",
 ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data
+output = exec git status --porcelain=v1 provider/testdata/data provider/fs/tests/data provider/blob/tests/data provider/repodata
 output_length = length ${output.stdout}
 if greater_than ${output_length} 0
     msg = array "" ""
@@ -110,9 +111,6 @@ dependencies = [
     "testdata-hello-world-blob",
 ]
 
-###### END CI TASKS
-
-
 [tasks.full-data]
 description = "Builds a complete postcard file from latest CLDR and icu_exportdata."
 category = "ICU4X Data"
@@ -128,18 +126,21 @@ args = [
     "--overwrite",
 ]
 
-[tasks.testdata-download-sources]
+[tasks.download-repo-sources]
 description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
 category = "ICU4X Data"
 command = "cargo"
 args = [
     "run",
-    "--bin=icu4x-testdata-download-sources",
+    "--bin=download-repo-sources",
     "--",
+    "--out=provider/repodata/data",
     "-v",
 ]
 
-[tasks.hello-world-lang-de]
+###### END CI TASKS
+
+[tasks.provider-adapters-hello-world-lang-de]
 description = "Build Hello World data for 'de'"
 category = "ICU4X Data"
 command = "cargo"
@@ -154,7 +155,7 @@ args = [
     "--overwrite",
 ]
 
-[tasks.hello-world-lang-ro]
+[tasks.provider-adapters-hello-world-lang-ro]
 description = "Build Hello World data for 'ro'"
 category = "ICU4X Data"
 command = "cargo"
@@ -169,10 +170,10 @@ args = [
     "--overwrite",
 ]
 
-[tasks.hello-world-lang-all]
-description = "Build all Hello World languages."
+[tasks.provider-adapters-testdata]
+description = "Build all testdata for the icu_provider_adapters crate."
 category = "ICU4X Data"
 dependencies = [
-    "hello-world-lang-de",
-    "hello-world-lang-ro",
+    "provider-adapters-hello-world-lang-de",
+    "provider-adapters-hello-world-lang-ro",
 ]

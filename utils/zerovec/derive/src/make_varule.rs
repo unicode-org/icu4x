@@ -233,6 +233,19 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         quote!()
     };
 
+    let maybe_hash = if attrs.hash {
+        quote!(
+            #[allow(clippy::derive_hash_xor_eq)]
+            impl core::hash::Hash for #ule_name {
+                fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
+                    state.write(<#ule_name as zerovec::ule::VarULE>::as_byte_slice(&self));
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
@@ -255,6 +268,8 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         #maybe_de
 
         #maybe_debug
+
+        #maybe_hash
     )
 }
 
