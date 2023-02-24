@@ -138,7 +138,7 @@ struct Cli {
     #[arg(help = "Which collation han database to use.")]
     collation_han_database: cli::CollationHanDatabase,
 
-    #[arg(long, value_enum, num_args = 0..)]
+    #[arg(long, value_enum, num_args = 1..)]
     #[arg(
         help = "Which less-common collation tables to include. 'search-all' includes all search tables."
     )]
@@ -148,7 +148,7 @@ struct Cli {
     #[arg(help = "Deprecated, use --locales full or --locales modern")]
     cldr_locale_subset: bool,
 
-    #[arg(long, short, num_args = 0..)]
+    #[arg(long, short, num_args = 1..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
                   Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
