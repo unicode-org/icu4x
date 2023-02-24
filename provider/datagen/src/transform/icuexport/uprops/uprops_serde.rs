@@ -18,11 +18,16 @@ pub mod binary {
     pub struct Main {
         #[serde(default)]
         pub binary_property: Vec<BinaryProperty>,
-        #[serde(skip)]
-        pub enum_property: (),
-        #[serde(skip)]
-        pub script_extensions: (),
     }
+}
+
+#[derive(serde::Deserialize)]
+pub struct PropertyValue {
+    pub discr: u16,
+    pub long: String,
+    pub short: Option<String>,
+    #[serde(default)]
+    pub aliases: Vec<String>,
 }
 
 pub mod enumerated {
@@ -34,32 +39,20 @@ pub mod enumerated {
         pub name: String,
     }
 
-    #[derive(serde::Deserialize)]
-    pub struct EnumeratedPropertyValue {
-        pub discr: u16,
-        pub long: String,
-        pub short: Option<String>,
-        #[serde(default)]
-        pub aliases: Vec<String>,
-    }
 
     #[derive(serde::Deserialize)]
     pub struct EnumeratedPropertyMap {
         pub long_name: String,
         pub short_name: String,
-        pub values: Vec<EnumeratedPropertyValue>,
+        pub values: Vec<super::PropertyValue>,
         pub ranges: Vec<EnumeratedPropertyMapRange>,
         pub code_point_trie: super::CodePointTrieToml,
     }
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        #[serde(skip)]
-        pub binary_property: (),
         #[serde(default)]
         pub enum_property: Vec<EnumeratedPropertyMap>,
-        #[serde(skip)]
-        pub script_extensions: (),
     }
 }
 
@@ -76,10 +69,6 @@ pub mod script_extensions {
 
     #[derive(serde::Deserialize)]
     pub struct Main {
-        #[serde(skip)]
-        pub binary_property: (),
-        #[serde(skip)]
-        pub enum_property: (),
         #[serde(default)]
         pub script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
     }
