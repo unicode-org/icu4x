@@ -36,7 +36,7 @@ skip_optional_dependencies = true
 denylist = ["bench", "serde", "logging"]
 
 [dependencies]
-harfbuzz-sys = { version = "0.5.0", default-features = false }
+harfbuzz-sys = { version = "0.5.0" }
 icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
 icu_properties = { version = "1.0.0", path = "../../components/properties" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
