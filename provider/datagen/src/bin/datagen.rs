@@ -2,60 +2,63 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{crate_version, ArgGroup, Parser, ValueEnum};
+use clap::{crate_version, ArgGroup, Parser};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Format {
-    Dir,
-    Blob,
-    Mod,
-    DeprecatedDefault,
-}
+mod cli {
+    use clap::ValueEnum;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Syntax {
-    Json,
-    Bincode,
-    Postcard,
-}
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+    pub(crate) enum Format {
+        Dir,
+        Blob,
+        Mod,
+        DeprecatedDefault,
+    }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum TrieType {
-    Small,
-    Fast,
-}
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum CliCollationHanDatabase {
-    Unihan,
-    Implicit,
-}
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+    pub(crate) enum Syntax {
+        Json,
+        Bincode,
+        Postcard,
+    }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum CollationTable {
-    Gb2312,
-    Big5han,
-    Search,
-    Searchji,
-    #[value(alias = "search*")] // for backwards compatability
-    SearchAll,
-}
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+    pub(crate) enum TrieType {
+        Small,
+        Fast,
+    }
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+    pub(crate) enum CollationHanDatabase {
+        Unihan,
+        Implicit,
+    }
 
-impl CollationTable {
-    fn to_datagen_value(self) -> &'static str {
-        match self {
-            Self::Gb2312 => "gb2312",
-            Self::Big5han => "big5han",
-            Self::Search => "search",
-            Self::Searchji => "searchji",
-            Self::SearchAll => "search*",
+    #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+    pub(crate) enum CollationTable {
+        Gb2312,
+        Big5han,
+        Search,
+        Searchji,
+        #[value(alias = "search*")] // for backwards compatability
+        SearchAll,
+    }
+
+    impl CollationTable {
+        pub(crate) fn to_datagen_value(self) -> &'static str {
+            match self {
+                Self::Gb2312 => "gb2312",
+                Self::Big5han => "big5han",
+                Self::Search => "search",
+                Self::Searchji => "searchji",
+                Self::SearchAll => "search*",
+            }
         }
     }
 }
-
 #[derive(Parser)]
 #[command(name = "icu4x-datagen", author, version)]
 #[command(about = concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()), long_about = None)]
@@ -69,19 +72,19 @@ struct Cli {
     #[arg(help = "Requests verbose output")]
     verbose: bool,
 
-    #[arg(long, value_enum, default_value_t = Format::DeprecatedDefault, hide_default_value = true)]
+    #[arg(long, value_enum, default_value_t = cli::Format::DeprecatedDefault, hide_default_value = true)]
     #[arg(
         help = "Select the output format: a directory tree of files, a single blob, or a Rust module."
     )]
-    format: Format,
+    format: cli::Format,
 
     #[arg(short = 'W', long)]
     #[arg(help = "Delete the output before writing data.")]
     overwrite: bool,
 
-    #[arg(short, long, value_enum, default_value_t = Syntax::Json)]
+    #[arg(short, long, value_enum, default_value_t = cli::Syntax::Json)]
     #[arg(help = "--format=dir only: serde serialization format.")]
-    syntax: Syntax,
+    syntax: cli::Syntax,
 
     #[arg(short, long)]
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
@@ -123,23 +126,23 @@ struct Cli {
     )]
     icuexport_root: Option<PathBuf>,
 
-    #[arg(long, value_enum, default_value_t = TrieType::Small)]
+    #[arg(long, value_enum, default_value_t = cli::TrieType::Small)]
     #[arg(
         help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
                   Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
                   information, see the TrieType enum."
     )]
-    trie_type: TrieType,
+    trie_type: cli::TrieType,
 
-    #[arg(long, value_enum, default_value_t = CliCollationHanDatabase::Implicit)]
+    #[arg(long, value_enum, default_value_t = cli::CollationHanDatabase::Implicit)]
     #[arg(help = "Which collation han database to use.")]
-    collation_han_database: CliCollationHanDatabase,
+    collation_han_database: cli::CollationHanDatabase,
 
     #[arg(long, value_enum, num_args = 0..)]
     #[arg(
         help = "Which less-common collation tables to include. 'search-all' includes all search tables."
     )]
-    include_collations: Vec<CollationTable>,
+    include_collations: Vec<cli::CollationTable>,
 
     #[arg(long, hide = true)]
     #[arg(help = "Deprecated, use --locales full or --locales modern")]
@@ -159,7 +162,7 @@ struct Cli {
                   and lines starting with '#' are ignored."
     )]
     key_file: Option<PathBuf>,
-    
+
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
     keys_for_bin: Option<PathBuf>,
@@ -261,13 +264,13 @@ fn main() -> eyre::Result<()> {
         source_data = source_data.with_icuexport_for_tag(tag)?;
     }
 
-    if matches.trie_type == TrieType::Fast {
+    if matches.trie_type == cli::TrieType::Fast {
         source_data = source_data.with_fast_tries();
     }
 
     source_data = source_data.with_collation_han_database(match matches.collation_han_database {
-        CliCollationHanDatabase::Unihan => CollationHanDatabase::Unihan,
-        CliCollationHanDatabase::Implicit => CollationHanDatabase::Implicit,
+        cli::CollationHanDatabase::Unihan => CollationHanDatabase::Unihan,
+        cli::CollationHanDatabase::Implicit => CollationHanDatabase::Implicit,
     });
 
     if !matches.include_collations.is_empty() {
@@ -310,8 +313,8 @@ fn main() -> eyre::Result<()> {
     };
 
     let out = match matches.format {
-        v @ (Format::Dir | Format::DeprecatedDefault) => {
-            if v == Format::DeprecatedDefault {
+        v @ (cli::Format::Dir | cli::Format::DeprecatedDefault) => {
+            if v == cli::Format::DeprecatedDefault {
                 log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
             }
             icu_datagen::Out::Fs {
@@ -319,16 +322,16 @@ fn main() -> eyre::Result<()> {
                     .output
                     .unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 serializer: match matches.syntax {
-                    Syntax::Bincode => Box::<syntax::Bincode>::default(),
-                    Syntax::Postcard => Box::<syntax::Postcard>::default(),
-                    Syntax::Json if matches.pretty => Box::new(syntax::Json::pretty()),
-                    Syntax::Json => Box::<syntax::Json>::default(),
+                    cli::Syntax::Bincode => Box::<syntax::Bincode>::default(),
+                    cli::Syntax::Postcard => Box::<syntax::Postcard>::default(),
+                    cli::Syntax::Json if matches.pretty => Box::new(syntax::Json::pretty()),
+                    cli::Syntax::Json => Box::<syntax::Json>::default(),
                 },
                 overwrite: matches.overwrite,
                 fingerprint: matches.fingerprint,
             }
         }
-        Format::Blob => icu_datagen::Out::Blob(if let Some(path) = matches.output {
+        cli::Format::Blob => icu_datagen::Out::Blob(if let Some(path) = matches.output {
             if !matches.overwrite && path.exists() {
                 eyre::bail!("Output path is present: {:?}", path);
             }
@@ -338,7 +341,7 @@ fn main() -> eyre::Result<()> {
         } else {
             Box::new(std::io::stdout())
         }),
-        Format::Mod => {
+        cli::Format::Mod => {
             let mod_directory = matches
                 .output
                 .unwrap_or_else(|| PathBuf::from("icu4x_data"));
