@@ -80,7 +80,7 @@ zerovec = { version = "0.9.2", path = "../../utils/zerovec", features = ["serde"
 zip = "0.5"
 
 # Dependencies for "bin" feature
-clap = { version = "4", optional = true, features = ["cargo"] }
+clap = { version = "4", optional = true, features = ["cargo", "derive"] }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "1.12", default-features = false, optional = true }
 

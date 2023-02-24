@@ -2,13 +2,194 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{crate_authors, crate_version, Command, Arg, ArgGroup};
+use clap::{crate_authors, crate_version, Arg, ArgGroup, Command, Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::{Path, PathBuf};
 
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum Format {
+    Dir,
+    Blob,
+    Mod,
+    DeprecatedDefault,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum Syntax {
+    Json,
+    Bincode,
+    Postcard,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum TrieType {
+    Small,
+    Fast,
+}
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum CliCollationHanDatabase {
+    Unihan,
+    Implicit,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum CollationTable {
+    Gb2312,
+    Big5han,
+    Search,
+    Searchji,
+    #[value(alias = "search*")] // for backwards compatability
+    SearchAll,
+}
+
+#[derive(Parser)]
+#[command(name = "icu4x-datagen", author, version)]
+#[command(about = concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()), long_about = None)]
+#[command(group(
+            ArgGroup::new("key_mode")
+                .required(true)
+                .args(["keys", "key_file", "keys_for_bin", "all_keys"]),
+        ))]
+struct Cli {
+    #[arg(short, long)]
+    #[arg(help = "Requests verbose output")]
+    verbose: bool,
+
+    #[arg(long, value_enum, default_value_t = Format::DeprecatedDefault, hide_default_value = true)]
+    #[arg(
+        help = "Select the output format: a directory tree of files, a single blob, or a Rust module."
+    )]
+    format: Format,
+
+    #[arg(short = 'W', long)]
+    #[arg(help = "Delete the output before writing data.")]
+    overwrite: bool,
+
+    #[arg(short, long, value_enum)]
+    #[arg(help = "--format=dir only: serde serialization format.")]
+    syntax: Syntax,
+
+    #[arg(short, long)]
+    #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
+    pretty: bool,
+
+    #[arg(long)]
+    #[arg(help = "--format=dir only: whether to add a fingerprints file to the output.")]
+    fingerprint: bool,
+
+    #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
+    #[arg(
+        help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
+                    Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                    Ignored if '--cldr-root' is present.\n\
+                    Note that some keys do not support versions before 41.0.0."
+    )]
+    cldr_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(
+        help = "Path to a local cldr-{version}-json-full.zip directory (see https://github.com/unicode-org/cldr-json/releases).\n\
+                  Note that some keys do not support versions before 41.0.0."
+    )]
+    cldr_root: PathBuf,
+
+    #[arg(long, value_name = "TAG", default_value = "latest")]
+    #[arg(
+        help = "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Ignored if '--icuexport-root' is present.\n\
+                  Note that some keys do not support versions before release-71-1."
+    )]
+    icuexport_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(
+        help = "Path to a local icuexportdata_uprops_full directory (see https://github.com/unicode-org/icu/releases).\n\
+                  Note that some keys do not support versions before release-71-1."
+    )]
+    icuexport_root: PathBuf,
+
+    #[arg(long, value_enum, default_value_t = TrieType::Small)]
+    #[arg(
+        help = "Whether to optimize CodePointTrie data structures for size (\"small\") or speed (\"fast\").\n\
+                  Using \"fast\" mode increases performance of CJK text processing and segmentation. For more\n\
+                  information, see the TrieType enum."
+    )]
+    trie_type: TrieType,
+
+    #[arg(long, value_enum, default_value_t = CliCollationHanDatabase::Implicit)]
+    #[arg(help = "Which collation han database to use.")]
+    collation_han_database: CliCollationHanDatabase,
+
+    #[arg(long, value_enum)]
+    #[arg(
+        help = "Which less-common collation tables to include. 'search-all' includes all search tables."
+    )]
+    include_collations: Vec<CollationTable>,
+
+    #[arg(long, hide = true)]
+    #[arg(help = "Deprecated, use --locales full or --locales modern")]
+    cldr_locale_subset: bool,
+
+    #[arg(long, short)]
+    #[arg(
+        help = "Include these resource keys in the output. Accepts multiple arguments.\n\
+                  Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
+                  or 'none' for no keys."
+    )]
+    keys: Vec<String>,
+    #[arg(long, value_name = "KEY_FILE")]
+    #[arg(
+        help = "Path to text file with resource keys to include, one per line. Empty lines \
+                  and lines starting with '#' are ignored."
+    )]
+    key_file: Option<PathBuf>,
+    #[arg(long, value_name = "BINARY")]
+    #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
+    keys_for_bin: Option<PathBuf>,
+
+    #[arg(long, hide = true)]
+    #[arg(help = "Deprecated: alias for --keys all")]
+    all_keys: bool,
+
+    #[arg(long, short, required_unless_present = "all_locales")]
+    #[arg(
+        help = "Include this locale in the output. Accepts multiple arguments. \
+                  Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
+    )]
+    locales: Vec<String>,
+
+    #[arg(long, hide = true)]
+    #[arg(help = "Deprecated: alias for --locales full")]
+    all_locales: bool,
+
+    #[arg(long, short, value_name = "PATH")]
+    #[arg(
+        help = "Path to output directory or file. Must be empty or non-existent, unless \
+                  --overwrite is present, in which case the directory is deleted first. \
+                  For --format=blob, omit this option to dump to stdout. \
+                  For --format={dir,mod} defaults to 'icu4x_data'."
+    )]
+    output: PathBuf,
+
+    #[arg(long)]
+    #[arg(
+        help = "--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates"
+    )]
+    insert_feature_gates: bool,
+
+    #[arg(long)]
+    #[arg(
+        help = "--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
+    )]
+    use_separate_crates: bool,
+}
+
 fn main() -> eyre::Result<()> {
+    let matches = Cli::parse();
+    unimplemented!();
     let matches = Command::new("icu4x-datagen")
         .version(crate_version!())
         .author(crate_authors!())
@@ -126,7 +307,7 @@ fn main() -> eyre::Result<()> {
                 .action(clap::ArgAction::Append)
                 .num_args(1)
                 .value_parser(["gb2312", "big5han", "search", "searchjl", "search*"])
-                .help("Which less-common collation tables to include. 'search*' includes all search tables.")
+                .help("Which less-common collation tables to include. 'search-all' includes all search tables.")
         )
         .arg(
             Arg::new("CLDR_LOCALE_SUBSET")
