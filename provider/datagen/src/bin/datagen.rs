@@ -201,7 +201,6 @@ struct Cli {
 
 fn main() -> eyre::Result<()> {
     let matches = Cli::parse();
-    println!("{:?}", matches.include_collations);
 
     if matches.verbose {
         SimpleLogger::new()
