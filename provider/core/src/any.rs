@@ -73,7 +73,7 @@ impl DataMarker for AnyMarker {
 
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
@@ -90,7 +90,7 @@ impl AnyPayload {
     /// the type stored in the `AnyPayload`.
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -118,7 +118,7 @@ impl AnyPayload {
     /// Clones and then transforms a type-erased `AnyPayload` into a concrete `DataPayload<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
@@ -162,7 +162,7 @@ impl AnyPayload {
 
 impl<M> DataPayload<M>
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Moves this DataPayload to the heap (requiring an allocation) and returns it as an
@@ -200,7 +200,7 @@ impl DataPayload<AnyMarker> {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataPayload<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -247,7 +247,7 @@ impl AnyResponse {
     #[inline]
     pub fn downcast<M>(self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
@@ -261,7 +261,7 @@ impl AnyResponse {
     /// Clones and then transforms a type-erased `AnyResponse` into a concrete `DataResponse<M>`.
     pub fn downcast_cloned<M>(&self) -> Result<DataResponse<M>, DataError>
     where
-        M: DataMarker + 'static,
+        M: DataMarker,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         M::Yokeable: MaybeSendSync,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
@@ -279,7 +279,7 @@ impl AnyResponse {
 
 impl<M> DataResponse<M>
 where
-    M: DataMarker + 'static,
+    M: DataMarker,
     M::Yokeable: MaybeSendSync,
 {
     /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
@@ -301,24 +301,43 @@ where
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let any_response = HelloWorldProvider
-///     .as_any_provider()
-///     .load_any(
-///         HelloWorldV1Marker::KEY,
-///         DataRequest {
-///             locale: &icu_locid::locale!("de").into(),
-///             metadata: Default::default(),
-///         },
-///     )
-///     .expect("Load should succeed");
+/// let any_provider = HelloWorldProvider.as_any_provider();
 ///
-/// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> =
-///     any_response.downcast().expect("Types match");
+/// let req = DataRequest {
+///     locale: &icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// let payload = response.take_payload().expect("Data should be present");
+/// // Downcasting manually
+/// assert_eq!(
+///     any_provider
+///         .load_any(HelloWorldV1Marker::KEY, req)
+///         .expect("load should succeed")
+///         .downcast::<HelloWorldV1Marker>()
+///         .expect("types should match")
+///         .take_payload()
+///         .unwrap()
+///         .get(),
+///     &HelloWorldV1 {
+///         message: Cow::Borrowed("Hallo Welt"),
+///     },
+/// );
 ///
-/// assert_eq!(payload.get().message, "Hallo Welt");
+/// // Downcasting automatically
+/// let downcasting_provider: &dyn DataProvider<HelloWorldV1Marker> =
+///     &any_provider.as_downcasting();
+///
+/// assert_eq!(
+///     downcasting_provider
+///         .load(req)
+///         .expect("load should succeed")
+///         .take_payload()
+///         .unwrap()
+///         .get(),
+///     &HelloWorldV1 {
+///         message: Cow::Borrowed("Hallo Welt"),
+///     },
+/// );
 /// ```
 pub trait AnyProvider {
     /// Loads an [`AnyPayload`] according to the key and request.
@@ -384,28 +403,34 @@ where
 impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: KeyedDataMarker + 'static,
+    M: KeyedDataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(M::KEY, req)?.downcast()
+        self.0
+            .load_any(M::KEY, req)?
+            .downcast()
+            .map_err(|e| e.with_req(M::KEY, req))
     }
 }
 
 impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: DataMarker + 'static,
+    M: DataMarker,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
     M::Yokeable: MaybeSendSync,
 {
     #[inline]
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.0.load_any(key, req)?.downcast()
+        self.0
+            .load_any(key, req)?
+            .downcast()
+            .map_err(|e| e.with_req(key, req))
     }
 }
 
@@ -428,7 +453,7 @@ mod test {
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
             "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
-            format!("{:?}", any_payload)
+            format!("{any_payload:?}")
         );
 
         struct WrongMarker;
@@ -440,7 +465,7 @@ mod test {
         let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
             "ICU4X data error: Mismatched types: tried to downcast with icu_provider::any::test::test_debug::WrongMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
-            format!("{}", err)
+            format!("{err}")
         );
     }
 

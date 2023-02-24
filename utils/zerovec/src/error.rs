@@ -22,10 +22,10 @@ impl fmt::Display for ZeroVecError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         match *self {
             ZeroVecError::InvalidLength { ty, len } => {
-                write!(f, "Invalid length {} for slice of type {}", len, ty)
+                write!(f, "Invalid length {len} for slice of type {ty}")
             }
             ZeroVecError::ParseError { ty } => {
-                write!(f, "Could not parse bytes to slice of type {}", ty)
+                write!(f, "Could not parse bytes to slice of type {ty}")
             }
             ZeroVecError::VarZeroVecFormatError => {
                 write!(f, "Invalid format for VarZeroVec buffer")

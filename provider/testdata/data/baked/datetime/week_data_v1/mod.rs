@@ -1,5 +1,6 @@
 // @generated
 #![cfg(feature = "icu_calendar")]
+#![allow(clippy::octal_escapes)]
 type DataStruct =
     <::icu_calendar::provider::WeekDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {

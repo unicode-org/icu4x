@@ -14,7 +14,7 @@ const WASM_BYTES: &[u8] = include_bytes!("../list_to_ucptrie.wasm");
 
 lazy_static! {
     static ref STORE: Store = Store::default();
-    static ref MODULE: Module = Module::new(&STORE, &WASM_BYTES).expect("valid WASM");
+    static ref MODULE: Module = Module::new(&STORE, WASM_BYTES).expect("valid WASM");
 }
 
 pub(crate) fn run_wasm<T>(builder: &CodePointTrieBuilder<T>) -> String
@@ -61,7 +61,7 @@ where
 
         for value in values {
             let num: u32 = (*value).into();
-            writeln!(wasi_stdin, "{}", num).expect("valid pipe");
+            writeln!(wasi_stdin, "{num}").expect("valid pipe");
         }
     }
 
@@ -73,10 +73,7 @@ where
     let exit_result = start.call(&[]);
 
     if let Err(e) = exit_result {
-        panic!(
-            "list_to_ucptrie failed in C++: args were: {:?}: {}",
-            args, e
-        );
+        panic!("list_to_ucptrie failed in C++: args were: {args:?}: {e}");
     }
 
     // To read from the stdout/stderr, we again need a mutable reference to the pipe

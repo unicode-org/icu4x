@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg_attr(not(feature = "experimental"), allow(dead_code))]
-
 use crate::transform::cldr::source::CldrCache;
-pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
+pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
@@ -58,18 +56,27 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-72-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-09/72.x";
+
+    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
+    ///
+    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
+    pub fn latest_tested() -> Self {
+        Self::default()
+            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+            .unwrap()
+            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+            .unwrap()
+    }
 
     #[cfg(test)]
-    pub fn for_test() -> Self {
+    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    pub fn repo() -> Self {
         Self::default()
-            .with_cldr(
-                icu_testdata::paths::cldr_json_root(),
-                CldrLocaleSubset::Full,
-            )
-            .expect("testdata is valid")
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-            .expect("testdata is valid")
+            .with_cldr(repodata::paths::cldr(), Default::default())
+            .unwrap()
+            .with_icuexport(repodata::paths::icuexport())
+            .unwrap()
     }
 
     /// Adds CLDR data to this `DataSource`. The root should point to a local
@@ -80,19 +87,11 @@ impl SourceData {
     pub fn with_cldr(
         self,
         root: PathBuf,
-        _locale_subset: CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         let root = AbstractFs::new(root)?;
-        let locale_subset = if root.list("cldr-misc-full").is_ok() {
-            CldrLocaleSubset::Full
-        } else {
-            CldrLocaleSubset::Modern
-        };
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(root),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(root)))),
             ..self
         })
     }
@@ -114,16 +113,13 @@ impl SourceData {
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
-        locale_subset: CldrLocaleSubset,
+        _use_default_here: crate::CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache {
-                cache: SerdeCache::new(AbstractFs::new_from_url(format!(
-                    "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-{}.zip",
-                    tag, tag, locale_subset
-                ))),
-                locale_subset,
-            })),
+            cldr_paths: Some(Arc::new(CldrCache(SerdeCache::new(AbstractFs::new_from_url(format!(
+                    "https://github.com/unicode-org/cldr-json/releases/download/{tag}/cldr-{tag}-json-full.zip",
+                )))
+            ))),
             ..self
         })
     }
@@ -139,8 +135,7 @@ impl SourceData {
         Ok(Self {
             icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_url(
                 format!(
-                    "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-                    tag,
+                    "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                     tag.replace('/', "-")
                 ),
             )))),
@@ -153,8 +148,11 @@ impl SourceData {
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     /// Deprecated
-    pub fn with_cldr_latest(self, locale_subset: CldrLocaleSubset) -> Result<Self, DataError> {
-        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, locale_subset)
+    pub fn with_cldr_latest(
+        self,
+        _use_default_here: crate::CldrLocaleSubset,
+    ) -> Result<Self, DataError> {
+        self.with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
     }
 
     #[deprecated(
@@ -224,6 +222,14 @@ impl SourceData {
 
     pub(crate) fn collations(&self) -> &[String] {
         &self.collations
+    }
+
+    /// List the locales for the given CLDR coverage levels
+    pub fn locales(
+        &self,
+        levels: &[CoverageLevel],
+    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        self.cldr()?.locales(levels)
     }
 }
 
@@ -335,7 +341,7 @@ impl SerdeCache {
         })
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
 }
@@ -394,7 +400,7 @@ impl AbstractFs {
                 let root = CACHE
                     .cached_path(resource)
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(&root)?))
+                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())
             }
@@ -407,7 +413,7 @@ impl AbstractFs {
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
-                std::fs::read(&root.join(path))
+                std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
@@ -430,12 +436,12 @@ impl AbstractFs {
         }
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.init()?;
         Ok(match self {
-            Self::Fs(root) => std::fs::read_dir(&root.join(path))
+            Self::Fs(root) => std::fs::read_dir(root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
-                .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
+                .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
                 .collect::<Result<HashSet<_>, DataError>>()
                 .map(HashSet::into_iter)?,
             Self::Zip(zip) => zip
@@ -447,7 +453,7 @@ impl AbstractFs {
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(PathBuf::from)
+                .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
         })

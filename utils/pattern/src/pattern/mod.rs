@@ -175,7 +175,7 @@ impl<'s, P> Pattern<'s, P> {
     {
         let mut interpolator = Interpolator::new(&self.0, replacements);
         while let Some(ik) = interpolator.try_next()? {
-            write!(sink, "{}", ik)?;
+            write!(sink, "{ik}")?;
         }
         Ok(())
     }
@@ -308,7 +308,7 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for elem in &self.0 {
-            write!(f, "{}", elem)?;
+            write!(f, "{elem}")?;
         }
         Ok(())
     }

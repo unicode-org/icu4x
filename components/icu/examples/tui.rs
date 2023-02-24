@@ -41,9 +41,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
         })
         .unwrap_or(5);
 
-    print(format!("\nTextual User Interface Example ({})", locale));
+    print(format!("\nTextual User Interface Example ({locale})"));
     print("===================================");
-    print(format!("User: {}", user_name));
+    print(format!("User: {user_name}"));
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
@@ -58,7 +58,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         let formatted_dt = dtf.format(&today_date, &today_tz);
 
-        print(format!("Today is: {}", formatted_dt));
+        print(format!("Today is: {formatted_dt}"));
     }
 
     {
@@ -85,7 +85,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
         match pr.category_for(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),
-            _ => print(format!("Note: You have {} unread emails.", email_count)),
+            _ => print(format!("Note: You have {email_count} unread emails.")),
         }
     }
 

@@ -60,8 +60,8 @@ impl<'l> Lstm<'l> {
         let mat8 = data.get().mat8.as_ndarray2()?;
         let mat9 = data.get().mat9.as_ndarray1()?;
         let embedd_dim = *mat1.shape().get(1).ok_or(Error::DimensionMismatch)?;
-        let hunits = *mat3.shape().get(0).ok_or(Error::DimensionMismatch)?;
-        let backward_hunits = *mat6.shape().get(0).ok_or(Error::DimensionMismatch)?;
+        let hunits = *mat3.shape().first().ok_or(Error::DimensionMismatch)?;
+        let backward_hunits = *mat6.shape().first().ok_or(Error::DimensionMismatch)?;
         if mat2.shape() != [embedd_dim, 4 * hunits]
             || mat3.shape() != [hunits, 4 * hunits]
             || mat4.shape() != [4 * hunits]
@@ -157,11 +157,12 @@ impl<'l> Lstm<'l> {
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
-                    self.return_id(
-                        input
-                            .get(*chunk.get(0).unwrap_or(&0)..*chunk.get(1).unwrap_or(&input.len()))
-                            .unwrap_or(input),
-                    )
+                    let range = if let [first, second, ..] = chunk {
+                        *first..*second
+                    } else {
+                        unreachable!()
+                    };
+                    self.return_id(input.get(range).unwrap_or(input))
                 })
                 .collect()
         } else {
@@ -324,7 +325,7 @@ mod tests {
             let lstm_output = lstm.word_segmenter(&test_case.unseg);
             println!("Test case      : {}", test_case.unseg);
             println!("Expected bies  : {}", test_case.expected_bies);
-            println!("Estimated bies : {}", lstm_output);
+            println!("Estimated bies : {lstm_output}");
             println!("True bies      : {}", test_case.true_bies);
             println!("****************************************************");
             assert_eq!(test_case.expected_bies, lstm_output);

@@ -388,7 +388,7 @@ mod test {
         assert_eq!(JSON_STR, json_str);
         let new_map: ZeroMap2d<u32, u16, str> =
             serde_json::from_str(&json_str).expect("deserialize");
-        assert_eq!(format!("{:?}", new_map), format!("{:?}", map));
+        assert_eq!(format!("{new_map:?}"), format!("{map:?}"));
     }
 
     #[test]
@@ -399,15 +399,15 @@ mod test {
         let new_map: ZeroMap2d<u32, u16, str> =
             bincode::deserialize(&bincode_bytes).expect("deserialize");
         assert_eq!(
-            format!("{:?}", new_map),
-            format!("{:?}", map).replace("Owned", "Borrowed"),
+            format!("{new_map:?}"),
+            format!("{map:?}").replace("Owned", "Borrowed"),
         );
 
         let new_map: ZeroMap2dBorrowed<u32, u16, str> =
             bincode::deserialize(&bincode_bytes).expect("deserialize");
         assert_eq!(
-            format!("{:?}", new_map),
-            format!("{:?}", map)
+            format!("{new_map:?}"),
+            format!("{map:?}")
                 .replace("Owned", "Borrowed")
                 .replace("ZeroMap2d", "ZeroMap2dBorrowed")
         );

@@ -4,19 +4,16 @@
 
 .DEFAULT_GOAL := test
 .PHONY: build test
+FORCE:
 
 ALL_HEADERS := $(wildcard ../../include/*.hpp) $(wildcard ../../../c/include/*.h)
-ALL_RUST := $(wildcard ../../../src/*.rs)
 
 CXX?=g++
 
-$(ALL_RUST):
-
 $(ALL_HEADERS):
 
-
-../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features cpp_default
+../../../../../target/debug/libicu_capi_staticlib.a: FORCE
+	cargo build -p icu_capi_staticlib --features cpp_default
 
 a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
@@ -25,3 +22,7 @@ build: a.out
 
 test: build
 	./a.out
+
+clean:
+	git clean -xf *
+	rm -f ../../../../../target/debug/libicu_capi_staticlib.a

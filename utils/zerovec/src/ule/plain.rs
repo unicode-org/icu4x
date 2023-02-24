@@ -7,10 +7,7 @@
 
 use super::*;
 use crate::ZeroSlice;
-use core::{
-    mem,
-    num::{NonZeroI8, NonZeroU8},
-};
+use core::num::{NonZeroI8, NonZeroU8};
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].
 #[repr(transparent)]
@@ -97,25 +94,10 @@ macro_rules! impl_const_constructors {
             ///
             /// See [`ZeroSlice::cast()`] for an example.
             pub const fn try_from_bytes(bytes: &[u8]) -> Result<&Self, ZeroVecError> {
-                /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-                /// ```compile_fail
-                /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-                /// ```
-                #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
-                const _: () = ();
                 let len = bytes.len();
                 #[allow(clippy::modulo_one)]
                 if len % $size == 0 {
-                    unsafe {
-                        // Most of the slice manipulation functions are not yet const-stable,
-                        // so we construct a slice with the right metadata and cast its type
-                        // https://rust-lang.github.io/unsafe-code-guidelines/layout/pointers.html#notes
-                        //
-                        // Safety:
-                        // * [u8] and [RawBytesULE<N>] have different lengths but the same alignment
-                        // * ZeroSlice<$base> is repr(transparent) with [RawBytesULE<N>]
-                        Ok(mem::transmute((bytes.as_ptr(), len / $size)))
-                    }
+                    Ok(unsafe { Self::from_bytes_unchecked(bytes) })
                 } else {
                     Err(ZeroVecError::InvalidLength {
                         ty: concat!("<const construct: ", $size, ">"),

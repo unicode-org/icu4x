@@ -12,17 +12,9 @@
 
         Construct an :cpp:class:`ICU4XLocale` from an locale identifier.
 
+        This will run the complete locale parsing algorithm. If code size and performance are critical and the locale is of a known shape (such as ``aa-BB``) use ``create_und``, ``set_language``, ``set_script``, and ``set_region``.
+
         See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
-
-
-    .. cpp:function:: static ICU4XLocale create_en()
-
-        Construct an :cpp:class:`ICU4XLocale` for the English language.
-
-
-    .. cpp:function:: static ICU4XLocale create_bn()
-
-        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
 
 
     .. cpp:function:: static ICU4XLocale create_und()
@@ -170,4 +162,18 @@
     .. cpp:function:: ICU4XOrdering strict_cmp(const std::string_view other) const
 
         See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XLocale create_en()
+
+        Construct an :cpp:class:`ICU4XLocale` for the English language.
+
+        This convenience constructor is intended for testing only and requires the ``provider_test`` feature.
+
+
+    .. cpp:function:: static ICU4XLocale create_bn()
+
+        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
+
+        This convenience constructor is intended for testing only and requires the ``provider_test`` feature.
 

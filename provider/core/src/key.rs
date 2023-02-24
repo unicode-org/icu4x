@@ -140,12 +140,6 @@ impl DataKeyPath {
     /// Gets the path as a static string slice.
     #[inline]
     pub const fn get(self) -> &'static str {
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        #[cfg(not(ICU4X_BUILDING_WITH_FORCED_NIGHTLY))]
-        const _: () = ();
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::mem::transmute((
@@ -216,7 +210,7 @@ impl Default for DataKeyMetadata {
 /// Therefore, users should not generally create DataKey instances; they should instead use
 /// the ones exported by a component.
 ///
-/// `DataKey`s are created with the [`data_key!`] macro:
+/// `DataKey`s are created with the [`data_key!`](crate::data_key) macro:
 ///
 /// ```
 /// # use icu_provider::prelude::DataKey;
@@ -226,7 +220,7 @@ impl Default for DataKeyMetadata {
 /// The human-readable path string ends with `@` followed by one or more digits (the version
 /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
 ///
-/// Invalid paths are compile-time errors (as [`data_key!`] uses `const`).
+/// Invalid paths are compile-time errors (as [`data_key!`](crate::data_key) uses `const`).
 ///
 /// ```compile_fail,E0080
 /// # use icu_provider::prelude::DataKey;

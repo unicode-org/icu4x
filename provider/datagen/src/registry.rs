@@ -2,13 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{DataKey, KeyedDataMarker};
+use icu_provider::prelude::*;
 
 use icu_calendar::provider::*;
+use icu_casemapping::provider::*;
 use icu_collator::provider::*;
+use icu_compactdecimal::provider::*;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::provider::time_zones::*;
 use icu_decimal::provider::*;
+use icu_displaynames::provider::*;
 use icu_list::provider::*;
 use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
@@ -16,51 +19,46 @@ use icu_plurals::provider::*;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
+use icu_relativetime::provider::*;
+use icu_segmenter::provider::*;
 use icu_timezone::provider::*;
 
-#[cfg(feature = "experimental")]
-use icu_casemapping::provider::*;
-#[cfg(feature = "experimental")]
-use icu_compactdecimal::provider::*;
-#[cfg(feature = "experimental")]
-use icu_displaynames::provider::*;
-#[cfg(feature = "experimental")]
-use icu_relativetime::provider::*;
-#[cfg(feature = "experimental")]
-use icu_segmenter::provider::*;
-
 macro_rules! registry {
-    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
-        /// List of all supported keys
+    ($($marker:ident,)+ # experimental # { $($exp_marker:ident,)+ }) => {
+        /// List of all supported keys, except those that require the "experimental"
+        /// feature on the `icu` crate.
+        ///
+        /// See [all_keys_with_experimental].
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             vec![
                 $(
                     <$marker>::KEY,
                 )+
+            ]
+        }
+
+        /// List of all supported keys, including those that require the "experimental"
+        /// feature on the `icu` crate.
+        ///
+        /// See [all_keys].
+        pub fn all_keys_with_experimental() -> Vec<DataKey> {
+            vec![
                 $(
-                    #[cfg(feature = "experimental")]
+                    <$marker>::KEY,
+                )+
+                $(
                     <$exp_marker>::KEY,
                 )+
             ]
         }
 
-        #[cfg(feature = "experimental")]
         icu_provider::make_exportable_provider!(
             crate::DatagenProvider,
             [
                 HelloWorldV1Marker,
                 $($marker,)+
                 $($exp_marker,)+
-            ]
-        );
-
-        #[cfg(not(feature = "experimental"))]
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                HelloWorldV1Marker,
-                $($marker,)+
             ]
         );
 
@@ -77,9 +75,25 @@ macro_rules! registry {
                 }
             )+
             $(
-                #[cfg(feature = "experimental")]
                 if key == $exp_marker::KEY {
                     return $exp_marker.bake(env);
+                }
+            )+
+            unreachable!("unregistered marker")
+        }
+
+        #[doc(hidden)]
+        pub fn deserialize_and_discard<R>(key: DataKey, buf: DataPayload<BufferMarker>, r: impl Fn() -> R) -> Result<R, DataError> {
+            $(
+                if key == $marker::KEY {
+                    let _reified_data: DataPayload<$marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
+                }
+            )+
+            $(
+                if key == $exp_marker::KEY {
+                    let _reified_data: DataPayload<$exp_marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
+                    return Ok(r());
                 }
             )+
             unreachable!("unregistered marker")
@@ -95,12 +109,14 @@ registry!(
     AsciiHexDigitV1Marker,
     BasicEmojiV1Marker,
     BidiClassV1Marker,
+    BidiClassNameToValueV1Marker,
     BidiControlV1Marker,
     BidiMirroredV1Marker,
     BlankV1Marker,
     BuddhistDateLengthsV1Marker,
     BuddhistDateSymbolsV1Marker,
     CanonicalCombiningClassV1Marker,
+    CanonicalCombiningClassNameToValueV1Marker,
     CanonicalCompositionsV1Marker,
     CanonicalDecompositionDataV1Marker,
     CanonicalDecompositionTablesV1Marker,
@@ -131,6 +147,7 @@ registry!(
     DeprecatedV1Marker,
     DiacriticV1Marker,
     EastAsianWidthV1Marker,
+    EastAsianWidthNameToValueV1Marker,
     EmojiComponentV1Marker,
     EmojiModifierBaseV1Marker,
     EmojiModifierV1Marker,
@@ -148,8 +165,10 @@ registry!(
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
     GeneralCategoryV1Marker,
+    GeneralCategoryNameToValueV1Marker,
     GraphemeBaseV1Marker,
     GraphemeClusterBreakV1Marker,
+    GraphemeClusterBreakNameToValueV1Marker,
     GraphemeExtendV1Marker,
     GraphemeLinkV1Marker,
     GraphV1Marker,
@@ -173,6 +192,7 @@ registry!(
     JoinControlV1Marker,
     LikelySubtagsV1Marker,
     LineBreakV1Marker,
+    LineBreakNameToValueV1Marker,
     LocaleFallbackLikelySubtagsV1Marker,
     LocaleFallbackParentsV1Marker,
     LogicalOrderExceptionV1Marker,
@@ -199,9 +219,11 @@ registry!(
     RadicalV1Marker,
     RegionalIndicatorV1Marker,
     ScriptV1Marker,
+    ScriptNameToValueV1Marker,
     ScriptWithExtensionsPropertyV1Marker,
     SegmentStarterV1Marker,
     SentenceBreakV1Marker,
+    SentenceBreakNameToValueV1Marker,
     SentenceTerminalV1Marker,
     SoftDottedV1Marker,
     TerminalPunctuationV1Marker,
@@ -216,10 +238,11 @@ registry!(
     WeekDataV1Marker,
     WhiteSpaceV1Marker,
     WordBreakV1Marker,
+    WordBreakNameToValueV1Marker,
     XdigitV1Marker,
     XidContinueV1Marker,
     XidStartV1Marker,
-    #[cfg(feature = "experimental")]
+    # experimental #
     {
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
@@ -264,7 +287,7 @@ registry!(
 fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
-    for key in all_keys() {
+    for key in all_keys_with_experimental() {
         if let Some(colliding_key) = map.insert(key.hashed(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",
