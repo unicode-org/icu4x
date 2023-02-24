@@ -177,7 +177,7 @@ struct Cli {
     #[arg(help = "Deprecated: alias for --locales full")]
     all_locales: bool,
 
-    #[arg(long, short, value_name = "PATH")]
+    #[arg(long = "output", short, value_name = "PATH")]
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
                   --overwrite is present, in which case the directory is deleted first. \
