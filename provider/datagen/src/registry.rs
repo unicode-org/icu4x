@@ -191,6 +191,8 @@ registry!(
     JapaneseExtendedErasV1Marker,
     JoinControlV1Marker,
     LikelySubtagsV1Marker,
+    LikelySubtagsForLanguageV1Marker,
+    LikelySubtagsForScriptRegionV1Marker,
     LineBreakV1Marker,
     LineBreakNameToValueV1Marker,
     LocaleFallbackLikelySubtagsV1Marker,

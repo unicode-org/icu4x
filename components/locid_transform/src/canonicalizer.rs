@@ -214,20 +214,62 @@ impl LocaleCanonicalizer {
     /// </div>
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, LocaleTransformError>
     where
-        P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
+        P: DataProvider<AliasesV1Marker>
+            + DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + ?Sized,
+    {
+        let expander = LocaleExpander::try_new_unstable(provider)?;
+        Self::try_new_with_expander_unstable(provider, expander)
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
+    pub fn try_new_with_any_provider(
+        provider: &impl AnyProvider,
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
+    pub fn try_new_with_buffer_provider(
+        provider: &impl BufferProvider,
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
+    }
+
+    /// A constructor which takes a [`DataProvider`] and a pre-existing [`LocaleExpander`]
+    /// and creates a [`LocaleCanonicalizer`].
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_with_expander_unstable<P>(
+        provider: &P,
+        expander: LocaleExpander,
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError>
+    where
+        P: DataProvider<AliasesV1Marker> + ?Sized,
     {
         let aliases: DataPayload<AliasesV1Marker> =
             provider.load(Default::default())?.take_payload()?;
-
-        let expander = LocaleExpander::try_new_unstable(provider)?;
 
         Ok(LocaleCanonicalizer { aliases, expander })
     }
 
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
-        options: skip,
-        error: LocaleTransformError
+        expander: LocaleExpander,
+        error: LocaleTransformError,
+        functions: [
+            Self::try_new_with_expander_unstable,
+            try_new_with_expander_with_any_provider,
+            try_new_with_expander_with_buffer_provider
+        ]
     );
 
     /// The canonicalize method potentially updates a passed in locale in place
