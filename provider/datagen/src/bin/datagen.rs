@@ -8,7 +8,7 @@ use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Format {
     Dir,
     Blob,
@@ -16,25 +16,25 @@ enum Format {
     DeprecatedDefault,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Syntax {
     Json,
     Bincode,
     Postcard,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum TrieType {
     Small,
     Fast,
 }
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum CliCollationHanDatabase {
     Unihan,
     Implicit,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum CollationTable {
     Gb2312,
     Big5han,
@@ -79,7 +79,7 @@ struct Cli {
     #[arg(help = "Delete the output before writing data.")]
     overwrite: bool,
 
-    #[arg(short, long, value_enum)]
+    #[arg(short, long, value_enum, default_value_t = Syntax::Json)]
     #[arg(help = "--format=dir only: serde serialization format.")]
     syntax: Syntax,
 
@@ -135,7 +135,7 @@ struct Cli {
     #[arg(help = "Which collation han database to use.")]
     collation_han_database: CliCollationHanDatabase,
 
-    #[arg(long, value_enum)]
+    #[arg(long, value_enum, num_args = 0..)]
     #[arg(
         help = "Which less-common collation tables to include. 'search-all' includes all search tables."
     )]
@@ -145,7 +145,7 @@ struct Cli {
     #[arg(help = "Deprecated, use --locales full or --locales modern")]
     cldr_locale_subset: bool,
 
-    #[arg(long, short)]
+    #[arg(long, short, num_args = 0..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
                   Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
@@ -166,7 +166,7 @@ struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, required_unless_present = "all_locales")]
+    #[arg(long, short, required_unless_present = "all_locales", num_args = 0..)]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
                   Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
@@ -201,6 +201,7 @@ struct Cli {
 
 fn main() -> eyre::Result<()> {
     let matches = Cli::parse();
+    println!("{:?}", matches.include_collations);
 
     if matches.verbose {
         SimpleLogger::new()
