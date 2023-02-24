@@ -127,7 +127,7 @@ args = [
 ]
 
 [tasks.download-repo-sources]
-description = "Download fresh CLDR JSON, overwriting the existing CLDR JSON."
+description = "Download fresh CLDR JSON and icuexportdata, overwriting the existing CLDR JSON/icuexportdata."
 category = "ICU4X Data"
 command = "cargo"
 args = [
