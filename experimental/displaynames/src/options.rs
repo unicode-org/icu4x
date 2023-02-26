@@ -48,8 +48,7 @@
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {
-    /// The formatting style to use for display name,
-    /// defaults to "long".
+    /// The optional formatting style to use for display name.
     pub style: Option<Style>,
     /// The fallback return when the system does not have the
     /// requested display name, defaults to "code".
