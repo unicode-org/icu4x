@@ -16,8 +16,8 @@
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Style::Short;
-/// let display_name = RegionDisplayNames::try_new_region_unstable(
+/// options.style = Some(Style::Short);
+/// let display_name = RegionDisplayNames::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -34,8 +34,8 @@
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Style::Short;
-/// let display_name = LanguageDisplayNames::try_new_language_unstable(
+/// options.style = Some(Style::Short);
+/// let display_name = LanguageDisplayNames::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -50,7 +50,7 @@
 pub struct DisplayNamesOptions {
     /// The formatting style to use for display name,
     /// defaults to "long".
-    pub style: Style,
+    pub style: Option<Style>,
     /// The fallback return when the system does not have the
     /// requested display name, defaults to "code".
     pub fallback: Fallback,
@@ -67,13 +67,6 @@ pub enum Style {
     Short,
     Long,
     Menu,
-    None,
-}
-
-impl Default for Style {
-    fn default() -> Self {
-        Self::None
-    }
 }
 
 /// An enum for fallback return when the system does not have the

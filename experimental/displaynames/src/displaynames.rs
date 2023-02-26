@@ -23,7 +23,7 @@ use zerovec::ule::UnvalidatedStr;
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = RegionDisplayNames::try_new_region_unstable(
+/// let display_name = RegionDisplayNames::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -46,7 +46,7 @@ impl RegionDisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_region_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<RegionDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -69,9 +69,9 @@ impl RegionDisplayNames {
         options: DisplayNamesOptions,
         error: DataError,
         functions: [
-            Self::try_new_region_unstable,
-            try_new_region_with_any_provider,
-            try_new_region_with_buffer_provider
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
         ]
     );
 
@@ -82,9 +82,10 @@ impl RegionDisplayNames {
             Ok(key) => {
                 let data = self.region_data.get();
                 match self.options.style {
-                    Style::Short => data.short_names.get(&key),
-                    _ => data.names.get(&key),
+                    Some(Style::Short) => data.short_names.get(&key),
+                    _ => None,
                 }
+                .or_else(|| data.names.get(&key))
             }
             Err(_) => None,
         }
@@ -102,7 +103,7 @@ impl RegionDisplayNames {
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LanguageDisplayNames::try_new_language_unstable(
+/// let display_name = LanguageDisplayNames::try_new_unstable(
 ///     &icu_testdata::unstable(),
 ///     &locale.into(),
 ///     options,
@@ -125,7 +126,7 @@ impl LanguageDisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_language_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -148,9 +149,9 @@ impl LanguageDisplayNames {
         options: DisplayNamesOptions,
         error: DataError,
         functions: [
-            Self::try_new_language_unstable,
-            try_new_language_with_any_provider,
-            try_new_language_with_buffer_provider
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
         ]
     );
 
@@ -160,10 +161,11 @@ impl LanguageDisplayNames {
         let key = UnvalidatedStr::from_str(code);
         let data = self.language_data.get();
         match self.options.style {
-            Style::Short => data.short_names.get(key),
-            Style::Long => data.long_names.get(key),
-            Style::Menu => data.menu_names.get(key),
-            _ => data.names.get(key),
+            Some(Style::Short) => data.short_names.get(key),
+            Some(Style::Long) => data.long_names.get(key),
+            Some(Style::Menu) => data.menu_names.get(key),
+            _ => None,
         }
+        .or_else(|| data.names.get(key))
     }
 }
