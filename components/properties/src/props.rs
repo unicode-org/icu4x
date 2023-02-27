@@ -647,6 +647,43 @@ impl GeneralCategoryGroup {
     }
 }
 
+impl_value_getter! {
+    marker: GeneralCategoryMaskNameToValueV1Marker;
+    impl GeneralCategoryGroup {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `General_Category_Mask` mask property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GeneralCategoryGroup;
+        ///
+        /// let lookup = GeneralCategoryGroup::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("LC"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Zp"), Some(GeneralCategoryGroup::ParagraphSeparator));
+        /// assert_eq!(lookup.get_strict("P"), Some(GeneralCategoryGroup::Punctuation));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Letter"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("Cased_Letter"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// // alias name
+        /// assert_eq!(lookup.get_strict("punct"), Some(GeneralCategoryGroup::Punctuation));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("letter"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("letter"), Some(GeneralCategoryGroup::Letter));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("EverythingLol"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
+
 impl From<GeneralCategory> for GeneralCategoryGroup {
     fn from(subcategory: GeneralCategory) -> Self {
         GeneralCategoryGroup(1 << (subcategory as u32))

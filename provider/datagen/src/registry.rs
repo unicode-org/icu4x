@@ -165,6 +165,7 @@ registry!(
     ExtenderV1Marker,
     FullCompositionExclusionV1Marker,
     GeneralCategoryV1Marker,
+    GeneralCategoryMaskNameToValueV1Marker,
     GeneralCategoryNameToValueV1Marker,
     GraphemeBaseV1Marker,
     GraphemeClusterBreakV1Marker,
