@@ -440,6 +440,20 @@ mod tests {
     }
 
     #[test]
+    fn test_mixed_keys() {
+        // Include the old key and one of the new keys but not both new keys
+        let provider = RejectByKeyProvider {
+            keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
+            inner: icu_testdata::buffer(),
+        };
+        let lc = LocaleExpander::try_new_with_buffer_provider(&provider)
+            .expect("should create with mixed keys");
+        let mut locale = locale!("zh-CN");
+        assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+        assert_eq!(locale, locale!("zh-Hans-CN"));
+    }
+
+    #[test]
     fn test_no_keys() {
         let provider = RejectByKeyProvider {
             keys: vec![
