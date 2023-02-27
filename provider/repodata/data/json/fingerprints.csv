@@ -813,9 +813,10 @@ list/unit@1, th, 360B, 43ae8f3a7c6ed835a75961800770ca7e85d1b96cfee44bee7fc216926
 list/unit@1, tr, 266B, d2e436ff33ba6f287e7f524bcd8bdb213a36cd9c3ec7ce0f2ece018e91c556d8
 list/unit@1, und, 267B, ab8cc47b97781d052232b4c5ea96b5fa6a0370262ae18cba539dd3490f4bb4d0
 locid_transform/aliases@1, und, 18572B, 74f2767c1fb2acdd01923652b6c005da76490619f8bfd4c39a681fc56ba22763
-locid_transform/likelysubtags@1, und, 87811B, d389c31ea2bfe599d9646d05b6c650d571e5756af5e82900fd30c293c02916c0
-locid_transform/likelysubtags_l@1, und, 66250B, 53ffbec249b6d1f173f716656e57c9a9e28a762c4bd5b21774de35c444e51bbd
-locid_transform/likelysubtags_sr@1, und, 21564B, cec4430d84cf2bf69a7505ce898a55993f7631df42d8889529543faf25fd6112
+locid_transform/likelysubtags@1, und, 23110B, eda7c39f4030ba8556de84cbf8111aba84f4c39615cdc0ede8141411712cab25
+locid_transform/likelysubtags_ext@1, und, 64839B, eef96bdc66f0a25d27cbf99168e53082ab0aeec13843c502ea8bf24bba7aee31
+locid_transform/likelysubtags_l@1, und, 9479B, b4a15071573cf4ab63063cdd6e68251f58dbfd69e444f869cb9ea4be3db8ac4e
+locid_transform/likelysubtags_sr@1, und, 13634B, 5da888126d719860bc080ea1ccedd27a9eb66e91f73fc8c25b010f49707a2642
 normalizer/comp@1, und, 29836B, 634be78f876811cd829efa0d9e2ff29d28b8f13696b527df30c7ef6f36820a47
 normalizer/decomp@1, und, 13620B, f9910c9b0fa1ef6938f3a66ad0e52b74ac18dc7ca3ce665f2d0867ebec782807
 normalizer/nfd@1, und, 85212B, 016cf4c4fd0c914314a43d08c55dcddd88b2c4ec16f44ccdb1fdba238fada546
