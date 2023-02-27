@@ -390,16 +390,32 @@ impl AbstractFs {
                 } else {
                     return Ok(());
                 };
-                lazy_static::lazy_static! {
-                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                        .freshness_lifetime(u64::MAX)
-                        .progress_bar(None)
-                        .build()
-                        .unwrap();
-                }
-                let root = CACHE
-                    .cached_path(resource)
-                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
+                #[cfg(feature = "networking")]
+                let root = {
+                    lazy_static::lazy_static! {
+                        static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                            .freshness_lifetime(u64::MAX)
+                            .progress_bar(None)
+                            .build()
+                            .unwrap();
+                    }
+
+                    CACHE
+                        .cached_path(resource)
+                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                };
+                #[cfg(not(feature = "networking"))]
+                let root = {
+                    let path = PathBuf::from(&resource);
+                    if !path.exists() {
+                        return Err(DataError::custom(
+                            "Could not load resource. If resource is a URL, \
+                            please build datagen with the `\"networking\"` feature",
+                        )
+                        .with_display_context(&format!("Resource requested was {resource}")));
+                    }
+                    path
+                };
                 *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())
