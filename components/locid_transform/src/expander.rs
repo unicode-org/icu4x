@@ -60,6 +60,49 @@ use crate::TransformResult;
 pub struct LocaleExpander {
     likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1Marker>,
     likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1Marker>,
+    likely_subtags_ext: Option<DataPayload<LikelySubtagsExtendedV1Marker>>,
+}
+
+struct LocaleExpanderBorrowed<'a> {
+    likely_subtags_l: &'a LikelySubtagsForLanguageV1<'a>,
+    likely_subtags_sr: &'a LikelySubtagsForScriptRegionV1<'a>,
+    likely_subtags_ext: Option<&'a LikelySubtagsExtendedV1<'a>>,
+}
+
+impl LocaleExpanderBorrowed<'_> {
+    fn get_l(&self, l: Language) -> Option<(Script, Region)> {
+        self.likely_subtags_l.language.get_copied(&l.into())
+    }
+
+    fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
+        self.likely_subtags_l
+            .language_script
+            .get_copied(&(l.into(), s.into()))
+    }
+
+    fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
+        self.likely_subtags_l
+            .language_region
+            .get_copied(&(l.into(), r.into()))
+    }
+
+    fn get_s(&self, s: Script) -> Option<(Language, Region)> {
+        self.likely_subtags_sr.script.get_copied(&s.into())
+    }
+
+    fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
+        self.likely_subtags_sr
+            .script_region
+            .get_copied(&(s.into(), r.into()))
+    }
+
+    fn get_r(&self, r: Region) -> Option<(Language, Script)> {
+        self.likely_subtags_sr.region.get_copied(&r.into())
+    }
+
+    fn get_und(&self) -> (Language, Script, Region) {
+        self.likely_subtags_l.und
+    }
 }
 
 #[inline]
@@ -104,14 +147,17 @@ impl LocaleExpander {
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsExtendedV1Marker>
             + ?Sized,
     {
         let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
         let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags_ext = Some(provider.load(Default::default())?.take_payload()?);
 
         Ok(LocaleExpander {
             likely_subtags_l,
             likely_subtags_sr,
+            likely_subtags_ext,
         })
     }
 
@@ -119,6 +165,7 @@ impl LocaleExpander {
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsExtendedV1Marker>
             + DataProvider<LikelySubtagsV1Marker>
             + ?Sized,
     {
@@ -128,26 +175,30 @@ impl LocaleExpander {
         let payload_sr = provider
             .load(Default::default())
             .and_then(DataResponse::take_payload);
+        let payload_ext = provider
+            .load(Default::default())
+            .and_then(DataResponse::take_payload);
 
-        let (likely_subtags_l, likely_subtags_sr) = match (payload_l, payload_sr) {
-            (Ok(l), Ok(sr)) => (l, sr),
-            (payload_l, payload_sr) => {
-                let result: DataPayload<LikelySubtagsV1Marker> =
-                    provider.load(Default::default())?.take_payload()?;
-                (
-                    payload_l.unwrap_or_else(|_e| {
+        let (likely_subtags_l, likely_subtags_sr, likely_subtags_ext) =
+            match (payload_l, payload_sr, payload_ext) {
+                (Ok(l), Ok(sr), Ok(ext)) => (l, sr, Some(ext)),
+                _ => {
+                    let result: DataPayload<LikelySubtagsV1Marker> =
+                        provider.load(Default::default())?.take_payload()?;
+                    (
                         result.map_project_cloned(|st, _| {
                             LikelySubtagsForLanguageV1::clone_from_borrowed(st)
-                        })
-                    }),
-                    payload_sr.unwrap_or_else(|_e| result.map_project(|st, _| st.into())),
-                )
-            }
-        };
+                        }),
+                        result.map_project(|st, _| st.into()),
+                        None,
+                    )
+                }
+            };
 
         Ok(LocaleExpander {
             likely_subtags_l,
             likely_subtags_sr,
+            likely_subtags_ext,
         })
     }
 
@@ -164,6 +215,14 @@ impl LocaleExpander {
         provider: &impl BufferProvider,
     ) -> Result<LocaleExpander, LocaleTransformError> {
         Self::try_new_compat(&provider.as_deserializing())
+    }
+
+    fn as_borrowed(&self) -> LocaleExpanderBorrowed {
+        LocaleExpanderBorrowed {
+            likely_subtags_l: self.likely_subtags_l.get(),
+            likely_subtags_sr: self.likely_subtags_sr.get(),
+            likely_subtags_ext: self.likely_subtags_ext.as_ref().map(|p| p.get()),
+        }
     }
 
     /// The maximize method potentially updates a passed in locale in place
@@ -195,8 +254,7 @@ impl LocaleExpander {
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
         let langid = langid.as_mut();
-        let data_l = self.likely_subtags_l.get();
-        let data_sr = self.likely_subtags_sr.get();
+        let data = self.as_borrowed();
 
         if !langid.language.is_empty() && langid.script.is_some() && langid.region.is_some() {
             return TransformResult::Unmodified;
@@ -204,60 +262,41 @@ impl LocaleExpander {
 
         if !langid.language.is_empty() {
             if let Some(region) = langid.region {
-                if let Some(script) = data_l
-                    .language_region
-                    .get(&(langid.language.into(), region.into()))
-                    .copied()
-                {
+                if let Some(script) = data.get_lr(langid.language, region) {
                     return update_langid(Language::UND, Some(script), None, langid);
                 }
             }
             if let Some(script) = langid.script {
-                if let Some(region) = data_l
-                    .language_script
-                    .get(&(langid.language.into(), script.into()))
-                    .copied()
-                {
+                if let Some(region) = data.get_ls(langid.language, script) {
                     return update_langid(Language::UND, None, Some(region), langid);
                 }
             }
-            if let Some((script, region)) = data_l
-                .language
-                .get(&langid.language.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
+            if let Some((script, region)) = data.get_l(langid.language) {
                 return update_langid(Language::UND, Some(script), Some(region), langid);
             }
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {
-                if let Some(language) = data_sr
-                    .script_region
-                    .get(&(script.into(), region.into()))
-                    .copied()
-                {
+                if let Some(language) = data.get_sr(script, region) {
                     return update_langid(language, None, None, langid);
                 }
             }
-            if let Some((language, region)) = data_sr
-                .script
-                .get(&script.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
+            if let Some((language, region)) = data.get_s(script) {
                 return update_langid(language, None, Some(region), langid);
             }
         }
         if let Some(region) = langid.region {
-            if let Some((language, script)) = data_sr
-                .region
-                .get(&region.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
+            if let Some((language, script)) = data.get_r(region) {
                 return update_langid(language, Some(script), None, langid);
             }
         }
 
-        update_langid(data_l.und.0, Some(data_l.und.1), Some(data_l.und.2), langid)
+        update_langid(
+            data.get_und().0,
+            Some(data.get_und().1),
+            Some(data.get_und().2),
+            langid,
+        )
     }
 
     /// This returns a new Locale that is the result of running the
