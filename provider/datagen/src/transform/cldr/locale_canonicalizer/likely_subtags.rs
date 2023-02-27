@@ -147,7 +147,8 @@ impl<'a> LikelySubtagsResources<'a> {
                 .likely_subtags
                 .iter()
                 .filter(move |(minimized, maximized)| {
-                    self.basic_plus_languages.contains(&maximized.language) || **minimized == LanguageIdentifier::UND
+                    self.basic_plus_languages.contains(&maximized.language)
+                        || **minimized == LanguageIdentifier::UND
                 }),
         )
     }
@@ -159,7 +160,8 @@ impl<'a> LikelySubtagsResources<'a> {
                 .likely_subtags
                 .iter()
                 .filter(move |(minimized, maximized)| {
-                    !self.basic_plus_languages.contains(&maximized.language) || **minimized == LanguageIdentifier::UND
+                    !self.basic_plus_languages.contains(&maximized.language)
+                        || **minimized == LanguageIdentifier::UND
                 }),
         )
     }
@@ -267,11 +269,19 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let entry = result_common.get().script.get_copied(&script!("Hant").into()).unwrap();
+    let entry = result_common
+        .get()
+        .script
+        .get_copied(&script!("Hant").into())
+        .unwrap();
     assert_eq!(entry.0, language!("zh"));
     assert_eq!(entry.1, region!("TW"));
 
-    let entry = result_extended.get().script.get_copied(&script!("Glag").into()).unwrap();
+    let entry = result_extended
+        .get()
+        .script
+        .get_copied(&script!("Glag").into())
+        .unwrap();
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));
 }
