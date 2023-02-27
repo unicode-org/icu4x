@@ -242,14 +242,7 @@ impl LocaleCanonicalizer {
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
 
-    /// A constructor which takes a [`DataProvider`] and a pre-existing [`LocaleExpander`]
-    /// and creates a [`LocaleCanonicalizer`].
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
-    pub fn try_new_with_expander_unstable<P>(
+    fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
     ) -> Result<LocaleCanonicalizer, LocaleTransformError>
@@ -261,17 +254,6 @@ impl LocaleCanonicalizer {
 
         Ok(LocaleCanonicalizer { aliases, expander })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        expander: LocaleExpander,
-        error: LocaleTransformError,
-        functions: [
-            Self::try_new_with_expander_unstable,
-            try_new_with_expander_with_any_provider,
-            try_new_with_expander_with_buffer_provider
-        ]
-    );
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
