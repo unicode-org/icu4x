@@ -129,19 +129,20 @@ impl LocaleExpander {
             .load(Default::default())
             .and_then(DataResponse::take_payload);
 
-        let (likely_subtags_l, likely_subtags_sr) = if payload_l.is_err() || payload_sr.is_err() {
-            let result: DataPayload<LikelySubtagsV1Marker> =
-                provider.load(Default::default())?.take_payload()?;
-            (
-                payload_l.unwrap_or_else(|_e| {
-                    result.map_project_cloned(|st, _| {
-                        LikelySubtagsForLanguageV1::clone_from_borrowed(st)
-                    })
-                }),
-                payload_sr.unwrap_or_else(|_e| result.map_project(|st, _| st.into())),
-            )
-        } else {
-            (payload_l?, payload_sr?)
+        let (likely_subtags_l, likely_subtags_sr) = match (payload_l, payload_sr) {
+            (Ok(l), Ok(sr)) => (l, sr),
+            (payload_l, payload_sr) => {
+                let result: DataPayload<LikelySubtagsV1Marker> =
+                    provider.load(Default::default())?.take_payload()?;
+                (
+                    payload_l.unwrap_or_else(|_e| {
+                        result.map_project_cloned(|st, _| {
+                            LikelySubtagsForLanguageV1::clone_from_borrowed(st)
+                        })
+                    }),
+                    payload_sr.unwrap_or_else(|_e| result.map_project(|st, _| st.into())),
+                )
+            }
         };
 
         Ok(LocaleExpander {
@@ -441,7 +442,8 @@ mod tests {
 
     #[test]
     fn test_mixed_keys() {
-        // Include the old key and one of the new keys but not both new keys
+        // Include the old key and one of the new keys but not both new keys.
+        // Not sure if this is a useful test.
         let provider = RejectByKeyProvider {
             keys: vec![LikelySubtagsForScriptRegionV1Marker::KEY],
             inner: icu_testdata::buffer(),
