@@ -59,7 +59,7 @@ crlify = { version = "1.0.1", path = "../../utils/crlify"}
 databake = { version = "0.1.3", path = "../../utils/databake"}
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder" }
+icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
 icu_collections = { version = "1.1.0", path = "../../components/collections", features = ["serde"] }
 icu_locid = { version = "1.1.0", path = "../../components/locid", features = ["std", "serde"] }
 itertools = "0.10"
@@ -91,8 +91,10 @@ icu_testdata = { path = "../testdata", features = ["buffer"] }
 repodata = { path = "../../provider/repodata" }
 
 [features]
-default = ["bin"]
+default = ["bin", "use_wasm"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
+use_wasm = ["icu_codepointtrie_builder/wasm"]
+use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 
 [[bin]]
 name = "icu4x-datagen"
