@@ -1275,6 +1275,21 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GeneralCategoryMaskNameToValueV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+                props::names::gcm_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryMaskNameToValueV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GeneralCategoryNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryNameToValueV1Marker>, DataError> {
                 props::names::gc_v1::lookup(&req.locale)
@@ -2782,6 +2797,9 @@ macro_rules! impl_any_provider {
                 const FULLCOMPOSITIONEXCLUSIONV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::FullCompositionExclusionV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const GENERALCATEGORYMASKNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::GeneralCategoryMaskNameToValueV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const GENERALCATEGORYNAMETOVALUEV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::GeneralCategoryNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -3177,6 +3195,8 @@ macro_rules! impl_any_provider {
                     EXTENDERV1MARKER => props::ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     FULLCOMPOSITIONEXCLUSIONV1MARKER => props::comp_ex_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    GENERALCATEGORYMASKNAMETOVALUEV1MARKER => props::names::gcm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GENERALCATEGORYNAMETOVALUEV1MARKER => props::names::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
