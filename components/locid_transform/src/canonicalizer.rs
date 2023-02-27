@@ -234,6 +234,7 @@ impl LocaleCanonicalizer {
 
     // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
     #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
+    #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &impl BufferProvider,
     ) -> Result<LocaleCanonicalizer, LocaleTransformError> {

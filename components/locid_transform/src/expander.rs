@@ -158,6 +158,7 @@ impl LocaleExpander {
     }
 
     #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
+    #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &impl BufferProvider,
     ) -> Result<LocaleExpander, LocaleTransformError> {
