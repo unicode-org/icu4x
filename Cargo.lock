@@ -1417,6 +1417,7 @@ dependencies = [
  "icu_casemapping",
  "icu_collator",
  "icu_collections",
+ "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
  "icu_displaynames",
