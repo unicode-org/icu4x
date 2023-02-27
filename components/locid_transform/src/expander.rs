@@ -449,9 +449,8 @@ mod tests {
             ],
             inner: icu_testdata::buffer(),
         };
-        match LocaleExpander::try_new_with_buffer_provider(&provider) {
-            Ok(_) => panic!("should not create: no data present"),
-            Err(_) => (),
+        if LocaleExpander::try_new_with_buffer_provider(&provider).is_ok() {
+            panic!("should not create: no data present")
         };
     }
 }

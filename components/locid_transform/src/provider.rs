@@ -243,7 +243,7 @@ impl<'data> LikelySubtagsForLanguageV1<'data> {
             language_script: other.language_script.clone(),
             language_region: other.language_region.clone(),
             language: other.language.clone(),
-            und: other.und.clone(),
+            und: other.und,
         }
     }
 }
