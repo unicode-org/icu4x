@@ -256,13 +256,22 @@ fn test_basic() {
     };
 
     let provider = crate::DatagenProvider::for_test();
-    let result: DataPayload<LikelySubtagsV1Marker> = provider
+    let result_common: DataPayload<LikelySubtagsV1Marker> = provider
+        .load(Default::default())
+        .unwrap()
+        .take_payload()
+        .unwrap();
+    let result_extended: DataPayload<LikelySubtagsExtendedV1Marker> = provider
         .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
 
-    let entry = result.get().script.get(&script!("Glag").into()).unwrap();
+    let entry = result_common.get().script.get_copied(&script!("Hant").into()).unwrap();
+    assert_eq!(entry.0, language!("zh"));
+    assert_eq!(entry.1, region!("TW"));
+
+    let entry = result_extended.get().script.get_copied(&script!("Glag").into()).unwrap();
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));
 }
