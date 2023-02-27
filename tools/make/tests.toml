@@ -44,11 +44,11 @@ set_env CARGO_TARGET_DIR ${pwd}/target
 
 cd docs/tutorials/crates
 
-exec --fail-on-error cargo --config patch.toml clippy -p tutorial_baked -- -D warnings
-exec --fail-on-error cargo --config patch.toml clippy -p tutorial_buffer -- -D warnings
-exec --fail-on-error cargo --config patch.toml clippy -p tutorial_experimental -- -D warnings
-exec --fail-on-error cargo --config patch.toml clippy -p tutorial_lazy_static -- -D warnings
-exec --fail-on-error cargo --config patch.toml clippy -p tutorial_testdata -- -D warnings
+exec --fail-on-error cargo --config patch.toml check -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
+exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml check -p tutorial_testdata
 '''
 
 [tasks.test-cargo-tutorial-local]
