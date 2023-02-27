@@ -71,33 +71,60 @@ struct LocaleExpanderBorrowed<'a> {
 
 impl LocaleExpanderBorrowed<'_> {
     fn get_l(&self, l: Language) -> Option<(Script, Region)> {
-        self.likely_subtags_l.language.get_copied(&l.into())
+        let key = &l.into();
+        self.likely_subtags_l.language.get_copied(key).or_else(|| {
+            self.likely_subtags_ext
+                .and_then(|ext| ext.language.get_copied(key))
+        })
     }
 
     fn get_ls(&self, l: Language, s: Script) -> Option<Region> {
+        let key = &(l.into(), s.into());
         self.likely_subtags_l
             .language_script
-            .get_copied(&(l.into(), s.into()))
+            .get_copied(key)
+            .or_else(|| {
+                self.likely_subtags_ext
+                    .and_then(|ext| ext.language_script.get_copied(key))
+            })
     }
 
     fn get_lr(&self, l: Language, r: Region) -> Option<Script> {
+        let key = &(l.into(), r.into());
         self.likely_subtags_l
             .language_region
-            .get_copied(&(l.into(), r.into()))
+            .get_copied(key)
+            .or_else(|| {
+                self.likely_subtags_ext
+                    .and_then(|ext| ext.language_region.get_copied(key))
+            })
     }
 
     fn get_s(&self, s: Script) -> Option<(Language, Region)> {
-        self.likely_subtags_sr.script.get_copied(&s.into())
+        let key = &s.into();
+        self.likely_subtags_sr.script.get_copied(key).or_else(|| {
+            self.likely_subtags_ext
+                .and_then(|ext| ext.script.get_copied(key))
+        })
     }
 
     fn get_sr(&self, s: Script, r: Region) -> Option<Language> {
+        let key = &(s.into(), r.into());
         self.likely_subtags_sr
             .script_region
-            .get_copied(&(s.into(), r.into()))
+            .get_copied(key)
+            .or_else(|| {
+                self.likely_subtags_ext
+                    .and_then(|ext| ext.script_region.get_copied(key))
+            })
     }
 
     fn get_r(&self, r: Region) -> Option<(Language, Script)> {
-        self.likely_subtags_sr.region.get_copied(&r.into())
+        let key = &r.into();
+        self.likely_subtags_sr.region.get_copied(key).or_else(|| {
+            self.likely_subtags_ext
+                .and_then(|ext| ext.region.get_copied(key))
+        })
     }
 
     fn get_und(&self) -> (Language, Script, Region) {
