@@ -115,7 +115,7 @@ struct Cli {
     #[arg(
         help = "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                  Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` feature.\n\
+                  Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
