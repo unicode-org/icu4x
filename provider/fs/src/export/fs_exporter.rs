@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// We're using SipHash, which is deprecated, but we want a stable hasher
-// (we're fine with it not being cryptographically secure since we're just using it to track diffs)
-#![allow(deprecated)]
 
 use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
@@ -12,6 +9,9 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
+#[allow(deprecated)]
+// We're using SipHash, which is deprecated, but we want a stable hasher
+// (we're fine with it not being cryptographically secure since we're just using it to track diffs)
 use std::hash::{Hasher, SipHasher};
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -144,6 +144,7 @@ impl DataExporter for FilesystemExporter {
                 ))
             },
             hash_size: if self.fingerprints.is_some() {
+                #[allow(deprecated)]
                 Some((SipHasher::new(), 0))
             } else {
                 None
@@ -184,6 +185,7 @@ impl DataExporter for FilesystemExporter {
 
 struct HashingFile {
     file: Box<dyn std::io::Write>,
+    #[allow(deprecated)]
     hash_size: Option<(SipHasher, usize)>,
 }
 
