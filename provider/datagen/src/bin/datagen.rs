@@ -98,7 +98,7 @@ struct Cli {
     #[arg(
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
                     Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                    Ignored if '--cldr-root' is present. Requires binary to be built with `networking` feature.\n\
+                    Ignored if '--cldr-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
                     Note that some keys do not support versions before 41.0.0."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
