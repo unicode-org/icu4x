@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::props::BidiMirroringGlyph;
 use crate::script::ScriptWithExt;
 use crate::{
-    BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
+    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
     LineBreak, Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
@@ -96,10 +95,10 @@ impl TrieValue for SentenceBreak {
     }
 }
 
-impl TrieValue for BidiMirroringGlyph {
+impl TrieValue for BidiPairedBracketType {
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        Ok(Self(i))
+        u8::try_from(i).map(Self)
     }
 }

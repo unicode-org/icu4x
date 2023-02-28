@@ -114,6 +114,26 @@ impl BidiClass {
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
 
+/// TODO: documentation for Enumerated property Bidi_Paired_Bracket_Type
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
+#[allow(clippy::exhaustive_structs)] // newtype
+#[repr(transparent)]
+#[zerovec::make_ule(BidiPairedBracketTypeULE)]
+pub struct BidiPairedBracketType(pub u8);
+
+#[allow(non_upper_case_globals)]
+impl BidiPairedBracketType {
+    /// Not a paired bracket.
+    pub const None: BidiPairedBracketType = BidiPairedBracketType(0);
+    /// Open paired bracket.
+    pub const Open: BidiPairedBracketType = BidiPairedBracketType(1);
+    /// Close paired bracket.
+    pub const Close: BidiPairedBracketType = BidiPairedBracketType(2);
+}
+
 /// Enumerated property General_Category.
 ///
 /// General_Category specifies the most general classification of a code point, usually
@@ -879,31 +899,3 @@ impl CanonicalCombiningClass {
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
 }
-
-//
-// String properties
-//
-
-/// String property Bidi_Mirroring_Glyph.
-///
-/// Informative mapping for substituting characters in an implementation of bidirectional mirroring.
-/// This maps a subset of characters with the Bidi_Mirrored property to other characters that normally
-/// are displayed with the corresponding mirrored glyph. When a character with the Bidi_Mirrored
-/// property has the default value for Bidi_Mirroring_Glyph, that means that no other character exists
-/// whose glyph is appropriate for character-based glyph mirroring.
-///
-/// See <https://www.unicode.org/reports/tr44/> .
-/// 
-/// ICU4X represents the property values as `Option<char>`, which is effectively equivalent
-/// to ICU's representation of a `u32` (in which  a code point with no mirroring glyph has
-/// a return value of the same input value).
-///
-/// Also see `u_charMirror` in ICU4C.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(BidiMirroringGlyphULE)]
-pub struct BidiMirroringGlyph(pub u32);

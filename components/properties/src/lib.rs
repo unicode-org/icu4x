@@ -97,8 +97,8 @@ pub mod sets;
 mod trievalue;
 
 pub use props::{
-    BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak, BidiMirroringGlyph,
+    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
+    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
 
 pub use error::PropertiesError;
