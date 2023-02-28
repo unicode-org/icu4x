@@ -98,9 +98,10 @@ struct Cli {
     #[arg(
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
                     Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                    Ignored if '--cldr-root' is present.\n\
+                    Ignored if '--cldr-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
                     Note that some keys do not support versions before 41.0.0."
     )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     cldr_tag: String,
 
     #[arg(long, value_name = "PATH")]
@@ -114,9 +115,10 @@ struct Cli {
     #[arg(
         help = "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                  Ignored if '--icuexport-root' is present.\n\
+                  Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
     icuexport_tag: String,
 
     #[arg(long, value_name = "PATH")]
@@ -247,21 +249,35 @@ fn main() -> eyre::Result<()> {
     if let Some(path) = matches.cldr_root {
         source_data = source_data.with_cldr(path, Default::default())?;
     } else {
-        let tag = match &*matches.cldr_tag {
-            "latest" => SourceData::LATEST_TESTED_CLDR_TAG,
-            other => other,
-        };
-        source_data = source_data.with_cldr_for_tag(tag, Default::default())?
+        #[cfg(feature = "networking")]
+        {
+            let tag = match &*matches.cldr_tag {
+                "latest" => SourceData::LATEST_TESTED_CLDR_TAG,
+                other => other,
+            };
+            source_data = source_data.with_cldr_for_tag(tag, Default::default())?
+        }
+        #[cfg(not(feature = "networking"))]
+        {
+            eyre::bail!("--cldr-root flag is mandatory unless datagen is built with the `\"networking\"` feature");
+        }
     }
 
     if let Some(path) = matches.icuexport_root {
         source_data = source_data.with_icuexport(path)?;
     } else {
-        let tag = match &*matches.icuexport_tag {
-            "latest" => SourceData::LATEST_TESTED_ICUEXPORT_TAG,
-            other => other,
-        };
-        source_data = source_data.with_icuexport_for_tag(tag)?;
+        #[cfg(feature = "networking")]
+        {
+            let tag = match &*matches.icuexport_tag {
+                "latest" => SourceData::LATEST_TESTED_ICUEXPORT_TAG,
+                other => other,
+            };
+            source_data = source_data.with_icuexport_for_tag(tag)?;
+        }
+        #[cfg(not(feature = "networking"))]
+        {
+            eyre::bail!("--icuexport-root flag is mandatory unless datagen is built with the `\"networking\"` feature");
+        }
     }
 
     if matches.trie_type == cli::TrieType::Fast {
