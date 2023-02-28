@@ -115,15 +115,15 @@ pub mod prelude {
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
-use icu_provider_adapters::filter::Filterable;
 use icu_provider_adapters::fallback::LocaleFallbacker;
+use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
+use once_cell::sync::Lazy;
 use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
-use once_cell::sync::Lazy;
 
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
@@ -422,9 +422,9 @@ pub fn datagen(
 
     let keys: HashSet<_> = keys.iter().collect();
 
-    let fallbacker: Lazy<Result<LocaleFallbacker, DataError>> = Lazy::new(|| {
+    let fallbacker: Lazy<Result<LocaleFallbacker, DataError>, _> = Lazy::new(|| {
         LocaleFallbacker::try_new_unstable(&DatagenProvider {
-            source: source.clone()
+            source: source.clone(),
         })
     });
 
@@ -432,24 +432,31 @@ pub fn datagen(
         let locales = provider
             .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
+
         let grouped_locales = if locales.len() <= 1 {
             vec![locales]
         } else {
-            (*fallbacker)?.for_key(key).sort_locales_into_groups(locales.iter().map(Clone::clone))
+            fallbacker
+                .as_ref()
+                .map_err(|e| *e)?
+                .for_key(key)
+                .sort_locales_into_groups(locales.iter().map(Clone::clone))
         };
-        // TODO: Iterate over the locales in groups, then intelligently strip out unnecessary locales
-        let res = locales.into_par_iter().try_for_each(|locale| {
-            let req = DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            };
-            let payload = provider
-                .load_data(key, req)
-                .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, req))?;
-            exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &locale, &payload)
-                    .map_err(|e| e.with_req(key, req))
+
+        let res = grouped_locales.into_par_iter().try_for_each(|group| {
+            group.into_par_iter().try_for_each(|locale| {
+                let req = DataRequest {
+                    locale: &locale,
+                    metadata: Default::default(),
+                };
+                let payload = provider
+                    .load_data(key, req)
+                    .and_then(DataResponse::take_payload)
+                    .map_err(|e| e.with_req(key, req))?;
+                exporters.par_iter().try_for_each(|e| {
+                    e.put_payload(key, &locale, &payload)
+                        .map_err(|e| e.with_req(key, req))
+                })
             })
         });
 
