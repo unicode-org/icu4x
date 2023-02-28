@@ -16,13 +16,16 @@ use std::{fs, io::BufReader};
 #[command(about = "Collect a memory report for examples using dhat-rs.")]
 struct ProcessedArgs {
     #[arg(
+        long,
         value_name = "OS",
         help = "Nests the results of the benchmark in a folder per-OS, primarily needed by CI."
     )]
     os: Option<String>,
-    #[arg(value_name = "EXAMPLES", help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>", num_args = 1..)]
+    #[arg(value_name = "EXAMPLES", num_args = 1.., index=1)]
+    #[arg(help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>",)]
     examples: Vec<String>,
     #[arg(
+        long,
         value_name = "TOOLCHAIN",
         default_value = "stable",
         help = "The toolchain for cargo to use.."
