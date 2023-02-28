@@ -1293,7 +1293,6 @@ dependencies = [
  "atomic-polyfill",
  "hash32",
  "rustc_version 0.4.0",
- "serde",
  "spin",
  "stable_deref_trait",
 ]
@@ -2678,7 +2677,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c2b180dc0bade59f03fd005cb967d3f1e5f69b13922dad0cd6e047cb8af2363"
 dependencies = [
  "cobs",
- "heapless",
  "serde",
 ]
 
