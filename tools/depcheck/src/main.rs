@@ -246,18 +246,9 @@ fn main() {
         "icu_capi",
         "normal",
         "--features logging",
-        &[
-            &basic,
-            &serde,
-            &experimental,
-            &lstm,
-            &ryu,
-            &capi,
-            &logging,
-        ],
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &logging],
         "`EXTRA_CAPI_LOGGING_DEPS`",
     );
-
 
     test_dep_list(
         "icu_datagen",
@@ -273,7 +264,7 @@ fn main() {
             &zip,
             &rayon,
             &datagen,
-            &logging
+            &logging,
         ],
         "`EXTRA_DATAGEN_DEPS` or `EXTRA_ZIP_DEPS` or `EXTRA_RAYON_DEPS`",
     );

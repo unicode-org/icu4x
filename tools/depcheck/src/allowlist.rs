@@ -101,8 +101,6 @@ pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &[
     "strck_ident",
 ];
 
-
-
 /// Dependencies allowed when opting in to blob providers on FFI
 /// This shuld rarely change
 pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
@@ -136,7 +134,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "serde_json",
     "toml",
 ];
-
 
 /// Dependencies needed by the `log` crate
 /// This should rarely change, and if it does consider toggling features until it doesn't
