@@ -2,13 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// We're using SipHash, which is deprecated, but we want a stable hasher
+// (we're fine with it not being cryptographically secure since we're just using it to track diffs)
+#![allow(deprecated)]
+
 use super::serializers::AbstractSerializer;
 use crate::manifest::Manifest;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 use std::fs;
+use std::hash::{Hasher, SipHasher};
 use std::path::PathBuf;
 use std::sync::Mutex;
 use writeable::Writeable;
@@ -140,7 +144,7 @@ impl DataExporter for FilesystemExporter {
                 ))
             },
             hash_size: if self.fingerprints.is_some() {
-                Some((Sha256::new(), 0))
+                Some((SipHasher::new(), 0))
             } else {
                 None
             },
@@ -155,7 +159,7 @@ impl DataExporter for FilesystemExporter {
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finalize()));
+                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finish()));
         }
         Ok(())
     }
@@ -180,22 +184,19 @@ impl DataExporter for FilesystemExporter {
 
 struct HashingFile {
     file: Box<dyn std::io::Write>,
-    hash_size: Option<(Sha256, usize)>,
+    hash_size: Option<(SipHasher, usize)>,
 }
 
 impl std::io::Write for HashingFile {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
         if let Some((hash, size)) = self.hash_size.as_mut() {
-            hash.write_all(buf)?;
+            hash.write(buf);
             *size += buf.len();
         }
         self.file.write(buf)
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some((hash, _)) = self.hash_size.as_mut() {
-            hash.flush()?;
-        }
         self.file.flush()
     }
 }
