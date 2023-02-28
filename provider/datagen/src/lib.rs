@@ -453,6 +453,7 @@ pub fn datagen(
                     .load_data(key, req)
                     .and_then(DataResponse::take_payload)
                     .map_err(|e| e.with_req(key, req))?;
+                // TODO: Before handing off to the exporter, check to see if we can deduplicate
                 exporters.par_iter().try_for_each(|e| {
                     e.put_payload(key, &locale, &payload)
                         .map_err(|e| e.with_req(key, req))
