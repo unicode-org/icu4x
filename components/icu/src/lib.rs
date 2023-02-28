@@ -176,3 +176,7 @@ pub use icu_displaynames as displaynames;
 #[cfg(feature = "icu_relativetime")]
 #[doc(inline)]
 pub use icu_relativetime as relativetime;
+
+#[cfg(feature = "icu_compactdecimal")]
+#[doc(inline)]
+pub use icu_compactdecimal as compactdecimal;

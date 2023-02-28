@@ -38,12 +38,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anes"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4b46cbb362ab8752921c97e041f5e366ee6297bd428a31275b9fcf1e380f7299"
-
-[[package]]
 name = "ansi_term"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -142,7 +136,7 @@ checksum = "a4a4ddaa51a5bc52a6948f74c06d20aaaddb71924eab79b8c97a8c556e942d6a"
 name = "bies"
 version = "0.2.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "itertools",
  "num-traits",
  "partial-min-max",
@@ -350,33 +344,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ciborium"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0c137568cc60b904a7724001b35ce2630fd00d5d84805fbb608ab89509d788f"
-dependencies = [
- "ciborium-io",
- "ciborium-ll",
- "serde",
-]
-
-[[package]]
-name = "ciborium-io"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "346de753af073cc87b52b2083a506b38ac176a44cfb05497b622e27be899b369"
-
-[[package]]
-name = "ciborium-ll"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "213030a2b5a4e0c0892b6652260cf6ccac84827b83a85a534e178e3906c4cf1b"
-dependencies = [
- "ciborium-io",
- "half",
-]
-
-[[package]]
 name = "clap"
 version = "2.34.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -385,31 +352,56 @@ dependencies = [
  "ansi_term",
  "atty",
  "bitflags",
- "strsim",
- "textwrap 0.11.0",
+ "strsim 0.8.0",
+ "textwrap",
  "unicode-width",
  "vec_map",
 ]
 
 [[package]]
 name = "clap"
-version = "3.2.23"
+version = "4.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
+checksum = "2148adefda54e14492fb9bddcc600b4344c5d1a3123bd666dcb939c6f0e0e57e"
 dependencies = [
+ "atty",
  "bitflags",
+ "clap_derive",
  "clap_lex",
- "indexmap",
- "textwrap 0.16.0",
+ "once_cell",
+ "strsim 0.10.0",
+ "termcolor",
+]
+
+[[package]]
+name = "clap_derive"
+version = "4.0.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0177313f9f02afc995627906bbd8967e2be069f5261954222dac78290c2b9014"
+dependencies = [
+ "heck 0.4.1",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
 name = "clap_lex"
-version = "0.2.4"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
+checksum = "0d4198f73e42b4936b35b5bb248d81d2b595ecb170da0bac7655c54eedfa8da8"
 dependencies = [
  "os_str_bytes",
+]
+
+[[package]]
+name = "cmake"
+version = "0.1.49"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db34956e100b30725f2eb215f90d4871051239535632f84fea3bc92722c66b7c"
+dependencies = [
+ "cc",
 ]
 
 [[package]]
@@ -484,6 +476,43 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
+name = "core-graphics"
+version = "0.22.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2581bbab3b8ffc6fcbd550bf46c355135d16e9ff2a6ea032ad6b9bf1d7efe4fb"
+dependencies = [
+ "bitflags",
+ "core-foundation",
+ "core-graphics-types",
+ "foreign-types",
+ "libc",
+]
+
+[[package]]
+name = "core-graphics-types"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a68b68b3446082644c91ac778bf50cd4104bfb002b5a6a7c44cca5a2c70788b"
+dependencies = [
+ "bitflags",
+ "core-foundation",
+ "foreign-types",
+ "libc",
+]
+
+[[package]]
+name = "core-text"
+version = "19.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "99d74ada66e07c1cefa18f8abfba765b486f250de2e4a999e5727fc0dd4b4a25"
+dependencies = [
+ "core-foundation",
+ "core-graphics",
+ "foreign-types",
+ "libc",
+]
+
+[[package]]
 name = "corosensei"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -535,7 +564,7 @@ dependencies = [
  "atty",
  "cast",
  "clap 2.34.0",
- "criterion-plot 0.4.5",
+ "criterion-plot",
  "csv",
  "itertools",
  "lazy_static",
@@ -553,46 +582,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "criterion"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7c76e09c1aae2bc52b3d2f29e13c6572553b30c4aa1b8a49fd70de6412654cb"
-dependencies = [
- "anes",
- "atty",
- "cast",
- "ciborium",
- "clap 3.2.23",
- "criterion-plot 0.5.0",
- "itertools",
- "lazy_static",
- "num-traits",
- "oorandom",
- "plotters",
- "rayon",
- "regex",
- "serde",
- "serde_derive",
- "serde_json",
- "tinytemplate",
- "walkdir",
-]
-
-[[package]]
 name = "criterion-plot"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2673cc8207403546f45f5fd319a974b1e6983ad1a3ee7e6041650013be041876"
-dependencies = [
- "cast",
- "itertools",
-]
-
-[[package]]
-name = "criterion-plot"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b50826342786a51a89e2da3a28f1c32b06e387201bc2d19791f622c673706b1"
 dependencies = [
  "cast",
  "itertools",
@@ -1033,7 +1026,7 @@ dependencies = [
 name = "fixed_decimal"
 version = "0.5.2"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "displaydoc",
  "getrandom",
  "icu_benchmark_macros",
@@ -1090,6 +1083,27 @@ name = "freertos-rust"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ed4d1f7356542cd640004f488cc41358ced96b1efab1fead3753d868a93d504"
+
+[[package]]
+name = "freetype"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bee38378a9e3db1cc693b4f88d166ae375338a0ff75cb8263e1c601d51f35dc6"
+dependencies = [
+ "freetype-sys",
+ "libc",
+]
+
+[[package]]
+name = "freetype-sys"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a37d4011c0cc628dfa766fcc195454f4b068d7afdc2adfd28861191d866e731a"
+dependencies = [
+ "cmake",
+ "libc",
+ "pkg-config",
+]
 
 [[package]]
 name = "fs2"
@@ -1230,6 +1244,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eabb4a44450da02c90444cf74558da904edde8fb4e9035a9a6a4e15445af0bd7"
 
 [[package]]
+name = "harfbuzz-sys"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf8c27ca13930dc4ffe474880040fe9e0f03c2121600dc9c95423624cab3e467"
+dependencies = [
+ "cc",
+ "core-graphics",
+ "core-text",
+ "foreign-types",
+ "freetype",
+ "pkg-config",
+]
+
+[[package]]
 name = "hash32"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1278,6 +1306,12 @@ checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
 dependencies = [
  "unicode-segmentation",
 ]
+
+[[package]]
+name = "heck"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "hermit-abi"
@@ -1406,6 +1440,7 @@ dependencies = [
  "icu_casemapping",
  "icu_collator",
  "icu_collections",
+ "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
  "icu_displaynames",
@@ -1452,7 +1487,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "icu",
@@ -1549,7 +1584,6 @@ version = "1.1.0"
 dependencies = [
  "arraystring",
  "atoi",
- "criterion 0.4.0",
  "databake",
  "displaydoc",
  "icu",
@@ -1570,7 +1604,7 @@ dependencies = [
 name = "icu_collections"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "iai",
@@ -1607,7 +1641,7 @@ name = "icu_datagen"
 version = "1.1.2"
 dependencies = [
  "cached-path",
- "clap 2.34.0",
+ "clap 4.0.26",
  "crlify",
  "databake",
  "dhat",
@@ -1663,7 +1697,7 @@ name = "icu_datetime"
 version = "1.1.0"
 dependencies = [
  "bincode",
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "either",
@@ -1691,7 +1725,7 @@ dependencies = [
 name = "icu_decimal"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "fixed_decimal",
@@ -1749,6 +1783,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_harfbuzz"
+version = "0.7.0"
+dependencies = [
+ "displaydoc",
+ "harfbuzz-sys",
+ "icu_normalizer",
+ "icu_properties",
+ "icu_provider",
+]
+
+[[package]]
 name = "icu_list"
 version = "1.1.0"
 dependencies = [
@@ -1770,7 +1815,7 @@ dependencies = [
 name = "icu_locid"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "iai",
@@ -1789,7 +1834,7 @@ dependencies = [
 name = "icu_locid_transform"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "icu",
@@ -1837,7 +1882,7 @@ dependencies = [
 name = "icu_plurals"
 version = "1.1.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "fixed_decimal",
@@ -1923,7 +1968,7 @@ name = "icu_provider_fs"
 version = "1.1.0"
 dependencies = [
  "bincode",
- "criterion 0.3.6",
+ "criterion",
  "crlify",
  "displaydoc",
  "icu_benchmark_macros",
@@ -1970,7 +2015,7 @@ dependencies = [
 name = "icu_segmenter"
 version = "0.8.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "icu",
@@ -1990,7 +2035,7 @@ dependencies = [
 name = "icu_testdata"
 version = "1.1.2"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "icu",
  "icu_calendar",
  "icu_casemapping",
@@ -2136,7 +2181,7 @@ checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
 name = "ixdtf"
 version = "0.0.0"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "icu_testdata",
  "serde-json-core",
 ]
@@ -2199,7 +2244,7 @@ version = "0.6.1"
 dependencies = [
  "bincode",
  "bytecheck",
- "criterion 0.3.6",
+ "criterion",
  "icu_benchmark_macros",
  "icu_locid",
  "postcard",
@@ -3334,6 +3379,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
 
 [[package]]
+name = "strsim"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
+
+[[package]]
 name = "strum"
 version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3348,7 +3399,7 @@ version = "0.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ee8bc6b87a5112aeeab1f4a9f7ab634fe6cbefc4850006df31267f4cfb9e3149"
 dependencies = [
- "heck",
+ "heck 0.3.3",
  "proc-macro2",
  "quote",
  "syn",
@@ -3457,12 +3508,6 @@ checksum = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
 dependencies = [
  "unicode-width",
 ]
-
-[[package]]
-name = "textwrap"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
 
 [[package]]
 name = "thiserror"
@@ -3584,7 +3629,7 @@ name = "tinystr"
 version = "0.7.1"
 dependencies = [
  "bincode",
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "displaydoc",
  "postcard",
@@ -4448,7 +4493,7 @@ dependencies = [
 name = "writeable"
 version = "0.5.1"
 dependencies = [
- "criterion 0.3.6",
+ "criterion",
  "icu_benchmark_macros",
  "rand",
 ]
@@ -4509,7 +4554,7 @@ name = "zerovec"
 version = "0.9.3"
 dependencies = [
  "bincode",
- "criterion 0.3.6",
+ "criterion",
  "databake",
  "getrandom",
  "iai",
