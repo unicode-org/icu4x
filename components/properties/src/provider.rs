@@ -462,7 +462,8 @@ impl NormalizedPropertyNameStr {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct(marker(GeneralCategoryMaskNameToValueV1Marker, "props/names/gcm@1"))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
@@ -736,5 +737,6 @@ expand!(
             "SB",
             SentenceBreak
         ),
+        // note: the names key for the GCM mask is handled above
     )
 );

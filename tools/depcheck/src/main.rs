@@ -140,10 +140,14 @@ fn main() {
     let capi_runtime: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
     let capi_build: BTreeSet<_> = EXTRA_CAPI_BUILD_DEPS.iter().copied().collect();
     let capi: BTreeSet<_> = capi_runtime.union(&capi_build).copied().collect();
-    let capi_logging: BTreeSet<_> = EXTRA_CAPI_LOGGING_DEPS.iter().copied().collect();
+    let logging: BTreeSet<_> = EXTRA_LOGGING_DEPS.iter().copied().collect();
     let blob: BTreeSet<_> = EXTRA_BLOB_DEPS.iter().copied().collect();
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
     let test: BTreeSet<_> = EXTRA_TEST_DEPS.iter().copied().collect();
+    let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
+    let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
+    let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
+
     // These tests are in a deliberate order such that the `dep_list_name_for_error`
     // will be accurate, i.e. each test tests at most one extra array of data compared to the
     // previous ones, so if a test fails it's obvious which array to update.
@@ -242,16 +246,27 @@ fn main() {
         "icu_capi",
         "normal",
         "--features logging",
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &logging],
+        "`EXTRA_CAPI_LOGGING_DEPS`",
+    );
+
+    test_dep_list(
+        "icu_datagen",
+        "normal",
+        "--features use_icu4c",
         &[
             &basic,
             &serde,
             &experimental,
             &lstm,
-            &ryu,
-            &capi,
-            &capi_logging,
+            &blob,
+            &fs,
+            &zip,
+            &rayon,
+            &datagen,
+            &logging,
         ],
-        "`EXTRA_CAPI_LOGGING_DEPS`",
+        "`EXTRA_DATAGEN_DEPS` or `EXTRA_ZIP_DEPS` or `EXTRA_RAYON_DEPS`",
     );
     // we aren't testing simple-logger, it's mostly for debugging purposes
 }
