@@ -51,6 +51,14 @@ icu::properties::exemplar_chars::load_exemplars_index#Fn
 icu::properties::exemplar_chars::load_exemplars_main#Fn
 icu::properties::exemplar_chars::load_exemplars_numbers#Fn
 icu::properties::exemplar_chars::load_exemplars_punctuation#Fn
+icu::properties::names::PropertyValueNameToEnumMapper#Struct
+icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed#FnInStruct
+icu::properties::names::PropertyValueNameToEnumMapper::from_data#FnInStruct
+icu::properties::names::PropertyValueNameToEnumMapperBorrowed#Struct
+icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose#FnInStruct
+icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16#FnInStruct
+icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict#FnInStruct
+icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16#FnInStruct
 icu::properties::sets::UnicodeSetData#Struct
 icu::properties::sets::UnicodeSetData::as_borrowed#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct

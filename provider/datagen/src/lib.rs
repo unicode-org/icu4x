@@ -8,6 +8,9 @@
 //! Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 //! command-line utility.
 //!
+//!
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//!
 //! # Examples
 //!
 //! ## `build.rs`
@@ -44,7 +47,6 @@
 //! >    --format blob \
 //! >    --out data.postcard
 //! ```
-
 //! More details can be found by running `--help`.
 
 #![cfg_attr(
@@ -71,7 +73,7 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::{all_keys, all_keys_with_experimental};
+pub use registry::*;
 pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
 
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
@@ -103,7 +105,8 @@ pub mod syntax {
 /// A prelude for using the datagen API
 pub mod prelude {
     pub use super::{
-        syntax, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out, SourceData,
+        syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
+        SourceData,
     };
     pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
@@ -134,7 +137,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::for_test(),
+                source: SourceData::repo(),
             };
         }
         TEST_PROVIDER.clone()
@@ -274,6 +277,33 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
+/// Options for configuring the output of databake.
+#[non_exhaustive]
+pub struct BakedOptions {
+    /// Whether to run `rustfmt` on the generated files.
+    pub pretty: bool,
+    /// Whether to gate each key on its crate name. This allows using the module
+    /// even if some keys are not required and their dependencies are not included.
+    /// Requires use_separate_crates.
+    pub insert_feature_gates: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    pub use_separate_crates: bool,
+    /// Whether to overwrite existing data. By default, errors if it is present.
+    pub overwrite: bool,
+}
+
+#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
+impl Default for BakedOptions {
+    fn default() -> Self {
+        Self {
+            pretty: false,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+            overwrite: false,
+        }
+    }
+}
+
 /// The output format.
 #[non_exhaustive]
 pub enum Out {
@@ -290,17 +320,20 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a module at the given location.
-    Module {
+    /// Output a module with baked data at the given location.
+    Baked {
         /// The directory of the generated module.
         mod_directory: PathBuf,
-        /// Whether to run `rustfmt` on the generated files.
+        /// Additional options to configure the generated module.
+        options: BakedOptions,
+    },
+    /// Old deprecated configuration for databake.
+    #[doc(hidden)]
+    #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
+    Module {
+        mod_directory: PathBuf,
         pretty: bool,
-        /// Whether to gate each key on its crate name. This allows using the module
-        /// even if some keys are not required and their dependencies are not included.
-        /// Requires use_separate_crates.
         insert_feature_gates: bool,
-        /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
     },
 }
@@ -346,6 +379,11 @@ pub fn datagen(
                 Out::Blob(write) => Box::new(
                     icu_provider_blob::export::BlobExporter::new_with_sink(write),
                 ),
+                Out::Baked {
+                    mod_directory,
+                    options,
+                } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
+                #[allow(deprecated)]
                 Out::Module {
                     mod_directory,
                     pretty,
@@ -353,9 +391,14 @@ pub fn datagen(
                     use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
-                    pretty,
-                    insert_feature_gates,
-                    use_separate_crates,
+                    BakedOptions {
+                        pretty,
+                        insert_feature_gates,
+                        use_separate_crates,
+                        // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                        // 1.1.2 made it an option in Out::Baked.
+                        overwrite: false,
+                    },
                 )?),
             })
         })
@@ -449,7 +492,7 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
+    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))

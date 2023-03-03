@@ -14,6 +14,8 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use crate::BakedOptions;
+
 macro_rules! move_out {
     ($field:expr) => {{
         let mut tmp = Default::default();
@@ -53,15 +55,21 @@ struct ImplData {
 }
 
 impl BakedDataExporter {
-    pub fn new(
-        mod_directory: PathBuf,
-        pretty: bool,
-        insert_feature_gates: bool,
-        use_separate_crates: bool,
-    ) -> Result<Self, DataError> {
+    pub fn new(mod_directory: PathBuf, options: BakedOptions) -> Result<Self, DataError> {
+        let BakedOptions {
+            pretty,
+            insert_feature_gates,
+            use_separate_crates,
+            overwrite,
+        } = options;
+
         if mod_directory.exists() {
-            std::fs::remove_dir(&mod_directory)
-                .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
+            if overwrite {
+                std::fs::remove_dir_all(&mod_directory)
+            } else {
+                std::fs::remove_dir(&mod_directory)
+            }
+            .map_err(|e| DataError::from(e).with_path_context(&mod_directory))?;
         }
 
         Ok(Self {

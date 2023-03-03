@@ -56,15 +56,27 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-72-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-24/72.x";
+
+    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
+    ///
+    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
+    pub fn latest_tested() -> Self {
+        Self::default()
+            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+            .unwrap()
+            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+            .unwrap()
+    }
 
     #[cfg(test)]
-    pub fn for_test() -> Self {
+    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
+    pub fn repo() -> Self {
         Self::default()
-            .with_cldr(icu_testdata::paths::cldr_json_root(), Default::default())
-            .expect("testdata is valid")
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-            .expect("testdata is valid")
+            .with_cldr(repodata::paths::cldr(), Default::default())
+            .unwrap()
+            .with_icuexport(repodata::paths::icuexport())
+            .unwrap()
     }
 
     /// Adds CLDR data to this `DataSource`. The root should point to a local
@@ -378,16 +390,26 @@ impl AbstractFs {
                 } else {
                     return Ok(());
                 };
-                lazy_static::lazy_static! {
-                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                        .freshness_lifetime(u64::MAX)
-                        .progress_bar(None)
-                        .build()
-                        .unwrap();
-                }
-                let root = CACHE
-                    .cached_path(resource)
-                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
+
+                let root: PathBuf = {
+                    #[cfg(not(feature = "networking"))]
+                    unreachable!("AbstractFs URL mode only possible when using CLDR/ICU tags, which cannot be set without the `networking` feature");
+
+                    #[cfg(feature = "networking")]
+                    {
+                        lazy_static::lazy_static! {
+                            static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                                .freshness_lifetime(u64::MAX)
+                                .progress_bar(None)
+                                .build()
+                                .unwrap();
+                        }
+
+                        CACHE
+                            .cached_path(resource)
+                            .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    }
+                };
                 *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())

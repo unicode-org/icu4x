@@ -83,3 +83,6 @@ pub mod zerovec;
 
 #[cfg(feature = "serde")]
 mod serde;
+
+#[cfg(feature = "databake")]
+mod databake;

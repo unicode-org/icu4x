@@ -45,6 +45,7 @@ icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", 
 icu_displaynames = { version = "0.9.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 
 # For docs links
 icu_provider = { version = "1.1.0", path = "../../provider/core", default-features = false }
@@ -102,6 +103,7 @@ experimental = [
     "icu_displaynames",
     "icu_relativetime",
     "icu_segmenter",
+    "icu_compactdecimal",
 ]
 
 [package.metadata.cargo-all-features]

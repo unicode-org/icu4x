@@ -69,10 +69,7 @@ jobs:
 
     # Actual job
     - name: Check
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-msrv-${{ matrix.behavior }}
+      run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
   # ci-job-test
   test:
@@ -111,18 +108,11 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-test
+      run: cargo make ci-job-test
 
-  # ci-job-testdata
-  testdata:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
-
+  # ci-job-test-cargo-tutorial
+  test-cargo-tutorial:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -152,15 +142,62 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-cargo-tutorial`
+      run: cargo make ci-job-test-cargo-tutorial
+
+  # ci-job-testdata
+  testdata:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x
     - name: Install rustfmt
       run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-testdata
+      run: cargo make ci-job-testdata
 
   # ci-job-test-docs
   test-docs:
@@ -195,10 +232,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test-docs`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-test-docs
+      run: cargo make ci-job-test-docs
 
   # ci-job-full-datagen
   full-datagen:
@@ -241,10 +275,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-full-datagen`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-full-datagen
+      run: cargo make ci-job-full-datagen
 
   # ci-job-ffi
   ffi:
@@ -302,10 +333,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-ffi`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-ffi
+      run: cargo make ci-job-ffi
       env:
         CXX: "g++-10"
 
@@ -368,10 +396,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-verify-ffi`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-verify-ffi
+      run: cargo make ci-job-verify-ffi
 
   # ci-job-verify-gn, ci-job-gn
   gn:
@@ -415,22 +440,13 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('tools/make/gn.toml', 'ffi/gn/Cargo.lock') }}
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: gn-install
+      run: cargo make gn-install
 
     # Actual job
     - name: Run `cargo make ci-job-verify-gn`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-verify-gn
+      run: cargo make ci-job-verify-gn
     - name: Run `cargo make ci-job-gn`
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-gn
+      run: cargo make ci-job-gn
 
   # ci-job-wasm
   wasm:
@@ -521,10 +537,7 @@ jobs:
 
     # Actual job
     - name: Check Format
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-fmt
+      run: cargo make ci-job-fmt
 
   # ci-job-tidy
   tidy:
@@ -580,10 +593,7 @@ jobs:
 
     # Actual job
     - name: Tidy
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-tidy
+      run: cargo make ci-job-tidy
 
   # ci-job-clippy
   clippy:
@@ -665,10 +675,7 @@ jobs:
 
     # Actual job
     - name: Cargo doc
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: make
-        args: ci-job-doc
+      run: cargo make ci-job-doc
 
 
   # Notify on slack  
