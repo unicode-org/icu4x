@@ -87,8 +87,8 @@ impl AsULE for MirroredPairedBracketData {
         let mirr_glyph_char_ule_ref_slice = &[self.mirroring_glyph.to_unaligned()];
         let byte_slice = CharULE::as_byte_slice(mirr_glyph_char_ule_ref_slice);
         let mut byte2 = byte_slice[2];
-        byte2 |= (self.is_mirrored as u8) << 6;
-        byte2 |= self.paired_bracket_type.0 << 7;
+        byte2 |= (self.is_mirrored as u8) << 5;
+        byte2 |= self.paired_bracket_type.0 << 6;
 
         MirroredPairedBracketDataULE([byte_slice[0], byte_slice[1], byte2])
     }
@@ -130,8 +130,8 @@ mod test {
         assert_eq!(expected_bytes1, MirroredPairedBracketDataULE::as_byte_slice(&[data1.to_unaligned()]));
 
 
-        let ule1 = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes1)?;
-        let parsed_data1 = MirroredPairedBracketData::from_unaligned(ule1);
+        let ule1 = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes1).unwrap();
+        let parsed_data1 = MirroredPairedBracketData::from_unaligned(ule1.first().unwrap().clone());
         assert_eq!(data1, parsed_data1);
     }
 }
