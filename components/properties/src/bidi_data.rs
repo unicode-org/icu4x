@@ -115,6 +115,8 @@ impl AsULE for MirroredPairedBracketData {
 }
 
 mod test {
+    use super::*;
+
     #[test]
     fn test_parse() {
         // data for U+007B LEFT CURLY BRACKET 
