@@ -115,8 +115,6 @@ impl AsULE for MirroredPairedBracketData {
 }
 
 mod test {
-    use super::*;
-
     #[test]
     fn test_parse() {
         // data for U+007B LEFT CURLY BRACKET 
@@ -131,7 +129,7 @@ mod test {
 
 
         let ule1 = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes1).unwrap();
-        let parsed_data1 = MirroredPairedBracketData::from_unaligned(ule1.first().unwrap().clone());
+        let parsed_data1 = MirroredPairedBracketData::from_unaligned(*ule1.first().unwrap());
         assert_eq!(data1, parsed_data1);
     }
 }
