@@ -4,8 +4,8 @@
 
 use crate::script::ScriptWithExt;
 use crate::{
-    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-    LineBreak, Script, SentenceBreak, WordBreak,
+    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
+    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;

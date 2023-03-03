@@ -89,6 +89,7 @@ pub mod maps;
 // name of that struct without coordination.
 mod props;
 
+pub mod bidi_data;
 pub mod exemplar_chars;
 pub mod provider;
 #[allow(clippy::exhaustive_structs)] // TODO
@@ -97,8 +98,8 @@ pub mod sets;
 mod trievalue;
 
 pub use props::{
-    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
+    GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
 
 pub use error::PropertiesError;
