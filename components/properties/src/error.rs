@@ -10,6 +10,8 @@ use crate::GeneralCategoryGroup;
 #[cfg(doc)]
 use crate::Script;
 
+use crate::runtime::UnicodeProperty;
+
 #[cfg(feature = "std")]
 impl std::error::Error for PropertiesError {}
 
@@ -28,6 +30,9 @@ pub enum PropertiesError {
     /// An unknown value was used for the [`GeneralCategoryGroup`](crate::GeneralCategoryGroup) property
     #[displaydoc("Unknown general category group: {0}")]
     UnknownGeneralCategoryGroup(u32),
+    /// An unknown or unexpected property was used for an API dealing with properties at runtime
+    #[displaydoc("Unexpected property {0:?}")]
+    UnexpectedProperty(UnicodeProperty),
 }
 
 impl From<DataError> for PropertiesError {

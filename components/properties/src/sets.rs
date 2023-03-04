@@ -294,6 +294,17 @@ impl<'a> UnicodeSetDataBorrowed<'a> {
     }
 }
 
+pub(crate) fn load_set_data<M, P>(provider: &P) -> Result<CodePointSetData, PropertiesError>
+where
+    M: KeyedDataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
+    P: DataProvider<M> + ?Sized,
+{
+    Ok(provider
+        .load(Default::default())
+        .and_then(DataResponse::take_payload)
+        .map(CodePointSetData::from_data)?)
+}
+
 //
 // Binary property getter fns
 // (data as code point sets)
@@ -314,7 +325,7 @@ macro_rules! make_code_point_set_property {
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointSetData, PropertiesError> {
-            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointSetData::from_data)?)
+            load_set_data(provider)
         }
     }
 }
