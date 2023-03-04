@@ -42,7 +42,7 @@ pub struct MirroredPairedBracketDataULE([u8; 3]);
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
-//  6. CharULE byte equality is semantic equality
+//  6. MirroredPairedBracketDataULE byte equality is semantic equality
 unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
