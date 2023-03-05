@@ -53,10 +53,9 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             });
         }
         // Validate the bytes
+        #[allow(clippy::indexing_slicing)] // Won't panic because the chunks are always 3 bytes long
         for byte_triple in bytes.chunks_exact(3) {
             // Bidi_Mirroring_Glyph validation
-            #[allow(clippy::indexing_slicing)]
-            // Won't panic because the chunks are always 3 bytes long
             let byte0 = byte_triple[0];
             let byte1 = byte_triple[1];
             let byte2 = byte_triple[2];
@@ -69,10 +68,6 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             // skip validating the Bidi_Mirrored boolean since it is always valid
 
             // skip validating Bidi_Paired_Bracket_Type because enum is open
-            //
-            // TODO: is the above statement correct and okay?
-            // TODO: or do we have a way to validate the enum discriminant against the enum for
-            //       newtype idiom enums?
         }
 
         Ok(())
@@ -86,21 +81,27 @@ impl AsULE for MirroredPairedBracketData {
     fn to_unaligned(self) -> Self::ULE {
         let mirr_glyph_char_ule_ref_slice = &[self.mirroring_glyph.to_unaligned()];
         let byte_slice = CharULE::as_byte_slice(mirr_glyph_char_ule_ref_slice);
-        let mut byte2 = byte_slice[2];
+        let mut byte2 = byte_slice.get(2).copied().unwrap_or_default();
         byte2 |= (self.is_mirrored as u8) << 5;
         byte2 |= self.paired_bracket_type.0 << 6;
 
-        MirroredPairedBracketDataULE([byte_slice[0], byte_slice[1], byte2])
+        MirroredPairedBracketDataULE([
+            byte_slice.get(0).copied().unwrap_or_default(),
+            byte_slice.get(1).copied().unwrap_or_default(),
+            byte2
+        ])
     }
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        let mirroring_glyph_ule_bytes = &[unaligned.0[0], unaligned.0[1], unaligned.0[2] & 0x1F];
         // Safe because the lower bits 20..0 of MirroredPairedBracketDataULE bytes are the CharULE bytes,
         // and CharULE::from_unaligned is safe because bytes are defined to represent a valid Unicode code point.
         let mirroring_glyph = unsafe {
+            let mirroring_glyph_ule_bytes = &[unaligned.0[0], unaligned.0[1], unaligned.0[2] & 0x1F];
             let mirroring_glyph_ule = CharULE::from_byte_slice_unchecked(mirroring_glyph_ule_bytes);
-            char::from_unaligned(mirroring_glyph_ule[0])
+            mirroring_glyph_ule.first()
+                .map(|ule| char::from_unaligned(*ule))
+                .unwrap_or(char::REPLACEMENT_CHARACTER)
         };
         let is_mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
         let paired_bracket_type =
