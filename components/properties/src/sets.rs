@@ -1835,6 +1835,191 @@ pub fn load_for_general_category_group(
     Ok(CodePointSetData::from_code_point_inversion_list(set))
 }
 
+/// Returns a type capable of looking up values for a property specified as a string, as long as it is an
+/// [ECMA262-subset binary property][ecma], using strict matching on the names in the spec.
+///
+/// This handles every property required by ECMA262, except for:
+///
+/// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
+///    [`maps::load_script()`].
+///    using property values parsed via [`GeneralCategory::get_name_to_enum_mapper()`] and [`Script::get_name_to_enum_mapper()`]
+///    if necessary.
+/// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
+/// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
+///    using property values parsed via [`GeneralCategoryGroup::get_name_to_enum_mapper()`] if necessary
+/// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
+///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
+///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
+///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
+/// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
+///    simply create the corresponding `GeneralCategory` set.
+///
+/// ```rust
+/// use icu::properties::sets;
+///
+/// let data = sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "Emoji").expect("loading data failed");
+/// let emoji = data.as_borrowed();
+///
+/// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
+/// assert!(!emoji.contains('V'));
+/// ```
+///
+/// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+pub fn load_for_ecma262_unstable<P>(
+    provider: &P,
+    name: &str,
+) -> Result<CodePointSetData, PropertiesError>
+where
+    P: ?Sized
+        + DataProvider<AsciiHexDigitV1Marker>
+        + DataProvider<AlphabeticV1Marker>
+        + DataProvider<BidiControlV1Marker>
+        + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CaseIgnorableV1Marker>
+        + DataProvider<CasedV1Marker>
+        + DataProvider<ChangesWhenCasefoldedV1Marker>
+        + DataProvider<ChangesWhenCasemappedV1Marker>
+        + DataProvider<ChangesWhenLowercasedV1Marker>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+        + DataProvider<ChangesWhenTitlecasedV1Marker>
+        + DataProvider<ChangesWhenUppercasedV1Marker>
+        + DataProvider<DashV1Marker>
+        + DataProvider<DefaultIgnorableCodePointV1Marker>
+        + DataProvider<DeprecatedV1Marker>
+        + DataProvider<DiacriticV1Marker>
+        + DataProvider<EmojiV1Marker>
+        + DataProvider<EmojiComponentV1Marker>
+        + DataProvider<EmojiModifierV1Marker>
+        + DataProvider<EmojiModifierBaseV1Marker>
+        + DataProvider<EmojiPresentationV1Marker>
+        + DataProvider<ExtendedPictographicV1Marker>
+        + DataProvider<ExtenderV1Marker>
+        + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeExtendV1Marker>
+        + DataProvider<HexDigitV1Marker>
+        + DataProvider<IdsBinaryOperatorV1Marker>
+        + DataProvider<IdsTrinaryOperatorV1Marker>
+        + DataProvider<IdContinueV1Marker>
+        + DataProvider<IdStartV1Marker>
+        + DataProvider<IdeographicV1Marker>
+        + DataProvider<JoinControlV1Marker>
+        + DataProvider<LogicalOrderExceptionV1Marker>
+        + DataProvider<LowercaseV1Marker>
+        + DataProvider<MathV1Marker>
+        + DataProvider<NoncharacterCodePointV1Marker>
+        + DataProvider<PatternSyntaxV1Marker>
+        + DataProvider<PatternWhiteSpaceV1Marker>
+        + DataProvider<QuotationMarkV1Marker>
+        + DataProvider<RadicalV1Marker>
+        + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceTerminalV1Marker>
+        + DataProvider<SoftDottedV1Marker>
+        + DataProvider<TerminalPunctuationV1Marker>
+        + DataProvider<UnifiedIdeographV1Marker>
+        + DataProvider<UppercaseV1Marker>
+        + DataProvider<VariationSelectorV1Marker>
+        + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<XidContinueV1Marker>
+        + DataProvider<XidStartV1Marker>,
+{
+    use crate::runtime::UnicodeProperty;
+
+    let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
+        prop
+    } else {
+        return Err(PropertiesError::unexpected_property(name));
+    };
+    match prop {
+        UnicodeProperty::AsciiHexDigit => load_set_data::<AsciiHexDigitV1Marker, _>(provider),
+        UnicodeProperty::Alphabetic => load_set_data::<AlphabeticV1Marker, _>(provider),
+        UnicodeProperty::BidiControl => load_set_data::<BidiControlV1Marker, _>(provider),
+        UnicodeProperty::BidiMirrored => load_set_data::<BidiMirroredV1Marker, _>(provider),
+        UnicodeProperty::CaseIgnorable => load_set_data::<CaseIgnorableV1Marker, _>(provider),
+        UnicodeProperty::Cased => load_set_data::<CasedV1Marker, _>(provider),
+        UnicodeProperty::ChangesWhenCasefolded => {
+            load_set_data::<ChangesWhenCasefoldedV1Marker, _>(provider)
+        }
+        UnicodeProperty::ChangesWhenCasemapped => {
+            load_set_data::<ChangesWhenCasemappedV1Marker, _>(provider)
+        }
+        UnicodeProperty::ChangesWhenLowercased => {
+            load_set_data::<ChangesWhenLowercasedV1Marker, _>(provider)
+        }
+        UnicodeProperty::ChangesWhenNfkcCasefolded => {
+            load_set_data::<ChangesWhenNfkcCasefoldedV1Marker, _>(provider)
+        }
+        UnicodeProperty::ChangesWhenTitlecased => {
+            load_set_data::<ChangesWhenTitlecasedV1Marker, _>(provider)
+        }
+        UnicodeProperty::ChangesWhenUppercased => {
+            load_set_data::<ChangesWhenUppercasedV1Marker, _>(provider)
+        }
+        UnicodeProperty::Dash => load_set_data::<DashV1Marker, _>(provider),
+        UnicodeProperty::DefaultIgnorableCodePoint => {
+            load_set_data::<DefaultIgnorableCodePointV1Marker, _>(provider)
+        }
+        UnicodeProperty::Deprecated => load_set_data::<DeprecatedV1Marker, _>(provider),
+        UnicodeProperty::Diacritic => load_set_data::<DiacriticV1Marker, _>(provider),
+        UnicodeProperty::Emoji => load_set_data::<EmojiV1Marker, _>(provider),
+        UnicodeProperty::EmojiComponent => load_set_data::<EmojiComponentV1Marker, _>(provider),
+        UnicodeProperty::EmojiModifier => load_set_data::<EmojiModifierV1Marker, _>(provider),
+        UnicodeProperty::EmojiModifierBase => {
+            load_set_data::<EmojiModifierBaseV1Marker, _>(provider)
+        }
+        UnicodeProperty::EmojiPresentation => {
+            load_set_data::<EmojiPresentationV1Marker, _>(provider)
+        }
+        UnicodeProperty::ExtendedPictographic => {
+            load_set_data::<ExtendedPictographicV1Marker, _>(provider)
+        }
+        UnicodeProperty::Extender => load_set_data::<ExtenderV1Marker, _>(provider),
+        UnicodeProperty::GraphemeBase => load_set_data::<GraphemeBaseV1Marker, _>(provider),
+        UnicodeProperty::GraphemeExtend => load_set_data::<GraphemeExtendV1Marker, _>(provider),
+        UnicodeProperty::HexDigit => load_set_data::<HexDigitV1Marker, _>(provider),
+        UnicodeProperty::IdsBinaryOperator => {
+            load_set_data::<IdsBinaryOperatorV1Marker, _>(provider)
+        }
+        UnicodeProperty::IdsTrinaryOperator => {
+            load_set_data::<IdsTrinaryOperatorV1Marker, _>(provider)
+        }
+        UnicodeProperty::IdContinue => load_set_data::<IdContinueV1Marker, _>(provider),
+        UnicodeProperty::IdStart => load_set_data::<IdStartV1Marker, _>(provider),
+        UnicodeProperty::Ideographic => load_set_data::<IdeographicV1Marker, _>(provider),
+        UnicodeProperty::JoinControl => load_set_data::<JoinControlV1Marker, _>(provider),
+        UnicodeProperty::LogicalOrderException => {
+            load_set_data::<LogicalOrderExceptionV1Marker, _>(provider)
+        }
+        UnicodeProperty::Lowercase => load_set_data::<LowercaseV1Marker, _>(provider),
+        UnicodeProperty::Math => load_set_data::<MathV1Marker, _>(provider),
+        UnicodeProperty::NoncharacterCodePoint => {
+            load_set_data::<NoncharacterCodePointV1Marker, _>(provider)
+        }
+        UnicodeProperty::PatternSyntax => load_set_data::<PatternSyntaxV1Marker, _>(provider),
+        UnicodeProperty::PatternWhiteSpace => {
+            load_set_data::<PatternWhiteSpaceV1Marker, _>(provider)
+        }
+        UnicodeProperty::QuotationMark => load_set_data::<QuotationMarkV1Marker, _>(provider),
+        UnicodeProperty::Radical => load_set_data::<RadicalV1Marker, _>(provider),
+        UnicodeProperty::RegionalIndicator => {
+            load_set_data::<RegionalIndicatorV1Marker, _>(provider)
+        }
+        UnicodeProperty::SentenceTerminal => load_set_data::<SentenceTerminalV1Marker, _>(provider),
+        UnicodeProperty::SoftDotted => load_set_data::<SoftDottedV1Marker, _>(provider),
+        UnicodeProperty::TerminalPunctuation => {
+            load_set_data::<TerminalPunctuationV1Marker, _>(provider)
+        }
+        UnicodeProperty::UnifiedIdeograph => load_set_data::<UnifiedIdeographV1Marker, _>(provider),
+        UnicodeProperty::Uppercase => load_set_data::<UppercaseV1Marker, _>(provider),
+        UnicodeProperty::VariationSelector => {
+            load_set_data::<VariationSelectorV1Marker, _>(provider)
+        }
+        UnicodeProperty::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
+        UnicodeProperty::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
+        UnicodeProperty::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
+        _ => return Err(PropertiesError::unexpected_property(name)),
+    }
+}
+
 #[cfg(test)]
 mod tests {
 

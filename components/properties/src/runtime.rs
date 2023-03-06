@@ -2,15 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! 🚧 \[Experimental\] This module is experimental and currently crate-private. Let us know if you
+//! have a use case for this!
+//!
 //! This module contains utilities for working with properties where the specific property in use
 //! is not known at compile time.
+//!
+//! For regex engines, [`crate::sets::load_for_ecma262_unstable()`] is a convenient API for working
+//! with properties at runtime tailored for the use case of ECMA262-compatible regex engines.
 
-use crate::provider::*;
-use crate::sets::CodePointSetData;
-use crate::PropertiesError;
 #[cfg(doc)]
 use crate::{maps, script, GeneralCategory, GeneralCategoryGroup, Script};
-use icu_provider::prelude::*;
 
 /// This type can represent any Unicode property.
 ///
@@ -23,6 +25,7 @@ use icu_provider::prelude::*;
 pub struct UnicodeProperty(pub u32);
 
 #[allow(non_upper_case_globals)]
+#[allow(unused)] // experimental, may be made public later
 impl UnicodeProperty {
     /// Binary property `Alphabetic`
     pub const Alphabetic: Self = UnicodeProperty(0);
@@ -267,6 +270,7 @@ impl UnicodeProperty {
 
 /// The kind of value a property has
 #[non_exhaustive]
+#[allow(unused)] // experimental, may be made public later
 pub enum PropertyKind {
     /// A binary property, has a value of True or False
     Binary,
@@ -287,6 +291,7 @@ pub enum PropertyKind {
     ScriptExtensions,
 }
 
+#[allow(unused)] // experimental, may be made public later
 impl UnicodeProperty {
     /// Obtain the [`PropertyKind`] of this property.
     ///
@@ -396,168 +401,5 @@ impl UnicodeProperty {
         };
 
         Some(prop)
-    }
-
-    /// Returns a type capable of looking up values for this property, as long as it is an
-    /// [ECMA262-subset binary property][ecma].
-    ///
-    /// This handles every property required by ECMA262, except for:
-    ///
-    /// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
-    ///    [`maps::load_script()`].
-    ///    using property values parsed via [`GeneralCategory::get_name_to_enum_mapper()`] and [`Script::get_name_to_enum_mapper()`]
-    ///    if necessary.
-    /// - `Script_Extensions`: handle this directly using APIs from [`crate::script`], like [`script::load_script_with_extensions_unstable()`]
-    /// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
-    ///    using property values parsed via [`GeneralCategoryGroup::get_name_to_enum_mapper()`] if necessary
-    /// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets,
-    ///    see docs on [`Self::parse_ecma262_name()`] for more details.
-    /// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
-    ///    simply create the corresponding `GeneralCategory` set.
-    ///
-    /// ```rust
-    /// use icu::properties::runtime::UnicodeProperty;
-    ///
-    /// let property = UnicodeProperty::parse_ecma262_name("Emoji").expect("parsing string failed");
-    /// let data = property.load_ecma262_binary_property_unstable(&icu_testdata::unstable()).expect("loading data failed");
-    /// let emoji = data.as_borrowed();
-    ///
-    /// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
-    /// assert!(!emoji.contains('V'));
-    /// ```
-    ///
-    /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
-    pub fn load_ecma262_binary_property_unstable<P>(
-        self,
-        provider: &P,
-    ) -> Result<CodePointSetData, PropertiesError>
-    where
-        P: ?Sized
-            + DataProvider<AsciiHexDigitV1Marker>
-            + DataProvider<AlphabeticV1Marker>
-            + DataProvider<BidiControlV1Marker>
-            + DataProvider<BidiMirroredV1Marker>
-            + DataProvider<CaseIgnorableV1Marker>
-            + DataProvider<CasedV1Marker>
-            + DataProvider<ChangesWhenCasefoldedV1Marker>
-            + DataProvider<ChangesWhenCasemappedV1Marker>
-            + DataProvider<ChangesWhenLowercasedV1Marker>
-            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-            + DataProvider<ChangesWhenTitlecasedV1Marker>
-            + DataProvider<ChangesWhenUppercasedV1Marker>
-            + DataProvider<DashV1Marker>
-            + DataProvider<DefaultIgnorableCodePointV1Marker>
-            + DataProvider<DeprecatedV1Marker>
-            + DataProvider<DiacriticV1Marker>
-            + DataProvider<EmojiV1Marker>
-            + DataProvider<EmojiComponentV1Marker>
-            + DataProvider<EmojiModifierV1Marker>
-            + DataProvider<EmojiModifierBaseV1Marker>
-            + DataProvider<EmojiPresentationV1Marker>
-            + DataProvider<ExtendedPictographicV1Marker>
-            + DataProvider<ExtenderV1Marker>
-            + DataProvider<GraphemeBaseV1Marker>
-            + DataProvider<GraphemeExtendV1Marker>
-            + DataProvider<HexDigitV1Marker>
-            + DataProvider<IdsBinaryOperatorV1Marker>
-            + DataProvider<IdsTrinaryOperatorV1Marker>
-            + DataProvider<IdContinueV1Marker>
-            + DataProvider<IdStartV1Marker>
-            + DataProvider<IdeographicV1Marker>
-            + DataProvider<JoinControlV1Marker>
-            + DataProvider<LogicalOrderExceptionV1Marker>
-            + DataProvider<LowercaseV1Marker>
-            + DataProvider<MathV1Marker>
-            + DataProvider<NoncharacterCodePointV1Marker>
-            + DataProvider<PatternSyntaxV1Marker>
-            + DataProvider<PatternWhiteSpaceV1Marker>
-            + DataProvider<QuotationMarkV1Marker>
-            + DataProvider<RadicalV1Marker>
-            + DataProvider<RegionalIndicatorV1Marker>
-            + DataProvider<SentenceTerminalV1Marker>
-            + DataProvider<SoftDottedV1Marker>
-            + DataProvider<TerminalPunctuationV1Marker>
-            + DataProvider<UnifiedIdeographV1Marker>
-            + DataProvider<UppercaseV1Marker>
-            + DataProvider<VariationSelectorV1Marker>
-            + DataProvider<WhiteSpaceV1Marker>
-            + DataProvider<XidContinueV1Marker>
-            + DataProvider<XidStartV1Marker>,
-    {
-        use crate::sets::load_set_data;
-
-        match self {
-            Self::AsciiHexDigit => load_set_data::<AsciiHexDigitV1Marker, _>(provider),
-            Self::Alphabetic => load_set_data::<AlphabeticV1Marker, _>(provider),
-            Self::BidiControl => load_set_data::<BidiControlV1Marker, _>(provider),
-            Self::BidiMirrored => load_set_data::<BidiMirroredV1Marker, _>(provider),
-            Self::CaseIgnorable => load_set_data::<CaseIgnorableV1Marker, _>(provider),
-            Self::Cased => load_set_data::<CasedV1Marker, _>(provider),
-            Self::ChangesWhenCasefolded => {
-                load_set_data::<ChangesWhenCasefoldedV1Marker, _>(provider)
-            }
-            Self::ChangesWhenCasemapped => {
-                load_set_data::<ChangesWhenCasemappedV1Marker, _>(provider)
-            }
-            Self::ChangesWhenLowercased => {
-                load_set_data::<ChangesWhenLowercasedV1Marker, _>(provider)
-            }
-            Self::ChangesWhenNfkcCasefolded => {
-                load_set_data::<ChangesWhenNfkcCasefoldedV1Marker, _>(provider)
-            }
-            Self::ChangesWhenTitlecased => {
-                load_set_data::<ChangesWhenTitlecasedV1Marker, _>(provider)
-            }
-            Self::ChangesWhenUppercased => {
-                load_set_data::<ChangesWhenUppercasedV1Marker, _>(provider)
-            }
-            Self::Dash => load_set_data::<DashV1Marker, _>(provider),
-            Self::DefaultIgnorableCodePoint => {
-                load_set_data::<DefaultIgnorableCodePointV1Marker, _>(provider)
-            }
-            Self::Deprecated => load_set_data::<DeprecatedV1Marker, _>(provider),
-            Self::Diacritic => load_set_data::<DiacriticV1Marker, _>(provider),
-            Self::Emoji => load_set_data::<EmojiV1Marker, _>(provider),
-            Self::EmojiComponent => load_set_data::<EmojiComponentV1Marker, _>(provider),
-            Self::EmojiModifier => load_set_data::<EmojiModifierV1Marker, _>(provider),
-            Self::EmojiModifierBase => load_set_data::<EmojiModifierBaseV1Marker, _>(provider),
-            Self::EmojiPresentation => load_set_data::<EmojiPresentationV1Marker, _>(provider),
-            Self::ExtendedPictographic => {
-                load_set_data::<ExtendedPictographicV1Marker, _>(provider)
-            }
-            Self::Extender => load_set_data::<ExtenderV1Marker, _>(provider),
-            Self::GraphemeBase => load_set_data::<GraphemeBaseV1Marker, _>(provider),
-            Self::GraphemeExtend => load_set_data::<GraphemeExtendV1Marker, _>(provider),
-            Self::HexDigit => load_set_data::<HexDigitV1Marker, _>(provider),
-            Self::IdsBinaryOperator => load_set_data::<IdsBinaryOperatorV1Marker, _>(provider),
-            Self::IdsTrinaryOperator => load_set_data::<IdsTrinaryOperatorV1Marker, _>(provider),
-            Self::IdContinue => load_set_data::<IdContinueV1Marker, _>(provider),
-            Self::IdStart => load_set_data::<IdStartV1Marker, _>(provider),
-            Self::Ideographic => load_set_data::<IdeographicV1Marker, _>(provider),
-            Self::JoinControl => load_set_data::<JoinControlV1Marker, _>(provider),
-            Self::LogicalOrderException => {
-                load_set_data::<LogicalOrderExceptionV1Marker, _>(provider)
-            }
-            Self::Lowercase => load_set_data::<LowercaseV1Marker, _>(provider),
-            Self::Math => load_set_data::<MathV1Marker, _>(provider),
-            Self::NoncharacterCodePoint => {
-                load_set_data::<NoncharacterCodePointV1Marker, _>(provider)
-            }
-            Self::PatternSyntax => load_set_data::<PatternSyntaxV1Marker, _>(provider),
-            Self::PatternWhiteSpace => load_set_data::<PatternWhiteSpaceV1Marker, _>(provider),
-            Self::QuotationMark => load_set_data::<QuotationMarkV1Marker, _>(provider),
-            Self::Radical => load_set_data::<RadicalV1Marker, _>(provider),
-            Self::RegionalIndicator => load_set_data::<RegionalIndicatorV1Marker, _>(provider),
-            Self::SentenceTerminal => load_set_data::<SentenceTerminalV1Marker, _>(provider),
-            Self::SoftDotted => load_set_data::<SoftDottedV1Marker, _>(provider),
-            Self::TerminalPunctuation => load_set_data::<TerminalPunctuationV1Marker, _>(provider),
-            Self::UnifiedIdeograph => load_set_data::<UnifiedIdeographV1Marker, _>(provider),
-            Self::Uppercase => load_set_data::<UppercaseV1Marker, _>(provider),
-            Self::VariationSelector => load_set_data::<VariationSelectorV1Marker, _>(provider),
-            Self::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
-            Self::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
-            Self::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
-            _ => return Err(PropertiesError::UnexpectedProperty(self)),
-        }
     }
 }

@@ -93,7 +93,7 @@ mod props;
 
 pub mod exemplar_chars;
 pub mod provider;
-pub mod runtime;
+pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;

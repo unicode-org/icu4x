@@ -291,7 +291,10 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='Þ' as u32);
     /// ```
-    pub fn iter_ranges_for_group(self, val: crate::GeneralCategoryGroup) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+    pub fn iter_ranges_for_group(
+        self,
+        val: crate::GeneralCategoryGroup,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map
             .iter_ranges()
             .filter(move |r| val.contains(r.value))
