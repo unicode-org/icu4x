@@ -81,8 +81,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     f(self)
                 }
             }
-            // This is safe because there are no lifetime parameters.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<#(#typarams),*> where #(#static_bounds),* {}
         }
     } else {
         if lts != 1 {
@@ -112,7 +110,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             structure.bind_with(|_| synstructure::BindStyle::Move);
             let owned_body = structure.each_variant(|vi| {
                 vi.construct(|f, i| {
-                    let binding = format!("__binding_{}", i);
+                    let binding = format!("__binding_{i}");
                     let field = Ident::new(&binding, Span::call_site());
                     let fty_static = replace_lifetime(&f.ty, static_lt());
 
@@ -250,9 +248,6 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
-            // This is safe because it is in the same block as the above impl, which only compiles
-            // if 'a is a covariant lifetime.
-            unsafe impl<'a, #(#tybounds),*> yoke::IsCovariant<'a> for #name<'a, #(#typarams),*> where #(#static_bounds),* {}
         }
     }
 }

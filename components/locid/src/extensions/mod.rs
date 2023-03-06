@@ -214,7 +214,7 @@ impl Extensions {
             if subtag.is_empty() {
                 return Err(ParserError::InvalidExtension);
             }
-            match subtag.get(0).map(|b| ExtensionType::try_from_byte(*b)) {
+            match subtag.first().map(|b| ExtensionType::try_from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
                     if unicode.is_some() {
                         return Err(ParserError::DuplicatedExtension);

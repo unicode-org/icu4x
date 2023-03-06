@@ -2,13 +2,8 @@
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[0u8]) },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 111u8, 118u8, 111u8, 103u8, 32u8, 115u8,
-                    97u8, 116u8, 97u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\0") },
+            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0ovog sata") },
         )
     },
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {

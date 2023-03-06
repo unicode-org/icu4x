@@ -4,11 +4,9 @@
 
 [package]
 name = "icu_collator-fuzz"
-version = "0.0.0"
-authors = ["Automatically generated"]
 publish = false
-edition = "2018"
-license = "Unicode-DFS-2016"
+version = "0.0.0"
+edition = "2021"
 
 [package.metadata]
 cargo-fuzz = true
@@ -20,8 +18,8 @@ rust_icu_ucol = { version = "3", features = ["use-bindgen", "icu_config"] }
 rust_icu_sys = { version = "3", features = ["use-bindgen", "icu_config"] }
 rust_icu_ustring = { version = "3", features = ["use-bindgen", "icu_config"] }
 encoding_rs = "0.8.31"
-icu_locid = { version = "1.0.0", path = "../../../components/locid" }
-icu_testdata = { version = "1.0.0", path = "../../../provider/testdata" }
+icu_locid = { path = "../../../components/locid" }
+icu_testdata = { path = "../../../provider/testdata" }
 icu_collator = { path = ".." }
 
 # Prevent this from interfering with workspaces

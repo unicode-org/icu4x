@@ -4,34 +4,21 @@
 
 [package]
 name = "icu_benchmark_macros"
-authors = ["The ICU4X Project Developers"]
-edition = "2018"
-version = "0.7.0"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-description = "Internal ICU4X benchmarking crate"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+publish = false
+version = "0.0.0"
+edition = "2021"
 
 [dependencies]
-dhat = { version = "0.2", optional = true }
+dhat = { version = "0.3", optional = true }
 
 # This cfg originates in dlmalloc/lib.rs
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
-dlmalloc = { version = "0.2", optional = true, features = ["global"] }
+dlmalloc = { version = "0.2", features = ["global"], optional = true }
 
 [features]
 
 # Enables `dhat` in example files to analyze memory allocations.
-benchmark_memory = ["dhat"]
+benchmark_memory = ["dep:dhat"]
 
 # Enables `dlmalloc` in example files to bypass the system allocator.
-rust_global_allocator = ["dlmalloc"]
+rust_global_allocator = ["dep:dlmalloc"]

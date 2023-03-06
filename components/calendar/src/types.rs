@@ -293,28 +293,45 @@ dt_unit!(
     IsoHour,
     u8,
     24,
-    "An ISO-8601 hour component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 24]`."
+    "An ISO-8601 hour component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 24]`. The value could be equal to 24 to
+denote the end of a day, with the writing 24:00:00. It corresponds to the same
+time as the next day at 00:00:00."
 );
 
 dt_unit!(
     IsoMinute,
     u8,
     60,
-    "An ISO-8601 minute component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 60]`."
+    "An ISO-8601 minute component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 60]`. The value could be equal to 60 to
+denote the end of an hour, with the writing 12:60:00. This example corresponds
+to the same time as 13:00:00. This is an extension to ISO 8601."
 );
 
 dt_unit!(
     IsoSecond,
     u8,
     61,
-    "An ISO-8601 second component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 61]`."
+    "An ISO-8601 second component, for use with ISO calendars.
+
+Must be within inclusive bounds `[0, 61]`. `60` accomodates for leap seconds.
+
+The value could also be equal to 60 or 61, to indicate the end of a leap second,
+with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
+if used with this goal, would correspond to the same time as the next day, at
+time `00:00:00.000000000Z`. This is an extension to ISO 8601."
 );
 
 dt_unit!(
     NanoSecond,
     u32,
     999_999_999,
-    "A fractional second component, stored as nanoseconds.\n\nMust be within inclusive bounds `[0, 999_999_999]`."
+    "A fractional second component, stored as nanoseconds.
+
+Must be within inclusive bounds `[0, 999_999_999]`."
 );
 
 #[test]
@@ -620,8 +637,8 @@ fn test_from_minute_with_remainder_days() {
     ];
     for cas in cases {
         let (actual_time, actual_remainder) = Time::from_minute_with_remainder_days(cas.minute);
-        assert_eq!(actual_time, cas.expected_time, "{:?}", cas);
-        assert_eq!(actual_remainder, cas.expected_remainder, "{:?}", cas);
+        assert_eq!(actual_time, cas.expected_time, "{cas:?}");
+        assert_eq!(actual_remainder, cas.expected_remainder, "{cas:?}");
     }
 }
 

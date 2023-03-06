@@ -101,7 +101,7 @@ impl DataPayload<BufferMarker> {
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     ///
-    /// let buffer: &[u8] = b"{\"message\":\"Hallo Welt\"}";
+    /// let buffer: &[u8] = br#"{"message":"Hallo Welt"}"#;
     ///
     /// let buffer_payload = DataPayload::from_owned(buffer);
     /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload
@@ -165,21 +165,21 @@ where
     }
 }
 
-#[cfg(feature = "serde_json")]
+#[cfg(feature = "deserialize_json")]
 impl From<serde_json::error::Error> for crate::DataError {
     fn from(e: serde_json::error::Error) -> Self {
         crate::DataError::custom("JSON deserialize").with_display_context(&e)
     }
 }
 
-#[cfg(feature = "bincode")]
+#[cfg(feature = "deserialize_bincode_1")]
 impl From<bincode::Error> for crate::DataError {
     fn from(e: bincode::Error) -> Self {
         crate::DataError::custom("Bincode deserialize").with_display_context(&e)
     }
 }
 
-#[cfg(feature = "postcard")]
+#[cfg(feature = "deserialize_postcard_1")]
 impl From<postcard::Error> for crate::DataError {
     fn from(e: postcard::Error) -> Self {
         crate::DataError::custom("Postcard deserialize").with_display_context(&e)

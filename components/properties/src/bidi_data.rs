@@ -17,7 +17,6 @@ use crate::props::{BidiPairedBracketType, BidiPairedBracketTypeULE};
 /// - `Bidi_Mirroring_Glyph`
 ///
 
-
 /// 20..0  Code point return value for Bidi_Mirroring_Glyph value
 /// 21..21 Boolean for Bidi_Mirrored
 /// 23..22 Enum value for Bidi_Paired_Bracket_Type
@@ -88,7 +87,7 @@ impl AsULE for MirroredPairedBracketData {
         MirroredPairedBracketDataULE([
             byte_slice.get(0).copied().unwrap_or_default(),
             byte_slice.get(1).copied().unwrap_or_default(),
-            byte2
+            byte2,
         ])
     }
 
@@ -97,9 +96,11 @@ impl AsULE for MirroredPairedBracketData {
         // Safe because the lower bits 20..0 of MirroredPairedBracketDataULE bytes are the CharULE bytes,
         // and CharULE::from_unaligned is safe because bytes are defined to represent a valid Unicode code point.
         let mirroring_glyph = unsafe {
-            let mirroring_glyph_ule_bytes = &[unaligned.0[0], unaligned.0[1], unaligned.0[2] & 0x1F];
+            let mirroring_glyph_ule_bytes =
+                &[unaligned.0[0], unaligned.0[1], unaligned.0[2] & 0x1F];
             let mirroring_glyph_ule = CharULE::from_byte_slice_unchecked(mirroring_glyph_ule_bytes);
-            mirroring_glyph_ule.first()
+            mirroring_glyph_ule
+                .first()
                 .map(|ule| char::from_unaligned(*ule))
                 .unwrap_or(char::REPLACEMENT_CHARACTER)
         };
@@ -120,16 +121,18 @@ mod test {
 
     #[test]
     fn test_parse() {
-        // data for U+007B LEFT CURLY BRACKET 
-        
+        // data for U+007B LEFT CURLY BRACKET
+
         let data1 = MirroredPairedBracketData {
             mirroring_glyph: '}',
             is_mirrored: true,
             paired_bracket_type: BidiPairedBracketType::Open,
         };
         let expected_bytes1 = &[0x7D, 0x0, 0x60];
-        assert_eq!(expected_bytes1, MirroredPairedBracketDataULE::as_byte_slice(&[data1.to_unaligned()]));
-
+        assert_eq!(
+            expected_bytes1,
+            MirroredPairedBracketDataULE::as_byte_slice(&[data1.to_unaligned()])
+        );
 
         let ule1 = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes1).unwrap();
         let parsed_data1 = MirroredPairedBracketData::from_unaligned(*ule1.first().unwrap());

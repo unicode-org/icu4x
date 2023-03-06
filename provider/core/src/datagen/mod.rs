@@ -9,11 +9,9 @@
 //! This module can be enabled with the `datagen` Cargo feature on `icu_provider`.
 
 mod data_conversion;
-mod heap_measure;
 mod iter;
 mod payload;
 pub use data_conversion::DataConverter;
-pub use heap_measure::{HeapStats, HeapStatsMarker};
 pub use iter::IterableDataProvider;
 
 #[doc(hidden)] // exposed for make_exportable_provider
@@ -50,7 +48,7 @@ pub trait DataExporter: Sync {
 
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
-/// Use [`make_exportable_provider`] to implement this.
+/// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
 pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {}
 impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMarker> + Sync {}
 
@@ -94,25 +92,6 @@ macro_rules! make_exportable_provider {
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
-                }
-            }
-        }
-
-        impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
-            fn convert(&self, key: $crate::DataKey, from: $crate::DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, ($crate::DataPayload<$crate::buf::BufferMarker>, $crate::DataError)> {
-                #![allow(non_upper_case_globals)]
-                // Reusing the struct names as identifiers
-                $(
-                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.hashed();
-                )+
-                match key.hashed() {
-                    $(
-                        $struct_m => {
-                            let heap_stats = from.attempt_zero_copy_heap_size::<$struct_m>();
-                            return Ok($crate::DataPayload::from_owned(heap_stats));
-                        }
-                    )+,
-                    _ => Err((from, $crate::DataErrorKind::MissingDataKey.with_key(key)))
                 }
             }
         }

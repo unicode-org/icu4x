@@ -5,10 +5,12 @@
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
+use zerovec::ule::{AsULE, RawBytesULE};
+
 use icu_collections::codepointtrie::TrieValue;
 
 use core::convert::TryFrom;
@@ -100,5 +102,72 @@ impl TrieValue for BidiPairedBracketType {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+}
+
+// GCG is not used inside tries, but it is used in the name lookup type, and we want
+// to squeeze it into a u16 for storage. Its named mask values are specced so we can
+// do this in code.
+//
+// This is done by:
+// - Single-value masks are translated to their corresponding GeneralCategory values
+// - we know all of the multi-value masks and we give them special values
+// - Anything else goes to 0xFF00, though this code path shouldn't be hit unless working with malformed icuexportdata
+//
+// In the reverse direction, unknown values go to the empty mask, but this codepath should not be hit except
+// with malformed ICU4X generated data.
+impl AsULE for GeneralCategoryGroup {
+    type ULE = RawBytesULE<2>;
+    fn to_unaligned(self) -> Self::ULE {
+        // if it's a single property, translate to that property
+        let value = if self.0.count_ones() == 1 {
+            // inverse operation of a bitshift
+            self.0.trailing_zeros() as u16
+        } else {
+            match self {
+                GeneralCategoryGroup::CasedLetter => 0xFFFF,
+                GeneralCategoryGroup::Letter => 0xFFFE,
+                GeneralCategoryGroup::Mark => 0xFFFD,
+                GeneralCategoryGroup::Number => 0xFFFC,
+                GeneralCategoryGroup::Separator => 0xFFFB,
+                GeneralCategoryGroup::Other => 0xFFFA,
+                GeneralCategoryGroup::Punctuation => 0xFFF9,
+                GeneralCategoryGroup::Symbol => 0xFFF8,
+                _ => 0xFF00, // random sentinel value
+            }
+        };
+        value.to_unaligned()
+    }
+    fn from_unaligned(ule: Self::ULE) -> Self {
+        let value = ule.as_unsigned_int();
+        packed_u16_to_gcg(value)
+    }
+}
+
+fn packed_u16_to_gcg(value: u16) -> GeneralCategoryGroup {
+    match value {
+        0xFFFF => GeneralCategoryGroup::CasedLetter,
+        0xFFFE => GeneralCategoryGroup::Letter,
+        0xFFFD => GeneralCategoryGroup::Mark,
+        0xFFFC => GeneralCategoryGroup::Number,
+        0xFFFB => GeneralCategoryGroup::Separator,
+        0xFFFA => GeneralCategoryGroup::Other,
+        0xFFF9 => GeneralCategoryGroup::Punctuation,
+        0xFFF8 => GeneralCategoryGroup::Symbol,
+        v if v < 32 => GeneralCategory::new_from_u8(v as u8)
+            .map(|gc| gc.into())
+            .unwrap_or(GeneralCategoryGroup(0)),
+        // unknown values produce an empty mask
+        _ => GeneralCategoryGroup(0),
+    }
+}
+
+impl TrieValue for GeneralCategoryGroup {
+    type TryFromU32Error = TryFromIntError;
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        // Even though we're dealing with u32s here, TrieValue is about converting
+        // trie storage types to the actual type. This type will always be a packed u16
+        // in our case since the names map upcasts from u16
+        u16::try_from(i).map(packed_u16_to_gcg)
     }
 }

@@ -1,0 +1,26 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_testdata_scripts"
+publish = false
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+crlify = { path = "../../utils/crlify" }
+databake = { path = "../../utils/databake" }
+icu_datagen = { path = "../../provider/datagen", default-features = false }
+icu_locid = { path = "../../components/locid", features = ["databake"] }
+icu_provider = { path = "../../provider/core" }
+repodata = { path = "../../provider/repodata" }
+
+cached-path = ">=0.5, <0.7"
+clap = "2.33"
+eyre = "0.6"
+log = "0.4"
+quote = "1"
+rust-format = { version = "0.3.4", features = ["token_stream"] }
+simple_logger = { version = "1.12", default-features = false }
+zip = ">=0.5, <0.7"

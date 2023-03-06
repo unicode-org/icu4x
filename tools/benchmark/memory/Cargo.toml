@@ -4,26 +4,12 @@
 
 [package]
 name = "icu_benchmark_memory"
-authors = ["The ICU4X Project Developers"]
-edition = "2018"
-version = "0.1.0"
-license = "Unicode-DFS-2016"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+version = "0.0.0"
 publish = false
+edition = "2021"
 
 [dependencies]
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 clap = "2.33"
 cargo_metadata = "0.13"
-# This is the last version that builds on our current pinned nightly due to
-# https://github.com/rust-lang/libc/issues/3066
-libc = "=0.2.126" 
+libc = "0.2"

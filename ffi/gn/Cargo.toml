@@ -4,29 +4,9 @@
 
 [package]
 name = "icu_capi_gn"
-description = "GN interface to ICU4X"
 publish = false
-version = "0.1.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2018"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
-
-[package.metadata.docs.rs]
-all-features = true
+version = "0.0.0"
+edition = "2021"
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.
@@ -55,3 +35,19 @@ rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
 
 [gn.package.syn."1.0.81"]
 rustflags = []
+
+[gn.package.num-traits."0.2.15"]
+rustflags = ["--cfg=has_i128"]
+
+[gn.package.libm."0.2.6"]
+rustflags = []
+
+[gn.package.num-integer."0.1.45"]
+rustflags = []
+
+[gn.package.num-complex."0.4.3"]
+rustflags = ["--cfg=has_i128"]
+
+# Build cargo-gnaw with the checked-in lockfile
+[workspace]
+members = ["third_party_tools/fuchsia/tools/cargo-gnaw"]

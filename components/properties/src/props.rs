@@ -9,6 +9,13 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
+use crate::provider::*;
+use crate::PropertiesError;
+use core::marker::PhantomData;
+use icu_collections::codepointtrie::TrieValue;
+use icu_provider::prelude::*;
+use zerovec::ule::VarULE;
+
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -48,6 +55,210 @@ enum EnumeratedProperty {
     ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
     /// Represents an invalid or unknown Unicode property.
     InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
+}
+
+/// Private marker type for PropertyValueNameToEnumMapper
+/// to work for all properties at once
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub(crate) struct ErasedNameToEnumMapV1Marker;
+impl DataMarker for ErasedNameToEnumMapV1Marker {
+    type Yokeable = PropertyValueNameToEnumMapV1<'static>;
+}
+
+/// A struct capable of looking up a property value from a string name.
+/// Access its data by calling [`Self::as_borrowed()`] and using the methods on
+/// [`PropertyValueNameToEnumMapperBorrowed`]/
+///
+/// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
+/// or an alias.
+///
+/// Property names can be looked up using "strict" matching (looking for a name
+/// that matches exactly), or "loose matching", where the name is allowed to deviate
+/// in terms of ASCII casing, whitespace, underscores, and hyphens.
+///
+/// # Example
+///
+/// ```
+/// use icu::properties::GeneralCategory;
+///
+/// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+///                  .expect("The data should be valid");
+/// let lookup = lookup.as_borrowed();
+/// // short name for value
+/// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
+/// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
+/// // long name for value
+/// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+/// assert_eq!(lookup.get_strict("Dash_Punctuation"), Some(GeneralCategory::DashPunctuation));
+/// // name has incorrect casing
+/// assert_eq!(lookup.get_strict("dashpunctuation"), None);
+/// // loose matching of name
+/// assert_eq!(lookup.get_loose("dash-punctuation"), Some(GeneralCategory::DashPunctuation));
+/// // fake property
+/// assert_eq!(lookup.get_strict("Animated_Gif"), None);
+/// ```
+pub struct PropertyValueNameToEnumMapper<T> {
+    map: DataPayload<ErasedNameToEnumMapV1Marker>,
+    marker: PhantomData<fn() -> T>,
+}
+
+/// A borrowed wrapper around property value name-to-enum data, returned by
+/// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
+pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
+    map: &'a PropertyValueNameToEnumMapV1<'a>,
+    marker: PhantomData<fn() -> T>,
+}
+
+impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
+    /// Construct a borrowed version of this type that can be queried.
+    ///
+    /// This avoids a potential small underlying cost per API call (like `get_static()`) by consolidating it
+    /// up front.
+    #[inline]
+    pub fn as_borrowed(&self) -> PropertyValueNameToEnumMapperBorrowed<'_, T> {
+        PropertyValueNameToEnumMapperBorrowed {
+            map: self.map.get(),
+            marker: PhantomData,
+        }
+    }
+
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use methods on individual property value types
+    /// (like [`Script::get_name_to_enum_mapper()`]) instead.
+    pub fn from_data<M>(data: DataPayload<M>) -> Self
+    where
+        M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
+    {
+        Self {
+            map: data.map_project(|m, _| m),
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
+    /// Get the property value as a u16, doing a strict search looking for
+    /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_strict_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(lookup.get_strict_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
+    /// ```
+    #[inline]
+    pub fn get_strict_u16(&self, name: &str) -> Option<u16> {
+        get_strict_u16(self.map, name)
+    }
+
+    /// Get the property value as a `T`, doing a strict search looking for
+    /// names that match exactly
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// // does not do loose matching
+    /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
+    /// ```
+    #[inline]
+    pub fn get_strict(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_strict_u16(name)? as u32).ok()
+    }
+
+    /// Get the property value as a u16, doing a loose search looking for
+    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
+    /// whitespaces.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_loose_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(lookup.get_loose_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// // does do loose matching
+    /// assert_eq!(lookup.get_loose_u16("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// ```
+    #[inline]
+    pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
+        get_loose_u16(self.map, name)
+    }
+
+    /// Get the property value as a `T`, doing a loose search looking for
+    /// names that match case-insensitively, ignoring ASCII hyphens, underscores, and
+    /// whitespaces.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::GeneralCategory;
+    ///
+    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///                  .expect("The data should be valid");
+    /// let lookup = lookup.as_borrowed();
+    /// assert_eq!(lookup.get_loose("Lu"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(lookup.get_loose("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// // does do loose matching
+    /// assert_eq!(lookup.get_loose("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter));
+    /// ```
+    #[inline]
+    pub fn get_loose(&self, name: &str) -> Option<T> {
+        T::try_from_u32(self.get_loose_u16(name)? as u32).ok()
+    }
+}
+
+/// Avoid monomorphizing multiple copies of this function
+fn get_strict_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    // NormalizedPropertyName has no invariants so this should be free, but
+    // avoid introducing a panic regardless
+    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
+    payload.map.get_copied(name)
+}
+
+/// Avoid monomorphizing multiple copies of this function
+fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Option<u16> {
+    // NormalizedPropertyName has no invariants so this should be free, but
+    // avoid introducing a panic regardless
+    let name = NormalizedPropertyNameStr::parse_byte_slice(name.as_bytes()).ok()?;
+    payload.map.get_copied_by(|p| p.cmp_loose(name))
+}
+
+macro_rules! impl_value_getter {
+    (
+        // the marker type for names lookup
+        marker: $marker:ident;
+        impl $ty:ident {
+            $(#[$attr:meta])*
+            $vis:vis fn $name:ident();
+        }
+    ) => {
+        impl $ty {
+            $(#[$attr])*
+            $vis fn $name(
+                provider: &(impl DataProvider<$marker> + ?Sized)
+            ) -> Result<PropertyValueNameToEnumMapper<$ty>, PropertiesError> {
+                Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(PropertyValueNameToEnumMapper::from_data)?)
+            }
+        }
+    }
 }
 
 /// Enumerated property Bidi_Class
@@ -134,6 +345,37 @@ impl BidiPairedBracketType {
     pub const Close: BidiPairedBracketType = BidiPairedBracketType(2);
 }
 
+impl_value_getter! {
+    marker: BidiClassNameToValueV1Marker;
+    impl BidiClass {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Bidi_Class` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::BidiClass;
+        ///
+        /// let lookup = BidiClass::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("AN"), Some(BidiClass::ArabicNumber));
+        /// assert_eq!(lookup.get_strict("NSM"), Some(BidiClass::NonspacingMark));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Arabic_Number"), Some(BidiClass::ArabicNumber));
+        /// assert_eq!(lookup.get_strict("Nonspacing_Mark"), Some(BidiClass::NonspacingMark));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("arabicnumber"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("arabicnumber"), Some(BidiClass::ArabicNumber));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
+
 /// Enumerated property General_Category.
 ///
 /// General_Category specifies the most general classification of a code point, usually
@@ -217,6 +459,37 @@ pub enum GeneralCategory {
     ModifierSymbol = 26,
     /// (`So`) A symbol of other type
     OtherSymbol = 27,
+}
+
+impl_value_getter! {
+    marker: GeneralCategoryNameToValueV1Marker;
+    impl GeneralCategory {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `General_Category` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GeneralCategory;
+        ///
+        /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Dash_Punctuation"), Some(GeneralCategory::DashPunctuation));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("dashpunctuation"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("dash-punctuation"), Some(GeneralCategory::DashPunctuation));
+        /// // fake property
+        /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
 }
 
 /// Groupings of multiple General_Category property values.
@@ -400,6 +673,43 @@ impl GeneralCategoryGroup {
     /// ```
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
+    }
+}
+
+impl_value_getter! {
+    marker: GeneralCategoryMaskNameToValueV1Marker;
+    impl GeneralCategoryGroup {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `General_Category_Mask` mask property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GeneralCategoryGroup;
+        ///
+        /// let lookup = GeneralCategoryGroup::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("LC"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Zp"), Some(GeneralCategoryGroup::ParagraphSeparator));
+        /// assert_eq!(lookup.get_strict("P"), Some(GeneralCategoryGroup::Punctuation));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Letter"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("Cased_Letter"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// // alias name
+        /// assert_eq!(lookup.get_strict("punct"), Some(GeneralCategoryGroup::Punctuation));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("letter"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("letter"), Some(GeneralCategoryGroup::Letter));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("EverythingLol"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
     }
 }
 
@@ -601,6 +911,37 @@ impl Script {
     pub const ZanabazarSquare: Script = Script(177);
 }
 
+impl_value_getter! {
+    marker: ScriptNameToValueV1Marker;
+    impl Script {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Script` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::Script;
+        ///
+        /// let lookup = Script::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("Brah"), Some(Script::Brahmi));
+        /// assert_eq!(lookup.get_strict("Hang"), Some(Script::Hangul));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Brahmi"), Some(Script::Brahmi));
+        /// assert_eq!(lookup.get_strict("Hangul"), Some(Script::Hangul));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("brahmi"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("brahmi"), Some(Script::Brahmi));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Linear_Z"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
+
 /// Enumerated property East_Asian_Width.
 ///
 /// See "Definition" in UAX #11 for the summary of each property value:
@@ -625,6 +966,37 @@ impl EastAsianWidth {
     pub const Fullwidth: EastAsianWidth = EastAsianWidth(3); //name="F"
     pub const Narrow: EastAsianWidth = EastAsianWidth(4); //name="Na"
     pub const Wide: EastAsianWidth = EastAsianWidth(5); //name="W"
+}
+
+impl_value_getter! {
+    marker: EastAsianWidthNameToValueV1Marker;
+    impl EastAsianWidth {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `East_Asian_Width` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::EastAsianWidth;
+        ///
+        /// let lookup = EastAsianWidth::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("N"), Some(EastAsianWidth::Neutral));
+        /// assert_eq!(lookup.get_strict("H"), Some(EastAsianWidth::Halfwidth));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Neutral"), Some(EastAsianWidth::Neutral));
+        /// assert_eq!(lookup.get_strict("Halfwidth"), Some(EastAsianWidth::Halfwidth));
+        /// // name has incorrect casing / extra hyphen
+        /// assert_eq!(lookup.get_strict("half-width"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("half-width"), Some(EastAsianWidth::Halfwidth));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
 }
 
 /// Enumerated property Line_Break.
@@ -690,6 +1062,37 @@ impl LineBreak {
     pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
 }
 
+impl_value_getter! {
+    marker: LineBreakNameToValueV1Marker;
+    impl LineBreak {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Line_Break` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::LineBreak;
+        ///
+        /// let lookup = LineBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("BK"), Some(LineBreak::MandatoryBreak));
+        /// assert_eq!(lookup.get_strict("AL"), Some(LineBreak::Alphabetic));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Mandatory_Break"), Some(LineBreak::MandatoryBreak));
+        /// assert_eq!(lookup.get_strict("Alphabetic"), Some(LineBreak::Alphabetic));
+        /// // name has incorrect casing and dash instead of underscore
+        /// assert_eq!(lookup.get_strict("mandatory-Break"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("mandatory-Break"), Some(LineBreak::MandatoryBreak));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
+
 /// Enumerated property Grapheme_Cluster_Break.
 ///
 /// See "Default Grapheme Cluster Boundary Specification" in UAX #29 for the
@@ -731,6 +1134,37 @@ impl GraphemeClusterBreak {
     /// This value is obsolete and unused.
     pub const GlueAfterZwj: GraphemeClusterBreak = GraphemeClusterBreak(16); // name="GAZ"
     pub const ZWJ: GraphemeClusterBreak = GraphemeClusterBreak(17); // name="ZWJ"
+}
+
+impl_value_getter! {
+    marker: GraphemeClusterBreakNameToValueV1Marker;
+    impl GraphemeClusterBreak {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Grapheme_Cluster_Break` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GraphemeClusterBreak;
+        ///
+        /// let lookup = GraphemeClusterBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("EX"), Some(GraphemeClusterBreak::Extend));
+        /// assert_eq!(lookup.get_strict("RI"), Some(GraphemeClusterBreak::RegionalIndicator));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Extend"), Some(GraphemeClusterBreak::Extend));
+        /// assert_eq!(lookup.get_strict("Regional_Indicator"), Some(GraphemeClusterBreak::RegionalIndicator));
+        /// // name has incorrect casing and lacks an underscore
+        /// assert_eq!(lookup.get_strict("regionalindicator"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("regionalindicator"), Some(GraphemeClusterBreak::RegionalIndicator));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
 }
 
 /// Enumerated property Word_Break.
@@ -781,6 +1215,37 @@ impl WordBreak {
     pub const WSegSpace: WordBreak = WordBreak(22); // name="WSegSpace"
 }
 
+impl_value_getter! {
+    marker: WordBreakNameToValueV1Marker;
+    impl WordBreak {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Word_Break` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::WordBreak;
+        ///
+        /// let lookup = WordBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("KA"), Some(WordBreak::Katakana));
+        /// assert_eq!(lookup.get_strict("LE"), Some(WordBreak::ALetter));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Katakana"), Some(WordBreak::Katakana));
+        /// assert_eq!(lookup.get_strict("ALetter"), Some(WordBreak::ALetter));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("Aletter"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("Aletter"), Some(WordBreak::ALetter));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
+
 /// Enumerated property Sentence_Break.
 /// See "Default Sentence Boundary Specification" in UAX #29 for the summary of
 /// each property value:
@@ -816,6 +1281,36 @@ impl SentenceBreak {
     pub const SContinue: SentenceBreak = SentenceBreak(14); // name="SC"
 }
 
+impl_value_getter! {
+    marker: SentenceBreakNameToValueV1Marker;
+    impl SentenceBreak {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Sentence_Break` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::SentenceBreak;
+        ///
+        /// let lookup = SentenceBreak::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("FO"), Some(SentenceBreak::Format));
+        /// assert_eq!(lookup.get_strict("NU"), Some(SentenceBreak::Numeric));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Format"), Some(SentenceBreak::Format));
+        /// assert_eq!(lookup.get_strict("Numeric"), Some(SentenceBreak::Numeric));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("fOrmat"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("fOrmat"), Some(SentenceBreak::Format));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
+}
 /// Property Canonical_Combining_Class.
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
@@ -898,4 +1393,36 @@ impl CanonicalCombiningClass {
     pub const DoubleBelow: CanonicalCombiningClass = CanonicalCombiningClass(233); // name="DB"
     pub const DoubleAbove: CanonicalCombiningClass = CanonicalCombiningClass(234); // name="DA"
     pub const IotaSubscript: CanonicalCombiningClass = CanonicalCombiningClass(240); // name="IS"
+}
+
+impl_value_getter! {
+    marker: CanonicalCombiningClassNameToValueV1Marker;
+    impl CanonicalCombiningClass {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the the `Canonical_Combining_Class` enumerated property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::CanonicalCombiningClass;
+        ///
+        /// let lookup = CanonicalCombiningClass::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("AL"), Some(CanonicalCombiningClass::AboveLeft));
+        /// assert_eq!(lookup.get_strict("ATBL"), Some(CanonicalCombiningClass::AttachedBelowLeft));
+        /// assert_eq!(lookup.get_strict("CCC10"), Some(CanonicalCombiningClass::CCC10));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Above_Left"), Some(CanonicalCombiningClass::AboveLeft));
+        /// assert_eq!(lookup.get_strict("Attached_Below_Left"), Some(CanonicalCombiningClass::AttachedBelowLeft));
+        /// // name has incorrect casing and hyphens
+        /// assert_eq!(lookup.get_strict("attached-below-left"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("attached-below-left"), Some(CanonicalCombiningClass::AttachedBelowLeft));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("Linear_Z"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
 }

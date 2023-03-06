@@ -4,34 +4,32 @@
 
 .DEFAULT_GOAL := build
 .PHONY: build test clean serve build-host test-host
+FORCE: 
 
 ALL_HEADERS := $(wildcard ../../include/*.hpp) $(wildcard ../../../c/include/*.h)
-ALL_RUST := $(wildcard ../../../src/*.rs)
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-05"
+ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-18"
 
 CXX?=g++
 EMCC?=emcc
 
-$(ALL_RUST):
-
 $(ALL_HEADERS):
 
-../../../../../target/debug/libicu_capi_staticlib_test.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features provider_test
-	mv ../../../../../target/debug/libicu_capi_staticlib.a ../../../../../target/debug/libicu_capi_staticlib_test.a
+../../../../../target/debug/libicu_capi_staticlib.a: FORCE
+	cargo build -p icu_capi_staticlib --features provider_test
 
-a.out: ../../../../../target/debug/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
-	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g
+a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
+	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g
 
-../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a: $(ALL_RUST)
+../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a: FORCE
+	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
+	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	RUSTFLAGS="-Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build --profile=release-opt-size -p icu_capi_staticlib --features provider_test --target wasm32-unknown-emscripten -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
-	mv ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a
 
-web-version.html: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
-	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
+web-version.html: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
+	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a -ldl -lpthread -lm -g  -o web-version.html --bind --emrun -sENVIRONMENT=web -sWASM=1 -sEXPORT_ES6=1 -sMODULARIZE=1
 
-node-version.js: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a $(ALL_HEADERS) test.cpp
-	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a -ldl -lpthread -lm -g  -o node-version.js --bind -sWASM=1 -sENVIRONMENT=node -sWASM_ASYNC_COMPILATION=0 -DNOMAIN
+node-version.js: ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
+	$(EMCC) -std=c++17 test.cpp ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a -ldl -lpthread -lm -g  -o node-version.js --bind -sWASM=1 -sENVIRONMENT=node -sWASM_ASYNC_COMPILATION=0 -DNOMAIN
 
 build: web-version.html node-version.js
 
@@ -49,11 +47,6 @@ test-host: build-host
 	./a.out
 
 clean:
-	rm -f web-version.html
-	rm -f web-version.wasm
-	rm -f web-version.js
-	rm -f node-version.js
-	rm -f node-version.wasm
-	rm -f ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib_test.a
-	rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
-	rm -f a.out
+	git clean -xf *
+	rm -f ../../../../../target/wasm32-unknown-emscripten/release-opt-size/libicu_capi_staticlib.a
+	rm -f ../../../../../target/debug/libicu_capi_staticlib.a

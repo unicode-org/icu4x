@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "experimental")]
-
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_displaynames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use tinystr::TinyStrError;
-use zerovec::ZeroMap;
 
 impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
@@ -52,39 +50,26 @@ impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider
 /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
-const SHORT_SUBSTRING: &str = "-short";
+const SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV1<'static> {
     type Error = TinyStrError;
     fn try_from(other: &cldr_serde::region_displaynames::Resource) -> Result<Self, Self::Error> {
-        let mut names = ZeroMap::new();
-        let mut short_names = ZeroMap::new();
-        for lang_data_entry in other.main.0.iter() {
-            for entry in lang_data_entry.1.localedisplaynames.regions.iter() {
-                let mut region = String::from(entry.0);
-                if !region.contains(ALT_SUBSTRING) {
-                    match <TinyAsciiStr<3>>::from_str(&region) {
-                        Ok(key) => {
-                            names.insert(&key, entry.1.as_ref());
-                        }
-                        Err(err) => {
-                            return Err(err);
-                        }
-                    }
-                } else if region.contains(SHORT_SUBSTRING) {
-                    region.truncate(region.find('-').unwrap());
-                    match <TinyAsciiStr<3>>::from_str(&region) {
-                        Ok(key) => {
-                            short_names.insert(&key, entry.1.as_ref());
-                        }
-                        Err(err) => {
-                            return Err(err);
-                        }
-                    }
+        let mut names = BTreeMap::new();
+        let mut short_names = BTreeMap::new();
+        for (_, lang_display_names) in other.main.0.iter() {
+            for (region, value) in lang_display_names.localedisplaynames.regions.iter() {
+                if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+                    short_names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
+                } else if !region.contains(ALT_SUBSTRING) {
+                    names.insert(TinyAsciiStr::from_str(region)?, value.as_ref());
                 }
             }
         }
-        Ok(Self { names, short_names })
+        Ok(Self {
+            names: names.into_iter().collect(),
+            short_names: short_names.into_iter().collect(),
+        })
     }
 }
 

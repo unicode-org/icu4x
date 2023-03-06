@@ -77,6 +77,8 @@
 )]
 #![warn(missing_docs)]
 
+extern crate alloc;
+
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
@@ -101,6 +103,11 @@ pub use props::{
     BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
     GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+
+/// Module for working with the names of property values
+pub mod names {
+    pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
+}
 
 pub use error::PropertiesError;
 

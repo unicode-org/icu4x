@@ -157,8 +157,8 @@ fn make_ule_enum_impl(
     let not_found = not_found.iter().collect::<Vec<_>>();
 
     if !not_found.is_empty() {
-        return Error::new(input.span(), &format!("#[make_ule] must be applied to enums with discriminants \
-                                                  filling the range from 0 to a maximum; could not find {:?}", not_found))
+        return Error::new(input.span(), format!("#[make_ule] must be applied to enums with discriminants \
+                                                  filling the range from 0 to a maximum; could not find {not_found:?}"))
             .to_compile_error();
     }
 
@@ -336,6 +336,19 @@ fn make_ule_struct_impl(
         )
     };
 
+    let maybe_hash = if attrs.hash {
+        quote!(
+            #[allow(clippy::derive_hash_xor_eq)]
+            impl core::hash::Hash for #ule_name {
+                fn hash<H>(&self, state: &mut H) where H: core::hash::Hasher {
+                    state.write(<#ule_name as zerovec::ule::ULE>::as_byte_slice(&[*self]));
+                }
+            }
+        )
+    } else {
+        quote!()
+    };
+
     quote!(
         #asule_impl
 
@@ -344,5 +357,7 @@ fn make_ule_struct_impl(
         #derived
 
         #maybe_ord_impls
+
+        #maybe_hash
     )
 }

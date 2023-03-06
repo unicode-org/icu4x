@@ -6,10 +6,8 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
-use crate::buf::BufferFormat;
 #[cfg(feature = "datagen")]
 use crate::datagen::IterableDataProvider;
-use crate::helpers;
 use crate::prelude::*;
 use crate::yoke::{self, *};
 use crate::zerofrom::{self, *};
@@ -21,7 +19,11 @@ use writeable::Writeable;
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(
+    any(feature = "deserialize_json", feature = "datagen"),
+    derive(serde::Serialize)
+)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
     /// The translation of "Hello World".
@@ -98,9 +100,10 @@ impl HelloWorldProvider {
         ("zh", "你好世界"),
     ];
 
-    /// Converts this provider into one that serves JSON blobs of the same data.
+    /// Converts this provider into a [`BufferProvider`] that uses JSON serialization.
+    #[cfg(feature = "deserialize_json")]
     pub fn into_json_provider(self) -> HelloWorldJsonProvider {
-        HelloWorldJsonProvider(self)
+        HelloWorldJsonProvider
     }
 }
 
@@ -110,13 +113,10 @@ impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
         let data = Self::DATA
             .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
             .map(|i| Self::DATA[i].1)
-            .map(|s| HelloWorldV1 {
-                message: Cow::Borrowed(s),
-            })
             .map_err(|_| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+            payload: Some(DataPayload::from_static_str(data)),
         })
     }
 }
@@ -130,12 +130,11 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
+// AnyProvider support.
 #[cfg(not(feature = "datagen"))]
 impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
-#[cfg(feature = "datagen")]
-make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
-
+#[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
 ///
 /// Mostly useful for testing.
@@ -157,9 +156,10 @@ make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 ///     .take_payload()
 ///     .expect("Data should be present");
 ///
-/// assert_eq!(b"{\"message\":\"Hallo Welt\"}", german_hello_world.get());
-pub struct HelloWorldJsonProvider(HelloWorldProvider);
+/// assert_eq!(german_hello_world.get(), br#"{"message":"Hallo Welt"}"#);
+pub struct HelloWorldJsonProvider;
 
+#[cfg(feature = "deserialize_json")]
 impl BufferProvider for HelloWorldJsonProvider {
     fn load_buffer(
         &self,
@@ -167,22 +167,37 @@ impl BufferProvider for HelloWorldJsonProvider {
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
-        let result = self.0.load(req)?;
+        let result = HelloWorldProvider.load(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(BufferFormat::Json);
-        let mut buffer = String::new();
-        buffer.push_str("{\"message\":\"");
-        helpers::escape_for_json(&old_payload.get().message, &mut buffer);
-        buffer.push_str("\"}");
+        metadata.buffer_format = Some(crate::buf::BufferFormat::Json);
+        #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned_buffer(
-                buffer.into_bytes().into_boxed_slice(),
+                serde_json::to_string(old_payload.get())
+                    .unwrap()
+                    .into_bytes()
+                    .into_boxed_slice(),
             )),
         })
     }
 }
+
+#[cfg(feature = "datagen")]
+impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        #[allow(clippy::unwrap_used)] // datagen
+        Ok(Self::DATA
+            .iter()
+            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
+            .map(DataLocale::from)
+            .collect())
+    }
+}
+
+#[cfg(feature = "datagen")]
+make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -267,18 +282,6 @@ impl<'l> Writeable for FormattedHelloWorld<'l> {
 }
 
 writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
-
-#[cfg(feature = "datagen")]
-impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA
-            .iter()
-            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(DataLocale::from)
-            .collect())
-    }
-}
 
 #[cfg(feature = "datagen")]
 #[test]

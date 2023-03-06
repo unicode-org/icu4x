@@ -8,6 +8,9 @@
 //! Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 //! command-line utility.
 //!
+//!
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//!
 //! # Examples
 //!
 //! ## `build.rs`
@@ -32,14 +35,7 @@
 //! The command line interface can be installed with the `bin` Cargo feature.
 //!
 //! ```bash
-//! $ cargo install icu_datagen --features bin
-//! ```
-//!
-//! If you need to export keys for experimental components,
-//! enable the `experimental` Cargo feature:
-//!
-//! ```bash
-//! $ cargo install icu_datagen --features bin,experimental
+//! $ cargo install icu4x-datagen
 //! ```
 //!
 //! Once the tool is installed, you can invoke it like this:
@@ -51,7 +47,6 @@
 //! >    --format blob \
 //! >    --out data.postcard
 //! ```
-
 //! More details can be found by running `--help`.
 
 #![cfg_attr(
@@ -78,8 +73,27 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::all_keys;
-pub use source::{CldrLocaleSubset, CollationHanDatabase, SourceData};
+pub use registry::*;
+pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
+
+#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[doc(hidden)]
+pub enum CldrLocaleSubset {
+    Ignored,
+}
+
+impl Default for CldrLocaleSubset {
+    fn default() -> Self {
+        Self::Ignored
+    }
+}
+
+impl CldrLocaleSubset {
+    #[allow(non_upper_case_globals)]
+    pub const Full: Self = Self::Ignored;
+    #[allow(non_upper_case_globals)]
+    pub const Modern: Self = Self::Ignored;
+}
 
 /// [Out::Fs] serialization formats.
 pub mod syntax {
@@ -90,17 +104,20 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{syntax, CldrLocaleSubset, CollationHanDatabase, Out, SourceData};
+    pub use super::{
+        syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
+        SourceData,
+    };
     pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
 }
 
-use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
+use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
@@ -120,7 +137,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::for_test(),
+                source: SourceData::repo(),
             };
         }
         TEST_PROVIDER.clone()
@@ -145,7 +162,7 @@ impl AnyProvider for DatagenProvider {
 /// ```
 pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
     lazy_static::lazy_static! {
-        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys()
+        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
                     .into_iter()
                     .chain(std::iter::once(
                         icu_provider::hello_world::HelloWorldV1Marker::KEY,
@@ -173,7 +190,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
 /// );
 /// ```
 pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
-    strings.iter().map(AsRef::as_ref).filter_map(key).collect()
+    strings.iter().filter_map(crate::key).collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
@@ -204,16 +221,13 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # }
 /// ```
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
+    BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
-        .collect::<std::io::Result<HashSet<String>>>()?;
-    Ok(all_keys()
-        .into_iter()
-        .filter(|k| keys.contains(&*k.path()))
-        .collect())
+        .filter_map(|k| k.map(crate::key).transpose())
+        .collect()
 }
 
-/// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
+/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
 ///
 /// Unknown key names are ignored.
 //  Supports the hello world key
@@ -236,7 +250,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let mut candidates = HashSet::new();
+    let mut result = Vec::new();
     let mut i = 0;
     let mut last_start = None;
     while i < file.len() {
@@ -246,18 +260,48 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
         } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
             && last_start.is_some()
         {
-            candidates.insert(&file[last_start.unwrap()..i]);
+            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
+                .ok()
+                .and_then(crate::key)
+            {
+                result.push(key);
+            }
             i += icu_provider::trailing_tag!().len();
             last_start = None;
         } else {
             i += 1;
         }
     }
+    result.sort();
+    result.dedup();
+    Ok(result)
+}
 
-    Ok(all_keys()
-        .into_iter()
-        .filter(|k| candidates.contains(k.path().as_bytes()))
-        .collect())
+/// Options for configuring the output of databake.
+#[non_exhaustive]
+pub struct BakedOptions {
+    /// Whether to run `rustfmt` on the generated files.
+    pub pretty: bool,
+    /// Whether to gate each key on its crate name. This allows using the module
+    /// even if some keys are not required and their dependencies are not included.
+    /// Requires use_separate_crates.
+    pub insert_feature_gates: bool,
+    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    pub use_separate_crates: bool,
+    /// Whether to overwrite existing data. By default, errors if it is present.
+    pub overwrite: bool,
+}
+
+#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
+impl Default for BakedOptions {
+    fn default() -> Self {
+        Self {
+            pretty: false,
+            insert_feature_gates: false,
+            use_separate_crates: false,
+            overwrite: false,
+        }
+    }
 }
 
 /// The output format.
@@ -276,17 +320,20 @@ pub enum Out {
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a module at the given location.
-    Module {
+    /// Output a module with baked data at the given location.
+    Baked {
         /// The directory of the generated module.
         mod_directory: PathBuf,
-        /// Whether to run `rustfmt` on the generated files.
+        /// Additional options to configure the generated module.
+        options: BakedOptions,
+    },
+    /// Old deprecated configuration for databake.
+    #[doc(hidden)]
+    #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
+    Module {
+        mod_directory: PathBuf,
         pretty: bool,
-        /// Whether to gate each key on its crate name. This allows using the module
-        /// even if some keys are not required and their dependencies are not included.
-        /// Requires use_separate_crates.
         insert_feature_gates: bool,
-        /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,
     },
 }
@@ -332,6 +379,11 @@ pub fn datagen(
                 Out::Blob(write) => Box::new(
                     icu_provider_blob::export::BlobExporter::new_with_sink(write),
                 ),
+                Out::Baked {
+                    mod_directory,
+                    options,
+                } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
+                #[allow(deprecated)]
                 Out::Module {
                     mod_directory,
                     pretty,
@@ -339,16 +391,21 @@ pub fn datagen(
                     use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
-                    pretty,
-                    insert_feature_gates,
-                    use_separate_crates,
+                    BakedOptions {
+                        pretty,
+                        insert_feature_gates,
+                        use_separate_crates,
+                        // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                        // 1.1.2 made it an option in Out::Baked.
+                        overwrite: false,
+                    },
                 )?),
             })
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
     let provider: Box<dyn ExportableProvider> = match locales {
-        Some(&[]) => Box::new(EmptyDataProvider::default()),
+        Some(&[]) => Box::<EmptyDataProvider>::default(),
         Some(locales) => Box::new(
             DatagenProvider {
                 source: source.clone(),
@@ -360,6 +417,8 @@ pub fn datagen(
             source: source.clone(),
         }),
     };
+
+    let keys: HashSet<_> = keys.iter().collect();
 
     keys.into_par_iter().try_for_each(|&key| {
         let locales = provider
@@ -420,12 +479,12 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_calendar::provider::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
 }
@@ -433,19 +492,19 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
+    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_calendar::provider::WeekDataV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
 }

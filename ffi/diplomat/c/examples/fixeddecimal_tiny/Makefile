@@ -4,12 +4,10 @@
 
 .DEFAULT_GOAL := test
 .PHONY: build test
+FORCE:
 
 ALL_HEADERS := $(wildcard ../../include/*.h)
-ALL_RUST := $(wildcard ../../../src/*.rs)
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-05"
-
-$(ALL_RUST):
+ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-18"
 
 $(ALL_HEADERS):
 
@@ -17,20 +15,23 @@ GCC := gcc
 CLANG := clang-14
 LLD := lld-14
 
-
-../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
+../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features buffer_provider
 
-icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: $(ALL_RUST)
+icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_tiny.a: FORCE
+	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
+	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu
 
-icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: $(ALL_RUST)
+icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: FORCE
+	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
+	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} panic-abort-build --target x86_64-unknown-linux-gnu --profile=release-opt-size
 
 decimal-bn-en.postcard:
-	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard
+	cargo run -p icu_datagen -- --locales en bn --keys "decimal/symbols@1" --format blob --out decimal-bn-en.postcard
 
 decimal_bn_en.h: decimal-bn-en.postcard
 	xxd -i -C decimal-bn-en.postcard > decimal_bn_en.h
@@ -77,3 +78,7 @@ test: build
 	./optim2.elf bn
 	./optim4.elf bn
 	./optim5.elf bn
+
+clean:
+	git clean -xf *
+	rm -f ../../../../../target/debug/libicu_capi_staticlib.a

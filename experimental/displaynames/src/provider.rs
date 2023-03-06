@@ -21,7 +21,7 @@ use zerovec::ZeroMap;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
@@ -40,7 +40,7 @@ pub struct RegionDisplayNamesV1<'data> {
 }
 
 #[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
@@ -53,4 +53,13 @@ pub struct LanguageDisplayNamesV1<'data> {
     /// Mapping for language to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedStr, str>,
+    /// Mapping for language to locale display short name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub short_names: ZeroMap<'data, UnvalidatedStr, str>,
+    /// Mapping for language to locale display long name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub long_names: ZeroMap<'data, UnvalidatedStr, str>,
+    /// Mapping for language to locale display menu variant name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub menu_names: ZeroMap<'data, UnvalidatedStr, str>,
 }

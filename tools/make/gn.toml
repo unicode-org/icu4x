@@ -1,0 +1,169 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.gn-install]
+description = "Install tools required for GN locally in the icu4x project"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+mkdir ffi/gn/third_party_tools
+cd ffi/gn/third_party_tools
+
+# depot_tools contains the following things we need:
+# 1. A cross-platform ninja wrapper script
+# 2. cipd, a tool to download a prebuilt GN binary
+if is_path_exists depot_tools
+    echo "NOTE: depot_tools already exists"
+else
+    exec --fail-on-error git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+    cd depot_tools
+    exec --fail-on-error git checkout 1f511020737b695f4cbb3260fdaef78a29acdd35
+    rm -rf .git
+    cd ..
+end
+
+# Write an "ensure file", which is used as input to cipd
+writefile ensure_file "${ICU4X_GN_PACKAGE} latest"
+exec --fail-on-error depot_tools/cipd ensure -root bin -ensure-file ensure_file
+
+# To get GNaw, we need to download Fuchsia sources
+if is_path_exists fuchsia
+    echo "NOTE: fuchsia already exists"
+else
+    exec --fail-on-error git clone --depth 1 https://fuchsia.googlesource.com/fuchsia --branch releases/f8
+    rm -rf fuchsia/.git
+    exec --fail-on-error ln -s Cargo.toml.crates-io fuchsia/tools/cargo-gnaw/Cargo.toml
+end
+
+# Install GNaw locally in the bin directory (alongside GN)
+# Since the parent directory is vendored, we have no choice but to vendor here, too
+mkdir .cargo
+writefile .cargo/config "source = { crates-io.replace-with = 'vendored-sources', vendored-sources.directory = 'vendor' }"
+exec --fail-on-error cargo +stable vendor --manifest-path fuchsia/tools/cargo-gnaw/Cargo.toml
+exec --fail-on-error cargo +stable install --path fuchsia/tools/cargo-gnaw --root . --offline
+
+# Ensure everything works
+exec --fail-on-error ./bin/gn --version
+exec --fail-on-error ./bin/gnaw --help
+
+echo "*** GN Tools Successfully Installed! Ignore all previous messages. ***"
+'''
+
+[tasks.gn-vendor]
+description = "Vendor in the dependencies for GN ICU4X"
+category = "ICU4X Development"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+cd ffi/gn
+
+rm -rf vendor
+output = exec --fail-on-error cargo vendor
+output_trimmed = trim_start ${output.stdout} # Needed since there are whitespace differences between cargo versions
+                                             # Probably can be removed when we update our CI stable
+writefile .cargo/config "# This file is part of ICU4X. For terms of use, please see the file\n"
+appendfile .cargo/config "# called LICENSE at the top level of the ICU4X source tree\n"
+appendfile .cargo/config "# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n\n"
+appendfile .cargo/config "# AUTO-GENERATED in ffi.toml\n"
+appendfile .cargo/config ${output_trimmed}
+'''
+
+[tasks.gn-gen]
+description = "Generate GN build rules for ICU4X"
+category = "ICU4X Development"
+dependencies = [
+    "gn-vendor",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
+
+icu4x_root = pwd
+
+cd ffi/gn
+
+exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${icu4x_root}/ffi/gn/Cargo.toml" --project-root ${icu4x_root} --output ${icu4x_root}/ffi/gn/icu4x/BUILD.gn --skip-root --gn-bin ${icu4x_root}/ffi/gn/third_party_tools/bin/gn
+'''
+
+[tasks.verify-gn-gen]
+description = "Verify that checked-in GN rules are up to date"
+category = "ICU4X Development"
+dependencies = [
+    "gn-gen",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+code = exec --get-exit-code git diff --exit-code -- ffi/gn
+if ${code}
+    trigger_error "GN rules need to be regenerated. Please run `cargo make gn-install`, then `cargo make gn-gen`, and commit."
+end
+'''
+
+[tasks.gn-build]
+description = "Build the GN version of ICU4X for the host platform"
+category = "ICU4X Development"
+dependencies = [
+    "gn-vendor",
+    "install-nightly",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
+
+cd ffi/gn
+
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. out/host
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/host
+'''
+
+[tasks.gn-build-wasi]
+description = "Build the GN version of ICU4X for wasm32-wasi"
+category = "ICU4X Development"
+dependencies = [
+    "gn-vendor",
+    "install-nightly",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+third_party_tools = is_path_exists ffi/gn/third_party_tools
+assert ${third_party_tools} "The GN third-party tools are not installed.\n*** Please run 'cargo make gn-install' ***"
+
+cd ffi/gn
+
+exec --fail-on-error rustup target add wasm32-wasi --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+
+exec --fail-on-error ./third_party_tools/bin/gn gen --root=../.. --args=target_os="wasi" out/wasi
+exec --fail-on-error rustup run ${ICU4X_NIGHTLY_TOOLCHAIN} ./third_party_tools/depot_tools/ninja -C out/wasi
+'''
+
+[tasks.gn-run]
+description = "Run the GN version of ICU4X"
+category = "ICU4X Development"
+install_crate = { crate_name = "wasmer-cli", binary = "wasmer", test_arg = ["--help"] }
+install_crate_args = ["--features=singlepass,cranelift", "--version=2.3.0"]
+dependencies = [
+    "gn-build",
+    "gn-build-wasi",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+cd ffi/gn
+exec --fail-on-error ./out/host/obj/ffi/gn/hello_world/print_hello
+exec --fail-on-error wasmer run ./out/wasi/obj/ffi/gn/hello_world/print_hello
+'''
