@@ -110,7 +110,7 @@ pub enum BufferFormat {
     Json,
     /// Serialize using Bincode version 1.
     Bincode1,
-    /// Serialize using Postcard version 0.7.
+    /// Serialize using Postcard version 1.
     Postcard1,
 }
 
