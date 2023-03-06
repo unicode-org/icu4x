@@ -17,9 +17,6 @@ use crate::props::{BidiPairedBracketType, BidiPairedBracketTypeULE};
 /// - `Bidi_Mirroring_Glyph`
 ///
 
-/// 20..0  Code point return value for Bidi_Mirroring_Glyph value
-/// 21..21 Boolean for Bidi_Mirrored
-/// 23..22 Enum value for Bidi_Paired_Bracket_Type
 #[doc(hidden)] // needed for datagen but not intended for users
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 pub struct MirroredPairedBracketData {
@@ -42,6 +39,12 @@ pub struct MirroredPairedBracketDataULE([u8; 3]);
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
 //  6. MirroredPairedBracketDataULE byte equality is semantic equality
+//
+// Bit layout for the 24 bits (23..0) of the `[u8; 3]` ULE raw type.
+// LE means first byte is 7..0, second byte 15..8, third byte is 23..16
+//  20..0  Code point return value for Bidi_Mirroring_Glyph value
+//  21..21 Boolean for Bidi_Mirrored
+//  23..22 Enum discriminant value for Bidi_Paired_Bracket_Type
 unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
@@ -105,8 +108,7 @@ impl AsULE for MirroredPairedBracketData {
                 .unwrap_or(char::REPLACEMENT_CHARACTER)
         };
         let is_mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
-        let paired_bracket_type =
-            BidiPairedBracketType(unaligned.0[2] >> 6);
+        let paired_bracket_type = BidiPairedBracketType(unaligned.0[2] >> 6);
 
         Self {
             mirroring_glyph,
