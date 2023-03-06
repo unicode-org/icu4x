@@ -85,7 +85,7 @@ impl AsULE for MirroredPairedBracketData {
         byte2 |= self.paired_bracket_type.0 << 6;
 
         MirroredPairedBracketDataULE([
-            byte_slice.get(0).copied().unwrap_or_default(),
+            byte_slice.first().copied().unwrap_or_default(),
             byte_slice.get(1).copied().unwrap_or_default(),
             byte2,
         ])
