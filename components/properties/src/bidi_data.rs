@@ -106,7 +106,7 @@ impl AsULE for MirroredPairedBracketData {
         };
         let is_mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
         let paired_bracket_type =
-            BidiPairedBracketType::from_unaligned(BidiPairedBracketTypeULE(unaligned.0[2] >> 6));
+            BidiPairedBracketType(unaligned.0[2] >> 6);
 
         Self {
             mirroring_glyph,
