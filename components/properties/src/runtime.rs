@@ -8,9 +8,9 @@
 use crate::provider::*;
 use crate::sets::CodePointSetData;
 use crate::PropertiesError;
-use icu_provider::prelude::*;
 #[cfg(doc)]
-use crate::{GeneralCategory, GeneralCategoryGroup, Script, script, maps};
+use crate::{maps, script, GeneralCategory, GeneralCategoryGroup, Script};
+use icu_provider::prelude::*;
 
 /// This type can represent any Unicode property.
 ///
