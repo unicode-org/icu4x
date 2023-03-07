@@ -35,7 +35,6 @@ typedef enum ICU4XError {
   ICU4XError_DataStructValidityError = 768,
   ICU4XError_PropertyUnknownScriptIdError = 1024,
   ICU4XError_PropertyUnknownGeneralCategoryGroupError = 1025,
-  ICU4XError_PropertyUnexpectedPropertyError = 1026,
   ICU4XError_FixedDecimalLimitError = 1280,
   ICU4XError_FixedDecimalSyntaxError = 1281,
   ICU4XError_PluralsParserError = 1536,

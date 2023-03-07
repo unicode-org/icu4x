@@ -16,6 +16,7 @@ typedef struct ICU4XCodePointSetData ICU4XCodePointSetData;
 #endif
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XCodePointSetData_ICU4XError.h"
+#include "diplomat_result_opt_box_ICU4XCodePointSetData_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -157,7 +158,7 @@ diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_
 
 diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_xid_start(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_for_ecma262(const ICU4XDataProvider* provider, const char* property_name_data, size_t property_name_len);
+diplomat_result_opt_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_for_ecma262(const ICU4XDataProvider* provider, const char* property_name_data, size_t property_name_len);
 void ICU4XCodePointSetData_destroy(ICU4XCodePointSetData* self);
 
 #ifdef __cplusplus

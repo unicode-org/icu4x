@@ -498,5 +498,5 @@ export class ICU4XCodePointSetData {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html Rust documentation for `load_for_ecma262_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static load_for_ecma262(provider: ICU4XDataProvider, property_name: string): ICU4XCodePointSetData | never;
+  static load_for_ecma262(provider: ICU4XDataProvider, property_name: string): ICU4XCodePointSetData | never | undefined;
 }

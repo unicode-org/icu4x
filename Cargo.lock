@@ -2039,7 +2039,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr 0.7.1",
  "unicode-bidi",
  "zerovec",
 ]

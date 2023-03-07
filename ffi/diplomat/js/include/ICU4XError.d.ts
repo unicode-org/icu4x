@@ -92,9 +92,6 @@ export enum ICU4XError {
   PropertyUnknownGeneralCategoryGroupError = 'PropertyUnknownGeneralCategoryGroupError',
   /**
    */
-  PropertyUnexpectedPropertyError = 'PropertyUnexpectedPropertyError',
-  /**
-   */
   FixedDecimalLimitError = 'FixedDecimalLimitError',
   /**
    */

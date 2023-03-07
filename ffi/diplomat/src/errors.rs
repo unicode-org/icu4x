@@ -88,7 +88,6 @@ pub mod ffi {
         // property errors
         PropertyUnknownScriptIdError = 0x4_00,
         PropertyUnknownGeneralCategoryGroupError = 0x4_01,
-        PropertyUnexpectedPropertyError = 0x4_02,
 
         // fixed_decimal errors
         FixedDecimalLimitError = 0x5_00,
@@ -209,9 +208,6 @@ impl From<PropertiesError> for ICU4XError {
             PropertiesError::UnknownScriptId(..) => ICU4XError::PropertyUnknownScriptIdError,
             PropertiesError::UnknownGeneralCategoryGroup(..) => {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
-            }
-            PropertiesError::UnexpectedProperty(..) => {
-                ICU4XError::PropertyUnexpectedPropertyError
             }
             _ => ICU4XError::UnknownError,
         }
