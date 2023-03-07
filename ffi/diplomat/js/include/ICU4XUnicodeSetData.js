@@ -47,4 +47,89 @@ export class ICU4XUnicodeSetData {
       }
     })();
   }
+
+  static load_exemplars_main(arg_provider, arg_locale) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetData_load_exemplars_main(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XUnicodeSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  static load_exemplars_auxiliary(arg_provider, arg_locale) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetData_load_exemplars_auxiliary(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XUnicodeSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  static load_exemplars_punctuation(arg_provider, arg_locale) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetData_load_exemplars_punctuation(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XUnicodeSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  static load_exemplars_numbers(arg_provider, arg_locale) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetData_load_exemplars_numbers(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XUnicodeSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  static load_exemplars_index(arg_provider, arg_locale) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XUnicodeSetData_load_exemplars_index(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XUnicodeSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
 }

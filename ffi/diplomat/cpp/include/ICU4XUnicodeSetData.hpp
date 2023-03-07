@@ -14,6 +14,7 @@
 class ICU4XDataProvider;
 class ICU4XUnicodeSetData;
 #include "ICU4XError.hpp"
+class ICU4XLocale;
 
 /**
  * A destruction policy for using ICU4XUnicodeSetData with std::unique_ptr.
@@ -61,6 +62,41 @@ class ICU4XUnicodeSetData {
    * See the [Rust documentation for `load_basic_emoji`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_basic_emoji(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_exemplars_main`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html) for more information.
+   */
+  static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_exemplars_auxiliary`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html) for more information.
+   */
+  static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_exemplars_punctuation`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html) for more information.
+   */
+  static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_exemplars_numbers`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html) for more information.
+   */
+  static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_exemplars_index`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html) for more information.
+   */
+  static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
   inline const capi::ICU4XUnicodeSetData* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XUnicodeSetData* AsFFIMut() { return this->inner.get(); }
   inline ICU4XUnicodeSetData(capi::ICU4XUnicodeSetData* i) : inner(i) {}
@@ -72,6 +108,7 @@ class ICU4XUnicodeSetData {
 };
 
 #include "ICU4XDataProvider.hpp"
+#include "ICU4XLocale.hpp"
 
 inline bool ICU4XUnicodeSetData::contains(const std::string_view s) const {
   return capi::ICU4XUnicodeSetData_contains(this->inner.get(), s.data(), s.size());
@@ -84,6 +121,56 @@ inline bool ICU4XUnicodeSetData::contains32(uint32_t cp) const {
 }
 inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_basic_emoji(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_basic_emoji(provider.AsFFI());
+  diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_exemplars_main(provider.AsFFI(), locale.AsFFI());
+  diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_exemplars_auxiliary(provider.AsFFI(), locale.AsFFI());
+  diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_exemplars_punctuation(provider.AsFFI(), locale.AsFFI());
+  diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_exemplars_numbers(provider.AsFFI(), locale.AsFFI());
+  diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XUnicodeSetData, ICU4XError> ICU4XUnicodeSetData::load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XUnicodeSetData_load_exemplars_index(provider.AsFFI(), locale.AsFFI());
   diplomat::result<ICU4XUnicodeSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XUnicodeSetData>(std::move(ICU4XUnicodeSetData(diplomat_result_raw_out_value.ok)));

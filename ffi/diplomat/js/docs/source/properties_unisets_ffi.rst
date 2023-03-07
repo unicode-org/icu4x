@@ -35,3 +35,28 @@
 
         See the `Rust documentation for load_basic_emoji <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html>`__ for more information.
 
+
+    .. js:function:: load_exemplars_main(provider, locale)
+
+        See the `Rust documentation for load_exemplars_main <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html>`__ for more information.
+
+
+    .. js:function:: load_exemplars_auxiliary(provider, locale)
+
+        See the `Rust documentation for load_exemplars_auxiliary <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html>`__ for more information.
+
+
+    .. js:function:: load_exemplars_punctuation(provider, locale)
+
+        See the `Rust documentation for load_exemplars_punctuation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html>`__ for more information.
+
+
+    .. js:function:: load_exemplars_numbers(provider, locale)
+
+        See the `Rust documentation for load_exemplars_numbers <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html>`__ for more information.
+
+
+    .. js:function:: load_exemplars_index(provider, locale)
+
+        See the `Rust documentation for load_exemplars_index <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html>`__ for more information.
+

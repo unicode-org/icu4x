@@ -2,6 +2,7 @@ import { u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XLocale } from "./ICU4XLocale";
 
 /**
 
@@ -43,4 +44,39 @@ export class ICU4XUnicodeSetData {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_basic_emoji(provider: ICU4XDataProvider): ICU4XUnicodeSetData | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html Rust documentation for `load_exemplars_main`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_exemplars_main(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html Rust documentation for `load_exemplars_auxiliary`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_exemplars_auxiliary(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html Rust documentation for `load_exemplars_punctuation`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_exemplars_punctuation(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html Rust documentation for `load_exemplars_numbers`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_exemplars_numbers(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html Rust documentation for `load_exemplars_index`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_exemplars_index(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
 }
