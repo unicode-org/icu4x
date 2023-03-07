@@ -1,0 +1,46 @@
+import { u32, char } from "./diplomat-runtime"
+import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataProvider } from "./ICU4XDataProvider";
+import { ICU4XError } from "./ICU4XError";
+
+/**
+
+ * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html Rust documentation for `properties`} for more information.
+
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetData.html Rust documentation for `UnicodeSetData`} for more information.
+
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html Rust documentation for `UnicodeSetDataBorrowed`} for more information.
+ */
+export class ICU4XUnicodeSetData {
+
+  /**
+
+   * Checks whether the string is in the set.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains Rust documentation for `contains`} for more information.
+   */
+  contains(s: string): boolean;
+
+  /**
+
+   * Checks whether the code point is in the set.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char Rust documentation for `contains_char`} for more information.
+   */
+  contains_char(cp: char): boolean;
+
+  /**
+
+   * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
+   */
+  contains32(cp: u32): boolean;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html Rust documentation for `load_basic_emoji`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_basic_emoji(provider: ICU4XDataProvider): ICU4XUnicodeSetData | never;
+}
