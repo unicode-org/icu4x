@@ -7,6 +7,7 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_properties::sets;
+    use core::str;
 
     use crate::errors::ffi::ICU4XError;
 
@@ -628,6 +629,27 @@ pub mod ffi {
         ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
             Ok(Box::new(ICU4XCodePointSetData(sets::load_xid_start(
                 &provider.0,
+            )?)))
+        }
+
+
+        #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_unstable, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_with_any_provider, Fn, hidden)]
+        #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_with_buffer_provider, Fn, hidden)]
+        pub fn load_for_ecma262(
+            provider: &ICU4XDataProvider,
+            property_name: &str,
+        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
+
+            let name = property_name.as_bytes(); // #2520
+            let name = if let Ok(s) = str::from_utf8(name) {
+                s
+            } else {
+                return Err(ICU4XError::TinyStrNonAsciiError)
+            };
+            Ok(Box::new(ICU4XCodePointSetData(sets::load_for_ecma262_unstable(
+                &provider.0,
+                name
             )?)))
         }
     }
