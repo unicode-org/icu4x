@@ -358,5 +358,9 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name)
 
+        Loads data for a property specified as a string as long as it is one of the `ECMA-262 binary properties <https://tc39.es/ecma262/#table-binary-unicode-properties>`__ (not including Any, ASCII, and Assigned pseudoproperties).
+
+        Returns ``ICU4XError::PropertyUnexpectedPropertyNameError`` in case the string does not match any property in the list
+
         See the `Rust documentation for load_for_ecma262_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
 

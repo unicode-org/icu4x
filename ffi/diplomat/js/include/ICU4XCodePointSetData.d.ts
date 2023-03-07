@@ -495,6 +495,10 @@ export class ICU4XCodePointSetData {
 
   /**
 
+   * Loads data for a property specified as a string as long as it is one of the {@link https://tc39.es/ecma262/#table-binary-unicode-properties ECMA-262 binary properties} (not including Any, ASCII, and Assigned pseudoproperties).
+
+   * Returns `ICU4XError::PropertyUnexpectedPropertyNameError` in case the string does not match any property in the list
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html Rust documentation for `load_for_ecma262_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
