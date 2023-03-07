@@ -355,3 +355,8 @@
 
         See the `Rust documentation for load_xid_start <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_xid_start.html>`__ for more information.
 
+
+    .. js:function:: load_for_ecma262(provider, property_name)
+
+        See the `Rust documentation for load_for_ecma262_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
+
