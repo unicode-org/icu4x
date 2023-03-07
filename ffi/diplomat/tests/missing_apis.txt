@@ -59,17 +59,10 @@ icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose#FnInStr
 icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16#FnInStruct
 icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict#FnInStruct
 icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16#FnInStruct
-icu::properties::sets::UnicodeSetData#Struct
-icu::properties::sets::UnicodeSetData::as_borrowed#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_data#FnInStruct
 icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list#FnInStruct
-icu::properties::sets::UnicodeSetDataBorrowed#Struct
-icu::properties::sets::UnicodeSetDataBorrowed::contains#FnInStruct
-icu::properties::sets::UnicodeSetDataBorrowed::contains32#FnInStruct
-icu::properties::sets::UnicodeSetDataBorrowed::contains_char#FnInStruct
-icu::properties::sets::load_basic_emoji#Fn
 icu::relativetime::FormattedRelativeTime#Struct
 icu::relativetime::RelativeTimeError#Enum
 icu::relativetime::RelativeTimeFormatter#Struct
