@@ -210,7 +210,7 @@ impl From<PropertiesError> for ICU4XError {
             PropertiesError::UnknownGeneralCategoryGroup(..) => {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
-            PropertiesError::UnexpectedPropertyName(..) => {
+            PropertiesError::UnexpectedPropertyName => {
                 ICU4XError::PropertyUnexpectedPropertyNameError
             }
             _ => ICU4XError::UnknownError,

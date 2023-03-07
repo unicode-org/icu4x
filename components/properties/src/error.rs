@@ -4,7 +4,6 @@
 
 use displaydoc::Display;
 use icu_provider::DataError;
-use tinystr::{tinystr, TinyStr16};
 
 #[cfg(doc)]
 use crate::GeneralCategoryGroup;
@@ -30,22 +29,12 @@ pub enum PropertiesError {
     #[displaydoc("Unknown general category group: {0}")]
     UnknownGeneralCategoryGroup(u32),
     /// An unknown or unexpected property name was used for an API dealing with properties specified as strings at runtime
-    #[displaydoc("Unexpected or unknown property name {0}")]
-    UnexpectedPropertyName(TinyStr16),
+    #[displaydoc("Unexpected or unknown property name")]
+    UnexpectedPropertyName,
 }
 
 impl From<DataError> for PropertiesError {
     fn from(e: DataError) -> Self {
         PropertiesError::PropDataLoad(e)
-    }
-}
-
-impl PropertiesError {
-    pub(crate) fn unexpected_property(name: &str) -> Self {
-        let tiny = name
-            .get(0..16)
-            .and_then(|x| TinyStr16::from_str(x).ok())
-            .unwrap_or(tinystr!(16, "invalid"));
-        Self::UnexpectedPropertyName(tiny)
     }
 }
