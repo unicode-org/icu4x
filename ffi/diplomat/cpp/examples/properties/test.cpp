@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XCodePointSetData.hpp"
+#include "../../include/ICU4XUnicodeSetData.hpp"
 #include "../../include/ICU4XCodePointMapData16.hpp"
 #include "../../include/ICU4XCodePointMapData8.hpp"
 #include "../../include/ICU4XLogger.hpp"
@@ -87,5 +88,30 @@ int main() {
         return result;
     }
 
+    ICU4XUnicodeSetData basic_emoji = ICU4XUnicodeSetData::load_basic_emoji(dp).ok().value();
+    std::string letter = u8"hello";
+
+    if (!basic_emoji.contains_char(U'🔥')) {
+        std::cout << "Character 🔥 not found in Basic_Emoji set" << std::endl;
+        result = 1;
+    }
+
+    if (!basic_emoji.contains(u8"🗺️")) {
+        std::cout << "String \"🗺️\" (U+1F5FA U+FE0F) not found in Basic_Emoji set" << std::endl;
+        result = 1;
+    }
+    if (basic_emoji.contains_char(U'a')) {
+        std::cout << "Character a found in Basic_Emoji set" << std::endl;
+        result = 1;
+    }
+
+    if (basic_emoji.contains(u8"aa")) {
+        std::cout << "String \"aa\" not found in Basic_Emoji set" << std::endl;
+        result = 1;
+    }
+
+    if (result != 0) {
+        return result;
+    }
     return 0;
 }
