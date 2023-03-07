@@ -87,6 +87,7 @@ export { ICU4XTimeFormatter } from './ICU4XTimeFormatter.js';
 export { ICU4XTimeLength } from './ICU4XTimeLength.js';
 export { ICU4XTimeZoneFormatter } from './ICU4XTimeZoneFormatter.js';
 export { ICU4XTransformResult } from './ICU4XTransformResult.js';
+export { ICU4XUnicodeSetData } from './ICU4XUnicodeSetData.js';
 export { ICU4XWeekCalculator } from './ICU4XWeekCalculator.js';
 export { ICU4XWeekOf } from './ICU4XWeekOf.js';
 export { ICU4XWeekRelativeUnit } from './ICU4XWeekRelativeUnit.js';
