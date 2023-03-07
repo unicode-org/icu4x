@@ -633,6 +633,13 @@ pub mod ffi {
         }
 
 
+        /// Loads data for a property specified as a string as long as it is one of the
+        /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
+        ///
+        /// Returns `ICU4XError::PropertyUnexpectedPropertyNameError` in case the string does not
+        /// match any property in the list
+        ///
+        /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_unstable, Fn)]
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_with_any_provider, Fn, hidden)]
         #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_with_buffer_provider, Fn, hidden)]

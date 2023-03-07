@@ -29,9 +29,9 @@ pub enum PropertiesError {
     /// An unknown value was used for the [`GeneralCategoryGroup`](crate::GeneralCategoryGroup) property
     #[displaydoc("Unknown general category group: {0}")]
     UnknownGeneralCategoryGroup(u32),
-    /// An unknown or unexpected property was used for an API dealing with properties at runtime
-    #[displaydoc("Unexpected or unknown property {0}")]
-    UnexpectedProperty(TinyStr16),
+    /// An unknown or unexpected property name was used for an API dealing with properties specified as strings at runtime
+    #[displaydoc("Unexpected or unknown property name {0}")]
+    UnexpectedPropertyName(TinyStr16),
 }
 
 impl From<DataError> for PropertiesError {
@@ -46,6 +46,6 @@ impl PropertiesError {
             .get(0..16)
             .and_then(|x| TinyStr16::from_str(x).ok())
             .unwrap_or(tinystr!(16, "invalid"));
-        Self::UnexpectedProperty(tiny)
+        Self::UnexpectedPropertyName(tiny)
     }
 }
