@@ -2016,7 +2016,7 @@ where
         UnicodeProperty::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
         UnicodeProperty::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
         UnicodeProperty::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
-        _ => return Err(PropertiesError::unexpected_property(name)),
+        _ => Err(PropertiesError::unexpected_property(name)),
     }
 }
 
