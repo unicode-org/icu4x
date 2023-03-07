@@ -2020,6 +2020,17 @@ where
     }
 }
 
+icu_provider::gen_any_buffer_constructors!(
+    locale: skip,
+    name: &str,
+    result: Result<CodePointSetData, PropertiesError>,
+    functions: [
+        load_for_ecma262_unstable,
+        load_for_ecma262_with_any_provider,
+        load_for_ecma262_with_buffer_provider
+    ]
+);
+
 #[cfg(test)]
 mod tests {
 
