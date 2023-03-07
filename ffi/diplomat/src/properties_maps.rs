@@ -19,7 +19,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
     #[diplomat::rust_link(
-        icu::properties::sets::CodePointMapData::as_borrowed,
+        icu::properties::maps::CodePointMapData::as_borrowed,
         FnInStruct,
         hidden
     )]
