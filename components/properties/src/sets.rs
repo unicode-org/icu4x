@@ -1838,7 +1838,7 @@ pub fn load_for_general_category_group(
 /// Returns a type capable of looking up values for a property specified as a string, as long as it is a
 /// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
 ///
-/// This handles every property required by ECMA262, except for:
+/// This handles every property required by ECMA-262 `/u` regular expressions, except for:
 ///
 /// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
 ///    [`maps::load_script()`].
