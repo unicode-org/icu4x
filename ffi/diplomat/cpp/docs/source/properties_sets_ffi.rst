@@ -356,7 +356,7 @@
         See the `Rust documentation for load_xid_start <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_xid_start.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<std::optional<ICU4XCodePointSetData>, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name)
+    .. cpp:function:: static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name)
 
         See the `Rust documentation for load_for_ecma262_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
 

@@ -1838,9 +1838,6 @@ pub fn load_for_general_category_group(
 /// Returns a type capable of looking up values for a property specified as a string, as long as it is a
 /// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
 ///
-/// Returns an error when data fails to load, and returns `Ok(None)` when the property name does not match
-/// any of the ECMA-262 binary properties.
-///
 /// This handles every property required by ECMA-262 `/u` regular expressions, except for:
 ///
 /// - `Script` and `General_Category`: handle these directly with [`maps::load_general_category()`] and
@@ -1874,7 +1871,7 @@ pub fn load_for_general_category_group(
 pub fn load_for_ecma262_unstable<P>(
     provider: &P,
     name: &str,
-) -> Result<Option<CodePointSetData>, PropertiesError>
+) -> Result<CodePointSetData, PropertiesError>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -1933,9 +1930,9 @@ where
     let prop = if let Some(prop) = UnicodeProperty::parse_ecma262_name(name) {
         prop
     } else {
-        return Ok(None);
+        return Err(PropertiesError::unexpected_property(name));
     };
-    let data = match prop {
+    match prop {
         UnicodeProperty::AsciiHexDigit => load_set_data::<AsciiHexDigitV1Marker, _>(provider),
         UnicodeProperty::Alphabetic => load_set_data::<AlphabeticV1Marker, _>(provider),
         UnicodeProperty::BidiControl => load_set_data::<BidiControlV1Marker, _>(provider),
@@ -2022,15 +2019,14 @@ where
         UnicodeProperty::WhiteSpace => load_set_data::<WhiteSpaceV1Marker, _>(provider),
         UnicodeProperty::XidContinue => load_set_data::<XidContinueV1Marker, _>(provider),
         UnicodeProperty::XidStart => load_set_data::<XidStartV1Marker, _>(provider),
-        _ => return Ok(None),
-    };
-    Ok(Some(data?))
+        _ => Err(PropertiesError::unexpected_property(name)),
+    }
 }
 
 icu_provider::gen_any_buffer_constructors!(
     locale: skip,
     name: &str,
-    result: Result<Option<CodePointSetData>, PropertiesError>,
+    result: Result<CodePointSetData, PropertiesError>,
     functions: [
         load_for_ecma262_unstable,
         load_for_ecma262_with_any_provider,

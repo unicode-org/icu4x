@@ -1153,10 +1153,7 @@ export class ICU4XCodePointSetData {
       wasm.ICU4XCodePointSetData_load_for_ecma262(diplomat_receive_buffer, arg_provider.underlying, buf_arg_property_name.ptr, buf_arg_property_name.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = (() => {
-          const option_ptr = diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer);
-          return (option_ptr == 0) ? null : new ICU4XCodePointSetData(option_ptr, true, []);
-        })();
+        const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
