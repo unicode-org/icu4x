@@ -59,7 +59,11 @@ fn main() {
                 typ: rl.typ,
             })
             .collect::<BTreeSet<_>>();
-
+    println!("# Please keep this file mostly empty");
+    println!("#");
+    println!("# It's fine for APIs to show up here temporarily, but this file should be clean during release.");
+    println!("# If you have added an API that you feel needs to be an exception, add it to IGNORED_PATHS in tools/ffi_coverage/src/main.rs");
+    println!("# and tag @Manishearth, @robertbastian, or @sffc for help on where it should go.");
     doc_types
         .difference(&diplomat_types)
         .for_each(|item| println!("{item}"));
@@ -158,12 +162,19 @@ lazy_static::lazy_static! {
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     static ref IGNORED_PATHS: HashSet<Vec<String>> = [
-        // Stuff that we DO plan to expose for 1.0 but we're keeping in the ignorelist
+        // Stuff that we DO plan to expose next release but we're keeping in the ignorelist
         // because we plan to solve it all at once.
-        // This section should go away before 1.0
+        // This section be clean before a release
         // =========================
 
-        // currently empty
+        "icu::properties::names",
+        "icu::properties::sets::UnicodeSetData",
+        "icu::properties::sets::UnicodeSetDataBorrowed",
+        "icu::properties::sets::load_basic_emoji",
+        "icu::properties::exemplar_chars",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
+        "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -243,6 +254,11 @@ lazy_static::lazy_static! {
         // The FFI constructor takes a single option instead of a struct
         "icu::decimal::options::FixedDecimalFormatterOptions",
 
+        // Experimental and unused decimal types
+        "fixed_decimal::CompactDecimal",
+        "fixed_decimal::FixedInteger",
+        "fixed_decimal::ScientificDecimal",
+
         // Rust-specific power user API for rules ASTS and such
         // could be exposed in the future but it's complicated
         "icu::plurals::rules",
@@ -266,9 +282,6 @@ lazy_static::lazy_static! {
         "icu::properties::maps::load_canonical_combining_class",
 
         // Not planned for 1.0
-        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
@@ -277,6 +290,7 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
         "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
         "icu::collections::codepointinvlist",
+        "icu::collections::codepointinvliststringlist",
         "icu::collections::codepointtrie",
         "icu::collections::char16trie",
 
@@ -331,6 +345,8 @@ lazy_static::lazy_static! {
         // Experimental
         "icu::casemapping",
         "icu::compactdecimal",
+        "icu::relativetime",
+        "icu::displaynames",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
