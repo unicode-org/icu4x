@@ -117,17 +117,25 @@ pub struct LstmMatrix<'data> {
     pub data: ZeroVec<'data, f32>,
 }
 
+pub(crate) type MatIntType = i16;
+
+fn f32_to_int(x: f32) -> MatIntType {
+    // Note: The `as` cast saturates the MatIntType if the value is too big
+    // <https://doc.rust-lang.org/reference/expressions/operator-expr.html#type-cast-expressions>
+    (x*1000.0).round() as MatIntType
+}
+
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub(crate) fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
+    pub(crate) fn as_ndarray1(&self) -> Result<Array1<MatIntType>, Error> {
         if self.dim.len() == 1 {
-            Ok(Array::from_vec(self.data.to_vec()))
+            Ok(Array::from_vec(self.data.iter().map(f32_to_int).collect()))
         } else {
             Err(Error::DimensionMismatch)
         }
     }
 
-    pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
+    pub(crate) fn as_ndarray2(&self) -> Result<Array2<MatIntType>, Error> {
         if self.dim.len() == 2 {
             #[allow(clippy::unwrap_used)]
             Array::from_shape_vec(
@@ -136,7 +144,7 @@ impl<'data> LstmMatrix<'data> {
                     self.dim.get(0).unwrap() as usize,
                     self.dim.get(1).unwrap() as usize,
                 ),
-                self.data.to_vec(),
+                self.data.iter().map(f32_to_int).collect(),
             )
             .map_err(|_| Error::DimensionMismatch)
         } else {

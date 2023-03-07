@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper;
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use crate::provider::{LstmDataV1Marker, RuleBreakDataV1, MatIntType};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -16,18 +16,22 @@ use zerovec::ule::AsULE;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
-    mat1: Array2<f32>,
-    mat2: Array2<f32>,
-    mat3: Array2<f32>,
-    mat4: Array1<f32>,
-    mat5: Array2<f32>,
-    mat6: Array2<f32>,
-    mat7: Array1<f32>,
-    mat8: Array2<f32>,
-    mat9: Array1<f32>,
+    mat1: Array2<MatIntType>,
+    mat2: Array2<MatIntType>,
+    mat3: Array2<MatIntType>,
+    mat4: Array1<MatIntType>,
+    mat5: Array2<MatIntType>,
+    mat6: Array2<MatIntType>,
+    mat7: Array1<MatIntType>,
+    mat8: Array2<MatIntType>,
+    mat9: Array1<MatIntType>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
     backward_hunits: usize,
+}
+
+fn int_to_f32(x: MatIntType) -> f32 {
+    (x as f32) / 1000.0
 }
 
 impl<'l> Lstm<'l> {
@@ -103,6 +107,7 @@ impl<'l> Lstm<'l> {
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
+        // std::println!("bies from: {arr:?}");
         let ind = math_helper::max_arr1(arr.view());
         match ind {
             0 => Ok('b'),
@@ -127,21 +132,29 @@ impl<'l> Lstm<'l> {
     #[allow(clippy::too_many_arguments)]
     fn compute_hc(
         &self,
-        x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        x_t: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 1]>>,
         h_tm1: &Array1<f32>,
         c_tm1: &Array1<f32>,
-        warr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        uarr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        warr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 2]>>,
+        uarr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 2]>>,
+        barr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 1]>>,
         hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.dot(&warr) + h_tm1.dot(&uarr) + barr;
+        let s_t = x_t.mapv(int_to_f32).dot(&warr.mapv(int_to_f32)) + h_tm1.dot(&uarr.mapv(int_to_f32)) + barr.mapv(int_to_f32);
+        // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?} = {s_t:?}");
+        // std::println!("s_t = {s_t:?}");
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
         let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
+        // std::println!("i = {i:?}");
+        // std::println!("f = {f:?}");
+        // std::println!("_c = {_c:?}");
+        // std::println!("o = {o:?}");
+        // std::println!("c_tm1 = {c_tm1:?}");
         let c_t = i * _c + f * c_tm1;
+        // std::println!("c_t = {c_t:?}");
         let h_t = o * math_helper::tanh_arr1(c_t.view());
         (h_t, c_t)
     }
@@ -183,6 +196,7 @@ impl<'l> Lstm<'l> {
         let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
+            // std::println!("x_t mean={:?} max={:?}", x_t.mean(), x_t[math_helper::max_arr1(x_t)]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_fw,
@@ -192,6 +206,10 @@ impl<'l> Lstm<'l> {
                 self.mat4.view(),
                 hunits,
             );
+            // std::println!("h mean={:?} max={:?}", new_h.mean(), new_h[math_helper::max_arr1_owned(&new_h)]);
+            // std::println!("c mean={:?} max={:?}", new_c.mean(), new_c[math_helper::max_arr1_owned(&new_c)]);
+            // std::println!("h={new_h:?}");
+            // std::println!("c={new_c:?}");
             h_fw = new_h;
             c_fw = new_c;
             all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
@@ -225,7 +243,7 @@ impl<'l> Lstm<'l> {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
-            let curr_est = concat_lstm.dot(&timew) + timeb;
+            let curr_est = concat_lstm.dot(&timew.mapv(int_to_f32)) + timeb.mapv(int_to_f32);
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(probs).unwrap_or('s'));
