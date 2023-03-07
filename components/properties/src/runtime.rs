@@ -268,53 +268,8 @@ impl UnicodeProperty {
     pub const ScriptExtensions: Self = UnicodeProperty(0x7000);
 }
 
-/// The kind of value a property has
-#[non_exhaustive]
-#[allow(unused)] // experimental, may be made public later
-pub enum PropertyKind {
-    /// A binary property, has a value of True or False
-    Binary,
-    /// An enumerated (integer) property, has an integer value that is one amongst
-    /// a limited set of possible values for that property
-    Enumerated,
-    /// A mask property that is intended to be used as a bitmask
-    ///
-    /// Currently only [`UnicodeProperty::GeneralCategoryMask`] is in this group
-    Mask,
-    /// A double property, with a property that is a double-precision integer
-    ///
-    /// Currently only [`UnicodeProperty::NumericValue`] is in this group
-    Double,
-    /// A string property
-    String,
-    /// Miscellaneous property `ScriptExtensions`
-    ScriptExtensions,
-}
-
 #[allow(unused)] // experimental, may be made public later
 impl UnicodeProperty {
-    /// Obtain the [`PropertyKind`] of this property.
-    ///
-    /// Returns `None` for unknown properties
-    pub fn kind(&self) -> Option<PropertyKind> {
-        let kind = if *self >= Self::Alphabetic && *self <= Self::BINARY_MAX {
-            PropertyKind::Binary
-        } else if *self <= Self::BidiClass && *self >= Self::ENUMERATED_MAX {
-            PropertyKind::Enumerated
-        } else if *self == Self::GeneralCategoryMask {
-            PropertyKind::Mask
-        } else if *self == Self::NumericValue {
-            PropertyKind::Double
-        } else if *self >= Self::Age && *self <= Self::STRING_MAX {
-            PropertyKind::String
-        } else if *self == Self::ScriptExtensions {
-            PropertyKind::ScriptExtensions
-        } else {
-            return None;
-        };
-        Some(kind)
-    }
-
     /// Given a property name (long, short, or alias), returns the corresponding [`UnicodeProperty`]
     /// value for it provided it belongs to the [subset relevant for ECMA262 regexes][subset]
     ///
