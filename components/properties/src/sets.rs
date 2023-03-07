@@ -1835,8 +1835,8 @@ pub fn load_for_general_category_group(
     Ok(CodePointSetData::from_code_point_inversion_list(set))
 }
 
-/// Returns a type capable of looking up values for a property specified as a string, as long as it is an
-/// [ECMA262-subset binary property][ecma], using strict matching on the names in the spec.
+/// Returns a type capable of looking up values for a property specified as a string, as long as it is a
+/// [binary property listed in ECMA-262][ecma], using strict matching on the names in the spec.
 ///
 /// This handles every property required by ECMA262, except for:
 ///
