@@ -1860,11 +1860,14 @@ pub fn load_for_general_category_group(
 /// ```rust
 /// use icu::properties::sets;
 ///
-/// let data = sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "Emoji").expect("loading data failed");
-/// let emoji = data.as_borrowed();
+/// let data = sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "White_Space")
+///               .expect("loading data failed")
+///               .expect("Parsing property name failed");
+/// let whitespace = data.as_borrowed();
 ///
-/// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
-/// assert!(!emoji.contains('V'));
+/// assert!(whitespace.contains(' '));  // U+0020 SPACE
+/// assert!(whitespace.contains('\u{3000}'));  // U+3000 IDEOGRAPHIC SPACE
+/// assert!(!whitespace.contains('a'));
 /// ```
 ///
 /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
