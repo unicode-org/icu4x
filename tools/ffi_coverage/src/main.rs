@@ -417,12 +417,9 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralOperands::Err",
 
         // Properties Rust internals
-        "icu::properties::maps::CodePointMapData::as_borrowed",
         "icu::properties::maps::CodePointMapData::from_data",
         "icu::properties::maps::CodePointMapData::try_into_converted",
-        "icu::properties::sets::CodePointSetData::as_borrowed",
         "icu::properties::sets::CodePointSetData::from_data",
-        "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
         "icu::properties::script::ScriptWithExtensions::from_data",
 
         // typedef
