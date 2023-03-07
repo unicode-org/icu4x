@@ -101,20 +101,6 @@ lazy_static::lazy_static! {
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     pub static ref IGNORED_PATHS: HashSet<Vec<String>> = [
-        // Stuff that we DO plan to expose next release but we're keeping in the ignorelist
-        // because we plan to solve it all at once.
-        // This section be clean before a release
-        // =========================
-
-        "icu::properties::names",
-        "icu::properties::sets::UnicodeSetData",
-        "icu::properties::sets::UnicodeSetDataBorrowed",
-        "icu::properties::sets::load_basic_emoji",
-        "icu::properties::exemplar_chars",
-        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
-        "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
-        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges",
-
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
         // Post 1.0 we should go through this and plan them, filing followups
