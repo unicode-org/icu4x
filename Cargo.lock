@@ -1896,7 +1896,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu_displaynames"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "databake",
  "icu_collections",

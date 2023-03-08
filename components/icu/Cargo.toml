@@ -42,7 +42,7 @@ icu_timezone = { version = "1.1.0", path = "../timezone", default-features = fal
 
 # Experimental components
 icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
-icu_displaynames = { version = "0.8.0", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_displaynames = { version = "0.9.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
 icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
