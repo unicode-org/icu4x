@@ -267,6 +267,8 @@ lazy_static::lazy_static! {
 
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
         "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
