@@ -15,6 +15,8 @@
 
 
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
+icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
+icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
 icu::properties::names::PropertyValueNameToEnumMapper#Struct
 icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed#FnInStruct
 icu::properties::names::PropertyValueNameToEnumMapper::from_data#FnInStruct
