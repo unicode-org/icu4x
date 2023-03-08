@@ -8,10 +8,65 @@ use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
 #[allow(unused_imports)]
 use num_traits::Float;
 
+/// Approximation of 128*sigmoid(x/32)
+fn pocket_sigmoid_128(x: i32) -> i32 {
+    if x <= -128 {
+        1
+    } else if x <= -75 {
+        x/8 + 20
+    } else if x <= -32 {
+        x/2 + 48
+    } else if x <= 31 {
+        x + 64
+    } else if x <= 74 {
+        x/2 + 80
+    } else if x <= 127 {
+        x/8 + 108
+    } else {
+        127
+    }
+}
+
+/// Approximation of 128*tanh(x/64)
+fn pocket_tanh_128(x: i32) -> i32 {
+    if x <= -128 {
+        -128
+    } else if x <= -75 {
+        x/4 - 88
+    } else if x <= -32 {
+        x - 32
+    } else if x <= 31 {
+        2*x
+    } else if x <= 74 {
+        x + 32
+    } else if x <= 127 {
+        x/4 + 88
+    } else {
+        127
+    }
+}
+
+#[test]
+fn test_pocket_sigmoid_tanh_128() {
+    for x in -150..150 {
+        let sigmoid_exact = 128.0 * sigmoid(x as f32 / 32.0);
+        let sigmoid_appx = pocket_sigmoid_128(x) as f32;
+        assert!((sigmoid_appx - sigmoid_exact).abs() < 10.0, "sigmoid: {x} {sigmoid_appx} {sigmoid_exact}");
+        let tanh_exact = 128.0 * tanh(x as f32 / 64.0);
+        let tanh_appx = pocket_tanh_128(x) as f32;
+        assert!((tanh_appx - tanh_exact).abs() < 10.0, "tanh: {x} {tanh_appx} {tanh_exact}");
+    }
+}
+
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
 fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
+}
+
+#[inline]
+fn tanh(x: f32) -> f32 {
+    x.tanh()
 }
 
 /// `softmax` gets a 1d array of `f32` numbers, and compute the softmax probability for each element in the array.
