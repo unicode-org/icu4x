@@ -61,6 +61,11 @@ impl crate::DatagenProvider {
                 continue;
             }
 
+            if era_id == "-1" || era_id == "-2" {
+                // These eras are handled in code
+                continue;
+            }
+
             let start_date = if let Some(start_date) = date.start.as_ref() {
                 EraStartDate::from_str(start_date).map_err(|_| {
                     DataError::custom(
@@ -77,13 +82,7 @@ impl crate::DatagenProvider {
             };
 
             if start_date.year >= 1868 || japanext {
-                let era_name = if let Some(era_name) = era_name_map.get(era_id) {
-                    era_name
-                } else {
-                    // TODO(#3181): Come up with codes for eras that don't have names (-1 and -2).
-                    continue;
-                };
-                let code = era_to_code(era_name, start_date.year)
+                let code = era_to_code(&era_name_map.get(era_id).unwrap(), start_date.year)
                     .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
 
                 dates_to_eras.insert(start_date, code);
@@ -211,7 +210,7 @@ pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
         .map(|(i, (_, value))| (i.to_string(), value))
         .collect();
     // Splice in details about gregorian eras for pre-meiji dates
-    map.insert("bce".to_string(), tinystr!(16, "bce"));
-    map.insert("ce".to_string(), tinystr!(16, "ce"));
+    map.insert("-2".to_string(), tinystr!(16, "bce"));
+    map.insert("-1".to_string(), tinystr!(16, "ce"));
     map
 }
