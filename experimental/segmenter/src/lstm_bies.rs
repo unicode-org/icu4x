@@ -31,7 +31,7 @@ pub struct Lstm<'l> {
 }
 
 fn int_to_f32(x: MatIntType) -> f32 {
-    (x as f32) / 1000.0
+    (x as f32) / 128.0
 }
 
 impl<'l> Lstm<'l> {
