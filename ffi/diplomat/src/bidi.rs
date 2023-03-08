@@ -5,6 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::vec::Vec;
     use diplomat_runtime::DiplomatWriteable;
 
     use core::fmt::Write;
@@ -60,6 +61,14 @@ pub mod ffi {
                 Level::new(default_level).ok(),
             )))
         }
+        /// Utility function for producing reorderings given a list of levels
+        ///
+        /// Produces a map saying which visual index maps to which source index.
+        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
+        pub fn reorder_visual(&self, levels: &[u8]) -> Box<ICU4XReorderedIndexMap> {
+            let levels = Level::from_slice_unchecked(levels);
+            Box::new(ICU4XReorderedIndexMap(BidiInfo::reorder_visual(levels)))
+        }
 
         /// Check if a Level returned by level_at is an RTL level.
         ///
@@ -87,6 +96,34 @@ pub mod ffi {
         #[diplomat::rust_link(unicode_bidi::Level::ltr, FnInStruct)]
         pub fn level_ltr() -> u8 {
             Level::ltr().number()
+        }
+    }
+
+    /// Thin wrapper around a vector that maps visual indices to source indices
+    ///
+    /// `map[visualIndex] = sourceIndex`
+    ///
+    /// Produced by `reorder_visual()` on [`ICU4XBidi`].
+    #[diplomat::opaque]
+    pub struct ICU4XReorderedIndexMap(pub Vec<usize>);
+
+    impl ICU4XReorderedIndexMap {
+        /// Get this as a slice/array of indices
+        pub fn as_slice<'a>(&'a self) -> &'a [usize] {
+            &self.0
+        }
+
+        /// The length of this map
+        #[allow(clippy::len_without_is_empty)]
+        pub fn len(&self) -> usize {
+            self.0.len()
+        }
+
+        /// Get element at `index`. Returns 0 when out of bounds
+        /// (note that 0 is also a valid in-bounds value, please use `len()`
+        /// to avoid out-of-bounds)
+        pub fn get(&self, index: usize) -> usize {
+            self.0.get(index).copied().unwrap_or(0)
         }
     }
 
