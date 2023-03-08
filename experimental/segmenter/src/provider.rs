@@ -117,7 +117,7 @@ pub struct LstmMatrix<'data> {
     pub data: ZeroVec<'data, f32>,
 }
 
-pub(crate) type MatIntType = i16;
+pub(crate) type MatIntType = i32;
 
 fn f32_to_int(x: f32) -> MatIntType {
     // Note: The `as` cast saturates the MatIntType if the value is too big

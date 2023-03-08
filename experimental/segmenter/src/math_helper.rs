@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
+use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, OwnedRepr};
 
 // Polyfill float operations with libm in case we're no_std.
 #[allow(unused_imports)]
@@ -69,10 +69,12 @@ fn tanh(x: f32) -> f32 {
     x.tanh()
 }
 
+const FACTOR: f32 = 128.0;
+
 /// `softmax` gets a 1d array of `f32` numbers, and compute the softmax probability for each element in the array.
-pub fn softmax(arr: Array1<f32>) -> Array1<f32> {
-    let sm = arr.fold(0.0, |sm, v| sm + v.exp());
-    arr.map(|v| v.exp() / sm)
+pub fn softmax(arr: Array1<i32>) -> Array1<f32> {
+    let sm = arr.fold(0.0, |sm, v| sm + (*v as f32 / FACTOR).exp());
+    arr.map(|v| (*v as f32 / FACTOR).exp() / sm)
 }
 
 /// `max_arr1` returns the index of the maximum value in a 1d array.
@@ -89,27 +91,41 @@ pub fn max_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> usize {
     ind
 }
 
+/// `max_arr1` returns the index of the maximum value in a 1d array.
+pub fn max_arr1_owned(arr: &ArrayBase<OwnedRepr<f32>, Dim<[usize; 1]>>) -> usize {
+    // No argmax in rust-ndarray (https://github.com/rust-ndarray/ndarray/issues/416)
+    let mut mx: f32 = 0.0;
+    let mut ind = 0;
+    arr.indexed_iter().for_each(|(i, v)| {
+        if mx < *v {
+            mx = *v;
+            ind = i
+        }
+    });
+    ind
+}
+
 /// `tanh_arr1` computes elementwise sigmoid function for elements of a 1d array
-pub fn sigmoid_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
-    arr.map(|v| sigmoid(*v))
+pub fn sigmoid_arr1(arr: ArrayBase<ViewRepr<&i32>, Dim<[usize; 1]>>) -> Array1<i32> {
+    arr.map(|x| pocket_sigmoid_128(x/4))
 }
 
 /// `tanh_arr1` computes elementwise tanh function for elements of a 1d array
-pub fn tanh_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
-    arr.map(|v| v.tanh())
+pub fn tanh_arr1(arr: ArrayBase<ViewRepr<&i32>, Dim<[usize; 1]>>) -> Array1<i32> {
+    arr.map(|x| pocket_tanh_128(x/2))
 }
 
 /// `change_row` gets one 2d array (`arr`), one 1d array (`arr1`), and an index (`row_id`), and replaces the `row_id`-th row of
 /// `arr` with `arr1`
-pub fn change_row(mut arr: Array2<f32>, row_id: usize, new_row: &Array1<f32>) -> Array2<f32> {
+pub fn change_row(mut arr: Array2<i32>, row_id: usize, new_row: &Array1<i32>) -> Array2<i32> {
     arr.row_mut(row_id).assign(new_row);
     arr
 }
 
 /// `concatenate_arr1` concatenates two 1d arrays to form another 1d array.
 pub fn concatenate_arr1(
-    arr1: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-    arr2: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-) -> Array1<f32> {
+    arr1: ArrayBase<ViewRepr<&i32>, Dim<[usize; 1]>>,
+    arr2: ArrayBase<ViewRepr<&i32>, Dim<[usize; 1]>>,
+) -> Array1<i32> {
     concatenate![Axis(0), arr1, arr2]
 }

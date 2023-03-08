@@ -30,8 +30,13 @@ pub struct Lstm<'l> {
     backward_hunits: usize,
 }
 
-fn int_to_f32(x: MatIntType) -> f32 {
-    (x as f32) / 128.0
+type CalcType = i32;
+
+const FACTOR: CalcType = 128;
+
+fn int_to_calc(x: MatIntType) -> i32 {
+    // (x as i32) / 128.0
+    x
 }
 
 impl<'l> Lstm<'l> {
@@ -107,7 +112,7 @@ impl<'l> Lstm<'l> {
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
-        // std::println!("bies from: {arr:?}");
+        std::println!("bies from: {arr:?}");
         let ind = math_helper::max_arr1(arr.view());
         match ind {
             0 => Ok('b'),
@@ -133,15 +138,15 @@ impl<'l> Lstm<'l> {
     fn compute_hc(
         &self,
         x_t: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 1]>>,
-        h_tm1: &Array1<f32>,
-        c_tm1: &Array1<f32>,
+        h_tm1: &Array1<CalcType>,
+        c_tm1: &Array1<CalcType>,
         warr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 2]>>,
         uarr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 2]>>,
         barr: ArrayBase<ViewRepr<&MatIntType>, Dim<[usize; 1]>>,
         hunits: usize,
-    ) -> (Array1<f32>, Array1<f32>) {
+    ) -> (Array1<CalcType>, Array1<CalcType>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.mapv(int_to_f32).dot(&warr.mapv(int_to_f32)) + h_tm1.dot(&uarr.mapv(int_to_f32)) + barr.mapv(int_to_f32);
+        let s_t = x_t.mapv(int_to_calc).dot(&warr.mapv(int_to_calc)) / FACTOR + h_tm1.dot(&uarr.mapv(int_to_calc)) / FACTOR + barr.mapv(int_to_calc);
         // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?} = {s_t:?}");
         // std::println!("s_t = {s_t:?}");
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
@@ -153,9 +158,9 @@ impl<'l> Lstm<'l> {
         // std::println!("_c = {_c:?}");
         // std::println!("o = {o:?}");
         // std::println!("c_tm1 = {c_tm1:?}");
-        let c_t = i * _c + f * c_tm1;
+        let c_t = i * _c / FACTOR + f * c_tm1 / FACTOR;
         // std::println!("c_t = {c_t:?}");
-        let h_t = o * math_helper::tanh_arr1(c_t.view());
+        let h_t = o * math_helper::tanh_arr1(c_t.view()) / FACTOR;
         (h_t, c_t)
     }
 
@@ -191,9 +196,9 @@ impl<'l> Lstm<'l> {
         // hunits is the number of hidden unints in each LSTM cell
         let hunits = self.hunits;
         // Forward LSTM
-        let mut c_fw = Array1::<f32>::zeros(hunits);
-        let mut h_fw = Array1::<f32>::zeros(hunits);
-        let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
+        let mut c_fw = Array1::<CalcType>::zeros(hunits);
+        let mut h_fw = Array1::<CalcType>::zeros(hunits);
+        let mut all_h_fw = Array2::<CalcType>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             // std::println!("x_t mean={:?} max={:?}", x_t.mean(), x_t[math_helper::max_arr1(x_t)]);
@@ -216,9 +221,9 @@ impl<'l> Lstm<'l> {
         }
 
         // Backward LSTM
-        let mut c_bw = Array1::<f32>::zeros(hunits);
-        let mut h_bw = Array1::<f32>::zeros(hunits);
-        let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
+        let mut c_bw = Array1::<CalcType>::zeros(hunits);
+        let mut h_bw = Array1::<CalcType>::zeros(hunits);
+        let mut all_h_bw = Array2::<CalcType>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
@@ -243,7 +248,7 @@ impl<'l> Lstm<'l> {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
-            let curr_est = concat_lstm.dot(&timew.mapv(int_to_f32)) + timeb.mapv(int_to_f32);
+            let curr_est = concat_lstm.dot(&timew.mapv(int_to_calc)) / FACTOR + timeb.mapv(int_to_calc);
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(probs).unwrap_or('s'));
