@@ -127,12 +127,17 @@ macro_rules! impl_data_provider {
                     for (era_index, date) in
                         era_dates.supplemental.calendar_data.japanese.eras.iter()
                     {
-                        let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
-                            DataError::custom(
-                                "calendarData.json contains unparseable data for a japanese era",
-                            )
-                            .with_display_context(&format!("era index {}", era_index))
-                        })?;
+                        let start_date = if let Some(start_date) = date.start.as_ref() {
+                            EraStartDate::from_str(start_date).map_err(|_| {
+                                DataError::custom(
+                                    "calendarData.json contains unparseable data for a japanese era",
+                                )
+                                .with_display_context(&format!("era index {}", era_index))
+                            })?
+                        } else {
+                            // Eras without start dates are not modern
+                            continue;
+                        };
 
                         if start_date.year >= 1868 {
                             set.insert(era_index.into());
