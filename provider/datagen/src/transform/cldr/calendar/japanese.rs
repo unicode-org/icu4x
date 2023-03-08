@@ -66,20 +66,10 @@ impl crate::DatagenProvider {
                 continue;
             }
 
-            let start_date = if let Some(start_date) = date.start.as_ref() {
-                EraStartDate::from_str(start_date).map_err(|_| {
-                    DataError::custom(
-                        "calendarData.json contains unparseable data for a japanese era",
-                    )
+            let start_date = EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
+                DataError::custom("calendarData.json contains unparseable data for a japanese era")
                     .with_display_context(&format!("era index {era_id}"))
-                })?
-            } else {
-                EraStartDate {
-                    year: i32::MIN,
-                    month: u8::MIN,
-                    day: u8::MIN,
-                }
-            };
+            })?;
 
             if start_date.year >= 1868 || japanext {
                 let code = era_to_code(&era_name_map.get(era_id).unwrap(), start_date.year)
