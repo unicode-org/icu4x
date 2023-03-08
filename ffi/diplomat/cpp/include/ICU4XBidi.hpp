@@ -15,6 +15,7 @@ class ICU4XDataProvider;
 class ICU4XBidi;
 #include "ICU4XError.hpp"
 class ICU4XBidiInfo;
+class ICU4XReorderedIndexMap;
 
 /**
  * A destruction policy for using ICU4XBidi with std::unique_ptr.
@@ -50,6 +51,15 @@ class ICU4XBidi {
    * Lifetimes: `text` must live at least as long as the output.
    */
   ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
+
+  /**
+   * Utility function for producing reorderings given a list of levels
+   * 
+   * Produces a map saying which visual index maps to which source index.
+   * 
+   * See the [Rust documentation for `is_rtl`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+   */
+  ICU4XReorderedIndexMap reorder_visual(const diplomat::span<const uint8_t> levels) const;
 
   /**
    * Check if a Level returned by level_at is an RTL level.
@@ -94,6 +104,7 @@ class ICU4XBidi {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XBidiInfo.hpp"
+#include "ICU4XReorderedIndexMap.hpp"
 
 inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XBidi_create(provider.AsFFI());
@@ -107,6 +118,9 @@ inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::create(const ICU4XData
 }
 inline ICU4XBidiInfo ICU4XBidi::for_text(const std::string_view text, uint8_t default_level) const {
   return ICU4XBidiInfo(capi::ICU4XBidi_for_text(this->inner.get(), text.data(), text.size(), default_level));
+}
+inline ICU4XReorderedIndexMap ICU4XBidi::reorder_visual(const diplomat::span<const uint8_t> levels) const {
+  return ICU4XReorderedIndexMap(capi::ICU4XBidi_reorder_visual(this->inner.get(), levels.data(), levels.size()));
 }
 inline bool ICU4XBidi::level_is_rtl(uint8_t level) {
   return capi::ICU4XBidi_level_is_rtl(level);

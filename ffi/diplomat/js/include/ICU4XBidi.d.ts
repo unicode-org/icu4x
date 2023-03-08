@@ -3,6 +3,7 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XBidiInfo } from "./ICU4XBidiInfo";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XReorderedIndexMap } from "./ICU4XReorderedIndexMap";
 
 /**
 
@@ -30,6 +31,16 @@ export class ICU4XBidi {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source Rust documentation for `new_with_data_source`} for more information.
    */
   for_text(text: string, default_level: u8): ICU4XBidiInfo;
+
+  /**
+
+   * Utility function for producing reorderings given a list of levels
+
+   * Produces a map saying which visual index maps to which source index.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl Rust documentation for `is_rtl`} for more information.
+   */
+  reorder_visual(levels: Uint8Array): ICU4XReorderedIndexMap;
 
   /**
 
