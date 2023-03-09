@@ -2,20 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
+//! to be stable, their Rust representation might not be. Use with caution.
+//! </div>
+//!
+//! Read more about data providers: [`icu_provider`]
+//!
+//! TODO: This module's description
+//!
+//! This module provides an efficient storage of data serving the following
+//! properties:
+//! - `Bidi_Paired_Bracket`
+//! - `Bidi_Paired_Bracket_Type`
+//! - `Bidi_Mirrored`
+//! - `Bidi_Mirroring_Glyph`
+
 use zerovec::ule::{AsULE, CharULE, ULE};
 use zerovec::ZeroVecError;
 
-use crate::props::{BidiPairedBracketType, BidiPairedBracketTypeULE};
-
-/// TODO: This module's description
-///
-/// This module provides an efficient storage of data serving the following
-/// properties:
-/// - `Bidi_Paired_Bracket`
-/// - `Bidi_Paired_Bracket_Type`
-/// - `Bidi_Mirrored`
-/// - `Bidi_Mirroring_Glyph`
-///
+use crate::props::BidiPairedBracketType;
 
 #[doc(hidden)] // needed for datagen but not intended for users
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]

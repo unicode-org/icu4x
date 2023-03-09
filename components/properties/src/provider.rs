@@ -33,6 +33,9 @@ use zerovec::{
     maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap, ZeroSlice, ZeroVecError,
 };
 
+// include the specialized structs for the compact representation of Bidi property data
+pub mod bidi_data;
+
 /// A set of characters which share a particular property value.
 ///
 /// This data enum is extensible, more backends may be added in the future.
