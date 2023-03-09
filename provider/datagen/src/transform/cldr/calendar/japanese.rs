@@ -66,13 +66,16 @@ impl crate::DatagenProvider {
                 continue;
             }
 
-            let start_date = EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
-                DataError::custom("calendarData.json contains unparseable data for a japanese era")
+            let start_date =
+                EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
+                    DataError::custom(
+                        "calendarData.json contains unparseable data for a japanese era",
+                    )
                     .with_display_context(&format!("era index {era_id}"))
-            })?;
+                })?;
 
             if start_date.year >= 1868 || japanext {
-                let code = era_to_code(&era_name_map.get(era_id).unwrap(), start_date.year)
+                let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)
                     .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
 
                 dates_to_eras.insert(start_date, code);
