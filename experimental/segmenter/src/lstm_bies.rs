@@ -146,10 +146,10 @@ impl<'l> Lstm<'l> {
         hunits: usize,
     ) -> (Array1<CalcType>, Array1<CalcType>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.mapv(int_to_calc).dot(&warr.mapv(int_to_calc)) / FACTOR
-            + h_tm1.dot(&uarr.mapv(int_to_calc)) / FACTOR
-            + barr.mapv(int_to_calc);
-        // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?} = {s_t:?}");
+        // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?}");
+        let s_t = x_t.dot(&warr) / FACTOR
+            + h_tm1.dot(&uarr) / FACTOR
+            + barr;
         // std::println!("s_t = {s_t:?}");
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
@@ -251,7 +251,7 @@ impl<'l> Lstm<'l> {
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
             let curr_est =
-                concat_lstm.dot(&timew.mapv(int_to_calc)) / FACTOR + timeb.mapv(int_to_calc);
+                concat_lstm.dot(&timew) / FACTOR + timeb;
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(probs).unwrap_or('s'));
