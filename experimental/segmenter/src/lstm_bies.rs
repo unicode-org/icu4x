@@ -34,11 +34,6 @@ type CalcType = i32;
 
 const FACTOR: CalcType = 1024;
 
-fn int_to_calc(x: MatIntType) -> i32 {
-    // (x as i32) / 128.0
-    x
-}
-
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(
@@ -112,7 +107,6 @@ impl<'l> Lstm<'l> {
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
-        // std::println!("bies from: {arr:?}");
         let ind = math_helper::max_arr1(arr.view());
         match ind {
             0 => Ok('b'),
@@ -146,22 +140,12 @@ impl<'l> Lstm<'l> {
         hunits: usize,
     ) -> (Array1<CalcType>, Array1<CalcType>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?}");
-        let s_t = x_t.dot(&warr) / FACTOR
-            + h_tm1.dot(&uarr) / FACTOR
-            + barr;
-        // std::println!("s_t = {s_t:?}");
+        let s_t = x_t.dot(&warr) / FACTOR + h_tm1.dot(&uarr) / FACTOR + barr;
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
         let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
-        // std::println!("i = {i:?}");
-        // std::println!("f = {f:?}");
-        // std::println!("_c = {_c:?}");
-        // std::println!("o = {o:?}");
-        // std::println!("c_tm1 = {c_tm1:?}");
         let c_t = i * _c / FACTOR + f * c_tm1 / FACTOR;
-        // std::println!("c_t = {c_t:?}");
         let h_t = o * math_helper::tanh_arr1(c_t.view()) / FACTOR;
         (h_t, c_t)
     }
@@ -203,7 +187,6 @@ impl<'l> Lstm<'l> {
         let mut all_h_fw = Array2::<CalcType>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
-            // std::println!("x_t mean={:?} max={:?}", x_t.mean(), x_t[math_helper::max_arr1(x_t)]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_fw,
@@ -213,10 +196,6 @@ impl<'l> Lstm<'l> {
                 self.mat4.view(),
                 hunits,
             );
-            // std::println!("h mean={:?} max={:?}", new_h.mean(), new_h[math_helper::max_arr1_owned(&new_h)]);
-            // std::println!("c mean={:?} max={:?}", new_c.mean(), new_c[math_helper::max_arr1_owned(&new_c)]);
-            // std::println!("h={new_h:?}");
-            // std::println!("c={new_c:?}");
             h_fw = new_h;
             c_fw = new_c;
             all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
@@ -250,8 +229,7 @@ impl<'l> Lstm<'l> {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
-            let curr_est =
-                concat_lstm.dot(&timew) / FACTOR + timeb;
+            let curr_est = concat_lstm.dot(&timew) / FACTOR + timeb;
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(probs).unwrap_or('s'));
