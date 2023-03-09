@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper;
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1, MatIntType};
+use crate::provider::{LstmDataV1Marker, MatIntType, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -32,7 +32,7 @@ pub struct Lstm<'l> {
 
 type CalcType = i32;
 
-const FACTOR: CalcType = 128;
+const FACTOR: CalcType = 1024;
 
 fn int_to_calc(x: MatIntType) -> i32 {
     // (x as i32) / 128.0
@@ -112,7 +112,7 @@ impl<'l> Lstm<'l> {
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
     fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
-        std::println!("bies from: {arr:?}");
+        // std::println!("bies from: {arr:?}");
         let ind = math_helper::max_arr1(arr.view());
         match ind {
             0 => Ok('b'),
@@ -146,7 +146,9 @@ impl<'l> Lstm<'l> {
         hunits: usize,
     ) -> (Array1<CalcType>, Array1<CalcType>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.mapv(int_to_calc).dot(&warr.mapv(int_to_calc)) / FACTOR + h_tm1.dot(&uarr.mapv(int_to_calc)) / FACTOR + barr.mapv(int_to_calc);
+        let s_t = x_t.mapv(int_to_calc).dot(&warr.mapv(int_to_calc)) / FACTOR
+            + h_tm1.dot(&uarr.mapv(int_to_calc)) / FACTOR
+            + barr.mapv(int_to_calc);
         // std::println!("dots: {x_t:?} * {warr:?} + {h_tm1:?} * {uarr:?} + {barr:?} = {s_t:?}");
         // std::println!("s_t = {s_t:?}");
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
@@ -248,7 +250,8 @@ impl<'l> Lstm<'l> {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
             let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
             let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
-            let curr_est = concat_lstm.dot(&timew.mapv(int_to_calc)) / FACTOR + timeb.mapv(int_to_calc);
+            let curr_est =
+                concat_lstm.dot(&timew.mapv(int_to_calc)) / FACTOR + timeb.mapv(int_to_calc);
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(probs).unwrap_or('s'));

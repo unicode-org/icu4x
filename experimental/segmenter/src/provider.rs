@@ -122,7 +122,7 @@ pub(crate) type MatIntType = i32;
 fn f32_to_int(x: f32) -> MatIntType {
     // Note: The `as` cast saturates the MatIntType if the value is too big
     // <https://doc.rust-lang.org/reference/expressions/operator-expr.html#type-cast-expressions>
-    (x*128.0).round() as MatIntType
+    (x * 1024.0).round() as MatIntType
 }
 
 #[cfg(feature = "lstm")]
