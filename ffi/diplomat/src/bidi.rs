@@ -64,7 +64,12 @@ pub mod ffi {
         /// Utility function for producing reorderings given a list of levels
         ///
         /// Produces a map saying which visual index maps to which source index.
-        #[diplomat::rust_link(unicode_bidi::Level::is_rtl, FnInStruct)]
+        ///
+        /// The levels array must not have values greater than 126 (this is the
+        /// Bidi maximum explicit depth plus one).
+        /// Failure to follow this invariant may lead to incorrect results,
+        /// but is still safe.
+        #[diplomat::rust_link(unicode_bidi::BidiInfo::reorder_visual, FnInStruct)]
         pub fn reorder_visual(&self, levels: &[u8]) -> Box<ICU4XReorderedIndexMap> {
             let levels = Level::from_slice_unchecked(levels);
             Box::new(ICU4XReorderedIndexMap(BidiInfo::reorder_visual(levels)))

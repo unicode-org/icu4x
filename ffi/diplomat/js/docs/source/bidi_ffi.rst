@@ -30,7 +30,9 @@
 
         Produces a map saying which visual index maps to which source index.
 
-        See the `Rust documentation for is_rtl <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl>`__ for more information.
+        The levels array must not have values greater than 126 (this is the Bidi maximum explicit depth plus one). Failure to follow this invariant may lead to incorrect results, but is still safe.
+
+        See the `Rust documentation for reorder_visual <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual>`__ for more information.
 
         - Note: ``levels`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
 

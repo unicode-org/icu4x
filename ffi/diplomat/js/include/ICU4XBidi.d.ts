@@ -38,7 +38,9 @@ export class ICU4XBidi {
 
    * Produces a map saying which visual index maps to which source index.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl Rust documentation for `is_rtl`} for more information.
+   * The levels array must not have values greater than 126 (this is the Bidi maximum explicit depth plus one). Failure to follow this invariant may lead to incorrect results, but is still safe.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual Rust documentation for `reorder_visual`} for more information.
    */
   reorder_visual(levels: Uint8Array): ICU4XReorderedIndexMap;
 
