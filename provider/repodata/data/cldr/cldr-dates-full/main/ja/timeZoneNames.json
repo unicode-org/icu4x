@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ja"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "チワワ"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "シウダー・フアレス"
               },
               "Coral_Harbour": {
                 "exemplarCity": "アティコカン"

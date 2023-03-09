@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "en",
         "territory": "001"
@@ -33,6 +33,7 @@
           "ang": "Old English",
           "ann": "Obolo",
           "anp": "Angika",
+          "apc": "apc",
           "ar": "Arabic",
           "ar-001": "Modern Standard Arabic",
           "arc": "Aramaic",

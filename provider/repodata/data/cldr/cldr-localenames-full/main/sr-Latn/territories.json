@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "sr",
         "script": "Latn"
@@ -95,6 +95,7 @@
           "CN": "Kina",
           "CO": "Kolumbija",
           "CP": "Ostrvo Kliperton",
+          "CQ": "CQ",
           "CR": "Kostarika",
           "CU": "Kuba",
           "CV": "Zelenortska Ostrva",

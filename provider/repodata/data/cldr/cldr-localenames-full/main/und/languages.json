@@ -3,7 +3,7 @@
     "und": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "root"
       },
@@ -23,6 +23,7 @@
           "an": "an",
           "ann": "ann",
           "anp": "anp",
+          "apc": "apc",
           "ar": "ar",
           "ar-001": "ar_001",
           "arn": "arn",
@@ -235,6 +236,7 @@
           "lij": "lij",
           "lil": "lil",
           "lkt": "lkt",
+          "lmo": "lmo",
           "ln": "ln",
           "lo": "lo",
           "lou": "lou",
@@ -336,6 +338,7 @@
           "rap": "rap",
           "rar": "rar",
           "rhg": "rhg",
+          "rif": "rif",
           "rm": "rm",
           "rn": "rn",
           "ro": "ro",

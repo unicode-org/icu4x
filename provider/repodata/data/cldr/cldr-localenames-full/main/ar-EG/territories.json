@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ar",
         "territory": "EG"
@@ -95,6 +95,7 @@
           "CN": "الصين",
           "CO": "كولومبيا",
           "CP": "جزيرة كليبيرتون",
+          "CQ": "CQ",
           "CR": "كوستاريكا",
           "CU": "كوبا",
           "CV": "الرأس الأخضر",

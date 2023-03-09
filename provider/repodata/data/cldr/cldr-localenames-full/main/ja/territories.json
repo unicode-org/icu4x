@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ja"
       },
@@ -94,6 +94,7 @@
           "CN": "中国",
           "CO": "コロンビア",
           "CP": "クリッパートン島",
+          "CQ": "CQ",
           "CR": "コスタリカ",
           "CU": "キューバ",
           "CV": "カーボベルデ",

@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fil"
       },
@@ -25,6 +25,7 @@
           "an": "Aragonese",
           "ann": "Obolo",
           "anp": "Angika",
+          "apc": "apc",
           "ar": "Arabic",
           "ar-001": "Modernong Karaniwang Arabic",
           "arn": "Mapuche",
@@ -243,6 +244,7 @@
           "lij": "lij",
           "lil": "Lillooet",
           "lkt": "Lakota",
+          "lmo": "Lombard",
           "ln": "Lingala",
           "lo": "Lao",
           "lou": "Louisiana Creole",
@@ -346,6 +348,7 @@
           "rap": "Rapanui",
           "rar": "Rarotongan",
           "rhg": "Rohingya",
+          "rif": "rif",
           "rm": "Romansh",
           "rn": "Rundi",
           "ro": "Romanian",

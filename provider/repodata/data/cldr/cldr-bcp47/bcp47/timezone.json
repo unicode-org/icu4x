@@ -1102,6 +1102,11 @@
           "_description": "Chihuahua, Mexico",
           "_alias": "America/Chihuahua"
         },
+        "mxcjs": {
+          "_description": "Ciudad Juárez, Mexico",
+          "_alias": "America/Ciudad_Juarez",
+          "_since": "43"
+        },
         "mxcun": {
           "_description": "Cancún, Mexico",
           "_alias": "America/Cancun"
@@ -1558,7 +1563,7 @@
           "_alias": "Pacific/Tongatapu"
         },
         "trist": {
-          "_description": "Istanbul, Turkey",
+          "_description": "Istanbul, Türkiye",
           "_alias": "Europe/Istanbul Asia/Istanbul Turkey"
         },
         "ttpos": {

@@ -3,7 +3,7 @@
     "und": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "root"
       },
@@ -66,7 +66,7 @@
                 "exemplarCity": "Bahia"
               },
               "Bahia_Banderas": {
-                "exemplarCity": "Bahia Banderas"
+                "exemplarCity": "Bahía de Banderas"
               },
               "Barbados": {
                 "exemplarCity": "Barbados"
@@ -99,7 +99,7 @@
                 "exemplarCity": "Campo Grande"
               },
               "Cancun": {
-                "exemplarCity": "Cancun"
+                "exemplarCity": "Cancún"
               },
               "Caracas": {
                 "exemplarCity": "Caracas"
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "Chihuahua"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Ciudad Juárez"
               },
               "Coral_Harbour": {
                 "exemplarCity": "Atikokan"
@@ -298,7 +301,7 @@
                 "exemplarCity": "Menominee"
               },
               "Merida": {
-                "exemplarCity": "Merida"
+                "exemplarCity": "Mérida"
               },
               "Metlakatla": {
                 "exemplarCity": "Metlakatla"

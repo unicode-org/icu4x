@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fr"
       },
@@ -94,6 +94,7 @@
           "CN": "Chine",
           "CO": "Colombie",
           "CP": "Île Clipperton",
+          "CQ": "CQ",
           "CR": "Costa Rica",
           "CU": "Cuba",
           "CV": "Cap-Vert",

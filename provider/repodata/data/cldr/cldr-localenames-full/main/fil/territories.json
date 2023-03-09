@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fil"
       },
@@ -94,6 +94,7 @@
           "CN": "China",
           "CO": "Colombia",
           "CP": "Clipperton Island",
+          "CQ": "CQ",
           "CR": "Costa Rica",
           "CU": "Cuba",
           "CV": "Cape Verde",
@@ -285,7 +286,7 @@
           "TM": "Turkmenistan",
           "TN": "Tunisia",
           "TO": "Tonga",
-          "TR": "Turkey",
+          "TR": "Türkiye",
           "TR-alt-variant": "Türkiye",
           "TT": "Trinidad & Tobago",
           "TV": "Tuvalu",

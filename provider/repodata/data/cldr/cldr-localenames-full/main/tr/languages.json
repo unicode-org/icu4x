@@ -3,7 +3,7 @@
     "tr": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "tr"
       },
@@ -32,6 +32,7 @@
           "ang": "Eski İngilizce",
           "ann": "Obolo dili",
           "anp": "Angika",
+          "apc": "apc",
           "ar": "Arapça",
           "ar-001": "Modern Standart Arapça",
           "arc": "Aramice",

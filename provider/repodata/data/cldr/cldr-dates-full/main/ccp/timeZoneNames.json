@@ -3,7 +3,7 @@
     "ccp": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ccp"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "𑄌𑄨𑄦𑄪𑄠𑄦𑄪𑄠"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Ciudad Juárez"
               },
               "Coral_Harbour": {
                 "exemplarCity": "𑄇𑄮𑄢𑄣𑄴 𑄦𑄢𑄴𑄝𑄢𑄴"

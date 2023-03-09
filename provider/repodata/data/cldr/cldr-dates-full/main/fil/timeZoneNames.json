@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fil"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "Chihuahua"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Lungsod ng Juárez"
               },
               "Coral_Harbour": {
                 "exemplarCity": "Atikokan"
