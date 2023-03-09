@@ -6,35 +6,35 @@
     See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. js:function:: create_from_i32(v)
+    .. js:staticfunction:: create_from_i32(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.
 
         See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. js:function:: create_from_u32(v)
+    .. js:staticfunction:: create_from_u32(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.
 
         See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. js:function:: create_from_i64(v)
+    .. js:staticfunction:: create_from_i64(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.
 
         See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. js:function:: create_from_u64(v)
+    .. js:staticfunction:: create_from_u64(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.
 
         See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. js:function:: create_from_f64_with_integer_precision(f)
+    .. js:staticfunction:: create_from_f64_with_integer_precision(f)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer-valued float
 
@@ -43,7 +43,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:function:: create_from_f64_with_lower_magnitude(f, magnitude)
+    .. js:staticfunction:: create_from_f64_with_lower_magnitude(f, magnitude)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for the lower magnitude
 
@@ -52,7 +52,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:function:: create_from_f64_with_significant_digits(f, digits)
+    .. js:staticfunction:: create_from_f64_with_significant_digits(f, digits)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, for a given number of significant digits
 
@@ -61,7 +61,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:function:: create_from_f64_with_floating_precision(f)
+    .. js:staticfunction:: create_from_f64_with_floating_precision(f)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
 
@@ -70,7 +70,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:function:: create_from_string(v)
+    .. js:staticfunction:: create_from_string(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from a string.
 

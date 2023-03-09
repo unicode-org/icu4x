@@ -53,14 +53,14 @@
     See the `Rust documentation for LocaleFallbacker <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Creates a new ``ICU4XLocaleFallbacker`` from a data provider.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: create_without_data()
+    .. js:staticfunction:: create_without_data()
 
         Creates a new ``ICU4XLocaleFallbacker`` without data for limited functionality.
 

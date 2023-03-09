@@ -8,14 +8,14 @@
     See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html>`__ for more information.
 
 
-    .. js:function:: create_from_iso_in_calendar(year, month, day, calendar)
+    .. js:staticfunction:: create_from_iso_in_calendar(year, month, day, calendar)
 
         Creates a new :js:class:`ICU4XDate` representing the ISO date and time given but in a given calendar
 
         See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso>`__ for more information.
 
 
-    .. js:function:: create_from_codes_in_calendar(era_code, year, month_code, day, calendar)
+    .. js:staticfunction:: create_from_codes_in_calendar(era_code, year, month_code, day, calendar)
 
         Creates a new :js:class:`ICU4XDate` from the given codes, which are interpreted in the given calendar system
 
@@ -133,7 +133,7 @@
     See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html>`__ for more information.
 
 
-    .. js:function:: create(year, month, day)
+    .. js:staticfunction:: create(year, month, day)
 
         Creates a new :js:class:`ICU4XIsoDate` from the specified date and time.
 

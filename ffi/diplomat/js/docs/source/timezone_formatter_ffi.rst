@@ -31,7 +31,7 @@
     See the `Rust documentation for TimeZoneFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/struct.TimeZoneFormatter.html>`__ for more information.
 
 
-    .. js:function:: create_with_localized_gmt_fallback(provider, locale)
+    .. js:staticfunction:: create_with_localized_gmt_fallback(provider, locale)
 
         Creates a new :js:class:`ICU4XTimeZoneFormatter` from locale data.
 
@@ -42,7 +42,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
 
-    .. js:function:: create_with_iso_8601_fallback(provider, locale, options)
+    .. js:staticfunction:: create_with_iso_8601_fallback(provider, locale, options)
 
         Creates a new :js:class:`ICU4XTimeZoneFormatter` from locale data.
 

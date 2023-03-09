@@ -29,7 +29,7 @@
     See the `Rust documentation for SentenceSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct an :js:class:`ICU4XSentenceSegmenter`.
 

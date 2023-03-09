@@ -6,7 +6,7 @@
     See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html>`__ for more information.
 
 
-    .. js:function:: create_v1(provider, locale, options)
+    .. js:staticfunction:: create_v1(provider, locale, options)
 
         Construct a new Collator instance.
 

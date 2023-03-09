@@ -8,21 +8,21 @@
     See the `Rust documentation for icu_provider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider/index.html>`__ for more information.
 
 
-    .. js:function:: create_fs(path)
+    .. js:staticfunction:: create_fs(path)
 
         Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_fs`` Cargo feature. Not supported in WASM.
 
         See the `Rust documentation for FsDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
 
-    .. js:function:: create_test()
+    .. js:staticfunction:: create_test()
 
         Constructs a testdata provider and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_test`` and one of ``any_provider`` or ``buffer_provider`` Cargo features.
 
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
 
-    .. js:function:: create_from_byte_slice(blob)
+    .. js:staticfunction:: create_from_byte_slice(blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
 
@@ -33,7 +33,7 @@
         - Warning: This method leaks memory. The parameter `blob` will not be freed as it is required to live for the duration of the program.
 
 
-    .. js:function:: create_empty()
+    .. js:staticfunction:: create_empty()
 
         Constructs an empty :js:class:`ICU4XDataProvider`.
 

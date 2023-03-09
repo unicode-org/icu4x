@@ -8,7 +8,7 @@
     This can be used to construct a StructDataProvider.
 
 
-    .. js:function:: create_decimal_symbols_v1(plus_sign_prefix, plus_sign_suffix, minus_sign_prefix, minus_sign_suffix, decimal_separator, grouping_separator, primary_group_size, secondary_group_size, min_group_size, digits)
+    .. js:staticfunction:: create_decimal_symbols_v1(plus_sign_prefix, plus_sign_suffix, minus_sign_prefix, minus_sign_suffix, decimal_separator, grouping_separator, primary_group_size, secondary_group_size, min_group_size, digits)
 
         Construct a new DecimalSymbolsV1 data struct.
 
