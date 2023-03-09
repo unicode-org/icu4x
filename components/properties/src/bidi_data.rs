@@ -25,7 +25,18 @@ pub struct MirroredPairedBracketData {
     paired_bracket_type: BidiPairedBracketType,
 }
 
-#[doc(hidden)] // needed for datagen but not intended for users
+/// Bit layout for the 24 bits (0..=23) of the `[u8; 3]` ULE raw type.
+/// LE means first byte is 0..=7, second byte 8..=15, third byte is 16..=23
+///  0..=20  Code point return value for Bidi_Mirroring_Glyph value
+///    extracted with: mask = 0x1FFFFF <=> [bytes[0], bytes[1], bytes[2] & 0x1F]
+///  21..=21 Boolean for Bidi_Mirrored
+///    extracted with: bitshift right by 21 followed by mask = 0x1 <=> (bytes[2] >> 5) & 0x1
+///  22..=23 Enum discriminant value for Bidi_Paired_Bracket_Type
+///    extracted with: bitshift right by 22 followed by mask = 0x3 <=> (bytes[2] >> 6) & 0x3
+///                    <=> (bytes[2] >> 6) b/c we left fill with 0s on bitshift right for unsigned
+///                         numbers and a byte has 8 bits
+#[doc(hidden)]
+/// needed for datagen but not intended for users
 #[derive(Copy, Clone, Hash, PartialEq, Eq, Debug)]
 #[repr(packed)]
 pub struct MirroredPairedBracketDataULE([u8; 3]);
@@ -38,13 +49,8 @@ pub struct MirroredPairedBracketDataULE([u8; 3]);
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
-//  6. MirroredPairedBracketDataULE byte equality is semantic equality
-//
-// Bit layout for the 24 bits (23..0) of the `[u8; 3]` ULE raw type.
-// LE means first byte is 7..0, second byte 15..8, third byte is 23..16
-//  20..0  Code point return value for Bidi_Mirroring_Glyph value
-//  21..21 Boolean for Bidi_Mirrored
-//  23..22 Enum discriminant value for Bidi_Paired_Bracket_Type
+//  6. MirroredPairedBracketDataULE byte equality is semantic equality because all bits
+//     are used, so no unused bits requires no extra work to zero out unused bits
 unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
@@ -69,7 +75,15 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
 
             // skip validating the Bidi_Mirrored boolean since it is always valid
 
-            // skip validating Bidi_Paired_Bracket_Type because enum is open
+            // assert that Bidi_Paired_Bracket_Type cannot have a 4th value because it only
+            // has 3 values: Open, Close, None
+            let paired_bracket_type_discriminant = byte2 >> 6;
+            if paired_bracket_type_discriminant == 0x3 {
+                return Err(ZeroVecError::ParseError {
+                    ty:
+                        "Unrecognized value for paired_bracket_type in MirroredPairedBracketDataULE",
+                });
+            }
         }
 
         Ok(())
@@ -125,19 +139,36 @@ mod test {
     fn test_parse() {
         // data for U+007B LEFT CURLY BRACKET
 
-        let data1 = MirroredPairedBracketData {
+        // serialize to ULE bytes
+        let data = MirroredPairedBracketData {
             mirroring_glyph: '}',
             is_mirrored: true,
             paired_bracket_type: BidiPairedBracketType::Open,
         };
-        let expected_bytes1 = &[0x7D, 0x0, 0x60];
+        let expected_bytes = &[0x7D, 0x0, 0x60];
         assert_eq!(
-            expected_bytes1,
-            MirroredPairedBracketDataULE::as_byte_slice(&[data1.to_unaligned()])
+            expected_bytes,
+            MirroredPairedBracketDataULE::as_byte_slice(&[data.to_unaligned()])
         );
 
-        let ule1 = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes1).unwrap();
-        let parsed_data1 = MirroredPairedBracketData::from_unaligned(*ule1.first().unwrap());
-        assert_eq!(data1, parsed_data1);
+        // deserialize from ULE bytes
+        let ule = MirroredPairedBracketDataULE::parse_byte_slice(expected_bytes).unwrap();
+        let parsed_data = MirroredPairedBracketData::from_unaligned(*ule.first().unwrap());
+        assert_eq!(data, parsed_data);
+    }
+
+    #[test]
+    fn test_parse_error() {
+        // data for U+007B LEFT CURLY BRACKET
+        let ule_bytes = &mut [0x7D, 0x0, 0x60];
+
+        // Set discriminant value for the BidiPairedBracketType enum to be invalid.
+        // BidiPairedBracketType only has 3 values (discriminants => 0..=2), so the 4th
+        // expressible value from the 2 bits (3) should not parse successfully.
+        ule_bytes[2] = ule_bytes[2] | 0xC0;
+
+        // deserialize from ULE bytes
+        let ule_parse_result = MirroredPairedBracketDataULE::parse_byte_slice(ule_bytes);
+        assert!(matches!(ule_parse_result, Err(_)));
     }
 }
