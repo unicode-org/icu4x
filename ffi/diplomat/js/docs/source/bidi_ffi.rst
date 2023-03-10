@@ -24,6 +24,19 @@
         See the `Rust documentation for new_with_data_source <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source>`__ for more information.
 
 
+    .. js:function:: reorder_visual(levels)
+
+        Utility function for producing reorderings given a list of levels
+
+        Produces a map saying which visual index maps to which source index.
+
+        The levels array must not have values greater than 126 (this is the Bidi maximum explicit depth plus one). Failure to follow this invariant may lead to incorrect results, but is still safe.
+
+        See the `Rust documentation for reorder_visual <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual>`__ for more information.
+
+        - Note: ``levels`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+
     .. js:function:: level_is_rtl(level)
 
         Check if a Level returned by level_at is an RTL level.
@@ -137,4 +150,28 @@
         Returns 0 (equivalent to ``Level::ltr()``) on error
 
         See the `Rust documentation for level_at <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
+
+
+.. js:class:: ICU4XReorderedIndexMap
+
+    Thin wrapper around a vector that maps visual indices to source indices
+
+    ``map[visualIndex] = sourceIndex``
+
+    Produced by ``reorder_visual()`` on :js:class:`ICU4XBidi`.
+
+
+    .. js:function:: as_slice()
+
+        Get this as a slice/array of indices
+
+
+    .. js:function:: len()
+
+        The length of this map
+
+
+    .. js:function:: get(index)
+
+        Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)
 
