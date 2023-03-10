@@ -106,7 +106,6 @@ impl<'a> CldrDirLang<'a> {
         Ok(self
             .0
             .list(&self.dir()?)?
-            .into_iter()
             .map(|path| LanguageIdentifier::from_str(&path).unwrap()))
     }
 
