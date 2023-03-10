@@ -24,7 +24,7 @@
         See the `Rust documentation for new_with_data_source <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source>`__ for more information.
 
 
-    .. js:function:: reorder_visual(levels)
+    .. js:method:: reorder_visual(levels)
 
         Utility function for producing reorderings given a list of levels
 
@@ -161,17 +161,17 @@
     Produced by ``reorder_visual()`` on :js:class:`ICU4XBidi`.
 
 
-    .. js:function:: as_slice()
+    .. js:method:: as_slice()
 
         Get this as a slice/array of indices
 
 
-    .. js:function:: len()
+    .. js:method:: len()
 
         The length of this map
 
 
-    .. js:function:: get(index)
+    .. js:method:: get(index)
 
         Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)
 
