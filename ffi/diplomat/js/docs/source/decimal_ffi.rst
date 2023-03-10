@@ -22,7 +22,7 @@
         The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed. Passing a consumed struct to this method will return an error.
 
 
-    .. js:method:: format(value)
+    .. js:function:: format(value)
 
         Formats a :js:class:`ICU4XFixedDecimal` to a string.
 

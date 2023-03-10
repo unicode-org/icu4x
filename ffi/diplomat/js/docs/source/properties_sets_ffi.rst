@@ -12,14 +12,14 @@
     See the `Rust documentation for CodePointSetDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html>`__ for more information.
 
 
-    .. js:method:: contains(cp)
+    .. js:function:: contains(cp)
 
         Checks whether the code point is in the set.
 
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 
 
-    .. js:method:: contains32(cp)
+    .. js:function:: contains32(cp)
 
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 

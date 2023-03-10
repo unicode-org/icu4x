@@ -15,28 +15,28 @@
         See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. js:method:: hour()
+    .. js:function:: hour()
 
         Returns the hour in this time
 
         See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
 
 
-    .. js:method:: minute()
+    .. js:function:: minute()
 
         Returns the minute in this time
 
         See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
 
 
-    .. js:method:: second()
+    .. js:function:: second()
 
         Returns the second in this time
 
         See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
 
 
-    .. js:method:: nanosecond()
+    .. js:function:: nanosecond()
 
         Returns the nanosecond in this time
 

@@ -20,14 +20,14 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday>`__, `2 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days>`__
 
 
-    .. js:method:: first_weekday()
+    .. js:function:: first_weekday()
 
         Returns the weekday that starts the week for this object's locale
 
         See the `Rust documentation for first_weekday <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday>`__ for more information.
 
 
-    .. js:method:: min_week_days()
+    .. js:function:: min_week_days()
 
         The minimum number of days overlapping a year required for a week to be considered part of that year
 

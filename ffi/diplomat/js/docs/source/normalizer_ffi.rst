@@ -20,7 +20,7 @@
         See the `Rust documentation for try_new_nfkc_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfkc_unstable>`__ for more information.
 
 
-    .. js:method:: normalize(s)
+    .. js:function:: normalize(s)
 
         Normalize a (potentially ill-formed) UTF8 string
 
@@ -29,7 +29,7 @@
         See the `Rust documentation for normalize_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8>`__ for more information.
 
 
-    .. js:method:: is_normalized(s)
+    .. js:function:: is_normalized(s)
 
         Check if a (potentially ill-formed) UTF8 string is normalized
 
@@ -57,7 +57,7 @@
         See the `Rust documentation for try_new_nfkd_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable>`__ for more information.
 
 
-    .. js:method:: normalize(s)
+    .. js:function:: normalize(s)
 
         Normalize a (potentially ill-formed) UTF8 string
 
@@ -66,7 +66,7 @@
         See the `Rust documentation for normalize_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8>`__ for more information.
 
 
-    .. js:method:: is_normalized(s)
+    .. js:function:: is_normalized(s)
 
         Check if a (potentially ill-formed) UTF8 string is normalized
 

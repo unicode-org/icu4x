@@ -15,7 +15,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: canonicalize(locale)
+    .. js:function:: canonicalize(locale)
 
         FFI version of ``LocaleCanonicalizer::canonicalize()``.
 
@@ -36,14 +36,14 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: maximize(locale)
+    .. js:function:: maximize(locale)
 
         FFI version of ``LocaleExpander::maximize()``.
 
         See the `Rust documentation for maximize <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.maximize>`__ for more information.
 
 
-    .. js:method:: minimize(locale)
+    .. js:function:: minimize(locale)
 
         FFI version of ``LocaleExpander::minimize()``.
 

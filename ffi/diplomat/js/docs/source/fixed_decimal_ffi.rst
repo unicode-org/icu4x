@@ -77,137 +77,137 @@
         See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str>`__ for more information.
 
 
-    .. js:method:: digit_at(magnitude)
+    .. js:function:: digit_at(magnitude)
 
         See the `Rust documentation for digit_at <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.digit_at>`__ for more information.
 
 
-    .. js:method:: magnitude_start()
+    .. js:function:: magnitude_start()
 
         See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
 
 
-    .. js:method:: magnitude_end()
+    .. js:function:: magnitude_end()
 
         See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
 
 
-    .. js:method:: nonzero_magnitude_start()
+    .. js:function:: nonzero_magnitude_start()
 
         See the `Rust documentation for nonzero_magnitude_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start>`__ for more information.
 
 
-    .. js:method:: nonzero_magnitude_end()
+    .. js:function:: nonzero_magnitude_end()
 
         See the `Rust documentation for nonzero_magnitude_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end>`__ for more information.
 
 
-    .. js:method:: is_zero()
+    .. js:function:: is_zero()
 
         See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.is_zero>`__ for more information.
 
 
-    .. js:method:: multiply_pow10(power)
+    .. js:function:: multiply_pow10(power)
 
         Multiply the :js:class:`ICU4XFixedDecimal` by a given power of ten.
 
         See the `Rust documentation for multiply_pow10 <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.multiply_pow10>`__ for more information.
 
 
-    .. js:method:: sign()
+    .. js:function:: sign()
 
         See the `Rust documentation for sign <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.sign>`__ for more information.
 
 
-    .. js:method:: set_sign(sign)
+    .. js:function:: set_sign(sign)
 
         Set the sign of the :js:class:`ICU4XFixedDecimal`.
 
         See the `Rust documentation for set_sign <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.set_sign>`__ for more information.
 
 
-    .. js:method:: apply_sign_display(sign_display)
+    .. js:function:: apply_sign_display(sign_display)
 
         See the `Rust documentation for apply_sign_display <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display>`__ for more information.
 
 
-    .. js:method:: trim_start()
+    .. js:function:: trim_start()
 
         See the `Rust documentation for trim_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_start>`__ for more information.
 
 
-    .. js:method:: trim_end()
+    .. js:function:: trim_end()
 
         See the `Rust documentation for trim_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_end>`__ for more information.
 
 
-    .. js:method:: pad_start(position)
+    .. js:function:: pad_start(position)
 
         Zero-pad the :js:class:`ICU4XFixedDecimal` on the left to a particular position
 
         See the `Rust documentation for pad_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_start>`__ for more information.
 
 
-    .. js:method:: pad_end(position)
+    .. js:function:: pad_end(position)
 
         Zero-pad the :js:class:`ICU4XFixedDecimal` on the right to a particular position
 
         See the `Rust documentation for pad_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_end>`__ for more information.
 
 
-    .. js:method:: set_max_position(position)
+    .. js:function:: set_max_position(position)
 
         Truncate the :js:class:`ICU4XFixedDecimal` on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
 
         See the `Rust documentation for set_max_position <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.set_max_position>`__ for more information.
 
 
-    .. js:method:: trunc(position)
+    .. js:function:: trunc(position)
 
         See the `Rust documentation for trunc <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trunc>`__ for more information.
 
 
-    .. js:method:: half_trunc(position)
+    .. js:function:: half_trunc(position)
 
         See the `Rust documentation for half_trunc <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_trunc>`__ for more information.
 
 
-    .. js:method:: expand(position)
+    .. js:function:: expand(position)
 
         See the `Rust documentation for expand <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.expand>`__ for more information.
 
 
-    .. js:method:: half_expand(position)
+    .. js:function:: half_expand(position)
 
         See the `Rust documentation for half_expand <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_expand>`__ for more information.
 
 
-    .. js:method:: ceil(position)
+    .. js:function:: ceil(position)
 
         See the `Rust documentation for ceil <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.ceil>`__ for more information.
 
 
-    .. js:method:: half_ceil(position)
+    .. js:function:: half_ceil(position)
 
         See the `Rust documentation for half_ceil <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_ceil>`__ for more information.
 
 
-    .. js:method:: floor(position)
+    .. js:function:: floor(position)
 
         See the `Rust documentation for floor <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.floor>`__ for more information.
 
 
-    .. js:method:: half_floor(position)
+    .. js:function:: half_floor(position)
 
         See the `Rust documentation for half_floor <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_floor>`__ for more information.
 
 
-    .. js:method:: half_even(position)
+    .. js:function:: half_even(position)
 
         See the `Rust documentation for half_even <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_even>`__ for more information.
 
 
-    .. js:method:: concatenate_end(other)
+    .. js:function:: concatenate_end(other)
 
         Concatenates ``other`` to the end of ``self``.
 
@@ -218,7 +218,7 @@
         See the `Rust documentation for concatenate_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end>`__ for more information.
 
 
-    .. js:method:: to_string()
+    .. js:function:: to_string()
 
         Format the :js:class:`ICU4XFixedDecimal` as a string.
 

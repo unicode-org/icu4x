@@ -15,7 +15,7 @@
         See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new>`__ for more information.
 
 
-    .. js:method:: for_text(text, default_level)
+    .. js:function:: for_text(text, default_level)
 
         Use the data loaded in this object to process a string and calculate bidi information
 
@@ -65,22 +65,22 @@
     See the `Rust documentation for BidiInfo <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html>`__ for more information.
 
 
-    .. js:method:: paragraph_count()
+    .. js:function:: paragraph_count()
 
         The number of paragraphs contained here
 
 
-    .. js:method:: paragraph_at(n)
+    .. js:function:: paragraph_at(n)
 
         Get the nth paragraph, returning None if out of bounds
 
 
-    .. js:method:: size()
+    .. js:function:: size()
 
         The number of bytes in this full text
 
 
-    .. js:method:: level_at(pos)
+    .. js:function:: level_at(pos)
 
         Get the BIDI level at a particular byte index in the full text. This integer is conceptually a ``unicode_bidi::Level``, and can be further inspected using the static methods on ICU4XBidi.
 
@@ -92,45 +92,45 @@
     Bidi information for a single processed paragraph
 
 
-    .. js:method:: set_paragraph_in_text(n)
+    .. js:function:: set_paragraph_in_text(n)
 
         Given a paragraph index ``n`` within the surrounding text, this sets this object to the paragraph at that index. Returns ``ICU4XError::OutOfBoundsError`` when out of bounds.
 
         This is equivalent to calling ``paragraph_at()`` on ``ICU4XBidiInfo`` but doesn't create a new object
 
 
-    .. js:method:: direction()
+    .. js:function:: direction()
 
         The primary direction of this paragraph
 
         See the `Rust documentation for level_at <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
 
 
-    .. js:method:: size()
+    .. js:function:: size()
 
         The number of bytes in this paragraph
 
         See the `Rust documentation for len <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.ParagraphInfo.html#method.len>`__ for more information.
 
 
-    .. js:method:: range_start()
+    .. js:function:: range_start()
 
         The start index of this paragraph within the source text
 
 
-    .. js:method:: range_end()
+    .. js:function:: range_end()
 
         The end index of this paragraph within the source text
 
 
-    .. js:method:: reorder_line(range_start, range_end)
+    .. js:function:: reorder_line(range_start, range_end)
 
         Reorder a line based on display order. The ranges are specified relative to the source text and must be contained within this paragraph's range.
 
         See the `Rust documentation for level_at <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
 
 
-    .. js:method:: level_at(pos)
+    .. js:function:: level_at(pos)
 
         Get the BIDI level at a particular byte index in this paragraph. This integer is conceptually a ``unicode_bidi::Level``, and can be further inspected using the static methods on ICU4XBidi.
 

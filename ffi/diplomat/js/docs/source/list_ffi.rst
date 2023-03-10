@@ -16,14 +16,14 @@
         Create a new list of strings with preallocated space to hold at least ``capacity`` elements
 
 
-    .. js:method:: push(val)
+    .. js:function:: push(val)
 
         Push a string to the list
 
         For C++ users, potentially invalid UTF8 will be handled via REPLACEMENT CHARACTERs
 
 
-    .. js:method:: len()
+    .. js:function:: len()
 
         The number of elements in this list
 
@@ -54,7 +54,7 @@
         See the `Rust documentation for try_new_unit_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length_unstable>`__ for more information.
 
 
-    .. js:method:: format(list)
+    .. js:function:: format(list)
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.format>`__ for more information.
 

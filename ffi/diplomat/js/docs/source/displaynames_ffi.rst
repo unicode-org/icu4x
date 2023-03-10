@@ -43,7 +43,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: of(code)
+    .. js:function:: of(code)
 
 .. js:class:: ICU4XRegionDisplayNames
 
@@ -57,7 +57,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: of(code)
+    .. js:function:: of(code)
 
 .. js:class:: ICU4XStyle
 
