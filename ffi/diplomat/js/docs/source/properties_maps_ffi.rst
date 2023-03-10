@@ -14,19 +14,19 @@
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
 
 
-    .. js:function:: get(cp)
+    .. js:method:: get(cp)
 
         Gets the value for a code point.
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. js:function:: get32(cp)
+    .. js:method:: get32(cp)
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
-    .. js:function:: get_set_for_value(value)
+    .. js:method:: get_set_for_value(value)
 
         Gets a :js:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
 
@@ -51,19 +51,19 @@
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
 
 
-    .. js:function:: get(cp)
+    .. js:method:: get(cp)
 
         Gets the value for a code point.
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. js:function:: get32(cp)
+    .. js:method:: get32(cp)
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
-    .. js:function:: get_set_for_value(value)
+    .. js:method:: get_set_for_value(value)
 
         Gets a :js:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
 
