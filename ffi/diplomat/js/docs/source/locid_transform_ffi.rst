@@ -8,14 +8,14 @@
     See the `Rust documentation for LocaleCanonicalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleCanonicalizer.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider)
+    .. js:function:: create(provider)
 
         Create a new :js:class:`ICU4XLocaleCanonicalizer`.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: canonicalize(locale)
+    .. js:method:: canonicalize(locale)
 
         FFI version of ``LocaleCanonicalizer::canonicalize()``.
 
@@ -29,21 +29,21 @@
     See the `Rust documentation for LocaleExpander <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider)
+    .. js:function:: create(provider)
 
         Create a new :js:class:`ICU4XLocaleExpander`.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: maximize(locale)
+    .. js:method:: maximize(locale)
 
         FFI version of ``LocaleExpander::maximize()``.
 
         See the `Rust documentation for maximize <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html#method.maximize>`__ for more information.
 
 
-    .. js:function:: minimize(locale)
+    .. js:method:: minimize(locale)
 
         FFI version of ``LocaleExpander::minimize()``.
 

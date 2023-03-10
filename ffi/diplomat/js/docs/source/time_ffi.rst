@@ -8,35 +8,35 @@
     See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(hour, minute, second, nanosecond)
+    .. js:function:: create(hour, minute, second, nanosecond)
 
         Creates a new :js:class:`ICU4XTime` given field values
 
         See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. js:function:: hour()
+    .. js:method:: hour()
 
         Returns the hour in this time
 
         See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
 
 
-    .. js:function:: minute()
+    .. js:method:: minute()
 
         Returns the minute in this time
 
         See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
 
 
-    .. js:function:: second()
+    .. js:method:: second()
 
         Returns the second in this time
 
         See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
 
 
-    .. js:function:: nanosecond()
+    .. js:method:: nanosecond()
 
         Returns the nanosecond in this time
 
