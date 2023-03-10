@@ -5,12 +5,11 @@
 //! This module contains types and implementations for the Displaynames component.
 
 use crate::options::*;
-use crate::provider::LanguageDisplayNamesV1Marker;
+use crate::provider::LocaleDisplayNamesV1Marker;
 use crate::provider::RegionDisplayNamesV1Marker;
+use icu_locid::{subtags::Region, Locale};
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
-use tinystr::TinyAsciiStr;
-use zerovec::ule::UnvalidatedStr;
 
 /// Lookup of the locale-specific display names by region code.
 ///
@@ -19,7 +18,7 @@ use zerovec::ule::UnvalidatedStr;
 /// ```
 /// use icu_displaynames::displaynames::RegionDisplayNames;
 /// use icu_displaynames::options::DisplayNamesOptions;
-/// use icu_locid::locale;
+/// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -30,8 +29,7 @@ use zerovec::ule::UnvalidatedStr;
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "AE";
-/// assert_eq!(display_name.of(&region_code), Some("United Arab Emirates"));
+/// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
 /// ```
 #[derive(Default)]
 pub struct RegionDisplayNames {
@@ -75,20 +73,14 @@ impl RegionDisplayNames {
         ]
     );
 
-    /// Returns the locale specific display name of a region for a given string.
-    /// This function is locale-sensitive.
-    pub fn of(&self, code: &str) -> Option<&str> {
-        match <TinyAsciiStr<3>>::from_str(code) {
-            Ok(key) => {
-                let data = self.region_data.get();
-                match self.options.style {
-                    Some(Style::Short) => data.short_names.get(&key),
-                    _ => None,
-                }
-                .or_else(|| data.names.get(&key))
-            }
-            Err(_) => None,
+    /// Returns the display name of a region.
+    pub fn of(&self, region: Region) -> Option<&str> {
+        let data = self.region_data.get();
+        match self.options.style {
+            Some(Style::Short) => data.short_names.get(&region.into()),
+            _ => None,
         }
+        .or_else(|| data.names.get(&region.into()))
     }
 }
 
@@ -110,13 +102,12 @@ impl RegionDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let language_code = "aa";
-/// assert_eq!(display_name.of(&language_code), Some("Afar"));
+/// assert_eq!(display_name.of(&locale!("de")), Some("German"));
 /// ```
 #[derive(Default)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
-    language_data: DataPayload<LanguageDisplayNamesV1Marker>,
+    language_data: DataPayload<LocaleDisplayNamesV1Marker>,
 }
 
 impl LanguageDisplayNames {
@@ -126,7 +117,7 @@ impl LanguageDisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LocaleDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -155,17 +146,27 @@ impl LanguageDisplayNames {
         ]
     );
 
-    /// Returns the locale specific display name of a language for a given string.
-    /// This function is locale-sensitive.
-    pub fn of(&self, code: &str) -> Option<&str> {
-        let key = UnvalidatedStr::from_str(code);
+    /// Returns the display name of a locale.
+    pub fn of(&self, langid: &Locale) -> Option<&str> {
         let data = self.language_data.get();
         match self.options.style {
-            Some(Style::Short) => data.short_names.get(key),
-            Some(Style::Long) => data.long_names.get(key),
-            Some(Style::Menu) => data.menu_names.get(key),
+            Some(Style::Short) => data
+                .short_names
+                .get_by(|bytes| langid.strict_cmp(bytes).reverse()),
+            Some(Style::Long) => data
+                .long_names
+                .get_by(|bytes| langid.strict_cmp(bytes).reverse()),
+            Some(Style::Menu) => data
+                .menu_names
+                .get_by(|bytes| langid.strict_cmp(bytes).reverse()),
             _ => None,
         }
-        .or_else(|| data.names.get(key))
+        .or_else(|| {
+            data.names
+                .get_by(|bytes| langid.strict_cmp(bytes).reverse())
+        })
+        // TODO: If no match was found, this code should construct a display name
+        // by combining the display names of subtags:
+        // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements:~:text=Spanish%20(Latin%20America)-,es%2DCyrl%2DMX,-Spanish%20(Cyrillic%2C%20Mexico
     }
 }

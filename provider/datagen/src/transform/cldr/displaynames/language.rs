@@ -10,11 +10,11 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
+    ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::language_displaynames::Resource = self
@@ -26,7 +26,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(
-                LanguageDisplayNamesV1::try_from(data).map_err(|e| {
+                LocaleDisplayNamesV1::try_from(data).map_err(|e| {
                     DataError::custom("data for LanguageDisplayNames").with_display_context(&e)
                 })?,
             )),
@@ -34,7 +34,7 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -55,7 +55,7 @@ const ALT_LONG_SUBSTRING: &str = "-alt-long";
 /// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
 const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
-impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNamesV1<'static> {
+impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1<'static> {
     fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
@@ -64,25 +64,37 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
                 if let Some(region) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(region);
-                    short_names.insert(key, entry.1.as_ref());
+                    short_names.insert(region, entry.1.as_ref());
                 } else if let Some(region) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(region);
-                    long_names.insert(key, entry.1.as_ref());
+                    long_names.insert(region, entry.1.as_ref());
                 } else if let Some(region) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(region);
-                    menu_names.insert(key, entry.1.as_ref());
+                    menu_names.insert(region, entry.1.as_ref());
                 } else if !entry.0.contains(ALT_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(entry.0);
-                    names.insert(key, entry.1.as_ref());
+                    names.insert(entry.0, entry.1.as_ref());
                 }
             }
         }
         Self {
-            names: names.into_iter().collect(),
-            short_names: short_names.into_iter().collect(),
-            long_names: long_names.into_iter().collect(),
-            menu_names: menu_names.into_iter().collect(),
+            names: names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .collect(),
+            short_names: short_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .collect(),
+            long_names: long_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .collect(),
+            menu_names: menu_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (UnvalidatedStr::from_str(k), v))
+                .collect(),
         }
     }
 }
@@ -96,7 +108,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -118,7 +130,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -140,7 +152,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -162,7 +174,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
+        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),

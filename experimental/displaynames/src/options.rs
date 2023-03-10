@@ -12,7 +12,7 @@
 /// ```
 /// use icu_displaynames::options::{DisplayNamesOptions, Style};
 /// use icu_displaynames::displaynames::RegionDisplayNames;
-/// use icu_locid::locale;
+/// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
@@ -24,8 +24,7 @@
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "BA";
-/// assert_eq!(display_name.of(&region_code), Some("Bosnia"));
+/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
 ///
 /// ```
 /// use icu_displaynames::options::{DisplayNamesOptions, Style};
@@ -42,8 +41,7 @@
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let language_code = "az";
-/// assert_eq!(display_name.of(&language_code), Some("Azeri"));
+/// assert_eq!(display_name.of(&locale!("az")), Some("Azeri"));
 /// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]

@@ -250,7 +250,7 @@ registry!(
         CaseMappingV1Marker,
         DateSkeletonPatternsV1Marker,
         RegionDisplayNamesV1Marker,
-        LanguageDisplayNamesV1Marker,
+        LocaleDisplayNamesV1Marker,
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
         LstmDataV1Marker,
