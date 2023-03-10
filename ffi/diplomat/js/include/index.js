@@ -51,6 +51,7 @@ export { ICU4XIsoTimeZoneMinuteDisplay } from './ICU4XIsoTimeZoneMinuteDisplay.j
 export { ICU4XIsoTimeZoneOptions } from './ICU4XIsoTimeZoneOptions.js';
 export { ICU4XIsoTimeZoneSecondDisplay } from './ICU4XIsoTimeZoneSecondDisplay.js';
 export { ICU4XIsoWeekday } from './ICU4XIsoWeekday.js';
+export { ICU4XLanguageDisplayNames } from './ICU4XLanguageDisplayNames.js';
 export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js';
 export { ICU4XLineBreakIteratorUtf16 } from './ICU4XLineBreakIteratorUtf16.js';
 export { ICU4XLineBreakIteratorUtf8 } from './ICU4XLineBreakIteratorUtf8.js';
@@ -75,6 +76,7 @@ export { ICU4XPluralCategories } from './ICU4XPluralCategories.js';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory.js';
 export { ICU4XPluralOperands } from './ICU4XPluralOperands.js';
 export { ICU4XPluralRules } from './ICU4XPluralRules.js';
+export { ICU4XRegionDisplayNames } from './ICU4XRegionDisplayNames.js';
 export { ICU4XScriptExtensionsSet } from './ICU4XScriptExtensionsSet.js';
 export { ICU4XScriptWithExtensions } from './ICU4XScriptWithExtensions.js';
 export { ICU4XScriptWithExtensionsBorrowed } from './ICU4XScriptWithExtensionsBorrowed.js';

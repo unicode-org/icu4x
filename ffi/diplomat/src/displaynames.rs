@@ -59,7 +59,7 @@ pub mod ffi {
     // }
 
     impl ICU4XLanguageDisplayNames {
-        /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
+        /// Creates a new `LanguageDisplayNames` from locale data and an options bag.
         #[diplomat::rust_link(icu::displaynames::LanguageDisplayNames::try_new_unstable, FnInStruct)]
         pub fn try_new_unstable(
             provider: &ICU4XDataProvider,
@@ -82,7 +82,7 @@ pub mod ffi {
     }
 
     impl ICU4XRegionDisplayNames {
-        /// Creates a new [`RegionDisplayNames`] from locale data and an options bag.
+        /// Creates a new `RegionDisplayNames` from locale data and an options bag.
         #[diplomat::rust_link(
             icu::displaynames::RegionDisplayNames::try_new_unstable,
             FnInStruct
@@ -99,7 +99,7 @@ pub mod ffi {
             )?)))
         }
 
-        /// Returns the locale specific display name of a region for a given string.
+        // Returns the locale specific display name of a region for a given string.
         // #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
         // pub fn of<'a>(&self, code: &str) -> Result<&'a str, ()> {
         //     self.0.of(code).map(|x| x.0).ok_or()
