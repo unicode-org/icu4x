@@ -8,7 +8,7 @@
     See the `Rust documentation for Locale <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
 
 
-    .. js:function:: create_from_string(name)
+    .. js:staticfunction:: create_from_string(name)
 
         Construct an :js:class:`ICU4XLocale` from an locale identifier.
 
@@ -17,7 +17,7 @@
         See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
-    .. js:function:: create_und()
+    .. js:staticfunction:: create_und()
 
         Construct a default undefined :js:class:`ICU4XLocale` "und".
 
@@ -87,7 +87,7 @@
         See the `Rust documentation for try_from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.try_from_bytes>`__ for more information.
 
 
-    .. js:function:: canonicalize(bytes)
+    .. js:staticfunction:: canonicalize(bytes)
 
         Best effort locale canonicalizer that doesn't need any data
 
@@ -113,14 +113,14 @@
         See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
 
 
-    .. js:function:: create_en()
+    .. js:staticfunction:: create_en()
 
         Construct an :js:class:`ICU4XLocale` for the English language.
 
         This convenience constructor is intended for testing only and requires the ``provider_test`` feature.
 
 
-    .. js:function:: create_bn()
+    .. js:staticfunction:: create_bn()
 
         Construct an :js:class:`ICU4XLocale` for the Bangla language.
 

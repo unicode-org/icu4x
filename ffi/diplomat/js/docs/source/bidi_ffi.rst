@@ -8,7 +8,7 @@
     See the `Rust documentation for BidiClassAdapter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Creates a new :js:class:`ICU4XBidi` from locale data.
 
@@ -24,7 +24,7 @@
         See the `Rust documentation for new_with_data_source <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source>`__ for more information.
 
 
-    .. js:function:: level_is_rtl(level)
+    .. js:staticfunction:: level_is_rtl(level)
 
         Check if a Level returned by level_at is an RTL level.
 
@@ -33,7 +33,7 @@
         See the `Rust documentation for is_rtl <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl>`__ for more information.
 
 
-    .. js:function:: level_is_ltr(level)
+    .. js:staticfunction:: level_is_ltr(level)
 
         Check if a Level returned by level_at is an LTR level.
 
@@ -42,14 +42,14 @@
         See the `Rust documentation for is_ltr <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr>`__ for more information.
 
 
-    .. js:function:: level_rtl()
+    .. js:staticfunction:: level_rtl()
 
         Get a basic RTL Level value
 
         See the `Rust documentation for rtl <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl>`__ for more information.
 
 
-    .. js:function:: level_ltr()
+    .. js:staticfunction:: level_ltr()
 
         Get a simple LTR Level value
 

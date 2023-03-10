@@ -8,7 +8,7 @@
     See the `Rust documentation for CanonicalCombiningClassMap <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
@@ -38,7 +38,7 @@
     See the `Rust documentation for CanonicalComposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct a new ICU4XCanonicalComposition instance for NFC
 
@@ -61,7 +61,7 @@
     See the `Rust documentation for CanonicalDecomposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct a new ICU4XCanonicalDecomposition instance for NFC
 

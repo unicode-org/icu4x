@@ -8,21 +8,21 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:function:: create_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar)
+    .. js:staticfunction:: create_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar)
 
         Creates a new :js:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
         See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso>`__ for more information.
 
 
-    .. js:function:: create_from_codes_in_calendar(era_code, year, month_code, day, hour, minute, second, nanosecond, calendar)
+    .. js:staticfunction:: create_from_codes_in_calendar(era_code, year, month_code, day, hour, minute, second, nanosecond, calendar)
 
         Creates a new :js:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
         See the `Rust documentation for try_new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_from_codes>`__ for more information.
 
 
-    .. js:function:: create_from_date_and_time(date, time)
+    .. js:staticfunction:: create_from_date_and_time(date, time)
 
         Creates a new :js:class:`ICU4XDateTime` from an :js:class:`ICU4XDate` and :js:class:`ICU4XTime` object
 
@@ -180,21 +180,21 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:function:: create(year, month, day, hour, minute, second, nanosecond)
+    .. js:staticfunction:: create(year, month, day, hour, minute, second, nanosecond)
 
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 
         See the `Rust documentation for try_new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime>`__ for more information.
 
 
-    .. js:function:: crate_from_date_and_time(date, time)
+    .. js:staticfunction:: crate_from_date_and_time(date, time)
 
         Creates a new :js:class:`ICU4XIsoDateTime` from an :js:class:`ICU4XIsoDate` and :js:class:`ICU4XTime` object
 
         See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
-    .. js:function:: create_from_minutes_since_local_unix_epoch(minutes)
+    .. js:staticfunction:: create_from_minutes_since_local_unix_epoch(minutes)
 
         Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 

@@ -6,14 +6,14 @@
     See the `Rust documentation for ComposingNormalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html>`__ for more information.
 
 
-    .. js:function:: create_nfc(provider)
+    .. js:staticfunction:: create_nfc(provider)
 
         Construct a new ICU4XComposingNormalizer instance for NFC
 
         See the `Rust documentation for try_new_nfc_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable>`__ for more information.
 
 
-    .. js:function:: create_nfkc(provider)
+    .. js:staticfunction:: create_nfkc(provider)
 
         Construct a new ICU4XComposingNormalizer instance for NFKC
 
@@ -43,14 +43,14 @@
     See the `Rust documentation for DecomposingNormalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html>`__ for more information.
 
 
-    .. js:function:: create_nfd(provider)
+    .. js:staticfunction:: create_nfd(provider)
 
         Construct a new ICU4XDecomposingNormalizer instance for NFC
 
         See the `Rust documentation for try_new_nfd_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable>`__ for more information.
 
 
-    .. js:function:: create_nfkd(provider)
+    .. js:staticfunction:: create_nfkd(provider)
 
         Construct a new ICU4XDecomposingNormalizer instance for NFKC
 

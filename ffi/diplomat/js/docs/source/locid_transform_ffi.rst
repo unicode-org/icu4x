@@ -8,7 +8,7 @@
     See the `Rust documentation for LocaleCanonicalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleCanonicalizer.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Create a new :js:class:`ICU4XLocaleCanonicalizer`.
 
@@ -29,7 +29,7 @@
     See the `Rust documentation for LocaleExpander <https://unicode-org.github.io/icu4x-docs/doc/icu/locid_transform/struct.LocaleExpander.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Create a new :js:class:`ICU4XLocaleExpander`.
 

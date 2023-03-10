@@ -53,6 +53,7 @@ pub mod date;
 pub mod datetime;
 pub mod datetime_formatter;
 pub mod decimal;
+pub mod displaynames;
 pub mod errors;
 pub mod fallbacker;
 pub mod fixed_decimal;
