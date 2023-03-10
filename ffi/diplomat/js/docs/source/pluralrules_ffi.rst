@@ -69,14 +69,14 @@
         See the `Rust documentation for try_new_ordinal_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable>`__ for more information.
 
 
-    .. js:function:: category_for(op)
+    .. js:method:: category_for(op)
 
         Get the category for a given number represented as operands
 
         See the `Rust documentation for category_for <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.category_for>`__ for more information.
 
 
-    .. js:function:: categories()
+    .. js:method:: categories()
 
         Get all of the categories needed in the current locale
 
