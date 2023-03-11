@@ -51,11 +51,11 @@ impl<'l> Lstm<'l> {
         }
 
         let mat1 = data.get().mat1.as_ndarray2()?;
-        let mat2 = data.get().mat2.as_ndarray2()?;
-        let mat3 = data.get().mat3.as_ndarray2()?;
+        let mut mat2 = data.get().mat2.as_ndarray2()?;
+        let mut mat3 = data.get().mat3.as_ndarray2()?;
         let mat4 = data.get().mat4.as_ndarray1()?;
-        let mat5 = data.get().mat5.as_ndarray2()?;
-        let mat6 = data.get().mat6.as_ndarray2()?;
+        let mut mat5 = data.get().mat5.as_ndarray2()?;
+        let mut mat6 = data.get().mat6.as_ndarray2()?;
         let mat7 = data.get().mat7.as_ndarray1()?;
         let mat8 = data.get().mat8.as_ndarray2()?;
         let mat9 = data.get().mat9.as_ndarray1()?;
@@ -73,6 +73,14 @@ impl<'l> Lstm<'l> {
         {
             return Err(Error::DimensionMismatch);
         }
+        mat2.swap_axes(0, 1);
+        mat3.swap_axes(0, 1);
+        mat5.swap_axes(0, 1);
+        mat6.swap_axes(0, 1);
+        let mat2 = mat2.as_standard_layout().into_owned();
+        let mat3 = mat3.as_standard_layout().into_owned();
+        let mat5 = mat5.as_standard_layout().into_owned();
+        let mat6 = mat6.as_standard_layout().into_owned();
         Ok(Self {
             data,
             mat1,
@@ -136,7 +144,7 @@ impl<'l> Lstm<'l> {
         hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.dot(&warr) + h_tm1.dot(&uarr) + barr;
+        let s_t = Array1::from(math_helper::mul_mul_sum(x_t.as_slice().unwrap(), warr.as_slice().unwrap(), h_tm1.as_slice().unwrap(), uarr.as_slice().unwrap(), barr.as_slice().unwrap()));
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
