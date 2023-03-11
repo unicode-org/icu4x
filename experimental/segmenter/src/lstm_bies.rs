@@ -183,9 +183,6 @@ impl<'l> Lstm<'l> {
         }
         }
 
-        let mut c_t = MatrixOwned::new_zero([hunits]);
-        let mut h_t = MatrixOwned::new_zero([hunits]);
-
         for i in 0..hunits {
             // For matrices with short stride for the four inner values:
             let p = math_helper::sigmoid(s_t[i*4]);
@@ -197,15 +194,14 @@ impl<'l> Lstm<'l> {
             // let f = math_helper::sigmoid(s_t[i+hunits]);
             // let c = math_helper::tanh(s_t[i+hunits*2]);
             // let o = math_helper::sigmoid(s_t[i+hunits*3]);
-            c_t.as_mut().as_mut_slice()[i] = p*c + f*c_tm1.as_borrowed().as_slice()[i];
-            h_t.as_mut().as_mut_slice()[i] = o*math_helper::tanh(c_t.as_borrowed().as_slice()[i]);
+            let c_old = c_tm1.as_borrowed().as_slice()[i];
+            let c_new = p*c + f*c_old;
+            c_tm1.as_mut_slice()[i] = c_new;
+            h_tm1.as_mut_slice()[i] = o*math_helper::tanh(c_new);
         }
 
         // std::println!("h_t = {:?}", h_t.as_borrowed());
         // std::println!("c_t = {:?}", c_t.as_borrowed());
-
-        h_tm1.set_to(h_t.as_borrowed());
-        c_tm1.set_to(c_t.as_borrowed());
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
