@@ -4,7 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper;
+use crate::math_helper::{self, MatrixOwned};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
@@ -18,12 +18,12 @@ use crate::math_helper::MatrixBorrowed;
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
     mat1: Array2<f32>,
-    mat2: Array3<f32>,
-    mat3: Array3<f32>,
-    mat4: Array2<f32>,
-    mat5: Array3<f32>,
-    mat6: Array3<f32>,
-    mat7: Array2<f32>,
+    mat2: MatrixOwned<3>,
+    mat3: MatrixOwned<3>,
+    mat4: MatrixOwned<2>,
+    mat5: MatrixOwned<3>,
+    mat6: MatrixOwned<3>,
+    mat7: MatrixOwned<2>,
     mat8: Array2<f32>,
     mat9: Array1<f32>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
@@ -97,12 +97,12 @@ impl<'l> Lstm<'l> {
         Ok(Self {
             data,
             mat1,
-            mat2,
-            mat3,
-            mat4,
-            mat5,
-            mat6,
-            mat7,
+            mat2: MatrixOwned::from_ndarray(mat2),
+            mat3: MatrixOwned::from_ndarray(mat3),
+            mat4: MatrixOwned::from_ndarray(mat4),
+            mat5: MatrixOwned::from_ndarray(mat5),
+            mat6: MatrixOwned::from_ndarray(mat6),
+            mat7: MatrixOwned::from_ndarray(mat7),
             mat8,
             mat9,
             grapheme: if data.get().model.contains("_codepoints_") {
@@ -244,9 +244,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 &h_fw,
                 &c_fw,
-                MatrixBorrowed::from_ndarray(&self.mat2.view()),
-                MatrixBorrowed::from_ndarray(&self.mat3.view()),
-                MatrixBorrowed::from_ndarray(&self.mat4.view()),
+                self.mat2.as_borrowed(),
+                self.mat3.as_borrowed(),
+                self.mat4.as_borrowed(),
                 hunits,
             );
             h_fw = new_h;
@@ -264,9 +264,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 &h_bw,
                 &c_bw,
-                MatrixBorrowed::from_ndarray(&self.mat5.view()),
-                MatrixBorrowed::from_ndarray(&self.mat6.view()),
-                MatrixBorrowed::from_ndarray(&self.mat7.view()),
+                self.mat5.as_borrowed(),
+                self.mat6.as_borrowed(),
+                self.mat7.as_borrowed(),
                 self.backward_hunits,
             );
             h_bw = new_h;

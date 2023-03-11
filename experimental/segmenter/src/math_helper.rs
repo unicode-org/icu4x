@@ -2,7 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, Dimension};
+use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, Dimension, OwnedRepr};
+
+pub struct MatrixOwned<const D: usize> {
+    data: Vec<f32>,
+    dims: [usize; D],
+}
+
+impl<const D: usize> MatrixOwned<D> {
+    pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
+        MatrixBorrowed {
+            data: &self.data,
+            dims: self.dims
+        }
+    }
+
+    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Self where Dim<[usize; D]>: Dimension {
+        let dims = nd.shape().try_into().unwrap();
+        Self {
+            data: nd.into_raw_vec(),
+            dims,
+        }
+    }
+}
 
 pub struct MatrixBorrowed<'a, const D: usize> {
     data: &'a [f32],
