@@ -155,26 +155,39 @@ impl<'l> Lstm<'l> {
         barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
         hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
-        // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = math_helper::mul_mul_sum(x_t.as_slice().unwrap(), warr.as_slice().unwrap(), h_tm1.as_slice().unwrap(), uarr.as_slice().unwrap(), barr.as_slice().unwrap());
-        // let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
-        // let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
-        // let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
-        // let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
-        // let c_t = i * _c + f * c_tm1;
-        // let c_t = Array1::from(math_helper::sigmoid_mul_tanh_sigmoid_mul(s_t.slice(ndarray::s![..hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![2 * hunits..3 * hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![hunits..2 * hunits]).as_slice().unwrap(), c_tm1.as_slice().unwrap()));
-        // let h_t = o * math_helper::tanh_arr1(c_t.view());
+        let embedd_dim = x_t.len();
+        debug_assert_eq!(h_tm1.len(), hunits);
+        debug_assert_eq!(c_tm1.len(), hunits);
+        debug_assert_eq!(warr.dim(), (hunits*4, embedd_dim));
+        debug_assert_eq!(uarr.dim(), (hunits*4, hunits));
+        debug_assert_eq!(barr.len(), hunits*4);
 
-        // println!("{s_t:?}");
+        let barr = barr.as_slice().unwrap();
+        let x_t = x_t.as_slice().unwrap();
+        let warr = warr.as_slice().unwrap();
+        let h_tm1 = h_tm1.as_slice().unwrap();
+        let uarr = uarr.as_slice().unwrap();
+
+        let mut s_t = Vec::from(barr);
+        for i in 0..hunits*4 {
+            let x = s_t.get_mut(i).unwrap();
+            *x += math_helper::unrolled_dot(x_t, &warr[i*embedd_dim..(i+1)*embedd_dim]);
+        }
+        for i in 0..hunits*4 {
+            let x = s_t.get_mut(i).unwrap();
+            *x += math_helper::unrolled_dot(h_tm1, &uarr[i*hunits..(i+1)*hunits]);
+        }
 
         let mut c_t = vec![0.0; hunits];
         let mut h_t = vec![0.0; hunits];
 
         for i in 0..hunits {
+            // For matrices with short stride for the four inner values:
             let p = math_helper::sigmoid(s_t[i*4]);
             let f = math_helper::sigmoid(s_t[i*4+1]);
             let c = math_helper::tanh(s_t[i*4+2]);
             let o = math_helper::sigmoid(s_t[i*4+3]);
+            // For matrices with long stride for the four inner values:
             // let p = math_helper::sigmoid(s_t[i]);
             // let f = math_helper::sigmoid(s_t[i+hunits]);
             // let c = math_helper::tanh(s_t[i+hunits*2]);

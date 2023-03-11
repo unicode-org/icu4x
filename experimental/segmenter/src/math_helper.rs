@@ -40,16 +40,6 @@ pub fn max_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> usize {
     ind
 }
 
-/// `tanh_arr1` computes elementwise sigmoid function for elements of a 1d array
-pub fn sigmoid_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
-    arr.map(|v| sigmoid(*v))
-}
-
-/// `tanh_arr1` computes elementwise tanh function for elements of a 1d array
-pub fn tanh_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> Array1<f32> {
-    arr.map(|v| v.tanh())
-}
-
 /// `change_row` gets one 2d array (`arr`), one 1d array (`arr1`), and an index (`row_id`), and replaces the `row_id`-th row of
 /// `arr` with `arr1`
 pub fn change_row(mut arr: Array2<f32>, row_id: usize, new_row: &Array1<f32>) -> Array2<f32> {
@@ -63,37 +53,6 @@ pub fn concatenate_arr1(
     arr2: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
 ) -> Array1<f32> {
     concatenate![Axis(0), arr1, arr2]
-}
-
-pub fn mul_mul_sum(a: &[f32], b: &[f32], c: &[f32], d: &[f32], e: &[f32]) -> Vec<f32> {
-    let m = a.len();
-    let n = b.len() / m;
-    debug_assert_eq!(n / 4, c.len());
-    debug_assert_eq!(n*n/4, d.len());
-    debug_assert_eq!(n, e.len());
-    let mut result = Vec::from(e);
-    for i in 0..n {
-        let x = result.get_mut(i).unwrap();
-        *x += unrolled_dot(a, &b[i*m..(i+1)*m]);
-    }
-    for i in 0..n {
-        let x = result.get_mut(i).unwrap();
-        *x += unrolled_dot(c, &d[i*n/4..(i+1)*n/4]);
-    }
-    result
-}
-
-pub fn sigmoid_mul_tanh_sigmoid_mul(a: &[f32], b: &[f32], c: &[f32], d: &[f32]) -> Vec<f32> {
-    let n = a.len();
-    debug_assert_eq!(n, b.len());
-    debug_assert_eq!(n, c.len());
-    debug_assert_eq!(n, d.len());
-    let mut result = vec![0.0; n];
-    for i in 0..n {
-        let x = result.get_mut(i).unwrap();
-        *x += sigmoid(a[i]) * tanh(b[i]) + sigmoid(c[i]) * d[i];
-    }
-    result
 }
 
 /// Compute the dot product.
