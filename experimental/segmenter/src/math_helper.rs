@@ -2,7 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
+use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, Dimension};
+
+pub struct MatrixBorrowed<'a, const D: usize> {
+    data: &'a [f32],
+    dims: [usize; D],
+}
+
+impl<'a, const D: usize> MatrixBorrowed<'a, D> {
+    #[cfg(debug_assertions)]
+    pub fn debug_assert_dims(&self, dims: [usize; D]) {
+        debug_assert_eq!(dims, self.dims);
+        let expected_len = dims.iter().product::<usize>();
+        debug_assert_eq!(expected_len, self.data.len());
+    }
+
+    pub fn as_slice(&self) -> &'a [f32] {
+        self.data
+    }
+
+    pub fn from_ndarray(nd: &'a ArrayBase<ViewRepr<&f32>, Dim<[usize; D]>>) -> Self where Dim<[usize; D]>: Dimension {
+        Self {
+            data: nd.as_slice().unwrap(),
+            dims: nd.shape().try_into().unwrap()
+        }
+    }
+}
 
 // Polyfill float operations with libm in case we're no_std.
 #[allow(unused_imports)]

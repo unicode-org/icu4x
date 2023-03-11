@@ -11,18 +11,19 @@ use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
-use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
+use ndarray::{Array1, Array2, Array3, ArrayBase, Dim, ViewRepr};
 use zerovec::ule::AsULE;
+use crate::math_helper::MatrixBorrowed;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
     mat1: Array2<f32>,
-    mat2: Array2<f32>,
-    mat3: Array2<f32>,
-    mat4: Array1<f32>,
-    mat5: Array2<f32>,
-    mat6: Array2<f32>,
-    mat7: Array1<f32>,
+    mat2: Array3<f32>,
+    mat3: Array3<f32>,
+    mat4: Array2<f32>,
+    mat5: Array3<f32>,
+    mat6: Array3<f32>,
+    mat7: Array2<f32>,
     mat8: Array2<f32>,
     mat9: Array1<f32>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
@@ -86,12 +87,12 @@ impl<'l> Lstm<'l> {
         mat5.swap_axes(0, 2);
         mat6.swap_axes(0, 2);
         mat7.swap_axes(0, 1);
-        let mat2 = mat2.as_standard_layout().into_owned().into_shape((4*hunits, embedd_dim)).unwrap();
-        let mat3 = mat3.as_standard_layout().into_owned().into_shape((4*hunits, hunits)).unwrap();
-        let mat4 = mat4.as_standard_layout().into_owned().into_shape((4*hunits)).unwrap();
-        let mat5 = mat5.as_standard_layout().into_owned().into_shape((4*hunits, embedd_dim)).unwrap();
-        let mat6 = mat6.as_standard_layout().into_owned().into_shape((4*hunits, hunits)).unwrap();
-        let mat7 = mat7.as_standard_layout().into_owned().into_shape((4*hunits)).unwrap();
+        let mat2 = mat2.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
+        let mat3 = mat3.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
+        let mat4 = mat4.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
+        let mat5 = mat5.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
+        let mat6 = mat6.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
+        let mat7 = mat7.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
         // std::println!("after:\n{mat3:#.1}\n\n");
         Ok(Self {
             data,
@@ -145,28 +146,31 @@ impl<'l> Lstm<'l> {
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
     #[allow(clippy::too_many_arguments)]
-    fn compute_hc(
+    fn compute_hc<'a>(
         &self,
         x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
         h_tm1: &Array1<f32>,
         c_tm1: &Array1<f32>,
-        warr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        uarr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        warr: MatrixBorrowed<'a, 3>,
+        uarr: MatrixBorrowed<'a, 3>,
+        barr: MatrixBorrowed<'a, 2>,
         hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         let embedd_dim = x_t.len();
         debug_assert_eq!(h_tm1.len(), hunits);
         debug_assert_eq!(c_tm1.len(), hunits);
-        debug_assert_eq!(warr.dim(), (hunits*4, embedd_dim));
-        debug_assert_eq!(uarr.dim(), (hunits*4, hunits));
-        debug_assert_eq!(barr.len(), hunits*4);
+        #[cfg(debug_assertions)]
+        {
+            warr.debug_assert_dims([hunits, 4, embedd_dim]);
+            uarr.debug_assert_dims([hunits, 4, hunits]);
+            barr.debug_assert_dims([hunits, 4]);
+        }
 
-        let barr = barr.as_slice().unwrap();
+        let barr = barr.as_slice();
         let x_t = x_t.as_slice().unwrap();
-        let warr = warr.as_slice().unwrap();
+        let warr = warr.as_slice();
         let h_tm1 = h_tm1.as_slice().unwrap();
-        let uarr = uarr.as_slice().unwrap();
+        let uarr = uarr.as_slice();
 
         let mut s_t = Vec::from(barr);
         for i in 0..hunits*4 {
@@ -240,9 +244,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 &h_fw,
                 &c_fw,
-                self.mat2.view(),
-                self.mat3.view(),
-                self.mat4.view(),
+                MatrixBorrowed::from_ndarray(&self.mat2.view()),
+                MatrixBorrowed::from_ndarray(&self.mat3.view()),
+                MatrixBorrowed::from_ndarray(&self.mat4.view()),
                 hunits,
             );
             h_fw = new_h;
@@ -260,9 +264,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 &h_bw,
                 &c_bw,
-                self.mat5.view(),
-                self.mat6.view(),
-                self.mat7.view(),
+                MatrixBorrowed::from_ndarray(&self.mat5.view()),
+                MatrixBorrowed::from_ndarray(&self.mat6.view()),
+                MatrixBorrowed::from_ndarray(&self.mat7.view()),
                 self.backward_hunits,
             );
             h_bw = new_h;
