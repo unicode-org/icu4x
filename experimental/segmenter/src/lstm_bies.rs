@@ -17,7 +17,7 @@ use crate::math_helper::MatrixBorrowed;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
-    mat1: Array2<f32>,
+    mat1: MatrixOwned<2>,
     mat2: MatrixOwned<3>,
     mat3: MatrixOwned<3>,
     mat4: MatrixOwned<2>,
@@ -99,7 +99,7 @@ impl<'l> Lstm<'l> {
         // std::println!("after:\n{mat3:#.1}\n\n");
         Ok(Self {
             data,
-            mat1,
+            mat1: MatrixOwned::from_ndarray(mat1),
             mat2: MatrixOwned::from_ndarray(mat2),
             mat3: MatrixOwned::from_ndarray(mat3),
             mat4: MatrixOwned::from_ndarray(mat4),
@@ -151,7 +151,7 @@ impl<'l> Lstm<'l> {
     #[allow(clippy::too_many_arguments)]
     fn compute_hc<'a>(
         &self,
-        x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        x_t: MatrixBorrowed<'a, 1>,
         mut h_tm1: MatrixBorrowedMut<'a, 1>,
         mut c_tm1: MatrixBorrowedMut<'a, 1>,
         warr: MatrixBorrowed<'a, 3>,
@@ -159,7 +159,7 @@ impl<'l> Lstm<'l> {
         barr: MatrixBorrowed<'a, 2>,
         hunits: usize,
     ) {
-        let embedd_dim = x_t.len();
+        let embedd_dim = x_t.dim();
         #[cfg(debug_assertions)]
         {
             h_tm1.as_borrowed().debug_assert_dims([hunits]);
@@ -169,29 +169,24 @@ impl<'l> Lstm<'l> {
             barr.debug_assert_dims([hunits, 4]);
         }
 
-        let mut s_t = Vec::from(barr.as_slice());
-        {
-        let x_t = x_t.as_slice().unwrap();
-        let warr = warr.as_slice();
-        let h_tm1 = h_tm1.as_borrowed().as_slice();
-        let uarr = uarr.as_slice();
+        let mut s_t = barr.to_owned();
 
-        for i in 0..hunits*4 {
-            let x = s_t.get_mut(i).unwrap();
-            *x += math_helper::unrolled_dot(x_t, &warr[i*embedd_dim..(i+1)*embedd_dim]);
-        }
-        for i in 0..hunits*4 {
-            let x = s_t.get_mut(i).unwrap();
-            *x += math_helper::unrolled_dot(h_tm1, &uarr[i*hunits..(i+1)*hunits]);
-        }
-        }
+        s_t.as_mut().add_dot_3d(x_t, warr);
+        s_t.as_mut().add_dot_3d(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
+            let submatrix = s_t.as_borrowed().submatrix::<1>(i).as_slice();
             // For matrices with short stride for the four inner values:
-            let p = math_helper::sigmoid(s_t[i*4]);
-            let f = math_helper::sigmoid(s_t[i*4+1]);
-            let c = math_helper::tanh(s_t[i*4+2]);
-            let o = math_helper::sigmoid(s_t[i*4+3]);
+            // let p = math_helper::sigmoid(submatrix[0]);
+            // let f = math_helper::sigmoid(submatrix[1]);
+            // let c = math_helper::tanh(submatrix[2]);
+            // let o = math_helper::sigmoid(submatrix[3]);
+            // Next:
+            let slice = s_t.as_borrowed().as_slice();
+            let p = math_helper::sigmoid(slice[i*4]);
+            let f = math_helper::sigmoid(slice[i*4+1]);
+            let c = math_helper::tanh(slice[i*4+2]);
+            let o = math_helper::sigmoid(slice[i*4+3]);
             // For matrices with long stride for the four inner values:
             // let p = math_helper::sigmoid(s_t[i]);
             // let f = math_helper::sigmoid(s_t[i+hunits]);
@@ -244,7 +239,7 @@ impl<'l> Lstm<'l> {
         // let mut h_fw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.mat1.submatrix::<1>(*g_id as usize);
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i-1, i);
             }
@@ -266,7 +261,8 @@ impl<'l> Lstm<'l> {
         // let mut h_bw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.mat1.submatrix::<1>(*g_id as usize);
+            // let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             if i > 0 {
                 all_h_bw.as_mut().copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
@@ -294,8 +290,8 @@ impl<'l> Lstm<'l> {
             let timew_bw = self.mat8.submatrix(1);
             // TODO: Make curr_est be stack-allocated
             let mut curr_est = MatrixOwned::<1>::new_zero([4]);
-            curr_fw.dot_2d(timew_fw, curr_est.as_mut());
-            curr_bw.dot_2d(timew_bw, curr_est.as_mut());
+            curr_est.as_mut().add_dot_2d(curr_fw, timew_fw);
+            curr_est.as_mut().add_dot_2d(curr_bw, timew_bw);
             curr_est.as_mut().add(timeb);
             curr_est.as_mut().to_softmax();
             // We use `unwrap_or` to fall back and prevent panics.

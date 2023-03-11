@@ -36,6 +36,7 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
         assert_eq!(M, D-1);
         let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
@@ -49,6 +50,7 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    #[inline]
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
         assert_eq!(M, D-1);
         let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
@@ -74,6 +76,13 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         self.data
     }
 
+    pub fn to_owned(&self) -> MatrixOwned<D> {
+        MatrixOwned {
+            data: self.data.to_vec(),
+            dims: self.dims
+        }
+    }
+
     pub fn argmax(&self) -> usize {
         let mut mx: f32 = 0.0;
         let mut ind = 0;
@@ -93,12 +102,14 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         }
     }
 
-    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
+    #[inline]
+    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<'a, M> {
         assert_eq!(M, D-1);
         let (range, sub_dims) = self.submatrix_range(index);
         MatrixBorrowed { data: &self.data[range], dims: sub_dims }
     }
 
+    #[inline]
     fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
         let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
         let n = sub_dims.iter().product::<usize>();
@@ -112,24 +123,20 @@ impl<'a> MatrixBorrowed<'a, 1> {
     }
 
     pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
-        assert_eq!(self.dims, other.dims);
+        debug_assert_eq!(self.dims, other.dims);
         unrolled_dot(self.data, other.data)
-    }
-
-    pub fn dot_2d(&self, other: MatrixBorrowed<2>, mut output: MatrixBorrowedMut<1>) {
-        let m = self.dim();
-        let n = output.as_borrowed().dim();
-        assert_eq!(m, other.dim().1);
-        assert_eq!(n, other.dim().0);
-        for i in 0..n {
-            output.as_mut_slice()[i] += self.dot_1d(other.submatrix(i));
-        }
     }
 }
 
 impl<'a> MatrixBorrowed<'a, 2> {
     pub fn dim(&self) -> (usize, usize) {
         (self.dims[0], self.dims[1])
+    }
+}
+
+impl<'a> MatrixBorrowed<'a, 3> {
+    pub fn dim(&self) -> (usize, usize, usize) {
+        (self.dims[0], self.dims[1], self.dims[2])
     }
 }
 
@@ -180,6 +187,41 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data.iter_mut().for_each(|v| {
             *v = v.exp() / sm;
         });
+    }
+}
+
+impl<'a> MatrixBorrowedMut<'a, 1> {
+    /// Calculate the dot product of a and b, saving the result to self.
+    ///
+    /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
+    /// this is the opposite of standard practice.
+    pub fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<2>) {
+        let m = a.dim();
+        let n = self.as_borrowed().dim();
+        debug_assert_eq!(m, b.dim().1);
+        debug_assert_eq!(n, b.dim().0);
+        for i in 0..n {
+            self.as_mut_slice()[i] += a.dot_1d(b.submatrix(i));
+        }
+    }
+}
+
+impl<'a> MatrixBorrowedMut<'a, 2> {
+    pub fn add_dot_3d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<3>) {
+        let m = a.dim();
+        let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
+        debug_assert_eq!(m, b.dim().2);
+        debug_assert_eq!(n, b.dim().0 * b.dim().1);
+        // Note: The following two loops are equivalent, but the second has more opportunity for
+        // vectorization since it allows the vectorization to span submatrices.
+        // for i in 0..b.dim().0 {
+        //     self.submatrix_mut::<1>(i).add_dot_2d(a, b.submatrix(i));
+        // }
+        let lhs = a.as_slice();
+        for i in 0..n {
+            let rhs = &b.as_slice()[i*m..(i+1)*m];
+            self.as_mut_slice()[i] += unrolled_dot(lhs, rhs);
+        }
     }
 }
 
