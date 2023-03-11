@@ -4,7 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper::{self, MatrixOwned};
+use crate::math_helper::{self, MatrixOwned, MatrixBorrowedMut};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
@@ -149,30 +149,30 @@ impl<'l> Lstm<'l> {
     fn compute_hc<'a>(
         &self,
         x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-        h_tm1: &Array1<f32>,
-        c_tm1: &Array1<f32>,
+        mut h_tm1: MatrixBorrowedMut<'a, 1>,
+        mut c_tm1: MatrixBorrowedMut<'a, 1>,
         warr: MatrixBorrowed<'a, 3>,
         uarr: MatrixBorrowed<'a, 3>,
         barr: MatrixBorrowed<'a, 2>,
         hunits: usize,
-    ) -> (Array1<f32>, Array1<f32>) {
+    ) {
         let embedd_dim = x_t.len();
-        debug_assert_eq!(h_tm1.len(), hunits);
-        debug_assert_eq!(c_tm1.len(), hunits);
         #[cfg(debug_assertions)]
         {
+            h_tm1.as_borrowed().debug_assert_dims([hunits]);
+            c_tm1.as_borrowed().debug_assert_dims([hunits]);
             warr.debug_assert_dims([hunits, 4, embedd_dim]);
             uarr.debug_assert_dims([hunits, 4, hunits]);
             barr.debug_assert_dims([hunits, 4]);
         }
 
-        let barr = barr.as_slice();
+        let mut s_t = Vec::from(barr.as_slice());
+        {
         let x_t = x_t.as_slice().unwrap();
         let warr = warr.as_slice();
-        let h_tm1 = h_tm1.as_slice().unwrap();
+        let h_tm1 = h_tm1.as_borrowed().as_slice();
         let uarr = uarr.as_slice();
 
-        let mut s_t = Vec::from(barr);
         for i in 0..hunits*4 {
             let x = s_t.get_mut(i).unwrap();
             *x += math_helper::unrolled_dot(x_t, &warr[i*embedd_dim..(i+1)*embedd_dim]);
@@ -181,9 +181,10 @@ impl<'l> Lstm<'l> {
             let x = s_t.get_mut(i).unwrap();
             *x += math_helper::unrolled_dot(h_tm1, &uarr[i*hunits..(i+1)*hunits]);
         }
+        }
 
-        let mut c_t = vec![0.0; hunits];
-        let mut h_t = vec![0.0; hunits];
+        let mut c_t = MatrixOwned::new_zero([hunits]);
+        let mut h_t = MatrixOwned::new_zero([hunits]);
 
         for i in 0..hunits {
             // For matrices with short stride for the four inner values:
@@ -196,11 +197,15 @@ impl<'l> Lstm<'l> {
             // let f = math_helper::sigmoid(s_t[i+hunits]);
             // let c = math_helper::tanh(s_t[i+hunits*2]);
             // let o = math_helper::sigmoid(s_t[i+hunits*3]);
-            c_t[i] = p*c + f*c_tm1[i];
-            h_t[i] = o*math_helper::tanh(c_t[i]);
+            c_t.as_mut().as_mut_slice()[i] = p*c + f*c_tm1.as_borrowed().as_slice()[i];
+            h_t.as_mut().as_mut_slice()[i] = o*math_helper::tanh(c_t.as_borrowed().as_slice()[i]);
         }
 
-        (Array1::from(h_t), Array1::from(c_t))
+        // std::println!("h_t = {:?}", h_t.as_borrowed());
+        // std::println!("c_t = {:?}", c_t.as_borrowed());
+
+        h_tm1.set_to(h_t.as_borrowed());
+        c_tm1.set_to(c_t.as_borrowed());
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
@@ -235,53 +240,58 @@ impl<'l> Lstm<'l> {
         // hunits is the number of hidden unints in each LSTM cell
         let hunits = self.hunits;
         // Forward LSTM
-        let mut c_fw = Array1::<f32>::zeros(hunits);
-        let mut h_fw = Array1::<f32>::zeros(hunits);
-        let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
+        // std::println!("Forward LSTM for: {}", input);
+        let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);//Array1::<f32>::zeros(hunits);
+        // let mut h_fw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
+        let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
-            let (new_h, new_c) = self.compute_hc(
+            if i > 0 {
+                all_h_fw.copy_submatrix::<1>(i-1, i);
+            }
+            self.compute_hc(
                 x_t,
-                &h_fw,
-                &c_fw,
+                all_h_fw.submatrix_mut(i),
+                c_fw.as_mut(),
                 self.mat2.as_borrowed(),
                 self.mat3.as_borrowed(),
                 self.mat4.as_borrowed(),
                 hunits,
             );
-            h_fw = new_h;
-            c_fw = new_c;
-            all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
+            // all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
         }
 
         // Backward LSTM
-        let mut c_bw = Array1::<f32>::zeros(hunits);
-        let mut h_bw = Array1::<f32>::zeros(hunits);
-        let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
+        // std::println!("Backward LSTM for: {}", input);
+        let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);//Array1::<f32>::zeros(hunits);
+        // let mut h_bw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
+        let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
-            let (new_h, new_c) = self.compute_hc(
+            if i > 0 {
+                all_h_bw.copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
+            }
+            self.compute_hc(
                 x_t,
-                &h_bw,
-                &c_bw,
+                all_h_bw.submatrix_mut(input_seq_len - i - 1),
+                c_bw.as_mut(),
                 self.mat5.as_borrowed(),
                 self.mat6.as_borrowed(),
                 self.mat7.as_borrowed(),
                 self.backward_hunits,
             );
-            h_bw = new_h;
-            c_bw = new_c;
-            all_h_bw = math_helper::change_row(all_h_bw, input_seq_len - 1 - i, &h_bw);
+            // all_h_bw = math_helper::change_row(all_h_bw, input_seq_len - 1 - i, &h_bw);
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
+        // std::println!("Resolving for: {}", input);
         let timew = self.mat8.view();
         let timeb = self.mat9.view();
         let mut bies = String::new();
         for i in 0..input_seq_len {
-            let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
-            let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
-            let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
+            let curr_fw = Array1::from(all_h_fw.submatrix::<1>(i).as_slice().to_vec());//.slice(ndarray::s![i, ..]);
+            let curr_bw = Array1::from(all_h_bw.submatrix::<1>(i).as_slice().to_vec());//.slice(ndarray::s![i, ..]);
+            let concat_lstm = math_helper::concatenate_arr1(curr_fw.view(), curr_bw.view());
             let curr_est = concat_lstm.dot(&timew) + timeb;
             let probs = math_helper::softmax(curr_est);
             // We use `unwrap_or` to fall back and prevent panics.

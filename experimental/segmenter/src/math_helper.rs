@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::ops::Range;
+
 use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, Dimension, OwnedRepr};
 
+#[derive(Debug, Clone)]
 pub struct MatrixOwned<const D: usize> {
     data: Vec<f32>,
     dims: [usize; D],
@@ -24,8 +27,48 @@ impl<const D: usize> MatrixOwned<D> {
             dims,
         }
     }
+
+    pub fn new_zero(dims: [usize; D]) -> Self {
+        let total_len = dims.iter().product::<usize>();
+        MatrixOwned {
+            data: vec![0.0; total_len],
+            dims,
+        }
+    }
+
+    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
+        assert_eq!(M, D-1);
+        let (range, sub_dims) = self.submatrix_range(index);
+        MatrixBorrowed { data: &self.data[range], dims: sub_dims }
+    }
+
+    pub fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
+        MatrixBorrowedMut {
+            data: &mut self.data,
+            dims: self.dims
+        }
+    }
+
+    pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
+        let (range_from, _) = self.submatrix_range::<M>(from);
+        let (range_to, _) = self.submatrix_range::<M>(to);
+        self.data.copy_within(range_from, range_to.start)
+    }
+
+    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
+        assert_eq!(M, D-1);
+        let (range, sub_dims) = self.submatrix_range(index);
+        MatrixBorrowedMut { data: &mut self.data[range], dims: sub_dims }
+    }
+
+    fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
+        let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
+        let n = sub_dims.iter().product::<usize>();
+        (n*index .. n*(index+1), sub_dims)
+    }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct MatrixBorrowed<'a, const D: usize> {
     data: &'a [f32],
     dims: [usize; D],
@@ -48,6 +91,36 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
             data: nd.as_slice().unwrap(),
             dims: nd.shape().try_into().unwrap()
         }
+    }
+}
+
+impl<'a> MatrixBorrowed<'a, 1> {
+    pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
+        assert_eq!(self.dims, other.dims);
+        unrolled_dot(self.data, other.data)
+    }
+}
+
+pub struct MatrixBorrowedMut<'a, const D: usize> {
+    data: &'a mut [f32],
+    dims: [usize; D],
+}
+
+impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
+    pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
+        MatrixBorrowed {
+            data: &self.data,
+            dims: self.dims
+        }
+    }
+
+    pub fn as_mut_slice(&mut self) -> &mut [f32] {
+        self.data
+    }
+
+    pub fn set_to(&mut self, other: MatrixBorrowed<'_, D>) {
+        assert_eq!(self.dims, other.dims);
+        self.data.copy_from_slice(other.data);
     }
 }
 
