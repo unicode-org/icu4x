@@ -46,7 +46,7 @@ const EPOCH: i32 = 1;
 ///
 /// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
-/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_calendar
+/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_8601#Dates
 ///
 /// # Era codes
 ///
