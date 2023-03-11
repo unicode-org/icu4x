@@ -10,13 +10,13 @@ use num_traits::Float;
 
 /// `tanh` computes the tanh function for a scalar value.
 #[inline]
-fn tanh(x: f32) -> f32 {
+pub fn tanh(x: f32) -> f32 {
     x.tanh()
 }
 
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
-fn sigmoid(x: f32) -> f32 {
+pub fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 

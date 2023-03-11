@@ -73,14 +73,26 @@ impl<'l> Lstm<'l> {
         {
             return Err(Error::DimensionMismatch);
         }
-        mat2.swap_axes(0, 1);
-        mat3.swap_axes(0, 1);
-        mat5.swap_axes(0, 1);
-        mat6.swap_axes(0, 1);
-        let mat2 = mat2.as_standard_layout().into_owned();
-        let mat3 = mat3.as_standard_layout().into_owned();
-        let mat5 = mat5.as_standard_layout().into_owned();
-        let mat6 = mat6.as_standard_layout().into_owned();
+        // std::println!("before:\n{mat3:#.1}\n\n");
+        let mut mat2 = mat2.into_shape((embedd_dim, 4, hunits))?;
+        let mut mat3 = mat3.into_shape((hunits, 4, hunits))?;
+        let mut mat4 = mat4.into_shape((4, hunits))?;
+        let mut mat5 = mat5.into_shape((embedd_dim, 4, hunits))?;
+        let mut mat6 = mat6.into_shape((hunits, 4, hunits))?;
+        let mut mat7 = mat7.into_shape((4, hunits))?;
+        mat2.swap_axes(0, 2);
+        mat3.swap_axes(0, 2);
+        mat4.swap_axes(0, 1);
+        mat5.swap_axes(0, 2);
+        mat6.swap_axes(0, 2);
+        mat7.swap_axes(0, 1);
+        let mat2 = mat2.as_standard_layout().into_owned().into_shape((4*hunits, embedd_dim)).unwrap();
+        let mat3 = mat3.as_standard_layout().into_owned().into_shape((4*hunits, hunits)).unwrap();
+        let mat4 = mat4.as_standard_layout().into_owned().into_shape((4*hunits)).unwrap();
+        let mat5 = mat5.as_standard_layout().into_owned().into_shape((4*hunits, embedd_dim)).unwrap();
+        let mat6 = mat6.as_standard_layout().into_owned().into_shape((4*hunits, hunits)).unwrap();
+        let mat7 = mat7.as_standard_layout().into_owned().into_shape((4*hunits)).unwrap();
+        // std::println!("after:\n{mat3:#.1}\n\n");
         Ok(Self {
             data,
             mat1,
@@ -144,15 +156,34 @@ impl<'l> Lstm<'l> {
         hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = Array1::from(math_helper::mul_mul_sum(x_t.as_slice().unwrap(), warr.as_slice().unwrap(), h_tm1.as_slice().unwrap(), uarr.as_slice().unwrap(), barr.as_slice().unwrap()));
+        let s_t = math_helper::mul_mul_sum(x_t.as_slice().unwrap(), warr.as_slice().unwrap(), h_tm1.as_slice().unwrap(), uarr.as_slice().unwrap(), barr.as_slice().unwrap());
         // let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         // let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         // let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
-        let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
+        // let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
         // let c_t = i * _c + f * c_tm1;
-        let c_t = Array1::from(math_helper::sigmoid_mul_tanh_sigmoid_mul(s_t.slice(ndarray::s![..hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![2 * hunits..3 * hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![hunits..2 * hunits]).as_slice().unwrap(), c_tm1.as_slice().unwrap()));
-        let h_t = o * math_helper::tanh_arr1(c_t.view());
-        (h_t, c_t)
+        // let c_t = Array1::from(math_helper::sigmoid_mul_tanh_sigmoid_mul(s_t.slice(ndarray::s![..hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![2 * hunits..3 * hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![hunits..2 * hunits]).as_slice().unwrap(), c_tm1.as_slice().unwrap()));
+        // let h_t = o * math_helper::tanh_arr1(c_t.view());
+
+        // println!("{s_t:?}");
+
+        let mut c_t = vec![0.0; hunits];
+        let mut h_t = vec![0.0; hunits];
+
+        for i in 0..hunits {
+            let p = math_helper::sigmoid(s_t[i*4]);
+            let f = math_helper::sigmoid(s_t[i*4+1]);
+            let c = math_helper::tanh(s_t[i*4+2]);
+            let o = math_helper::sigmoid(s_t[i*4+3]);
+            // let p = math_helper::sigmoid(s_t[i]);
+            // let f = math_helper::sigmoid(s_t[i+hunits]);
+            // let c = math_helper::tanh(s_t[i+hunits*2]);
+            // let o = math_helper::sigmoid(s_t[i+hunits*3]);
+            c_t[i] = p*c + f*c_tm1[i];
+            h_t[i] = o*math_helper::tanh(c_t[i]);
+        }
+
+        (Array1::from(h_t), Array1::from(c_t))
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
