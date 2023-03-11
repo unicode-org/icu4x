@@ -24,8 +24,8 @@ pub struct Lstm<'l> {
     mat5: MatrixOwned<3>,
     mat6: MatrixOwned<3>,
     mat7: MatrixOwned<2>,
-    mat8: Array2<f32>,
-    mat9: Array1<f32>,
+    mat8: MatrixOwned<3>,
+    mat9: MatrixOwned<1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
     backward_hunits: usize,
@@ -81,18 +81,21 @@ impl<'l> Lstm<'l> {
         let mut mat5 = mat5.into_shape((embedd_dim, 4, hunits))?;
         let mut mat6 = mat6.into_shape((hunits, 4, hunits))?;
         let mut mat7 = mat7.into_shape((4, hunits))?;
+        let mut mat8 = mat8.into_shape((2, hunits, 4))?;
         mat2.swap_axes(0, 2);
         mat3.swap_axes(0, 2);
         mat4.swap_axes(0, 1);
         mat5.swap_axes(0, 2);
         mat6.swap_axes(0, 2);
         mat7.swap_axes(0, 1);
+        mat8.swap_axes(1, 2);
         let mat2 = mat2.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
         let mat3 = mat3.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
         let mat4 = mat4.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
         let mat5 = mat5.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
         let mat6 = mat6.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
         let mat7 = mat7.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
+        let mat8 = mat8.as_standard_layout().into_owned();
         // std::println!("after:\n{mat3:#.1}\n\n");
         Ok(Self {
             data,
@@ -103,8 +106,8 @@ impl<'l> Lstm<'l> {
             mat5: MatrixOwned::from_ndarray(mat5),
             mat6: MatrixOwned::from_ndarray(mat6),
             mat7: MatrixOwned::from_ndarray(mat7),
-            mat8,
-            mat9,
+            mat8: MatrixOwned::from_ndarray(mat8),
+            mat9: MatrixOwned::from_ndarray(mat9),
             grapheme: if data.get().model.contains("_codepoints_") {
                 None
             } else {
@@ -123,8 +126,8 @@ impl<'l> Lstm<'l> {
 
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
-    fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
-        let ind = math_helper::max_arr1(arr.view());
+    fn compute_bies(&self, arr: MatrixBorrowed<1>) -> Result<char, Error> {
+        let ind = arr.argmax();
         match ind {
             0 => Ok('b'),
             1 => Ok('i'),
@@ -243,7 +246,7 @@ impl<'l> Lstm<'l> {
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             if i > 0 {
-                all_h_fw.copy_submatrix::<1>(i-1, i);
+                all_h_fw.as_mut().copy_submatrix::<1>(i-1, i);
             }
             self.compute_hc(
                 x_t,
@@ -265,7 +268,7 @@ impl<'l> Lstm<'l> {
         for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             if i > 0 {
-                all_h_bw.copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
+                all_h_bw.as_mut().copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
             self.compute_hc(
                 x_t,
@@ -281,17 +284,22 @@ impl<'l> Lstm<'l> {
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
         // std::println!("Resolving for: {}", input);
-        let timew = self.mat8.view();
-        let timeb = self.mat9.view();
+        // let timew = self.mat8.view();
+        let timeb = self.mat9.as_borrowed();
         let mut bies = String::new();
         for i in 0..input_seq_len {
-            let curr_fw = Array1::from(all_h_fw.submatrix::<1>(i).as_slice().to_vec());//.slice(ndarray::s![i, ..]);
-            let curr_bw = Array1::from(all_h_bw.submatrix::<1>(i).as_slice().to_vec());//.slice(ndarray::s![i, ..]);
-            let concat_lstm = math_helper::concatenate_arr1(curr_fw.view(), curr_bw.view());
-            let curr_est = concat_lstm.dot(&timew) + timeb;
-            let probs = math_helper::softmax(curr_est);
+            let curr_fw = all_h_fw.submatrix::<1>(i);
+            let curr_bw = all_h_bw.submatrix::<1>(i);
+            let timew_fw = self.mat8.submatrix(0);
+            let timew_bw = self.mat8.submatrix(1);
+            // TODO: Make curr_est be stack-allocated
+            let mut curr_est = MatrixOwned::<1>::new_zero([4]);
+            curr_fw.dot_2d(timew_fw, curr_est.as_mut());
+            curr_bw.dot_2d(timew_bw, curr_est.as_mut());
+            curr_est.as_mut().add(timeb);
+            curr_est.as_mut().to_softmax();
             // We use `unwrap_or` to fall back and prevent panics.
-            bies.push(self.compute_bies(probs).unwrap_or('s'));
+            bies.push(self.compute_bies(curr_est.as_borrowed()).unwrap_or('s'));
         }
         bies
     }

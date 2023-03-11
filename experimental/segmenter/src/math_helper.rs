@@ -38,7 +38,7 @@ impl<const D: usize> MatrixOwned<D> {
 
     pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.submatrix_range(index);
+        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
         MatrixBorrowed { data: &self.data[range], dims: sub_dims }
     }
 
@@ -49,22 +49,10 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
-    pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
-        let (range_from, _) = self.submatrix_range::<M>(from);
-        let (range_to, _) = self.submatrix_range::<M>(to);
-        self.data.copy_within(range_from, range_to.start)
-    }
-
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.submatrix_range(index);
+        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
         MatrixBorrowedMut { data: &mut self.data[range], dims: sub_dims }
-    }
-
-    fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
-        let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
-        let n = sub_dims.iter().product::<usize>();
-        (n*index .. n*(index+1), sub_dims)
     }
 }
 
@@ -86,18 +74,62 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         self.data
     }
 
+    pub fn argmax(&self) -> usize {
+        let mut mx: f32 = 0.0;
+        let mut ind = 0;
+        self.data.iter().enumerate().for_each(|(i, v)| {
+            if mx < *v {
+                mx = *v;
+                ind = i
+            }
+        });
+        ind
+    }
+
     pub fn from_ndarray(nd: &'a ArrayBase<ViewRepr<&f32>, Dim<[usize; D]>>) -> Self where Dim<[usize; D]>: Dimension {
         Self {
             data: nd.as_slice().unwrap(),
             dims: nd.shape().try_into().unwrap()
         }
     }
+
+    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
+        assert_eq!(M, D-1);
+        let (range, sub_dims) = self.submatrix_range(index);
+        MatrixBorrowed { data: &self.data[range], dims: sub_dims }
+    }
+
+    fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
+        let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
+        let n = sub_dims.iter().product::<usize>();
+        (n*index .. n*(index+1), sub_dims)
+    }
 }
 
 impl<'a> MatrixBorrowed<'a, 1> {
+    pub fn dim(&self) -> usize {
+        self.dims[0]
+    }
+
     pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
         assert_eq!(self.dims, other.dims);
         unrolled_dot(self.data, other.data)
+    }
+
+    pub fn dot_2d(&self, other: MatrixBorrowed<2>, mut output: MatrixBorrowedMut<1>) {
+        let m = self.dim();
+        let n = output.as_borrowed().dim();
+        assert_eq!(m, other.dim().1);
+        assert_eq!(n, other.dim().0);
+        for i in 0..n {
+            output.as_mut_slice()[i] += self.dot_1d(other.submatrix(i));
+        }
+    }
+}
+
+impl<'a> MatrixBorrowed<'a, 2> {
+    pub fn dim(&self) -> (usize, usize) {
+        (self.dims[0], self.dims[1])
     }
 }
 
@@ -118,9 +150,36 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data
     }
 
+    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
+        assert_eq!(M, D-1);
+        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
+        MatrixBorrowedMut { data: &mut self.data[range], dims: sub_dims }
+    }
+
+    pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
+        let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
+        let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
+        self.data.copy_within(range_from, range_to.start)
+    }
+
     pub fn set_to(&mut self, other: MatrixBorrowed<'_, D>) {
         assert_eq!(self.dims, other.dims);
         self.data.copy_from_slice(other.data);
+    }
+
+    pub fn add(&mut self, other: MatrixBorrowed<'_, D>) {
+        assert_eq!(self.dims, other.dims);
+        // TODO: Vectorize?
+        for i in 0..self.data.len() {
+            self.data[i] += other.data[i];
+        }
+    }
+
+    pub fn to_softmax(&mut self) {
+        let sm = self.data.iter().fold(0.0, |sm, v| sm + v.exp());
+        self.data.iter_mut().for_each(|v| {
+            *v = v.exp() / sm;
+        });
     }
 }
 
