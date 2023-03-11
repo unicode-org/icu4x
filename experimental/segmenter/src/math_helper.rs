@@ -8,6 +8,12 @@ use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr};
 #[allow(unused_imports)]
 use num_traits::Float;
 
+/// `tanh` computes the tanh function for a scalar value.
+#[inline]
+fn tanh(x: f32) -> f32 {
+    x.tanh()
+}
+
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
 fn sigmoid(x: f32) -> f32 {
@@ -73,6 +79,19 @@ pub fn mul_mul_sum(a: &[f32], b: &[f32], c: &[f32], d: &[f32], e: &[f32]) -> Vec
     for i in 0..n {
         let x = result.get_mut(i).unwrap();
         *x += unrolled_dot(c, &d[i*n/4..(i+1)*n/4]);
+    }
+    result
+}
+
+pub fn sigmoid_mul_tanh_sigmoid_mul(a: &[f32], b: &[f32], c: &[f32], d: &[f32]) -> Vec<f32> {
+    let n = a.len();
+    debug_assert_eq!(n, b.len());
+    debug_assert_eq!(n, c.len());
+    debug_assert_eq!(n, d.len());
+    let mut result = vec![0.0; n];
+    for i in 0..n {
+        let x = result.get_mut(i).unwrap();
+        *x += sigmoid(a[i]) * tanh(b[i]) + sigmoid(c[i]) * d[i];
     }
     result
 }

@@ -145,11 +145,12 @@ impl<'l> Lstm<'l> {
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
         let s_t = Array1::from(math_helper::mul_mul_sum(x_t.as_slice().unwrap(), warr.as_slice().unwrap(), h_tm1.as_slice().unwrap(), uarr.as_slice().unwrap(), barr.as_slice().unwrap()));
-        let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
-        let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
-        let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
+        // let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
+        // let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
+        // let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
         let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
-        let c_t = i * _c + f * c_tm1;
+        // let c_t = i * _c + f * c_tm1;
+        let c_t = Array1::from(math_helper::sigmoid_mul_tanh_sigmoid_mul(s_t.slice(ndarray::s![..hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![2 * hunits..3 * hunits]).as_slice().unwrap(), s_t.slice(ndarray::s![hunits..2 * hunits]).as_slice().unwrap(), c_tm1.as_slice().unwrap()));
         let h_t = o * math_helper::tanh_arr1(c_t.view());
         (h_t, c_t)
     }
