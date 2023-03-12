@@ -4,7 +4,7 @@
 
 use core::ops::Range;
 
-use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, ViewRepr, Dimension, OwnedRepr};
+use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, Dimension, OwnedRepr, ViewRepr};
 
 #[derive(Debug, Clone)]
 pub struct MatrixOwned<const D: usize> {
@@ -16,11 +16,14 @@ impl<const D: usize> MatrixOwned<D> {
     pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: &self.data,
-            dims: self.dims
+            dims: self.dims,
         }
     }
 
-    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Self where Dim<[usize; D]>: Dimension {
+    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Self
+    where
+        Dim<[usize; D]>: Dimension,
+    {
         let dims = nd.shape().try_into().unwrap();
         Self {
             data: nd.into_raw_vec(),
@@ -38,7 +41,7 @@ impl<const D: usize> MatrixOwned<D> {
 
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
-        assert_eq!(M, D-1);
+        assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
         let data = &self.data.get(range)?;
         Some(MatrixBorrowed { data, dims })
@@ -47,13 +50,13 @@ impl<const D: usize> MatrixOwned<D> {
     pub fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
         MatrixBorrowedMut {
             data: &mut self.data,
-            dims: self.dims
+            dims: self.dims,
         }
     }
 
     #[inline]
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
-        assert_eq!(M, D-1);
+        assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
         let data = self.data.get_mut(range)?;
         Some(MatrixBorrowedMut { data, dims })
@@ -81,7 +84,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     pub fn to_owned(&self) -> MatrixOwned<D> {
         MatrixOwned {
             data: self.data.to_vec(),
-            dims: self.dims
+            dims: self.dims,
         }
     }
 
@@ -97,17 +100,20 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         ind
     }
 
-    pub fn from_ndarray(nd: &'a ArrayBase<ViewRepr<&f32>, Dim<[usize; D]>>) -> Self where Dim<[usize; D]>: Dimension {
+    pub fn from_ndarray(nd: &'a ArrayBase<ViewRepr<&f32>, Dim<[usize; D]>>) -> Self
+    where
+        Dim<[usize; D]>: Dimension,
+    {
         Self {
             data: nd.as_slice().unwrap(),
-            dims: nd.shape().try_into().unwrap()
+            dims: nd.shape().try_into().unwrap(),
         }
     }
 
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion should always fail and be elided at compile time
-        assert_eq!(M, D-1);
+        assert_eq!(M, D - 1);
         let (range, dims) = self.submatrix_range(index);
         let data = &self.data.get(range)?;
         Some(MatrixBorrowed { data, dims })
@@ -116,12 +122,12 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     #[inline]
     fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
         // This assertion should always fail and be elided at compile time
-        assert_eq!(M, D-1);
+        assert_eq!(M, D - 1);
         // The above assertion guarantees that the following line will succeed
         #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
         let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
         let n = sub_dims.iter().product::<usize>();
-        (n*index .. n*(index+1), sub_dims)
+        (n * index..n * (index + 1), sub_dims)
     }
 }
 
@@ -138,7 +144,12 @@ impl<'a> MatrixBorrowed<'a, 1> {
         if self.data.len() == 4 {
             // Safety: self.data has length 4
             unsafe {
-                Some((*self.data.get_unchecked(0), *self.data.get_unchecked(1), *self.data.get_unchecked(2), *self.data.get_unchecked(3)))
+                Some((
+                    *self.data.get_unchecked(0),
+                    *self.data.get_unchecked(1),
+                    *self.data.get_unchecked(2),
+                    *self.data.get_unchecked(3),
+                ))
             }
         } else {
             None
@@ -171,7 +182,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: &self.data,
-            dims: self.dims
+            dims: self.dims,
         }
     }
 
@@ -180,7 +191,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
-        assert_eq!(M, D-1);
+        assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
         let data = self.data.get_mut(range)?;
         Some(MatrixBorrowedMut { data, dims })
@@ -237,7 +248,8 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         debug_assert_eq!(m, b.dim().1);
         debug_assert_eq!(n, b.dim().0);
         for i in 0..n {
-            if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i)) {
+            if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
+            {
                 *dest += unrolled_dot(a.data, b_sub.data);
             } else {
                 debug_assert!(false);
@@ -262,7 +274,10 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         // }
         let lhs = a.as_slice();
         for i in 0..n {
-            if let (Some(dest), Some(rhs)) = (self.as_mut_slice().get_mut(i), b.as_slice().get(i*m..(i+1)*m)) {
+            if let (Some(dest), Some(rhs)) = (
+                self.as_mut_slice().get_mut(i),
+                b.as_slice().get(i * m..(i + 1) * m),
+            ) {
                 *dest += unrolled_dot(lhs, rhs);
             } else {
                 debug_assert!(false);
@@ -328,8 +343,7 @@ pub fn concatenate_arr1(
 ///
 /// (From ndarray 0.15.6)
 #[allow(clippy::indexing_slicing)] // all indexing is protected by the entry assertion
-pub fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32
-{
+pub fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
     if xs.len() != ys.len() {
         return 0.0;
@@ -340,16 +354,8 @@ pub fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32
     let mut xs = &xs[..len];
     let mut ys = &ys[..len];
     let mut sum = 0.0;
-    let (mut p0, mut p1, mut p2, mut p3, mut p4, mut p5, mut p6, mut p7) = (
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-    );
+    let (mut p0, mut p1, mut p2, mut p3, mut p4, mut p5, mut p6, mut p7) =
+        (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     while xs.len() >= 8 {
         p0 = p0 + xs[0] * ys[0];
         p1 = p1 + xs[1] * ys[1];
