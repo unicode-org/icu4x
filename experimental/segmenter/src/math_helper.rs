@@ -13,6 +13,13 @@ pub struct MatrixOwned<const D: usize> {
 }
 
 impl<const D: usize> MatrixOwned<D> {
+    pub fn empty() -> Self {
+        Self {
+            data: vec![],
+            dims: [0; D],
+        }
+    }
+
     pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: &self.data,
@@ -24,10 +31,14 @@ impl<const D: usize> MatrixOwned<D> {
     where
         Dim<[usize; D]>: Dimension,
     {
-        let dims = nd.shape().try_into().unwrap();
-        Self {
-            data: nd.into_raw_vec(),
-            dims,
+        let maybe_dims: Result<[usize; D], _> = nd.shape().try_into();
+        let data = nd.into_raw_vec();
+        match maybe_dims {
+            Ok(dims) if dims.iter().product::<usize>() == data.len() => Self { data, dims },
+            _ => {
+                debug_assert!(false);
+                Self::empty()
+            }
         }
     }
 
@@ -81,6 +92,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         self.data
     }
 
+    #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
     pub fn to_owned(&self) -> MatrixOwned<D> {
         MatrixOwned {
             data: self.data.to_vec(),
@@ -187,15 +199,17 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data.copy_within(range_from, range_to.start);
     }
 
-    pub fn add(&mut self, other: MatrixBorrowed<'_, D>) {
-        assert_eq!(self.dims, other.dims);
+    #[must_use]
+    pub fn add(&mut self, other: MatrixBorrowed<'_, D>) -> Option<()> {
+        debug_assert_eq!(self.dims, other.dims);
         // TODO: Vectorize?
         for i in 0..self.data.len() {
-            self.data[i] += other.data[i];
+            *self.data.get_mut(i)? += other.data.get(i)?;
         }
+        Some(())
     }
 
-    pub fn to_softmax(&mut self) {
+    pub fn softmax_transform(&mut self) {
         let sm = self.data.iter().fold(0.0, |sm, v| sm + v.exp());
         self.data.iter_mut().for_each(|v| {
             *v = v.exp() / sm;
@@ -282,7 +296,7 @@ pub fn sigmoid(x: f32) -> f32 {
 ///
 /// (From ndarray 0.15.6)
 #[allow(clippy::indexing_slicing)] // all indexing is protected by the entry assertion
-pub fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
+fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
     if xs.len() != ys.len() {
         return 0.0;

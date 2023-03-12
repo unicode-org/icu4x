@@ -283,8 +283,8 @@ impl<'l> Lstm<'l> {
             let mut curr_est = MatrixOwned::<1>::new_zero([4]);
             curr_est.as_mut().add_dot_2d(curr_fw, timew_fw);
             curr_est.as_mut().add_dot_2d(curr_bw, timew_bw);
-            curr_est.as_mut().add(timeb);
-            curr_est.as_mut().to_softmax();
+            curr_est.as_mut().add(timeb)?;
+            curr_est.as_mut().softmax_transform();
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(curr_est.as_borrowed()).unwrap_or('s'));
         }
