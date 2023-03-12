@@ -17,7 +17,7 @@ pub enum Error {
 }
 
 impl From<ndarray::ShapeError> for Error {
-    fn from(value: ndarray::ShapeError) -> Self {
+    fn from(_: ndarray::ShapeError) -> Self {
         Self::DimensionMismatch
     }
 }

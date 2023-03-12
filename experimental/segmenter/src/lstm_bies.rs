@@ -4,16 +4,15 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper::{self, MatrixOwned, MatrixBorrowedMut};
+use crate::math_helper::MatrixBorrowed;
+use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
-use ndarray::{Array1, Array2, Array3, ArrayBase, Dim, ViewRepr};
 use zerovec::ule::AsULE;
-use crate::math_helper::MatrixBorrowed;
 
 pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
@@ -52,11 +51,11 @@ impl<'l> Lstm<'l> {
         }
 
         let mat1 = data.get().mat1.as_ndarray2()?;
-        let mut mat2 = data.get().mat2.as_ndarray2()?;
-        let mut mat3 = data.get().mat3.as_ndarray2()?;
+        let mat2 = data.get().mat2.as_ndarray2()?;
+        let mat3 = data.get().mat3.as_ndarray2()?;
         let mat4 = data.get().mat4.as_ndarray1()?;
-        let mut mat5 = data.get().mat5.as_ndarray2()?;
-        let mut mat6 = data.get().mat6.as_ndarray2()?;
+        let mat5 = data.get().mat5.as_ndarray2()?;
+        let mat6 = data.get().mat6.as_ndarray2()?;
         let mat7 = data.get().mat7.as_ndarray1()?;
         let mat8 = data.get().mat8.as_ndarray2()?;
         let mat9 = data.get().mat9.as_ndarray1()?;
@@ -74,7 +73,6 @@ impl<'l> Lstm<'l> {
         {
             return Err(Error::DimensionMismatch);
         }
-        // std::println!("before:\n{mat3:#.1}\n\n");
         let mut mat2 = mat2.into_shape((embedd_dim, 4, hunits))?;
         let mut mat3 = mat3.into_shape((hunits, 4, hunits))?;
         let mut mat4 = mat4.into_shape((4, hunits))?;
@@ -89,14 +87,13 @@ impl<'l> Lstm<'l> {
         mat6.swap_axes(0, 2);
         mat7.swap_axes(0, 1);
         mat8.swap_axes(1, 2);
-        let mat2 = mat2.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
-        let mat3 = mat3.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
-        let mat4 = mat4.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
-        let mat5 = mat5.as_standard_layout().into_owned();//.into_shape((4*hunits, embedd_dim)).unwrap();
-        let mat6 = mat6.as_standard_layout().into_owned();//.into_shape((4*hunits, hunits)).unwrap();
-        let mat7 = mat7.as_standard_layout().into_owned();//.into_shape((4*hunits)).unwrap();
+        let mat2 = mat2.as_standard_layout().into_owned();
+        let mat3 = mat3.as_standard_layout().into_owned();
+        let mat4 = mat4.as_standard_layout().into_owned();
+        let mat5 = mat5.as_standard_layout().into_owned();
+        let mat6 = mat6.as_standard_layout().into_owned();
+        let mat7 = mat7.as_standard_layout().into_owned();
         let mat8 = mat8.as_standard_layout().into_owned();
-        // std::println!("after:\n{mat3:#.1}\n\n");
         Ok(Self {
             data,
             mat1: MatrixOwned::from_ndarray(mat1),
@@ -176,15 +173,19 @@ impl<'l> Lstm<'l> {
         s_t.as_mut().add_dot_3d(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
-            let tuple = s_t.as_borrowed().submatrix::<1>(i).and_then(|s| s.read_4()).unwrap_or((0.0, 0.0, 0.0, 0.0));
+            let tuple = s_t
+                .as_borrowed()
+                .submatrix::<1>(i)
+                .and_then(|s| s.read_4())
+                .unwrap_or((0.0, 0.0, 0.0, 0.0));
             let p = math_helper::sigmoid(tuple.0);
             let f = math_helper::sigmoid(tuple.1);
             let c = math_helper::tanh(tuple.2);
             let o = math_helper::sigmoid(tuple.3);
             let c_old = c_tm1.as_borrowed().as_slice().get(i)?;
-            let c_new = p*c + f*c_old;
+            let c_new = p * c + f * c_old;
             *c_tm1.as_mut_slice().get_mut(i)? = c_new;
-            *h_tm1.as_mut_slice().get_mut(i)? = o*math_helper::tanh(c_new);
+            *h_tm1.as_mut_slice().get_mut(i)? = o * math_helper::tanh(c_new);
         }
         Some(())
     }
@@ -236,7 +237,7 @@ impl<'l> Lstm<'l> {
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
-                all_h_fw.as_mut().copy_submatrix::<1>(i-1, i);
+                all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
             self.compute_hc(
                 x_t,
@@ -255,7 +256,9 @@ impl<'l> Lstm<'l> {
         for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
-                all_h_bw.as_mut().copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
+                all_h_bw
+                    .as_mut()
+                    .copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
             self.compute_hc(
                 x_t,

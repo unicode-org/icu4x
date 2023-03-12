@@ -4,7 +4,7 @@
 
 use core::ops::Range;
 
-use ndarray::{concatenate, Array1, Array2, ArrayBase, Axis, Dim, Dimension, OwnedRepr, ViewRepr};
+use ndarray::{ArrayBase, Dim, Dimension, OwnedRepr};
 
 #[derive(Debug, Clone)]
 pub struct MatrixOwned<const D: usize> {
@@ -100,16 +100,6 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         ind
     }
 
-    pub fn from_ndarray(nd: &'a ArrayBase<ViewRepr<&f32>, Dim<[usize; D]>>) -> Self
-    where
-        Dim<[usize; D]>: Dimension,
-    {
-        Self {
-            data: nd.as_slice().unwrap(),
-            dims: nd.shape().try_into().unwrap(),
-        }
-    }
-
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion should always fail and be elided at compile time
@@ -190,28 +180,11 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data
     }
 
-    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
-        assert_eq!(M, D - 1);
-        let (range, dims) = self.as_borrowed().submatrix_range(index);
-        let data = self.data.get_mut(range)?;
-        Some(MatrixBorrowedMut { data, dims })
-    }
-
     pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
         let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
         let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
         // TODO: The following function call is panicky
         self.data.copy_within(range_from, range_to.start);
-    }
-
-    pub fn set_to(&mut self, other: MatrixBorrowed<'_, D>) {
-        debug_assert_eq!(self.dims, other.dims);
-        if self.data.len() != other.data.len() {
-            debug_assert!(false);
-            return;
-        }
-        // The above assertion protects the following panic
-        self.data.copy_from_slice(other.data);
     }
 
     pub fn add(&mut self, other: MatrixBorrowed<'_, D>) {
@@ -231,6 +204,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
 }
 
 impl<'a> MatrixBorrowed<'a, 1> {
+    #[allow(dead_code)] // could be useful
     pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
         debug_assert_eq!(self.dims, other.dims);
         unrolled_dot(self.data, other.data)
@@ -300,41 +274,6 @@ pub fn tanh(x: f32) -> f32 {
 #[inline]
 pub fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
-}
-
-/// `softmax` gets a 1d array of `f32` numbers, and compute the softmax probability for each element in the array.
-pub fn softmax(arr: Array1<f32>) -> Array1<f32> {
-    let sm = arr.fold(0.0, |sm, v| sm + v.exp());
-    arr.map(|v| v.exp() / sm)
-}
-
-/// `max_arr1` returns the index of the maximum value in a 1d array.
-pub fn max_arr1(arr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>) -> usize {
-    // No argmax in rust-ndarray (https://github.com/rust-ndarray/ndarray/issues/416)
-    let mut mx: f32 = 0.0;
-    let mut ind = 0;
-    arr.indexed_iter().for_each(|(i, v)| {
-        if mx < *v {
-            mx = *v;
-            ind = i
-        }
-    });
-    ind
-}
-
-/// `change_row` gets one 2d array (`arr`), one 1d array (`arr1`), and an index (`row_id`), and replaces the `row_id`-th row of
-/// `arr` with `arr1`
-pub fn change_row(mut arr: Array2<f32>, row_id: usize, new_row: &Array1<f32>) -> Array2<f32> {
-    arr.row_mut(row_id).assign(new_row);
-    arr
-}
-
-/// `concatenate_arr1` concatenates two 1d arrays to form another 1d array.
-pub fn concatenate_arr1(
-    arr1: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-    arr2: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-) -> Array1<f32> {
-    concatenate![Axis(0), arr1, arr2]
 }
 
 /// Compute the dot product.
