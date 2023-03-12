@@ -182,11 +182,17 @@ impl<'l> Lstm<'l> {
             // let c = math_helper::tanh(submatrix[2]);
             // let o = math_helper::sigmoid(submatrix[3]);
             // Next:
-            let slice = s_t.as_borrowed().as_slice();
-            let p = math_helper::sigmoid(slice[i*4]);
-            let f = math_helper::sigmoid(slice[i*4+1]);
-            let c = math_helper::tanh(slice[i*4+2]);
-            let o = math_helper::sigmoid(slice[i*4+3]);
+            let tuple = s_t.as_borrowed().submatrix::<1>(i).read_4();
+            let p = math_helper::sigmoid(tuple.0);
+            let f = math_helper::sigmoid(tuple.1);
+            let c = math_helper::tanh(tuple.2);
+            let o = math_helper::sigmoid(tuple.3);
+            //
+            // let slice = s_t.as_borrowed().as_slice();
+            // let p = math_helper::sigmoid(slice[i*4]);
+            // let f = math_helper::sigmoid(slice[i*4+1]);
+            // let c = math_helper::tanh(slice[i*4+2]);
+            // let o = math_helper::sigmoid(slice[i*4+3]);
             // For matrices with long stride for the four inner values:
             // let p = math_helper::sigmoid(s_t[i]);
             // let f = math_helper::sigmoid(s_t[i+hunits]);
@@ -197,9 +203,6 @@ impl<'l> Lstm<'l> {
             c_tm1.as_mut_slice()[i] = c_new;
             h_tm1.as_mut_slice()[i] = o*math_helper::tanh(c_new);
         }
-
-        // std::println!("h_t = {:?}", h_t.as_borrowed());
-        // std::println!("c_t = {:?}", c_t.as_borrowed());
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
@@ -234,9 +237,7 @@ impl<'l> Lstm<'l> {
         // hunits is the number of hidden unints in each LSTM cell
         let hunits = self.hunits;
         // Forward LSTM
-        // std::println!("Forward LSTM for: {}", input);
-        let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);//Array1::<f32>::zeros(hunits);
-        // let mut h_fw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
+        let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
             let x_t = self.mat1.submatrix::<1>(*g_id as usize);
@@ -252,17 +253,13 @@ impl<'l> Lstm<'l> {
                 self.mat4.as_borrowed(),
                 hunits,
             );
-            // all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
         }
 
         // Backward LSTM
-        // std::println!("Backward LSTM for: {}", input);
-        let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);//Array1::<f32>::zeros(hunits);
-        // let mut h_bw = vec![0.0; hunits];//Array1::<f32>::zeros(hunits);
+        let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
             let x_t = self.mat1.submatrix::<1>(*g_id as usize);
-            // let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             if i > 0 {
                 all_h_bw.as_mut().copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
@@ -275,12 +272,9 @@ impl<'l> Lstm<'l> {
                 self.mat7.as_borrowed(),
                 self.backward_hunits,
             );
-            // all_h_bw = math_helper::change_row(all_h_bw, input_seq_len - 1 - i, &h_bw);
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        // std::println!("Resolving for: {}", input);
-        // let timew = self.mat8.view();
         let timeb = self.mat9.as_borrowed();
         let mut bies = String::new();
         for i in 0..input_seq_len {

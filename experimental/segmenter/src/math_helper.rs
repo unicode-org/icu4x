@@ -104,6 +104,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<'a, M> {
+        // This assertion should always fail and be elided at compile time
         assert_eq!(M, D-1);
         let (range, sub_dims) = self.submatrix_range(index);
         MatrixBorrowed { data: &self.data[range], dims: sub_dims }
@@ -119,12 +120,22 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
 impl<'a> MatrixBorrowed<'a, 1> {
     pub fn dim(&self) -> usize {
+        // The type parameter guarantees that self.dims has 1 element
+        #[allow(clippy::indexing_slicing)]
         self.dims[0]
     }
 
-    pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
-        debug_assert_eq!(self.dims, other.dims);
-        unrolled_dot(self.data, other.data)
+    pub fn read_4(&self) -> (f32, f32, f32, f32) {
+        debug_assert_eq!(self.dims, [4]);
+        debug_assert_eq!(self.data.len(), 4);
+        if self.data.len() == 4 {
+            // Safety: self.data has length 4
+            unsafe {
+                (*self.data.get_unchecked(0), *self.data.get_unchecked(1), *self.data.get_unchecked(2), *self.data.get_unchecked(3))
+            }
+        } else {
+            (0.0, 0.0, 0.0, 0.0)
+        }
     }
 }
 
@@ -190,8 +201,15 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 }
 
+impl<'a> MatrixBorrowed<'a, 1> {
+    pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
+        debug_assert_eq!(self.dims, other.dims);
+        unrolled_dot(self.data, other.data)
+    }
+}
+
 impl<'a> MatrixBorrowedMut<'a, 1> {
-    /// Calculate the dot product of a and b, saving the result to self.
+    /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
     /// this is the opposite of standard practice.
@@ -201,12 +219,15 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         debug_assert_eq!(m, b.dim().1);
         debug_assert_eq!(n, b.dim().0);
         for i in 0..n {
-            self.as_mut_slice()[i] += a.dot_1d(b.submatrix(i));
+            self.as_mut_slice()[i] += unrolled_dot(a.data, b.submatrix::<1>(i).data);
         }
     }
 }
 
 impl<'a> MatrixBorrowedMut<'a, 2> {
+    /// Calculate the dot product of a and b, adding the result to self.
+    ///
+    /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
     pub fn add_dot_3d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
