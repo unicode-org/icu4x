@@ -50,6 +50,7 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
+        // TODO: Perform this matrix reshaping in datagen.
         let mat1 = data.get().mat1.as_ndarray2()?;
         let mat2 = data.get().mat2.as_ndarray2()?;
         let mat3 = data.get().mat3.as_ndarray2()?;
