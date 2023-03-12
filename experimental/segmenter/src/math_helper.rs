@@ -37,10 +37,11 @@ impl<const D: usize> MatrixOwned<D> {
     }
 
     #[inline]
-    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<M> {
+    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
-        MatrixBorrowed { data: &self.data[range], dims: sub_dims }
+        let (range, dims) = self.as_borrowed().submatrix_range(index);
+        let data = &self.data.get(range)?;
+        Some(MatrixBorrowed { data, dims })
     }
 
     pub fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
@@ -51,10 +52,11 @@ impl<const D: usize> MatrixOwned<D> {
     }
 
     #[inline]
-    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
+    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
-        MatrixBorrowedMut { data: &mut self.data[range], dims: sub_dims }
+        let (range, dims) = self.as_borrowed().submatrix_range(index);
+        let data = self.data.get_mut(range)?;
+        Some(MatrixBorrowedMut { data, dims })
     }
 }
 
@@ -103,15 +105,20 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     }
 
     #[inline]
-    pub fn submatrix<const M: usize>(&self, index: usize) -> MatrixBorrowed<'a, M> {
+    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion should always fail and be elided at compile time
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.submatrix_range(index);
-        MatrixBorrowed { data: &self.data[range], dims: sub_dims }
+        let (range, dims) = self.submatrix_range(index);
+        let data = &self.data.get(range)?;
+        Some(MatrixBorrowed { data, dims })
     }
 
     #[inline]
     fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
+        // This assertion should always fail and be elided at compile time
+        assert_eq!(M, D-1);
+        // The above assertion guarantees that the following line will succeed
+        #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
         let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
         let n = sub_dims.iter().product::<usize>();
         (n*index .. n*(index+1), sub_dims)
@@ -125,28 +132,32 @@ impl<'a> MatrixBorrowed<'a, 1> {
         self.dims[0]
     }
 
-    pub fn read_4(&self) -> (f32, f32, f32, f32) {
+    pub fn read_4(&self) -> Option<(f32, f32, f32, f32)> {
         debug_assert_eq!(self.dims, [4]);
         debug_assert_eq!(self.data.len(), 4);
         if self.data.len() == 4 {
             // Safety: self.data has length 4
             unsafe {
-                (*self.data.get_unchecked(0), *self.data.get_unchecked(1), *self.data.get_unchecked(2), *self.data.get_unchecked(3))
+                Some((*self.data.get_unchecked(0), *self.data.get_unchecked(1), *self.data.get_unchecked(2), *self.data.get_unchecked(3)))
             }
         } else {
-            (0.0, 0.0, 0.0, 0.0)
+            None
         }
     }
 }
 
 impl<'a> MatrixBorrowed<'a, 2> {
     pub fn dim(&self) -> (usize, usize) {
+        // The type parameter guarantees that self.dims has 2 elements
+        #[allow(clippy::indexing_slicing)]
         (self.dims[0], self.dims[1])
     }
 }
 
 impl<'a> MatrixBorrowed<'a, 3> {
     pub fn dim(&self) -> (usize, usize, usize) {
+        // The type parameter guarantees that self.dims has 3 elements
+        #[allow(clippy::indexing_slicing)]
         (self.dims[0], self.dims[1], self.dims[2])
     }
 }
@@ -168,20 +179,27 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data
     }
 
-    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> MatrixBorrowedMut<M> {
+    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
         assert_eq!(M, D-1);
-        let (range, sub_dims) = self.as_borrowed().submatrix_range(index);
-        MatrixBorrowedMut { data: &mut self.data[range], dims: sub_dims }
+        let (range, dims) = self.as_borrowed().submatrix_range(index);
+        let data = self.data.get_mut(range)?;
+        Some(MatrixBorrowedMut { data, dims })
     }
 
     pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
         let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
         let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
-        self.data.copy_within(range_from, range_to.start)
+        // TODO: The following function call is panicky
+        self.data.copy_within(range_from, range_to.start);
     }
 
     pub fn set_to(&mut self, other: MatrixBorrowed<'_, D>) {
-        assert_eq!(self.dims, other.dims);
+        debug_assert_eq!(self.dims, other.dims);
+        if self.data.len() != other.data.len() {
+            debug_assert!(false);
+            return;
+        }
+        // The above assertion protects the following panic
         self.data.copy_from_slice(other.data);
     }
 
@@ -219,7 +237,11 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         debug_assert_eq!(m, b.dim().1);
         debug_assert_eq!(n, b.dim().0);
         for i in 0..n {
-            self.as_mut_slice()[i] += unrolled_dot(a.data, b.submatrix::<1>(i).data);
+            if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i)) {
+                *dest += unrolled_dot(a.data, b_sub.data);
+            } else {
+                debug_assert!(false);
+            }
         }
     }
 }
@@ -240,8 +262,11 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         // }
         let lhs = a.as_slice();
         for i in 0..n {
-            let rhs = &b.as_slice()[i*m..(i+1)*m];
-            self.as_mut_slice()[i] += unrolled_dot(lhs, rhs);
+            if let (Some(dest), Some(rhs)) = (self.as_mut_slice().get_mut(i), b.as_slice().get(i*m..(i+1)*m)) {
+                *dest += unrolled_dot(lhs, rhs);
+            } else {
+                debug_assert!(false);
+            }
         }
     }
 }
@@ -302,9 +327,13 @@ pub fn concatenate_arr1(
 /// `xs` and `ys` must be the same length
 ///
 /// (From ndarray 0.15.6)
+#[allow(clippy::indexing_slicing)] // all indexing is protected by the entry assertion
 pub fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32
 {
     debug_assert_eq!(xs.len(), ys.len());
+    if xs.len() != ys.len() {
+        return 0.0;
+    }
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
     let len = core::cmp::min(xs.len(), ys.len());

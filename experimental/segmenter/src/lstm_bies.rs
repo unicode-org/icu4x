@@ -149,6 +149,7 @@ impl<'l> Lstm<'l> {
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
     #[allow(clippy::too_many_arguments)]
+    #[must_use] // return value is GIGO path
     fn compute_hc<'a>(
         &self,
         x_t: MatrixBorrowed<'a, 1>,
@@ -158,7 +159,7 @@ impl<'l> Lstm<'l> {
         uarr: MatrixBorrowed<'a, 3>,
         barr: MatrixBorrowed<'a, 2>,
         hunits: usize,
-    ) {
+    ) -> Option<()> {
         let embedd_dim = x_t.dim();
         #[cfg(debug_assertions)]
         {
@@ -175,39 +176,32 @@ impl<'l> Lstm<'l> {
         s_t.as_mut().add_dot_3d(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
-            let submatrix = s_t.as_borrowed().submatrix::<1>(i).as_slice();
-            // For matrices with short stride for the four inner values:
-            // let p = math_helper::sigmoid(submatrix[0]);
-            // let f = math_helper::sigmoid(submatrix[1]);
-            // let c = math_helper::tanh(submatrix[2]);
-            // let o = math_helper::sigmoid(submatrix[3]);
-            // Next:
-            let tuple = s_t.as_borrowed().submatrix::<1>(i).read_4();
+            let tuple = s_t.as_borrowed().submatrix::<1>(i).and_then(|s| s.read_4()).unwrap_or((0.0, 0.0, 0.0, 0.0));
             let p = math_helper::sigmoid(tuple.0);
             let f = math_helper::sigmoid(tuple.1);
             let c = math_helper::tanh(tuple.2);
             let o = math_helper::sigmoid(tuple.3);
-            //
-            // let slice = s_t.as_borrowed().as_slice();
-            // let p = math_helper::sigmoid(slice[i*4]);
-            // let f = math_helper::sigmoid(slice[i*4+1]);
-            // let c = math_helper::tanh(slice[i*4+2]);
-            // let o = math_helper::sigmoid(slice[i*4+3]);
-            // For matrices with long stride for the four inner values:
-            // let p = math_helper::sigmoid(s_t[i]);
-            // let f = math_helper::sigmoid(s_t[i+hunits]);
-            // let c = math_helper::tanh(s_t[i+hunits*2]);
-            // let o = math_helper::sigmoid(s_t[i+hunits*3]);
-            let c_old = c_tm1.as_borrowed().as_slice()[i];
+            let c_old = c_tm1.as_borrowed().as_slice().get(i)?;
             let c_new = p*c + f*c_old;
-            c_tm1.as_mut_slice()[i] = c_new;
-            h_tm1.as_mut_slice()[i] = o*math_helper::tanh(c_new);
+            *c_tm1.as_mut_slice().get_mut(i)? = c_new;
+            *h_tm1.as_mut_slice().get_mut(i)? = o*math_helper::tanh(c_new);
         }
+        Some(())
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
     pub fn word_segmenter(&self, input: &str) -> String {
+        match self.word_segmenter_inner(input) {
+            Some(s) => s,
+            None => {
+                debug_assert!(false);
+                String::new()
+            }
+        }
+    }
+
+    fn word_segmenter_inner(&self, input: &str) -> Option<String> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
@@ -240,48 +234,48 @@ impl<'l> Lstm<'l> {
         let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize);
+            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i-1, i);
             }
             self.compute_hc(
                 x_t,
-                all_h_fw.submatrix_mut(i),
+                all_h_fw.submatrix_mut(i)?,
                 c_fw.as_mut(),
                 self.mat2.as_borrowed(),
                 self.mat3.as_borrowed(),
                 self.mat4.as_borrowed(),
                 hunits,
-            );
+            )?;
         }
 
         // Backward LSTM
         let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize);
+            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
                 all_h_bw.as_mut().copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
             self.compute_hc(
                 x_t,
-                all_h_bw.submatrix_mut(input_seq_len - i - 1),
+                all_h_bw.submatrix_mut(input_seq_len - i - 1)?,
                 c_bw.as_mut(),
                 self.mat5.as_borrowed(),
                 self.mat6.as_borrowed(),
                 self.mat7.as_borrowed(),
                 self.backward_hunits,
-            );
+            )?;
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
         let timeb = self.mat9.as_borrowed();
         let mut bies = String::new();
         for i in 0..input_seq_len {
-            let curr_fw = all_h_fw.submatrix::<1>(i);
-            let curr_bw = all_h_bw.submatrix::<1>(i);
-            let timew_fw = self.mat8.submatrix(0);
-            let timew_bw = self.mat8.submatrix(1);
+            let curr_fw = all_h_fw.submatrix::<1>(i)?;
+            let curr_bw = all_h_bw.submatrix::<1>(i)?;
+            let timew_fw = self.mat8.submatrix(0)?;
+            let timew_bw = self.mat8.submatrix(1)?;
             // TODO: Make curr_est be stack-allocated
             let mut curr_est = MatrixOwned::<1>::new_zero([4]);
             curr_est.as_mut().add_dot_2d(curr_fw, timew_fw);
@@ -291,7 +285,7 @@ impl<'l> Lstm<'l> {
             // We use `unwrap_or` to fall back and prevent panics.
             bies.push(self.compute_bies(curr_est.as_borrowed()).unwrap_or('s'));
         }
-        bies
+        Some(bies)
     }
 }
 
