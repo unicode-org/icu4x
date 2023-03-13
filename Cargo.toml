@@ -23,6 +23,7 @@ members = [
     "experimental/casemapping",
     "experimental/compactdecimal",
     "experimental/displaynames",
+    "experimental/intmath",
     "experimental/harfbuzz",
     "experimental/ixdtf",
     "experimental/relativetime",
