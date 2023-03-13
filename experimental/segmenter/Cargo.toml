@@ -43,6 +43,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 
 ndarray = { version = "0.15.5", default-features = false, optional = true }
 num-traits = { version = "0.2", default-features = false, features = ["libm"], optional = true }
+intmath = { version = "0.1", path = "../../experimental/intmath", optional = true }
 
 [dev-dependencies]
 criterion = "0.3"
@@ -56,7 +57,7 @@ default = ["auto"]
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-lstm = ["dep:ndarray", "dep:num-traits"]
+lstm = ["dep:ndarray", "dep:num-traits", "dep:intmath"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 
 [lib]

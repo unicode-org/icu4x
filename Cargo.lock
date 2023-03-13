@@ -2154,6 +2154,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_testdata",
+ "intmath",
  "ndarray",
  "num-traits",
  "serde",

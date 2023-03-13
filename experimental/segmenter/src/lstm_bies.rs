@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::MatrixBorrowed;
-use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned};
+use crate::math_helper::{self, to_mat_type, MatrixBorrowedMut, MatrixOwned, ZERO};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
@@ -97,15 +97,15 @@ impl<'l> Lstm<'l> {
         let mat8 = mat8.as_standard_layout().into_owned();
         Ok(Self {
             data,
-            mat1: MatrixOwned::from_ndarray(mat1),
-            mat2: MatrixOwned::from_ndarray(mat2),
-            mat3: MatrixOwned::from_ndarray(mat3),
-            mat4: MatrixOwned::from_ndarray(mat4),
-            mat5: MatrixOwned::from_ndarray(mat5),
-            mat6: MatrixOwned::from_ndarray(mat6),
-            mat7: MatrixOwned::from_ndarray(mat7),
-            mat8: MatrixOwned::from_ndarray(mat8),
-            mat9: MatrixOwned::from_ndarray(mat9),
+            mat1: MatrixOwned::from_ndarray(mat1.mapv(to_mat_type)),
+            mat2: MatrixOwned::from_ndarray(mat2.mapv(to_mat_type)),
+            mat3: MatrixOwned::from_ndarray(mat3.mapv(to_mat_type)),
+            mat4: MatrixOwned::from_ndarray(mat4.mapv(to_mat_type)),
+            mat5: MatrixOwned::from_ndarray(mat5.mapv(to_mat_type)),
+            mat6: MatrixOwned::from_ndarray(mat6.mapv(to_mat_type)),
+            mat7: MatrixOwned::from_ndarray(mat7.mapv(to_mat_type)),
+            mat8: MatrixOwned::from_ndarray(mat8.mapv(to_mat_type)),
+            mat9: MatrixOwned::from_ndarray(mat9.mapv(to_mat_type)),
             grapheme: if data.get().model.contains("_codepoints_") {
                 None
             } else {
@@ -178,15 +178,15 @@ impl<'l> Lstm<'l> {
                 .as_borrowed()
                 .submatrix::<1>(i)
                 .and_then(|s| s.read_4())
-                .unwrap_or((0.0, 0.0, 0.0, 0.0));
+                .unwrap_or((ZERO, ZERO, ZERO, ZERO));
             let p = math_helper::sigmoid(tuple.0);
             let f = math_helper::sigmoid(tuple.1);
             let c = math_helper::tanh(tuple.2);
             let o = math_helper::sigmoid(tuple.3);
             let c_old = c_tm1.as_borrowed().as_slice().get(i)?;
-            let c_new = p * c + f * c_old;
+            let c_new = math_helper::muldiv(p, c) + math_helper::muldiv(f, *c_old);
             *c_tm1.as_mut_slice().get_mut(i)? = c_new;
-            *h_tm1.as_mut_slice().get_mut(i)? = o * math_helper::tanh(c_new);
+            *h_tm1.as_mut_slice().get_mut(i)? = math_helper::muldiv(o, math_helper::tanh(c_new));
         }
         Some(())
     }
