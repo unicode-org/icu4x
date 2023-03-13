@@ -2282,6 +2282,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "intmath"
+version = "0.1.0"
+dependencies = [
+ "criterion 0.3.6",
+]
+
+[[package]]
 name = "ipnet"
 version = "2.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
