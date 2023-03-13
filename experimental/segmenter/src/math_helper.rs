@@ -346,6 +346,8 @@ fn pocket_tanh_128(x: i16) -> i16 {
     }
 }
 
+/// An integer approximation of `1024*tanh(x/1024)`
+/// <https://octav.onl/sigmoid-tanh-1024-a>
 fn tanh_1024(x: MatType) -> MatType {
     let y = match x.unsigned_abs() {
         x if x <= 273 => x,
@@ -379,6 +381,8 @@ fn test_tanh_1024() {
     }
 }
 
+/// An integer approximation of `1024*sigmoid(x/1024)`
+/// <https://octav.onl/sigmoid-tanh-1024-a>
 fn sigmoid_1024(x: MatType) -> MatType {
     let y = match x.unsigned_abs() {
         x if x <= 470 => x * 1 / 4 + 512,
