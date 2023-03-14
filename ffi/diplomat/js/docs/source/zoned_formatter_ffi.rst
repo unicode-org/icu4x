@@ -26,7 +26,7 @@
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XIsoDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 
@@ -58,14 +58,14 @@
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 
         See the `Rust documentation for format <https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XIsoDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 

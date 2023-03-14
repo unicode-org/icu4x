@@ -29,77 +29,77 @@
         See the `Rust documentation for new <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
-    .. js:function:: date()
+    .. js:method:: date()
 
         Gets a copy of the date contained in this object
 
         See the `Rust documentation for date <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
 
 
-    .. js:function:: time()
+    .. js:method:: time()
 
         Gets the time contained in this object
 
         See the `Rust documentation for time <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
 
-    .. js:function:: to_iso()
+    .. js:method:: to_iso()
 
         Converts this date to ISO
 
         See the `Rust documentation for to_iso <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_iso>`__ for more information.
 
 
-    .. js:function:: to_calendar(calendar)
+    .. js:method:: to_calendar(calendar)
 
         Convert this datetime to one in a different calendar
 
         See the `Rust documentation for to_calendar <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-    .. js:function:: hour()
+    .. js:method:: hour()
 
         Returns the hour in this time
 
         See the `Rust documentation for hour <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
 
 
-    .. js:function:: minute()
+    .. js:method:: minute()
 
         Returns the minute in this time
 
         See the `Rust documentation for minute <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
 
 
-    .. js:function:: second()
+    .. js:method:: second()
 
         Returns the second in this time
 
         See the `Rust documentation for second <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
 
 
-    .. js:function:: nanosecond()
+    .. js:method:: nanosecond()
 
         Returns the nanosecond in this time
 
         See the `Rust documentation for nanosecond <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
 
 
-    .. js:function:: day_of_month()
+    .. js:method:: day_of_month()
 
         Returns the 1-indexed day in the month for this date
 
         See the `Rust documentation for day_of_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
 
 
-    .. js:function:: day_of_week()
+    .. js:method:: day_of_week()
 
         Returns the day in the week for this day
 
         See the `Rust documentation for day_of_week <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
-    .. js:function:: week_of_month(first_weekday)
+    .. js:method:: week_of_month(first_weekday)
 
         Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
@@ -108,14 +108,14 @@
         See the `Rust documentation for week_of_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
 
 
-    .. js:function:: week_of_year(calculator)
+    .. js:method:: week_of_year(calculator)
 
         Returns the week number in this year, using week data
 
         See the `Rust documentation for week_of_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
 
 
-    .. js:function:: ordinal_month()
+    .. js:method:: ordinal_month()
 
         Returns 1-indexed number of the month of this date in its year
 
@@ -124,49 +124,49 @@
         See the `Rust documentation for month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. js:function:: month_code()
+    .. js:method:: month_code()
 
         Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
         See the `Rust documentation for month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. js:function:: year_in_era()
+    .. js:method:: year_in_era()
 
         Returns the year number in the current era for this date
 
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
-    .. js:function:: era()
+    .. js:method:: era()
 
         Returns the era for this date,
 
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
-    .. js:function:: months_in_year()
+    .. js:method:: months_in_year()
 
         Returns the number of months in the year represented by this date
 
         See the `Rust documentation for months_in_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
 
 
-    .. js:function:: days_in_month()
+    .. js:method:: days_in_month()
 
         Returns the number of days in the month represented by this date
 
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. js:function:: days_in_year()
+    .. js:method:: days_in_year()
 
         Returns the number of days in the year represented by this date
 
         See the `Rust documentation for days_in_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
 
 
-    .. js:function:: calendar()
+    .. js:method:: calendar()
 
         Returns the :js:class:`ICU4XCalendar` object backing this date
 
@@ -201,84 +201,84 @@
         See the `Rust documentation for from_minutes_since_local_unix_epoch <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch>`__ for more information.
 
 
-    .. js:function:: date()
+    .. js:method:: date()
 
         Gets the date contained in this object
 
         See the `Rust documentation for date <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
 
 
-    .. js:function:: time()
+    .. js:method:: time()
 
         Gets the time contained in this object
 
         See the `Rust documentation for time <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
 
-    .. js:function:: to_any()
+    .. js:method:: to_any()
 
         Converts this to an :js:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
 
         See the `Rust documentation for to_any <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
 
 
-    .. js:function:: minutes_since_local_unix_epoch()
+    .. js:method:: minutes_since_local_unix_epoch()
 
         Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
         See the `Rust documentation for minutes_since_local_unix_epoch <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch>`__ for more information.
 
 
-    .. js:function:: to_calendar(calendar)
+    .. js:method:: to_calendar(calendar)
 
         Convert this datetime to one in a different calendar
 
         See the `Rust documentation for to_calendar <https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-    .. js:function:: hour()
+    .. js:method:: hour()
 
         Returns the hour in this time
 
         See the `Rust documentation for hour <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
 
 
-    .. js:function:: minute()
+    .. js:method:: minute()
 
         Returns the minute in this time
 
         See the `Rust documentation for minute <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
 
 
-    .. js:function:: second()
+    .. js:method:: second()
 
         Returns the second in this time
 
         See the `Rust documentation for second <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
 
 
-    .. js:function:: nanosecond()
+    .. js:method:: nanosecond()
 
         Returns the nanosecond in this time
 
         See the `Rust documentation for nanosecond <https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
 
 
-    .. js:function:: day_of_month()
+    .. js:method:: day_of_month()
 
         Returns the 1-indexed day in the month for this date
 
         See the `Rust documentation for day_of_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
 
 
-    .. js:function:: day_of_week()
+    .. js:method:: day_of_week()
 
         Returns the day in the week for this day
 
         See the `Rust documentation for day_of_week <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
-    .. js:function:: week_of_month(first_weekday)
+    .. js:method:: week_of_month(first_weekday)
 
         Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
@@ -287,42 +287,42 @@
         See the `Rust documentation for week_of_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
 
 
-    .. js:function:: week_of_year(calculator)
+    .. js:method:: week_of_year(calculator)
 
         Returns the week number in this year, using week data
 
         See the `Rust documentation for week_of_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
 
 
-    .. js:function:: month()
+    .. js:method:: month()
 
         Returns 1-indexed number of the month of this date in its year
 
         See the `Rust documentation for month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. js:function:: year()
+    .. js:method:: year()
 
         Returns the year number for this date
 
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
-    .. js:function:: months_in_year()
+    .. js:method:: months_in_year()
 
         Returns the number of months in the year represented by this date
 
         See the `Rust documentation for months_in_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
 
 
-    .. js:function:: days_in_month()
+    .. js:method:: days_in_month()
 
         Returns the number of days in the month represented by this date
 
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. js:function:: days_in_year()
+    .. js:method:: days_in_year()
 
         Returns the number of days in the year represented by this date
 

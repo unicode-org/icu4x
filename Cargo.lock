@@ -936,8 +936,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "715c9a09a3623bfc1e3e7f602dd46ff28271869b97c7141b250c2041e3f50742"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -948,14 +947,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72436165c1437c454114de69a35992c2fe33a8a538bb0a7f781fe10d34a8ad5e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
 
 [[package]]
 name = "diplomat_core"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c59c2b777f3d2914166b3f9106348118c67959c5fae4aecab88d5f2620d5bd5b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -4001,9 +3998,9 @@ checksum = "9e79c4d996edb816c91e4308506774452e55e95c3c9de07b6729e17e15a5ef81"
 
 [[package]]
 name = "unicode-bidi"
-version = "0.3.10"
+version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d54675592c1dbefd78cbd98db9bacd89886e1ca50692a0692baefffdeb92dd58"
+checksum = "524b68aca1d05e03fdf03fcdce2c6c94b6daf6d16861ddaa7e4f2b6638a9052c"
 
 [[package]]
 name = "unicode-ident"

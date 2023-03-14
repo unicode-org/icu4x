@@ -145,7 +145,7 @@ impl TryFrom<&[u8]> for CompactDecimal {
                 }
                 if exponent_str.is_empty()
                     || exponent_str.bytes().next() == Some(b'0')
-                    || !exponent_str.bytes().all(|c| (b'0'..=b'9').contains(&c))
+                    || !exponent_str.bytes().all(|c| c.is_ascii_digit())
                 {
                     return Err(Error::Syntax);
                 }
