@@ -13,6 +13,11 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
+    #[diplomat::rust_link(
+        icu::properties::script::ScriptWithExtensions::from_data,
+        FnInStruct,
+        hidden
+    )]
     pub struct ICU4XScriptWithExtensions(pub script::ScriptWithExtensions);
 
     #[diplomat::opaque]

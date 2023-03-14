@@ -357,15 +357,6 @@ lazy_static::lazy_static! {
         // associated type
         "icu::plurals::PluralOperands::Err",
 
-        // Properties Rust internals
-        "icu::properties::maps::CodePointMapData::from_data",
-        "icu::properties::maps::CodePointMapData::try_into_converted",
-        "icu::properties::sets::CodePointSetData::from_data",
-        "icu::properties::script::ScriptWithExtensions::from_data",
-
-        // typedef
-        "icu::properties::script::ScriptWithExtensionsResult",
-
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
