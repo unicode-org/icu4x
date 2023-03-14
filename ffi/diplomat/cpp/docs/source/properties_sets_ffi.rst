@@ -362,5 +362,5 @@
 
         Returns ``ICU4XError::PropertyUnexpectedPropertyNameError`` in case the string does not match any property in the list
 
-        See the `Rust documentation for load_for_ecma262_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
+        See the `Rust documentation for load_for_ecma262_unstable <https://docs.rs/icu/latest/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
 

@@ -519,7 +519,7 @@ class ICU4XCodePointSetData {
    * 
    * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
    * 
-   * See the [Rust documentation for `load_for_ecma262_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html) for more information.
+   * See the [Rust documentation for `load_for_ecma262_unstable`](https://docs.rs/icu/latest/icu/properties/sets/fn.load_for_ecma262_unstable.html) for more information.
    */
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name);
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }

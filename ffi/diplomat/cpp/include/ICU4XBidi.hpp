@@ -62,7 +62,7 @@ class ICU4XBidi {
    * Failure to follow this invariant may lead to incorrect results,
    * but is still safe.
    * 
-   * See the [Rust documentation for `reorder_visual`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
+   * See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
    */
   ICU4XReorderedIndexMap reorder_visual(const diplomat::span<const uint8_t> levels) const;
 
