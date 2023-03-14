@@ -20,6 +20,11 @@ pub mod ffi {
         FnInStruct,
         hidden
     )]
+    #[diplomat::rust_link(
+        icu::properties::names::PropertyValueNameToEnumMapper::from_data,
+        FnInStruct,
+        hidden
+    )]
     pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
 
     fn load<M: KeyedDataMarker<Yokeable = provider::PropertyValueNameToEnumMapV1<'static>>>(
@@ -36,8 +41,8 @@ pub mod ffi {
         /// Get the property value matching the given name, using strict matching
         ///
         /// Returns -1 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
+        // #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict, FnInStruct)]
+        // #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16, FnInStruct, hidden)]
         pub fn get_strict(&self, name: &str) -> i16 {
             self.0
                 .as_borrowed()
@@ -49,8 +54,8 @@ pub mod ffi {
         /// Get the property value matching the given name, using loose matching
         ///
         /// Returns -1 if the name is unknown for this property
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
-        // #[diplomat::rust_link(icu::properties::maps::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
+        // #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose, FnInStruct)]
+        // #[diplomat::rust_link(icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16, FnInStruct, hidden)]
         pub fn get_loose(&self, name: &str) -> i16 {
             self.0
                 .as_borrowed()
