@@ -393,6 +393,31 @@ impl<'data> CodePointInversionList<'data> {
         })
     }
 
+    /// Yields an [`Iterator`] returning the ranges of the code points that are
+    /// *not* included in the [`CodePointInversionList`]
+    ///
+    /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
+    /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
+    /// behavior of ranges, ex: `CodePointInversionList::contains(UChar32 start, UChar32 end)`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
+    /// let example_list = [0x41, 0x44, 0x45, 0x46];
+    /// let example =
+    ///     CodePointInversionList::try_from_inversion_list_slice(&example_list)
+    ///         .unwrap();
+    /// let mut example_iter_ranges = example.iter_ranges_complemented();
+    /// assert_eq!(Some(0..=0x40), example_iter_ranges.next());
+    /// assert_eq!(Some(0x44..=0x44), example_iter_ranges.next());
+    /// assert_eq!(Some(0x46..=char::MAX as u32), example_iter_ranges.next());
+    /// assert_eq!(None, example_iter_ranges.next());
+    /// ```
+    pub fn iter_ranges_complemented(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        crate::iterator_utils::RangeListIteratorComplementer::new(self.iter_ranges())
+    }
+
     /// Returns the number of ranges contained in this [`CodePointInversionList`]
     pub fn get_range_count(&self) -> usize {
         self.inv_list.len() / 2

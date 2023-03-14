@@ -861,6 +861,38 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .map(|cpm_range| cpm_range.range)
     }
 
+    /// Yields an [`Iterator`] returning the ranges of the code points whose values
+    /// match `predicate`.
+    ///
+    /// This is preferable to calling `.get_ranges().filter()` since it will coalesce
+    /// adjacent ranges into one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let mut sip_range_iter = trie.get_ranges_for_predicate(|r| r.value != plane_val as u8);
+    ///
+    /// let end = plane_val * 0x1_0000 - 1;
+    ///
+    /// let sip_range = sip_range_iter.next()
+    ///     .expect("Complemented planes data should have at least one entry");
+    /// assert_eq!(0..=end, sip_range);
+    pub fn get_ranges_for_predicate<'a>(
+        &'a self,
+        predicate: impl FnMut(&CodePointMapRange<T>) -> bool + Copy + 'a,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        crate::iterator_utils::RangeListIteratorCoalescer::new(
+            self.iter_ranges()
+                .filter(predicate)
+                .map(|cpm_range| cpm_range.range),
+        )
+    }
+
     /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
