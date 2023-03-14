@@ -36,6 +36,44 @@ impl IterableDataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
     }
 }
 
+impl DataProvider<LikelySubtagsForLanguageV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LikelySubtagsForLanguageV1Marker>, DataError> {
+        let response = DataProvider::<LikelySubtagsV1Marker>::load(self, req)?;
+        Ok(DataResponse {
+            metadata: response.metadata,
+            payload: response.payload.map(|p| p.map_project(|st, _| st.into())),
+        })
+    }
+}
+
+impl IterableDataProvider<LikelySubtagsForLanguageV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
+impl DataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1Marker>, DataError> {
+        let response = DataProvider::<LikelySubtagsV1Marker>::load(self, req)?;
+        Ok(DataResponse {
+            metadata: response.metadata,
+            payload: response.payload.map(|p| p.map_project(|st, _| st.into())),
+        })
+    }
+}
+
+impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
 impl From<&cldr_serde::likely_subtags::Resource> for LikelySubtagsV1<'static> {
     fn from(other: &cldr_serde::likely_subtags::Resource) -> Self {
         use icu_locid::subtags::Language;

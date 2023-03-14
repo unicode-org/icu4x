@@ -509,6 +509,19 @@ class ICU4XCodePointSetData {
    * See the [Rust documentation for `load_xid_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.load_xid_start.html) for more information.
    */
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_xid_start(const ICU4XDataProvider& provider);
+
+  /**
+   * Loads data for a property specified as a string as long as it is one of the
+   * [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
+   * 
+   * Returns `ICU4XError::PropertyUnexpectedPropertyNameError` in case the string does not
+   * match any property in the list
+   * 
+   * [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+   * 
+   * See the [Rust documentation for `load_for_ecma262_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html) for more information.
+   */
+  static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name);
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointSetData* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCodePointSetData(capi::ICU4XCodePointSetData* i) : inner(i) {}
@@ -1179,6 +1192,16 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
 }
 inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::load_xid_start(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_xid_start(provider.AsFFI());
+  diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::load_for_ecma262(const ICU4XDataProvider& provider, const std::string_view property_name) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_for_ecma262(provider.AsFFI(), property_name.data(), property_name.size());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));

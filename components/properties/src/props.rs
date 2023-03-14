@@ -14,40 +14,6 @@ use zerovec::ule::VarULE;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Selection constants for Unicode properties.
-/// These constants are used to select one of the Unicode properties.
-/// See `UProperty` in ICU4C.
-#[allow(dead_code)] // Not currently used but seems like it could be useful
-#[derive(Clone, PartialEq, Debug)]
-#[non_exhaustive]
-#[repr(i32)]
-enum EnumeratedProperty {
-    /// The Bidi_Class property.
-    BidiClass = 0x1000,
-    /// The Canonical_Combining_Class property.
-    CanonicalCombiningClass = 0x1002,
-    /// The East_Asian_Width property. See [`EastAsianWidth`].
-    EastAsianWidth = 0x1004,
-    /// The General_Category property.
-    GeneralCategory = 0x1005,
-    /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
-    GeneralCategoryGroup = 0x2000,
-    /// The Line_Break property. See [`LineBreak`].
-    LineBreak = 0x1008,
-    /// The Script property. See [`Script`].
-    Script = 0x100A,
-    /// The Grapheme_Cluster_Break property. See [`GraphemeClusterBreak`].
-    GraphemeClusterBreak = 0x1012,
-    /// The Sentence_Break property. See [`SentenceBreak`].
-    SentenceBreak = 0x1013,
-    /// The Word_Break property. See [`WordBreak`].
-    WordBreak = 0x1014,
-    /// The Script_Extensions property. See [`Script`].
-    ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
-    /// Represents an invalid or unknown Unicode property.
-    InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
-}
-
 /// Private marker type for PropertyValueNameToEnumMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -94,7 +60,7 @@ pub struct PropertyValueNameToEnumMapper<T> {
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`ErasedNameToEnumMapV1Marker::as_borrowed()`]. More efficient to query.
+/// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
 pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     marker: PhantomData<fn() -> T>,
@@ -644,6 +610,43 @@ impl GeneralCategoryGroup {
     /// ```
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
+    }
+}
+
+impl_value_getter! {
+    marker: GeneralCategoryMaskNameToValueV1Marker;
+    impl GeneralCategoryGroup {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `General_Category_Mask` mask property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GeneralCategoryGroup;
+        ///
+        /// let lookup = GeneralCategoryGroup::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("LC"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Zp"), Some(GeneralCategoryGroup::ParagraphSeparator));
+        /// assert_eq!(lookup.get_strict("P"), Some(GeneralCategoryGroup::Punctuation));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Letter"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("Cased_Letter"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// // alias name
+        /// assert_eq!(lookup.get_strict("punct"), Some(GeneralCategoryGroup::Punctuation));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("letter"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("letter"), Some(GeneralCategoryGroup::Letter));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("EverythingLol"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
     }
 }
 

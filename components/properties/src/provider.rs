@@ -318,7 +318,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
 }
 
 /// This is a property name that can be "loose matched" as according to
-/// https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt
+/// [PropertyValueAliases.txt](https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt)
 ///
 /// (matched case-insensitively in ASCII, ignoring underscores, whitespace, and hyphens)
 ///
@@ -457,12 +457,13 @@ impl NormalizedPropertyNameStr {
 
 /// A set of characters and strings which share a particular property value.
 ///
-//// <div class="stab unstable">
+/// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct(marker(GeneralCategoryMaskNameToValueV1Marker, "props/names/gcm@1"))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
@@ -736,5 +737,6 @@ expand!(
             "SB",
             SentenceBreak
         ),
+        // note: the names key for the GCM mask is handled above
     )
 );

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Display names for regions
+//! 🚧 \[Experimental\] Display names for languages and regions.
 //!
 //! This module is published as its own crate ([`icu_displaynames`](https://docs.rs/icu_displaynames/latest/icu_displaynames/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
@@ -23,7 +23,8 @@ pub mod displaynames;
 pub mod options;
 pub mod provider;
 
-pub use displaynames::DisplayNames;
+pub use displaynames::LanguageDisplayNames;
+pub use displaynames::RegionDisplayNames;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;
 pub use options::LanguageDisplay;

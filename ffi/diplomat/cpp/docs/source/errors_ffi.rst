@@ -73,6 +73,8 @@
 
     .. cpp:enumerator:: PropertyUnknownGeneralCategoryGroupError
 
+    .. cpp:enumerator:: PropertyUnexpectedPropertyNameError
+
     .. cpp:enumerator:: FixedDecimalLimitError
 
     .. cpp:enumerator:: FixedDecimalSyntaxError

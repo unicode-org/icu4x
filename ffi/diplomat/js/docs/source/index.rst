@@ -26,6 +26,7 @@ Documentation
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi
+   properties_unisets_ffi
    provider_ffi
    script_ffi
    segmenter_grapheme_ffi

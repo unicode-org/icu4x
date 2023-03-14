@@ -55,7 +55,7 @@ path = "src/lib.rs"
 default = []
 std = []
 bench = ["serde"]
-serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
+serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde", "icu_testdata/buffer"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake"]
 
 [[bench]]

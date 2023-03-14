@@ -16,11 +16,11 @@ icu_locid = { path = "../../components/locid", features = ["databake"] }
 icu_provider = { path = "../../provider/core" }
 repodata = { path = "../../provider/repodata" }
 
-cached-path = "0.5"
+cached-path = ">=0.5, <0.7"
 clap = "2.33"
 eyre = "0.6"
 log = "0.4"
 quote = "1"
 rust-format = { version = "0.3.4", features = ["token_stream"] }
 simple_logger = { version = "1.12", default-features = false }
-zip = "0.5"
+zip = ">=0.5, <0.7"
