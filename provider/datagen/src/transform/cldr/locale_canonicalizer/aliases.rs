@@ -169,7 +169,6 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                     from,
                     to.replacement
                         .split(' ')
-                        .into_iter()
                         .filter_map(|r| r.parse::<subtags::Region>().ok())
                         .collect::<Box<[_]>>(),
                 );
@@ -183,7 +182,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         }
 
         for (from, to) in other.supplemental.metadata.alias.subdivision_aliases.iter() {
-            if let Some(replacement) = to.replacement.split(' ').into_iter().find_map(|r| {
+            if let Some(replacement) = to.replacement.split(' ').find_map(|r| {
                 if r.len() == 2 {
                     // Following http://unicode.org/reports/tr35/#Canonical_Unicode_Locale_Identifiers,
                     // append "zzzz" to make this syntactically correct.

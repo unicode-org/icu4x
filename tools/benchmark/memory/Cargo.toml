@@ -12,6 +12,4 @@ edition = "2021"
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 clap = "2.33"
 cargo_metadata = "0.13"
-# This is the last version that builds on our current pinned nightly due to
-# https://github.com/rust-lang/libc/issues/3066
-libc = "=0.2.126" 
+libc = "0.2"

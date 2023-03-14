@@ -12,14 +12,14 @@
     See the `Rust documentation for CodePointSetDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html>`__ for more information.
 
 
-    .. js:function:: contains(cp)
+    .. js:method:: contains(cp)
 
         Checks whether the code point is in the set.
 
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 
 
-    .. js:function:: contains32(cp)
+    .. js:method:: contains32(cp)
 
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 
@@ -354,4 +354,13 @@
     .. js:function:: load_xid_start(provider)
 
         See the `Rust documentation for load_xid_start <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_xid_start.html>`__ for more information.
+
+
+    .. js:function:: load_for_ecma262(provider, property_name)
+
+        Loads data for a property specified as a string as long as it is one of the `ECMA-262 binary properties <https://tc39.es/ecma262/#table-binary-unicode-properties>`__ (not including Any, ASCII, and Assigned pseudoproperties).
+
+        Returns ``ICU4XError::PropertyUnexpectedPropertyNameError`` in case the string does not match any property in the list
+
+        See the `Rust documentation for load_for_ecma262_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_ecma262_unstable.html>`__ for more information.
 

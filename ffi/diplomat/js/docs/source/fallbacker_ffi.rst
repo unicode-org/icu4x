@@ -25,14 +25,14 @@
     See the `Rust documentation for LocaleFallbackIterator <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackIterator.html>`__ for more information.
 
 
-    .. js:function:: get()
+    .. js:method:: get()
 
         Gets a snapshot of the current state of the locale.
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackIterator.html#method.get>`__ for more information.
 
 
-    .. js:function:: step()
+    .. js:method:: step()
 
         Performs one step of the fallback algorithm, mutating the locale.
 
@@ -67,7 +67,7 @@
         See the `Rust documentation for new_without_data <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.new_without_data>`__ for more information.
 
 
-    .. js:function:: for_config(config)
+    .. js:method:: for_config(config)
 
         Associates this ``ICU4XLocaleFallbacker`` with configuration options.
 
@@ -81,7 +81,7 @@
     See the `Rust documentation for LocaleFallbackerWithConfig <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackerWithConfig.html>`__ for more information.
 
 
-    .. js:function:: fallback_for_locale(locale)
+    .. js:method:: fallback_for_locale(locale)
 
         Creates an iterator from a locale with each step of fallback.
 

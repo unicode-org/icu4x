@@ -26,7 +26,7 @@
         See the `Rust documentation for get_for_bcp47_value <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value>`__ for more information.
 
 
-    .. js:function:: bcp47()
+    .. js:method:: bcp47()
 
         Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
 
@@ -52,7 +52,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: kind()
+    .. js:method:: kind()
 
         Returns the kind of this calendar
 
