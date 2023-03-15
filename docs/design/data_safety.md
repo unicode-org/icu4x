@@ -94,6 +94,7 @@ impl MonthNamesGIGO {
             Some(v) => v,
             None => {
                 debug_assert!(false, "month_names is empty");
+                // Return a GIGO result:
                 ""
             }
         }
