@@ -4,13 +4,13 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use intmath::i8_mul_div_128;
-use intmath::i8_mul_div_128_reference;
-use intmath::saturating_i16_mul_div_1024;
-use intmath::saturating_i16_mul_div_1024_reference;
+use tinymath::i8_mul_div_128;
+use tinymath::i8_mul_div_128_reference;
+use tinymath::saturating_i16_mul_div_1024;
+use tinymath::saturating_i16_mul_div_1024_reference;
 
 fn bench_i8_mul_div_128(c: &mut Criterion) {
-    let mut group = c.benchmark_group("intmath/muldiv/i8/128");
+    let mut group = c.benchmark_group("tinymath/muldiv/i8/128");
 
     let values = [0i8, 1, 2, 3, 4, 5, 10, 16, 20, 32, 40, 63, 64, 65, 90, 127];
 
@@ -44,7 +44,7 @@ fn bench_i8_mul_div_128(c: &mut Criterion) {
 }
 
 fn bench_saturating_i16_mul_div_1024(c: &mut Criterion) {
-    let mut group = c.benchmark_group("intmath/muldiv/i16/1024");
+    let mut group = c.benchmark_group("tinymath/muldiv/i16/1024");
 
     let values = [
         0, 1, 2, 3, 10, 16, 20, 63, 64, 65, 90, 128, 511, 512, 1023, 1024, 4000,

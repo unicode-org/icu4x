@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use intmath::i8_mul_div_128;
-use intmath::i8_mul_div_128_reference;
-use intmath::saturating_i16_mul_div_1024;
-use intmath::saturating_i16_mul_div_1024_reference;
+use tinymath::i8_mul_div_128;
+use tinymath::i8_mul_div_128_reference;
+use tinymath::saturating_i16_mul_div_1024;
+use tinymath::saturating_i16_mul_div_1024_reference;
 
 #[test]
 fn test_i8_mul_div_128() {

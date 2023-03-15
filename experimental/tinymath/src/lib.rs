@@ -4,7 +4,7 @@
 
 #![no_std]
 
-//! Routines for performing integer arithmetic.
+//! Routines for performing arithmetic on small data types.
 //!
 //! This focus of this crate is currently on functions to perform operations
 //! of the form `a * b / 2^c`. Normally this operation requires using the
@@ -29,7 +29,7 @@
 /// # Examples
 ///
 /// ```
-/// use intmath::i8_mul_div_128;
+/// use tinymath::i8_mul_div_128;
 ///
 /// assert_eq!(29, 50 * 75 / 128);
 /// assert_eq!(29, i8_mul_div_128(50, 75));
@@ -75,7 +75,7 @@ pub fn i8_mul_div_128_reference(a: i8, b: i8) -> i8 {
 /// # Examples
 ///
 /// ```
-/// use intmath::saturating_i16_mul_div_1024;
+/// use tinymath::saturating_i16_mul_div_1024;
 ///
 /// assert_eq!(146, 200 * 750 / 1024);
 /// assert_eq!(146, saturating_i16_mul_div_1024(200, 750));
@@ -84,7 +84,7 @@ pub fn i8_mul_div_128_reference(a: i8, b: i8) -> i8 {
 /// Saturates the `i16` if the result does not fit:
 ///
 /// ```
-/// use intmath::saturating_i16_mul_div_1024;
+/// use tinymath::saturating_i16_mul_div_1024;
 ///
 /// assert_eq!(62500, 8000 * 8000 / 1024);
 /// assert_eq!(32767, saturating_i16_mul_div_1024(8000, 8000));
