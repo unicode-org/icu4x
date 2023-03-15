@@ -250,7 +250,7 @@ rust_library("icu_capi-v1_1_0") {
   deps += [ ":icu_segmenter-v0_8_0" ]
   deps += [ ":icu_timezone-v1_1_0" ]
   deps += [ ":tinystr-v0_7_1" ]
-  deps += [ ":unicode-bidi-v0_3_8" ]
+  deps += [ ":unicode-bidi-v0_3_11" ]
   deps += [ ":writeable-v0_5_1" ]
   if (current_cpu == "wasm32") {
     deps += [ ":log-v0_4_14" ]
@@ -510,7 +510,7 @@ rust_library("icu_properties-v1_1_0") {
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
   deps += [ ":icu_collections-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
-  deps += [ ":unicode-bidi-v0_3_8" ]
+  deps += [ ":unicode-bidi-v0_3_11" ]
   deps += [ ":zerovec-v0_9_3" ]
 
   rustenv = []
@@ -1208,10 +1208,10 @@ rust_library("tinystr-v0_7_1") {
   visibility = [ ":*" ]
 }
 
-rust_library("unicode-bidi-v0_3_8") {
+rust_library("unicode-bidi-v0_3_11") {
   crate_name = "unicode_bidi"
   crate_root = "//ffi/gn/vendor/unicode-bidi/src/lib.rs"
-  output_name = "unicode_bidi-d7c128c711aa3d34"
+  output_name = "unicode_bidi-5102bb38f48c1b72"
 
   deps = []
 
@@ -1220,8 +1220,8 @@ rust_library("unicode-bidi-v0_3_8") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2018",
-    "-Cmetadata=d7c128c711aa3d34",
-    "-Cextra-filename=-d7c128c711aa3d34",
+    "-Cmetadata=5102bb38f48c1b72",
+    "-Cextra-filename=-5102bb38f48c1b72",
   ]
 
   visibility = [ ":*" ]

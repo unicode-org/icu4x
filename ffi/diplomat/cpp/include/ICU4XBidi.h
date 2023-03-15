@@ -17,6 +17,7 @@ typedef struct ICU4XBidi ICU4XBidi;
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XBidi_ICU4XError.h"
 #include "ICU4XBidiInfo.h"
+#include "ICU4XReorderedIndexMap.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -25,6 +26,8 @@ extern "C" {
 diplomat_result_box_ICU4XBidi_ICU4XError ICU4XBidi_create(const ICU4XDataProvider* provider);
 
 ICU4XBidiInfo* ICU4XBidi_for_text(const ICU4XBidi* self, const char* text_data, size_t text_len, uint8_t default_level);
+
+ICU4XReorderedIndexMap* ICU4XBidi_reorder_visual(const ICU4XBidi* self, const uint8_t* levels_data, size_t levels_len);
 
 bool ICU4XBidi_level_is_rtl(uint8_t level);
 

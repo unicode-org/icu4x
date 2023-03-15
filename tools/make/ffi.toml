@@ -263,9 +263,6 @@ mkdir ./js/docs/source
 echo "$conf_py" > ./js/docs/source/conf.py
 
 diplomat-tool js ./js/include/ --docs ./js/docs/source --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
-
-# TODO: Fix diplomat bug
-find ./js/docs/source -type f -exec sed -i  {} -e 's/staticfunction/function/g' \;
 '''
 
 [tasks.install-cortex-8]

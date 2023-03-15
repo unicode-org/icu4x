@@ -23,6 +23,12 @@ pub mod ffi {
         FnInStruct,
         hidden
     )]
+    #[diplomat::rust_link(icu::properties::maps::CodePointMapData::from_data, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::properties::maps::CodePointMapData::try_into_converted,
+        FnInStruct,
+        hidden
+    )]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 

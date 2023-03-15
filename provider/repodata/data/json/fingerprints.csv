@@ -813,9 +813,10 @@ list/unit@1, th, 360B, 2b55f76c450485ec
 list/unit@1, tr, 266B, 85311523bac423fc
 list/unit@1, und, 267B, ed5c23376111f549
 locid_transform/aliases@1, und, 18572B, 34ee26a369ad86e3
-locid_transform/likelysubtags@1, und, 372271B, c99bcb6b52065fce
-locid_transform/likelysubtags_l@1, und, 350710B, 395a13314bc425a4
-locid_transform/likelysubtags_sr@1, und, 21564B, 50024e3b17083ac6
+locid_transform/likelysubtags@1, und, 23110B, 7cf7f4adb6384f93
+locid_transform/likelysubtags_ext@1, und, 349299B, 904055aea5324e1e
+locid_transform/likelysubtags_l@1, und, 9479B, 37f0f4accdcf60d
+locid_transform/likelysubtags_sr@1, und, 13634B, a2aa9a464e168477
 normalizer/comp@1, und, 29836B, acf6b523f466044b
 normalizer/decomp@1, und, 13620B, f268fef343685b92
 normalizer/nfd@1, und, 85212B, 1694a185adfafd01

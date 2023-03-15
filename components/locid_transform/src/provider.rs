@@ -301,3 +301,54 @@ impl<'data> From<LikelySubtagsV1<'data>> for LikelySubtagsForScriptRegionV1<'dat
         }
     }
 }
+
+#[icu_provider::data_struct(LikelySubtagsExtendedV1Marker = "locid_transform/likelysubtags_ext@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locid_transform::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+/// This likely subtags data is used for full coverage of locales, including ones that
+/// don't otherwise have data in the Common Locale Data Repository (CLDR).
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[yoke(prove_covariance_manually)]
+pub struct LikelySubtagsExtendedV1<'data> {
+    /// Language and script.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub language_script: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedScript), Region>,
+    /// Language and region.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub language_region: ZeroMap<'data, (UnvalidatedLanguage, UnvalidatedRegion), Script>,
+    /// Just language.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub language: ZeroMap<'data, UnvalidatedLanguage, (Script, Region)>,
+    /// Script and region.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub script_region: ZeroMap<'data, (UnvalidatedScript, UnvalidatedRegion), Language>,
+    /// Just script.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub script: ZeroMap<'data, UnvalidatedScript, (Language, Region)>,
+    /// Just region.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub region: ZeroMap<'data, UnvalidatedRegion, (Language, Script)>,
+}
+
+impl<'data> From<LikelySubtagsV1<'data>> for LikelySubtagsExtendedV1<'data> {
+    fn from(other: LikelySubtagsV1<'data>) -> Self {
+        Self {
+            language_script: other.language_script,
+            language_region: other.language_region,
+            language: other.language,
+            script_region: other.script_region,
+            script: other.script,
+            region: other.region,
+        }
+    }
+}
