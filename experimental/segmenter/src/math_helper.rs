@@ -102,18 +102,6 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         }
     }
 
-    pub fn argmax(&self) -> usize {
-        let mut mx: f32 = 0.0;
-        let mut ind = 0;
-        self.data.iter().enumerate().for_each(|(i, v)| {
-            if mx < *v {
-                mx = *v;
-                ind = i
-            }
-        });
-        ind
-    }
-
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion should always succeed and be elided at compile time

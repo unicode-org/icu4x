@@ -124,15 +124,23 @@ impl<'l> Lstm<'l> {
 
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
-    fn compute_bies(&self, arr: MatrixBorrowed<1>) -> Result<char, Error> {
-        let ind = arr.argmax();
-        match ind {
-            0 => Ok('b'),
-            1 => Ok('i'),
-            2 => Ok('e'),
-            3 => Ok('s'),
-            _ => Err(Error::Syntax),
+    fn compute_bies(&self, arr: [f32; 4]) -> char {
+        let [b, i, e, s] = arr;
+        let mut result = 'b';
+        let mut max = b;
+        if i > max {
+            result = 'i';
+            max = i;
         }
+        if e > max {
+            result = 'e';
+            max = e;
+        }
+        if s > max {
+            result = 's';
+            // max = s;
+        }
+        result
     }
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
@@ -282,8 +290,8 @@ impl<'l> Lstm<'l> {
             curr_est.as_mut().add_dot_2d(curr_bw, timew_bw);
             curr_est.as_mut().add(timeb)?;
             curr_est.as_mut().softmax_transform();
-            // We use `unwrap_or` to fall back and prevent panics.
-            bies.push(self.compute_bies(curr_est.as_borrowed()).unwrap_or('s'));
+            let weights = curr_est.as_borrowed().read_4()?;
+            bies.push(self.compute_bies(weights));
         }
         Some(bies)
     }
