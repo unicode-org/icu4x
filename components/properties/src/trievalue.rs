@@ -2,11 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::bidi_data::MirroredPairedBracketData;
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
     GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+use core::char::CharTryFromError;
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -169,5 +171,24 @@ impl TrieValue for GeneralCategoryGroup {
         // trie storage types to the actual type. This type will always be a packed u16
         // in our case since the names map upcasts from u16
         u16::try_from(i).map(packed_u16_to_gcg)
+    }
+}
+
+impl TrieValue for MirroredPairedBracketData {
+    type TryFromU32Error = CharTryFromError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        let code_point = i & 0x1FFFFF;
+        let mirroring_glyph = char::try_from_u32(code_point)?;
+        let is_mirrored = ((i >> 21) & 0x1) == 1;
+        let paired_bracket_type = {
+            let value = ((i >> 22) & 0x3) as u8;
+            BidiPairedBracketType(value)
+        };
+        Ok(MirroredPairedBracketData {
+            mirroring_glyph,
+            is_mirrored,
+            paired_bracket_type,
+        })
     }
 }
