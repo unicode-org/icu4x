@@ -298,7 +298,7 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// assert_eq!(ranges.next().unwrap(), 'µ' as u32..='µ' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'º' as u32..='º' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
-    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='Þ' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='ö' as u32);
     /// ```
     pub fn iter_ranges_for_group(
         self,

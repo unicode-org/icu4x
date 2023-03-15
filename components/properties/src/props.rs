@@ -563,7 +563,7 @@ impl GeneralCategoryGroup {
         | 1 << (GC::ModifierSymbol as u32)
         | 1 << (GC::OtherSymbol as u32));
 
-    const ALL: u32 = (1 << (GC::OtherSymbol as u32 + 1)) - 1;
+    const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
 
     /// Return whether the code point belongs in the provided multi-value category.
     ///
