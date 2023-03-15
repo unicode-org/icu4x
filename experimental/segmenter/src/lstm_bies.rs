@@ -97,15 +97,16 @@ impl<'l> Lstm<'l> {
         let mat8 = mat8.as_standard_layout().into_owned();
         Ok(Self {
             data,
-            mat1: MatrixOwned::from_ndarray(mat1),
-            mat2: MatrixOwned::from_ndarray(mat2),
-            mat3: MatrixOwned::from_ndarray(mat3),
-            mat4: MatrixOwned::from_ndarray(mat4),
-            mat5: MatrixOwned::from_ndarray(mat5),
-            mat6: MatrixOwned::from_ndarray(mat6),
-            mat7: MatrixOwned::from_ndarray(mat7),
-            mat8: MatrixOwned::from_ndarray(mat8),
-            mat9: MatrixOwned::from_ndarray(mat9),
+            // These unwraps will change when ndarray is moved into datagen
+            mat1: MatrixOwned::from_ndarray(mat1).unwrap(),
+            mat2: MatrixOwned::from_ndarray(mat2).unwrap(),
+            mat3: MatrixOwned::from_ndarray(mat3).unwrap(),
+            mat4: MatrixOwned::from_ndarray(mat4).unwrap(),
+            mat5: MatrixOwned::from_ndarray(mat5).unwrap(),
+            mat6: MatrixOwned::from_ndarray(mat6).unwrap(),
+            mat7: MatrixOwned::from_ndarray(mat7).unwrap(),
+            mat8: MatrixOwned::from_ndarray(mat8).unwrap(),
+            mat9: MatrixOwned::from_ndarray(mat9).unwrap(),
             grapheme: if data.get().model.contains("_codepoints_") {
                 None
             } else {
@@ -185,8 +186,7 @@ impl<'l> Lstm<'l> {
             let [s0, s1, s2, s3] = s_t
                 .as_borrowed()
                 .submatrix::<1>(i)
-                .and_then(|s| s.read_4())
-                .unwrap_or([0.0, 0.0, 0.0, 0.0]);
+                .and_then(|s| s.read_4())?;
             let p = math_helper::sigmoid(s0);
             let f = math_helper::sigmoid(s1);
             let c = math_helper::tanh(s2);
@@ -204,7 +204,14 @@ impl<'l> Lstm<'l> {
     pub fn word_segmenter(&self, input: &str) -> String {
         let inner = self.word_segmenter_inner(input);
         debug_assert!(inner.is_some(), "{:?}", input);
-        inner.unwrap_or_default()
+        // Fill in a GIGO result of all 's'
+        let result = inner.unwrap_or_else(|| {
+            core::iter::repeat("s")
+                .take(input.chars().count())
+                .collect()
+        });
+        debug_assert_eq!(result.len(), input.chars().count(), "{:?}", input);
+        result
     }
 
     fn word_segmenter_inner(&self, input: &str) -> Option<String> {

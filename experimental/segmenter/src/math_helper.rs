@@ -15,13 +15,6 @@ pub struct MatrixOwned<const D: usize> {
 }
 
 impl<const D: usize> MatrixOwned<D> {
-    pub fn empty() -> Self {
-        Self {
-            data: vec![],
-            dims: [0; D],
-        }
-    }
-
     pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: &self.data,
@@ -29,18 +22,16 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
-    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Self
+    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Option<Self>
     where
         Dim<[usize; D]>: Dimension,
     {
-        let maybe_dims: Result<[usize; D], _> = nd.shape().try_into();
+        let dims: [usize; D] = nd.shape().try_into().ok()?;
         let data = nd.into_raw_vec();
-        match maybe_dims {
-            Ok(dims) if dims.iter().product::<usize>() == data.len() => Self { data, dims },
-            _ => {
-                debug_assert!(false);
-                Self::empty()
-            }
+        if dims.iter().product::<usize>() == data.len() {
+            Some(Self { data, dims })
+        } else {
+            None
         }
     }
 
