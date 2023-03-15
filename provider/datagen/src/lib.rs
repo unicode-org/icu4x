@@ -193,34 +193,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     strings.iter().filter_map(crate::key).collect()
 }
 
-/// Parses a file of human-readable key identifiers and returns a
-/// list of [`DataKey`]s.
-///
-/// Unknown key names are ignored.
-//  Supports the hello world key
-/// # Example
-///
-/// #### keys.txt
-/// ```text
-/// list/and@1
-/// list/or@1
-/// ```
-/// #### build.rs
-/// ```no_run
-/// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
-/// # fn main() -> std::io::Result<()> {
-/// assert_eq!(
-///     icu_datagen::keys_from_file("keys.txt")?,
-///     vec![
-///         icu::list::provider::AndListV1Marker::KEY,
-///         icu::list::provider::OrListV1Marker::KEY,
-///     ],
-/// );
-/// # Ok(())
-/// # }
-/// ```
-#[deprecated]
+#[doc(hidden)]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
@@ -228,28 +201,16 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect()
 }
 
-/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
-///
-/// Unknown key names are ignored.
-//  Supports the hello world key
-/// # Example
-///
-/// #### build.rs
-/// ```no_run
-/// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
-/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// assert_eq!(
-///     icu_datagen::keys_from_bin("target/release/my-app")?,
-///     vec![
-///         icu::list::provider::AndListV1Marker::KEY,
-///         icu::list::provider::OrListV1Marker::KEY,
-///     ],
-/// );
-/// # Ok(())
-/// # }
-/// ```
-#[deprecated]
+
+/// Parses a compiled binary and returns the [`Options`](options::Options) for it.
+pub fn options_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<options::Options> {
+    let mut options = options::Options::default();
+    options.keys = options::KeyInclude::Explicit(keys_from_bin(path)?.into_iter().collect());
+    // TODO: more static analysis
+    options
+}
+
+#[doc(hidden)]
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
     let mut result = Vec::new();
@@ -359,21 +320,18 @@ pub fn datagen(
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
     use options::*;
-    datagen_with_options(Options {
-        keys: keys.iter().cloned().collect(),
-        locales: LocaleOptions {
-            locales: locales.map(Into::into).map(LocaleInclude::Explicit).unwrap_or(LocaleInclude::All),
-            regions: RegionInclude::All,
-            include_root: true,
-            some_segmenter_flag: false,
+    datagen_with_options(
+        Options {
+            keys: KeyInclude::Explicit(keys.iter().cloned().collect()),
+            locales: locales
+                .map(Into::into)
+                .map(LocaleInclude::Explicit)
+                .unwrap_or(LocaleInclude::All),
+            ..Default::default()
         },
-        fallback: FallbackOptions {
-            variant: FallbackVariant::None,
-        },
-    },
-    source,
-    outs,
-)
+        source,
+        outs,
+    )
 }
 
 pub fn datagen_with_options(
@@ -431,49 +389,51 @@ pub fn datagen_with_options(
         .collect::<Result<Vec<_>, DataError>>()?;
 
     use options::LocaleInclude;
-    let provider: Box<dyn ExportableProvider> = match options.locales.locales.resolved(source)? {
+    let provider: Box<dyn ExportableProvider> = match options.locales.resolved(source)? {
         LocaleInclude::None => Box::<EmptyDataProvider>::default(),
         LocaleInclude::Explicit(locales) => Box::new(
             DatagenProvider {
                 source: source.clone(),
             }
             .filterable("icu4x-datagen locales")
-            .filter_by_langid(move |lid| {
-                (lid.language.is_empty() && options.locales.include_root) || locales.contains(lid)
-            }),
+            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
         ),
         LocaleInclude::All => Box::new(DatagenProvider {
             source: source.clone(),
         }),
-        _ => unreachable!("CLDR levels have been resolved")
+        _ => unreachable!("CLDR levels have been resolved"),
     };
 
-    options.keys.into_par_iter().try_for_each(|key| {
-        let locales = provider
-            .supported_locales_for_key(key)
-            .map_err(|e| e.with_key(key))?;
-        let res = locales.into_par_iter().try_for_each(|locale| {
-            let req = DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            };
-            let payload = provider
-                .load_data(key, req)
-                .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, req))?;
-            exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &locale, &payload)
-                    .map_err(|e| e.with_req(key, req))
-            })
-        });
+    options
+        .keys
+        .resolved()
+        .into_par_iter()
+        .try_for_each(|key| {
+            let locales = provider
+                .supported_locales_for_key(key)
+                .map_err(|e| e.with_key(key))?;
+            let res = locales.into_par_iter().try_for_each(|locale| {
+                let req = DataRequest {
+                    locale: &locale,
+                    metadata: Default::default(),
+                };
+                let payload = provider
+                    .load_data(key, req)
+                    .and_then(DataResponse::take_payload)
+                    .map_err(|e| e.with_req(key, req))?;
+                exporters.par_iter().try_for_each(|e| {
+                    e.put_payload(key, &locale, &payload)
+                        .map_err(|e| e.with_req(key, req))
+                })
+            });
 
-        log::info!("Writing key: {}", key);
-        for e in &exporters {
-            e.flush(key).map_err(|e| e.with_key(key))?;
-        }
+            log::info!("Writing key: {}", key);
+            for e in &exporters {
+                e.flush(key).map_err(|e| e.with_key(key))?;
+            }
 
-        res
-    })?;
+            res
+        })?;
 
     for mut e in exporters {
         e.close()?;

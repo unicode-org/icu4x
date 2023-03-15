@@ -47,24 +47,33 @@ fn main() {
         File::create(out_dir.join("testdata.postcard")).unwrap(),
     ));
 
-    let mut options = BakedOptions::default();
-    options.pretty = true;
-    options.insert_feature_gates = true;
-    options.use_separate_crates = true;
-    options.overwrite = true;
     let mod_out = Out::Baked {
         mod_directory: out_dir.join("baked"),
-        options,
+        options: {
+            let mut options = BakedOptions::default();
+            options.pretty = true;
+            options.insert_feature_gates = true;
+            options.use_separate_crates = true;
+            options.overwrite = true;
+            options
+        },
     };
 
-    icu_datagen::datagen(
-        Some(LOCALES),
-        &icu_datagen::all_keys_with_experimental()
-            .into_iter()
-            .chain(core::iter::once(
-                icu_provider::hello_world::HelloWorldV1Marker::KEY,
-            ))
-            .collect::<Vec<_>>(),
+    icu_datagen::datagen_with_options(
+        {
+            let mut options = options::Options::default();
+            options.keys = options::KeyInclude::Explicit(
+                icu_datagen::all_keys_with_experimental()
+                    .into_iter()
+                    .chain(core::iter::once(
+                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
+                    ))
+                    .collect(),
+            );
+            options.locales = options::LocaleInclude::Explicit(LOCALES.to_vec());
+            options.include_root_locale = true;
+            options
+        },
         &source,
         vec![json_out, blob_out, mod_out, postcard_out],
     )
