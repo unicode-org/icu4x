@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::Range;
 use alloc::vec;
 use alloc::vec::Vec;
+use core::ops::Range;
 
 use ndarray::{ArrayBase, Dim, Dimension, OwnedRepr};
 
