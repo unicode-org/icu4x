@@ -259,42 +259,38 @@ pub fn sigmoid(x: f32) -> f32 {
 /// `xs` and `ys` must be the same length
 ///
 /// (From ndarray 0.15.6)
-#[allow(clippy::indexing_slicing)] // all indexing is protected by the entry assertion
+#[allow(clippy::indexing_slicing)] // all indexing has been reviewed
 fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
-    if xs.len() != ys.len() {
-        return 0.0;
-    }
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
     let len = core::cmp::min(xs.len(), ys.len());
     let mut xs = &xs[..len];
     let mut ys = &ys[..len];
     let mut sum = 0.0;
-    let (mut p0, mut p1, mut p2, mut p3, mut p4, mut p5, mut p6, mut p7) =
-        (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    // TODO: Use array_chunks once stable to reduce the number of indexing ops.
+    // <https://github.com/rust-lang/rust/issues/74985>
     while xs.len() >= 8 {
-        p0 += xs[0] * ys[0];
-        p1 += xs[1] * ys[1];
-        p2 += xs[2] * ys[2];
-        p3 += xs[3] * ys[3];
-        p4 += xs[4] * ys[4];
-        p5 += xs[5] * ys[5];
-        p6 += xs[6] * ys[6];
-        p7 += xs[7] * ys[7];
+        p.0 += xs[0] * ys[0];
+        p.1 += xs[1] * ys[1];
+        p.2 += xs[2] * ys[2];
+        p.3 += xs[3] * ys[3];
+        p.4 += xs[4] * ys[4];
+        p.5 += xs[5] * ys[5];
+        p.6 += xs[6] * ys[6];
+        p.7 += xs[7] * ys[7];
 
         xs = &xs[8..];
         ys = &ys[8..];
     }
-    sum += p0 + p4;
-    sum += p1 + p5;
-    sum += p2 + p6;
-    sum += p3 + p7;
+    sum += p.0 + p.4;
+    sum += p.1 + p.5;
+    sum += p.2 + p.6;
+    sum += p.3 + p.7;
 
     for (i, (&x, &y)) in xs.iter().zip(ys).enumerate() {
-        if i >= 7 {
-            break;
-        }
+        debug_assert!(i < 7);
         sum += x * y;
     }
     sum
