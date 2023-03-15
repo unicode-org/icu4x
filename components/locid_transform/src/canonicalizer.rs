@@ -217,6 +217,7 @@ impl LocaleCanonicalizer {
         P: DataProvider<AliasesV1Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + DataProvider<LikelySubtagsExtendedV1Marker>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_unstable(provider)?;
