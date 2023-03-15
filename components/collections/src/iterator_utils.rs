@@ -32,6 +32,7 @@ where
 {
     type Item = RangeInclusive<u32>;
 
+    #[allow(clippy::needless_return)] // This is a gnarly function, let's make control flow explicit
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(prev_end) = self.prev_end {
             // We had already begun iterating
@@ -140,6 +141,7 @@ where
         };
 
         // Keep pulling ranges
+        #[allow(clippy::while_let_on_iterator)] // can't move the iterator, also we want it to be explicit that we're not draining the iterator
         while let Some(next) = self.iter.next() {
             if *next.start() == end + 1 {
                 // Range has no gap, coalesce
