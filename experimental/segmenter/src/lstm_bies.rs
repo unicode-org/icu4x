@@ -194,13 +194,9 @@ impl<'l> Lstm<'l> {
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
     pub fn word_segmenter(&self, input: &str) -> String {
-        match self.word_segmenter_inner(input) {
-            Some(s) => s,
-            None => {
-                debug_assert!(false);
-                String::new()
-            }
-        }
+        let inner = self.word_segmenter_inner(input);
+        debug_assert!(inner.is_some(), "{:?}", input);
+        inner.unwrap_or_default()
     }
 
     fn word_segmenter_inner(&self, input: &str) -> Option<String> {

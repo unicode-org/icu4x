@@ -116,7 +116,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
-        // This assertion should always fail and be elided at compile time
+        // This assertion should always succeed and be elided at compile time
         assert_eq!(M, D - 1);
         let (range, dims) = self.submatrix_range(index);
         let data = &self.data.get(range)?;
@@ -125,7 +125,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
     #[inline]
     fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
-        // This assertion should always fail and be elided at compile time
+        // This assertion should always succeed and be elided at compile time
         assert_eq!(M, D - 1);
         // The above assertion guarantees that the following line will succeed
         #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
@@ -137,9 +137,8 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
 impl<'a> MatrixBorrowed<'a, 1> {
     pub fn dim(&self) -> usize {
-        // The type parameter guarantees that self.dims has 1 element
-        #[allow(clippy::indexing_slicing)]
-        self.dims[0]
+        let [dim] = self.dims;
+        dim
     }
 
     pub fn read_4(&self) -> Option<(f32, f32, f32, f32)> {
