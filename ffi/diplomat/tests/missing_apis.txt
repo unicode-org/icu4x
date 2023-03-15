@@ -17,8 +17,10 @@
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
+icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented#FnInStruct
 icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges#FnInStruct
+icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_data#FnInStruct
