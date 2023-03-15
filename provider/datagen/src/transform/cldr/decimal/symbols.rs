@@ -69,11 +69,25 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
             .numsys_data
             .symbols
             .get(&nsname)
+            .or_else(|| {
+                // Fall back to Latin
+                numbers
+                    .numsys_data
+                    .symbols
+                    .get(&tinystr::tinystr!(8, "latn"))
+            })
             .ok_or("Could not find symbols for numbering system")?;
         let formats = numbers
             .numsys_data
             .formats
             .get(&nsname)
+            .or_else(|| {
+                // Fall back to Latin
+                numbers
+                    .numsys_data
+                    .formats
+                    .get(&tinystr::tinystr!(8, "latn"))
+            })
             .ok_or("Could not find formats for numbering system")?;
         let parsed_pattern: super::decimal_pattern::DecimalPattern = formats
             .standard
