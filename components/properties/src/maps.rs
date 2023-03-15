@@ -265,6 +265,12 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
             .filter(move |r| r.value == val)
             .map(|r| r.range)
     }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// do *not* have the value `v` in the [`CodePointMapData`].
+    pub fn iter_ranges_for_value_complemented(self, val: T) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.map.iter_ranges_for_predicate(move |r| r.value != val)
+    }
 }
 
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
@@ -296,9 +302,7 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
         val: crate::GeneralCategoryGroup,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map
-            .iter_ranges()
-            .filter(move |r| val.contains(r.value))
-            .map(|r| r.range)
+            .iter_ranges_for_predicate(move |r| val.contains(r.value))
     }
 }
 
