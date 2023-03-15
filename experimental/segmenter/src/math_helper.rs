@@ -259,39 +259,37 @@ pub fn sigmoid(x: f32) -> f32 {
 /// `xs` and `ys` must be the same length
 ///
 /// (From ndarray 0.15.6)
-#[allow(clippy::indexing_slicing)] // all indexing has been reviewed
 fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
-    let len = core::cmp::min(xs.len(), ys.len());
-    let mut xs = &xs[..len];
-    let mut ys = &ys[..len];
     let mut sum = 0.0;
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    // TODO: Use array_chunks once stable to reduce the number of indexing ops.
-    // <https://github.com/rust-lang/rust/issues/74985>
-    while xs.len() >= 8 {
-        p.0 += xs[0] * ys[0];
-        p.1 += xs[1] * ys[1];
-        p.2 += xs[2] * ys[2];
-        p.3 += xs[3] * ys[3];
-        p.4 += xs[4] * ys[4];
-        p.5 += xs[5] * ys[5];
-        p.6 += xs[6] * ys[6];
-        p.7 += xs[7] * ys[7];
-
-        xs = &xs[8..];
-        ys = &ys[8..];
+    let xit = xs.chunks_exact(8);
+    let yit = ys.chunks_exact(8);
+    for (x, y) in xit.remainder().iter().zip(yit.remainder().iter()) {
+        sum += x * y;
+    }
+    for (xx, yy) in xit.zip(yit) {
+        // TODO: Use array_chunks once stable to avoid the unwrap.
+        // <https://github.com/rust-lang/rust/issues/74985>
+        #[allow(clippy::unwrap_used)]
+        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[f32; 8]>::try_from(xx).unwrap();
+        #[allow(clippy::unwrap_used)]
+        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[f32; 8]>::try_from(yy).unwrap();
+        p.0 += x0 * y0;
+        p.1 += x1 * y1;
+        p.2 += x2 * y2;
+        p.3 += x3 * y3;
+        p.4 += x4 * y4;
+        p.5 += x5 * y5;
+        p.6 += x6 * y6;
+        p.7 += x7 * y7;
     }
     sum += p.0 + p.4;
     sum += p.1 + p.5;
     sum += p.2 + p.6;
     sum += p.3 + p.7;
 
-    for (i, (&x, &y)) in xs.iter().zip(ys).enumerate() {
-        debug_assert!(i < 7);
-        sum += x * y;
-    }
     sum
 }
