@@ -4,8 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper::MatrixBorrowed;
-use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned};
+use crate::math_helper::{self, MatrixBorrowed, MatrixBorrowedMut, MatrixOwned};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
