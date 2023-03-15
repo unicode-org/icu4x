@@ -174,15 +174,15 @@ impl<'l> Lstm<'l> {
         s_t.as_mut().add_dot_3d(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
-            let tuple = s_t
+            let [s0, s1, s2, s3] = s_t
                 .as_borrowed()
                 .submatrix::<1>(i)
                 .and_then(|s| s.read_4())
-                .unwrap_or((0.0, 0.0, 0.0, 0.0));
-            let p = math_helper::sigmoid(tuple.0);
-            let f = math_helper::sigmoid(tuple.1);
-            let c = math_helper::tanh(tuple.2);
-            let o = math_helper::sigmoid(tuple.3);
+                .unwrap_or([0.0, 0.0, 0.0, 0.0]);
+            let p = math_helper::sigmoid(s0);
+            let f = math_helper::sigmoid(s1);
+            let c = math_helper::tanh(s2);
+            let o = math_helper::sigmoid(s3);
             let c_old = c_tm1.as_borrowed().as_slice().get(i)?;
             let c_new = p * c + f * c_old;
             *c_tm1.as_mut_slice().get_mut(i)? = c_new;

@@ -141,38 +141,22 @@ impl<'a> MatrixBorrowed<'a, 1> {
         dim
     }
 
-    pub fn read_4(&self) -> Option<(f32, f32, f32, f32)> {
-        debug_assert_eq!(self.dims, [4]);
-        debug_assert_eq!(self.data.len(), 4);
-        if self.data.len() == 4 {
-            // Safety: self.data has length 4
-            unsafe {
-                Some((
-                    *self.data.get_unchecked(0),
-                    *self.data.get_unchecked(1),
-                    *self.data.get_unchecked(2),
-                    *self.data.get_unchecked(3),
-                ))
-            }
-        } else {
-            None
-        }
+    pub fn read_4(&self) -> Option<[f32; 4]> {
+        <&[f32; 4]>::try_from(self.data).ok().copied()
     }
 }
 
 impl<'a> MatrixBorrowed<'a, 2> {
     pub fn dim(&self) -> (usize, usize) {
-        // The type parameter guarantees that self.dims has 2 elements
-        #[allow(clippy::indexing_slicing)]
-        (self.dims[0], self.dims[1])
+        let [d0, d1] = self.dims;
+        (d0, d1)
     }
 }
 
 impl<'a> MatrixBorrowed<'a, 3> {
     pub fn dim(&self) -> (usize, usize, usize) {
-        // The type parameter guarantees that self.dims has 3 elements
-        #[allow(clippy::indexing_slicing)]
-        (self.dims[0], self.dims[1], self.dims[2])
+        let [d0, d1, d2] = self.dims;
+        (d0, d1, d2)
     }
 }
 
