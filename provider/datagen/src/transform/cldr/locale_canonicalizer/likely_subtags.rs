@@ -141,16 +141,19 @@ impl<'a> LikelySubtagsResources<'a> {
             .collect()
     }
 
+    fn common_predicate(&self, min_max: &(&LanguageIdentifier, &LanguageIdentifier)) -> bool {
+        let (minimized, maximized) = min_max;
+        self.basic_plus_languages.contains(&maximized.language)
+            || **minimized == LanguageIdentifier::UND
+    }
+
     fn get_common(&self) -> LikelySubtagsV1<'static> {
         transform(
             self.likely_subtags
                 .supplemental
                 .likely_subtags
                 .iter()
-                .filter(move |(minimized, maximized)| {
-                    self.basic_plus_languages.contains(&maximized.language)
-                        || **minimized == LanguageIdentifier::UND
-                }),
+                .filter(|min_max| self.common_predicate(min_max)),
         )
     }
 
@@ -160,10 +163,7 @@ impl<'a> LikelySubtagsResources<'a> {
                 .supplemental
                 .likely_subtags
                 .iter()
-                .filter(move |(minimized, maximized)| {
-                    !self.basic_plus_languages.contains(&maximized.language)
-                        || **minimized == LanguageIdentifier::UND
-                }),
+                .filter(|min_max| !self.common_predicate(min_max)),
         )
     }
 }
@@ -248,7 +248,11 @@ fn transform<'x>(
         script_region: script_region.into_iter().collect(),
         script: script.into_iter().collect(),
         region: region.into_iter().collect(),
-        und: und.expect("'und' has a mapping"),
+        und: und.unwrap_or((
+            icu_locid::subtags_language!("und"),
+            icu_locid::subtags_script!("Zzzz"),
+            icu_locid::subtags_region!("ZZ"),
+        )),
     }
 }
 
