@@ -73,7 +73,7 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::{all_keys, all_keys_with_experimental};
+pub use registry::*;
 pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
 
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
@@ -137,7 +137,7 @@ impl DatagenProvider {
     pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::for_test(),
+                source: SourceData::repo(),
             };
         }
         TEST_PROVIDER.clone()
@@ -492,7 +492,7 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
+    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))

@@ -13,6 +13,12 @@ pub struct FixedDecimalFormatterOptions {
     pub grouping_strategy: GroupingStrategy,
 }
 
+impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
+    fn from(grouping_strategy: GroupingStrategy) -> Self {
+        Self { grouping_strategy }
+    }
+}
+
 /// Configuration for how often to render grouping separators.
 ///
 /// # Examples

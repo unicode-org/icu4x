@@ -69,6 +69,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_displaynames",
     "icu_relativetime",
     "icu_segmenter",
+    "icu_compactdecimal",
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
@@ -100,10 +101,6 @@ pub const EXTRA_CAPI_BUILD_DEPS: &[&str] = &[
     "strck_ident",
 ];
 
-/// Dependencies allowed when opting in to logging on FFI
-/// This should rarely change
-pub const EXTRA_CAPI_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
-
 /// Dependencies allowed when opting in to blob providers on FFI
 /// This shuld rarely change
 pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
@@ -115,3 +112,59 @@ pub const EXTRA_FS_DEPS: &[&str] = &["icu_provider_fs", "serde-json-core"];
 /// Dependencies allowed when opting in to test data on FFI
 /// This shuld rarely change
 pub const EXTRA_TEST_DEPS: &[&str] = &["icu_testdata"];
+
+/// Dependencies needed by datagen (not counting `log`, `zip`, and `rayon` deps)
+/// This might change semi frequently but we should try and keep this small.
+pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
+    "bincode",
+    "crlify",
+    "databake",
+    "databake-derive",
+    "elsa",
+    "erased-serde",
+    "icu_codepointtrie_builder",
+    "icu_datagen",
+    "itertools",
+    "itoa",
+    "lazy_static",
+    "regex-syntax",
+    "rust-format",
+    "ryu",
+    "serde-aux",
+    "serde_json",
+    "toml",
+];
+
+/// Dependencies needed by the `log` crate
+/// This should rarely change, and if it does consider toggling features until it doesn't
+pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
+
+/// Dependencies needed by the `zip` crate
+/// This should rarely change, and if it does consider toggling features until it doesn't
+pub const EXTRA_ZIP_DEPS: &[&str] = &[
+    "adler",
+    "byteorder",
+    "cfg-if",
+    "crc32fast",
+    "crc32fast",
+    "flate2",
+    "miniz_oxide",
+    "thiserror",
+    "thiserror-impl",
+    "zip",
+];
+
+/// Dependencies needed by the `rayon` crate
+/// This should rarely change, and if it does consider toggling features until it doesn't
+pub const EXTRA_RAYON_DEPS: &[&str] = &[
+    "crossbeam-channel",
+    "crossbeam-deque",
+    "crossbeam-epoch",
+    "crossbeam-utils",
+    "libc",
+    "memoffset",
+    "num_cpus",
+    "rayon",
+    "rayon-core",
+    "scopeguard",
+];

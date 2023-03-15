@@ -77,6 +77,8 @@
 )]
 #![warn(missing_docs)]
 
+extern crate alloc;
+
 #[cfg(feature = "bidi")]
 pub mod bidi;
 
@@ -91,6 +93,7 @@ mod props;
 
 pub mod exemplar_chars;
 pub mod provider;
+pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;
@@ -100,6 +103,11 @@ pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
     GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
+
+/// Module for working with the names of property values
+pub mod names {
+    pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
+}
 
 pub use error::PropertiesError;
 

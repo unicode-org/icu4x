@@ -21,7 +21,7 @@ use zerovec::ZeroMap;
 type UnvalidatedRegion = TinyAsciiStr<3>;
 
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
@@ -40,7 +40,7 @@ pub struct RegionDisplayNamesV1<'data> {
 }
 
 #[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",

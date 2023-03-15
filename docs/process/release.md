@@ -13,6 +13,8 @@ Once the release is complete, the assigned release driver will:
 * Verify that the milestone and checklist are complete
 * Verify with component owners that they're ready for release
 * Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
+* Verify that we have acceptable FFI coverage (should be a part of the checklist issue)
+  * Verify that `ffi/diplomat/tests/missing_apis.txt` is empty. If not, check with the team that we are okay punting these to the next release.
 * Take a bird-eye view at:
   * READMEs
   * Documentation
@@ -30,6 +32,8 @@ Once the release is complete, the assigned release driver will:
 * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order
   * Add `icu4x-release` group as owners to each new component you're publishing
     * `cargo owner -a github:unicode-org:icu4x-release`
+* Verify that the tutorial crates work on the newly released crates.io sources by running `cargo make test-cargo-tutorial-cratesio`
+  * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public
 

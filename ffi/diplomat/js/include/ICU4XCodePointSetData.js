@@ -1145,4 +1145,24 @@ export class ICU4XCodePointSetData {
       }
     })();
   }
+
+  static load_for_ecma262(arg_provider, arg_property_name) {
+    const buf_arg_property_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_property_name);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XCodePointSetData_load_for_ecma262(diplomat_receive_buffer, arg_provider.underlying, buf_arg_property_name.ptr, buf_arg_property_name.size);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    buf_arg_property_name.free();
+    return diplomat_out;
+  }
 }
