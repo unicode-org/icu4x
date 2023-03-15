@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::ops::Range;
+use alloc::vec;
+use alloc::vec::Vec;
 
 use ndarray::{ArrayBase, Dim, Dimension, OwnedRepr};
 
