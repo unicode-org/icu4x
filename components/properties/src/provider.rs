@@ -237,7 +237,9 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn iter_ranges_complemented(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+    pub(crate) fn iter_ranges_complemented(
+        &self,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
         match *self {
             Self::InversionList(ref l) => l.iter_ranges_complemented(),
         }
@@ -303,7 +305,10 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         }
     }
     #[inline]
-    pub(crate) fn iter_ranges_for_predicate<'a>(&'a self, predicate: impl FnMut(&CodePointMapRange<T>) -> bool + Copy + 'a) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+    pub(crate) fn iter_ranges_for_predicate<'a>(
+        &'a self,
+        predicate: impl FnMut(&CodePointMapRange<T>) -> bool + Copy + 'a,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         match *self {
             Self::CodePointTrie(ref t) => t.get_ranges_for_predicate(predicate),
         }

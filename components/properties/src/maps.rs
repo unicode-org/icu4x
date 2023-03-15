@@ -268,7 +268,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
 
     /// Yields an [`Iterator`] returning ranges of consecutive code points that
     /// do *not* have the value `v` in the [`CodePointMapData`].
-    pub fn iter_ranges_for_value_complemented(self, val: T) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+    pub fn iter_ranges_for_value_complemented(
+        self,
+        val: T,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map.iter_ranges_for_predicate(move |r| r.value != val)
     }
 }
