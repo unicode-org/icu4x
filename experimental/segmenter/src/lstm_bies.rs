@@ -158,9 +158,9 @@ impl<'l> Lstm<'l> {
         barr: MatrixBorrowed<'a, 2>,
         hunits: usize,
     ) -> Option<()> {
-        let embedd_dim = x_t.dim();
         #[cfg(debug_assertions)]
         {
+            let embedd_dim = x_t.dim();
             h_tm1.as_borrowed().debug_assert_dims([hunits]);
             c_tm1.as_borrowed().debug_assert_dims([hunits]);
             warr.debug_assert_dims([hunits, 4, embedd_dim]);
