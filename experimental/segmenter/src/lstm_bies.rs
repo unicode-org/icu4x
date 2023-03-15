@@ -201,19 +201,6 @@ impl<'l> Lstm<'l> {
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
     pub fn word_segmenter(&self, input: &str) -> String {
-        let inner = self.word_segmenter_inner(input);
-        debug_assert!(inner.is_some(), "{:?}", input);
-        // Fill in a GIGO result of all 's'
-        let result = inner.unwrap_or_else(|| {
-            core::iter::repeat("s")
-                .take(input.chars().count())
-                .collect()
-        });
-        debug_assert_eq!(result.len(), input.chars().count(), "{:?}", input);
-        result
-    }
-
-    fn word_segmenter_inner(&self, input: &str) -> Option<String> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
@@ -236,7 +223,16 @@ impl<'l> Lstm<'l> {
                 .map(|c| self.return_id(&c.to_string()))
                 .collect()
         };
+        let input_seq_len = input_seq.len();
+        let inner = self.word_segmenter_inner(input_seq);
+        debug_assert!(inner.is_some(), "{:?}", input);
+        // Fill in a GIGO result of all 's'
+        let result = inner.unwrap_or_else(|| core::iter::repeat('s').take(input_seq_len).collect());
+        debug_assert_eq!(result.len(), input_seq_len, "{:?}", input);
+        result
+    }
 
+    fn word_segmenter_inner(&self, input_seq: Vec<i16>) -> Option<String> {
         // x_data is the data ready to be feed into the model
         let input_seq_len = input_seq.len();
 
