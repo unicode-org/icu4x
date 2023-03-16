@@ -100,7 +100,7 @@ impl Dictionary {
     }
 
     /// Construct a [`Dictionary`] for Chinese and Japanese.
-    #[cfg(feature = "lstm")] // Use by WordSegmenter with "lstm" enabled.
+    #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     pub(crate) fn new_chinese_japanese<
         D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
     >(

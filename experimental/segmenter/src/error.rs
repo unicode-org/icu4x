@@ -6,8 +6,6 @@ use core::fmt::Debug;
 use displaydoc::Display;
 use icu_provider::prelude::DataError;
 
-use crate::lstm_error::Error;
-
 #[cfg(feature = "std")]
 impl std::error::Error for SegmenterError {}
 
@@ -22,6 +20,7 @@ pub enum SegmenterError {
     Data(DataError),
     /// An error occurred while preparing the LSTM data.
     #[displaydoc("LSTM data error")]
+    #[cfg(feature = "lstm")]
     LstmDataError,
 }
 
@@ -31,8 +30,9 @@ impl From<DataError> for SegmenterError {
     }
 }
 
-impl From<Error> for SegmenterError {
-    fn from(_: Error) -> Self {
+#[cfg(feature = "lstm")]
+impl From<crate::lstm_error::Error> for SegmenterError {
+    fn from(_: crate::lstm_error::Error) -> Self {
         Self::LstmDataError
     }
 }
