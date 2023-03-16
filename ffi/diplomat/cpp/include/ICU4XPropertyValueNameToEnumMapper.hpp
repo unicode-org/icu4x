@@ -38,6 +38,8 @@ class ICU4XPropertyValueNameToEnumMapper {
    * Get the property value matching the given name, using strict matching
    * 
    * Returns -1 if the name is unknown for this property
+   * 
+   * See the [Rust documentation for `get_strict`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict) for more information.
    */
   int16_t get_strict(const std::string_view name) const;
 
@@ -45,6 +47,8 @@ class ICU4XPropertyValueNameToEnumMapper {
    * Get the property value matching the given name, using loose matching
    * 
    * Returns -1 if the name is unknown for this property
+   * 
+   * See the [Rust documentation for `get_loose`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose) for more information.
    */
   int16_t get_loose(const std::string_view name) const;
 
