@@ -15,10 +15,7 @@ use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "lstm")]
-use crate::{
-    lstm_error::Error,
-    math_helper::MatrixOwned,
-};
+use crate::{lstm_error::Error, math_helper::MatrixOwned};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(

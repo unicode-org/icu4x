@@ -212,7 +212,7 @@ impl<'l> Lstm<'l> {
         let inner = self.word_segmenter_inner(input_seq);
         debug_assert!(inner.is_some(), "{:?}", input);
         // Fill in a GIGO result of all 's'
-        let result = inner.unwrap_or_else(|| core::iter::repeat('s').take(input_seq_len).collect());
+        let result = inner.unwrap_or_else(|| "s".repeat(input_seq_len));
         debug_assert_eq!(result.len(), input_seq_len, "{:?}", input);
         result
     }

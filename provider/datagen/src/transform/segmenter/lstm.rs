@@ -138,7 +138,7 @@ where
         .as_slice_memory_order()
         .ok_or_else(|| DataError::custom("ndarray matrix not in memory order"))?;
     Ok(LstmMatrix {
-        data: ZeroVec::alloc_from_slice(&data),
+        data: ZeroVec::alloc_from_slice(data),
         dims: ZeroVec::alloc_from_slice(&dims),
     })
 }
@@ -174,7 +174,6 @@ impl IterableDataProvider<LstmDataV1Marker> for crate::DatagenProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::prelude::*;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_segmenter::LineSegmenter;
