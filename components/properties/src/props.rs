@@ -14,40 +14,6 @@ use zerovec::ule::VarULE;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Selection constants for Unicode properties.
-/// These constants are used to select one of the Unicode properties.
-/// See `UProperty` in ICU4C.
-#[allow(dead_code)] // Not currently used but seems like it could be useful
-#[derive(Clone, PartialEq, Debug)]
-#[non_exhaustive]
-#[repr(i32)]
-enum EnumeratedProperty {
-    /// The Bidi_Class property.
-    BidiClass = 0x1000,
-    /// The Canonical_Combining_Class property.
-    CanonicalCombiningClass = 0x1002,
-    /// The East_Asian_Width property. See [`EastAsianWidth`].
-    EastAsianWidth = 0x1004,
-    /// The General_Category property.
-    GeneralCategory = 0x1005,
-    /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
-    GeneralCategoryGroup = 0x2000,
-    /// The Line_Break property. See [`LineBreak`].
-    LineBreak = 0x1008,
-    /// The Script property. See [`Script`].
-    Script = 0x100A,
-    /// The Grapheme_Cluster_Break property. See [`GraphemeClusterBreak`].
-    GraphemeClusterBreak = 0x1012,
-    /// The Sentence_Break property. See [`SentenceBreak`].
-    SentenceBreak = 0x1013,
-    /// The Word_Break property. See [`WordBreak`].
-    WordBreak = 0x1014,
-    /// The Script_Extensions property. See [`Script`].
-    ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
-    /// Represents an invalid or unknown Unicode property.
-    InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
-}
-
 /// Private marker type for PropertyValueNameToEnumMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -58,7 +24,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 
 /// A struct capable of looking up a property value from a string name.
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyValueNameToEnumMapperBorrowed`]/
+/// [`PropertyValueNameToEnumMapperBorrowed`].
 ///
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
@@ -692,6 +658,11 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 impl From<u32> for GeneralCategoryGroup {
     fn from(mask: u32) -> Self {
         GeneralCategoryGroup(mask)
+    }
+}
+impl From<GeneralCategoryGroup> for u32 {
+    fn from(group: GeneralCategoryGroup) -> Self {
+        group.0
     }
 }
 /// Enumerated property Script.

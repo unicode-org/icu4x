@@ -27,7 +27,7 @@
         See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
 
 
-    .. js:function:: try_set_gmt_offset_seconds(offset_seconds)
+    .. js:method:: try_set_gmt_offset_seconds(offset_seconds)
 
         Sets the ``gmt_offset`` field from offset seconds.
 
@@ -38,7 +38,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
-    .. js:function:: clear_gmt_offset()
+    .. js:method:: clear_gmt_offset()
 
         Clears the ``gmt_offset`` field.
 
@@ -47,7 +47,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
-    .. js:function:: gmt_offset_seconds()
+    .. js:method:: gmt_offset_seconds()
 
         Returns the value of the ``gmt_offset`` field as offset seconds.
 
@@ -58,7 +58,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
-    .. js:function:: is_gmt_offset_positive()
+    .. js:method:: is_gmt_offset_positive()
 
         Returns whether the ``gmt_offset`` field is positive.
 
@@ -67,7 +67,7 @@
         See the `Rust documentation for is_positive <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive>`__ for more information.
 
 
-    .. js:function:: is_gmt_offset_zero()
+    .. js:method:: is_gmt_offset_zero()
 
         Returns whether the ``gmt_offset`` field is zero.
 
@@ -76,7 +76,7 @@
         See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero>`__ for more information.
 
 
-    .. js:function:: gmt_offset_has_minutes()
+    .. js:method:: gmt_offset_has_minutes()
 
         Returns whether the ``gmt_offset`` field has nonzero minutes.
 
@@ -85,7 +85,7 @@
         See the `Rust documentation for has_minutes <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes>`__ for more information.
 
 
-    .. js:function:: gmt_offset_has_seconds()
+    .. js:method:: gmt_offset_has_seconds()
 
         Returns whether the ``gmt_offset`` field has nonzero seconds.
 
@@ -94,7 +94,7 @@
         See the `Rust documentation for has_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_seconds>`__ for more information.
 
 
-    .. js:function:: try_set_time_zone_id(id)
+    .. js:method:: try_set_time_zone_id(id)
 
         Sets the ``time_zone_id`` field from a string.
 
@@ -105,7 +105,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. js:function:: clear_time_zone_id()
+    .. js:method:: clear_time_zone_id()
 
         Clears the ``time_zone_id`` field.
 
@@ -114,7 +114,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. js:function:: time_zone_id()
+    .. js:method:: time_zone_id()
 
         Writes the value of the ``time_zone_id`` field as a string.
 
@@ -125,7 +125,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. js:function:: try_set_metazone_id(id)
+    .. js:method:: try_set_metazone_id(id)
 
         Sets the ``metazone_id`` field from a string.
 
@@ -136,7 +136,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
 
-    .. js:function:: clear_metazone_id()
+    .. js:method:: clear_metazone_id()
 
         Clears the ``metazone_id`` field.
 
@@ -145,7 +145,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
 
-    .. js:function:: metazone_id()
+    .. js:method:: metazone_id()
 
         Writes the value of the ``metazone_id`` field as a string.
 
@@ -156,7 +156,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
 
-    .. js:function:: try_set_zone_variant(id)
+    .. js:method:: try_set_zone_variant(id)
 
         Sets the ``zone_variant`` field from a string.
 
@@ -167,7 +167,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. js:function:: clear_zone_variant()
+    .. js:method:: clear_zone_variant()
 
         Clears the ``zone_variant`` field.
 
@@ -176,7 +176,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. js:function:: zone_variant()
+    .. js:method:: zone_variant()
 
         Writes the value of the ``zone_variant`` field as a string.
 
@@ -187,7 +187,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. js:function:: set_standard_time()
+    .. js:method:: set_standard_time()
 
         Sets the ``zone_variant`` field to standard time.
 
@@ -196,7 +196,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: set_daylight_time()
+    .. js:method:: set_daylight_time()
 
         Sets the ``zone_variant`` field to daylight time.
 
@@ -205,7 +205,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: is_standard_time()
+    .. js:method:: is_standard_time()
 
         Returns whether the ``zone_variant`` field is standard time.
 
@@ -216,7 +216,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: is_daylight_time()
+    .. js:method:: is_daylight_time()
 
         Returns whether the ``zone_variant`` field is daylight time.
 
@@ -227,7 +227,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: maybe_calculate_metazone(metazone_calculator, local_datetime)
+    .. js:method:: maybe_calculate_metazone(metazone_calculator, local_datetime)
 
         Sets the metazone based on the time zone and the local timestamp.
 

@@ -28,6 +28,9 @@ pub enum PropertiesError {
     /// An unknown value was used for the [`GeneralCategoryGroup`](crate::GeneralCategoryGroup) property
     #[displaydoc("Unknown general category group: {0}")]
     UnknownGeneralCategoryGroup(u32),
+    /// An unknown or unexpected property name was used for an API dealing with properties specified as strings at runtime
+    #[displaydoc("Unexpected or unknown property name")]
+    UnexpectedPropertyName,
 }
 
 impl From<DataError> for PropertiesError {

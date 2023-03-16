@@ -15,14 +15,14 @@
         See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
-    .. js:function:: format_date(value)
+    .. js:method:: format_date(value)
 
         Formats a :js:class:`ICU4XDate` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_date(value)
+    .. js:method:: format_iso_date(value)
 
         Formats a :js:class:`ICU4XIsoDate` to a string.
 
@@ -31,14 +31,14 @@
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_datetime(value)
+    .. js:method:: format_datetime(value)
 
         Formats a :js:class:`ICU4XDateTime` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime(value)
+    .. js:method:: format_iso_datetime(value)
 
         Formats a :js:class:`ICU4XIsoDateTime` to a string.
 
@@ -66,14 +66,14 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_datetime(value)
+    .. js:method:: format_datetime(value)
 
         Formats a :js:class:`ICU4XDateTime` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime(value)
+    .. js:method:: format_iso_datetime(value)
 
         Formats a :js:class:`ICU4XIsoDateTime` to a string.
 
@@ -96,14 +96,14 @@
         See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
-    .. js:function:: format_iso_date(value)
+    .. js:method:: format_iso_date(value)
 
         Formats a :js:class:`ICU4XIsoDate` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime(value)
+    .. js:method:: format_iso_datetime(value)
 
         Formats a :js:class:`ICU4XIsoDateTime` to a string.
 
@@ -124,7 +124,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime(value)
+    .. js:method:: format_iso_datetime(value)
 
         Formats a :js:class:`ICU4XIsoDateTime` to a string.
 
@@ -145,21 +145,21 @@
         See the `Rust documentation for try_new_with_length_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length_unstable>`__ for more information.
 
 
-    .. js:function:: format_time(value)
+    .. js:method:: format_time(value)
 
         Formats a :js:class:`ICU4XTime` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_datetime(value)
+    .. js:method:: format_datetime(value)
 
         Formats a :js:class:`ICU4XDateTime` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime(value)
+    .. js:method:: format_iso_datetime(value)
 
         Formats a :js:class:`ICU4XIsoDateTime` to a string.
 

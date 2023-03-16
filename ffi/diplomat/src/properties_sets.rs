@@ -6,6 +6,7 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
+    use core::str;
     use icu_properties::sets;
 
     use crate::errors::ffi::ICU4XError;
@@ -14,6 +15,12 @@ pub mod ffi {
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetData, Struct)]
+    #[diplomat::rust_link(
+        icu::properties::sets::CodePointSetData::as_borrowed,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::properties::sets::CodePointSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
     pub struct ICU4XCodePointSetData(pub sets::CodePointSetData);
 
@@ -629,6 +636,39 @@ pub mod ffi {
             Ok(Box::new(ICU4XCodePointSetData(sets::load_xid_start(
                 &provider.0,
             )?)))
+        }
+
+        /// Loads data for a property specified as a string as long as it is one of the
+        /// [ECMA-262 binary properties][ecma] (not including Any, ASCII, and Assigned pseudoproperties).
+        ///
+        /// Returns `ICU4XError::PropertyUnexpectedPropertyNameError` in case the string does not
+        /// match any property in the list
+        ///
+        /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
+        #[diplomat::rust_link(icu::properties::sets::load_for_ecma262_unstable, Fn)]
+        #[diplomat::rust_link(
+            icu::properties::sets::load_for_ecma262_with_any_provider,
+            Fn,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::properties::sets::load_for_ecma262_with_buffer_provider,
+            Fn,
+            hidden
+        )]
+        pub fn load_for_ecma262(
+            provider: &ICU4XDataProvider,
+            property_name: &str,
+        ) -> Result<Box<ICU4XCodePointSetData>, ICU4XError> {
+            let name = property_name.as_bytes(); // #2520
+            let name = if let Ok(s) = str::from_utf8(name) {
+                s
+            } else {
+                return Err(ICU4XError::TinyStrNonAsciiError);
+            };
+            Ok(Box::new(ICU4XCodePointSetData(
+                sets::load_for_ecma262_unstable(&provider.0, name)?,
+            )))
         }
     }
 }
