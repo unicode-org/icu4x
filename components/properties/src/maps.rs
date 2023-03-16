@@ -305,10 +305,10 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// ```
     pub fn iter_ranges_for_group(
         self,
-        val: crate::GeneralCategoryGroup,
+        group: crate::GeneralCategoryGroup,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map
-            .iter_ranges_mapped(move |value| val.contains(value))
+            .iter_ranges_mapped(move |value| group.contains(value))
             .filter(|v| v.value)
             .map(|v| v.range)
     }

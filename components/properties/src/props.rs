@@ -625,12 +625,15 @@ impl GeneralCategoryGroup {
     /// let not_letter = letter.complement();
     ///
     /// assert!(not_letter.contains(GeneralCategory::MathSymbol));
+    /// assert!(!letter.contains(GeneralCategory::MathSymbol));
     /// assert!(not_letter.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!letter.contains(GeneralCategory::OtherPunctuation));
     /// assert!(!not_letter.contains(GeneralCategory::UppercaseLetter));
+    /// assert!(letter.contains(GeneralCategory::UppercaseLetter));
     /// ```
     pub fn complement(self) -> Self {
-        // Mask off things not in Self::ALL to keep the mask
-        // values in-range
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
         GeneralCategoryGroup(!self.0 & Self::ALL)
     }
 
@@ -752,8 +755,8 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 }
 impl From<u32> for GeneralCategoryGroup {
     fn from(mask: u32) -> Self {
-        // Mask off things not in Self::ALL to keep the mask
-        // values in-range
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
         GeneralCategoryGroup(mask & Self::ALL)
     }
 }
