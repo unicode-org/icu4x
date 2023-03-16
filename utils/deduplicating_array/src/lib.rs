@@ -39,7 +39,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 
@@ -156,7 +156,7 @@ enum MachineSer<'a, T> {
 //
 // These are not considered part of the stable API.
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 #[serde(untagged)]
 #[doc(hidden)]
 #[allow(clippy::exhaustive_enums)] // internal type
@@ -166,6 +166,7 @@ pub enum HumanDe<T> {
 }
 
 #[doc(hidden)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_enums)] // internal type
 pub enum MachineDe<T> {
     Value(T),

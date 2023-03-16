@@ -18,7 +18,7 @@ use icu_provider::prelude::*;
 use std::io;
 
 /// A simple serializer trait that works on whole objects.
-pub trait AbstractSerializer {
+pub trait AbstractSerializer: core::fmt::Debug {
     /// Serializes an object to a sink.
     fn serialize(
         &self,

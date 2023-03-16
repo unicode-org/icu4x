@@ -14,6 +14,7 @@ use icu_provider::datagen;
 /// Data provider traits implemented by both `P0` and `P1` are implemented on
 /// `EitherProvider<P0, P1>`.
 #[allow(clippy::exhaustive_enums)] // this is stable
+#[derive(Debug)]
 pub enum EitherProvider<P0, P1> {
     /// A value of type `P0`.
     A(P0),

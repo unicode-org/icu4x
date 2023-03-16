@@ -32,6 +32,7 @@ use icu_provider::prelude::*;
 /// property data in a set-like form, ex: a set of code points sharing the same
 /// value for a Unicode property. Access its data via the borrowed version,
 /// [`CodePointSetDataBorrowed`].
+#[derive(Debug)]
 pub struct CodePointSetData {
     data: DataPayload<ErasedSetlikeMarker>,
 }
@@ -115,7 +116,7 @@ impl CodePointSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct CodePointSetDataBorrowed<'a> {
     set: &'a PropertyCodePointSetV1<'a>,
 }
@@ -191,6 +192,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 //
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
+#[derive(Debug)]
 pub struct UnicodeSetData {
     data: DataPayload<ErasedUnicodeSetlikeMarker>,
 }
@@ -266,7 +268,7 @@ impl UnicodeSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct UnicodeSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }

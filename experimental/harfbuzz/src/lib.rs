@@ -13,7 +13,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -199,6 +199,7 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) 
 }
 
 /// RAII holder for `*mut hb_unicode_funcs_t`.
+#[derive(Debug)]
 pub struct UnicodeFuncs {
     raw: *mut hb_unicode_funcs_t,
 }
