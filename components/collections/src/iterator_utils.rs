@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::codepointtrie::CodePointMapRange;
 use core::ops::RangeInclusive;
 
 /// This is an iterator that turns an iterator over code point ranges
@@ -108,55 +109,55 @@ where
 
 /// This is an iterator that coalesces adjacent ranges in an iterator over code
 /// point ranges
-pub(crate) struct RangeListIteratorCoalescer<I> {
+pub(crate) struct RangeListIteratorCoalescer<I, T> {
     iter: I,
-    peek: Option<RangeInclusive<u32>>,
+    peek: Option<CodePointMapRange<T>>,
 }
 
-impl<I> RangeListIteratorCoalescer<I>
+impl<I, T: Eq> RangeListIteratorCoalescer<I, T>
 where
-    I: Iterator<Item = RangeInclusive<u32>>,
+    I: Iterator<Item = CodePointMapRange<T>>,
 {
     pub fn new(iter: I) -> Self {
         Self { iter, peek: None }
     }
 }
 
-impl<I> Iterator for RangeListIteratorCoalescer<I>
+impl<I, T: Eq> Iterator for RangeListIteratorCoalescer<I, T>
 where
-    I: Iterator<Item = RangeInclusive<u32>>,
+    I: Iterator<Item = CodePointMapRange<T>>,
 {
-    type Item = RangeInclusive<u32>;
+    type Item = CodePointMapRange<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
         // Get the initial range we're working with: either a leftover
         // range from last time, or the next range
-        let (start, mut end) = if let Some(ref peek) = self.peek {
-            (*peek.start(), *peek.end())
+        let mut ret = if let Some(peek) = self.peek.take() {
+            peek
         } else if let Some(next) = self.iter.next() {
-            (*next.start(), *next.end())
+            next
         } else {
             // No ranges, exit early
             return None;
         };
 
         // Keep pulling ranges
-        #[allow(clippy::while_let_on_iterator)] // can't move the iterator, also we want it to be explicit that we're not draining the iterator
+        #[allow(clippy::while_let_on_iterator)]
+        // can't move the iterator, also we want it to be explicit that we're not draining the iterator
         while let Some(next) = self.iter.next() {
-            if *next.start() == end + 1 {
+            if *next.range.start() == ret.range.end() + 1 && next.value == ret.value {
                 // Range has no gap, coalesce
-                end = *next.end();
+                ret.range = *ret.range.start()..=*next.range.end();
             } else {
                 // Range has a gap, return what we have so far, update
                 // peek
                 self.peek = Some(next);
-                return Some(start..=end);
+                return Some(ret);
             }
         }
 
         // Ran out of elements, exit
-        self.peek = None;
-        Some(start..=end)
+        Some(ret)
     }
 }
 

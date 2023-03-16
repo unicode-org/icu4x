@@ -305,12 +305,12 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         }
     }
     #[inline]
-    pub(crate) fn iter_ranges_for_predicate<'a>(
+    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
         &'a self,
-        predicate: impl FnMut(&CodePointMapRange<T>) -> bool + Copy + 'a,
-    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
         match *self {
-            Self::CodePointTrie(ref t) => t.get_ranges_for_predicate(predicate),
+            Self::CodePointTrie(ref t) => t.get_ranges_mapped(map),
         }
     }
 

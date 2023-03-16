@@ -272,7 +272,10 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
         self,
         val: T,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
-        self.map.iter_ranges_for_predicate(move |r| r.value != val)
+        self.map
+            .iter_ranges_mapped(move |value| value != val)
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 }
 
@@ -305,7 +308,9 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
         val: crate::GeneralCategoryGroup,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map
-            .iter_ranges_for_predicate(move |r| val.contains(r.value))
+            .iter_ranges_mapped(move |value| val.contains(value))
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 }
 
