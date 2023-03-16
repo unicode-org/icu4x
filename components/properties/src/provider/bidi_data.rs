@@ -28,15 +28,15 @@ use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, CharULE, ULE};
 use zerovec::ZeroVecError;
 
-/// A data provider struct for properties related to mirroring, including paired
-/// brackets.
+/// A data provider struct for properties related to Bidi algorithms, including
+/// mirroring and bracket pairing.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(BidiMirroringPropertiesV1Marker = "props/bidimirroring@1")]
+#[icu_provider::data_struct(BidiAuxiliaryPropertiesV1Marker = "props/bidiauxiliaryprops@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -44,7 +44,7 @@ use zerovec::ZeroVecError;
     databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct BidiMirroringPropertiesV1<'data> {
+pub struct BidiAuxiliaryPropertiesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, MirroredPairedBracketData>,
 }
