@@ -56,7 +56,7 @@ pub struct BidiAuxiliaryPropertiesV1<'data> {
 #[doc(hidden)] // needed for datagen but not intended for users
 pub struct MirroredPairedBracketData {
     pub mirroring_glyph: char,
-    pub is_mirrored: bool,
+    pub mirrored: bool,
     pub paired_bracket_type: BidiPairedBracketType,
 }
 
@@ -133,7 +133,7 @@ impl AsULE for MirroredPairedBracketData {
         let mirr_glyph_char_ule_ref_slice = &[self.mirroring_glyph.to_unaligned()];
         let byte_slice = CharULE::as_byte_slice(mirr_glyph_char_ule_ref_slice);
         let mut byte2 = byte_slice.get(2).copied().unwrap_or_default();
-        byte2 |= (self.is_mirrored as u8) << 5;
+        byte2 |= (self.mirrored as u8) << 5;
         byte2 |= self.paired_bracket_type.0 << 6;
 
         MirroredPairedBracketDataULE([
@@ -156,12 +156,12 @@ impl AsULE for MirroredPairedBracketData {
                 .map(|ule| char::from_unaligned(*ule))
                 .unwrap_or(char::REPLACEMENT_CHARACTER)
         };
-        let is_mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
+        let mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
         let paired_bracket_type = BidiPairedBracketType(unaligned.0[2] >> 6);
 
         Self {
             mirroring_glyph,
-            is_mirrored,
+            mirrored,
             paired_bracket_type,
         }
     }
@@ -177,7 +177,7 @@ mod test {
         // serialize to ULE bytes
         let data = MirroredPairedBracketData {
             mirroring_glyph: '}',
-            is_mirrored: true,
+            mirrored: true,
             paired_bracket_type: BidiPairedBracketType::Open,
         };
         let expected_bytes = &[0x7D, 0x0, 0x60];

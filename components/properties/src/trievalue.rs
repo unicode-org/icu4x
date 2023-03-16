@@ -180,14 +180,14 @@ impl TrieValue for MirroredPairedBracketData {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         let code_point = i & 0x1FFFFF;
         let mirroring_glyph = char::try_from_u32(code_point)?;
-        let is_mirrored = ((i >> 21) & 0x1) == 1;
+        let mirrored = ((i >> 21) & 0x1) == 1;
         let paired_bracket_type = {
             let value = ((i >> 22) & 0x3) as u8;
             BidiPairedBracketType(value)
         };
         Ok(MirroredPairedBracketData {
             mirroring_glyph,
-            is_mirrored,
+            mirrored,
             paired_bracket_type,
         })
     }
