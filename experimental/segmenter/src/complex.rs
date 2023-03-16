@@ -36,7 +36,7 @@ impl LstmPayloads {
     /// Construct a [`LstmPayloads`] for all supported languages.
     pub(crate) fn new<D: DataProvider<LstmDataV1Marker> + ?Sized>(provider: &D) -> Self {
         let burmese = Self::load(provider, locale!("my")).ok();
-        let khmer = Self::load(provider, locale!("lo")).ok();
+        let khmer = Self::load(provider, locale!("km")).ok();
         let lao = Self::load(provider, locale!("lo")).ok();
         let thai = Self::load(provider, locale!("th")).ok();
         LstmPayloads {
