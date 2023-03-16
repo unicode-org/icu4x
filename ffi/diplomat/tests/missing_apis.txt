@@ -17,10 +17,6 @@
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16#FnInStruct
 icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct

@@ -18,6 +18,8 @@ export class ICU4XPropertyValueNameToEnumMapper {
    * Get the property value matching the given name, using strict matching
 
    * Returns -1 if the name is unknown for this property
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict Rust documentation for `get_strict`} for more information.
    */
   get_strict(name: string): i16;
 
@@ -26,6 +28,8 @@ export class ICU4XPropertyValueNameToEnumMapper {
    * Get the property value matching the given name, using loose matching
 
    * Returns -1 if the name is unknown for this property
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose Rust documentation for `get_loose`} for more information.
    */
   get_loose(name: string): i16;
 
