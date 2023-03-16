@@ -132,7 +132,8 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                     let mut tzid = tzid.split('/');
                     Some((
                         bcp47,
-                        match other.time_zone_names_resource
+                        match other
+                            .time_zone_names_resource
                             .zone
                             .0
                             .get(tzid.next()?)?
