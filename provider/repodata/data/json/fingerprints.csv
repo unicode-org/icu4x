@@ -1489,7 +1489,7 @@ segmenter/dictionary@1, ja, 10320776B, 86284c168777fcf1
 segmenter/dictionary@1, th, 1078278B, 56b1112fa508e4b6
 segmenter/grapheme@1, und, 66878B, 52becb77e273abc0
 segmenter/line@1, und, 154373B, 745a396a785f54bb
-segmenter/lstm@1, th, 324969B, abc8e1a0723886ee
+segmenter/lstm@1, th, 325035B, b6866820c17d372a
 segmenter/sentence@1, und, 108617B, 4f02ff15a48cee20
 segmenter/word@1, und, 112594B, e510712744f4e36c
 time_zone/exemplar_cities@1, ar, 12469B, 1a37e1654bdb1c76

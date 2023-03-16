@@ -15,9 +15,3 @@ pub enum Error {
     /// This error shows if matrices are not compatible for multiplication.
     DimensionMismatch,
 }
-
-impl From<ndarray::ShapeError> for Error {
-    fn from(_: ndarray::ShapeError) -> Self {
-        Self::DimensionMismatch
-    }
-}

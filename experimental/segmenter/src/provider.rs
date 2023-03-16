@@ -16,8 +16,7 @@ use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "lstm")]
 use crate::lstm_error::Error;
-#[cfg(feature = "lstm")]
-use ndarray::{Array, Array1, Array2};
+use crate::math_helper::MatrixOwned;
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -111,7 +110,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 pub struct LstmMatrix<'data> {
     #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dim: ZeroVec<'data, i16>,
+    pub dims: ZeroVec<'data, u16>,
     #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, f32>,
@@ -119,29 +118,14 @@ pub struct LstmMatrix<'data> {
 
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub(crate) fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
-        if self.dim.len() == 1 {
-            Ok(Array::from_vec(self.data.to_vec()))
-        } else {
-            Err(Error::DimensionMismatch)
-        }
-    }
-
-    pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
-        if self.dim.len() == 2 {
-            #[allow(clippy::unwrap_used)]
-            Array::from_shape_vec(
-                (
-                    // `unwrap` cannot fail due to `dim.len()` check above.
-                    self.dim.get(0).unwrap() as usize,
-                    self.dim.get(1).unwrap() as usize,
-                ),
-                self.data.to_vec(),
-            )
-            .map_err(|_| Error::DimensionMismatch)
-        } else {
-            Err(Error::DimensionMismatch)
-        }
+    pub(crate) fn alloc_matrix<const D: usize>(&self) -> Result<MatrixOwned<D>, Error> {
+        let dims = self
+            .dims
+            .get_as_array()
+            .ok_or(Error::DimensionMismatch)?
+            .map(|x| x as usize);
+        let data = self.data.iter().collect();
+        MatrixOwned::try_from_parts(data, dims)
     }
 }
 

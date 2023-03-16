@@ -26,7 +26,6 @@ pub struct Lstm<'l> {
     mat9: MatrixOwned<1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
-    backward_hunits: usize,
 }
 
 impl<'l> Lstm<'l> {
@@ -50,69 +49,46 @@ impl<'l> Lstm<'l> {
         }
 
         // TODO: Perform this matrix reshaping in datagen.
-        let mat1 = data.get().mat1.as_ndarray2()?;
-        let mat2 = data.get().mat2.as_ndarray2()?;
-        let mat3 = data.get().mat3.as_ndarray2()?;
-        let mat4 = data.get().mat4.as_ndarray1()?;
-        let mat5 = data.get().mat5.as_ndarray2()?;
-        let mat6 = data.get().mat6.as_ndarray2()?;
-        let mat7 = data.get().mat7.as_ndarray1()?;
-        let mat8 = data.get().mat8.as_ndarray2()?;
-        let mat9 = data.get().mat9.as_ndarray1()?;
-        let embedd_dim = *mat1.shape().get(1).ok_or(Error::DimensionMismatch)?;
-        let hunits = *mat3.shape().first().ok_or(Error::DimensionMismatch)?;
-        let backward_hunits = *mat6.shape().first().ok_or(Error::DimensionMismatch)?;
-        if mat2.shape() != [embedd_dim, 4 * hunits]
-            || mat3.shape() != [hunits, 4 * hunits]
-            || mat4.shape() != [4 * hunits]
-            || mat5.shape() != [embedd_dim, 4 * hunits]
-            || mat6.shape() != [hunits, 4 * hunits]
-            || mat7.shape() != [4 * hunits]
-            || mat8.shape() != [2 * hunits, 4]
-            || mat9.shape() != [4]
+        let mat1 = data.get().mat1.alloc_matrix::<2>()?;
+        let mat2 = data.get().mat2.alloc_matrix::<3>()?;
+        let mat3 = data.get().mat3.alloc_matrix::<3>()?;
+        let mat4 = data.get().mat4.alloc_matrix::<2>()?;
+        let mat5 = data.get().mat5.alloc_matrix::<3>()?;
+        let mat6 = data.get().mat6.alloc_matrix::<3>()?;
+        let mat7 = data.get().mat7.alloc_matrix::<2>()?;
+        let mat8 = data.get().mat8.alloc_matrix::<3>()?;
+        let mat9 = data.get().mat9.alloc_matrix::<1>()?;
+        let embedd_dim = mat1.as_borrowed().dim().1;
+        let hunits = mat3.as_borrowed().dim().0;
+        if mat2.as_borrowed().dim() != (hunits, 4, embedd_dim)
+            || mat3.as_borrowed().dim() != (hunits, 4, hunits)
+            || mat4.as_borrowed().dim() != (hunits, 4)
+            || mat5.as_borrowed().dim() != (hunits, 4, embedd_dim)
+            || mat6.as_borrowed().dim() != (hunits, 4, hunits)
+            || mat7.as_borrowed().dim() != (hunits, 4)
+            || mat8.as_borrowed().dim() != (2, 4, hunits)
+            || mat9.as_borrowed().dim() != (4)
         {
             return Err(Error::DimensionMismatch);
         }
-        let mut mat2 = mat2.into_shape((embedd_dim, 4, hunits))?;
-        let mut mat3 = mat3.into_shape((hunits, 4, hunits))?;
-        let mut mat4 = mat4.into_shape((4, hunits))?;
-        let mut mat5 = mat5.into_shape((embedd_dim, 4, hunits))?;
-        let mut mat6 = mat6.into_shape((hunits, 4, hunits))?;
-        let mut mat7 = mat7.into_shape((4, hunits))?;
-        let mut mat8 = mat8.into_shape((2, hunits, 4))?;
-        mat2.swap_axes(0, 2);
-        mat3.swap_axes(0, 2);
-        mat4.swap_axes(0, 1);
-        mat5.swap_axes(0, 2);
-        mat6.swap_axes(0, 2);
-        mat7.swap_axes(0, 1);
-        mat8.swap_axes(1, 2);
-        let mat2 = mat2.as_standard_layout().into_owned();
-        let mat3 = mat3.as_standard_layout().into_owned();
-        let mat4 = mat4.as_standard_layout().into_owned();
-        let mat5 = mat5.as_standard_layout().into_owned();
-        let mat6 = mat6.as_standard_layout().into_owned();
-        let mat7 = mat7.as_standard_layout().into_owned();
-        let mat8 = mat8.as_standard_layout().into_owned();
+
         Ok(Self {
             data,
-            // These unwraps will change when ndarray is moved into datagen
-            mat1: MatrixOwned::from_ndarray(mat1).unwrap(),
-            mat2: MatrixOwned::from_ndarray(mat2).unwrap(),
-            mat3: MatrixOwned::from_ndarray(mat3).unwrap(),
-            mat4: MatrixOwned::from_ndarray(mat4).unwrap(),
-            mat5: MatrixOwned::from_ndarray(mat5).unwrap(),
-            mat6: MatrixOwned::from_ndarray(mat6).unwrap(),
-            mat7: MatrixOwned::from_ndarray(mat7).unwrap(),
-            mat8: MatrixOwned::from_ndarray(mat8).unwrap(),
-            mat9: MatrixOwned::from_ndarray(mat9).unwrap(),
+            mat1,
+            mat2,
+            mat3,
+            mat4,
+            mat5,
+            mat6,
+            mat7,
+            mat8,
+            mat9,
             grapheme: if data.get().model.contains("_codepoints_") {
                 None
             } else {
                 grapheme
             },
             hunits,
-            backward_hunits,
         })
     }
 
@@ -120,6 +96,15 @@ impl<'l> Lstm<'l> {
     #[allow(dead_code)]
     pub fn get_model_name(&self) -> &str {
         &self.data.get().model
+    }
+
+    #[cfg(test)]
+    pub fn embedding_type(&self) -> &'static str {
+        if self.grapheme.is_some() {
+            "grapheme"
+        } else {
+            "codepoints"
+        }
     }
 
     // TODO(#421): Use common BIES normalizer code
@@ -274,7 +259,7 @@ impl<'l> Lstm<'l> {
                 self.mat5.as_borrowed(),
                 self.mat6.as_borrowed(),
                 self.mat7.as_borrowed(),
-                self.backward_hunits,
+                self.hunits,
             )?;
         }
 
@@ -302,7 +287,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::provider::GraphemeClusterBreakDataV1Marker;
+    use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
     use std::fs::File;
@@ -335,15 +320,6 @@ mod tests {
         }
     }
 
-    fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
-        DataPayload::from_owned_buffer(
-            std::fs::read(filename)
-                .expect("File can read to end")
-                .into_boxed_slice(),
-        )
-        .map_project(|bytes, _| serde_json::from_slice(bytes).expect("JSON syntax error"))
-    }
-
     fn load_test_text(filename: &str) -> TestTextData {
         let file = File::open(filename).expect("File should be present");
         let reader = BufReader::new(file);
@@ -351,36 +327,22 @@ mod tests {
     }
 
     #[test]
-    fn test_model_loading() {
-        let filename =
-            "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
-        let lstm_data = load_lstm_data(filename);
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let lstm = Lstm::try_new(&lstm_data, Some(grapheme.get())).expect("Test data is invalid");
-        assert_eq!(
-            lstm.get_model_name(),
-            "Thai_graphclust_exclusive_model4_heavy"
-        );
-    }
-
-    #[test]
     fn segment_file_by_lstm() {
         // Choosing the embedding system. It can be "graphclust" or "codepoints".
-        let embedding: &str = "codepoints";
-        let mut model_filename = "tests/testdata/Thai_".to_owned();
-        model_filename.push_str(embedding);
-        model_filename.push_str("_exclusive_model4_heavy/weights.json");
-        let lstm_data = load_lstm_data(&model_filename);
-        let lstm = Lstm::try_new(&lstm_data, None).expect("Test data is invalid");
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &locale!("th").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let lstm = Lstm::try_new(&payload, None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();
-        test_text_filename.push_str(embedding);
+        test_text_filename.push_str(lstm.embedding_type());
         test_text_filename.push_str(".json");
         let test_text_data = load_test_text(&test_text_filename);
         let test_text = TestText::new(test_text_data);

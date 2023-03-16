@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::lstm_error::Error;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
-
-use ndarray::{ArrayBase, Dim, Dimension, OwnedRepr};
 
 #[derive(Debug, Clone)]
 pub struct MatrixOwned<const D: usize> {
@@ -22,16 +21,11 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
-    pub fn from_ndarray(nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>) -> Option<Self>
-    where
-        Dim<[usize; D]>: Dimension,
-    {
-        let dims: [usize; D] = nd.shape().try_into().ok()?;
-        let data = nd.into_raw_vec();
+    pub fn try_from_parts(data: Vec<f32>, dims: [usize; D]) -> Result<Self, Error> {
         if dims.iter().product::<usize>() == data.len() {
-            Some(Self { data, dims })
+            Ok(Self { data, dims })
         } else {
-            None
+            Err(Error::DimensionMismatch)
         }
     }
 
