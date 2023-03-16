@@ -9,6 +9,7 @@ use alloc::vec::Vec;
 use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
+/// Using ZeroOne(Option<T>) saves 8 bytes in ShortVec via niche optimization.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub(crate) enum ShortVec<T> {
     ZeroOne(Option<T>),
