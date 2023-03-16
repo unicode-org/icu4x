@@ -119,47 +119,31 @@ impl Location {
 
 impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
-        let time_zone_names_data = other.time_zone_names_resource;
-        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+        // Sorting this map before iterating. This is because multiple time zones might
+        // map to the same BCP-47 ID (such as Pacific/Enderbury and Pacific/Kanton to
+        // kipho). The `collect` lower down will use the latest value (Pacific/Kanton).
+        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource)
+            .into_iter()
+            .collect::<std::collections::BTreeMap<_, _>>();
         Self(
-            time_zone_names_data
-                .zone
-                .0
+            bcp47_tzid_data
                 .iter()
-                .flat_map(|(key, region)| {
-                    region
-                        .0
-                        .iter()
-                        .flat_map(move |(inner_key, place_or_region)| {
-                            let mut key = key.clone();
-                            key.push('/');
-                            key.push_str(inner_key);
-                            match place_or_region {
-                                LocationOrSubRegion::Location(place) => {
-                                    match bcp47_tzid_data.get(&key) {
-                                        Some(bcp47) => place
-                                            .exemplar_city()
-                                            .map(|city| vec![(bcp47, city)])
-                                            .unwrap_or_default(),
-                                        None => panic!("Cannot find bcp47 for {key:?}."),
-                                    }
-                                }
-                                LocationOrSubRegion::SubRegion(region) => region
-                                    .iter()
-                                    .filter_map(|(inner_key, place)| {
-                                        let mut key = key.clone();
-                                        key.push('/');
-                                        key.push_str(inner_key);
-                                        match bcp47_tzid_data.get(&key) {
-                                            Some(bcp47) => {
-                                                place.exemplar_city().map(|city| (bcp47, city))
-                                            }
-                                            None => panic!("Cannot find bcp47 for {key:?}."),
-                                        }
-                                    })
-                                    .collect::<Vec<_>>(),
-                            }
-                        })
+                .filter_map(|(tzid, bcp47)| {
+                    let mut tzid = tzid.split('/');
+                    Some((
+                        bcp47,
+                        match other.time_zone_names_resource
+                            .zone
+                            .0
+                            .get(tzid.next()?)?
+                            .0
+                            .get(tzid.next()?)?
+                        {
+                            LocationOrSubRegion::Location(place) => place,
+                            LocationOrSubRegion::SubRegion(region) => region.get(tzid.next()?)?,
+                        }
+                        .exemplar_city()?,
+                    ))
                 })
                 .collect(),
         )
