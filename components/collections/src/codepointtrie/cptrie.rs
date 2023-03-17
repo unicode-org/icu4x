@@ -875,14 +875,14 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let trie = planes::get_planes_trie();
     ///
     /// let plane_val = 2;
-    /// let mut sip_range_iter = trie.get_ranges_mapped(|value| value != plane_val as u8).filter(|range| range.value);
+    /// let mut sip_range_iter = trie.iter_ranges_mapped(|value| value != plane_val as u8).filter(|range| range.value);
     ///
     /// let end = plane_val * 0x1_0000 - 1;
     ///
     /// let sip_range = sip_range_iter.next()
     ///     .expect("Complemented planes data should have at least one entry");
     /// assert_eq!(0..=end, sip_range.range);
-    pub fn get_ranges_mapped<'a, U: Eq + 'a>(
+    pub fn iter_ranges_mapped<'a, U: Eq + 'a>(
         &'a self,
         mut map: impl FnMut(T) -> U + Copy + 'a,
     ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {

@@ -310,7 +310,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         map: impl FnMut(T) -> U + Copy + 'a,
     ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
         match *self {
-            Self::CodePointTrie(ref t) => t.get_ranges_mapped(map),
+            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
         }
     }
 
