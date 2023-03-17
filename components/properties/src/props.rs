@@ -24,7 +24,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 
 /// A struct capable of looking up a property value from a string name.
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyValueNameToEnumMapperBorrowed`]/
+/// [`PropertyValueNameToEnumMapperBorrowed`].
 ///
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
@@ -658,6 +658,11 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 impl From<u32> for GeneralCategoryGroup {
     fn from(mask: u32) -> Self {
         GeneralCategoryGroup(mask)
+    }
+}
+impl From<GeneralCategoryGroup> for u32 {
+    fn from(group: GeneralCategoryGroup) -> Self {
+        group.0
     }
 }
 /// Enumerated property Script.

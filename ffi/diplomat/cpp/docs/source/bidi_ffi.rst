@@ -26,6 +26,17 @@
         Lifetimes: ``text`` must live at least as long as the output.
 
 
+    .. cpp:function:: ICU4XReorderedIndexMap reorder_visual(const diplomat::span<const uint8_t> levels) const
+
+        Utility function for producing reorderings given a list of levels
+
+        Produces a map saying which visual index maps to which source index.
+
+        The levels array must not have values greater than 126 (this is the Bidi maximum explicit depth plus one). Failure to follow this invariant may lead to incorrect results, but is still safe.
+
+        See the `Rust documentation for reorder_visual <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual>`__ for more information.
+
+
     .. cpp:function:: static bool level_is_rtl(uint8_t level)
 
         Check if a Level returned by level_at is an RTL level.
@@ -154,4 +165,30 @@
         Returns 0 (equivalent to ``Level::ltr()``) on error
 
         See the `Rust documentation for level_at <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
+
+
+.. cpp:class:: ICU4XReorderedIndexMap
+
+    Thin wrapper around a vector that maps visual indices to source indices
+
+    ``map[visualIndex] = sourceIndex``
+
+    Produced by ``reorder_visual()`` on :cpp:class:`ICU4XBidi`.
+
+
+    .. cpp:function:: const diplomat::span<const size_t> as_slice() const
+
+        Get this as a slice/array of indices
+
+        Lifetimes: ``this`` must live at least as long as the output.
+
+
+    .. cpp:function:: size_t len() const
+
+        The length of this map
+
+
+    .. cpp:function:: size_t get(size_t index) const
+
+        Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)
 
