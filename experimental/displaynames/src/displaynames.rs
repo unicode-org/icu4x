@@ -74,14 +74,13 @@ impl RegionDisplayNames {
     );
 
     /// Returns the display name of a region.
-    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, region: &'c Region) -> &'a str {
+    pub fn of(&self, region: Region) -> Option<&str> {
         let data = self.region_data.get();
         match self.options.style {
             Some(Style::Short) => data.short_names.get(&region.into()),
             _ => None,
         }
         .or_else(|| data.names.get(&region.into()))
-        .unwrap_or(region.as_str())
     }
 }
 
@@ -148,7 +147,7 @@ impl LanguageDisplayNames {
     );
 
     /// Returns the display name of a locale.
-    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, langid: &'c Locale) -> Cow<&str> {
+    pub fn of(&self, langid: &Locale) -> Option<&str> {
         let data = self.language_data.get();
         match self.options.style {
             Some(Style::Short) => data
