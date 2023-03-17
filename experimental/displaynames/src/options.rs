@@ -68,7 +68,7 @@ pub enum Style {
 
 /// An enum for fallback return when the system does not have the
 /// requested display name.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
@@ -83,7 +83,7 @@ impl Default for Fallback {
 }
 
 /// An enum for the language display kind.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum LanguageDisplay {

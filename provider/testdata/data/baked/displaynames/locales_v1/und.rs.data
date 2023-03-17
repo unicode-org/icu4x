@@ -1,4 +1,4 @@
-::icu_displaynames::provider::LanguageDisplayNamesV1 {
+::icu_displaynames::provider::LocaleDisplayNamesV1 {
     names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

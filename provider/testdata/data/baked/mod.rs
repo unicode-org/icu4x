@@ -542,7 +542,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_displaynames")]
         impl DataProvider<::icu_displaynames::provider::LanguageDisplayNamesV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::LanguageDisplayNamesV1Marker>, DataError> {
-                displaynames::locales_v1::lookup(&req.locale)
+                displaynames::languages_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -550,6 +550,19 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_displaynames")]
+        impl DataProvider<::icu_displaynames::provider::LocaleDisplayNamesV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_displaynames::provider::LocaleDisplayNamesV1Marker>, DataError> {
+                displaynames::locales_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_displaynames")]
@@ -2694,6 +2707,9 @@ macro_rules! impl_any_provider {
                 const LANGUAGEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_displaynames::provider::LanguageDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_displaynames")]
+                const LOCALEDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_displaynames::provider::LocaleDisplayNamesV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_displaynames")]
                 const REGIONDISPLAYNAMESV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_displaynames::provider::RegionDisplayNamesV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_list")]
@@ -3121,7 +3137,9 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_decimal")]
                     DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
-                    LANGUAGEDISPLAYNAMESV1MARKER => displaynames::locales_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    LANGUAGEDISPLAYNAMESV1MARKER => displaynames::languages_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_displaynames")]
+                    LOCALEDISPLAYNAMESV1MARKER => displaynames::locales_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_displaynames")]
                     REGIONDISPLAYNAMESV1MARKER => displaynames::regions_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_list")]

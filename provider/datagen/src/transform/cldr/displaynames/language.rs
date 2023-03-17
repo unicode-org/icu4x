@@ -5,9 +5,11 @@
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_displaynames::provider::*;
+use icu_locid::subtags::Language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
@@ -33,8 +35,43 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
         })
     }
 }
+impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
+        let langid = req.locale.get_langid();
+
+        let data: &cldr_serde::language_displaynames::Resource = self
+            .source
+            .cldr()?
+            .displaynames()
+            .read_and_parse(&langid, "languages.json")?;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(
+                LocaleDisplayNamesV1::try_from(data).map_err(|e| {
+                    DataError::custom("data for LocaleDisplayNames").with_display_context(&e)
+                })?,
+            )),
+        })
+    }
+}
 
 impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .source
+            .cldr()?
+            .displaynames()
+            .list_langs()?
+            .map(DataLocale::from)
+            .collect())
+    }
+}
+
+impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -63,14 +100,57 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
         let mut menu_names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
-                if let Some(region) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    short_names.insert(region, entry.1.as_ref());
-                } else if let Some(region) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
-                    long_names.insert(region, entry.1.as_ref());
-                } else if let Some(region) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
-                    menu_names.insert(region, entry.1.as_ref());
+                if let Some(lang) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+                    if let Ok(lang) = lang.parse::<Language>() {
+                        short_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                    }
+                } else if let Some(lang) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
+                    if let Ok(lang) = lang.parse::<Language>() {
+                        long_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                    }
+                } else if let Some(lang) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
+                    if let Ok(lang) = lang.parse::<Language>() {
+                        menu_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                    }
+                } else if let Ok(lang) = entry.0.parse::<Language>() {
+                    names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                }
+            }
+        }
+        Self {
+            // Old CLDR versions may contain trivial entries, so filter
+            names: names.into_iter().filter(|&(k, v)| k != v).collect(),
+            short_names: short_names.into_iter().filter(|&(k, v)| k != v).collect(),
+            long_names: long_names.into_iter().filter(|&(k, v)| k != v).collect(),
+            menu_names: menu_names.into_iter().filter(|&(k, v)| k != v).collect(),
+        }
+    }
+}
+
+impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1<'static> {
+    fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
+        let mut names = BTreeMap::new();
+        let mut short_names = BTreeMap::new();
+        let mut long_names = BTreeMap::new();
+        let mut menu_names = BTreeMap::new();
+        for lang_data_entry in other.main.0.iter() {
+            for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
+                if let Some(locale) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+                    if locale.contains('-') {
+                        short_names.insert(locale, entry.1.as_ref());
+                    }
+                } else if let Some(locale) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
+                    if locale.contains('-') {
+                        long_names.insert(locale, entry.1.as_ref());
+                    }
+                } else if let Some(locale) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
+                    if locale.contains('-') {
+                        menu_names.insert(locale, entry.1.as_ref());
+                    }
                 } else if !entry.0.contains(ALT_SUBSTRING) {
-                    names.insert(entry.0, entry.1.as_ref());
+                    if entry.0.contains('-') {
+                        names.insert(entry.0, entry.1.as_ref());
+                    }
                 }
             }
         }

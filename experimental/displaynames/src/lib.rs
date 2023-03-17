@@ -19,6 +19,8 @@
 
 #![warn(missing_docs)]
 
+extern crate alloc;
+
 pub mod displaynames;
 pub mod options;
 pub mod provider;
