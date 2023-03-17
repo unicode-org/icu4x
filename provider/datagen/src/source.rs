@@ -478,13 +478,13 @@ impl AbstractFs {
         Ok(match self {
             Self::Fs(root) => root.join(path).is_file(),
             Self::Zip(zip) => zip
-            .read()
-            .expect("poison")
-            .as_ref()
-            .ok()
-            .unwrap() // init called
-            .file_names()
-            .any(|p| p == path)
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
+                .file_names()
+                .any(|p| p == path),
         })
     }
 }
