@@ -861,8 +861,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .map(|cpm_range| cpm_range.range)
     }
 
-    /// Yields an [`Iterator`] returning the ranges of the code points whose values
-    /// match `predicate`.
+    /// Yields an [`Iterator`] returning the ranges of the code points after passing
+    /// the value through a mapping function.
     ///
     /// This is preferable to calling `.get_ranges().map()` since it will coalesce
     /// adjacent ranges into one.
