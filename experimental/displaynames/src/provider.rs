@@ -52,16 +52,16 @@ pub struct RegionDisplayNamesV1<'data> {
 #[yoke(prove_covariance_manually)]
 /// LanguageDisplayNames provides mapping between languages and display names.
 pub struct LanguageDisplayNamesV1<'data> {
-    /// Mapping for locale to display name.
+    /// Mapping for language to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLanguage, str>,
-    /// Mapping for locale to short display name.
+    /// Mapping for language to short display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub short_names: ZeroMap<'data, UnvalidatedLanguage, str>,
-    /// Mapping for locale to long display name.
+    /// Mapping for language to long display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub long_names: ZeroMap<'data, UnvalidatedLanguage, str>,
-    /// Mapping for locale to menu variant display name.
+    /// Mapping for language to menu variant display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }
