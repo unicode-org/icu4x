@@ -16,6 +16,7 @@ use icu_list::provider::*;
 use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
 use icu_plurals::provider::*;
+use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
@@ -112,6 +113,7 @@ registry!(
     BidiClassNameToValueV1Marker,
     BidiControlV1Marker,
     BidiMirroredV1Marker,
+    BidiAuxiliaryPropertiesV1Marker,
     BlankV1Marker,
     BuddhistDateLengthsV1Marker,
     BuddhistDateSymbolsV1Marker,

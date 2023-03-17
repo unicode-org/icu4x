@@ -49,6 +49,14 @@ pub struct BidiAuxiliaryPropertiesV1<'data> {
     pub trie: CodePointTrie<'data, MirroredPairedBracketData>,
 }
 
+impl<'data> BidiAuxiliaryPropertiesV1<'data> {
+    #[doc(hidden)]
+    pub fn new(
+        trie: CodePointTrie<'data, MirroredPairedBracketData>,
+    ) -> BidiAuxiliaryPropertiesV1<'data> {
+        BidiAuxiliaryPropertiesV1 { trie }
+    }
+}
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
@@ -58,6 +66,27 @@ pub struct MirroredPairedBracketData {
     pub mirroring_glyph: char,
     pub mirrored: bool,
     pub paired_bracket_type: BidiPairedBracketType,
+}
+
+impl Default for MirroredPairedBracketData {
+    fn default() -> Self {
+        Self {
+            mirroring_glyph: 0 as char,
+            mirrored: false,
+            paired_bracket_type: BidiPairedBracketType::None,
+        }
+    }
+}
+
+impl Into<u32> for MirroredPairedBracketData {
+    fn into(self) -> u32 {
+        let ule = self.to_unaligned();
+        let ule_slice = &[ule];
+        let bytes = ULE::as_byte_slice(ule_slice);
+        let array = <[u8; 3]>::try_from(bytes)
+            .expect("ULE deserialization failed for MirroredPairedBracketData");
+        u32::from_ne_bytes([array[0], array[1], array[2], 0])
+    }
 }
 
 /// Bit layout for the 24 bits (0..=23) of the `[u8; 3]` ULE raw type.

@@ -55,6 +55,30 @@ pub mod enumerated {
     }
 }
 
+pub mod code_point_prop {
+    #[derive(serde::Deserialize)]
+    pub struct CodePointPropertyMapRange {
+        pub a: u32,
+        pub b: u32,
+        pub v: u32,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct CodePointPropertyMap {
+        pub long_name: String,
+        pub short_name: String,
+        pub ranges: Vec<CodePointPropertyMapRange>,
+        pub code_point_trie: super::CodePointTrieToml,
+    }
+
+    #[derive(serde::Deserialize)]
+    pub struct Main {
+        // TODO: update icuexportdata to print a different TOML header than "enum_property"
+        #[serde(default)]
+        pub enum_property: Vec<CodePointPropertyMap>,
+    }
+}
+
 pub mod mask {
     #[derive(serde::Deserialize)]
     pub struct MaskPropertyMap {
