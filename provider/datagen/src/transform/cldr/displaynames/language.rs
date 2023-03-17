@@ -10,11 +10,11 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use zerovec::ule::UnvalidatedStr;
 
-impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
+impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<LocaleDisplayNamesV1Marker>, DataError> {
+    ) -> Result<DataResponse<LanguageDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::language_displaynames::Resource = self
@@ -26,7 +26,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(
-                LocaleDisplayNamesV1::try_from(data).map_err(|e| {
+                LanguageDisplayNamesV1::try_from(data).map_err(|e| {
                     DataError::custom("data for LanguageDisplayNames").with_display_context(&e)
                 })?,
             )),
@@ -34,7 +34,7 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -55,7 +55,7 @@ const ALT_LONG_SUBSTRING: &str = "-alt-long";
 /// Substring used to denote menu display names data variants for a given language. For example: "az-alt-menu".
 const ALT_MENU_SUBSTRING: &str = "-alt-menu";
 
-impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1<'static> {
+impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNamesV1<'static> {
     fn from(other: &cldr_serde::language_displaynames::Resource) -> Self {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
@@ -108,7 +108,7 @@ mod tests {
     fn test_basic_lang_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -130,7 +130,7 @@ mod tests {
     fn test_basic_lang_short_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -152,7 +152,7 @@ mod tests {
     fn test_basic_lang_long_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),
@@ -174,7 +174,7 @@ mod tests {
     fn test_basic_lang_menu_display_names() {
         let provider = crate::DatagenProvider::for_test();
 
-        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+        let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en-001").into(),
                 metadata: Default::default(),

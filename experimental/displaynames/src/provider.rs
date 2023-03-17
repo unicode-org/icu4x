@@ -40,7 +40,7 @@ pub struct RegionDisplayNamesV1<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-#[icu_provider::data_struct(LocaleDisplayNamesV1Marker = "displaynames/locales@1")]
+#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/locales@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
@@ -50,7 +50,7 @@ pub struct RegionDisplayNamesV1<'data> {
 )]
 #[yoke(prove_covariance_manually)]
 /// LanguageDisplayNames provides mapping between locales and display names.
-pub struct LocaleDisplayNamesV1<'data> {
+pub struct LanguageDisplayNamesV1<'data> {
     /// Mapping for locale to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLocale, str>,

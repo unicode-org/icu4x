@@ -5,7 +5,7 @@
 //! This module contains types and implementations for the Displaynames component.
 
 use crate::options::*;
-use crate::provider::LocaleDisplayNamesV1Marker;
+use crate::provider::LanguageDisplayNamesV1Marker;
 use crate::provider::RegionDisplayNamesV1Marker;
 use icu_locid::{subtags::Region, Locale};
 use icu_provider::prelude::*;
@@ -74,13 +74,14 @@ impl RegionDisplayNames {
     );
 
     /// Returns the display name of a region.
-    pub fn of(&self, region: Region) -> Option<&str> {
+    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, region: &'c Region) -> &'a str {
         let data = self.region_data.get();
         match self.options.style {
             Some(Style::Short) => data.short_names.get(&region.into()),
             _ => None,
         }
         .or_else(|| data.names.get(&region.into()))
+        .unwrap_or(region.as_str())
     }
 }
 
@@ -107,7 +108,7 @@ impl RegionDisplayNames {
 #[derive(Default)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
-    language_data: DataPayload<LocaleDisplayNamesV1Marker>,
+    language_data: DataPayload<LanguageDisplayNamesV1Marker>,
 }
 
 impl LanguageDisplayNames {
@@ -117,7 +118,7 @@ impl LanguageDisplayNames {
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
-    pub fn try_new_unstable<D: DataProvider<LocaleDisplayNamesV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<LanguageDisplayNamesV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: DisplayNamesOptions,
@@ -147,7 +148,7 @@ impl LanguageDisplayNames {
     );
 
     /// Returns the display name of a locale.
-    pub fn of(&self, langid: &Locale) -> Option<&str> {
+    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, langid: &'c Locale) -> Cow<&str> {
         let data = self.language_data.get();
         match self.options.style {
             Some(Style::Short) => data

@@ -42,8 +42,8 @@ icu::displaynames::options::DisplayNamesOptions#Struct
 icu::displaynames::options::Fallback#Enum
 icu::displaynames::options::LanguageDisplay#Enum
 icu::displaynames::options::Style#Enum
-icu::displaynames::provider::LocaleDisplayNamesV1#Struct
-icu::displaynames::provider::LocaleDisplayNamesV1Marker#Struct
+icu::displaynames::provider::LanguageDisplayNamesV1#Struct
+icu::displaynames::provider::LanguageDisplayNamesV1Marker#Struct
 icu::displaynames::provider::RegionDisplayNamesV1#Struct
 icu::displaynames::provider::RegionDisplayNamesV1Marker#Struct
 icu::properties::names::PropertyValueNameToEnumMapper#Struct
