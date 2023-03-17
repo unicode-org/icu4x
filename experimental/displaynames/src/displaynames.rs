@@ -179,10 +179,11 @@ impl LanguageDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// // Custom display name
-/// assert_eq!(display_name.of(&locale!("de-CH")).unwrap(), "Swiss High German");
-/// // Generated display name
-/// assert_eq!(display_name.of(&locale!("de-MX")).unwrap(), "German (Mexico)");
+/// assert_eq!(display_name.of(&locale!("de-CH")), "Swiss High German");
+/// assert_eq!(display_name.of(&locale!("de")), "German");
+/// assert_eq!(display_name.of(&locale!("de-MX")), "German (Mexico)");
+/// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
+/// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
@@ -242,7 +243,7 @@ impl LocaleDisplayNamesFormatter {
 
     /// Returns the display name of a locale.
     // TODO: Make this return a writeable instead of using alloc
-    pub fn of(&self, locale: &Locale) -> Option<Cow<str>> {
+    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
         // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements
 
         // TODO: This binary search needs to return the longest matching found prefix
@@ -271,7 +272,7 @@ impl LocaleDisplayNamesFormatter {
                 .names
                 .get_by(|bytes| locale.strict_cmp(bytes).reverse())
         }) {
-            return Some(Cow::Borrowed(displayname));
+            return Cow::Borrowed(displayname);
         }
 
         // TODO: This is a dummy implementation which does not adhere to UTS35. It only uses
@@ -308,16 +309,13 @@ impl LocaleDisplayNamesFormatter {
                 _ => None,
             }
             .or_else(|| self.region_data.get().names.get(&region.into()));
-            match (langdisplay, regiondisplay) {
-                (None, None) => None,
-                (_, _) => Some(Cow::Owned(format!(
-                    "{} ({})",
-                    langdisplay.unwrap_or(locale.id.language.as_str()),
-                    regiondisplay.unwrap_or(region.as_str())
-                ))),
-            }
+            Cow::Owned(format!(
+                "{} ({})",
+                langdisplay.unwrap_or(locale.id.language.as_str()),
+                regiondisplay.unwrap_or(region.as_str())
+            ))
         } else {
-            langdisplay.map(Cow::Borrowed)
+            Cow::Borrowed(langdisplay.unwrap_or(locale.id.language.as_str()))
         }
     }
 }
