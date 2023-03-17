@@ -157,11 +157,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                             if alias.contains('/') && !alias.starts_with("Etc") {
                                 Some((
                                     bcp47,
-                                    dbg!(alias)
-                                        .split('/')
-                                        .next_back()
-                                        .unwrap()
-                                        .replace('_', " "),
+                                    alias.split('/').next_back().unwrap().replace('_', " "),
                                 ))
                             } else {
                                 None
