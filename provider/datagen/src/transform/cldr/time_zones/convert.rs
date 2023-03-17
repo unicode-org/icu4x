@@ -119,32 +119,54 @@ impl Location {
 
 impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
-        // Sorting this map before iterating. This is because multiple time zones might
-        // map to the same BCP-47 ID (such as Pacific/Enderbury and Pacific/Kanton to
-        // kipho). The `collect` lower down will use the latest value (Pacific/Kanton).
-        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource)
-            .into_iter()
-            .collect::<std::collections::BTreeMap<_, _>>();
         Self(
-            bcp47_tzid_data
+            other
+                .bcp47_tzids_resource
                 .iter()
-                .filter_map(|(tzid, bcp47)| {
-                    let mut tzid = tzid.split('/');
-                    Some((
-                        bcp47,
-                        match other
-                            .time_zone_names_resource
-                            .zone
-                            .0
-                            .get(tzid.next()?)?
-                            .0
-                            .get(tzid.next()?)?
-                        {
-                            LocationOrSubRegion::Location(place) => place,
-                            LocationOrSubRegion::SubRegion(region) => region.get(tzid.next()?)?,
-                        }
-                        .exemplar_city()?,
-                    ))
+                .filter_map(|(bcp47, bcp47_tzid_data)| {
+                    bcp47_tzid_data
+                        .alias
+                        .as_ref()
+                        .map(|aliases| (bcp47, aliases))
+                })
+                .filter_map(|(bcp47, aliases)| {
+                    aliases
+                        .split(' ')
+                        .find_map(|alias| {
+                            let mut alias = alias.split('/');
+                            Some((
+                                bcp47,
+                                match other
+                                    .time_zone_names_resource
+                                    .zone
+                                    .0
+                                    .get(alias.next()?)?
+                                    .0
+                                    .get(alias.next()?)?
+                                {
+                                    LocationOrSubRegion::Location(place) => place,
+                                    LocationOrSubRegion::SubRegion(region) => {
+                                        region.get(alias.next()?)?
+                                    }
+                                }
+                                .exemplar_city()?,
+                            ))
+                        })
+                        .or_else(|| {
+                            let alias = aliases.split(' ').next().unwrap();
+                            if alias.contains('/') && !alias.starts_with("Etc") {
+                                Some((
+                                    bcp47,
+                                    dbg!(alias)
+                                        .split('/')
+                                        .next_back()
+                                        .unwrap()
+                                        .replace('_', " "),
+                                ))
+                            } else {
+                                None
+                            }
+                        })
                 })
                 .collect(),
         )
