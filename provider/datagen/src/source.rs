@@ -344,6 +344,10 @@ impl SerdeCache {
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
+
+    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.root.file_exists(path)
+    }
 }
 
 pub(crate) enum AbstractFs {
@@ -466,6 +470,21 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+        })
+    }
+
+    fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.init()?;
+        Ok(match self {
+            Self::Fs(root) => root.join(path).is_file(),
+            Self::Zip(zip) => zip
+            .read()
+            .expect("poison")
+            .as_ref()
+            .ok()
+            .unwrap() // init called
+            .file_names()
+            .any(|p| p == path)
         })
     }
 }
