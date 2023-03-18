@@ -426,7 +426,7 @@ impl<'data> CodePointInversionList<'data> {
         } else {
             None
         };
-        let end = if let Some(last) = self.inv_list.get(self.inv_list.len() - 1) {
+        let end = if let Some(last) = self.inv_list.last() {
             if last == char::MAX as u32 {
                 None
             } else {
