@@ -54,6 +54,12 @@ impl<U: Copy> OptionULE<U> {
     }
 }
 
+impl<U: Copy + core::fmt::Debug> core::fmt::Debug for OptionULE<U> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.get().fmt(f)
+    }
+}
+
 // Safety (based on the safety checklist on the ULE trait):
 //  1. OptionULE does not include any uninitialized or padding bytes.
 //     (achieved by `#[repr(packed)]` on a struct containing only ULE fields,
@@ -149,6 +155,12 @@ impl<U: VarULE + ?Sized> OptionVarULE<U> {
         } else {
             None
         }
+    }
+}
+
+impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.as_ref().fmt(f)
     }
 }
 

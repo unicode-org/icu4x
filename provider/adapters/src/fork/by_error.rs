@@ -125,6 +125,7 @@ where
 ///
 /// [`MultiForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
+#[derive(Debug)]
 pub struct MultiForkByErrorProvider<P, F> {
     providers: Vec<P>,
     predicate: F,

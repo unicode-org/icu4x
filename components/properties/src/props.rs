@@ -54,6 +54,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// // fake property
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
+#[derive(Debug)]
 pub struct PropertyValueNameToEnumMapper<T> {
     map: DataPayload<ErasedNameToEnumMapV1Marker>,
     marker: PhantomData<fn() -> T>,
@@ -61,6 +62,7 @@ pub struct PropertyValueNameToEnumMapper<T> {
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
 /// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
+#[derive(Debug)]
 pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     marker: PhantomData<fn() -> T>,

@@ -506,6 +506,7 @@ macro_rules! expand {
             // For now, synonymous with binary properties of code points only.
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $code_point_set_marker;
 
                 impl DataMarker for $code_point_set_marker {
@@ -537,6 +538,7 @@ macro_rules! expand {
             //   - exemplar characters
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $unicode_set_marker;
 
                 impl DataMarker for $unicode_set_marker {
@@ -566,6 +568,7 @@ macro_rules! expand {
             // For now, synonymous with enumerated properties [of code points only].
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $code_point_map_marker;
 
                 impl DataMarker for $code_point_map_marker {
@@ -592,6 +595,7 @@ macro_rules! expand {
                 }
 
                 #[doc = core::concat!("Data marker for the names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $value_name_marker;
 
                 impl DataMarker for $value_name_marker {

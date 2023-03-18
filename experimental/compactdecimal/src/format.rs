@@ -12,6 +12,7 @@ use crate::provider::{Count, PatternULE};
 
 /// An intermediate structure returned by [`CompactDecimalFormatter`](crate::CompactDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
+#[derive(Debug)]
 pub struct FormattedCompactDecimal<'l> {
     pub(crate) formatter: &'l CompactDecimalFormatter,
     pub(crate) value: Cow<'l, CompactDecimal>,
