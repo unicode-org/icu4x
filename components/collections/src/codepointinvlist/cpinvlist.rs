@@ -417,7 +417,7 @@ impl<'data> CodePointInversionList<'data> {
     pub fn iter_ranges_complemented(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
         let inv_ule = self.inv_list.as_ule_slice();
         let middle = inv_ule.get(1..inv_ule.len() - 1).unwrap_or(&[]);
-        let beginning = if let Some(first) = self.inv_list.get(0) {
+        let beginning = if let Some(first) = self.inv_list.first() {
             if first == 0 {
                 None
             } else {
