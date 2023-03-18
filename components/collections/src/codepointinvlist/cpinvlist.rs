@@ -415,7 +415,33 @@ impl<'data> CodePointInversionList<'data> {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges_complemented(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        crate::iterator_utils::RangeListIteratorComplementer::new(self.iter_ranges())
+        let inv_ule = self.inv_list.as_ule_slice();
+        let middle = inv_ule.get(1..inv_ule.len() - 1).unwrap_or(&[]);
+        let beginning = if let Some(first) = self.inv_list.get(0) {
+            if first == 0 {
+                None
+            } else {
+                Some(0..=first - 1)
+            }
+        } else {
+            None
+        };
+        let end = if let Some(last) = self.inv_list.get(self.inv_list.len() - 1) {
+            if last == char::MAX as u32 {
+                None
+            } else {
+                Some(last..=char::MAX as u32)
+            }
+        } else {
+            None
+        };
+        #[allow(clippy::indexing_slicing)] // chunks
+        let chunks = middle.chunks(2).map(|pair| {
+            let range_start: u32 = AsULE::from_unaligned(pair[0]);
+            let range_limit: u32 = AsULE::from_unaligned(pair[1]);
+            RangeInclusive::new(range_start, range_limit - 1)
+        });
+        beginning.into_iter().chain(chunks).chain(end.into_iter())
     }
 
     /// Returns the number of ranges contained in this [`CodePointInversionList`]
