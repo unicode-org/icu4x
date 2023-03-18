@@ -563,6 +563,8 @@ impl GeneralCategoryGroup {
         | 1 << (GC::ModifierSymbol as u32)
         | 1 << (GC::OtherSymbol as u32));
 
+    const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
+
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
@@ -611,6 +613,102 @@ impl GeneralCategoryGroup {
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
+
+    /// Produce a GeneralCategoryGroup that is the inverse of this one
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let not_letter = letter.complement();
+    ///
+    /// assert!(not_letter.contains(GeneralCategory::MathSymbol));
+    /// assert!(!letter.contains(GeneralCategory::MathSymbol));
+    /// assert!(not_letter.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!letter.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!not_letter.contains(GeneralCategory::UppercaseLetter));
+    /// assert!(letter.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn complement(self) -> Self {
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
+        GeneralCategoryGroup(!self.0 & Self::ALL)
+    }
+
+    /// Return the group representing all GeneralCategory values
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let all = GeneralCategoryGroup::all();
+    ///
+    /// assert!(all.contains(GeneralCategory::MathSymbol));
+    /// assert!(all.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(all.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn all() -> Self {
+        Self(Self::ALL)
+    }
+
+    /// Return the empty group
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let empty = GeneralCategoryGroup::empty();
+    ///
+    /// assert!(!empty.contains(GeneralCategory::MathSymbol));
+    /// assert!(!empty.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!empty.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn empty() -> Self {
+        Self(0)
+    }
+
+    /// Take the union of two groups
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let symbol = GeneralCategoryGroup::Symbol;
+    /// let union = letter.union(symbol);
+    ///
+    /// assert!(union.contains(GeneralCategory::MathSymbol));
+    /// assert!(!union.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(union.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn union(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+
+    /// Take the intersection of two groups
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let lu = GeneralCategoryGroup::UppercaseLetter;
+    /// let intersection = letter.intersection(lu);
+    ///
+    /// assert!(!intersection.contains(GeneralCategory::MathSymbol));
+    /// assert!(!intersection.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(intersection.contains(GeneralCategory::UppercaseLetter));
+    /// assert!(!intersection.contains(GeneralCategory::LowercaseLetter));
+    /// ```
+    pub fn intersection(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
 }
 
 impl_value_getter! {
@@ -657,7 +755,9 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 }
 impl From<u32> for GeneralCategoryGroup {
     fn from(mask: u32) -> Self {
-        GeneralCategoryGroup(mask)
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
+        GeneralCategoryGroup(mask & Self::ALL)
     }
 }
 impl From<GeneralCategoryGroup> for u32 {

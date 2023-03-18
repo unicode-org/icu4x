@@ -149,6 +149,7 @@ where
 }
 
 #[test]
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
 fn test_cpt_builder() {
     // Buckets of ten characters for 0 to 100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
     let values: Vec<u32> = (0..100)
