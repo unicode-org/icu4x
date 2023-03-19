@@ -45,6 +45,7 @@ use zerofrom::ZeroFrom;
 ///     })
 /// ))
 /// ```
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
     /// The [`DataKey`] for which to provide data. All others will receive a

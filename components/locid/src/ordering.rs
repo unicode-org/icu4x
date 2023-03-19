@@ -35,6 +35,7 @@ use core::cmp::Ordering;
 ///
 /// [`Locale::strict_cmp_iter`]: crate::Locale::strict_cmp_iter
 #[allow(clippy::exhaustive_enums)] // well-defined exhaustive enum semantics
+#[derive(Debug)]
 pub enum SubtagOrderingResult<I> {
     /// Potentially remaining subtags after the comparison operation.
     Subtags(I),

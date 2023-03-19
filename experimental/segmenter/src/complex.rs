@@ -12,7 +12,7 @@ use icu_provider::prelude::*;
 #[cfg(feature = "lstm")]
 use crate::lstm::LstmSegmenter;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct LstmPayloads {
     pub burmese: Option<DataPayload<LstmDataV1Marker>>,
     pub khmer: Option<DataPayload<LstmDataV1Marker>>,
@@ -60,7 +60,7 @@ impl LstmPayloads {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Dictionary {
     pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
     pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,

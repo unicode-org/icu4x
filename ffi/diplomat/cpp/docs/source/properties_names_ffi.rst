@@ -44,12 +44,16 @@
 
         Returns -1 if the name is unknown for this property
 
+        See the `Rust documentation for get_strict <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict>`__ for more information.
+
 
     .. cpp:function:: int16_t get_loose(const std::string_view name) const
 
         Get the property value matching the given name, using loose matching
 
         Returns -1 if the name is unknown for this property
+
+        See the `Rust documentation for get_loose <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> load_general_category(const ICU4XDataProvider& provider)
