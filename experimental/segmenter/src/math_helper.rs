@@ -261,9 +261,7 @@ fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     let xit = xs.chunks_exact(8);
     let yit = ys.chunks_exact(8);
-    for (x, y) in xit.remainder().iter().zip(yit.remainder().iter()) {
-        sum += x * y;
-    }
+    let mut sum = xit.remainder().iter().zip(yit.remainder().iter()).map(|(x, y)| x * y).sum();
     for (xx, yy) in xit.zip(yit) {
         // TODO: Use array_chunks once stable to avoid the unwrap.
         // <https://github.com/rust-lang/rust/issues/74985>
@@ -280,10 +278,5 @@ fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
         p.6 += x6 * y6;
         p.7 += x7 * y7;
     }
-    sum += p.0 + p.4;
-    sum += p.1 + p.5;
-    sum += p.2 + p.6;
-    sum += p.3 + p.7;
-
-    sum
+    sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
 }
