@@ -50,6 +50,7 @@ impl<const D: usize> MatrixOwned<D> {
     /// The type parameter `M` should be `D - 1`.
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
+        // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
         let data = &self.data.get(range)?;
@@ -66,6 +67,7 @@ impl<const D: usize> MatrixOwned<D> {
     /// A mutable version of [`Self::submatrix`].
     #[inline]
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
+        // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
         let data = self.data.get_mut(range)?;
@@ -103,7 +105,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     /// See [`MatrixOwned::submatrix`].
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
-        // This assertion should always succeed and be elided at compile time
+        // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.submatrix_range(index);
         let data = &self.data.get(range)?;
@@ -112,7 +114,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
 
     #[inline]
     fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
-        // This assertion should always succeed and be elided at compile time
+        // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         // The above assertion guarantees that the following line will succeed
         #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
