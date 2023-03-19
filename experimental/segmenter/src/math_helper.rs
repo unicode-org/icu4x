@@ -257,11 +257,15 @@ fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
-    let mut sum = 0.0;
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     let xit = xs.chunks_exact(8);
     let yit = ys.chunks_exact(8);
-    let mut sum = xit.remainder().iter().zip(yit.remainder().iter()).map(|(x, y)| x * y).sum();
+    let sum = xit
+        .remainder()
+        .iter()
+        .zip(yit.remainder().iter())
+        .map(|(x, y)| x * y)
+        .sum::<f32>();
     for (xx, yy) in xit.zip(yit) {
         // TODO: Use array_chunks once stable to avoid the unwrap.
         // <https://github.com/rust-lang/rust/issues/74985>
