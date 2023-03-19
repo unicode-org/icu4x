@@ -7,6 +7,11 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
 
+/// A `D`-dimensional, heap-allocated matrix.
+///
+/// This matrix implementation supports slicing matrices into tightly-packed
+/// submatrices. For example, indexing into a matrix of size 5x4x3 returns a
+/// matrix of size 4x3. For more information, see [`MatrixOwned::submatrix`].
 #[derive(Debug, Clone)]
 pub struct MatrixOwned<const D: usize> {
     data: Vec<f32>,
@@ -37,6 +42,12 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    /// Returns the tighly packed submatrix at _index_, or `None` if _index_ is out of range.
+    ///
+    /// For example, if the matrix is 5x4x3, this function returns a matrix sized 4x3. If the
+    /// matrix is 4x3, then this function returns a linear matrix of length 3.
+    ///
+    /// The type parameter `M` should be `D - 1`.
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
         assert_eq!(M, D - 1);
@@ -52,6 +63,7 @@ impl<const D: usize> MatrixOwned<D> {
         }
     }
 
+    /// A mutable version of [`Self::submatrix`].
     #[inline]
     pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
         assert_eq!(M, D - 1);
@@ -61,6 +73,7 @@ impl<const D: usize> MatrixOwned<D> {
     }
 }
 
+/// A `D`-dimensional, borrowed matrix.
 #[derive(Debug, Clone, Copy)]
 pub struct MatrixBorrowed<'a, const D: usize> {
     data: &'a [f32],
@@ -87,6 +100,7 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         }
     }
 
+    /// See [`MatrixOwned::submatrix`].
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion should always succeed and be elided at compile time
@@ -133,6 +147,7 @@ impl<'a> MatrixBorrowed<'a, 3> {
     }
 }
 
+/// A `D`-dimensional, mutably borrowed matrix.
 pub struct MatrixBorrowedMut<'a, const D: usize> {
     data: &'a mut [f32],
     dims: [usize; D],
@@ -153,8 +168,13 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
         let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
         let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
-        // TODO: The following function call is panicky
-        self.data.copy_within(range_from, range_to.start);
+        if let (Some(_), Some(_)) = (
+            self.data.get(range_from.clone()),
+            self.data.get(range_to.clone()),
+        ) {
+            // This function is panicky, but we just validated the ranges
+            self.data.copy_within(range_from, range_to.start);
+        }
     }
 
     #[must_use]
@@ -167,8 +187,9 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         Some(())
     }
 
+    /// Mutates this matrix by applying a softmax transformation.
     pub fn softmax_transform(&mut self) {
-        let sm = self.data.iter().fold(0.0, |sm, v| sm + v.exp());
+        let sm = self.data.iter().map(|v| v.exp()).sum::<f32>();
         self.data.iter_mut().for_each(|v| {
             *v = v.exp() / sm;
         });
@@ -191,14 +212,28 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
     pub fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<2>) {
         let m = a.dim();
         let n = self.as_borrowed().dim();
-        debug_assert_eq!(m, b.dim().1);
-        debug_assert_eq!(n, b.dim().0);
+        debug_assert_eq!(
+            m,
+            b.dim().1,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        debug_assert_eq!(
+            n,
+            b.dim().0,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
         for i in 0..n {
             if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
             {
                 *dest += unrolled_dot(a.data, b_sub.data);
             } else {
-                debug_assert!(false);
+                debug_assert!(false, "unreachable: dims checked above");
             }
         }
     }
@@ -211,8 +246,22 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     pub fn add_dot_3d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
-        debug_assert_eq!(m, b.dim().2);
-        debug_assert_eq!(n, b.dim().0 * b.dim().1);
+        debug_assert_eq!(
+            m,
+            b.dim().2,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        debug_assert_eq!(
+            n,
+            b.dim().0 * b.dim().1,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
         // Note: The following two loops are equivalent, but the second has more opportunity for
         // vectorization since it allows the vectorization to span submatrices.
         // for i in 0..b.dim().0 {
@@ -226,7 +275,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
             ) {
                 *dest += unrolled_dot(lhs, rhs);
             } else {
-                debug_assert!(false);
+                debug_assert!(false, "unreachable: dims checked above");
             }
         }
     }

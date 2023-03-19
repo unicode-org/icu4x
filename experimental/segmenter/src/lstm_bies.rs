@@ -48,7 +48,10 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
-        // TODO: Perform this matrix reshaping in datagen.
+        // Note: We are currently copying the ZeroVecs into allocated matrices.
+        // The ICU4X style guide discourages this. We do it here because:
+        // 1. The data need to be aligned in order to be vectorized.
+        // 2. The LSTM is highly performance-sensitive.
         let mat1 = data.get().mat1.alloc_matrix::<2>()?;
         let mat2 = data.get().mat2.alloc_matrix::<3>()?;
         let mat3 = data.get().mat3.alloc_matrix::<3>()?;
@@ -99,7 +102,7 @@ impl<'l> Lstm<'l> {
     }
 
     #[cfg(test)]
-    pub fn embedding_type(&self) -> &'static str {
+    fn embedding_type(&self) -> &'static str {
         if self.grapheme.is_some() {
             "grapheme"
         } else {
