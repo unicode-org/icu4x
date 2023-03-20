@@ -137,6 +137,16 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                     }
                     aliases
                         .split(' ')
+                        // This rev doesn't make much sense, we should actually take the *first*
+                        // alias' exemplary city. However, in practice only one alias (I assume
+                        // the first) ever has a exemplary cities defined, *expect* for kipho, which
+                        // has aliases `Pacific/Enderbury Pacific/Kanton`. While root only has an
+                        // exemplary city for `Pacific/Kanton`, other languages also have one for
+                        // `Pacific/Enderbury` (which is deprecated). The rev makes sure we pick
+                        // `Pacific/Kanton`.
+                        // I filed https://unicode-org.atlassian.net/jira/software/c/projects/CLDR/issues/CLDR-16490
+                        // to clean this up in CLDR.
+                        .rev()
                         .find_map(|alias| {
                             let mut alias = alias.split('/');
                             Some((
