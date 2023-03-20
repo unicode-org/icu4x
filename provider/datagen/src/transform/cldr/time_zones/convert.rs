@@ -129,45 +129,41 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                         .as_ref()
                         .map(|aliases| (bcp47, aliases))
                 })
+                // Montreal is meant to be deprecated, but pre-43 the deprecation
+                // fallback was not set, which is why it might show up here.
+                .filter(|(bcp47, _)| bcp47.0 != "camtr")
                 .filter_map(|(bcp47, aliases)| {
-                    if bcp47.0 == "camtr" {
-                        // Montreal is meant to be deprecated, but pre-43 the deprecation
-                        // fallback was not set, which is why it shows up here.
-                        None?
-                    }
-                    aliases
-                        .split(' ')
-                        .find_map(|alias| {
-                            let mut alias = alias.split('/');
-                            Some((
-                                bcp47,
-                                match other
-                                    .time_zone_names_resource
-                                    .zone
-                                    .0
-                                    .get(alias.next()?)?
-                                    .0
-                                    .get(alias.next()?)?
-                                {
-                                    LocationOrSubRegion::Location(place) => place,
-                                    LocationOrSubRegion::SubRegion(region) => {
-                                        region.get(alias.next()?)?
-                                    }
+                    let alias = aliases.split(' ').next().expect("split non-empty");
+                    let mut alias_parts = alias.split('/');
+                    let continent = alias_parts.next().expect("split non-empty");
+                    let location_or_subregion = alias_parts.next()?;
+                    let location_in_subregion = alias_parts.next();
+
+                    Some((
+                        bcp47,
+                        other
+                            .time_zone_names_resource
+                            .zone
+                            .0
+                            .get(continent)
+                            .and_then(|x| x.0.get(location_or_subregion))
+                            .and_then(|x| match x {
+                                LocationOrSubRegion::Location(place) => Some(place),
+                                LocationOrSubRegion::SubRegion(region) => {
+                                    region.get(location_in_subregion?)
                                 }
-                                .exemplar_city()?,
-                            ))
-                        })
-                        .or_else(|| {
-                            let alias = aliases.split(' ').next().unwrap();
-                            if alias.contains('/') && !alias.starts_with("Etc") {
-                                Some((
-                                    bcp47,
-                                    alias.split('/').next_back().unwrap().replace('_', " "),
-                                ))
-                            } else {
-                                None
-                            }
-                        })
+                            })
+                            .and_then(|p| p.exemplar_city())
+                            .or_else(|| {
+                                (continent != "Etc").then(|| {
+                                    alias
+                                        .split('/')
+                                        .next_back()
+                                        .expect("split non-empty")
+                                        .replace('_', " ")
+                                })
+                            })?,
+                    ))
                 })
                 .collect(),
         )
