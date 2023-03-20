@@ -224,9 +224,9 @@ impl LocaleDisplayNamesFormatter {
 
         Ok(Self {
             options,
-            language_data: data_provider.load(req.clone())?.take_payload()?,
-            locale_data: data_provider.load(req.clone())?.take_payload()?,
-            region_data: data_provider.load(req.clone())?.take_payload()?,
+            language_data: data_provider.load(req)?.take_payload()?,
+            locale_data: data_provider.load(req)?.take_payload()?,
+            region_data: data_provider.load(req)?.take_payload()?,
         })
     }
 

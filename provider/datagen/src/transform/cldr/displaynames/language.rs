@@ -144,6 +144,7 @@ impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1
         let mut menu_names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
+                #[allow(clippy::collapsible_if)] // consistency
                 if let Some(locale) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
                     if locale.contains('-') {
                         short_names.insert(locale, entry.1.as_ref());
@@ -295,8 +296,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get()
-                .names
+    UnvalidatedStr::from_str("de-CH")s
                 .get(UnvalidatedStr::from_str("de-CH").into())
                 .unwrap(),
             "Swiss High German"
