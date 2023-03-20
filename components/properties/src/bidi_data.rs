@@ -16,7 +16,7 @@ use crate::PropertiesError;
 
 use icu_provider::prelude::*;
 
-/// A wrapper around certain Bidi properties data. Can be obtained via [`load_bidi_mirroring_properties_unstable()`] and
+/// A wrapper around certain Bidi properties data. Can be obtained via [`load_bidi_auxiliary_properties_unstable()`] and
 /// related getters.
 ///
 /// Most useful methods are on [`BidiAuxiliaryPropertiesBorrowed`] obtained by calling [`BidiAuxiliaryProperties::as_borrowed()`]
@@ -39,7 +39,7 @@ impl BidiAuxiliaryProperties {
 
     /// Construct a new one from loaded data
     ///
-    /// Typically it is preferable to use getters like [`load_bidi_mirroring_properties_unstable()`] instead
+    /// Typically it is preferable to use getters like [`load_bidi_auxiliary_properties_unstable()`] instead
     pub(crate) fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
         Self { data }
     }
@@ -95,7 +95,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
     ///
     /// let data =
-    ///     bidi_data::load_bidi_mirroring_properties_unstable(&icu_testdata::unstable())
+    ///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
@@ -129,7 +129,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
     /// let data =
-    ///     bidi_data::load_bidi_mirroring_properties_unstable(&icu_testdata::unstable())
+    ///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
@@ -169,14 +169,14 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
 ///
 /// let data =
-///     bidi_data::load_bidi_mirroring_properties_unstable(&icu_testdata::unstable())
+///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
 ///         .expect("The data should be valid");
 /// let bidi_data = data.as_borrowed();
 ///
 /// let open_paren = bidi_data.get_mirroring_props('(' as u32);
 /// assert_eq!(open_paren, BidiMirroringProperties{ mirroring_glyph: Some(')'), mirrored: true });
 /// ```
-pub fn load_bidi_mirroring_properties_unstable(
+pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
 ) -> Result<BidiAuxiliaryProperties, PropertiesError> {
     Ok(provider
@@ -190,8 +190,8 @@ icu_provider::gen_any_buffer_constructors!(
     options: skip,
     result: Result<BidiAuxiliaryProperties, PropertiesError>,
     functions: [
-        load_bidi_mirroring_properties_unstable,
-        load_bidi_mirroring_properties_with_any_provider,
-        load_bidi_mirroring_properties_with_buffer_provider
+        load_bidi_auxiliary_properties_unstable,
+        load_bidi_auxiliary_properties_with_any_provider,
+        load_bidi_auxiliary_properties_with_buffer_provider
     ]
 );
