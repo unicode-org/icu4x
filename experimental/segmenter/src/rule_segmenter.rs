@@ -39,6 +39,7 @@ pub trait RuleBreakType<'l, 's> {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
+#[derive(Debug)]
 pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
@@ -218,6 +219,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
     }
 }
 
+#[derive(Debug)]
 pub struct RuleBreakTypeUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
@@ -235,6 +237,8 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf8 {
         unreachable!()
     }
 }
+
+#[derive(Debug)]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
@@ -253,6 +257,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
     }
 }
 
+#[derive(Debug)]
 pub struct RuleBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
@@ -271,6 +276,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeLatin1 {
     }
 }
 
+#[derive(Debug)]
 pub struct RuleBreakTypeUtf16;
 
 impl<'l, 's> RuleBreakType<'l, 's> for RuleBreakTypeUtf16 {

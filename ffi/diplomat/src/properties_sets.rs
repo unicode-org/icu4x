@@ -20,6 +20,7 @@ pub mod ffi {
         FnInStruct,
         hidden
     )]
+    #[diplomat::rust_link(icu::properties::sets::CodePointSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
     pub struct ICU4XCodePointSetData(pub sets::CodePointSetData);
 

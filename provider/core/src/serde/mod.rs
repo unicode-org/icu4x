@@ -23,6 +23,7 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
 
 /// A [`BufferProvider`] that deserializes its data using Serde.
+#[derive(Debug)]
 pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_deserializing()`] function.

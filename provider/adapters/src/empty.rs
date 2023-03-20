@@ -29,6 +29,7 @@ use icu_provider::prelude::*;
 ///     })
 /// ));
 /// ```
+#[derive(Debug)]
 pub struct EmptyDataProvider {
     error_kind: DataErrorKind,
 }

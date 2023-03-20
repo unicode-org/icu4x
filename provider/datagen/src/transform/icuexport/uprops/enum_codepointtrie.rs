@@ -146,7 +146,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
 
             // sentinel value
             if packed == 0xFF00 {
-                return Err(DataError::custom("Found unknown general category mask value {v}, properties code may need to be updated."));
+                return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
             }
             Ok(packed)
         })?;
