@@ -208,10 +208,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get()
-                .names
-                .get(&language!("aa").into())
-                .unwrap(),
+            data.get().names.get(&language!("aa").into()).unwrap(),
             "Afar"
         );
     }
@@ -230,10 +227,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get()
-                .short_names
-                .get(&language!("az").into())
-                .unwrap(),
+            data.get().short_names.get(&language!("az").into()).unwrap(),
             "Azeri"
         );
     }
@@ -252,10 +246,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get()
-                .long_names
-                .get(&language!("zh").into())
-                .unwrap(),
+            data.get().long_names.get(&language!("zh").into()).unwrap(),
             "Mandarin Chinese"
         );
     }
@@ -274,10 +265,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get()
-                .menu_names
-                .get(&language!("zh").into())
-                .unwrap(),
+            data.get().menu_names.get(&language!("zh").into()).unwrap(),
             "Chinese, Mandarin"
         );
     }
@@ -296,8 +284,9 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-    UnvalidatedStr::from_str("de-CH")s
-                .get(UnvalidatedStr::from_str("de-CH").into())
+            data.get()
+                .names
+                .get(UnvalidatedStr::from_str("de-CH"))
                 .unwrap(),
             "Swiss High German"
         );
