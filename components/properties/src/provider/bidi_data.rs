@@ -41,7 +41,7 @@ use zerovec::ZeroVecError;
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
+    databake(path = icu_properties::provider::bidi_data),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct BidiAuxiliaryPropertiesV1<'data> {
