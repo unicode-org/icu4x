@@ -33,6 +33,9 @@ impl BidiAuxiliaryProperties {
     }
 }
 
+/// This struct represents the properties Bidi_Mirrored and Bidi_Mirroring_Glyph.
+/// If Bidi_Mirroring_Glyph is not defined for a code point, then the value in the
+/// struct is `None`.
 #[derive(Debug)]
 pub struct BidiMirroringProperties {
     pub mirroring_glyph: Option<char>,
@@ -62,6 +65,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
         }
     }
 
+    /// Return a struct for the given code point representing Bidi mirroring-related
+    /// property values. See [`BidiMirroringProperties`].
     pub fn get_mirroring_props(self, code_point: u32) -> BidiMirroringProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph_opt =
@@ -72,6 +77,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
         }
     }
 
+    /// Return a struct for the given code point representing Bidi bracket 
+    /// pairing-related property values. See [`BidiPairingProperties`].
     pub fn get_pairing_props(self, code_point: u32) -> BidiPairingProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph = bidi_aux_props.mirroring_glyph;

@@ -12,8 +12,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 //!
-//! TODO: This module's description
-//!
 //! This module provides an efficient storage of data serving the following
 //! properties:
 //! - `Bidi_Paired_Bracket`
@@ -45,6 +43,8 @@ use zerovec::ZeroVecError;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct BidiAuxiliaryPropertiesV1<'data> {
+    /// A `CodePointTrie` efficiently storing the data from which property values
+    /// can be extracted or derived for the supported Bidi properties.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, MirroredPairedBracketData>,
 }
