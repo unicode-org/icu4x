@@ -85,7 +85,19 @@ impl Into<u32> for MirroredPairedBracketData {
         let bytes = ULE::as_byte_slice(ule_slice);
         let array = <[u8; 3]>::try_from(bytes)
             .expect("ULE deserialization failed for MirroredPairedBracketData");
-        u32::from_ne_bytes([array[0], array[1], array[2], 0])
+        u32::from_le_bytes([array[0], array[1], array[2], 0])
+    }
+}
+
+impl TryFrom<u32> for MirroredPairedBracketData {
+    type Error = ZeroVecError;
+    
+    fn try_from(x: u32) -> Result<Self, ZeroVecError> {
+        let bytes = u32::to_le_bytes(x);
+        let ule_byte_array = [bytes[0], bytes[1], bytes[2]];
+        let ule_slice = MirroredPairedBracketDataULE::parse_byte_slice(&ule_byte_array)?;
+        let data = <Self as AsULE>::from_unaligned(ule_slice[0]);
+        Ok(data)
     }
 }
 

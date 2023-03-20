@@ -59,24 +59,34 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
 
-        let trie_vals_structured_vec: Vec<MirroredPairedBracketData> = (0..=(char::MAX as u32))
+        // create the equivalent of CPT<MirroredPairedBracketData>, but since the
+        // trie value type's ULE serializes to 24 bits, which CPT builder cannot handle, widen
+        // to 32 bits via u32.
+        let trie_vals_structured_iter = (0..=(char::MAX as u32))
             .map(|cp| MirroredPairedBracketData {
                 mirroring_glyph: bmg_trie.get32(cp),
                 mirrored: bidi_m_cpinvlist.contains32(cp),
                 paired_bracket_type: bpt_trie.get32(cp),
-            })
-            .collect();
-        let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_structured_vec);
-
+            });
+        let trie_vals_ule_iter =
+            trie_vals_structured_iter
+                .map(|elem| elem.into());
+        let trie_vals_vec: Vec<u32> = trie_vals_ule_iter.collect();
+        let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);
+        let default_val: u32 = MirroredPairedBracketData::default().into();
         let trie_builder = CodePointTrieBuilder {
             data: trie_data,
-            default_value: MirroredPairedBracketData::default(),
-            error_value: MirroredPairedBracketData::default(),
+            default_value: default_val,
+            error_value: default_val,
             trie_type: TrieType::Small,
         };
-        let trie = trie_builder.build();
+        let trie: CodePointTrie<u32> = trie_builder.build();
 
-        let data_struct = BidiAuxiliaryPropertiesV1::new(trie);
+        let trie_mpbd =
+            trie.try_alloc_map_value(|x: u32| MirroredPairedBracketData::try_from(x))
+                .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
+
+        let data_struct = BidiAuxiliaryPropertiesV1::new(trie_mpbd);
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

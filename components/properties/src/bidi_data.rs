@@ -8,6 +8,7 @@ use crate::PropertiesError;
 
 use icu_provider::prelude::*;
 
+#[derive(Debug)]
 pub struct BidiAuxiliaryProperties {
     data: DataPayload<BidiAuxiliaryPropertiesV1Marker>,
 }
@@ -32,6 +33,7 @@ impl BidiAuxiliaryProperties {
     }
 }
 
+#[derive(Debug)]
 pub struct BidiMirroringProperties {
     pub mirroring_glyph: Option<char>,
     pub mirrored: bool,
@@ -39,12 +41,14 @@ pub struct BidiMirroringProperties {
 
 /// The enum represents Bidi_Paired_Bracket_Type, the char represents Bidi_Paired_Bracket.
 /// Bidi_Paired_Bracket has a value of `None` when Bidi_Paired_Bracket_Type is `None`.
+#[derive(Debug)]
 pub enum BidiPairingProperties {
     Open(char),
     Close(char),
     None,
 }
 
+#[derive(Debug)]
 pub struct BidiAuxiliaryPropertiesBorrowed<'a> {
     data: &'a BidiAuxiliaryPropertiesV1<'a>,
 }
