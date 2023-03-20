@@ -130,6 +130,11 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
                         .map(|aliases| (bcp47, aliases))
                 })
                 .filter_map(|(bcp47, aliases)| {
+                    if bcp47.0 == "camtr" {
+                        // Montreal is meant to be deprecated, but pre-43 the deprecation
+                        // fallback was not set, which is why it shows up here.
+                        None?
+                    }
                     aliases
                         .split(' ')
                         .find_map(|alias| {
