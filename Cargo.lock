@@ -1739,6 +1739,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
+ "icu_testdata",
  "postcard",
  "serde",
  "serde_json",

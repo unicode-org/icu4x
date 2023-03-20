@@ -44,12 +44,16 @@
 
         Returns -1 if the name is unknown for this property
 
+        See the `Rust documentation for get_strict <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict>`__ for more information.
+
 
     .. js:method:: get_loose(name)
 
         Get the property value matching the given name, using loose matching
 
         Returns -1 if the name is unknown for this property
+
+        See the `Rust documentation for get_loose <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose>`__ for more information.
 
 
     .. js:function:: load_general_category(provider)

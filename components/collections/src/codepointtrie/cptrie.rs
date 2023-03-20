@@ -861,6 +861,39 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .map(|cpm_range| cpm_range.range)
     }
 
+    /// Yields an [`Iterator`] returning the ranges of the code points after passing
+    /// the value through a mapping function.
+    ///
+    /// This is preferable to calling `.get_ranges().map()` since it will coalesce
+    /// adjacent ranges into one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let mut sip_range_iter = trie.iter_ranges_mapped(|value| value != plane_val as u8).filter(|range| range.value);
+    ///
+    /// let end = plane_val * 0x1_0000 - 1;
+    ///
+    /// let sip_range = sip_range_iter.next()
+    ///     .expect("Complemented planes data should have at least one entry");
+    /// assert_eq!(0..=end, sip_range.range);
+    pub fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        mut map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        crate::iterator_utils::RangeListIteratorCoalescer::new(self.iter_ranges().map(
+            move |range| CodePointMapRange {
+                range: range.range,
+                value: map(range.value),
+            },
+        ))
+    }
+
     /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
@@ -944,9 +977,9 @@ where
 
 /// Represents a range of consecutive code points sharing the same value in a
 /// code point map. The start and end of the interval is represented as a
-/// `RangeInclusive<u32>`, and the value is represented as a [`TrieValue`].
+/// `RangeInclusive<u32>`, and the value is represented as `T`.
 #[derive(PartialEq, Eq, Debug, Clone)]
-pub struct CodePointMapRange<T: TrieValue> {
+pub struct CodePointMapRange<T> {
     /// Range of code points from start to end (inclusive).
     pub range: RangeInclusive<u32>,
     /// Trie value associated with this range.

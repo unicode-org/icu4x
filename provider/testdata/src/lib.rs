@@ -61,7 +61,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -177,6 +178,7 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 
 #[doc(hidden)]
 #[non_exhaustive]
+#[derive(Debug)]
 pub struct UnstableDataProvider;
 
 mod baked {

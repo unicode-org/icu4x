@@ -54,6 +54,14 @@ pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     valid: U,
 }
 
+impl<U: NicheBytes<N> + ULE + core::fmt::Debug, const N: usize> core::fmt::Debug
+    for NichedOptionULE<U, N>
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.get().fmt(f)
+    }
+}
+
 impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
     /// New `NichedOptionULE<U, N>` from `Option<U>`
     pub fn new(opt: Option<U>) -> Self {

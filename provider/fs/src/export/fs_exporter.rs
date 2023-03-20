@@ -67,6 +67,7 @@ impl From<PathBuf> for ExporterOptions {
 
 /// A data exporter that writes data to a filesystem hierarchy.
 /// See the module-level docs for an example.
+#[derive(Debug)]
 pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
