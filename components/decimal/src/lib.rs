@@ -90,7 +90,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -125,6 +125,7 @@ use writeable::Writeable;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
+#[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,

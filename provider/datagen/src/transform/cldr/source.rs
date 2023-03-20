@@ -106,7 +106,6 @@ impl<'a> CldrDirLang<'a> {
         Ok(self
             .0
             .list(&self.dir()?)?
-            .into_iter()
             .map(|path| LanguageIdentifier::from_str(&path).unwrap()))
     }
 
@@ -118,5 +117,14 @@ impl<'a> CldrDirLang<'a> {
             .unwrap_or_else(|| format!("{}-full", self.1));
         dir.push_str("/main");
         Ok(dir)
+    }
+
+    pub fn file_exists(
+        &self,
+        lang: &LanguageIdentifier,
+        file_name: &str,
+    ) -> Result<bool, DataError> {
+        self.0
+            .file_exists(&format!("{}/{lang}/{file_name}", self.dir()?))
     }
 }

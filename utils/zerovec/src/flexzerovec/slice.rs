@@ -22,6 +22,12 @@ pub struct FlexZeroSlice {
     data: [u8],
 }
 
+impl fmt::Debug for FlexZeroSlice {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.to_vec().fmt(f)
+    }
+}
+
 impl PartialEq for FlexZeroSlice {
     fn eq(&self, other: &Self) -> bool {
         self.width == other.width && self.data == other.data
@@ -504,12 +510,6 @@ impl FlexZeroSlice {
             let index = probe as *const _ as usize - zero_index;
             predicate(index)
         })
-    }
-}
-
-impl fmt::Debug for &FlexZeroSlice {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self.to_vec())
     }
 }
 

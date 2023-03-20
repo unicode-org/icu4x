@@ -54,6 +54,7 @@ impl AnyQuaternaryAccumulator {
 }
 
 /// Compares strings according to culturally-relevant ordering.
+#[derive(Debug)]
 pub struct Collator {
     special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
     root: DataPayload<CollationDataV1Marker>,
