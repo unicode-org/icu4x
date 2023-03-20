@@ -23,7 +23,7 @@
 
 use crate::props::BidiPairedBracketType;
 
-use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, CharULE, ULE};
 use zerovec::ZeroVecError;
@@ -78,25 +78,39 @@ impl Default for MirroredPairedBracketData {
     }
 }
 
-impl Into<u32> for MirroredPairedBracketData {
-    fn into(self) -> u32 {
-        let ule = self.to_unaligned();
+impl From<MirroredPairedBracketData> for u32 {
+    fn from(mpbd: MirroredPairedBracketData) -> u32 {
+        let ule = mpbd.to_unaligned();
         let ule_slice = &[ule];
         let bytes = ULE::as_byte_slice(ule_slice);
-        let array = <[u8; 3]>::try_from(bytes)
-            .expect("ULE deserialization failed for MirroredPairedBracketData");
-        u32::from_le_bytes([array[0], array[1], array[2], 0])
+        match <[u8; 3]>::try_from(bytes) {
+            Ok(array) => u32::from_le_bytes([array[0], array[1], array[2], 0]),
+            Err(_) => u32::MAX,
+        }
     }
 }
 
 impl TryFrom<u32> for MirroredPairedBracketData {
     type Error = ZeroVecError;
-    
+
     fn try_from(x: u32) -> Result<Self, ZeroVecError> {
         let bytes = u32::to_le_bytes(x);
-        let ule_byte_array = [bytes[0], bytes[1], bytes[2]];
-        let ule_slice = MirroredPairedBracketDataULE::parse_byte_slice(&ule_byte_array)?;
-        let data = <Self as AsULE>::from_unaligned(ule_slice[0]);
+        let err_msg = "Could not deserialize MirroredPairedBracketData from u32";
+        let byte0 = bytes
+            .first()
+            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
+        let byte1 = bytes
+            .get(1)
+            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
+        let byte2 = bytes
+            .get(2)
+            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
+        let ule_byte_array = [*byte0, *byte1, *byte2];
+        let ule_struct_slice = MirroredPairedBracketDataULE::parse_byte_slice(&ule_byte_array)?;
+        let ule_struct = ule_struct_slice
+            .first()
+            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
+        let data = <Self as AsULE>::from_unaligned(*ule_struct);
         Ok(data)
     }
 }
@@ -208,7 +222,8 @@ impl AsULE for MirroredPairedBracketData {
     }
 }
 
-mod test {
+#[cfg(test)]
+mod tests {
     use super::*;
 
     #[test]

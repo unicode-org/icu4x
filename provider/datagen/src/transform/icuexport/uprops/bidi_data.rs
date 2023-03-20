@@ -11,10 +11,8 @@ use icu_collections::codepointtrie::{CodePointTrie, TrieType};
 use icu_properties::provider::bidi_data::{
     BidiAuxiliaryPropertiesV1, BidiAuxiliaryPropertiesV1Marker, MirroredPairedBracketData,
 };
-use icu_properties::BidiPairedBracketType;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, ULE};
 
 fn get_code_point_prop_map<'a>(
     source: &'a SourceData,
@@ -59,35 +57,42 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
 
-        // create the equivalent of CPT<MirroredPairedBracketData>, but since the
-        // trie value type's ULE serializes to 24 bits, which CPT builder cannot handle, widen
-        // to 32 bits via u32.
-        let trie_vals_structured_iter = (0..=(char::MAX as u32))
-            .map(|cp| MirroredPairedBracketData {
+        // Create the equivalent of CPT<MirroredPairedBracketData>, but since the
+        // trie's value type's ULE serializes to 24 bits, which CPT builder cannot handle, widen
+        // to 32 bits using u32.
+        let trie_vals_structured_iter =
+            (0..=(char::MAX as u32)).map(|cp| MirroredPairedBracketData {
                 mirroring_glyph: bmg_trie.get32(cp),
                 mirrored: bidi_m_cpinvlist.contains32(cp),
                 paired_bracket_type: bpt_trie.get32(cp),
             });
-        let trie_vals_ule_iter =
-            trie_vals_structured_iter
-                .map(|elem| elem.into());
+        let trie_vals_ule_iter = trie_vals_structured_iter.map(u32::from);
         let trie_vals_vec: Vec<u32> = trie_vals_ule_iter.collect();
         let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);
         let default_val: u32 = MirroredPairedBracketData::default().into();
-        let trie_builder = CodePointTrieBuilder {
-            data: trie_data,
-            default_value: default_val,
-            error_value: default_val,
-            trie_type: TrieType::Small,
-        };
-        let trie: CodePointTrie<u32> = trie_builder.build();
 
-        let trie_mpbd =
-            trie.try_alloc_map_value(|x: u32| MirroredPairedBracketData::try_from(x))
-                .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
+        // Create CPT<u32> using the builder, then use CPT method to map the CPT's
+        // values from u32 to MirroredPairedBracketData
+        let trie: CodePointTrie<u32> = {
+            #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+            return Err(DataError::custom(
+                "icu_datagen must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
+            ));
+
+            #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+            CodePointTrieBuilder {
+                data: trie_data,
+                default_value: default_val,
+                error_value: default_val,
+                trie_type: TrieType::Small,
+            }
+            .build()
+        };
+        let trie_mpbd = trie
+            .try_alloc_map_value(MirroredPairedBracketData::try_from)
+            .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
 
         let data_struct = BidiAuxiliaryPropertiesV1::new(trie_mpbd);
-
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data_struct)),
