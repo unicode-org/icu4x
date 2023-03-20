@@ -67,7 +67,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 
     /// Return a struct for the given code point representing Bidi mirroring-related
     /// property values. See [`BidiMirroringProperties`].
-    pub fn get_mirroring_props(self, code_point: u32) -> BidiMirroringProperties {
+    pub fn get_mirroring_props(&self, code_point: u32) -> BidiMirroringProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph_opt =
             Self::convert_mirroring_glyph_data(bidi_aux_props.mirroring_glyph);
@@ -79,7 +79,7 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 
     /// Return a struct for the given code point representing Bidi bracket 
     /// pairing-related property values. See [`BidiPairingProperties`].
-    pub fn get_pairing_props(self, code_point: u32) -> BidiPairingProperties {
+    pub fn get_pairing_props(&self, code_point: u32) -> BidiPairingProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph = bidi_aux_props.mirroring_glyph;
         let paired_bracket_type = bidi_aux_props.paired_bracket_type;
