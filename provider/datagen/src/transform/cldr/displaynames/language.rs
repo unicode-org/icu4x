@@ -191,7 +191,7 @@ impl From<&cldr_serde::language_displaynames::Resource> for LocaleDisplayNamesV1
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::{locale, subtags_language as language};
 
     #[test]
     fn test_basic_lang_display_names() {
@@ -209,7 +209,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(UnvalidatedStr::from_str("aa"))
+                .get(&language!("aa").into())
                 .unwrap(),
             "Afar"
         );
@@ -231,7 +231,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(UnvalidatedStr::from_str("az"))
+                .get(&language!("az").into())
                 .unwrap(),
             "Azeri"
         );
@@ -253,7 +253,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .long_names
-                .get(UnvalidatedStr::from_str("zh"))
+                .get(&language!("zh").into())
                 .unwrap(),
             "Mandarin Chinese"
         );
@@ -275,9 +275,31 @@ mod tests {
         assert_eq!(
             data.get()
                 .menu_names
-                .get(UnvalidatedStr::from_str("zh"))
+                .get(&language!("zh").into())
                 .unwrap(),
             "Chinese, Mandarin"
+        );
+    }
+
+    #[test]
+    fn test_basic_locale_display_names() {
+        let provider = crate::DatagenProvider::for_test();
+
+        let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
+            .load(DataRequest {
+                locale: &locale!("en-001").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+
+        assert_eq!(
+            data.get()
+                .names
+                .get(UnvalidatedStr::from_str("de-CH").into())
+                .unwrap(),
+            "Swiss High German"
         );
     }
 }
