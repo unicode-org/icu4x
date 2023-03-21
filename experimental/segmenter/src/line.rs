@@ -29,7 +29,7 @@ use utf8_iter::Utf8CharIndices;
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum LineBreakRule {
     /// Breaks text using the least restrictive set of line-breaking rules.
     /// Typically used for short lines, such as in newspapers.
@@ -65,7 +65,7 @@ pub enum LineBreakRule {
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
 #[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum WordBreakRule {
     /// Words break according to their customary rules. See the details in
     /// <https://drafts.csswg.org/css-text-3/#valdef-word-break-normal>.
@@ -89,7 +89,7 @@ pub enum WordBreakRule {
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
 #[non_exhaustive]
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct LineBreakOptions {
     /// Strictness of line-breaking rules. See [`LineBreakRule`].
     pub line_break_rule: LineBreakRule,
@@ -188,6 +188,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
+#[derive(Debug)]
 pub struct LineSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
@@ -672,6 +673,7 @@ pub trait LineBreakType<'l, 's> {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
+#[derive(Debug)]
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
@@ -892,6 +894,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 }
 
+#[derive(Debug)]
 pub struct LineBreakTypeUtf8;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
@@ -923,6 +926,8 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+
+#[derive(Debug)]
 pub struct LineBreakTypePotentiallyIllFormedUtf8;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
@@ -1007,6 +1012,8 @@ where
         i += T::get_current_position_character_len(iter);
     }
 }
+
+#[derive(Debug)]
 pub struct LineBreakTypeLatin1;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
@@ -1035,6 +1042,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     }
 }
 
+#[derive(Debug)]
 pub struct LineBreakTypeUtf16;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {

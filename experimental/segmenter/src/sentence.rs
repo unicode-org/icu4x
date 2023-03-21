@@ -60,6 +60,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBrea
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
+#[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
 }

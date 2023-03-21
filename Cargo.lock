@@ -1739,6 +1739,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
+ "icu_testdata",
  "postcard",
  "serde",
  "serde_json",
@@ -1804,6 +1805,7 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
+ "ndarray",
  "proc-macro2",
  "quote",
  "rayon",
@@ -2151,7 +2153,6 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "icu_testdata",
- "ndarray",
  "num-traits",
  "serde",
  "serde_json",
@@ -3998,9 +3999,9 @@ checksum = "9e79c4d996edb816c91e4308506774452e55e95c3c9de07b6729e17e15a5ef81"
 
 [[package]]
 name = "unicode-bidi"
-version = "0.3.11"
+version = "0.3.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "524b68aca1d05e03fdf03fcdce2c6c94b6daf6d16861ddaa7e4f2b6638a9052c"
+checksum = "92888ba5573ff080736b3648696b70cafad7d250551175acbaa4e0385b3e1460"
 
 [[package]]
 name = "unicode-ident"
