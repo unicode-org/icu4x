@@ -94,7 +94,7 @@ impl TryFrom<u32> for MirroredPairedBracketData {
     type Error = ZeroVecError;
 
     fn try_from(x: u32) -> Result<Self, ZeroVecError> {
-        let[byte0, byte1, byte2, byte3] = u32::to_le_bytes(x);
+        let [byte0, byte1, byte2, byte3] = u32::to_le_bytes(x);
         if byte3 != 0 {
             return Err(ZeroVecError::parse::<Self>());
         }
