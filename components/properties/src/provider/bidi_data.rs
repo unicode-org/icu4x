@@ -157,10 +157,7 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             // assert that Bidi_Paired_Bracket_Type cannot have a 4th value because it only
             // has 3 values: Open, Close, None
             if (byte2 & 0xC0) == 0xC0 {
-                return Err(ZeroVecError::ParseError {
-                    ty:
-                        "Unrecognized value for paired_bracket_type in MirroredPairedBracketDataULE",
-                });
+                return Err(ZeroVecError::parse::<Self>());
             }
         }
 
