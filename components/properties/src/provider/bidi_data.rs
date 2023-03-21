@@ -195,7 +195,7 @@ impl AsULE for MirroredPairedBracketData {
             .first()
             .map(|ule| char::from_unaligned(*ule))
             .unwrap_or(char::REPLACEMENT_CHARACTER);
-        let mirrored = (unaligned.0[2] >> 5) & 0x1 == 1;
+        let mirrored = ((unaligned.0[2] >> 5) & 0x1) == 1;
         let paired_bracket_type = BidiPairedBracketType(unaligned.0[2] >> 6);
 
         Self {
