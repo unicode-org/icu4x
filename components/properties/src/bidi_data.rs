@@ -99,18 +99,23 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///         .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
-    /// let open_paren = bidi_data.get_mirroring_props('(' as u32);
-    /// assert_eq!(open_paren, BidiMirroringProperties{ mirroring_glyph: Some(')'), mirrored: true });
-    /// let close_paren = bidi_data.get_mirroring_props(')' as u32);
-    /// assert_eq!(close_paren, BidiMirroringProperties{ mirroring_glyph: Some('('), mirrored: true });
-    /// let open_angle_bracket = bidi_data.get_mirroring_props('<' as u32);
-    /// assert_eq!(open_angle_bracket, BidiMirroringProperties{ mirroring_glyph: Some('>'), mirrored: true });
-    /// let close_angle_bracket = bidi_data.get_mirroring_props('>' as u32);
-    /// assert_eq!(close_angle_bracket, BidiMirroringProperties{ mirroring_glyph: Some('<'), mirrored: true });
-    /// let three = bidi_data.get_mirroring_props('3' as u32);
-    /// assert_eq!(three, BidiMirroringProperties{ mirroring_glyph: None, mirrored: false });
+    /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
+    /// assert_eq!(open_paren.mirroring_glyph, Some(')'));
+    /// assert_eq!(open_paren.mirrored, true);
+    /// let close_paren = bidi_data.get32_mirroring_props(')' as u32);
+    /// assert_eq!(close_paren.mirroring_glyph, Some('('));
+    /// assert_eq!(close_paren.mirrored, true);
+    /// let open_angle_bracket = bidi_data.get32_mirroring_props('<' as u32);
+    /// assert_eq!(open_angle_bracket.mirroring_glyph, Some('>'));
+    /// assert_eq!(open_angle_bracket.mirrored, true);
+    /// let close_angle_bracket = bidi_data.get32_mirroring_props('>' as u32);
+    /// assert_eq!(close_angle_bracket.mirroring_glyph, Some('<'));
+    /// assert_eq!(close_angle_bracket.mirrored, true);
+    /// let three = bidi_data.get32_mirroring_props('3' as u32);
+    /// assert_eq!(three.mirroring_glyph, None);
+    /// assert_eq!(three.mirrored, false);
     /// ```
-    pub fn get_mirroring_props(&self, code_point: u32) -> BidiMirroringProperties {
+    pub fn get32_mirroring_props(&self, code_point: u32) -> BidiMirroringProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph_opt =
             Self::convert_mirroring_glyph_data(bidi_aux_props.mirroring_glyph);
@@ -133,18 +138,18 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///         .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
-    /// let open_paren = bidi_data.get_pairing_props('(' as u32);
+    /// let open_paren = bidi_data.get32_pairing_props('(' as u32);
     /// assert_eq!(open_paren, BidiPairingProperties::Open(')'));
-    /// let close_paren = bidi_data.get_pairing_props(')' as u32);
+    /// let close_paren = bidi_data.get32_pairing_props(')' as u32);
     /// assert_eq!(close_paren, BidiPairingProperties::Close('('));
-    /// let open_angle_bracket = bidi_data.get_pairing_props('<' as u32);
+    /// let open_angle_bracket = bidi_data.get32_pairing_props('<' as u32);
     /// assert_eq!(open_angle_bracket, BidiPairingProperties::None);
-    /// let close_angle_bracket = bidi_data.get_pairing_props('>' as u32);
+    /// let close_angle_bracket = bidi_data.get32_pairing_props('>' as u32);
     /// assert_eq!(close_angle_bracket, BidiPairingProperties::None);
-    /// let three = bidi_data.get_pairing_props('3' as u32);
+    /// let three = bidi_data.get32_pairing_props('3' as u32);
     /// assert_eq!(three, BidiPairingProperties::None);
     /// ```
-    pub fn get_pairing_props(&self, code_point: u32) -> BidiPairingProperties {
+    pub fn get32_pairing_props(&self, code_point: u32) -> BidiPairingProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph = bidi_aux_props.mirroring_glyph;
         let paired_bracket_type = bidi_aux_props.paired_bracket_type;
@@ -173,8 +178,9 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 ///         .expect("The data should be valid");
 /// let bidi_data = data.as_borrowed();
 ///
-/// let open_paren = bidi_data.get_mirroring_props('(' as u32);
-/// assert_eq!(open_paren, BidiMirroringProperties{ mirroring_glyph: Some(')'), mirrored: true });
+/// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
+/// assert_eq!(open_paren.mirroring_glyph, Some(')'));
+/// assert_eq!(open_paren.mirrored, true);
 /// ```
 pub fn load_bidi_auxiliary_properties_unstable(
     provider: &(impl DataProvider<BidiAuxiliaryPropertiesV1Marker> + ?Sized),
