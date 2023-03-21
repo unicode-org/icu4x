@@ -4,19 +4,31 @@
 
 use self::ffi::ICU4XError;
 use core::fmt;
+#[cfg(feature = "icu_decimal")]
 use fixed_decimal::Error as FixedDecimalError;
+#[cfg(feature = "icu_datetime")]
 use icu_calendar::CalendarError;
+#[cfg(feature = "icu_collator")]
 use icu_collator::CollatorError;
+#[cfg(feature = "icu_datetime")]
 use icu_datetime::DateTimeError;
+#[cfg(any(feature = "icu_decimal", feature = "icu_datetime"))]
 use icu_decimal::DecimalError;
+#[cfg(feature = "icu_list")]
 use icu_list::ListError;
 use icu_locid::ParserError;
+#[cfg(feature = "icu_locid_transform")]
 use icu_locid_transform::LocaleTransformError;
+#[cfg(feature = "icu_normalizer")]
 use icu_normalizer::NormalizerError;
+#[cfg(any(feature = "icu_plurals", feature = "icu_datetime"))]
 use icu_plurals::PluralsError;
+#[cfg(feature = "icu_properties")]
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+#[cfg(feature = "icu_segmenter")]
 use icu_segmenter::SegmenterError;
+#[cfg(feature = "icu_datetime")]
 use icu_timezone::TimeZoneError;
 use tinystr::TinyStrError;
 
@@ -190,6 +202,7 @@ impl From<DataError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_collator")]
 impl From<CollatorError> for ICU4XError {
     fn from(e: CollatorError) -> Self {
         match e {
@@ -201,7 +214,7 @@ impl From<CollatorError> for ICU4XError {
         .log_original(&e)
     }
 }
-
+#[cfg(feature = "icu_properties")]
 impl From<PropertiesError> for ICU4XError {
     fn from(e: PropertiesError) -> Self {
         match e {
@@ -219,6 +232,7 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_datetime")]
 impl From<CalendarError> for ICU4XError {
     fn from(e: CalendarError) -> Self {
         match e {
@@ -238,6 +252,7 @@ impl From<CalendarError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_datetime")]
 impl From<DateTimeError> for ICU4XError {
     fn from(e: DateTimeError) -> Self {
         match e {
@@ -264,6 +279,7 @@ impl From<DateTimeError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_decimal")]
 impl From<FixedDecimalError> for ICU4XError {
     fn from(e: FixedDecimalError) -> Self {
         match e {
@@ -275,6 +291,7 @@ impl From<FixedDecimalError> for ICU4XError {
     }
 }
 
+#[cfg(any(feature = "icu_plurals", feature = "icu_datetime"))]
 impl From<PluralsError> for ICU4XError {
     fn from(e: PluralsError) -> Self {
         match e {
@@ -285,6 +302,7 @@ impl From<PluralsError> for ICU4XError {
     }
 }
 
+#[cfg(any(feature = "icu_decimal", feature = "icu_datetime"))]
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         match e {
@@ -295,6 +313,7 @@ impl From<DecimalError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_locid_transform")]
 impl From<LocaleTransformError> for ICU4XError {
     fn from(e: LocaleTransformError) -> Self {
         match e {
@@ -305,6 +324,7 @@ impl From<LocaleTransformError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_segmenter")]
 impl From<SegmenterError> for ICU4XError {
     fn from(e: SegmenterError) -> Self {
         match e {
@@ -315,6 +335,7 @@ impl From<SegmenterError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_list")]
 impl From<ListError> for ICU4XError {
     fn from(e: ListError) -> Self {
         match e {
@@ -349,6 +370,7 @@ impl From<TinyStrError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_datetime")]
 impl From<TimeZoneError> for ICU4XError {
     fn from(e: TimeZoneError) -> Self {
         match e {
@@ -361,6 +383,7 @@ impl From<TimeZoneError> for ICU4XError {
     }
 }
 
+#[cfg(feature = "icu_normalizer")]
 impl From<NormalizerError> for ICU4XError {
     fn from(e: NormalizerError) -> Self {
         match e {
