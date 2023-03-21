@@ -225,6 +225,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -304,6 +305,17 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "writeable",
+]
+
+[[package]]
+name = "icu_displaynames"
+version = "0.9.0"
+dependencies = [
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "tinystr",
+ "zerovec",
 ]
 
 [[package]]
