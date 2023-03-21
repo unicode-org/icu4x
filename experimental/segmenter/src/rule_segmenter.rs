@@ -12,6 +12,7 @@ use utf8_iter::Utf8CharIndices;
 /// The category tag that is returned by rule_status.
 #[non_exhaustive]
 #[derive(PartialEq, Debug)]
+#[repr(u8)]
 pub enum RuleStatusType {
     /// No category tag
     None = 0,
@@ -251,18 +252,15 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
             // break position is SOT / Any
             return RuleStatusType::None;
         }
-        if let Some(value) = self
+        match self
             .data
             .rule_status_table
             .0
             .get((self.boundary_property - 1) as usize)
         {
-            match value {
-                1 => RuleStatusType::Number,
-                2 => RuleStatusType::Letter,
-                _ => RuleStatusType::None,
-            }
-                RuleStatusType::None
+            Some(1) => RuleStatusType::Number,
+            Some(2) => RuleStatusType::Letter,
+            _ => RuleStatusType::None,
         }
     }
 
