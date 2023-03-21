@@ -1,7 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 
-export const ICU4XStyle_js_to_rust = {
+export const ICU4XDisplayNamesStyle_js_to_rust = {
   "Auto": 0,
   "Narrow": 1,
   "Short": 2,
@@ -9,7 +9,7 @@ export const ICU4XStyle_js_to_rust = {
   "Menu": 4,
 };
 
-export const ICU4XStyle_rust_to_js = {
+export const ICU4XDisplayNamesStyle_rust_to_js = {
   [0]: "Auto",
   [1]: "Narrow",
   [2]: "Short",
@@ -17,7 +17,7 @@ export const ICU4XStyle_rust_to_js = {
   [4]: "Menu",
 };
 
-export const ICU4XStyle = {
+export const ICU4XDisplayNamesStyle = {
   "Auto": "Auto",
   "Narrow": "Narrow",
   "Short": "Short",

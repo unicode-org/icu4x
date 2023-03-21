@@ -1,17 +1,26 @@
 ``displaynames::ffi``
 =====================
 
+.. cpp:enum-struct:: ICU4XDisplayNamesFallback
+
+    See the `Rust documentation for Fallback <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Code
+
+    .. cpp:enumerator:: None
+
 .. cpp:struct:: ICU4XDisplayNamesOptions
 
     See the `Rust documentation for DisplayNamesOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XStyle style
+    .. cpp:member:: ICU4XDisplayNamesStyle style
 
         The optional formatting style to use for display name.
 
 
-    .. cpp:member:: ICU4XFallback fallback
+    .. cpp:member:: ICU4XDisplayNamesFallback fallback
 
         The fallback return when the system does not have the requested display name, defaults to "code".
 
@@ -21,14 +30,20 @@
         The language display kind, defaults to "dialect".
 
 
-.. cpp:enum-struct:: ICU4XFallback
+.. cpp:enum-struct:: ICU4XDisplayNamesStyle
 
-    See the `Rust documentation for Fallback <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html>`__ for more information.
+    See the `Rust documentation for Style <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html>`__ for more information.
 
 
-    .. cpp:enumerator:: Code
+    .. cpp:enumerator:: Auto
 
-    .. cpp:enumerator:: None
+    .. cpp:enumerator:: Narrow
+
+    .. cpp:enumerator:: Short
+
+    .. cpp:enumerator:: Long
+
+    .. cpp:enumerator:: Menu
 
 .. cpp:enum-struct:: ICU4XLanguageDisplay
 
@@ -82,18 +97,3 @@
 
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
-
-.. cpp:enum-struct:: ICU4XStyle
-
-    See the `Rust documentation for Style <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html>`__ for more information.
-
-
-    .. cpp:enumerator:: Auto
-
-    .. cpp:enumerator:: Narrow
-
-    .. cpp:enumerator:: Short
-
-    .. cpp:enumerator:: Long
-
-    .. cpp:enumerator:: Menu

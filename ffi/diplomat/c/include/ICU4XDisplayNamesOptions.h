@@ -6,23 +6,23 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "ICU4XStyle.h"
-#include "ICU4XFallback.h"
+#include "ICU4XDisplayNamesStyle.h"
+#include "ICU4XDisplayNamesFallback.h"
 #include "ICU4XLanguageDisplay.h"
 #ifdef __cplusplus
 namespace capi {
 #endif
 
 typedef struct ICU4XDisplayNamesOptions {
-    ICU4XStyle style;
-    ICU4XFallback fallback;
+    ICU4XDisplayNamesStyle style;
+    ICU4XDisplayNamesFallback fallback;
     ICU4XLanguageDisplay language_display;
 } ICU4XDisplayNamesOptions;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XStyle.h"
-#include "ICU4XFallback.h"
+#include "ICU4XDisplayNamesStyle.h"
+#include "ICU4XDisplayNamesFallback.h"
 #include "ICU4XLanguageDisplay.h"
 #ifdef __cplusplus
 namespace capi {

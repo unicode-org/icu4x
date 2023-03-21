@@ -11,8 +11,8 @@
 
 #include "ICU4XDisplayNamesOptions.h"
 
-#include "ICU4XStyle.hpp"
-#include "ICU4XFallback.hpp"
+#include "ICU4XDisplayNamesStyle.hpp"
+#include "ICU4XDisplayNamesFallback.hpp"
 #include "ICU4XLanguageDisplay.hpp"
 
 
@@ -27,13 +27,13 @@ struct ICU4XDisplayNamesOptions {
   /**
    * The optional formatting style to use for display name.
    */
-  ICU4XStyle style;
+  ICU4XDisplayNamesStyle style;
 
   /**
    * The fallback return when the system does not have the
    * requested display name, defaults to "code".
    */
-  ICU4XFallback fallback;
+  ICU4XDisplayNamesFallback fallback;
 
   /**
    * The language display kind, defaults to "dialect".

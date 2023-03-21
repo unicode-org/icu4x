@@ -1,5 +1,5 @@
-#ifndef ICU4XFallback_HPP
-#define ICU4XFallback_HPP
+#ifndef ICU4XDisplayNamesFallback_HPP
+#define ICU4XDisplayNamesFallback_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XFallback.h"
+#include "ICU4XDisplayNamesFallback.h"
 
 
 
@@ -18,7 +18,7 @@
  * 
  * See the [Rust documentation for `Fallback`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html) for more information.
  */
-enum struct ICU4XFallback {
+enum struct ICU4XDisplayNamesFallback {
   Code = 0,
   None = 1,
 };

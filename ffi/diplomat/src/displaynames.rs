@@ -28,17 +28,17 @@ pub mod ffi {
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
     pub struct ICU4XDisplayNamesOptions {
         /// The optional formatting style to use for display name.
-        pub style: ICU4XStyle,
+        pub style: ICU4XDisplayNamesStyle,
         /// The fallback return when the system does not have the
         /// requested display name, defaults to "code".
-        pub fallback: ICU4XFallback,
+        pub fallback: ICU4XDisplayNamesFallback,
         /// The language display kind, defaults to "dialect".
         pub language_display: ICU4XLanguageDisplay,
     }
 
-    // FFI version of `Style`.
+    // FFI version of `Style` option for the display names.
     #[diplomat::rust_link(icu::displaynames::options::Style, Enum)]
-    pub enum ICU4XStyle {
+    pub enum ICU4XDisplayNamesStyle {
         Auto,
         Narrow,
         Short,
@@ -46,10 +46,10 @@ pub mod ffi {
         Menu,
     }
 
-    // FFI version of `Fallback`.
+    // FFI version of `Fallback` option for the display names.
     #[diplomat::rust_link(icu::displaynames::options::Fallback, Enum)]
     #[diplomat::enum_convert(Fallback, needs_wildcard)]
-    pub enum ICU4XFallback {
+    pub enum ICU4XDisplayNamesFallback {
         Code,
         None,
     }
@@ -82,6 +82,8 @@ pub mod ffi {
         }
 
         // Returns the locale specific display name of a language for a given string.
+        // Note that the funtion returns an empty string in case the display name for a given
+        // language code is not found.
         #[diplomat::rust_link(icu::displaynames::LanguageDisplayNames::of, FnInStruct)]
         pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             self.0.of(code).unwrap_or("").write_to(write)?;
@@ -103,6 +105,8 @@ pub mod ffi {
         }
 
         // Returns the locale specific display name of a region for a given string.
+        // Note that the funtion returns an empty string in case the display name for a given
+        // region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
         pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             self.0.of(code).unwrap_or("").write_to(write)?;
@@ -114,14 +118,14 @@ pub mod ffi {
 #[allow(unused_imports)] // feature-specific
 use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay, Style};
 
-impl From<ffi::ICU4XStyle> for Option<Style> {
-    fn from(style: ffi::ICU4XStyle) -> Option<Style> {
+impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
+    fn from(style: ffi::ICU4XDisplayNamesStyle) -> Option<Style> {
         match style {
-            ffi::ICU4XStyle::Auto => None,
-            ffi::ICU4XStyle::Narrow => Some(Style::Narrow),
-            ffi::ICU4XStyle::Short => Some(Style::Short),
-            ffi::ICU4XStyle::Long => Some(Style::Long),
-            ffi::ICU4XStyle::Menu => Some(Style::Menu),
+            ffi::ICU4XDisplayNamesStyle::Auto => None,
+            ffi::ICU4XDisplayNamesStyle::Narrow => Some(Style::Narrow),
+            ffi::ICU4XDisplayNamesStyle::Short => Some(Style::Short),
+            ffi::ICU4XDisplayNamesStyle::Long => Some(Style::Long),
+            ffi::ICU4XDisplayNamesStyle::Menu => Some(Style::Menu),
         }
     }
 }

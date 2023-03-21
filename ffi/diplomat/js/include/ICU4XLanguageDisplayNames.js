@@ -1,9 +1,9 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { ICU4XDisplayNamesFallback_js_to_rust, ICU4XDisplayNamesFallback_rust_to_js } from "./ICU4XDisplayNamesFallback.js"
+import { ICU4XDisplayNamesStyle_js_to_rust, ICU4XDisplayNamesStyle_rust_to_js } from "./ICU4XDisplayNamesStyle.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
-import { ICU4XFallback_js_to_rust, ICU4XFallback_rust_to_js } from "./ICU4XFallback.js"
 import { ICU4XLanguageDisplay_js_to_rust, ICU4XLanguageDisplay_rust_to_js } from "./ICU4XLanguageDisplay.js"
-import { ICU4XStyle_js_to_rust, ICU4XStyle_rust_to_js } from "./ICU4XStyle.js"
 
 const ICU4XLanguageDisplayNames_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLanguageDisplayNames_destroy(underlying);
@@ -25,7 +25,7 @@ export class ICU4XLanguageDisplayNames {
     const field_language_display_arg_options = arg_options["language_display"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLanguageDisplayNames_try_new_unstable(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XStyle_js_to_rust[field_style_arg_options], ICU4XFallback_js_to_rust[field_fallback_arg_options], ICU4XLanguageDisplay_js_to_rust[field_language_display_arg_options]);
+      wasm.ICU4XLanguageDisplayNames_try_new_unstable(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XDisplayNamesStyle_js_to_rust[field_style_arg_options], ICU4XDisplayNamesFallback_js_to_rust[field_fallback_arg_options], ICU4XLanguageDisplay_js_to_rust[field_language_display_arg_options]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLanguageDisplayNames(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

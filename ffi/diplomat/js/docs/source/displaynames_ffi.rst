@@ -1,6 +1,11 @@
 ``displaynames::ffi``
 =====================
 
+.. js:class:: ICU4XDisplayNamesFallback
+
+    See the `Rust documentation for Fallback <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html>`__ for more information.
+
+
 .. js:class:: ICU4XDisplayNamesOptions
 
     See the `Rust documentation for DisplayNamesOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html>`__ for more information.
@@ -21,9 +26,9 @@
         The language display kind, defaults to "dialect".
 
 
-.. js:class:: ICU4XFallback
+.. js:class:: ICU4XDisplayNamesStyle
 
-    See the `Rust documentation for Fallback <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html>`__ for more information.
+    See the `Rust documentation for Style <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html>`__ for more information.
 
 
 .. js:class:: ICU4XLanguageDisplay
@@ -63,9 +68,4 @@
     .. js:method:: of(code)
 
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
-
-
-.. js:class:: ICU4XStyle
-
-    See the `Rust documentation for Style <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html>`__ for more information.
 

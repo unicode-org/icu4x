@@ -1,5 +1,5 @@
-#ifndef ICU4XStyle_H
-#define ICU4XStyle_H
+#ifndef ICU4XDisplayNamesFallback_H
+#define ICU4XDisplayNamesFallback_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,13 +10,10 @@
 namespace capi {
 #endif
 
-typedef enum ICU4XStyle {
-  ICU4XStyle_Auto = 0,
-  ICU4XStyle_Narrow = 1,
-  ICU4XStyle_Short = 2,
-  ICU4XStyle_Long = 3,
-  ICU4XStyle_Menu = 4,
-} ICU4XStyle;
+typedef enum ICU4XDisplayNamesFallback {
+  ICU4XDisplayNamesFallback_Code = 0,
+  ICU4XDisplayNamesFallback_None = 1,
+} ICU4XDisplayNamesFallback;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -25,7 +22,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XStyle_destroy(ICU4XStyle* self);
+void ICU4XDisplayNamesFallback_destroy(ICU4XDisplayNamesFallback* self);
 
 #ifdef __cplusplus
 } // extern "C"

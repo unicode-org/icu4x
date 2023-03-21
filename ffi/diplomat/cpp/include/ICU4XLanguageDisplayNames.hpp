@@ -70,7 +70,7 @@ class ICU4XLanguageDisplayNames {
 
 inline diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> ICU4XLanguageDisplayNames::try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptions options) {
   ICU4XDisplayNamesOptions diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLanguageDisplayNames_try_new_unstable(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptions{ .style = static_cast<capi::ICU4XStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
+  auto diplomat_result_raw_out_value = capi::ICU4XLanguageDisplayNames_try_new_unstable(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptions{ .style = static_cast<capi::ICU4XDisplayNamesStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XDisplayNamesFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
   diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLanguageDisplayNames>(std::move(ICU4XLanguageDisplayNames(diplomat_result_raw_out_value.ok)));

@@ -1,5 +1,5 @@
-#ifndef ICU4XStyle_HPP
-#define ICU4XStyle_HPP
+#ifndef ICU4XDisplayNamesStyle_HPP
+#define ICU4XDisplayNamesStyle_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XStyle.h"
+#include "ICU4XDisplayNamesStyle.h"
 
 
 
@@ -18,7 +18,7 @@
  * 
  * See the [Rust documentation for `Style`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html) for more information.
  */
-enum struct ICU4XStyle {
+enum struct ICU4XDisplayNamesStyle {
   Auto = 0,
   Narrow = 1,
   Short = 2,
