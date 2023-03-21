@@ -289,7 +289,10 @@ impl BidiClass {
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
 
-/// TODO: documentation for Enumerated property Bidi_Paired_Bracket_Type
+/// Enumerated property Bidi_Paired_Bracket_Type.
+///
+/// Bidi_Paired_Bracket_Type represents the type of a paired bracket, either
+/// opening or closing. This property is used in the implementation of parenthesis matching.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
