@@ -276,14 +276,6 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 }
 
-impl<'a> MatrixBorrowed<'a, 1> {
-    #[allow(dead_code)] // could be useful
-    pub(super) fn dot_1d(&self, other: MatrixZero<1>) -> f32 {
-        debug_assert_eq!(self.dims, other.dims);
-        unrolled_dot_1(self.data, other.data)
-    }
-}
-
 impl<'a> MatrixBorrowedMut<'a, 1> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
@@ -490,34 +482,113 @@ macro_rules! f32c {
 /// (Based on ndarray 0.15.6)
 fn unrolled_dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
-    // eightfold unrolled so that floating point can be vectorized
-    // (even with strict floating point accuracy semantics)
-    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let xit = xs.chunks_exact(8);
-    let yit = ys.as_ule_slice().chunks_exact(8);
-    let sum = xit
+
+    let xc = xs.chunks_exact(8);
+    let yc = ys.as_ule_slice().chunks_exact(8);
+
+    let remainder = xc
         .remainder()
         .iter()
-        .zip(yit.remainder().iter())
-        .map(|(x, y)| x * f32c!(*y))
-        .sum::<f32>();
-    for (xx, yy) in xit.zip(yit) {
-        // TODO: Use array_chunks once stable to avoid the unwrap.
-        // <https://github.com/rust-lang/rust/issues/74985>
-        #[allow(clippy::unwrap_used)]
-        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[f32; 8]>::try_from(xx).unwrap();
-        #[allow(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
-        p.0 += x0 * f32c!(y0);
-        p.1 += x1 * f32c!(y1);
-        p.2 += x2 * f32c!(y2);
-        p.3 += x3 * f32c!(y3);
-        p.4 += x4 * f32c!(y4);
-        p.5 += x5 * f32c!(y5);
-        p.6 += x6 * f32c!(y6);
-        p.7 += x7 * f32c!(y7);
+        .zip(yc.remainder().iter())
+        .fold(0.0, |sum, (&x, &y)| x.mul_add(f32c!(y), sum));
+
+    // TODO: Use array_chunks once stable to avoid the unwrap.
+    // <https://github.com/rust-lang/rust/issues/74985>
+    #[allow(clippy::unwrap_used)]
+    let xc = xc.map(|xx| *<&[_; 8]>::try_from(xx).unwrap());
+    #[allow(clippy::unwrap_used)]
+    let yc = yc.map(|yy| *<&[_; 8]>::try_from(yy).unwrap());
+
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+    if std::is_x86_feature_detected!("avx") {
+        #[cfg(target_arch = "x86")]
+        use core::arch::x86::*;
+        #[cfg(target_arch = "x86_64")]
+        use core::arch::x86_64::*;
+
+        // SAFETY: No safety requirement
+        let mut sum = unsafe { _mm256_setzero_ps() };
+
+        for (x, y) in xc.zip(yc) {
+            // We should be able to use _mm256_load_ps here, as x is f32-aligned, and f32-aligment
+            // is the safety requirement of that function. However, it segfaults.
+            let xv = unsafe { _mm256_loadu_ps(x.as_ptr()) };
+            // SAFETY: _mm256_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm256_loadu_ps(y.as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm256_fmadd_ps(xv, yv, sum) };
+        }
+
+        // Using hacks in
+        // https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+        // SAFETY: No safety requirement
+        let mut lo = unsafe { _mm256_castps256_ps128(sum) };
+        // SAFETY: No safety requirement
+        let hi = unsafe { _mm256_extractf128_ps(sum, 1) };
+        // SAFETY: No safety requirement
+        lo = unsafe { _mm_add_ps(lo, hi) };
+
+        // SAFETY: No safety requirement
+        let mut shuf = unsafe { _mm_movehdup_ps(lo) };
+        // SAFETY: No safety requirement
+        let mut sums = unsafe { _mm_add_ps(lo, shuf) };
+        // SAFETY: No safety requirement
+        shuf = unsafe { _mm_movehl_ps(shuf, sums) };
+        // SAFETY: No safety requirement
+        sums = unsafe { _mm_add_ss(sums, shuf) };
+        // SAFETY: No safety requirement
+        return unsafe { _mm_cvtss_f32(sums) } + remainder;
+    } else if std::is_x86_feature_detected!("sse") {
+        #[cfg(target_arch = "x86")]
+        use core::arch::x86::*;
+        #[cfg(target_arch = "x86_64")]
+        use core::arch::x86_64::*;
+
+        // SAFETY: No safety requirement
+        let mut sum = unsafe { _mm_setzero_ps() };
+
+        for (x, y) in xc.zip(yc) {
+            // SAFETY: x is aligned
+            let xv = unsafe { _mm_load_ps(x.as_ptr()) };
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm_loadu_ps(y.as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm_fmadd_ps(xv, yv, sum) };
+
+            // SAFETY: x[4..] is aligned
+            let xv = unsafe { _mm_load_ps(x[4..].as_ptr()) };
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm_loadu_ps(y[4..].as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm_fmadd_ps(xv, yv, sum) };
+        }
+
+        // Using hacks in
+        // https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+        // SAFETY: No safety requirement
+        let mut shuf = unsafe { _mm_movehdup_ps(sum) };
+        // SAFETY: No safety requirement
+        let mut sums = unsafe { _mm_add_ps(sum, shuf) };
+        // SAFETY: No safety requirement
+        shuf = unsafe { _mm_movehl_ps(shuf, sums) };
+        // SAFETY: No safety requirement
+        sums = unsafe { _mm_add_ss(sums, shuf) };
+        // SAFETY: No safety requirement
+        return unsafe { _mm_cvtss_f32(sums) } + remainder;
     }
-    sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
+
+    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    for ([x0, x1, x2, x3, x4, x5, x6, x7], [y0, y1, y2, y3, y4, y5, y6, y7]) in xc.zip(yc) {
+        p.0 = x0.mul_add(f32c!(y0), p.0);
+        p.1 = x1.mul_add(f32c!(y1), p.1);
+        p.2 = x2.mul_add(f32c!(y2), p.2);
+        p.3 = x3.mul_add(f32c!(y3), p.3);
+        p.4 = x4.mul_add(f32c!(y4), p.4);
+        p.5 = x5.mul_add(f32c!(y5), p.5);
+        p.6 = x6.mul_add(f32c!(y6), p.6);
+        p.7 = x7.mul_add(f32c!(y7), p.7);
+    }
+    (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7) + remainder
 }
 
 /// Compute the dot product of two unaligned f32 slices.
@@ -527,32 +598,110 @@ fn unrolled_dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
 /// (Based on ndarray 0.15.6)
 fn unrolled_dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
-    // eightfold unrolled so that floating point can be vectorized
-    // (even with strict floating point accuracy semantics)
-    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let xit = xs.as_ule_slice().chunks_exact(8);
-    let yit = ys.as_ule_slice().chunks_exact(8);
-    let sum = xit
+
+    let xc = xs.as_ule_slice().chunks_exact(8);
+    let yc = ys.as_ule_slice().chunks_exact(8);
+
+    let remainder = xc
         .remainder()
         .iter()
-        .zip(yit.remainder().iter())
-        .map(|(x, y)| f32c!(*x) * f32c!(*y))
-        .sum::<f32>();
-    for (xx, yy) in xit.zip(yit) {
-        // TODO: Use array_chunks once stable to avoid the unwrap.
-        // <https://github.com/rust-lang/rust/issues/74985>
-        #[allow(clippy::unwrap_used)]
-        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(xx).unwrap();
-        #[allow(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
-        p.0 += f32c!(x0) * f32c!(y0);
-        p.1 += f32c!(x1) * f32c!(y1);
-        p.2 += f32c!(x2) * f32c!(y2);
-        p.3 += f32c!(x3) * f32c!(y3);
-        p.4 += f32c!(x4) * f32c!(y4);
-        p.5 += f32c!(x5) * f32c!(y5);
-        p.6 += f32c!(x6) * f32c!(y6);
-        p.7 += f32c!(x7) * f32c!(y7);
+        .zip(yc.remainder().iter())
+        .fold(0.0, |sum, (&x, &y)| f32c!(x).mul_add(f32c!(y), sum));
+
+    // TODO: Use array_chunks once stable to avoid the unwrap.
+    // <https://github.com/rust-lang/rust/issues/74985>
+    #[allow(clippy::unwrap_used)]
+    let xc = xc.map(|xx| *<&[_; 8]>::try_from(xx).unwrap());
+    #[allow(clippy::unwrap_used)]
+    let yc = yc.map(|yy| *<&[_; 8]>::try_from(yy).unwrap());
+
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+    if std::is_x86_feature_detected!("avx") {
+        #[cfg(target_arch = "x86")]
+        use core::arch::x86::*;
+        #[cfg(target_arch = "x86_64")]
+        use core::arch::x86_64::*;
+
+        // SAFETY: No safety requirement
+        let mut sum = unsafe { _mm256_setzero_ps() };
+
+        for (x, y) in xc.zip(yc) {
+            // SAFETY: _mm256_loadu_ps does not require its argument to be aligned
+            let xv = unsafe { _mm256_loadu_ps(x.as_ptr() as *const f32) };
+            // SAFETY: _mm256_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm256_loadu_ps(y.as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm256_fmadd_ps(xv, yv, sum) };
+        }
+
+        // Using hacks in
+        // https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+        // SAFETY: No safety requirement
+        let mut lo = unsafe { _mm256_castps256_ps128(sum) };
+        // SAFETY: No safety requirement
+        let hi = unsafe { _mm256_extractf128_ps(sum, 1) };
+        // SAFETY: No safety requirement
+        lo = unsafe { _mm_add_ps(lo, hi) };
+
+        // SAFETY: No safety requirement
+        let mut shuf = unsafe { _mm_movehdup_ps(lo) };
+        // SAFETY: No safety requirement
+        let mut sums = unsafe { _mm_add_ps(lo, shuf) };
+        // SAFETY: No safety requirement
+        shuf = unsafe { _mm_movehl_ps(shuf, sums) };
+        // SAFETY: No safety requirement
+        sums = unsafe { _mm_add_ss(sums, shuf) };
+        // SAFETY: No safety requirement
+        return unsafe { _mm_cvtss_f32(sums) } + remainder;
+    } else if std::is_x86_feature_detected!("sse") {
+        #[cfg(target_arch = "x86")]
+        use core::arch::x86::*;
+        #[cfg(target_arch = "x86_64")]
+        use core::arch::x86_64::*;
+
+        // SAFETY: No safety requirement
+        let mut sum = unsafe { _mm_setzero_ps() };
+
+        for (x, y) in xc.zip(yc) {
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let xv = unsafe { _mm_loadu_ps(x.as_ptr() as *const f32) };
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm_loadu_ps(y.as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm_fmadd_ps(xv, yv, sum) };
+
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let xv = unsafe { _mm_loadu_ps(x[4..].as_ptr() as *const f32) };
+            // SAFETY: _mm_loadu_ps does not require its argument to be aligned
+            let yv = unsafe { _mm_loadu_ps(y[4..].as_ptr() as *const f32) };
+            // SAFETY: No safety requirement
+            sum = unsafe { _mm_fmadd_ps(xv, yv, sum) };
+        }
+
+        // Using hacks in
+        // https://stackoverflow.com/questions/6996764/fastest-way-to-do-horizontal-sse-vector-sum-or-other-reduction
+        // SAFETY: No safety requirement
+        let mut shuf = unsafe { _mm_movehdup_ps(sum) };
+        // SAFETY: No safety requirement
+        let mut sums = unsafe { _mm_add_ps(sum, shuf) };
+        // SAFETY: No safety requirement
+        shuf = unsafe { _mm_movehl_ps(shuf, sums) };
+        // SAFETY: No safety requirement
+        sums = unsafe { _mm_add_ss(sums, shuf) };
+        // SAFETY: No safety requirement
+        return unsafe { _mm_cvtss_f32(sums) } + remainder;
     }
-    sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
+
+    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    for ([x0, x1, x2, x3, x4, x5, x6, x7], [y0, y1, y2, y3, y4, y5, y6, y7]) in xc.zip(yc) {
+        p.0 = f32c!(x0).mul_add(f32c!(y0), p.0);
+        p.1 = f32c!(x1).mul_add(f32c!(y1), p.1);
+        p.2 = f32c!(x2).mul_add(f32c!(y2), p.2);
+        p.3 = f32c!(x3).mul_add(f32c!(y3), p.3);
+        p.4 = f32c!(x4).mul_add(f32c!(y4), p.4);
+        p.5 = f32c!(x5).mul_add(f32c!(y5), p.5);
+        p.6 = f32c!(x6).mul_add(f32c!(y6), p.6);
+        p.7 = f32c!(x7).mul_add(f32c!(y7), p.7);
+    }
+    (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7) + remainder
 }
