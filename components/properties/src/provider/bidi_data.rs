@@ -227,7 +227,7 @@ mod tests {
         // Set discriminant value for the BidiPairedBracketType enum to be invalid.
         // BidiPairedBracketType only has 3 values (discriminants => 0..=2), so the 4th
         // expressible value from the 2 bits (3) should not parse successfully.
-        ule_bytes[2] = ule_bytes[2] | 0xC0;
+        ule_bytes[2] |= 0xC0;
 
         // deserialize from ULE bytes
         let ule_parse_result = MirroredPairedBracketDataULE::parse_byte_slice(ule_bytes);
