@@ -4,7 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
+use crate::math_helper::{self, MatrixBorrowedMut, MatrixBorrowed, MatrixOwned, MatrixZero};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
@@ -17,10 +17,12 @@ pub struct Lstm<'l> {
     data: &'l DataPayload<LstmDataV1Marker>,
     mat1: MatrixZero<'l, 2>,
     mat2: MatrixZero<'l, 3>,
+    mat2_precompute: MatrixOwned<3>,
     mat3: MatrixZero<'l, 3>,
     mat4: MatrixZero<'l, 2>,
     mat5: MatrixZero<'l, 3>,
     mat6: MatrixZero<'l, 3>,
+    mat5_precompute: MatrixOwned<3>,
     mat7: MatrixZero<'l, 2>,
     mat8: MatrixZero<'l, 3>,
     mat9: MatrixZero<'l, 1>,
@@ -61,6 +63,7 @@ impl<'l> Lstm<'l> {
         let mat7 = data.get().mat7.as_matrix_zero::<2>()?;
         let mat8 = data.get().mat8.as_matrix_zero::<3>()?;
         let mat9 = data.get().mat9.as_matrix_zero::<1>()?;
+        let num_classes = mat1.dim().0;
         let embedd_dim = mat1.dim().1;
         let hunits = mat3.dim().0;
         if mat2.dim() != (hunits, 4, embedd_dim)
@@ -75,13 +78,29 @@ impl<'l> Lstm<'l> {
             return Err(Error::DimensionMismatch);
         }
 
+        let mut mat2_precompute = MatrixOwned::new_zero([num_classes, hunits, 4]);
+        for i in 0..num_classes {
+            let x_t = mat1.submatrix::<1>(i).unwrap();
+            let mut dest = mat2_precompute.submatrix_mut::<2>(i).unwrap();
+            dest.add_dot_3d_2(x_t, mat2);
+        }
+
+        let mut mat5_precompute = MatrixOwned::new_zero([num_classes, hunits, 4]);
+        for i in 0..num_classes {
+            let x_t = mat1.submatrix::<1>(i).unwrap();
+            let mut dest = mat5_precompute.submatrix_mut::<2>(i).unwrap();
+            dest.add_dot_3d_2(x_t, mat5);
+        }
+
         Ok(Self {
             data,
             mat1,
+            mat2_precompute,
             mat2,
             mat3,
             mat4,
             mat5,
+            mat5_precompute,
             mat6,
             mat7,
             mat8,
@@ -146,27 +165,30 @@ impl<'l> Lstm<'l> {
     #[must_use] // return value is GIGO path
     fn compute_hc<'a>(
         &self,
-        x_t: MatrixZero<'a, 1>,
+        // x_t: MatrixZero<'a, 1>,
         mut h_tm1: MatrixBorrowedMut<'a, 1>,
         mut c_tm1: MatrixBorrowedMut<'a, 1>,
-        warr: MatrixZero<'a, 3>,
+        // warr: MatrixZero<'a, 3>,
+        warr_precompute: MatrixBorrowed<'a, 2>,
         uarr: MatrixZero<'a, 3>,
         barr: MatrixZero<'a, 2>,
         hunits: usize,
     ) -> Option<()> {
         #[cfg(debug_assertions)]
         {
-            let embedd_dim = x_t.dim();
+            // let embedd_dim = x_t.dim();
             h_tm1.as_borrowed().debug_assert_dims([hunits]);
             c_tm1.as_borrowed().debug_assert_dims([hunits]);
-            warr.debug_assert_dims([hunits, 4, embedd_dim]);
+            // warr.debug_assert_dims([hunits, 4, embedd_dim]);
+            warr_precompute.debug_assert_dims([hunits, 4]);
             uarr.debug_assert_dims([hunits, 4, hunits]);
             barr.debug_assert_dims([hunits, 4]);
         }
 
         let mut s_t = barr.to_owned();
 
-        s_t.as_mut().add_dot_3d_2(x_t, warr);
+        s_t.as_mut().add_borrowed(warr_precompute)?;
+        // s_t.as_mut().add_dot_3d_2(x_t, warr);
         s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
@@ -230,15 +252,16 @@ impl<'l> Lstm<'l> {
         let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
+            let mat2_x = self.mat2_precompute.submatrix::<2>(*g_id as usize)?;
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
             self.compute_hc(
-                x_t,
+                // x_t,
                 all_h_fw.submatrix_mut(i)?,
                 c_fw.as_mut(),
-                self.mat2,
+                // self.mat2,
+                mat2_x,
                 self.mat3,
                 self.mat4,
                 hunits,
@@ -249,17 +272,18 @@ impl<'l> Lstm<'l> {
         let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
+            let mat5_x = self.mat5_precompute.submatrix::<2>(*g_id as usize)?;
             if i > 0 {
                 all_h_bw
                     .as_mut()
                     .copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
             }
             self.compute_hc(
-                x_t,
+                // x_t,
                 all_h_bw.submatrix_mut(input_seq_len - i - 1)?,
                 c_bw.as_mut(),
-                self.mat5,
+                // self.mat5,
+                mat5_x,
                 self.mat6,
                 self.mat7,
                 self.hunits,

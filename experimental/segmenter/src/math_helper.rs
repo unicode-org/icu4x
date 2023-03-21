@@ -187,6 +187,33 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         Some(())
     }
 
+    #[must_use]
+    pub fn add_borrowed(&mut self, other: MatrixBorrowed<'_, D>) -> Option<()> {
+        debug_assert_eq!(self.dims, other.dims);
+        let it_x = self.data.chunks_exact_mut(8);
+        let it_y = other.data.chunks_exact(8);
+        let it_zip = it_x.zip(it_y);
+        for (xx, yy) in it_zip {
+            let [x0, x1, x2, x3, x4, x5, x6, x7] = <&mut [f32; 8]>::try_from(xx).unwrap();
+            let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[f32; 8]>::try_from(yy).unwrap();
+            *x0 += y0;
+            *x1 += y1;
+            *x2 += y2;
+            *x3 += y3;
+            *x4 += y4;
+            *x5 += y5;
+            *x6 += y6;
+            *x7 += y7;
+        }
+        // Is there a way to get ownership of it_x and it_y back from it_zip?
+        let it_x = self.data.chunks_exact_mut(8);
+        let it_y = other.data.chunks_exact(8);
+        for (x, y) in it_x.into_remainder().iter_mut().zip(it_y.remainder()) {
+            *x += y;
+        }
+        Some(())
+    }
+
     /// Mutates this matrix by applying a softmax transformation.
     pub fn softmax_transform(&mut self) {
         let sm = self.data.iter().map(|v| v.exp()).sum::<f32>();
