@@ -358,7 +358,8 @@
         },
         "cafne": {
           "_description": "Fort Nelson, Canada",
-          "_alias": "America/Fort_Nelson"
+          "_alias": "America/Fort_Nelson",
+          "_since": "29"
         },
         "caglb": {
           "_description": "Glace Bay, Canada",
@@ -692,7 +693,8 @@
         },
         "gazastrp": {
           "_description": "Gaza Strip, Palestinian Territories",
-          "_alias": "Asia/Gaza"
+          "_alias": "Asia/Gaza",
+          "_since": "40"
         },
         "gblon": {
           "_description": "London, United Kingdom",
@@ -744,7 +746,8 @@
         },
         "gmt": {
           "_description": "Greenwich Mean Time",
-          "_alias": "Etc/GMT Etc/GMT+0 Etc/GMT-0 Etc/GMT0 Etc/Greenwich GMT GMT+0 GMT-0 GMT0 Greenwich"
+          "_alias": "Etc/GMT Etc/GMT+0 Etc/GMT-0 Etc/GMT0 Etc/Greenwich GMT GMT+0 GMT-0 GMT0 Greenwich",
+          "_since": "31"
         },
         "gncky": {
           "_description": "Conakry, Guinea",

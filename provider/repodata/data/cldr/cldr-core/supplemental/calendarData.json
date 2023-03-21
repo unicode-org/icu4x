@@ -157,17 +157,10 @@
       },
       "japanese": {
         "calendarSystem": "solar",
+        "inheritEras": {
+          "_calendar": "gregorian"
+        },
         "eras": {
-          "-2": {
-            "_code": "japanese-inverse",
-            "_aliases": "gregory-inverse bc bce",
-            "_end": "0-12-31"
-          },
-          "-1": {
-            "_code": "japanese",
-            "_aliases": "gregory ad ce",
-            "_start": "1-01-01"
-          },
           "0": {
             "_start": "645-6-19"
           },

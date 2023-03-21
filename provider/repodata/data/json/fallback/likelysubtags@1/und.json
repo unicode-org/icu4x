@@ -995,6 +995,17 @@
       "CM": "Arab",
       "SD": "Arab"
     },
+    "hnj": {
+      "AU": "Laoo",
+      "CN": "Laoo",
+      "FR": "Laoo",
+      "GF": "Laoo",
+      "LA": "Laoo",
+      "MM": "Laoo",
+      "SR": "Laoo",
+      "TH": "Laoo",
+      "VN": "Laoo"
+    },
     "kk": {
       "AF": "Arab",
       "CN": "Arab",
@@ -7687,6 +7698,9 @@
     },
     "grc": {
       "Linb": "GR"
+    },
+    "hnj": {
+      "Laoo": "LA"
     },
     "ili": {
       "Cyrl": "KZ"

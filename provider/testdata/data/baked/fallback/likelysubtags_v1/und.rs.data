@@ -15,17 +15,17 @@
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(
-                    b"az\0ha\0kk\0ku\0ky\0manmn\0ms\0pa\0sd\0sr\0tg\0ug\0unruz\0yuezh\0",
+                    b"az\0ha\0hnjkk\0ku\0ky\0manmn\0ms\0pa\0sd\0sr\0tg\0ug\0unruz\0yuezh\0",
                 )
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\x05\0\0\0\t\0\0\0\n\0\0\0\x0C\0\0\0\r\0\0\0\x0E\0\0\0\x0F\0\0\0\x10\0\0\0\x11\0\0\0\x15\0\0\0\x16\0\0\0\x18\0\0\0\x19\0\0\0\x1B\0\0\0\x1C\0\0\0+\0\0\0")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\x05\0\0\0\x0E\0\0\0\x12\0\0\0\x13\0\0\0\x15\0\0\0\x16\0\0\0\x17\0\0\0\x18\0\0\0\x19\0\0\0\x1A\0\0\0\x1E\0\0\0\x1F\0\0\0!\0\0\0\"\0\0\0$\0\0\0%\0\0\04\0\0\0")
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"IQ\0IR\0RU\0CM\0SD\0AF\0CN\0IR\0MN\0LB\0CN\0TR\0GN\0CN\0CC\0PK\0IN\0ME\0RO\0RU\0TR\0PK\0KZ\0MN\0NP\0AF\0CN\0CN\0AU\0BN\0GB\0GF\0HK\0ID\0MO\0PA\0PF\0PH\0SR\0TH\0TW\0US\0VN\0")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"IQ\0IR\0RU\0CM\0SD\0AU\0CN\0FR\0GF\0LA\0MM\0SR\0TH\0VN\0AF\0CN\0IR\0MN\0LB\0CN\0TR\0GN\0CN\0CC\0PK\0IN\0ME\0RO\0RU\0TR\0PK\0KZ\0MN\0NP\0AF\0CN\0CN\0AU\0BN\0GB\0GF\0HK\0ID\0MO\0PA\0PF\0PH\0SR\0TH\0TW\0US\0VN\0")
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"ArabArabCyrlArabArabArabArabArabArabArabArabLatnNkooMongArabArabDevaLatnLatnLatnLatnArabCyrlCyrlDevaArabCyrlHansHantHantHantHantHantHantHantHantHantHantHantHantHantHantHant")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"ArabArabCyrlArabArabLaooLaooLaooLaooLaooLaooLaooLaooLaooArabArabArabArabArabArabLatnNkooMongArabArabDevaLatnLatnLatnLatnArabCyrlCyrlDevaArabCyrlHansHantHantHantHantHantHantHantHantHantHantHantHantHantHantHant")
             },
         )
     },
@@ -44,16 +44,16 @@
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"adiahkanuaotarcaz\0azbblrbrbbrucfmclkcmocu\0en\0evnff\0grciliiskiumjdtjehjgekdrkjpkk\0knsku\0ky\0lbflboliflusmanmjtmn\0mwtolapa\0palpcermlrmnruprutsd\0sghssstg\0ug\0unruz\0wblxomyuezh\0zhd")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"adiahkanuaotarcaz\0azbblrbrbbrucfmclkcmocu\0en\0evnff\0grchnjiliiskiumjdtjehjgekdrkjpkk\0knsku\0ky\0lbflboliflusmanmjtmn\0mwtolapa\0palpcermlrmnruprutsd\0sghssstg\0ug\0unruz\0wblxomyuezh\0zhd")
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x01\0\0\0\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0\x08\0\0\0\n\0\0\0\x0B\0\0\0\r\0\0\0\x0F\0\0\0\x10\0\0\0\x11\0\0\0\x12\0\0\0\x13\0\0\0\x14\0\0\0\x16\0\0\0\x17\0\0\0\x18\0\0\0\x19\0\0\0\x1A\0\0\0\x1C\0\0\0\x1D\0\0\0\x1E\0\0\0\x1F\0\0\0 \0\0\0!\0\0\0\"\0\0\0#\0\0\0%\0\0\0'\0\0\0(\0\0\0)\0\0\0*\0\0\0+\0\0\0,\0\0\0-\0\0\0.\0\0\0/\0\0\00\0\0\01\0\0\02\0\0\03\0\0\04\0\0\06\0\0\07\0\0\08\0\0\0;\0\0\0<\0\0\0=\0\0\0>\0\0\0?\0\0\0@\0\0\0A\0\0\0C\0\0\0D\0\0\0E\0\0\0H\0\0\0I\0\0\0")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x01\0\0\0\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0\x08\0\0\0\n\0\0\0\x0B\0\0\0\r\0\0\0\x0F\0\0\0\x10\0\0\0\x11\0\0\0\x12\0\0\0\x13\0\0\0\x14\0\0\0\x16\0\0\0\x17\0\0\0\x18\0\0\0\x19\0\0\0\x1A\0\0\0\x1B\0\0\0\x1D\0\0\0\x1E\0\0\0\x1F\0\0\0 \0\0\0!\0\0\0\"\0\0\0#\0\0\0$\0\0\0&\0\0\0(\0\0\0)\0\0\0*\0\0\0+\0\0\0,\0\0\0-\0\0\0.\0\0\0/\0\0\00\0\0\01\0\0\02\0\0\03\0\0\04\0\0\05\0\0\07\0\0\08\0\0\09\0\0\0<\0\0\0=\0\0\0>\0\0\0?\0\0\0@\0\0\0A\0\0\0B\0\0\0D\0\0\0E\0\0\0F\0\0\0I\0\0\0J\0\0\0")
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"TibtThaiArabLatnLatnNbatPalmArabCyrlLatnThaiLaooLatnLaooThaiBengTibtKhmrGlagShawLatnMongAdlmLinbCyrlCyrlLaooThaiLatnLaooHebrCyrlThaiArabThaiArabYeziArabLatnTibtLatnLimbBengNkooBengMongThaiTibtArabPhlpThaiCyrlCyrlGrekGrekLatnDevaKhojSindArabThaiArabCyrlDevaArabArabCyrlEthiHansBopoHanbHantLatn")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"TibtThaiArabLatnLatnNbatPalmArabCyrlLatnThaiLaooLatnLaooThaiBengTibtKhmrGlagShawLatnMongAdlmLinbLaooCyrlCyrlLaooThaiLatnLaooHebrCyrlThaiArabThaiArabYeziArabLatnTibtLatnLimbBengNkooBengMongThaiTibtArabPhlpThaiCyrlCyrlGrekGrekLatnDevaKhojSindArabThaiArabCyrlDevaArabArabCyrlEthiHansBopoHanbHantLatn")
             },
             unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"CN\0TH\0SS\0SS\0IN\0JO\0SY\0IR\0AZ\0AZ\0TH\0LA\0VN\0LA\0LA\0IN\0CN\0KH\0BG\0GB\0CN\0CN\0GN\0GR\0KZ\0TJ\0LA\0TH\0AZ\0LA\0IL\0UA\0TH\0CN\0TH\0IQ\0GE\0CN\0TR\0CN\0US\0IN\0BD\0GN\0BD\0CN\0TH\0CN\0PK\0CN\0TH\0BY\0BG\0GR\0GR\0AZ\0IN\0IN\0IN\0AF\0TH\0PK\0KZ\0NP\0AF\0AF\0TJ\0ET\0CN\0TW\0TW\0TW\0VN\0")
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"CN\0TH\0SS\0SS\0IN\0JO\0SY\0IR\0AZ\0AZ\0TH\0LA\0VN\0LA\0LA\0IN\0CN\0KH\0BG\0GB\0CN\0CN\0GN\0GR\0LA\0KZ\0TJ\0LA\0TH\0AZ\0LA\0IL\0UA\0TH\0CN\0TH\0IQ\0GE\0CN\0TR\0CN\0US\0IN\0BD\0GN\0BD\0CN\0TH\0CN\0PK\0CN\0TH\0BY\0BG\0GR\0GR\0AZ\0IN\0IN\0IN\0AF\0TH\0PK\0KZ\0NP\0AF\0AF\0TJ\0ET\0CN\0TW\0TW\0TW\0VN\0")
             },
         )
     },
