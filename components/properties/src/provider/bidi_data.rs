@@ -94,22 +94,15 @@ impl TryFrom<u32> for MirroredPairedBracketData {
     type Error = ZeroVecError;
 
     fn try_from(x: u32) -> Result<Self, ZeroVecError> {
-        let bytes = u32::to_le_bytes(x);
-        let err_msg = "Could not deserialize MirroredPairedBracketData from u32";
-        let byte0 = bytes
-            .first()
-            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
-        let byte1 = bytes
-            .get(1)
-            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
-        let byte2 = bytes
-            .get(2)
-            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
-        let ule_byte_array = [*byte0, *byte1, *byte2];
+        let[byte0, byte1, byte2, byte3] = u32::to_le_bytes(x);
+        if byte3 != 0 {
+            return Err(ZeroVecError::parse::<Self>());
+        }
+        let ule_byte_array = [byte0, byte1, byte2];
         let ule_struct_slice = MirroredPairedBracketDataULE::parse_byte_slice(&ule_byte_array)?;
         let ule_struct = ule_struct_slice
             .first()
-            .ok_or(ZeroVecError::ParseError { ty: err_msg })?;
+            .ok_or(ZeroVecError::parse::<Self>())?;
         let data = <Self as AsULE>::from_unaligned(*ule_struct);
         Ok(data)
     }
@@ -145,18 +138,14 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         if bytes.len() % 3 != 0 {
-            return Err(ZeroVecError::InvalidLength {
-                ty: "MirroredPairedBracketDataULE",
-                len: bytes.len(),
-            });
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
         // Validate the bytes
         #[allow(clippy::indexing_slicing)] // Won't panic because the chunks are always 3 bytes long
         for byte_triple in bytes.chunks_exact(3) {
             // Bidi_Mirroring_Glyph validation
-            let byte0 = byte_triple[0];
-            let byte1 = byte_triple[1];
-            let byte2 = byte_triple[2];
+            #[allow(clippy::unwrap_used)] // chunks_exact returns slices of length 3
+            let [byte0, byte1, byte2] = *<&[u8; 3]>::try_from(byte_triple).unwrap();
             let mut mirroring_glyph_code_point: u32 = (byte2 & 0x1F) as u32;
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte1 as u32);
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte0 as u32);
