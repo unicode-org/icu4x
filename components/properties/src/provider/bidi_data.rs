@@ -21,7 +21,7 @@
 
 use crate::props::BidiPairedBracketType;
 
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, CharULE, ULE};
 use zerovec::ZeroVecError;
@@ -80,13 +80,10 @@ impl Default for MirroredPairedBracketData {
 
 impl From<MirroredPairedBracketData> for u32 {
     fn from(mpbd: MirroredPairedBracketData) -> u32 {
-        let ule = mpbd.to_unaligned();
-        let ule_slice = &[ule];
-        let bytes = ULE::as_byte_slice(ule_slice);
-        match <[u8; 3]>::try_from(bytes) {
-            Ok(array) => u32::from_le_bytes([array[0], array[1], array[2], 0]),
-            Err(_) => u32::MAX,
-        }
+        let mut result = mpbd.mirroring_glyph as u32;
+        result |= (mpbd.mirrored as u32) << 21;
+        result |= (mpbd.paired_bracket_type.0 as u32) << 22;
+        result
     }
 }
 
@@ -94,17 +91,7 @@ impl TryFrom<u32> for MirroredPairedBracketData {
     type Error = ZeroVecError;
 
     fn try_from(x: u32) -> Result<Self, ZeroVecError> {
-        let [byte0, byte1, byte2, byte3] = u32::to_le_bytes(x);
-        if byte3 != 0 {
-            return Err(ZeroVecError::parse::<Self>());
-        }
-        let ule_byte_array = [byte0, byte1, byte2];
-        let ule_struct_slice = MirroredPairedBracketDataULE::parse_byte_slice(&ule_byte_array)?;
-        let ule_struct = ule_struct_slice
-            .first()
-            .ok_or(ZeroVecError::parse::<Self>())?;
-        let data = <Self as AsULE>::from_unaligned(*ule_struct);
-        Ok(data)
+        MirroredPairedBracketData::try_from_u32(x).map_err(|_| ZeroVecError::parse::<Self>())
     }
 }
 
