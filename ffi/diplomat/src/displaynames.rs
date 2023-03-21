@@ -81,9 +81,9 @@ pub mod ffi {
             )))
         }
 
-        // Returns the locale specific display name of a language for a given string.
-        // Note that the funtion returns an empty string in case the display name for a given
-        // language code is not found.
+        /// Returns the locale specific display name of a language for a given string.
+        /// Note that the funtion returns an empty string in case the display name for a given
+        /// language code is not found.
         #[diplomat::rust_link(icu::displaynames::LanguageDisplayNames::of, FnInStruct)]
         pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             self.0.of(code).unwrap_or("").write_to(write)?;
@@ -104,9 +104,9 @@ pub mod ffi {
             )))
         }
 
-        // Returns the locale specific display name of a region for a given string.
-        // Note that the funtion returns an empty string in case the display name for a given
-        // region code is not found.
+        /// Returns the locale specific display name of a region for a given string.
+        /// Note that the funtion returns an empty string in case the display name for a given
+        /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
         pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
             self.0.of(code).unwrap_or("").write_to(write)?;

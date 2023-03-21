@@ -21,6 +21,8 @@ export class ICU4XLanguageDisplayNames {
 
   /**
 
+   * Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of Rust documentation for `of`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

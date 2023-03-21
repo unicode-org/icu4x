@@ -68,10 +68,14 @@
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
 
+        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+
+        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
 
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
 
@@ -90,10 +94,14 @@
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
 
+        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
+
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+
+        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
 
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 

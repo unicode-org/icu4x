@@ -41,14 +41,18 @@ class ICU4XRegionDisplayNames {
   static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
-   * 
+   * Returns the locale specific display name of a region for a given string.
+   * Note that the funtion returns an empty string in case the display name for a given
+   * region code is not found.
    * 
    * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const;
 
   /**
-   * 
+   * Returns the locale specific display name of a region for a given string.
+   * Note that the funtion returns an empty string in case the display name for a given
+   * region code is not found.
    * 
    * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */

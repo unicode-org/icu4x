@@ -42,14 +42,18 @@ class ICU4XLanguageDisplayNames {
   static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptions options);
 
   /**
-   * 
+   * Returns the locale specific display name of a language for a given string.
+   * Note that the funtion returns an empty string in case the display name for a given
+   * language code is not found.
    * 
    * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const;
 
   /**
-   * 
+   * Returns the locale specific display name of a language for a given string.
+   * Note that the funtion returns an empty string in case the display name for a given
+   * language code is not found.
    * 
    * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
    */

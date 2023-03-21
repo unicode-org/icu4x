@@ -239,6 +239,7 @@ rust_library("icu_capi-v1_1_0") {
   deps += [ ":icu_collections-v1_1_0" ]
   deps += [ ":icu_datetime-v1_1_0" ]
   deps += [ ":icu_decimal-v1_1_0" ]
+  deps += [ ":icu_displaynames-v0_9_0" ]
   deps += [ ":icu_list-v1_1_0" ]
   deps += [ ":icu_locid-v1_1_0" ]
   deps += [ ":icu_locid_transform-v1_1_0" ]
@@ -371,6 +372,30 @@ rust_library("icu_decimal-v1_1_0") {
     "--edition=2021",
     "-Cmetadata=359d9c71d0cca475",
     "-Cextra-filename=-359d9c71d0cca475",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("icu_displaynames-v0_9_0") {
+  crate_name = "icu_displaynames"
+  crate_root = "//experimental/displaynames/src/lib.rs"
+  output_name = "icu_displaynames-f4e3f069e17592e0"
+
+  deps = []
+  deps += [ ":icu_collections-v1_1_0" ]
+  deps += [ ":icu_locid-v1_1_0" ]
+  deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":tinystr-v0_7_1" ]
+  deps += [ ":zerovec-v0_9_3" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=f4e3f069e17592e0",
+    "-Cextra-filename=-f4e3f069e17592e0",
   ]
 
   visibility = [ ":*" ]

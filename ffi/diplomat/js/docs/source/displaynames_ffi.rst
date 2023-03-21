@@ -50,6 +50,8 @@
 
     .. js:method:: of(code)
 
+        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
 
 
@@ -66,6 +68,8 @@
 
 
     .. js:method:: of(code)
+
+        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
 
         See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
