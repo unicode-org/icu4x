@@ -8,7 +8,7 @@
     See the `Rust documentation for TypedZonedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_with_lengths(provider, locale, date_length, time_length)
+    .. js:function:: create_with_lengths(provider, locale, date_length, time_length)
 
         Creates a new :js:class:`ICU4XGregorianZonedDateTimeFormatter` from locale data.
 
@@ -17,7 +17,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
+    .. js:function:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
 
         Creates a new :js:class:`ICU4XGregorianZonedDateTimeFormatter` from locale data.
 
@@ -26,7 +26,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XIsoDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 
@@ -40,7 +40,7 @@
     See the `Rust documentation for ZonedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_with_lengths(provider, locale, date_length, time_length)
+    .. js:function:: create_with_lengths(provider, locale, date_length, time_length)
 
         Creates a new :js:class:`ICU4XZonedDateTimeFormatter` from locale data.
 
@@ -49,7 +49,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
+    .. js:function:: create_with_lengths_and_iso_8601_time_zone_fallback(provider, locale, date_length, time_length, zone_options)
 
         Creates a new :js:class:`ICU4XZonedDateTimeFormatter` from locale data.
 
@@ -58,14 +58,14 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: format_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 
         See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
-    .. js:function:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
+    .. js:method:: format_iso_datetime_with_custom_time_zone(datetime, time_zone)
 
         Formats a :js:class:`ICU4XIsoDateTime` and :js:class:`ICU4XCustomTimeZone` to a string.
 

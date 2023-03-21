@@ -8,7 +8,7 @@
     See the `Rust documentation for AnyCalendarKind <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html>`__ for more information.
 
 
-    .. js:staticfunction:: get_for_locale(locale)
+    .. js:function:: get_for_locale(locale)
 
         Read the calendar type off of the -u-ca- extension on a locale.
 
@@ -17,7 +17,7 @@
         See the `Rust documentation for get_for_locale <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale>`__ for more information.
 
 
-    .. js:staticfunction:: get_for_bcp47(s)
+    .. js:function:: get_for_bcp47(s)
 
         Obtain the calendar type given a BCP-47 -u-ca- extension string.
 
@@ -26,7 +26,7 @@
         See the `Rust documentation for get_for_bcp47_value <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value>`__ for more information.
 
 
-    .. js:function:: bcp47()
+    .. js:method:: bcp47()
 
         Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
 
@@ -38,21 +38,21 @@
     See the `Rust documentation for AnyCalendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_for_locale(provider, locale)
+    .. js:function:: create_for_locale(provider, locale)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
         See the `Rust documentation for try_new_for_locale_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_for_kind(provider, kind)
+    .. js:function:: create_for_kind(provider, kind)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: kind()
+    .. js:method:: kind()
 
         Returns the kind of this calendar
 

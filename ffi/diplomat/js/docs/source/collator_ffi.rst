@@ -6,14 +6,14 @@
     See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_v1(provider, locale, options)
+    .. js:function:: create_v1(provider, locale, options)
 
         Construct a new Collator instance.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: compare(left, right)
+    .. js:method:: compare(left, right)
 
         Compare potentially ill-formed UTF-8 strings.
 
@@ -22,7 +22,7 @@
         See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
 
 
-    .. js:function:: compare_valid_utf8(left, right)
+    .. js:method:: compare_valid_utf8(left, right)
 
         Compare guaranteed well-formed UTF-8 strings.
 
@@ -31,7 +31,7 @@
         See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
 
 
-    .. js:function:: compare_utf16(left, right)
+    .. js:method:: compare_utf16(left, right)
 
         Compare potentially ill-formed UTF-16 strings, with unpaired surrogates compared as REPLACEMENT CHARACTER.
 

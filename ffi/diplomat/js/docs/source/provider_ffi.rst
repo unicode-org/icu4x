@@ -8,21 +8,21 @@
     See the `Rust documentation for icu_provider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider/index.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_fs(path)
+    .. js:function:: create_fs(path)
 
         Constructs an ``FsDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_fs`` Cargo feature. Not supported in WASM.
 
         See the `Rust documentation for FsDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_test()
+    .. js:function:: create_test()
 
         Constructs a testdata provider and returns it as an :js:class:`ICU4XDataProvider`. Requires the ``provider_test`` and one of ``any_provider`` or ``buffer_provider`` Cargo features.
 
         See the `Rust documentation for icu_testdata <https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_byte_slice(blob)
+    .. js:function:: create_from_byte_slice(blob)
 
         Constructs a ``BlobDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
 
@@ -33,14 +33,14 @@
         - Warning: This method leaks memory. The parameter `blob` will not be freed as it is required to live for the duration of the program.
 
 
-    .. js:staticfunction:: create_empty()
+    .. js:function:: create_empty()
 
         Constructs an empty :js:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 
 
-    .. js:function:: fork_by_key(other)
+    .. js:method:: fork_by_key(other)
 
         Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider ``other``.
 
@@ -51,14 +51,14 @@
         See the `Rust documentation for ForkByKeyProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html>`__ for more information.
 
 
-    .. js:function:: fork_by_locale(other)
+    .. js:method:: fork_by_locale(other)
 
         Same as ``fork_by_key`` but forks by locale instead of key.
 
         See the `Rust documentation for MissingLocalePredicate <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html>`__ for more information.
 
 
-    .. js:function:: enable_locale_fallback()
+    .. js:method:: enable_locale_fallback()
 
         Enables locale fallbacking for data requests made to this provider.
 
@@ -69,7 +69,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html>`__
 
 
-    .. js:function:: enable_locale_fallback_with(fallbacker)
+    .. js:method:: enable_locale_fallback_with(fallbacker)
 
         See the `Rust documentation for new_with_fallbacker <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker>`__ for more information.
 

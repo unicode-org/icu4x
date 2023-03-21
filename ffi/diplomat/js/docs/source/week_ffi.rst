@@ -8,26 +8,26 @@
     See the `Rust documentation for WeekCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider, locale)
+    .. js:function:: create(provider, locale)
 
         Creates a new :js:class:`ICU4XWeekCalculator` from locale data.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_first_day_of_week_and_min_week_days(first_weekday, min_week_days)
+    .. js:function:: create_from_first_day_of_week_and_min_week_days(first_weekday, min_week_days)
 
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday>`__, `2 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days>`__
 
 
-    .. js:function:: first_weekday()
+    .. js:method:: first_weekday()
 
         Returns the weekday that starts the week for this object's locale
 
         See the `Rust documentation for first_weekday <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday>`__ for more information.
 
 
-    .. js:function:: min_week_days()
+    .. js:method:: min_week_days()
 
         The minimum number of days overlapping a year required for a week to be considered part of that year
 

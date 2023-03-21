@@ -8,21 +8,21 @@
     See the `Rust documentation for CanonicalCombiningClassMap <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider)
+    .. js:function:: create(provider)
 
         Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: get(ch)
+    .. js:method:: get(ch)
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get>`__ for more information.
 
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/properties/struct.CanonicalCombiningClass.html>`__
 
 
-    .. js:function:: get32(ch)
+    .. js:method:: get32(ch)
 
         See the `Rust documentation for get32 <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32>`__ for more information.
 
@@ -38,14 +38,14 @@
     See the `Rust documentation for CanonicalComposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider)
+    .. js:function:: create(provider)
 
         Construct a new ICU4XCanonicalComposition instance for NFC
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: compose(starter, second)
+    .. js:method:: compose(starter, second)
 
         Performs canonical composition (including Hangul) on a pair of characters or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
 
@@ -61,14 +61,14 @@
     See the `Rust documentation for CanonicalDecomposition <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(provider)
+    .. js:function:: create(provider)
 
         Construct a new ICU4XCanonicalDecomposition instance for NFC
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:function:: decompose(c)
+    .. js:method:: decompose(c)
 
         Performs non-recursive canonical decomposition (including for Hangul).
 

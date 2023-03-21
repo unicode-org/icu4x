@@ -3,21 +3,21 @@
 
 .. js:class:: ICU4XWordBreakIteratorLatin1
 
-    .. js:function:: next()
+    .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
 .. js:class:: ICU4XWordBreakIteratorUtf16
 
-    .. js:function:: next()
+    .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
 .. js:class:: ICU4XWordBreakIteratorUtf8
 
-    .. js:function:: next()
+    .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
@@ -29,7 +29,7 @@
     See the `Rust documentation for WordSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_auto(provider)
+    .. js:function:: create_auto(provider)
 
         Construct an :js:class:`ICU4XWordSegmenter` with automatically selecting the best available LSTM or dictionary payload data.
 
@@ -38,7 +38,7 @@
         See the `Rust documentation for try_new_auto_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_lstm(provider)
+    .. js:function:: create_lstm(provider)
 
         Construct an :js:class:`ICU4XWordSegmenter` with LSTM payload data for Burmese, Khmer, Lao, and Thai.
 
@@ -47,21 +47,21 @@
         See the `Rust documentation for try_new_lstm_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: create_dictionary(provider)
+    .. js:function:: create_dictionary(provider)
 
         Construct an :js:class:`ICU4XWordSegmenter` with dictionary payload data for Chinese, Japanese, Burmese, Khmer, Lao, and Thai.
 
         See the `Rust documentation for try_new_dictionary_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary_unstable>`__ for more information.
 
 
-    .. js:function:: segment_utf8(input)
+    .. js:method:: segment_utf8(input)
 
         Segments a (potentially ill-formed) UTF-8 string.
 
         See the `Rust documentation for segment_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordSegmenter.html#method.segment_utf8>`__ for more information.
 
 
-    .. js:function:: segment_utf16(input)
+    .. js:method:: segment_utf16(input)
 
         Segments a UTF-16 string.
 
@@ -70,7 +70,7 @@
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
 
 
-    .. js:function:: segment_latin1(input)
+    .. js:method:: segment_latin1(input)
 
         Segments a Latin-1 string.
 
