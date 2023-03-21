@@ -110,6 +110,7 @@ unsafe impl VarZeroVecFormat for Index32 {
 /// exist.
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
+#[derive(Debug)]
 pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
     len: u32,

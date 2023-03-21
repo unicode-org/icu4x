@@ -8,7 +8,7 @@
     See the `Rust documentation for BidiClassAdapter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         Creates a new :js:class:`ICU4XBidi` from locale data.
 
@@ -24,7 +24,20 @@
         See the `Rust documentation for new_with_data_source <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source>`__ for more information.
 
 
-    .. js:function:: level_is_rtl(level)
+    .. js:function:: reorder_visual(levels)
+
+        Utility function for producing reorderings given a list of levels
+
+        Produces a map saying which visual index maps to which source index.
+
+        The levels array must not have values greater than 126 (this is the Bidi maximum explicit depth plus one). Failure to follow this invariant may lead to incorrect results, but is still safe.
+
+        See the `Rust documentation for reorder_visual <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.reorder_visual>`__ for more information.
+
+        - Note: ``levels`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+
+    .. js:staticfunction:: level_is_rtl(level)
 
         Check if a Level returned by level_at is an RTL level.
 
@@ -33,7 +46,7 @@
         See the `Rust documentation for is_rtl <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl>`__ for more information.
 
 
-    .. js:function:: level_is_ltr(level)
+    .. js:staticfunction:: level_is_ltr(level)
 
         Check if a Level returned by level_at is an LTR level.
 
@@ -42,14 +55,14 @@
         See the `Rust documentation for is_ltr <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr>`__ for more information.
 
 
-    .. js:function:: level_rtl()
+    .. js:staticfunction:: level_rtl()
 
         Get a basic RTL Level value
 
         See the `Rust documentation for rtl <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl>`__ for more information.
 
 
-    .. js:function:: level_ltr()
+    .. js:staticfunction:: level_ltr()
 
         Get a simple LTR Level value
 
@@ -137,4 +150,28 @@
         Returns 0 (equivalent to ``Level::ltr()``) on error
 
         See the `Rust documentation for level_at <https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at>`__ for more information.
+
+
+.. js:class:: ICU4XReorderedIndexMap
+
+    Thin wrapper around a vector that maps visual indices to source indices
+
+    ``map[visualIndex] = sourceIndex``
+
+    Produced by ``reorder_visual()`` on :js:class:`ICU4XBidi`.
+
+
+    .. js:function:: as_slice()
+
+        Get this as a slice/array of indices
+
+
+    .. js:function:: len()
+
+        The length of this map
+
+
+    .. js:function:: get(index)
+
+        Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)
 

@@ -51,10 +51,14 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> of_to_writeable(const std::string_view code, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
+
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> of(const std::string_view code) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
 
 
 .. cpp:class:: ICU4XRegionDisplayNames
@@ -69,10 +73,14 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> of_to_writeable(const std::string_view code, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
+
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> of(const std::string_view code) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
 
 .. cpp:enum-struct:: ICU4XStyle

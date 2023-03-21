@@ -36,7 +36,7 @@
     See the `Rust documentation for ScriptWithExtensions <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         See the `Rust documentation for load_script_with_extensions_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/fn.load_script_with_extensions_unstable.html>`__ for more information.
 

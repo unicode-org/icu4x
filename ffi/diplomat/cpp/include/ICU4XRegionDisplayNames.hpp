@@ -39,8 +39,20 @@ class ICU4XRegionDisplayNames {
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
-  template<typename W> diplomat::result<std::monostate, std::monostate> of_to_writeable(const std::string_view code, W& write) const;
-  diplomat::result<std::string, std::monostate> of(const std::string_view code) const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   */
+  template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   */
+  diplomat::result<std::string, ICU4XError> of(const std::string_view code) const;
   inline const capi::ICU4XRegionDisplayNames* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XRegionDisplayNames* AsFFIMut() { return this->inner.get(); }
   inline ICU4XRegionDisplayNames(capi::ICU4XRegionDisplayNames* i) : inner(i) {}
@@ -64,26 +76,26 @@ inline diplomat::result<ICU4XRegionDisplayNames, ICU4XError> ICU4XRegionDisplayN
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XRegionDisplayNames::of_to_writeable(const std::string_view code, W& write) const {
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XRegionDisplayNames::of_to_writeable(const std::string_view code, W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_of(this->inner.get(), code.data(), code.size(), &write_writer);
-  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, std::monostate> ICU4XRegionDisplayNames::of(const std::string_view code) const {
+inline diplomat::result<std::string, ICU4XError> ICU4XRegionDisplayNames::of(const std::string_view code) const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
   auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_of(this->inner.get(), code.data(), code.size(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(std::monostate());
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

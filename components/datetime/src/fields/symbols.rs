@@ -349,6 +349,7 @@ macro_rules! field_type {
         #[allow(clippy::enum_variant_names)]
         #[repr(u8)]
         #[zerovec::make_ule($ule_name)]
+        #[zerovec::derive(Debug)]
         #[allow(clippy::exhaustive_enums)] // used in data struct
         $(#[$enum_attr])*
         pub enum $i {

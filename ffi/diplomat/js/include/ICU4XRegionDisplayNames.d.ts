@@ -19,7 +19,9 @@ export class ICU4XRegionDisplayNames {
   static try_new_unstable(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XRegionDisplayNames | never;
 
   /**
-   * @throws {@link FFIError}<void>
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of Rust documentation for `of`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   of(code: string): string | never;
 }

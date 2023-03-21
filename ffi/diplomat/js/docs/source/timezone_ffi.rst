@@ -6,21 +6,21 @@
     See the `Rust documentation for CustomTimeZone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html>`__ for more information.
 
 
-    .. js:function:: create_from_string(s)
+    .. js:staticfunction:: create_from_string(s)
 
         Creates a time zone from an offset string.
 
         See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str>`__ for more information.
 
 
-    .. js:function:: create_empty()
+    .. js:staticfunction:: create_empty()
 
         Creates a time zone with no information.
 
         See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
 
 
-    .. js:function:: create_utc()
+    .. js:staticfunction:: create_utc()
 
         Creates a time zone for UTC.
 
@@ -241,7 +241,7 @@
     See the `Rust documentation for MetazoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
 
 
-    .. js:function:: create(provider)
+    .. js:staticfunction:: create(provider)
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
 

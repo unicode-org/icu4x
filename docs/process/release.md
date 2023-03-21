@@ -13,6 +13,8 @@ Once the release is complete, the assigned release driver will:
 * Verify that the milestone and checklist are complete
 * Verify with component owners that they're ready for release
 * Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
+* Verify that we have acceptable FFI coverage (should be a part of the checklist issue)
+  * Verify that `ffi/diplomat/tests/missing_apis.txt` is empty. If not, check with the team that we are okay punting these to the next release.
 * Take a bird-eye view at:
   * READMEs
   * Documentation

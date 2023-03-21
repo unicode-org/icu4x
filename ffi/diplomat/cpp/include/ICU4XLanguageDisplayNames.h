@@ -18,7 +18,7 @@ typedef struct ICU4XLanguageDisplayNames ICU4XLanguageDisplayNames;
 #include "ICU4XLocale.h"
 #include "ICU4XDisplayNamesOptions.h"
 #include "diplomat_result_box_ICU4XLanguageDisplayNames_ICU4XError.h"
-#include "diplomat_result_void_void.h"
+#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -26,7 +26,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XLanguageDisplayNames_ICU4XError ICU4XLanguageDisplayNames_try_new_unstable(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDisplayNamesOptions options);
 
-diplomat_result_void_void ICU4XLanguageDisplayNames_of(const ICU4XLanguageDisplayNames* self, const char* code_data, size_t code_len, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XLanguageDisplayNames_of(const ICU4XLanguageDisplayNames* self, const char* code_data, size_t code_len, DiplomatWriteable* write);
 void ICU4XLanguageDisplayNames_destroy(ICU4XLanguageDisplayNames* self);
 
 #ifdef __cplusplus

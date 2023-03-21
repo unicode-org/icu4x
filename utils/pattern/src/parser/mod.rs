@@ -8,7 +8,7 @@ use crate::token::PatternToken;
 pub use error::ParserError;
 use std::{borrow::Cow, fmt::Debug, marker::PhantomData, str::FromStr};
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 enum ParserState {
     Default,
     Placeholder,
@@ -39,6 +39,7 @@ macro_rules! handle_literal {
 }
 
 /// Options passed to the constructor of [`Parser`].
+#[derive(Debug)]
 pub struct ParserOptions {
     /// Controls whether ASCII letters can appear in the raw
     /// pattern.
@@ -244,6 +245,7 @@ pub struct ParserOptions {
 /// [`Item`]: std::iter::Iterator::Item
 /// [`TryFrom`]: std::convert::TryFrom
 /// [`ReplacementProvider`]: crate::ReplacementProvider
+#[derive(Debug)]
 pub struct Parser<'p, P> {
     input: &'p str,
     len: usize,

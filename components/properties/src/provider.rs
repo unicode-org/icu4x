@@ -237,6 +237,15 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
+    pub(crate) fn iter_ranges_complemented(
+        &self,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges_complemented(),
+        }
+    }
+
+    #[inline]
     pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
         Self::InversionList(l)
     }
@@ -293,6 +302,15 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
         match *self {
             Self::CodePointTrie(ref t) => t.iter_ranges(),
+        }
+    }
+    #[inline]
+    pub(crate) fn iter_ranges_mapped<'a, U: Eq + 'a>(
+        &'a self,
+        map: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges_mapped(map),
         }
     }
 
@@ -488,6 +506,7 @@ macro_rules! expand {
             // For now, synonymous with binary properties of code points only.
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $code_point_set_marker;
 
                 impl DataMarker for $code_point_set_marker {
@@ -519,6 +538,7 @@ macro_rules! expand {
             //   - exemplar characters
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $unicode_set_marker;
 
                 impl DataMarker for $unicode_set_marker {
@@ -548,6 +568,7 @@ macro_rules! expand {
             // For now, synonymous with enumerated properties [of code points only].
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $code_point_map_marker;
 
                 impl DataMarker for $code_point_map_marker {
@@ -574,6 +595,7 @@ macro_rules! expand {
                 }
 
                 #[doc = core::concat!("Data marker for the names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug)]
                 pub struct $value_name_marker;
 
                 impl DataMarker for $value_name_marker {

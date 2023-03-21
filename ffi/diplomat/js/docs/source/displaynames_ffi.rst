@@ -36,7 +36,7 @@
     See the `Rust documentation for LanguageDisplayNames <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html>`__ for more information.
 
 
-    .. js:function:: try_new_unstable(provider, locale, options)
+    .. js:staticfunction:: try_new_unstable(provider, locale, options)
 
         Creates a new ``LanguageDisplayNames`` from locale data and an options bag.
 
@@ -45,12 +45,15 @@
 
     .. js:function:: of(code)
 
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
+
+
 .. js:class:: ICU4XRegionDisplayNames
 
     See the `Rust documentation for RegionDisplayNames <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html>`__ for more information.
 
 
-    .. js:function:: try_new_unstable(provider, locale)
+    .. js:staticfunction:: try_new_unstable(provider, locale)
 
         Creates a new ``RegionDisplayNames`` from locale data and an options bag.
 
@@ -58,6 +61,9 @@
 
 
     .. js:function:: of(code)
+
+        See the `Rust documentation for of <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
+
 
 .. js:class:: ICU4XStyle
 

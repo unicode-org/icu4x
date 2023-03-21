@@ -8,7 +8,7 @@
     See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. js:function:: create(hour, minute, second, nanosecond)
+    .. js:staticfunction:: create(hour, minute, second, nanosecond)
 
         Creates a new :js:class:`ICU4XTime` given field values
 

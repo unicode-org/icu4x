@@ -65,6 +65,7 @@ pub mod normalizer;
 pub mod normalizer_properties;
 pub mod pluralrules;
 pub mod properties_maps;
+pub mod properties_names;
 pub mod properties_sets;
 pub mod properties_unisets;
 pub mod provider;

@@ -37,9 +37,17 @@ export class ICU4XRegionDisplayNames {
     const buf_arg_code = diplomatRuntime.DiplomatBuf.str(wasm, arg_code);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
-        const is_ok = wasm.ICU4XRegionDisplayNames_of(this.underlying, buf_arg_code.ptr, buf_arg_code.size, writeable) == 1;
-        if (!is_ok) {
-          throw new diplomatRuntime.FFIError(undefined);
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        wasm.ICU4XRegionDisplayNames_of(diplomat_receive_buffer, this.underlying, buf_arg_code.ptr, buf_arg_code.size, writeable);
+        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+        if (is_ok) {
+          const ok_value = {};
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          return ok_value;
+        } else {
+          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          throw new diplomatRuntime.FFIError(throw_value);
         }
       })();
     });
