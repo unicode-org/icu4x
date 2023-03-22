@@ -56,7 +56,7 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-09/72.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-24/72.x";
 
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
@@ -344,6 +344,10 @@ impl SerdeCache {
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
+
+    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.root.file_exists(path)
+    }
 }
 
 pub(crate) enum AbstractFs {
@@ -390,16 +394,26 @@ impl AbstractFs {
                 } else {
                     return Ok(());
                 };
-                lazy_static::lazy_static! {
-                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                        .freshness_lifetime(u64::MAX)
-                        .progress_bar(None)
-                        .build()
-                        .unwrap();
-                }
-                let root = CACHE
-                    .cached_path(resource)
-                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?;
+
+                let root: PathBuf = {
+                    #[cfg(not(feature = "networking"))]
+                    unreachable!("AbstractFs URL mode only possible when using CLDR/ICU tags, which cannot be set without the `networking` feature");
+
+                    #[cfg(feature = "networking")]
+                    {
+                        lazy_static::lazy_static! {
+                            static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                                .freshness_lifetime(u64::MAX)
+                                .progress_bar(None)
+                                .build()
+                                .unwrap();
+                        }
+
+                        CACHE
+                            .cached_path(resource)
+                            .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    }
+                };
                 *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
                     .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
                 Ok(())
@@ -456,6 +470,21 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+        })
+    }
+
+    fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.init()?;
+        Ok(match self {
+            Self::Fs(root) => root.join(path).is_file(),
+            Self::Zip(zip) => zip
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
+                .file_names()
+                .any(|p| p == path),
         })
     }
 }

@@ -120,7 +120,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -176,3 +176,7 @@ pub use icu_displaynames as displaynames;
 #[cfg(feature = "icu_relativetime")]
 #[doc(inline)]
 pub use icu_relativetime as relativetime;
+
+#[cfg(feature = "icu_compactdecimal")]
+#[doc(inline)]
+pub use icu_compactdecimal as compactdecimal;

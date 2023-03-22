@@ -59,7 +59,7 @@
         // clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -79,6 +79,7 @@ pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
 
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
 #[doc(hidden)]
+#[derive(Debug)]
 pub enum CldrLocaleSubset {
     Ignored,
 }
@@ -242,6 +243,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 
 /// Options for configuring the output of databake.
 #[non_exhaustive]
+#[derive(Debug)]
 pub struct BakedOptions {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
@@ -299,6 +301,47 @@ pub enum Out {
         insert_feature_gates: bool,
         use_separate_crates: bool,
     },
+}
+
+impl core::fmt::Debug for Out {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Fs {
+                output_path,
+                serializer,
+                overwrite,
+                fingerprint,
+            } => f
+                .debug_struct("Fs")
+                .field("output_path", output_path)
+                .field("serializer", serializer)
+                .field("overwrite", overwrite)
+                .field("fingerprint", fingerprint)
+                .finish(),
+            Self::Blob(_) => f.debug_tuple("Blob").field(&"[...]").finish(),
+            Self::Baked {
+                mod_directory,
+                options,
+            } => f
+                .debug_struct("Baked")
+                .field("mod_directory", mod_directory)
+                .field("options", options)
+                .finish(),
+            #[allow(deprecated)]
+            Self::Module {
+                mod_directory,
+                pretty,
+                insert_feature_gates,
+                use_separate_crates,
+            } => f
+                .debug_struct("Module")
+                .field("mod_directory", mod_directory)
+                .field("pretty", pretty)
+                .field("insert_feature_gates", insert_feature_gates)
+                .field("use_separate_crates", use_separate_crates)
+                .finish(),
+        }
+    }
 }
 
 #[deprecated]
@@ -480,7 +523,7 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
+    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))

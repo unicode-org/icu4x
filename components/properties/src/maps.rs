@@ -17,6 +17,7 @@ use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
+use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerovec::ZeroVecError;
@@ -25,6 +26,7 @@ use zerovec::ZeroVecError;
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
+#[derive(Debug)]
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
 }
@@ -144,7 +146,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
     map: &'a PropertyCodePointMapV1<'a, T>,
 }
@@ -221,35 +223,95 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::maps::CodePointMapData;
-    /// use icu_collections::codepointtrie::planes;
-    /// use icu_collections::codepointtrie::CodePointMapRange;
+    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::maps::{self, CodePointMapData};
     ///
-    /// let planes_trie = planes::get_planes_trie();
-    /// let cp_map_data = CodePointMapData::from_code_point_trie(planes_trie);
-    /// let cp_map = cp_map_data.as_borrowed();
-    ///
-    /// let mut ranges = cp_map.iter_ranges();
-    ///
-    /// for plane in 0..=16 {
-    ///     let exp_start = plane * 0x1_0000;
-    ///     let exp_end = exp_start + 0xffff;
-    ///     assert_eq!(
-    ///         ranges.next(),
-    ///         Some(CodePointMapRange {
-    ///             range: RangeInclusive::new(exp_start, exp_end),
-    ///             value: plane as u8
-    ///         })
-    ///     );
-    /// }
-    ///
-    /// // Hitting the end of the iterator returns `None`, as will subsequent
-    /// // calls to .next().
-    /// assert_eq!(ranges.next(), None);
-    /// assert_eq!(ranges.next(), None);
+    /// let data = maps::load_general_category(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    /// let mut ranges = gc.iter_ranges();
+    /// let next = ranges.next().unwrap();
+    /// assert_eq!(next.range, 0..=31);
+    /// assert_eq!(next.value, GeneralCategory::Control);
+    /// let next = ranges.next().unwrap();
+    /// assert_eq!(next.range, 32..=32);
+    /// assert_eq!(next.value, GeneralCategory::SpaceSeparator);
     /// ```
     pub fn iter_ranges(self) -> impl Iterator<Item = CodePointMapRange<T>> + 'a {
         self.map.iter_ranges()
+    }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// share the same value `v` in the [`CodePointMapData`].
+    ///
+    /// # Examples
+    ///
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu::properties::GeneralCategory;
+    /// use icu::properties::maps::{self, CodePointMapData};
+    ///
+    /// let data = maps::load_general_category(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    /// let mut ranges = gc.iter_ranges_for_value(GeneralCategory::UppercaseLetter);
+    /// assert_eq!(ranges.next().unwrap(), 'A' as u32..='Z' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='Þ' as u32);
+    /// ```
+    pub fn iter_ranges_for_value(self, val: T) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.map
+            .iter_ranges()
+            .filter(move |r| r.value == val)
+            .map(|r| r.range)
+    }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// do *not* have the value `v` in the [`CodePointMapData`].
+    pub fn iter_ranges_for_value_complemented(
+        self,
+        val: T,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.map
+            .iter_ranges_mapped(move |value| value != val)
+            .filter(|v| v.value)
+            .map(|v| v.range)
+    }
+}
+
+impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// have a `General_Category` value belonging to the specified [`GeneralCategoryGroup`]
+    ///
+    /// # Examples
+    ///
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu::properties::GeneralCategoryGroup;
+    /// use icu::properties::maps::{self, CodePointMapData};
+    ///
+    /// let data = maps::load_general_category(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
+    /// let gc = data.as_borrowed();
+    /// let mut ranges = gc.iter_ranges_for_group(GeneralCategoryGroup::Letter);
+    /// assert_eq!(ranges.next().unwrap(), 'A' as u32..='Z' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'a' as u32..='z' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'ª' as u32..='ª' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'µ' as u32..='µ' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'º' as u32..='º' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='ö' as u32);
+    /// ```
+    pub fn iter_ranges_for_group(
+        self,
+        group: crate::GeneralCategoryGroup,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.map
+            .iter_ranges_mapped(move |value| group.contains(value))
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 }
 

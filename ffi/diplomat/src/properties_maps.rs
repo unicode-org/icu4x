@@ -18,6 +18,17 @@ pub mod ffi {
     /// For properties whose values fit into 8 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
+    #[diplomat::rust_link(
+        icu::properties::maps::CodePointMapData::as_borrowed,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::properties::maps::CodePointMapData::from_data, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::properties::maps::CodePointMapData::try_into_converted,
+        FnInStruct,
+        hidden
+    )]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 

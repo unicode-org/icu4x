@@ -65,6 +65,7 @@ pub struct AnyPayload {
 
 /// The [`DataMarker`] marker type for [`AnyPayload`].
 #[allow(clippy::exhaustive_structs)] // marker type
+#[derive(Debug)]
 pub struct AnyMarker;
 
 impl DataMarker for AnyMarker {
@@ -213,6 +214,7 @@ impl DataPayload<AnyMarker> {
 ///
 /// Convertible to and from `DataResponse<AnyMarker>`.
 #[allow(clippy::exhaustive_structs)] // this type is stable (the metadata is allowed to grow)
+#[derive(Debug)]
 pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -301,24 +303,43 @@ where
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let any_response = HelloWorldProvider
-///     .as_any_provider()
-///     .load_any(
-///         HelloWorldV1Marker::KEY,
-///         DataRequest {
-///             locale: &icu_locid::locale!("de").into(),
-///             metadata: Default::default(),
-///         },
-///     )
-///     .expect("Load should succeed");
+/// let any_provider = HelloWorldProvider.as_any_provider();
 ///
-/// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> =
-///     any_response.downcast().expect("Types match");
+/// let req = DataRequest {
+///     locale: &icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// let payload = response.take_payload().expect("Data should be present");
+/// // Downcasting manually
+/// assert_eq!(
+///     any_provider
+///         .load_any(HelloWorldV1Marker::KEY, req)
+///         .expect("load should succeed")
+///         .downcast::<HelloWorldV1Marker>()
+///         .expect("types should match")
+///         .take_payload()
+///         .unwrap()
+///         .get(),
+///     &HelloWorldV1 {
+///         message: Cow::Borrowed("Hallo Welt"),
+///     },
+/// );
 ///
-/// assert_eq!(payload.get().message, "Hallo Welt");
+/// // Downcasting automatically
+/// let downcasting_provider: &dyn DataProvider<HelloWorldV1Marker> =
+///     &any_provider.as_downcasting();
+///
+/// assert_eq!(
+///     downcasting_provider
+///         .load(req)
+///         .expect("load should succeed")
+///         .take_payload()
+///         .unwrap()
+///         .get(),
+///     &HelloWorldV1 {
+///         message: Cow::Borrowed("Hallo Welt"),
+///     },
+/// );
 /// ```
 pub trait AnyProvider {
     /// Loads an [`AnyPayload`] according to the key and request.
@@ -333,6 +354,7 @@ impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
 
 /// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
+#[derive(Debug)]
 pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_any_provider()`] function.
@@ -363,6 +385,7 @@ where
 
 /// A wrapper over `AnyProvider` that implements `DynamicDataProvider<M>` via downcasting
 #[allow(clippy::exhaustive_structs)] // newtype
+#[derive(Debug)]
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_downcasting()`] function.

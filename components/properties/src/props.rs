@@ -14,40 +14,6 @@ use zerovec::ule::VarULE;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Selection constants for Unicode properties.
-/// These constants are used to select one of the Unicode properties.
-/// See `UProperty` in ICU4C.
-#[allow(dead_code)] // Not currently used but seems like it could be useful
-#[derive(Clone, PartialEq, Debug)]
-#[non_exhaustive]
-#[repr(i32)]
-enum EnumeratedProperty {
-    /// The Bidi_Class property.
-    BidiClass = 0x1000,
-    /// The Canonical_Combining_Class property.
-    CanonicalCombiningClass = 0x1002,
-    /// The East_Asian_Width property. See [`EastAsianWidth`].
-    EastAsianWidth = 0x1004,
-    /// The General_Category property.
-    GeneralCategory = 0x1005,
-    /// A pseudo-property that is used to represent groupings of `GeneralCategory`.
-    GeneralCategoryGroup = 0x2000,
-    /// The Line_Break property. See [`LineBreak`].
-    LineBreak = 0x1008,
-    /// The Script property. See [`Script`].
-    Script = 0x100A,
-    /// The Grapheme_Cluster_Break property. See [`GraphemeClusterBreak`].
-    GraphemeClusterBreak = 0x1012,
-    /// The Sentence_Break property. See [`SentenceBreak`].
-    SentenceBreak = 0x1013,
-    /// The Word_Break property. See [`WordBreak`].
-    WordBreak = 0x1014,
-    /// The Script_Extensions property. See [`Script`].
-    ScriptExtensions = 0x7000, // TODO(#1160) - this is a Miscellaneous property, not Enumerated
-    /// Represents an invalid or unknown Unicode property.
-    InvalidCode = -1, // TODO(#1160) - taken from ICU4C UProperty::UCHAR_INVALID_CODE
-}
-
 /// Private marker type for PropertyValueNameToEnumMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -58,7 +24,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 
 /// A struct capable of looking up a property value from a string name.
 /// Access its data by calling [`Self::as_borrowed()`] and using the methods on
-/// [`PropertyValueNameToEnumMapperBorrowed`]/
+/// [`PropertyValueNameToEnumMapperBorrowed`].
 ///
 /// The name can be a short name (`Lu`), a long name(`Uppercase_Letter`),
 /// or an alias.
@@ -88,13 +54,15 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// // fake property
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
+#[derive(Debug)]
 pub struct PropertyValueNameToEnumMapper<T> {
     map: DataPayload<ErasedNameToEnumMapV1Marker>,
     marker: PhantomData<fn() -> T>,
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`ErasedNameToEnumMapV1Marker::as_borrowed()`]. More efficient to query.
+/// [`PropertyValueNameToEnumMapper::as_borrowed()`]. More efficient to query.
+#[derive(Debug)]
 pub struct PropertyValueNameToEnumMapperBorrowed<'a, T> {
     map: &'a PropertyValueNameToEnumMapV1<'a>,
     marker: PhantomData<fn() -> T>,
@@ -597,6 +565,8 @@ impl GeneralCategoryGroup {
         | 1 << (GC::ModifierSymbol as u32)
         | 1 << (GC::OtherSymbol as u32));
 
+    const ALL: u32 = (1 << (GC::FinalPunctuation as u32 + 1)) - 1;
+
     /// Return whether the code point belongs in the provided multi-value category.
     ///
     /// ```
@@ -645,6 +615,139 @@ impl GeneralCategoryGroup {
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0
     }
+
+    /// Produce a GeneralCategoryGroup that is the inverse of this one
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let not_letter = letter.complement();
+    ///
+    /// assert!(not_letter.contains(GeneralCategory::MathSymbol));
+    /// assert!(!letter.contains(GeneralCategory::MathSymbol));
+    /// assert!(not_letter.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!letter.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!not_letter.contains(GeneralCategory::UppercaseLetter));
+    /// assert!(letter.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn complement(self) -> Self {
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
+        GeneralCategoryGroup(!self.0 & Self::ALL)
+    }
+
+    /// Return the group representing all GeneralCategory values
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let all = GeneralCategoryGroup::all();
+    ///
+    /// assert!(all.contains(GeneralCategory::MathSymbol));
+    /// assert!(all.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(all.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn all() -> Self {
+        Self(Self::ALL)
+    }
+
+    /// Return the empty group
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let empty = GeneralCategoryGroup::empty();
+    ///
+    /// assert!(!empty.contains(GeneralCategory::MathSymbol));
+    /// assert!(!empty.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(!empty.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn empty() -> Self {
+        Self(0)
+    }
+
+    /// Take the union of two groups
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let symbol = GeneralCategoryGroup::Symbol;
+    /// let union = letter.union(symbol);
+    ///
+    /// assert!(union.contains(GeneralCategory::MathSymbol));
+    /// assert!(!union.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(union.contains(GeneralCategory::UppercaseLetter));
+    /// ```
+    pub fn union(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+
+    /// Take the intersection of two groups
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use icu::properties::{GeneralCategory, GeneralCategoryGroup};
+    ///
+    /// let letter = GeneralCategoryGroup::Letter;
+    /// let lu = GeneralCategoryGroup::UppercaseLetter;
+    /// let intersection = letter.intersection(lu);
+    ///
+    /// assert!(!intersection.contains(GeneralCategory::MathSymbol));
+    /// assert!(!intersection.contains(GeneralCategory::OtherPunctuation));
+    /// assert!(intersection.contains(GeneralCategory::UppercaseLetter));
+    /// assert!(!intersection.contains(GeneralCategory::LowercaseLetter));
+    /// ```
+    pub fn intersection(self, other: Self) -> Self {
+        Self(self.0 & other.0)
+    }
+}
+
+impl_value_getter! {
+    marker: GeneralCategoryMaskNameToValueV1Marker;
+    impl GeneralCategoryGroup {
+        /// Return a [`PropertyValueNameToEnumMapper`], capable of looking up values
+        /// from strings for the `General_Category_Mask` mask property
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use icu::properties::GeneralCategoryGroup;
+        ///
+        /// let lookup = GeneralCategoryGroup::get_name_to_enum_mapper(&icu_testdata::unstable())
+        ///                  .expect("The data should be valid");
+        /// let lookup = lookup.as_borrowed();
+        /// // short name for value
+        /// assert_eq!(lookup.get_strict("L"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("LC"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// assert_eq!(lookup.get_strict("Zp"), Some(GeneralCategoryGroup::ParagraphSeparator));
+        /// assert_eq!(lookup.get_strict("P"), Some(GeneralCategoryGroup::Punctuation));
+        /// // long name for value
+        /// assert_eq!(lookup.get_strict("Letter"), Some(GeneralCategoryGroup::Letter));
+        /// assert_eq!(lookup.get_strict("Cased_Letter"), Some(GeneralCategoryGroup::CasedLetter));
+        /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategoryGroup::UppercaseLetter));
+        /// // alias name
+        /// assert_eq!(lookup.get_strict("punct"), Some(GeneralCategoryGroup::Punctuation));
+        /// // name has incorrect casing
+        /// assert_eq!(lookup.get_strict("letter"), None);
+        /// // loose matching of name
+        /// assert_eq!(lookup.get_loose("letter"), Some(GeneralCategoryGroup::Letter));
+        /// // fake property
+        /// assert_eq!(lookup.get_strict("EverythingLol"), None);
+        /// ```
+        pub fn get_name_to_enum_mapper();
+    }
 }
 
 impl From<GeneralCategory> for GeneralCategoryGroup {
@@ -654,7 +757,14 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 }
 impl From<u32> for GeneralCategoryGroup {
     fn from(mask: u32) -> Self {
-        GeneralCategoryGroup(mask)
+        // Mask off things not in Self::ALL to guarantee the mask
+        // values stay in-range
+        GeneralCategoryGroup(mask & Self::ALL)
+    }
+}
+impl From<GeneralCategoryGroup> for u32 {
+    fn from(group: GeneralCategoryGroup) -> Self {
+        group.0
     }
 }
 /// Enumerated property Script.

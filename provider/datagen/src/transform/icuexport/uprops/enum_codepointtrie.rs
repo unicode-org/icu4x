@@ -26,16 +26,16 @@ fn get_enumerated_prop<'a>(
         .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
-fn get_prop_values_map(
-    source: &SourceData,
-    key: &str,
-) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError> {
-    let data = get_enumerated_prop(source, key)
-        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
-                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+fn get_prop_values_map<F>(
+    values: &[super::uprops_serde::PropertyValue],
+    transform_u32: F,
+) -> Result<PropertyValueNameToEnumMapV1<'static>, DataError>
+where
+    F: Fn(u32) -> Result<u16, DataError>,
+{
     let mut map = BTreeMap::new();
-    for value in &data.values {
-        let discr = value.discr;
+    for value in values {
+        let discr = transform_u32(value.discr)?;
         map.insert(
             NormalizedPropertyNameStr::boxed_from_bytes(value.long.as_bytes()),
             discr,
@@ -89,7 +89,11 @@ macro_rules! expand {
             impl DataProvider<$names_marker> for crate::DatagenProvider
             {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
-                    let data_struct = get_prop_values_map(&self.source, $prop_name)?;
+                    let data = get_enumerated_prop(&self.source, $prop_name)
+                        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
+                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+
+                    let data_struct = get_prop_values_map(&data.values, |v| u16::try_from(v).map_err(|_| DataError::custom(concat!("Found value larger than u16 for property ", $prop_name))))?;
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
@@ -107,6 +111,57 @@ macro_rules! expand {
             }
         )+
     };
+}
+
+fn get_mask_prop<'a>(
+    source: &'a SourceData,
+    key: &str,
+) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
+    source
+        .icuexport()?
+        .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
+            "uprops/{}/{}.toml",
+            source.trie_type(),
+            key
+        ))?
+        .mask_property
+        .get(0)
+        .ok_or(DataError::custom("Loading icuexport property data failed: \
+                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
+}
+// Special handling for GeneralCategoryMask
+impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV1Marker>, DataError> {
+        use icu_properties::GeneralCategoryGroup;
+        use zerovec::ule::AsULE;
+
+        let data = get_mask_prop(&self.source, "gcm")?;
+        let data_struct = get_prop_values_map(&data.values, |v| {
+            let value: GeneralCategoryGroup = v.into();
+            let ule = value.to_unaligned();
+            let packed = u16::from_unaligned(ule);
+
+            // sentinel value
+            if packed == 0xFF00 {
+                return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
+            }
+            Ok(packed)
+        })?;
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
+    }
+}
+
+impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        get_mask_prop(&self.source, "gcm")?;
+        Ok(vec![Default::default()])
+    }
 }
 
 expand!(

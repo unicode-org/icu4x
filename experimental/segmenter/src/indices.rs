@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 /// Similar to CharIndices for Latin-1 character
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Latin1Indices<'a> {
     front_offset: usize,
     iter: &'a [u8],
@@ -31,7 +31,7 @@ impl<'a> Iterator for Latin1Indices<'a> {
 }
 
 /// Similar to CharIndices for UTF-16 character
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Utf16Indices<'a> {
     front_offset: usize,
     iter: &'a [u16],

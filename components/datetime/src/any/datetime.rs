@@ -111,6 +111,7 @@ use writeable::Writeable;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct DateTimeFormatter(pub(crate) raw::DateTimeFormatter, AnyCalendar);
 
 impl DateTimeFormatter {

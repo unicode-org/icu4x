@@ -21,6 +21,7 @@ components/timezone/              @nordzilla
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
+experimental/harfbuzz/            @hsivonen
 experimental/relativetime/        @pdogr
 experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth

@@ -240,13 +240,14 @@ impl ScriptExtensionsSet<'_> {
 /// related getters.
 ///
 /// Most useful methods are on [`ScriptWithExtensionsBorrowed`] obtained by calling [`ScriptWithExtensions::as_borrowed()`]
+#[derive(Debug)]
 pub struct ScriptWithExtensions {
     data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
 /// [`ScriptWithExtensions::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct ScriptWithExtensionsBorrowed<'a> {
     data: &'a ScriptWithExtensionsPropertyV1<'a>,
 }

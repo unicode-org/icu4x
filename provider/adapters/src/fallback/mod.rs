@@ -241,6 +241,7 @@ pub struct LocaleFallbackerWithConfig<'a> {
 }
 
 /// Inner iteration type. Does not own the item under fallback.
+#[derive(Debug)]
 struct LocaleFallbackIteratorInner<'a, 'b> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
@@ -255,6 +256,7 @@ struct LocaleFallbackIteratorInner<'a, 'b> {
 ///
 /// Because the `Iterator` trait does not allow items to borrow from the iterator, this class does
 /// not implement that trait. Instead, use `.step()` and `.get()`.
+#[derive(Debug)]
 pub struct LocaleFallbackIterator<'a, 'b> {
     current: DataLocale,
     inner: LocaleFallbackIteratorInner<'a, 'b>,
