@@ -105,3 +105,35 @@ impl IterableDataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenPro
         Ok(vec![Default::default()])
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_properties::bidi_data::{BidiAuxiliaryProperties, BidiPairingProperties};
+    use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+
+    #[test]
+    fn test_bidi_data_provider() {
+        let provider = crate::DatagenProvider::for_test();
+
+        let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
+            .load(Default::default())
+            .and_then(DataResponse::take_payload)
+            .expect("Loading was successful");
+
+        let bidi_data_api_struct = BidiAuxiliaryProperties::from_data(payload);
+        let bidi_data = bidi_data_api_struct.as_borrowed();
+
+        let close_paren = bidi_data.get32_mirroring_props(')' as u32);
+        assert_eq!(close_paren.mirroring_glyph, Some('('));
+        assert!(close_paren.mirrored);
+        let close_angle_bracket = bidi_data.get32_mirroring_props('>' as u32);
+        assert_eq!(close_angle_bracket.mirroring_glyph, Some('<'));
+        assert!(close_angle_bracket.mirrored);
+
+        let open_paren = bidi_data.get32_pairing_props('(' as u32);
+        assert_eq!(open_paren, BidiPairingProperties::Open(')'));
+        let open_angle_bracket = bidi_data.get32_pairing_props('<' as u32);
+        assert_eq!(open_angle_bracket, BidiPairingProperties::None);
+    }
+}

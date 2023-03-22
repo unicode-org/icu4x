@@ -40,7 +40,7 @@ impl BidiAuxiliaryProperties {
     /// Construct a new one from loaded data
     ///
     /// Typically it is preferable to use getters like [`load_bidi_auxiliary_properties_unstable()`] instead
-    pub(crate) fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
+    pub fn from_data(data: DataPayload<BidiAuxiliaryPropertiesV1Marker>) -> Self {
         Self { data }
     }
 }
