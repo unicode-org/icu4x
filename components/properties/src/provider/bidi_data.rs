@@ -172,10 +172,10 @@ impl AsULE for MirroredPairedBracketData {
 
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        // Safe because the lower bits 20..0 of MirroredPairedBracketDataULE bytes are the CharULE bytes,
-        // and CharULE::from_unaligned is safe because bytes are defined to represent a valid Unicode code point.
         let [unaligned_byte0, unaligned_byte1, unaligned_byte2] = unaligned.0;
         let mirroring_glyph_ule_bytes = &[unaligned_byte0, unaligned_byte1, unaligned_byte2 & 0x1F];
+        // Safe because the lower bits 20..0 of MirroredPairedBracketDataULE bytes are the CharULE bytes,
+        // and CharULE::from_unaligned is safe because bytes are defined to represent a valid Unicode code point.
         let mirroring_glyph_ule =
             unsafe { CharULE::from_byte_slice_unchecked(mirroring_glyph_ule_bytes) };
         let mirroring_glyph = mirroring_glyph_ule
