@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "lstm")]
-use crate::{lstm_error::Error, math_helper::MatrixOwned};
+use crate::{lstm_error::Error, math_helper::MatrixZero};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -117,14 +117,13 @@ pub struct LstmMatrix<'data> {
 
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub(crate) fn alloc_matrix<const D: usize>(&self) -> Result<MatrixOwned<D>, Error> {
+    pub(crate) fn as_matrix_zero<const D: usize>(&self) -> Result<MatrixZero<D>, Error> {
         let dims = self
             .dims
             .get_as_array()
             .ok_or(Error::DimensionMismatch)?
             .map(|x| x as usize);
-        let data = self.data.iter().collect();
-        MatrixOwned::try_from_parts(data, dims)
+        MatrixZero::try_from_parts(&self.data, dims)
     }
 }
 

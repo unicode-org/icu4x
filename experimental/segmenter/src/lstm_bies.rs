@@ -4,8 +4,8 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper::{self, MatrixBorrowed, MatrixBorrowedMut, MatrixOwned};
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
+use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -14,16 +14,16 @@ use icu_provider::DataPayload;
 use zerovec::ule::AsULE;
 
 pub struct Lstm<'l> {
-    data: &'l DataPayload<LstmDataV1Marker>,
-    mat1: MatrixOwned<2>,
-    mat2: MatrixOwned<3>,
-    mat3: MatrixOwned<3>,
-    mat4: MatrixOwned<2>,
-    mat5: MatrixOwned<3>,
-    mat6: MatrixOwned<3>,
-    mat7: MatrixOwned<2>,
-    mat8: MatrixOwned<3>,
-    mat9: MatrixOwned<1>,
+    data: &'l LstmDataV1<'l>,
+    mat1: MatrixZero<'l, 2>,
+    mat2: MatrixZero<'l, 3>,
+    mat3: MatrixZero<'l, 3>,
+    mat4: MatrixZero<'l, 2>,
+    mat5: MatrixZero<'l, 3>,
+    mat6: MatrixZero<'l, 3>,
+    mat7: MatrixZero<'l, 2>,
+    mat8: MatrixZero<'l, 3>,
+    mat9: MatrixZero<'l, 1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
 }
@@ -48,35 +48,31 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
-        // Note: We are currently copying the ZeroVecs into allocated matrices.
-        // The ICU4X style guide discourages this. We do it here because:
-        // 1. The data need to be aligned in order to be vectorized.
-        // 2. The LSTM is highly performance-sensitive.
-        let mat1 = data.get().mat1.alloc_matrix::<2>()?;
-        let mat2 = data.get().mat2.alloc_matrix::<3>()?;
-        let mat3 = data.get().mat3.alloc_matrix::<3>()?;
-        let mat4 = data.get().mat4.alloc_matrix::<2>()?;
-        let mat5 = data.get().mat5.alloc_matrix::<3>()?;
-        let mat6 = data.get().mat6.alloc_matrix::<3>()?;
-        let mat7 = data.get().mat7.alloc_matrix::<2>()?;
-        let mat8 = data.get().mat8.alloc_matrix::<3>()?;
-        let mat9 = data.get().mat9.alloc_matrix::<1>()?;
-        let embedd_dim = mat1.as_borrowed().dim().1;
-        let hunits = mat3.as_borrowed().dim().0;
-        if mat2.as_borrowed().dim() != (hunits, 4, embedd_dim)
-            || mat3.as_borrowed().dim() != (hunits, 4, hunits)
-            || mat4.as_borrowed().dim() != (hunits, 4)
-            || mat5.as_borrowed().dim() != (hunits, 4, embedd_dim)
-            || mat6.as_borrowed().dim() != (hunits, 4, hunits)
-            || mat7.as_borrowed().dim() != (hunits, 4)
-            || mat8.as_borrowed().dim() != (2, 4, hunits)
-            || mat9.as_borrowed().dim() != (4)
+        let mat1 = data.get().mat1.as_matrix_zero::<2>()?;
+        let mat2 = data.get().mat2.as_matrix_zero::<3>()?;
+        let mat3 = data.get().mat3.as_matrix_zero::<3>()?;
+        let mat4 = data.get().mat4.as_matrix_zero::<2>()?;
+        let mat5 = data.get().mat5.as_matrix_zero::<3>()?;
+        let mat6 = data.get().mat6.as_matrix_zero::<3>()?;
+        let mat7 = data.get().mat7.as_matrix_zero::<2>()?;
+        let mat8 = data.get().mat8.as_matrix_zero::<3>()?;
+        let mat9 = data.get().mat9.as_matrix_zero::<1>()?;
+        let embedd_dim = mat1.dim().1;
+        let hunits = mat3.dim().0;
+        if mat2.dim() != (hunits, 4, embedd_dim)
+            || mat3.dim() != (hunits, 4, hunits)
+            || mat4.dim() != (hunits, 4)
+            || mat5.dim() != (hunits, 4, embedd_dim)
+            || mat6.dim() != (hunits, 4, hunits)
+            || mat7.dim() != (hunits, 4)
+            || mat8.dim() != (2, 4, hunits)
+            || mat9.dim() != (4)
         {
             return Err(Error::DimensionMismatch);
         }
 
         Ok(Self {
-            data,
+            data: data.get(),
             mat1,
             mat2,
             mat3,
@@ -98,7 +94,7 @@ impl<'l> Lstm<'l> {
     /// `get_model_name` returns the name of the LSTM model.
     #[allow(dead_code)]
     pub fn get_model_name(&self) -> &str {
-        &self.data.get().model
+        &self.data.model
     }
 
     #[cfg(test)]
@@ -133,11 +129,11 @@ impl<'l> Lstm<'l> {
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        let id = self.data.get().dic.get(g);
+        let id = self.data.dic.get(g);
         if let Some(id) = id {
             i16::from_unaligned(*id)
         } else {
-            self.data.get().dic.len() as i16
+            self.data.dic.len() as i16
         }
     }
 
@@ -146,12 +142,12 @@ impl<'l> Lstm<'l> {
     #[must_use] // return value is GIGO path
     fn compute_hc<'a>(
         &self,
-        x_t: MatrixBorrowed<'a, 1>,
+        x_t: MatrixZero<'a, 1>,
         mut h_tm1: MatrixBorrowedMut<'a, 1>,
         mut c_tm1: MatrixBorrowedMut<'a, 1>,
-        warr: MatrixBorrowed<'a, 3>,
-        uarr: MatrixBorrowed<'a, 3>,
-        barr: MatrixBorrowed<'a, 2>,
+        warr: MatrixZero<'a, 3>,
+        uarr: MatrixZero<'a, 3>,
+        barr: MatrixZero<'a, 2>,
         hunits: usize,
     ) -> Option<()> {
         #[cfg(debug_assertions)]
@@ -166,8 +162,8 @@ impl<'l> Lstm<'l> {
 
         let mut s_t = barr.to_owned();
 
-        s_t.as_mut().add_dot_3d(x_t, warr);
-        s_t.as_mut().add_dot_3d(h_tm1.as_borrowed(), uarr);
+        s_t.as_mut().add_dot_3d_2(x_t, warr);
+        s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), uarr);
 
         for i in 0..hunits {
             let [s0, s1, s2, s3] = s_t
@@ -238,9 +234,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 all_h_fw.submatrix_mut(i)?,
                 c_fw.as_mut(),
-                self.mat2.as_borrowed(),
-                self.mat3.as_borrowed(),
-                self.mat4.as_borrowed(),
+                self.mat2,
+                self.mat3,
+                self.mat4,
                 hunits,
             )?;
         }
@@ -259,15 +255,15 @@ impl<'l> Lstm<'l> {
                 x_t,
                 all_h_bw.submatrix_mut(input_seq_len - i - 1)?,
                 c_bw.as_mut(),
-                self.mat5.as_borrowed(),
-                self.mat6.as_borrowed(),
-                self.mat7.as_borrowed(),
+                self.mat5,
+                self.mat6,
+                self.mat7,
                 self.hunits,
             )?;
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let timeb = self.mat9.as_borrowed();
+        let timeb = self.mat9;
         let mut bies = String::new();
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.submatrix::<1>(i)?;
