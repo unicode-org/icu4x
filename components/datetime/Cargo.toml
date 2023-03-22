@@ -126,4 +126,3 @@ required-features = ["experimental"]
 
 [[example]]
 name = "work_log"
-required-features = ["serde"]

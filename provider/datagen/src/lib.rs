@@ -538,34 +538,26 @@ fn test_keys_from_file() {
 }
 
 #[test]
-fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::buffer_no_fallback`
-    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
-    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
-    assert_eq!(
-        keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
-            .unwrap(),
-        vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_calendar::provider::WeekDataV1Marker::KEY,
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
-        ]
-    );
-}
-
-#[test]
 fn test_options_from_bin() {
     // This is the test binary for `cargo test -p icu_segmenter --test complex_word --release`
-    assert!(
+    assert_eq!(
         options_from_bin(
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("tests/data/complex_word-b46191e5ca4b3378")
         )
-        .unwrap()
-        .dictionary_segmenter
+        .unwrap(),
+        options::Options {
+            keys: options::KeyInclude::Explicit(
+                [
+                    icu_segmenter::provider::LstmDataV1Marker::KEY,
+                    icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY,
+                    icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY,
+                    icu_segmenter::provider::WordBreakDataV1Marker::KEY,
+                ]
+                .into()
+            ),
+            dictionary_segmenter: true,
+            ..Default::default()
+        }
     )
 }
