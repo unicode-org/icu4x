@@ -215,7 +215,7 @@ pub mod _internal {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! binary_tag_leading {
+macro_rules! leading_tag {
     () => {
         "icu4x:"
     };
@@ -223,7 +223,7 @@ macro_rules! binary_tag_leading {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! binary_tag_trailing {
+macro_rules! trailing_tag {
     () => {
         "\0"
     };
@@ -231,12 +231,20 @@ macro_rules! binary_tag_trailing {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! binary_tagged {
+macro_rules! tagged {
     ($without_tags:expr) => {
         concat!(
-            $crate::binary_tag_leading!(),
+            $crate::leading_tag!(),
             $without_tags,
-            $crate::binary_tag_trailing!()
+            $crate::trailing_tag!()
         )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! force_include_tag {
+    ($string:literal) => {
+        unsafe { core::ptr::read_volatile($crate::tagged!($string).as_ptr()) };
     };
 }

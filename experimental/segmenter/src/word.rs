@@ -151,7 +151,7 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        core::hint::black_box(icu_provider::binary_tagged!("dictionary_segmenter"));
+        icu_provider::force_include_tag!("dictionary_segmenter");
 
         let payload = provider.load(Default::default())?.take_payload()?;
         let grapheme = provider.load(Default::default())?.take_payload()?;

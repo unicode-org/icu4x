@@ -208,16 +208,16 @@ fn static_analysis(path: &Path) -> std::io::Result<HashSet<String>> {
     let mut i = 0;
     let mut last_start = None;
     while i < file.len() {
-        if file[i..].starts_with(icu_provider::binary_tag_leading!().as_bytes()) {
-            i += icu_provider::binary_tag_leading!().len();
+        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
+            i += icu_provider::leading_tag!().len();
             last_start = Some(i);
-        } else if file[i..].starts_with(icu_provider::binary_tag_trailing!().as_bytes())
+        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
             && last_start.is_some()
         {
             if let Ok(value) = std::str::from_utf8(&file[last_start.unwrap()..i]) {
                 result.insert(value.to_owned());
             }
-            i += icu_provider::binary_tag_trailing!().len();
+            i += icu_provider::trailing_tag!().len();
             last_start = None;
         } else {
             i += 1;
@@ -557,13 +557,12 @@ fn test_keys_from_bin() {
 #[test]
 fn test_options_from_bin() {
     // This is the test binary for `cargo test -p icu_segmenter --test complex_word --release`
-    assert_eq!(
+    assert!(
         options_from_bin(
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
                 .join("tests/data/complex_word-b46191e5ca4b3378")
         )
         .unwrap()
-        .dictionary_segmenter,
-        true
+        .dictionary_segmenter
     )
 }
