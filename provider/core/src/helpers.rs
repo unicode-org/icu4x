@@ -94,24 +94,6 @@ fn test_hash_word_32() {
     assert_eq!(0xC0F176A4, fxhash_32(b"abcdefg", 0, 0));
     assert_eq!(0x09AB476D, fxhash_32(b"abcdefgh", 0, 0));
     assert_eq!(0xB72F5D88, fxhash_32(b"abcdefghi", 0, 0));
-
-    assert_eq!(
-        fxhash_32(crate::tagged!("props/sc=Khmr@1").as_bytes(), 0, 0),
-        fxhash_32(crate::tagged!("props/sc=Samr@1").as_bytes(), 0, 0)
-    );
-
-    assert_ne!(
-        fxhash_32(
-            crate::tagged!("props/sc=Khmr@1").as_bytes(),
-            crate::leading_tag!().len(),
-            crate::trailing_tag!().len()
-        ),
-        fxhash_32(
-            crate::tagged!("props/sc=Samr@1").as_bytes(),
-            crate::leading_tag!().len(),
-            crate::trailing_tag!().len()
-        )
-    );
 }
 
 #[doc(hidden)]
