@@ -157,9 +157,9 @@ impl AsULE for MirroredPairedBracketData {
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
-        let ch = u32::from(self.mirroring_glyph);
+        let mut ch = u32::from(self.mirroring_glyph);
         ch |= u32::from(self.mirrored) << 21;
-        ch |= self.paired_bracket_type.0 << 22;
+        ch |= (self.paired_bracket_type.0 as u32) << 22;
         let [byte0, byte1, byte2, _] = ch.to_le_bytes();
         MirroredPairedBracketDataULE([byte0, byte1, byte2])
     }
