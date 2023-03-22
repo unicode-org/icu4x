@@ -116,11 +116,10 @@ pub mod prelude {
 
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_adapters::empty::EmptyDataProvider;
-use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
 use prelude::*;
 use rayon::prelude::*;
+use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
@@ -194,6 +193,39 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     strings.iter().filter_map(crate::key).collect()
 }
 
+/// Parses a compiled binary and returns the [`Options`](options::Options) for it.
+pub fn options_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<options::Options> {
+    let mut options = options::Options::default();
+    let tags = static_analysis(path.as_ref())?;
+    options.keys = options::KeyInclude::Explicit(tags.iter().filter_map(crate::key).collect());
+    options.dictionary_segmenter = tags.contains("dictionary_segmenter");
+    Ok(options)
+}
+
+fn static_analysis(path: &Path) -> std::io::Result<HashSet<String>> {
+    let file = std::fs::read(path)?;
+    let mut result = HashSet::new();
+    let mut i = 0;
+    let mut last_start = None;
+    while i < file.len() {
+        if file[i..].starts_with(icu_provider::binary_tag_leading!().as_bytes()) {
+            i += icu_provider::binary_tag_leading!().len();
+            last_start = Some(i);
+        } else if file[i..].starts_with(icu_provider::binary_tag_trailing!().as_bytes())
+            && last_start.is_some()
+        {
+            if let Ok(value) = std::str::from_utf8(&file[last_start.unwrap()..i]) {
+                result.insert(value.to_owned());
+            }
+            i += icu_provider::binary_tag_trailing!().len();
+            last_start = None;
+        } else {
+            i += 1;
+        }
+    }
+    Ok(result)
+}
+
 #[doc(hidden)]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     BufReader::new(std::fs::File::open(path.as_ref())?)
@@ -202,43 +234,13 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect()
 }
 
-
-/// Parses a compiled binary and returns the [`Options`](options::Options) for it.
-pub fn options_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<options::Options> {
-    let mut options = options::Options::default();
-    options.keys = options::KeyInclude::Explicit(keys_from_bin(path)?.into_iter().collect());
-    // TODO: more static analysis
-    options
-}
-
 #[doc(hidden)]
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    let file = std::fs::read(path.as_ref())?;
-    let mut result = Vec::new();
-    let mut i = 0;
-    let mut last_start = None;
-    while i < file.len() {
-        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-            i += icu_provider::leading_tag!().len();
-            last_start = Some(i);
-        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
-            && last_start.is_some()
-        {
-            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
-                .ok()
-                .and_then(crate::key)
-            {
-                result.push(key);
-            }
-            i += icu_provider::trailing_tag!().len();
-            last_start = None;
-        } else {
-            i += 1;
-        }
-    }
-    result.sort();
-    result.dedup();
-    Ok(result)
+    let mut strings = static_analysis(path.as_ref())?
+        .into_iter()
+        .collect::<Vec<_>>();
+    strings.sort();
+    Ok(strings.into_iter().filter_map(crate::key).collect())
 }
 
 /// Options for configuring the output of databake.
@@ -367,21 +369,33 @@ pub fn datagen(
         Options {
             keys: KeyInclude::Explicit(keys.iter().cloned().collect()),
             locales: locales
-                .map(Into::into)
-                .map(LocaleInclude::Explicit)
+                .map(|ls| LocaleInclude::Explicit(ls.iter().cloned().collect()))
                 .unwrap_or(LocaleInclude::All),
             ..Default::default()
         },
-        source,
+        source.clone(),
         outs,
     )
 }
 
+/// Runs ICU4X datagen, transforming the data in `source` into the output formats in `Out`,
+/// using the specified `options`.
+///
+/// See the documentation on [`Options`](options::Options), [`SourceData`], and [`Out`].
 pub fn datagen_with_options(
     options: options::Options,
-    source: &SourceData,
+    mut source: SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
+    if source.options != Default::default() {
+        return Err(DataError::custom("Options were set on both SourceData and Options. Setting options on SourceData is deprecated."));
+    }
+
+    source.options = options;
+    source.resolve()?;
+
+    let provider = DatagenProvider { source };
+
     let exporters = outs
         .into_iter()
         .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
@@ -431,30 +445,30 @@ pub fn datagen_with_options(
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    use options::LocaleInclude;
-    let provider: Box<dyn ExportableProvider> = match options.locales.resolved(source)? {
-        LocaleInclude::None => Box::<EmptyDataProvider>::default(),
-        LocaleInclude::Explicit(locales) => Box::new(
-            DatagenProvider {
-                source: source.clone(),
-            }
-            .filterable("icu4x-datagen locales")
-            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        ),
-        LocaleInclude::All => Box::new(DatagenProvider {
-            source: source.clone(),
-        }),
-        _ => unreachable!("CLDR levels have been resolved"),
-    };
-
-    options
-        .keys
-        .resolved()
+    provider
+        .source
+        .options
+        .resolved_keys()
         .into_par_iter()
         .try_for_each(|key| {
-            let locales = provider
+            let mut locales = provider
                 .supported_locales_for_key(key)
                 .map_err(|e| e.with_key(key))?;
+
+            // TODO: Push this down into `supported_locales_for_key` and implement per-key locale logic for all keys
+            if key != icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY
+                && key != icu_calendar::provider::WeekDataV1Marker::KEY
+            {
+                locales = match &provider.source.options.locales {
+                    options::LocaleInclude::All => locales,
+                    options::LocaleInclude::Explicit(set) => locales
+                        .into_iter()
+                        .filter(|l| set.contains(&l.get_langid()))
+                        .collect(),
+                    _ => unreachable!("resolved"),
+                };
+            }
+
             let res = locales.into_par_iter().try_for_each(|locale| {
                 let req = DataRequest {
                     locale: &locale,
@@ -522,7 +536,7 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
+    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::buffer_no_fallback`
     // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
@@ -538,4 +552,18 @@ fn test_keys_from_bin() {
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
+}
+
+#[test]
+fn test_options_from_bin() {
+    // This is the test binary for `cargo test -p icu_segmenter --test complex_word --release`
+    assert_eq!(
+        options_from_bin(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/data/complex_word-b46191e5ca4b3378")
+        )
+        .unwrap()
+        .dictionary_segmenter,
+        true
+    )
 }

@@ -31,8 +31,12 @@ mod test;
 fn has_legacy_swedish_variants(source: &crate::SourceData) -> bool {
     source
         .icuexport()
-        .and_then(|i| i.list(&format!("collation/{}", source.collation_han_database())))
-        .map(|mut iter| iter.any(|s| s == "sv_reformed_meta.toml"))
+        .and_then(|i| {
+            i.file_exists(&format!(
+                "collation/{}/sv_reformed_meta.toml",
+                source.options.collation_han_database,
+            ))
+        })
         .unwrap_or(false)
 }
 
@@ -110,19 +114,14 @@ impl crate::DatagenProvider {
     /// Whether to include the given collation value based on
     /// the default excludes and explicit includes.
     fn should_include_collation(&self, collation: &Value) -> bool {
-        let collation_str = collation.write_to_string();
-        if self
-            .source
-            .collations()
-            .iter()
-            .any(|s| s == &*collation_str)
-        {
+        let collation_str = &*collation.write_to_string();
+        if self.source.options.collations.contains(collation_str) {
             true
         } else if collation_str.starts_with("search") {
             // Note: literal "search" and "searchjl" are handled above
-            self.source.collations().iter().any(|s| s == "search*")
+            self.source.options.collations.contains("search*")
         } else {
-            !DEFAULT_REMOVED_COLLATIONS.contains(&&*collation_str)
+            !DEFAULT_REMOVED_COLLATIONS.contains(&collation_str)
         }
     }
 }
@@ -137,7 +136,7 @@ macro_rules! collation_provider {
                         .icuexport()?
                         .read_and_parse_toml(&format!(
                             "collation/{}/{}{}.toml",
-                            self.source.collation_han_database(),
+                            self.source.options.collation_han_database,
                             locale_to_file_name(&req.locale, has_legacy_swedish_variants(&self.source)),
                             $suffix
                         ))
@@ -166,7 +165,7 @@ macro_rules! collation_provider {
                         .icuexport()?
                         .list(&format!(
                             "collation/{}",
-                            self.source.collation_han_database()
+                            self.source.options.collation_han_database
                         ))?
                         .filter_map(|mut file_name| {
                             file_name.truncate(file_name.len() - ".toml".len());

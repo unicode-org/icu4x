@@ -9,7 +9,7 @@ use std::fmt::Debug;
 use std::str::FromStr;
 
 /// Specifies a variant of CLDR JSON
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 #[non_exhaustive]
 pub enum CoverageLevel {
     /// Locales listed as modern coverage targets by the CLDR subcomittee.

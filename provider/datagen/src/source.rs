@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
@@ -22,13 +23,12 @@ use zip::ZipArchive;
 #[derive(Clone, Debug)]
 #[non_exhaustive]
 pub struct SourceData {
-    cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
-    segmenter_lstm_paths: Arc<SerdeCache>,
-    trie_type: IcuTrieType,
-    collation_han_database: CollationHanDatabase,
-    collations: Vec<String>,
+    pub(crate) cldr_paths: Option<Arc<CldrCache>>,
+    pub(crate) icuexport_paths: Option<Arc<SerdeCache>>,
+    pub(crate) segmenter_paths: Arc<SerdeCache>,
+    pub(crate) segmenter_lstm_paths: Arc<SerdeCache>,
+    // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
+    pub(crate) options: Options,
 }
 
 impl Default for SourceData {
@@ -44,9 +44,7 @@ impl Default for SourceData {
             segmenter_lstm_paths: Arc::new(SerdeCache::new(
                 AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
             )),
-            trie_type: IcuTrieType::Small,
-            collation_han_database: CollationHanDatabase::Implicit,
-            collations: vec![],
+            options: Default::default(),
         }
     }
 }
@@ -164,29 +162,44 @@ impl SourceData {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
     }
 
+    #[deprecated(note = "use crate::Options", since = "1.2.0")]
     /// Set this to use tries optimized for speed instead of data size
     pub fn with_fast_tries(self) -> Self {
         Self {
-            trie_type: IcuTrieType::Fast,
+            options: Options {
+                trie_type: crate::options::IcuTrieType::Fast,
+                ..self.options
+            },
             ..self
         }
     }
 
+    #[deprecated(note = "use crate::Options", since = "1.2.0")]
     /// Set the [`CollationHanDatabase`] version.
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
-            collation_han_database,
+            options: Options {
+                collation_han_database,
+                ..self.options
+            },
             ..self
         }
     }
 
+    #[deprecated(note = "use crate::Options", since = "1.2.0")]
     /// Set the list of BCP-47 collation IDs to include beyond the default set.
     ///
     /// If a list was already set, this function overwrites the previous list.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
     pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self { collations, ..self }
+        Self {
+            options: Options {
+                collations: collations.into_iter().collect(),
+                ..self.options
+            },
+            ..self
+        }
     }
 
     /// Paths to CLDR source data.
@@ -212,18 +225,6 @@ impl SourceData {
         Ok(&self.segmenter_lstm_paths)
     }
 
-    pub(crate) fn trie_type(&self) -> IcuTrieType {
-        self.trie_type
-    }
-
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
-    }
-
-    pub(crate) fn collations(&self) -> &[String] {
-        &self.collations
-    }
-
     /// List the locales for the given CLDR coverage levels
     pub fn locales(
         &self,
@@ -233,51 +234,8 @@ impl SourceData {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum IcuTrieType {
-    Fast,
-    Small,
-}
-
-impl IcuTrieType {
-    pub(crate) fn to_internal(self) -> icu_collections::codepointtrie::TrieType {
-        match self {
-            IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-            IcuTrieType::Small => icu_collections::codepointtrie::TrieType::Small,
-        }
-    }
-}
-
-impl std::fmt::Display for IcuTrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            IcuTrieType::Fast => write!(f, "fast"),
-            IcuTrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    Implicit,
-    /// Unihan
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
+#[doc(hidden)]
+pub use crate::options::CollationHanDatabase;
 
 pub(crate) struct SerdeCache {
     root: AbstractFs,

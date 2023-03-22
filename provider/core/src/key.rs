@@ -4,6 +4,7 @@
 
 use crate::error::{DataError, DataErrorKind};
 use crate::helpers;
+use crate::{binary_tag_leading, binary_tag_trailing};
 
 use alloc::borrow::Cow;
 use core::fmt;
@@ -11,34 +12,6 @@ use core::fmt::Write;
 use core::ops::Deref;
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! leading_tag {
-    () => {
-        "\nicu4x_key_tag"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! trailing_tag {
-    () => {
-        "\n"
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! tagged {
-    ($without_tags:expr) => {
-        concat!(
-            $crate::leading_tag!(),
-            $without_tags,
-            $crate::trailing_tag!()
-        )
-    };
-}
 
 /// A compact hash of a [`DataKey`]. Useful for keys in maps.
 ///
@@ -52,8 +25,8 @@ impl DataKeyHash {
     const fn compute_from_path(path: DataKeyPath) -> Self {
         let hash = helpers::fxhash_32(
             path.tagged.as_bytes(),
-            leading_tag!().len(),
-            trailing_tag!().len(),
+            binary_tag_leading!().len(),
+            binary_tag_trailing!().len(),
         );
         Self(hash.to_le_bytes())
     }
@@ -131,7 +104,7 @@ pub enum FallbackSupplement {
 /// The string path of a data key. For example, "foo@1"
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataKeyPath {
-    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
+    // This string literal is wrapped in binary_tag_leading!() and binary_tag_trailing!() to make it detectable
     // in a compiled binary.
     tagged: &'static str,
 }
@@ -143,8 +116,8 @@ impl DataKeyPath {
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::mem::transmute((
-                self.tagged.as_ptr().add(leading_tag!().len()),
-                self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
+                self.tagged.as_ptr().add(binary_tag_leading!().len()),
+                self.tagged.len() - binary_tag_trailing!().len() - binary_tag_leading!().len(),
             )))
         }
     }
@@ -334,24 +307,24 @@ impl DataKey {
         path: &'static str,
         metadata: DataKeyMetadata,
     ) -> Result<Self, (&'static str, usize)> {
-        if path.len() < leading_tag!().len() + trailing_tag!().len() {
+        if path.len() < binary_tag_leading!().len() + binary_tag_trailing!().len() {
             return Err(("tag", 0));
         }
         // Start and end of the untagged part
-        let start = leading_tag!().len();
-        let end = path.len() - trailing_tag!().len();
+        let start = binary_tag_leading!().len();
+        let end = path.len() - binary_tag_trailing!().len();
 
         // Check tags
         let mut i = 0;
-        while i < leading_tag!().len() {
-            if path.as_bytes()[i] != leading_tag!().as_bytes()[i] {
+        while i < binary_tag_leading!().len() {
+            if path.as_bytes()[i] != binary_tag_leading!().as_bytes()[i] {
                 return Err(("tag", 0));
             }
             i += 1;
         }
         i = 0;
-        while i < trailing_tag!().len() {
-            if path.as_bytes()[end + i] != trailing_tag!().as_bytes()[i] {
+        while i < binary_tag_trailing!().len() {
+            if path.as_bytes()[end + i] != binary_tag_trailing!().as_bytes()[i] {
                 return Err(("tag", end + 1));
             }
             i += 1;
@@ -464,7 +437,7 @@ macro_rules! data_key {
     ($path:expr, $metadata:expr) => {{
         // Force the DataKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::DataKey = {
-            match $crate::DataKey::construct_internal($crate::tagged!($path), $metadata) {
+            match $crate::DataKey::construct_internal($crate::binary_tagged!($path), $metadata) {
                 Ok(v) => v,
                 #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
@@ -473,7 +446,7 @@ macro_rules! data_key {
                 //     "Invalid resource key {:?}: expected {:?}, found {:?} ",
                 //     $path,
                 //     expected,
-                //     $crate::tagged!($path).get(index..))
+                //     $crate::binary_tagged!($path).get(index..))
                 // );
             }
         };
@@ -509,88 +482,100 @@ writeable::impl_display_with_writeable!(DataKey);
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    DataKey::construct_internal(tagged!("hello/world@1"), Default::default()).unwrap();
-    DataKey::construct_internal(tagged!("hello/world/foo@1"), Default::default()).unwrap();
-    DataKey::construct_internal(tagged!("hello/world@999"), Default::default()).unwrap();
-    DataKey::construct_internal(tagged!("hello_world/foo@1"), Default::default()).unwrap();
-    DataKey::construct_internal(tagged!("hello_458/world@1"), Default::default()).unwrap();
-    DataKey::construct_internal(tagged!("hello_world@1"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello/world@1"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello/world/foo@1"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello/world@999"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello_world/foo@1"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello_458/world@1"), Default::default()).unwrap();
+    DataKey::construct_internal(binary_tagged!("hello_world@1"), Default::default()).unwrap();
 
     // No version:
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world"), Default::default()),
+        DataKey::construct_internal(binary_tagged!("hello/world"), Default::default()),
         Err((
             "[a-zA-z0-9_/@]",
-            concat!(leading_tag!(), "hello/world").len()
+            concat!(binary_tag_leading!(), "hello/world").len()
         ))
     );
 
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
+        DataKey::construct_internal(binary_tagged!("hello/world@"), Default::default()),
+        Err((
+            "[0-9]",
+            concat!(binary_tag_leading!(), "hello/world@").len()
+        ))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@foo"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
+        DataKey::construct_internal(binary_tagged!("hello/world@foo"), Default::default()),
+        Err((
+            "[0-9]",
+            concat!(binary_tag_leading!(), "hello/world@").len()
+        ))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1foo"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
+        DataKey::construct_internal(binary_tagged!("hello/world@1foo"), Default::default()),
+        Err((
+            "[0-9]",
+            concat!(binary_tag_leading!(), "hello/world@1").len()
+        ))
     );
 
     // Meta no longer accepted:
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[R]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[R]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[u-ca]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[u-ca]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[R][u-ca]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[R][u-ca]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
 
     // Invalid meta:
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[U]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[U]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[uca]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[uca]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[u-"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[u-"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[u-caa]"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[u-caa]"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[R"), Default::default()),
-        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+        DataKey::construct_internal(binary_tagged!("foo@1[R"), Default::default()),
+        Err(("[0-9]", concat!(binary_tag_leading!(), "foo@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
-        DataKey::construct_internal(tagged!("你好/世界@1"), Default::default()),
-        Err(("[a-zA-Z0-9_]", leading_tag!().len()))
+        DataKey::construct_internal(binary_tagged!("你好/世界@1"), Default::default()),
+        Err(("[a-zA-Z0-9_]", binary_tag_leading!().len()))
     );
 
     // Invalid tag:
     assert_eq!(
         DataKey::construct_internal(
-            concat!("hello/world@1", trailing_tag!()),
+            concat!("hello/world@1", binary_tag_trailing!()),
             Default::default()
         ),
         Err(("tag", 0))
     );
     assert_eq!(
-        DataKey::construct_internal(concat!(leading_tag!(), "hello/world@1"), Default::default()),
-        Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
+        DataKey::construct_internal(
+            concat!(binary_tag_leading!(), "hello/world@1"),
+            Default::default()
+        ),
+        Err(("tag", concat!(binary_tag_leading!(), "hello/world@1").len()))
     );
     assert_eq!(
         DataKey::construct_internal("hello/world@1", Default::default()),

@@ -6,7 +6,7 @@
 
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::{langid, locale};
+use icu_locid::langid;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
     SentenceBreak, WordBreak,
@@ -593,7 +593,7 @@ impl crate::DatagenProvider {
                 data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
                 default_value: 0,
                 error_value: 0,
-                trie_type: self.source.trie_type().to_internal(),
+                trie_type: self.source.options.trie_type.to_internal(),
             }
             .build()
         };
@@ -749,13 +749,27 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            locale!("th").into(),
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-            locale!("ja").into(),
-        ])
+        let supported = [
+            langid!("th"),
+            langid!("km"),
+            langid!("lo"),
+            langid!("my"),
+            langid!("ja"),
+        ];
+
+        let needed = supported
+            .iter()
+            .filter(|l| self.source.options.dictionary_segmenter || langid!("ja") == **l);
+
+        use crate::options::LocaleInclude;
+        Ok(match &self.source.options.locales {
+            LocaleInclude::All => needed.map(DataLocale::from).collect(),
+            LocaleInclude::Explicit(set) => needed
+                .filter(|l| set.contains(l))
+                .map(DataLocale::from)
+                .collect(),
+            _ => unreachable!("resolved"),
+        })
     }
 }
 
@@ -775,6 +789,31 @@ mod tests {
         assert_eq!(
             data.complex_property, 127,
             "Grapheme cluster data doesn't handle SA"
+        );
+    }
+
+    #[test]
+    fn supported_locales() {
+        let mut provider = crate::DatagenProvider::for_test();
+
+        assert_eq!(
+            IterableDataProvider::<UCharDictionaryBreakDataV1Marker>::supported_locales(&provider)
+                .unwrap(),
+            vec![langid!("ja").into(),]
+        );
+
+        provider.source.options.dictionary_segmenter = true;
+
+        assert_eq!(
+            IterableDataProvider::<UCharDictionaryBreakDataV1Marker>::supported_locales(&provider)
+                .unwrap(),
+            vec![
+                langid!("th").into(),
+                langid!("km").into(),
+                langid!("lo").into(),
+                langid!("my").into(),
+                langid!("ja").into(),
+            ]
         );
     }
 }

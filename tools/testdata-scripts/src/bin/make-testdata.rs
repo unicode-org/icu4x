@@ -70,11 +70,11 @@ fn main() {
                     ))
                     .collect(),
             );
-            options.locales = options::LocaleInclude::Explicit(LOCALES.to_vec());
-            options.include_root_locale = true;
+            options.locales = options::LocaleInclude::Explicit(LOCALES.iter().cloned().collect());
+            options.dictionary_segmenter = true;
             options
         },
-        &source,
+        source,
         vec![json_out, blob_out, mod_out, postcard_out],
     )
     .unwrap();

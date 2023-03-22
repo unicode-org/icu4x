@@ -212,3 +212,31 @@ pub use crate::response::Cart;
 pub mod _internal {
     pub use icu_locid::extensions_unicode_key;
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! binary_tag_leading {
+    () => {
+        "icu4x:"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! binary_tag_trailing {
+    () => {
+        "\0"
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! binary_tagged {
+    ($without_tags:expr) => {
+        concat!(
+            $crate::binary_tag_leading!(),
+            $without_tags,
+            $crate::binary_tag_trailing!()
+        )
+    };
+}

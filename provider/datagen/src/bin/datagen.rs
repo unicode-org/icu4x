@@ -4,6 +4,7 @@
 
 use clap::{crate_version, ArgGroup, Parser};
 use eyre::WrapErr;
+use icu_datagen::options::*;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
 use std::path::PathBuf;
@@ -222,28 +223,81 @@ fn main() -> eyre::Result<()> {
             .unwrap()
     }
 
-    let selected_keys = if matches.all_keys {
-        icu_datagen::all_keys()
-    } else if !matches.keys.is_empty() {
-        match matches.keys.as_slice() {
-            [x] if x == "none" => vec![],
-            [x] if x == "all" => icu_datagen::all_keys(),
-            [x] if x == "experimental-all" => icu_datagen::all_keys_with_experimental(),
-            keys => icu_datagen::keys(keys),
-        }
-    } else if let Some(ref key_file_path) = matches.key_file {
-        icu_datagen::keys_from_file(key_file_path)
-            .with_context(|| key_file_path.to_string_lossy().into_owned())?
-    } else if let Some(ref bin_path) = matches.keys_for_bin {
-        icu_datagen::keys_from_bin(bin_path)
+    let mut options = if let Some(bin_path) = matches.keys_for_bin {
+        icu_datagen::options_from_bin(&bin_path)
             .with_context(|| bin_path.to_string_lossy().into_owned())?
     } else {
-        unreachable!("required group")
+        Default::default()
     };
 
-    if selected_keys.is_empty() {
-        log::warn!("No keys selected");
+    if matches.all_keys {
+        options.keys = KeyInclude::All
+    } else if !matches.keys.is_empty() {
+        options.keys = match matches.keys.as_slice() {
+            [x] if x == "none" => KeyInclude::None,
+            [x] if x == "all" => KeyInclude::All,
+            [x] if x == "experimental-all" => KeyInclude::AllWithExperimental,
+            keys => KeyInclude::Explicit(icu_datagen::keys(keys).into_iter().collect()),
+        }
+    } else if let Some(key_file_path) = matches.key_file {
+        options.keys = KeyInclude::Explicit(
+            icu_datagen::keys_from_file(&key_file_path)
+                .with_context(|| key_file_path.to_string_lossy().into_owned())?
+                .into_iter()
+                .collect(),
+        )
     }
+
+    if let KeyInclude::Explicit(e) = &options.keys {
+        if e.is_empty() {
+            log::warn!("No keys selected");
+        }
+    }
+
+    options.trie_type = match matches.trie_type {
+        cli::TrieType::Fast => options::IcuTrieType::Fast,
+        cli::TrieType::Small => options::IcuTrieType::Small,
+    };
+
+    options.collation_han_database = match matches.collation_han_database {
+        cli::CollationHanDatabase::Unihan => CollationHanDatabase::Unihan,
+        cli::CollationHanDatabase::Implicit => CollationHanDatabase::Implicit,
+    };
+
+    options.collations = matches
+        .include_collations
+        .iter()
+        .map(|c| c.to_datagen_value().to_owned())
+        .collect();
+
+    options.locales = if matches.locales.as_slice() == ["none"] {
+        LocaleInclude::None
+    } else if matches.locales.as_slice() == ["full"] || matches.all_locales {
+        LocaleInclude::All
+    } else if let Some(locale_subsets) = matches
+        .locales
+        .iter()
+        .map(|s| match &**s {
+            "basic" => Some(CoverageLevel::Basic),
+            "moderate" => Some(CoverageLevel::Moderate),
+            "modern" => Some(CoverageLevel::Modern),
+            _ => None,
+        })
+        .collect::<Option<Vec<_>>>()
+    {
+        LocaleInclude::CldrSet(locale_subsets.into_iter().collect())
+    } else {
+        LocaleInclude::Explicit(
+            matches
+                .locales
+                .iter()
+                .map(|s| {
+                    s.parse::<LanguageIdentifier>()
+                        .with_context(|| s.to_string())
+                })
+                .collect::<Result<_, eyre::Error>>()?,
+        )
+    };
 
     let mut source_data = SourceData::default();
     if let Some(path) = matches.cldr_root {
@@ -279,54 +333,6 @@ fn main() -> eyre::Result<()> {
             eyre::bail!("--icuexport-root flag is mandatory unless datagen is built with the `\"networking\"` feature");
         }
     }
-
-    if matches.trie_type == cli::TrieType::Fast {
-        source_data = source_data.with_fast_tries();
-    }
-
-    source_data = source_data.with_collation_han_database(match matches.collation_han_database {
-        cli::CollationHanDatabase::Unihan => CollationHanDatabase::Unihan,
-        cli::CollationHanDatabase::Implicit => CollationHanDatabase::Implicit,
-    });
-
-    if !matches.include_collations.is_empty() {
-        source_data = source_data.with_collations(
-            matches
-                .include_collations
-                .iter()
-                .map(|c| c.to_datagen_value().to_owned())
-                .collect(),
-        );
-    }
-
-    let raw_locales = &matches.locales;
-
-    let selected_locales = if raw_locales == &["none"] || selected_keys.is_empty() {
-        Some(vec![])
-    } else if raw_locales == &["full"] || matches.all_locales {
-        None
-    } else if let Some(locale_subsets) = raw_locales
-        .iter()
-        .map(|s| match &**s {
-            "basic" => Some(CoverageLevel::Basic),
-            "moderate" => Some(CoverageLevel::Moderate),
-            "modern" => Some(CoverageLevel::Modern),
-            _ => None,
-        })
-        .collect::<Option<Vec<_>>>()
-    {
-        Some(source_data.locales(&locale_subsets)?)
-    } else {
-        Some(
-            raw_locales
-                .iter()
-                .map(|s| {
-                    s.parse::<LanguageIdentifier>()
-                        .with_context(|| s.to_string())
-                })
-                .collect::<Result<Vec<LanguageIdentifier>, eyre::Error>>()?,
-        )
-    };
 
     let out = match matches.format {
         v @ (cli::Format::Dir | cli::Format::DeprecatedDefault) => {
@@ -375,11 +381,6 @@ fn main() -> eyre::Result<()> {
         }
     };
 
-    icu_datagen::datagen(
-        selected_locales.as_deref(),
-        &selected_keys,
-        &source_data,
-        vec![out],
-    )
-    .map_err(eyre::ErrReport::from)
+    icu_datagen::datagen_with_options(options, source_data, vec![out])
+        .map_err(eyre::ErrReport::from)
 }
