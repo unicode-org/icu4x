@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Grapheme_Link"
 short_name = "Gr_Link"
+uproperty_discr = C
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x94d, 0x94d],

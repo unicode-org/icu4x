@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Basic_Emoji"
 short_name = "Basic_Emoji"
+uproperty_discr = 41
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x231a, 0x231b],
