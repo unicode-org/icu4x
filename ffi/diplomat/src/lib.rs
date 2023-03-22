@@ -44,14 +44,27 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
+// Common modules
+
+pub mod common;
+pub mod data_struct;
+pub mod errors;
+pub mod fallbacker;
+pub mod locale;
+pub mod logging;
+pub mod provider;
+
+#[cfg(target_arch = "wasm32")]
+mod wasm_glue;
+
+// Components
+
 #[cfg(feature = "icu_properties")]
 pub mod bidi;
 #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod calendar;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
-pub mod common;
-pub mod data_struct;
 #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod date;
 #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
@@ -62,16 +75,12 @@ pub mod datetime_formatter;
 pub mod decimal;
 #[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
-pub mod errors;
-pub mod fallbacker;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
 #[cfg(feature = "icu_list")]
 pub mod list;
-pub mod locale;
 #[cfg(feature = "icu_locid_transform")]
 pub mod locid_transform;
-pub mod logging;
 #[cfg(feature = "icu_normalizer")]
 pub mod normalizer;
 #[cfg(feature = "icu_normalizer")]
@@ -86,7 +95,6 @@ pub mod properties_names;
 pub mod properties_sets;
 #[cfg(feature = "icu_properties")]
 pub mod properties_unisets;
-pub mod provider;
 #[cfg(feature = "icu_properties")]
 pub mod script;
 #[cfg(feature = "icu_segmenter")]
@@ -107,6 +115,3 @@ pub mod timezone_formatter;
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;
-
-#[cfg(target_arch = "wasm32")]
-mod wasm_glue;

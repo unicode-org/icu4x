@@ -20,7 +20,7 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
     pub struct ICU4XCustomTimeZone(pub CustomTimeZone);
- 
+
     #[cfg(feature = "icu_timezone")]
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
