@@ -6,7 +6,7 @@ use self::ffi::ICU4XError;
 use core::fmt;
 #[cfg(feature = "icu_decimal")]
 use fixed_decimal::Error as FixedDecimalError;
-#[cfg(feature = "icu_datetime")]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 use icu_calendar::CalendarError;
 #[cfg(feature = "icu_collator")]
 use icu_collator::CollatorError;
@@ -28,7 +28,7 @@ use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
 #[cfg(feature = "icu_segmenter")]
 use icu_segmenter::SegmenterError;
-#[cfg(feature = "icu_datetime")]
+#[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 use icu_timezone::TimeZoneError;
 use tinystr::TinyStrError;
 
@@ -232,7 +232,7 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
-#[cfg(feature = "icu_datetime")]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 impl From<CalendarError> for ICU4XError {
     fn from(e: CalendarError) -> Self {
         match e {
@@ -370,7 +370,7 @@ impl From<TinyStrError> for ICU4XError {
     }
 }
 
-#[cfg(feature = "icu_datetime")]
+#[cfg(any(feature = "icu_timezone", feature = "icu_datetime"))]
 impl From<TimeZoneError> for ICU4XError {
     fn from(e: TimeZoneError) -> Self {
         match e {

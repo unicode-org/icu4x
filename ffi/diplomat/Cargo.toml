@@ -82,7 +82,7 @@ icu_normalizer = ["dep:icu_normalizer"]
 icu_plurals = ["dep:icu_plurals", "dep:fixed_decimal"]
 icu_properties = ["dep:icu_properties", "dep:icu_collections", "dep:unicode-bidi"]
 icu_segmenter = ["dep:icu_segmenter"]
-# icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"] # Useful on its own, not exposed initially
+icu_timezone = ["dep:icu_timezone", "dep:icu_calendar"]
 
 
 [dependencies]

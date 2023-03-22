@@ -20,7 +20,8 @@ pub mod ffi {
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
     pub struct ICU4XCustomTimeZone(pub CustomTimeZone);
-
+ 
+    #[cfg(feature = "icu_timezone")]
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
     pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
@@ -291,6 +292,7 @@ pub mod ffi {
             FnInStruct,
             compact
         )]
+        #[cfg(feature = "icu_timezone")]
         pub fn maybe_calculate_metazone(
             &mut self,
             metazone_calculator: &ICU4XMetazoneCalculator,
@@ -301,8 +303,10 @@ pub mod ffi {
         }
     }
 
+    #[cfg(feature = "icu_timezone")]
     impl ICU4XMetazoneCalculator {
         #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
+        #[cfg(feature = "icu_timezone")]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XError> {

@@ -46,15 +46,15 @@ extern crate alloc;
 
 #[cfg(feature = "icu_properties")]
 pub mod bidi;
-#[cfg(any(feature = "icu_datetime"))]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod calendar;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
 pub mod common;
 pub mod data_struct;
-#[cfg(any(feature = "icu_datetime"))]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod date;
-#[cfg(any(feature = "icu_datetime"))]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod datetime;
 #[cfg(feature = "icu_datetime")]
 pub mod datetime_formatter;
@@ -97,13 +97,13 @@ pub mod segmenter_line;
 pub mod segmenter_sentence;
 #[cfg(feature = "icu_segmenter")]
 pub mod segmenter_word;
-#[cfg(any(feature = "icu_datetime"))]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod time;
-#[cfg(any(feature = "icu_datetime"))]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
-#[cfg(feature = "icu_datetime")]
+#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;
