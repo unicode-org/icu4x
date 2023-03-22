@@ -136,8 +136,8 @@ unsafe impl ULE for MirroredPairedBracketDataULE {
             let mut mirroring_glyph_code_point: u32 = (byte2 & 0x1F) as u32;
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte1 as u32);
             mirroring_glyph_code_point = (mirroring_glyph_code_point << 8) | (byte0 as u32);
-            let _mirroring_glyph = char::from_u32(mirroring_glyph_code_point)
-                .ok_or(ZeroVecError::parse::<Self>())?;
+            let _mirroring_glyph =
+                char::from_u32(mirroring_glyph_code_point).ok_or(ZeroVecError::parse::<Self>())?;
 
             // skip validating the Bidi_Mirrored boolean since it is always valid
 
