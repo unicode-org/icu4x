@@ -157,6 +157,7 @@ impl std::fmt::Display for CollationHanDatabase {
 
 /// Specifies the trie type to use.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum IcuTrieType {
     /// Fast tries are optimized for speed
     Fast,
