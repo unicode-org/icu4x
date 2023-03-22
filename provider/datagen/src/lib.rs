@@ -371,9 +371,12 @@ pub fn datagen(
             locales: locales
                 .map(|ls| LocaleInclude::Explicit(ls.iter().cloned().collect()))
                 .unwrap_or(LocaleInclude::All),
-            ..Default::default()
+            ..source.options.clone()
         },
-        source.clone(),
+        SourceData {
+            options: Default::default(),
+            ..source.clone()
+        },
         outs,
     )
 }
@@ -388,7 +391,7 @@ pub fn datagen_with_options(
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
     if source.options != Default::default() {
-        return Err(DataError::custom("Options were set on both SourceData and Options. Setting options on SourceData is deprecated."));
+        log::warn!("TrieType, CollationHanDatabase, or Collations set on SourceData. These will be ignored in favor of options.");
     }
 
     source.options = options;
