@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
 use alloc::string::String;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -14,7 +14,7 @@ use icu_provider::DataPayload;
 use zerovec::ule::AsULE;
 
 pub struct Lstm<'l> {
-    data: &'l DataPayload<LstmDataV1Marker>,
+    data: &'l LstmDataV1<'l>,
     mat1: MatrixZero<'l, 2>,
     mat2: MatrixZero<'l, 3>,
     mat3: MatrixZero<'l, 3>,
@@ -48,10 +48,6 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
-        // Note: We are currently copying the ZeroVecs into allocated matrices.
-        // The ICU4X style guide discourages this. We do it here because:
-        // 1. The data need to be aligned in order to be vectorized.
-        // 2. The LSTM is highly performance-sensitive.
         let mat1 = data.get().mat1.as_matrix_zero::<2>()?;
         let mat2 = data.get().mat2.as_matrix_zero::<3>()?;
         let mat3 = data.get().mat3.as_matrix_zero::<3>()?;
@@ -76,7 +72,7 @@ impl<'l> Lstm<'l> {
         }
 
         Ok(Self {
-            data,
+            data: data.get(),
             mat1,
             mat2,
             mat3,
@@ -98,7 +94,7 @@ impl<'l> Lstm<'l> {
     /// `get_model_name` returns the name of the LSTM model.
     #[allow(dead_code)]
     pub fn get_model_name(&self) -> &str {
-        &self.data.get().model
+        &self.data.model
     }
 
     #[cfg(test)]
@@ -133,11 +129,11 @@ impl<'l> Lstm<'l> {
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        let id = self.data.get().dic.get(g);
+        let id = self.data.dic.get(g);
         if let Some(id) = id {
             i16::from_unaligned(*id)
         } else {
-            self.data.get().dic.len() as i16
+            self.data.dic.len() as i16
         }
     }
 

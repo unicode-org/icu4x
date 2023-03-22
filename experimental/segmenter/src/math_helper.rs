@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use zerovec::ule::AsULE;
-use zerovec::ZeroSlice;
 use crate::lstm_error::Error;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
+use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///
@@ -137,8 +137,16 @@ macro_rules! impl_basic_dim {
 }
 
 impl_basic_dim!(MatrixOwned<1>, MatrixOwned<2>, MatrixOwned<3>);
-impl_basic_dim!(MatrixBorrowed<'a, 1>, MatrixBorrowed<'a, 2>, MatrixBorrowed<'a, 3>);
-impl_basic_dim!(MatrixBorrowedMut<'a, 1>, MatrixBorrowedMut<'a, 2>, MatrixBorrowedMut<'a, 3>);
+impl_basic_dim!(
+    MatrixBorrowed<'a, 1>,
+    MatrixBorrowed<'a, 2>,
+    MatrixBorrowed<'a, 3>
+);
+impl_basic_dim!(
+    MatrixBorrowedMut<'a, 1>,
+    MatrixBorrowedMut<'a, 2>,
+    MatrixBorrowedMut<'a, 3>
+);
 impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
 
 impl<'a> MatrixBorrowed<'a, 1> {
@@ -395,7 +403,9 @@ pub fn sigmoid(x: f32) -> f32 {
 }
 
 macro_rules! f32c {
-    ($ule:expr) => {f32::from_unaligned($ule)};
+    ($ule:expr) => {
+        f32::from_unaligned($ule)
+    };
 }
 
 /// Compute the dot product of an aligned and an unaligned f32 slice.
