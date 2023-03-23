@@ -29,12 +29,18 @@ fn get_code_point_prop_map<'a>(
         .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
-// implement data provider
+// implement data provider 2 different ways, based on whether or not
+// features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
 impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
         _: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
+        use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+        use icu_collections::codepointtrie::TrieType;
+        use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1;
+
         // Bidi_M / Bidi_Mirrored
         let bidi_m_data = bin_cp_set::get_binary_prop_for_code_point_set(&self.source, "Bidi_M")?;
         let mut bidi_m_builder = CodePointInversionListBuilder::new();
@@ -67,42 +73,37 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
             });
         let trie_vals_ule_iter = trie_vals_structured_iter.map(u32::from);
         let trie_vals_vec: Vec<u32> = trie_vals_ule_iter.collect();
+        let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);
+        let default_val: u32 = MirroredPairedBracketData::default().into();
 
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        // Create CPT<u32> using the builder, then use CPT method to map the CPT's
+        // values from u32 to MirroredPairedBracketData
+        let trie: CodePointTrie<u32> = CodePointTrieBuilder {
+            data: trie_data,
+            default_value: default_val,
+            error_value: default_val,
+            trie_type: TrieType::Small,
+        }
+        .build();
+        let trie_mpbd = trie
+            .try_alloc_map_value(MirroredPairedBracketData::try_from)
+            .map_err(|_| DataError::custom("Cannot parse MirroredPairedBracketData from u32"))?;
+
+        let data_struct = BidiAuxiliaryPropertiesV1::new(trie_mpbd);
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data_struct)),
+        })
+    }
+
+    #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
         return Err(DataError::custom(
             "icu_datagen must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
         ));
-
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        {
-            use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-            use icu_collections::codepointtrie::TrieType;
-            use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1;
-
-            let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);
-            let default_val: u32 = MirroredPairedBracketData::default().into();
-
-            // Create CPT<u32> using the builder, then use CPT method to map the CPT's
-            // values from u32 to MirroredPairedBracketData
-            let trie: CodePointTrie<u32> = CodePointTrieBuilder {
-                data: trie_data,
-                default_value: default_val,
-                error_value: default_val,
-                trie_type: TrieType::Small,
-            }
-            .build();
-            let trie_mpbd = trie
-                .try_alloc_map_value(MirroredPairedBracketData::try_from)
-                .map_err(|_| {
-                    DataError::custom("Cannot parse MirroredPairedBracketData from u32")
-                })?;
-
-            let data_struct = BidiAuxiliaryPropertiesV1::new(trie_mpbd);
-            Ok(DataResponse {
-                metadata: DataResponseMetadata::default(),
-                payload: Some(DataPayload::from_owned(data_struct)),
-            })
-        }
     }
 }
 
