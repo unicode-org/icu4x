@@ -2,17 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::icuexport::uprops::{bin_cp_set, enum_codepointtrie};
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 use crate::SourceData;
 
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::bidi_data::{
-    BidiAuxiliaryPropertiesV1Marker, MirroredPairedBracketData,
-};
+use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn get_code_point_prop_map<'a>(
     source: &'a SourceData,
     key: &str,
@@ -37,9 +34,14 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
         &self,
         _: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
+        use crate::transform::icuexport::uprops::{bin_cp_set, enum_codepointtrie};
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+        use icu_collections::codepointinvlist::CodePointInversionListBuilder;
+        use icu_collections::codepointtrie::CodePointTrie;
         use icu_collections::codepointtrie::TrieType;
-        use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1;
+        use icu_properties::provider::bidi_data::{
+            BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
+        };
 
         // Bidi_M / Bidi_Mirrored
         let bidi_m_data = bin_cp_set::get_binary_prop_for_code_point_set(&self.source, "Bidi_M")?;
