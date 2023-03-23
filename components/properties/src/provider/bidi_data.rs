@@ -57,6 +57,7 @@ impl<'data> BidiAuxiliaryPropertiesV1<'data> {
         BidiAuxiliaryPropertiesV1 { trie }
     }
 }
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
