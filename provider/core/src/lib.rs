@@ -245,6 +245,7 @@ macro_rules! tagged {
 #[macro_export]
 macro_rules! force_include_tag {
     ($string:literal) => {
+        // SAFETY: `tagged!` produces a `&str`, which is safe to read as a `u8`.
         unsafe { core::ptr::read_volatile($crate::tagged!($string).as_ptr()) };
     };
 }
