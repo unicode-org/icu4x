@@ -11,7 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Soft_Dotted"
 short_name = "SD"
-uproperty_discr = 1B
+uproperty_discr = 0x1B
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x69, 0x6a],

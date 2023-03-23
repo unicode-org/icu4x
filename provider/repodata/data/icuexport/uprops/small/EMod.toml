@@ -11,7 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Emoji_Modifier"
 short_name = "EMod"
-uproperty_discr = 3B
+uproperty_discr = 0x3B
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x1f3fb, 0x1f3ff],

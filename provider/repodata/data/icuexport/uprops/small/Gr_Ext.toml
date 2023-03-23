@@ -11,7 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Grapheme_Extend"
 short_name = "Gr_Ext"
-uproperty_discr = B
+uproperty_discr = 0xB
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x300, 0x36f],

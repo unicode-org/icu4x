@@ -11,7 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Full_Composition_Exclusion"
 short_name = "Comp_Ex"
-uproperty_discr = 9
+uproperty_discr = 0x9
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x340, 0x341],

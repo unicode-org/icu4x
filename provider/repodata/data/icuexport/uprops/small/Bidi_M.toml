@@ -11,7 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Bidi_Mirrored"
 short_name = "Bidi_M"
-uproperty_discr = 3
+uproperty_discr = 0x3
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x28, 0x29],
