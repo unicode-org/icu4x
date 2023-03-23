@@ -76,6 +76,8 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/Bidi_C.toml",
     "uprops/small/Bidi_M.toml",
     "uprops/small/blank.toml",
+    "uprops/small/bmg.toml",
+    "uprops/small/bpt.toml",
     "uprops/small/Cased.toml",
     "uprops/small/ccc.toml",
     "uprops/small/CI.toml",
