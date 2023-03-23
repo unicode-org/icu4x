@@ -255,8 +255,8 @@ fn main() -> eyre::Result<()> {
     }
 
     options.trie_type = match matches.trie_type {
-        cli::TrieType::Fast => options::IcuTrieType::Fast,
-        cli::TrieType::Small => options::IcuTrieType::Small,
+        cli::TrieType::Fast => IcuTrieType::Fast,
+        cli::TrieType::Small => IcuTrieType::Small,
     };
 
     options.collation_han_database = match matches.collation_han_database {

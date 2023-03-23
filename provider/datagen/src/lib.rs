@@ -110,7 +110,7 @@ pub mod prelude {
         options, syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
         SourceData,
     };
-    pub use icu_locid::{langid, subtags::Region, subtags_region as region, LanguageIdentifier};
+    pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
 }
 
