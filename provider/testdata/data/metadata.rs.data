@@ -25,4 +25,4 @@ pub const LOCALES: &[icu_locid::LanguageIdentifier] = &[
     icu_locid::langid!("und"),
 ];
 pub const CLDR_TAG: &str = "42.0.0";
-pub const ICUEXPORT_TAG: &str = "icu4x/2023-03-22a/72.x";
+pub const ICUEXPORT_TAG: &str = "icu4x/2023-02-24/72.x";
