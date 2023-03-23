@@ -384,7 +384,7 @@
         "camtr": {
           "_deprecated": true,
           "_description": "Montreal, Canada",
-          "_alias": "America/Montreal"
+          "_preferred": "cator"
         },
         "canpg": {
           "_description": "Nipigon, Canada",
@@ -412,7 +412,7 @@
         },
         "cator": {
           "_description": "Toronto, Canada",
-          "_alias": "America/Toronto Canada/Eastern"
+          "_alias": "America/Toronto America/Montreal Canada/Eastern"
         },
         "cavan": {
           "_description": "Vancouver, Canada",
