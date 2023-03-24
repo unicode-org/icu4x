@@ -157,8 +157,8 @@ impl<'a> MatrixBorrowed<'a, 1> {
 
 /// A `D`-dimensional, mutably borrowed matrix.
 pub struct MatrixBorrowedMut<'a, const D: usize> {
-    data: &'a mut [f32],
-    dims: [usize; D],
+    pub(crate) data: &'a mut [f32],
+    pub(crate) dims: [usize; D],
 }
 
 impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {

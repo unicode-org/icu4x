@@ -160,31 +160,31 @@ pub struct LstmDataV1<'data> {
     /// The grapheme cluster dictionary used to train the model
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dic: ZeroMap<'data, str, i16>,
-    /// The matrix associateed with embedding layer
+    /// The embedding layer
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat1: LstmMatrix<'data>,
-    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub embedding: LstmMatrix<'data>,
+    /// The forward layer's first matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat2: LstmMatrix<'data>,
-    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub fw_w: LstmMatrix<'data>,
+    /// The forward layte's second matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat3: LstmMatrix<'data>,
-    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub fw_u: LstmMatrix<'data>,
+    /// The forward layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat4: LstmMatrix<'data>,
-    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub fw_b: LstmMatrix<'data>,
+    /// The backward layer's first matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat5: LstmMatrix<'data>,
-    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub bw_w: LstmMatrix<'data>,
+    /// The backward layer's second matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat6: LstmMatrix<'data>,
-    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    pub bw_u: LstmMatrix<'data>,
+    /// The backward layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat7: LstmMatrix<'data>,
-    /// The matrices associated with output layer (weight and bias term respectiely)
+    pub bw_b: LstmMatrix<'data>,
+    /// The output layer's weights
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat8: LstmMatrix<'data>,
-    /// The matrices associated with output layer (weight and bias term respectiely)
+    pub time_w: LstmMatrix<'data>,
+    /// The output layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub mat9: LstmMatrix<'data>,
+    pub time_b: LstmMatrix<'data>,
 }

@@ -15,15 +15,15 @@ use zerovec::ule::AsULE;
 
 pub struct Lstm<'l> {
     data: &'l LstmDataV1<'l>,
-    mat1: MatrixZero<'l, 2>,
-    mat2: MatrixZero<'l, 3>,
-    mat3: MatrixZero<'l, 3>,
-    mat4: MatrixZero<'l, 2>,
-    mat5: MatrixZero<'l, 3>,
-    mat6: MatrixZero<'l, 3>,
-    mat7: MatrixZero<'l, 2>,
-    mat8: MatrixZero<'l, 3>,
-    mat9: MatrixZero<'l, 1>,
+    embedding: MatrixZero<'l, 2>,
+    fw_w: MatrixZero<'l, 3>,
+    fw_u: MatrixZero<'l, 3>,
+    fw_b: MatrixZero<'l, 2>,
+    bw_w: MatrixZero<'l, 3>,
+    bw_u: MatrixZero<'l, 3>,
+    bw_b: MatrixZero<'l, 2>,
+    time_w: MatrixZero<'l, 3>,
+    time_b: MatrixZero<'l, 1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
 }
@@ -48,40 +48,40 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
-        let mat1 = data.get().mat1.as_matrix_zero::<2>()?;
-        let mat2 = data.get().mat2.as_matrix_zero::<3>()?;
-        let mat3 = data.get().mat3.as_matrix_zero::<3>()?;
-        let mat4 = data.get().mat4.as_matrix_zero::<2>()?;
-        let mat5 = data.get().mat5.as_matrix_zero::<3>()?;
-        let mat6 = data.get().mat6.as_matrix_zero::<3>()?;
-        let mat7 = data.get().mat7.as_matrix_zero::<2>()?;
-        let mat8 = data.get().mat8.as_matrix_zero::<3>()?;
-        let mat9 = data.get().mat9.as_matrix_zero::<1>()?;
-        let embedd_dim = mat1.dim().1;
-        let hunits = mat3.dim().0;
-        if mat2.dim() != (hunits, 4, embedd_dim)
-            || mat3.dim() != (hunits, 4, hunits)
-            || mat4.dim() != (hunits, 4)
-            || mat5.dim() != (hunits, 4, embedd_dim)
-            || mat6.dim() != (hunits, 4, hunits)
-            || mat7.dim() != (hunits, 4)
-            || mat8.dim() != (2, 4, hunits)
-            || mat9.dim() != (4)
+        let embedding = data.get().embedding.as_matrix_zero::<2>()?;
+        let fw_w = data.get().fw_w.as_matrix_zero::<3>()?;
+        let fw_u = data.get().fw_u.as_matrix_zero::<3>()?;
+        let fw_b = data.get().fw_b.as_matrix_zero::<2>()?;
+        let bw_w = data.get().bw_w.as_matrix_zero::<3>()?;
+        let bw_u = data.get().bw_u.as_matrix_zero::<3>()?;
+        let bw_b = data.get().bw_b.as_matrix_zero::<2>()?;
+        let time_w = data.get().time_w.as_matrix_zero::<3>()?;
+        let time_b = data.get().time_b.as_matrix_zero::<1>()?;
+        let embedd_dim = embedding.dim().1;
+        let hunits = fw_u.dim().0;
+        if fw_w.dim() != (hunits, 4, embedd_dim)
+            || fw_u.dim() != (hunits, 4, hunits)
+            || fw_b.dim() != (hunits, 4)
+            || bw_w.dim() != (hunits, 4, embedd_dim)
+            || bw_u.dim() != (hunits, 4, hunits)
+            || bw_b.dim() != (hunits, 4)
+            || time_w.dim() != (2, 4, hunits)
+            || time_b.dim() != (4)
         {
             return Err(Error::DimensionMismatch);
         }
 
         Ok(Self {
             data: data.get(),
-            mat1,
-            mat2,
-            mat3,
-            mat4,
-            mat5,
-            mat6,
-            mat7,
-            mat8,
-            mat9,
+            embedding,
+            fw_w,
+            fw_u,
+            fw_b,
+            bw_w,
+            bw_u,
+            bw_b,
+            time_w,
+            time_b,
             grapheme: if data.get().model.contains("_codepoints_") {
                 None
             } else {
@@ -148,16 +148,15 @@ impl<'l> Lstm<'l> {
         warr: MatrixZero<'a, 3>,
         uarr: MatrixZero<'a, 3>,
         barr: MatrixZero<'a, 2>,
-        hunits: usize,
     ) -> Option<()> {
         #[cfg(debug_assertions)]
         {
             let embedd_dim = x_t.dim();
-            h_tm1.as_borrowed().debug_assert_dims([hunits]);
-            c_tm1.as_borrowed().debug_assert_dims([hunits]);
-            warr.debug_assert_dims([hunits, 4, embedd_dim]);
-            uarr.debug_assert_dims([hunits, 4, hunits]);
-            barr.debug_assert_dims([hunits, 4]);
+            h_tm1.as_borrowed().debug_assert_dims([self.hunits]);
+            c_tm1.as_borrowed().debug_assert_dims([self.hunits]);
+            warr.debug_assert_dims([self.hunits, 4, embedd_dim]);
+            uarr.debug_assert_dims([self.hunits, 4, self.hunits]);
+            barr.debug_assert_dims([self.hunits, 4]);
         }
 
         let mut s_t = barr.to_owned();
@@ -165,7 +164,7 @@ impl<'l> Lstm<'l> {
         s_t.as_mut().add_dot_3d_2(x_t, warr);
         s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), uarr);
 
-        for i in 0..hunits {
+        for i in 0..self.hunits {
             let [s0, s1, s2, s3] = s_t
                 .as_borrowed()
                 .submatrix::<1>(i)
@@ -226,7 +225,7 @@ impl<'l> Lstm<'l> {
         let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
+            let x_t = self.embedding.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
@@ -234,10 +233,9 @@ impl<'l> Lstm<'l> {
                 x_t,
                 all_h_fw.submatrix_mut(i)?,
                 c_fw.as_mut(),
-                self.mat2,
-                self.mat3,
-                self.mat4,
-                hunits,
+                self.fw_w,
+                self.fw_u,
+                self.fw_b,
             )?;
         }
 
@@ -245,7 +243,7 @@ impl<'l> Lstm<'l> {
         let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.mat1.submatrix::<1>(*g_id as usize)?;
+            let x_t = self.embedding.submatrix::<1>(*g_id as usize)?;
             if i > 0 {
                 all_h_bw
                     .as_mut()
@@ -255,28 +253,29 @@ impl<'l> Lstm<'l> {
                 x_t,
                 all_h_bw.submatrix_mut(input_seq_len - i - 1)?,
                 c_bw.as_mut(),
-                self.mat5,
-                self.mat6,
-                self.mat7,
-                self.hunits,
+                self.bw_w,
+                self.bw_u,
+                self.bw_b,
             )?;
         }
 
+        let timew_fw = self.time_w.submatrix(0)?;
+        let timew_bw = self.time_w.submatrix(1)?;
+
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let timeb = self.mat9;
         let mut bies = String::new();
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.submatrix::<1>(i)?;
             let curr_bw = all_h_bw.submatrix::<1>(i)?;
-            let timew_fw = self.mat8.submatrix(0)?;
-            let timew_bw = self.mat8.submatrix(1)?;
-            // TODO: Make curr_est be stack-allocated
-            let mut curr_est = MatrixOwned::<1>::new_zero([4]);
-            curr_est.as_mut().add_dot_2d(curr_fw, timew_fw);
-            curr_est.as_mut().add_dot_2d(curr_bw, timew_bw);
-            curr_est.as_mut().add(timeb)?;
-            curr_est.as_mut().softmax_transform();
-            let weights = curr_est.as_borrowed().read_4()?;
+            let mut weights = [0.0; 4];
+            let mut curr_est = MatrixBorrowedMut {
+                data: &mut weights,
+                dims: [4],
+            };
+            curr_est.add_dot_2d(curr_fw, timew_fw);
+            curr_est.add_dot_2d(curr_bw, timew_bw);
+            curr_est.add(self.time_b)?;
+            curr_est.softmax_transform();
             bies.push(self.compute_bies(weights));
         }
         Some(bies)
