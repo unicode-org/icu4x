@@ -71,7 +71,7 @@ wasm_default = ["buffer_provider", "logging"]
 # Components
 default_components = ["icu_collator", "icu_datetime", "icu_decimal", "icu_displaynames", "icu_list",
                       "icu_locid_transform", "icu_normalizer", "icu_plurals",
-                      "icu_properties", "icu_segmenter"]
+                      "icu_properties", "icu_segmenter", "icu_timezone"]
 # icu_calendar = ["dep:icu_calendar"] # Calendars are not currently useful on their own
 icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own
