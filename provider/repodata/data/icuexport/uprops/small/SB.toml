@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Sentence_Break"
 short_name = "SB"
+uproperty_discr = 0x1013
 values = [
   {discr = 0, long = "Other", short = "XX"},
   {discr = 1, long = "ATerm", short = "AT"},

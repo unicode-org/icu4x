@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[mask_property]]
 long_name = "General_Category_Mask"
 short_name = "gcm"
+uproperty_discr = 0x2000
 mask_for = "General_Category"
 values = [
   {discr = 0x1, long = "Unassigned", short = "Cn"},

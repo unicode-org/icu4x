@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "General_Category"
 short_name = "gc"
+uproperty_discr = 0x1005
 values = [
   {discr = 0, long = "Unassigned", short = "Cn"},
   {discr = 1, long = "Uppercase_Letter", short = "Lu"},
