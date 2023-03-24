@@ -6,28 +6,17 @@ use icu_timezone::CustomTimeZone;
 
 #[diplomat::bridge]
 pub mod ffi {
-    #[cfg(feature = "icu_timezone")]
-    use crate::datetime::ffi::ICU4XIsoDateTime;
     use crate::errors::ffi::ICU4XError;
-    #[cfg(feature = "icu_timezone")]
-    use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::fmt::Write;
     use core::str::{self};
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
-    #[cfg(feature = "icu_timezone")]
-    use icu_timezone::MetazoneCalculator;
     use icu_timezone::ZoneVariant;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
     pub struct ICU4XCustomTimeZone(pub CustomTimeZone);
-
-    #[cfg(feature = "icu_timezone")]
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
-    pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
 
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
@@ -298,24 +287,11 @@ pub mod ffi {
         #[cfg(feature = "icu_timezone")]
         pub fn maybe_calculate_metazone(
             &mut self,
-            metazone_calculator: &ICU4XMetazoneCalculator,
-            local_datetime: &ICU4XIsoDateTime,
+            metazone_calculator: &crate::metazone_calculator::ffi::ICU4XMetazoneCalculator,
+            local_datetime: &crate::datetime::ffi::ICU4XIsoDateTime,
         ) {
             self.0
                 .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
-        }
-    }
-
-    #[cfg(feature = "icu_timezone")]
-    impl ICU4XMetazoneCalculator {
-        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
-        #[cfg(feature = "icu_timezone")]
-        pub fn create(
-            provider: &ICU4XDataProvider,
-        ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XError> {
-            Ok(Box::new(ICU4XMetazoneCalculator(
-                MetazoneCalculator::try_new_unstable(&provider.0)?,
-            )))
         }
     }
 }
