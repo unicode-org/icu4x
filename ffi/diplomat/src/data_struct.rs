@@ -11,10 +11,6 @@ pub mod ffi {
     #[cfg(feature = "icu_decimal")]
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    #[cfg(feature = "icu_decimal")]
-    use icu_decimal::provider::{
-        AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
-    };
     use icu_provider::prelude::AnyPayload;
 
     #[diplomat::opaque]
@@ -42,6 +38,9 @@ pub mod ffi {
             min_group_size: u8,
             digits: &[char],
         ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
+            use icu_decimal::provider::{
+                AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
+            };
             use super::str_to_cow;
             use icu_provider::prelude::DataPayload;
             let digits = if digits.len() == 10 {
