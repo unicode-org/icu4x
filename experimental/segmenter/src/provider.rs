@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "lstm")]
-use crate::{lstm_error::Error, math_helper::MatrixOwned};
+use crate::{lstm_error::Error, math_helper::MatrixZero};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -39,6 +39,10 @@ pub struct RuleBreakDataV1<'data> {
     /// Break state table for rule-based breaking.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub break_state_table: RuleBreakStateTable<'data>,
+
+    /// Rule status table for rule-based breaking.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rule_status_table: RuleStatusTable<'data>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
@@ -82,6 +86,18 @@ pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
 );
 
+/// Rules status data for rule_status and is_word_like of word segmenter.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct RuleStatusTable<'data>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, u8>,
+);
+
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/dictionary@1")]
 #[derive(Debug, PartialEq, Clone)]
@@ -117,14 +133,13 @@ pub struct LstmMatrix<'data> {
 
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub(crate) fn alloc_matrix<const D: usize>(&self) -> Result<MatrixOwned<D>, Error> {
+    pub(crate) fn as_matrix_zero<const D: usize>(&self) -> Result<MatrixZero<D>, Error> {
         let dims = self
             .dims
             .get_as_array()
             .ok_or(Error::DimensionMismatch)?
             .map(|x| x as usize);
-        let data = self.data.iter().collect();
-        MatrixOwned::try_from_parts(data, dims)
+        MatrixZero::try_from_parts(&self.data, dims)
     }
 }
 

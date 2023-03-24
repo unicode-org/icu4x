@@ -6,6 +6,8 @@ use crate::lstm_error::Error;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
+use zerovec::ule::AsULE;
+use zerovec::ZeroSlice;
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///
@@ -23,14 +25,6 @@ impl<const D: usize> MatrixOwned<D> {
         MatrixBorrowed {
             data: &self.data,
             dims: self.dims,
-        }
-    }
-
-    pub fn try_from_parts(data: Vec<f32>, dims: [usize; D]) -> Result<Self, Error> {
-        if dims.iter().product::<usize>() == data.len() {
-            Ok(Self { data, dims })
-        } else {
-            Err(Error::DimensionMismatch)
         }
     }
 
@@ -94,14 +88,6 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         self.data
     }
 
-    #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
-    pub fn to_owned(&self) -> MatrixOwned<D> {
-        MatrixOwned {
-            data: self.data.to_vec(),
-            dims: self.dims,
-        }
-    }
-
     /// See [`MatrixOwned::submatrix`].
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
@@ -124,28 +110,48 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     }
 }
 
-impl<'a> MatrixBorrowed<'a, 1> {
-    pub fn dim(&self) -> usize {
-        let [dim] = self.dims;
-        dim
-    }
+macro_rules! impl_basic_dim {
+    ($t1:path, $t2:path, $t3:path) => {
+        impl<'a> $t1 {
+            #[allow(dead_code)]
+            pub fn dim(&self) -> usize {
+                let [dim] = self.dims;
+                dim
+            }
+        }
+        impl<'a> $t2 {
+            #[allow(dead_code)]
+            pub fn dim(&self) -> (usize, usize) {
+                let [d0, d1] = self.dims;
+                (d0, d1)
+            }
+        }
+        impl<'a> $t3 {
+            #[allow(dead_code)]
+            pub fn dim(&self) -> (usize, usize, usize) {
+                let [d0, d1, d2] = self.dims;
+                (d0, d1, d2)
+            }
+        }
+    };
+}
 
+impl_basic_dim!(MatrixOwned<1>, MatrixOwned<2>, MatrixOwned<3>);
+impl_basic_dim!(
+    MatrixBorrowed<'a, 1>,
+    MatrixBorrowed<'a, 2>,
+    MatrixBorrowed<'a, 3>
+);
+impl_basic_dim!(
+    MatrixBorrowedMut<'a, 1>,
+    MatrixBorrowedMut<'a, 2>,
+    MatrixBorrowedMut<'a, 3>
+);
+impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
+
+impl<'a> MatrixBorrowed<'a, 1> {
     pub fn read_4(&self) -> Option<[f32; 4]> {
         <&[f32; 4]>::try_from(self.data).ok().copied()
-    }
-}
-
-impl<'a> MatrixBorrowed<'a, 2> {
-    pub fn dim(&self) -> (usize, usize) {
-        let [d0, d1] = self.dims;
-        (d0, d1)
-    }
-}
-
-impl<'a> MatrixBorrowed<'a, 3> {
-    pub fn dim(&self) -> (usize, usize, usize) {
-        let [d0, d1, d2] = self.dims;
-        (d0, d1, d2)
     }
 }
 
@@ -180,7 +186,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 
     #[must_use]
-    pub fn add(&mut self, other: MatrixBorrowed<'_, D>) -> Option<()> {
+    pub fn add(&mut self, other: MatrixZero<'_, D>) -> Option<()> {
         debug_assert_eq!(self.dims, other.dims);
         // TODO: Vectorize?
         for i in 0..self.data.len() {
@@ -200,9 +206,9 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
 
 impl<'a> MatrixBorrowed<'a, 1> {
     #[allow(dead_code)] // could be useful
-    pub fn dot_1d(&self, other: MatrixBorrowed<1>) -> f32 {
+    pub fn dot_1d(&self, other: MatrixZero<1>) -> f32 {
         debug_assert_eq!(self.dims, other.dims);
-        unrolled_dot(self.data, other.data)
+        unrolled_dot_1(self.data, other.data)
     }
 }
 
@@ -211,7 +217,7 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
     ///
     /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
     /// this is the opposite of standard practice.
-    pub fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<2>) {
+    pub fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<2>) {
         let m = a.dim();
         let n = self.as_borrowed().dim();
         debug_assert_eq!(
@@ -233,7 +239,7 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         for i in 0..n {
             if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
             {
-                *dest += unrolled_dot(a.data, b_sub.data);
+                *dest += unrolled_dot_1(a.data, b_sub.data);
             } else {
                 debug_assert!(false, "unreachable: dims checked above");
             }
@@ -245,7 +251,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
-    pub fn add_dot_3d(&mut self, a: MatrixBorrowed<1>, b: MatrixBorrowed<3>) {
+    pub fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
         debug_assert_eq!(
@@ -273,13 +279,110 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         for i in 0..n {
             if let (Some(dest), Some(rhs)) = (
                 self.as_mut_slice().get_mut(i),
-                b.as_slice().get(i * m..(i + 1) * m),
+                b.as_slice().get_subslice(i * m..(i + 1) * m),
             ) {
-                *dest += unrolled_dot(lhs, rhs);
+                *dest += unrolled_dot_1(lhs, rhs);
             } else {
                 debug_assert!(false, "unreachable: dims checked above");
             }
         }
+    }
+
+    /// Calculate the dot product of a and b, adding the result to self.
+    ///
+    /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    pub fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
+        let m = a.dim();
+        let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
+        debug_assert_eq!(
+            m,
+            b.dim().2,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        debug_assert_eq!(
+            n,
+            b.dim().0 * b.dim().1,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        // Note: The following two loops are equivalent, but the second has more opportunity for
+        // vectorization since it allows the vectorization to span submatrices.
+        // for i in 0..b.dim().0 {
+        //     self.submatrix_mut::<1>(i).add_dot_2d(a, b.submatrix(i));
+        // }
+        let lhs = a.as_slice();
+        for i in 0..n {
+            if let (Some(dest), Some(rhs)) = (
+                self.as_mut_slice().get_mut(i),
+                b.as_slice().get_subslice(i * m..(i + 1) * m),
+            ) {
+                *dest += unrolled_dot_2(lhs, rhs);
+            } else {
+                debug_assert!(false, "unreachable: dims checked above");
+            }
+        }
+    }
+}
+
+/// A `D`-dimensional matrix borrowed from a [`ZeroSlice`].
+#[derive(Debug, Clone, Copy)]
+pub struct MatrixZero<'a, const D: usize> {
+    data: &'a ZeroSlice<f32>,
+    dims: [usize; D],
+}
+
+impl<'a, const D: usize> MatrixZero<'a, D> {
+    pub fn try_from_parts(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Result<Self, Error> {
+        if dims.iter().product::<usize>() == data.len() {
+            Ok(Self { data, dims })
+        } else {
+            Err(Error::DimensionMismatch)
+        }
+    }
+
+    #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
+    pub fn to_owned(&self) -> MatrixOwned<D> {
+        MatrixOwned {
+            data: self.data.iter().collect(),
+            dims: self.dims,
+        }
+    }
+
+    pub fn as_slice(&self) -> &ZeroSlice<f32> {
+        self.data
+    }
+
+    #[cfg(debug_assertions)]
+    pub fn debug_assert_dims(&self, dims: [usize; D]) {
+        debug_assert_eq!(dims, self.dims);
+        let expected_len = dims.iter().product::<usize>();
+        debug_assert_eq!(expected_len, self.data.len());
+    }
+
+    /// See [`MatrixOwned::submatrix`].
+    #[inline]
+    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixZero<'a, M>> {
+        // This assertion is based on const generics; it should always succeed and be elided.
+        assert_eq!(M, D - 1);
+        let (range, dims) = self.submatrix_range(index);
+        let data = &self.data.get_subslice(range)?;
+        Some(MatrixZero { data, dims })
+    }
+
+    #[inline]
+    fn submatrix_range<const M: usize>(&self, index: usize) -> (Range<usize>, [usize; M]) {
+        // This assertion is based on const generics; it should always succeed and be elided.
+        assert_eq!(M, D - 1);
+        // The above assertion guarantees that the following line will succeed
+        #[allow(clippy::indexing_slicing, clippy::unwrap_used)]
+        let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
+        let n = sub_dims.iter().product::<usize>();
+        (n * index..n * (index + 1), sub_dims)
     }
 }
 
@@ -299,23 +402,29 @@ pub fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 
-/// Compute the dot product.
+macro_rules! f32c {
+    ($ule:expr) => {
+        f32::from_unaligned($ule)
+    };
+}
+
+/// Compute the dot product of an aligned and an unaligned f32 slice.
 ///
 /// `xs` and `ys` must be the same length
 ///
-/// (From ndarray 0.15.6)
-fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
+/// (Based on ndarray 0.15.6)
+fn unrolled_dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
     debug_assert_eq!(xs.len(), ys.len());
     // eightfold unrolled so that floating point can be vectorized
     // (even with strict floating point accuracy semantics)
     let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     let xit = xs.chunks_exact(8);
-    let yit = ys.chunks_exact(8);
+    let yit = ys.as_ule_slice().chunks_exact(8);
     let sum = xit
         .remainder()
         .iter()
         .zip(yit.remainder().iter())
-        .map(|(x, y)| x * y)
+        .map(|(x, y)| x * f32c!(*y))
         .sum::<f32>();
     for (xx, yy) in xit.zip(yit) {
         // TODO: Use array_chunks once stable to avoid the unwrap.
@@ -323,15 +432,52 @@ fn unrolled_dot(xs: &[f32], ys: &[f32]) -> f32 {
         #[allow(clippy::unwrap_used)]
         let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[f32; 8]>::try_from(xx).unwrap();
         #[allow(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[f32; 8]>::try_from(yy).unwrap();
-        p.0 += x0 * y0;
-        p.1 += x1 * y1;
-        p.2 += x2 * y2;
-        p.3 += x3 * y3;
-        p.4 += x4 * y4;
-        p.5 += x5 * y5;
-        p.6 += x6 * y6;
-        p.7 += x7 * y7;
+        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
+        p.0 += x0 * f32c!(y0);
+        p.1 += x1 * f32c!(y1);
+        p.2 += x2 * f32c!(y2);
+        p.3 += x3 * f32c!(y3);
+        p.4 += x4 * f32c!(y4);
+        p.5 += x5 * f32c!(y5);
+        p.6 += x6 * f32c!(y6);
+        p.7 += x7 * f32c!(y7);
+    }
+    sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
+}
+
+/// Compute the dot product of two unaligned f32 slices.
+///
+/// `xs` and `ys` must be the same length
+///
+/// (Based on ndarray 0.15.6)
+fn unrolled_dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
+    debug_assert_eq!(xs.len(), ys.len());
+    // eightfold unrolled so that floating point can be vectorized
+    // (even with strict floating point accuracy semantics)
+    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    let xit = xs.as_ule_slice().chunks_exact(8);
+    let yit = ys.as_ule_slice().chunks_exact(8);
+    let sum = xit
+        .remainder()
+        .iter()
+        .zip(yit.remainder().iter())
+        .map(|(x, y)| f32c!(*x) * f32c!(*y))
+        .sum::<f32>();
+    for (xx, yy) in xit.zip(yit) {
+        // TODO: Use array_chunks once stable to avoid the unwrap.
+        // <https://github.com/rust-lang/rust/issues/74985>
+        #[allow(clippy::unwrap_used)]
+        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(xx).unwrap();
+        #[allow(clippy::unwrap_used)]
+        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
+        p.0 += f32c!(x0) * f32c!(y0);
+        p.1 += f32c!(x1) * f32c!(y1);
+        p.2 += f32c!(x2) * f32c!(y2);
+        p.3 += f32c!(x3) * f32c!(y3);
+        p.4 += f32c!(x4) * f32c!(y4);
+        p.5 += f32c!(x5) * f32c!(y5);
+        p.6 += f32c!(x6) * f32c!(y6);
+        p.7 += f32c!(x7) * f32c!(y7);
     }
     sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
 }

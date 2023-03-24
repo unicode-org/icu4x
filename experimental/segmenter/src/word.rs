@@ -184,6 +184,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -203,6 +204,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -217,6 +219,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -231,6 +234,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 }

@@ -25,3 +25,4 @@ icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#
 icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_data#FnInStruct
 icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list#FnInStruct
+icu::segmenter::RuleStatusType#Enum
