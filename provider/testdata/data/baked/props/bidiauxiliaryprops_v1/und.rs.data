@@ -17,7 +17,8 @@
         ::icu_properties::provider::bidi_data::MirroredPairedBracketData {
             mirroring_glyph: '\0',
             mirrored: false,
-            paired_bracket_type: ::icu_properties::BidiPairedBracketType(0u8),
+            paired_bracket_type:
+                ::icu_properties::provider::bidi_data::CheckedBidiPairedBracketType::None,
         },
     ),
 }
