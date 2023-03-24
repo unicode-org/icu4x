@@ -11,8 +11,7 @@
 //! - `Bidi_Mirroring_Glyph`
 
 use crate::provider::bidi_data::{BidiAuxiliaryPropertiesV1, BidiAuxiliaryPropertiesV1Marker};
-use crate::BidiPairedBracketType;
-use crate::PropertiesError;
+use crate::{BidiPairedBracketType, PropertiesError};
 
 use icu_provider::prelude::*;
 
@@ -118,10 +117,10 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     pub fn get32_mirroring_props(&self, code_point: u32) -> BidiMirroringProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
         let mirroring_glyph_opt =
-            Self::convert_mirroring_glyph_data(bidi_aux_props.mirroring_glyph);
+            Self::convert_mirroring_glyph_data(bidi_aux_props.get_mirroring_glyph());
         BidiMirroringProperties {
             mirroring_glyph: mirroring_glyph_opt,
-            mirrored: bidi_aux_props.mirrored,
+            mirrored: bidi_aux_props.get_mirrored(),
         }
     }
 
@@ -151,8 +150,8 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// ```
     pub fn get32_pairing_props(&self, code_point: u32) -> BidiPairingProperties {
         let bidi_aux_props = self.data.trie.get32(code_point);
-        let mirroring_glyph = bidi_aux_props.mirroring_glyph;
-        let paired_bracket_type = bidi_aux_props.paired_bracket_type;
+        let mirroring_glyph = bidi_aux_props.get_mirroring_glyph();
+        let paired_bracket_type = bidi_aux_props.get_paired_bracket_type();
         match paired_bracket_type {
             BidiPairedBracketType::Open => BidiPairingProperties::Open(mirroring_glyph),
             BidiPairedBracketType::Close => BidiPairingProperties::Close(mirroring_glyph),

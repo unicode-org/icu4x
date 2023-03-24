@@ -185,10 +185,10 @@ impl TrieValue for MirroredPairedBracketData {
             let value = ((i >> 22) & 0x3) as u8;
             BidiPairedBracketType(value)
         };
-        Ok(MirroredPairedBracketData {
+        Ok(MirroredPairedBracketData::new(
             mirroring_glyph,
             mirrored,
             paired_bracket_type,
-        })
+        ))
     }
 }
