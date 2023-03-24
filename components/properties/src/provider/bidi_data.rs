@@ -64,12 +64,18 @@ impl<'data> BidiAuxiliaryPropertiesV1<'data> {
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
 #[doc(hidden)] // needed for datagen but not intended for users
 pub struct MirroredPairedBracketData {
-    mirroring_glyph: char,
-    mirrored: bool,
-    paired_bracket_type: CheckedBidiPairedBracketType,
+    pub mirroring_glyph: char,
+    pub mirrored: bool,
+    pub paired_bracket_type: CheckedBidiPairedBracketType,
 }
 
 impl MirroredPairedBracketData {
+    /// Construct a new [`MirroredPairedBracketData`] that coerces the input into
+    /// valid values of `MirroredPairedBracketData`.
+    ///
+    /// GIGO: This function will return `CheckedBidiPairedBracketType::None` if
+    /// the input `BidiPairedBracketType` value is not valid for `MirroredPairedBracketData`.
+    /// See [`CheckedBidiPairedBracketType::from(BidiPairedBracketType)`].
     pub fn new(
         mirroring_glyph: char,
         mirrored: bool,
@@ -82,18 +88,6 @@ impl MirroredPairedBracketData {
             paired_bracket_type: checked_bpt,
             ..MirroredPairedBracketData::default()
         }
-    }
-
-    pub fn get_mirroring_glyph(&self) -> char {
-        self.mirroring_glyph
-    }
-
-    pub fn get_mirrored(&self) -> bool {
-        self.mirrored
-    }
-
-    pub fn get_paired_bracket_type(&self) -> BidiPairedBracketType {
-        BidiPairedBracketType::from(self.paired_bracket_type)
     }
 }
 
@@ -109,9 +103,9 @@ impl Default for MirroredPairedBracketData {
 
 impl From<MirroredPairedBracketData> for u32 {
     fn from(mpbd: MirroredPairedBracketData) -> u32 {
-        let mut result = mpbd.get_mirroring_glyph() as u32;
-        result |= (mpbd.get_mirrored() as u32) << 21;
-        result |= (mpbd.get_paired_bracket_type().0 as u32) << 22;
+        let mut result = mpbd.mirroring_glyph as u32;
+        result |= (mpbd.mirrored as u32) << 21;
+        result |= (mpbd.paired_bracket_type as u32) << 22;
         result
     }
 }
@@ -224,8 +218,8 @@ impl AsULE for MirroredPairedBracketData {
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
         let mut ch = u32::from(self.mirroring_glyph);
-        ch |= u32::from(self.get_mirrored()) << 21;
-        ch |= (self.get_paired_bracket_type().0 as u32) << 22;
+        ch |= u32::from(self.mirrored) << 21;
+        ch |= (self.paired_bracket_type as u32) << 22;
         let [byte0, byte1, byte2, _] = ch.to_le_bytes();
         MirroredPairedBracketDataULE([byte0, byte1, byte2])
     }
@@ -261,7 +255,7 @@ mod tests {
         let data = MirroredPairedBracketData {
             mirroring_glyph: '}',
             mirrored: true,
-            paired_bracket_type: BidiPairedBracketType::Open,
+            paired_bracket_type: CheckedBidiPairedBracketType::Open,
         };
         let expected_bytes = &[0x7D, 0x0, 0x60];
         assert_eq!(
