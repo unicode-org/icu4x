@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::lstm_bies::Lstm;
+use crate::lstm_bies::{Bies, Lstm};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use crate::SegmenterError;
 use alloc::borrow::ToOwned;
@@ -14,7 +14,7 @@ use icu_provider::DataPayload;
 
 pub struct LstmSegmenterIterator {
     input: String,
-    bies_str: String,
+    bies_str: Box<[Bies]>,
     pos: usize,
     pos_utf8: usize,
 }
@@ -24,10 +24,10 @@ impl Iterator for LstmSegmenterIterator {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let ch = self.bies_str.chars().nth(self.pos)?;
-            self.pos_utf8 += self.input.chars().nth(self.pos)?.len_utf8();
+            let bies = *self.bies_str.get(self.pos)?;
+            self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
             self.pos += 1;
-            if ch == 'e' && self.bies_str.len() > self.pos {
+            if bies == Bies::E && self.bies_str.len() > self.pos {
                 return Some(self.pos_utf8);
             }
         }
@@ -47,7 +47,7 @@ impl LstmSegmenterIterator {
 }
 
 pub struct LstmSegmenterIteratorUtf16 {
-    bies_str: String,
+    bies_str: Box<[Bies]>,
     pos: usize,
 }
 
@@ -56,10 +56,9 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let ch = self.bies_str.chars().nth(self.pos)?;
-            // This ch is always in bitmap.
+            let bies = *self.bies_str.get(self.pos)?;
             self.pos += 1;
-            if ch == 'e' && self.bies_str.len() > self.pos {
+            if bies == Bies::E && self.bies_str.len() > self.pos {
                 return Some(self.pos);
             }
         }
