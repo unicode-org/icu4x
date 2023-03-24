@@ -80,6 +80,10 @@ pub struct BidiAuxiliaryPropertiesBorrowed<'a> {
 }
 
 impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
+    // The source data coming from icuexportdata will use 0 to represent the
+    // property value in cases for which the Bidi_Mirroring_Glyph property value
+    // of a code point is undefined. Since Rust types can be more expressive, we
+    // should represent these cases as None.
     fn convert_mirroring_glyph_data(trie_data_char: char) -> Option<char> {
         if trie_data_char as u32 == 0 {
             None
