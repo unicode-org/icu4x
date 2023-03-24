@@ -56,7 +56,7 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-24/72.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-03-22a/72.x";
 
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
