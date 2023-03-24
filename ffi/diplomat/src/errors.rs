@@ -214,6 +214,7 @@ impl From<CollatorError> for ICU4XError {
         .log_original(&e)
     }
 }
+
 #[cfg(feature = "icu_properties")]
 impl From<PropertiesError> for ICU4XError {
     fn from(e: PropertiesError) -> Self {
