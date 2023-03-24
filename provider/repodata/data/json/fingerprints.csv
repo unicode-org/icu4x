@@ -1489,11 +1489,11 @@ relativetime/short/year@1, tr, 548B, da4a4d996cb48710
 relativetime/short/year@1, und, 425B, 7a604578bc7e4265
 segmenter/dictionary@1, ja, 10320776B, 86284c168777fcf1
 segmenter/dictionary@1, th, 1078278B, 56b1112fa508e4b6
-segmenter/grapheme@1, und, 66878B, 52becb77e273abc0
-segmenter/line@1, und, 154373B, 745a396a785f54bb
+segmenter/grapheme@1, und, 66905B, 445a7c30c1bbfd6d
+segmenter/line@1, und, 154400B, 36dc3e278178555e
 segmenter/lstm@1, th, 325035B, b6866820c17d372a
-segmenter/sentence@1, und, 108617B, 4f02ff15a48cee20
-segmenter/word@1, und, 112594B, e510712744f4e36c
+segmenter/sentence@1, und, 108644B, 57c21125cd329c0e
+segmenter/word@1, und, 113449B, 1103532d45a51419
 time_zone/exemplar_cities@1, ar, 12473B, efe79e8f85ceb20a
 time_zone/exemplar_cities@1, ar-EG, 12473B, efe79e8f85ceb20a
 time_zone/exemplar_cities@1, bn, 17251B, ae2edabf30637617
