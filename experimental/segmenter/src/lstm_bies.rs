@@ -48,6 +48,13 @@ impl<'l> Lstm<'l> {
             return Err(Error::Syntax);
         }
 
+        #[cfg(debug_assertions)]
+        for &unaligned in data.get().dic.iter_values() {
+            if i16::from_unaligned(unaligned) as usize >= data.get().dic.len() {
+                return Err(Error::DimensionMismatch);
+            }
+        }
+
         let embedding = data.get().embedding.as_matrix_zero::<2>()?;
         let fw_w = data.get().fw_w.as_matrix_zero::<3>()?;
         let fw_u = data.get().fw_u.as_matrix_zero::<3>()?;
@@ -59,7 +66,8 @@ impl<'l> Lstm<'l> {
         let time_b = data.get().time_b.as_matrix_zero::<1>()?;
         let embedd_dim = embedding.dim().1;
         let hunits = fw_u.dim().0;
-        if fw_w.dim() != (hunits, 4, embedd_dim)
+        if embedding.dim() != (data.get().dic.len() + 1, embedd_dim)
+            || fw_w.dim() != (hunits, 4, embedd_dim)
             || fw_u.dim() != (hunits, 4, hunits)
             || fw_b.dim() != (hunits, 4)
             || bw_w.dim() != (hunits, 4, embedd_dim)
@@ -138,47 +146,48 @@ impl<'l> Lstm<'l> {
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
-    #[allow(clippy::too_many_arguments)]
-    #[must_use] // return value is GIGO path
     fn compute_hc<'a>(
         &self,
         x_t: MatrixZero<'a, 1>,
         mut h_tm1: MatrixBorrowedMut<'a, 1>,
         mut c_tm1: MatrixBorrowedMut<'a, 1>,
-        warr: MatrixZero<'a, 3>,
-        uarr: MatrixZero<'a, 3>,
-        barr: MatrixZero<'a, 2>,
-    ) -> Option<()> {
+        w: MatrixZero<'a, 3>,
+        u: MatrixZero<'a, 3>,
+        b: MatrixZero<'a, 2>,
+    ) {
         #[cfg(debug_assertions)]
         {
             let embedd_dim = x_t.dim();
             h_tm1.as_borrowed().debug_assert_dims([self.hunits]);
             c_tm1.as_borrowed().debug_assert_dims([self.hunits]);
-            warr.debug_assert_dims([self.hunits, 4, embedd_dim]);
-            uarr.debug_assert_dims([self.hunits, 4, self.hunits]);
-            barr.debug_assert_dims([self.hunits, 4]);
+            w.debug_assert_dims([self.hunits, 4, embedd_dim]);
+            u.debug_assert_dims([self.hunits, 4, self.hunits]);
+            b.debug_assert_dims([self.hunits, 4]);
         }
 
-        let mut s_t = barr.to_owned();
+        let mut s_t = b.to_owned();
 
-        s_t.as_mut().add_dot_3d_2(x_t, warr);
-        s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), uarr);
+        s_t.as_mut().add_dot_3d_2(x_t, w);
+        s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
 
+        #[allow(clippy::unwrap_used)]
         for i in 0..self.hunits {
             let [s0, s1, s2, s3] = s_t
                 .as_borrowed()
                 .submatrix::<1>(i)
-                .and_then(|s| s.read_4())?;
+                .unwrap()
+                .read_4()
+                .unwrap(); // shape (hunits, 4)
             let p = math_helper::sigmoid(s0);
             let f = math_helper::sigmoid(s1);
             let c = math_helper::tanh(s2);
             let o = math_helper::sigmoid(s3);
-            let c_old = c_tm1.as_borrowed().as_slice().get(i)?;
-            let c_new = p * c + f * c_old;
-            *c_tm1.as_mut_slice().get_mut(i)? = c_new;
-            *h_tm1.as_mut_slice().get_mut(i)? = o * math_helper::tanh(c_new);
+            let c_old = c_tm1.as_borrowed().as_slice().get(i).unwrap(); // shape (h_units)
+            let c_new = p.mul_add(c, f * c_old);
+            *c_tm1.as_mut_slice().get_mut(i).unwrap() = c_new; // shape (h_units)
+            *h_tm1.as_mut_slice().get_mut(i).unwrap() = o * math_helper::tanh(c_new);
+            // shape (hunits)
         }
-        Some(())
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
@@ -206,67 +215,51 @@ impl<'l> Lstm<'l> {
                 .map(|c| self.return_id(&c.to_string()))
                 .collect()
         };
-        let input_seq_len = input_seq.len();
-        let inner = self.word_segmenter_inner(input_seq);
-        debug_assert!(inner.is_some(), "{:?}", input);
-        // Fill in a GIGO result of all 's'
-        let result = inner.unwrap_or_else(|| "s".repeat(input_seq_len));
-        debug_assert_eq!(result.len(), input_seq_len, "{:?}", input);
-        result
-    }
 
-    fn word_segmenter_inner(&self, input_seq: Vec<i16>) -> Option<String> {
-        // x_data is the data ready to be feed into the model
-        let input_seq_len = input_seq.len();
-
-        // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.hunits;
         // Forward LSTM
-        let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
-        let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
-        for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.embedding.submatrix::<1>(*g_id as usize)?;
+        let mut c_fw = MatrixOwned::<1>::new_zero([self.hunits]);
+        let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
+        for (i, &g_id) in input_seq.iter().enumerate() {
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap(); // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
             self.compute_hc(
                 x_t,
-                all_h_fw.submatrix_mut(i)?,
+                all_h_fw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
                 c_fw.as_mut(),
                 self.fw_w,
                 self.fw_u,
                 self.fw_b,
-            )?;
+            );
         }
 
         // Backward LSTM
-        let mut c_bw = MatrixOwned::<1>::new_zero([hunits]);
-        let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq_len, hunits]);
-        for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.embedding.submatrix::<1>(*g_id as usize)?;
-            if i > 0 {
-                all_h_bw
-                    .as_mut()
-                    .copy_submatrix::<1>(input_seq_len - i, input_seq_len - i - 1);
+        let mut c_bw = MatrixOwned::<1>::new_zero([self.hunits]);
+        let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
+        for (i, &g_id) in input_seq.iter().enumerate().rev() {
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap(); // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            if i + 1 < input_seq.len() {
+                all_h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
             }
             self.compute_hc(
                 x_t,
-                all_h_bw.submatrix_mut(input_seq_len - i - 1)?,
+                all_h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
                 c_bw.as_mut(),
                 self.bw_w,
                 self.bw_u,
                 self.bw_b,
-            )?;
+            );
         }
 
-        let timew_fw = self.time_w.submatrix(0)?;
-        let timew_bw = self.time_w.submatrix(1)?;
+        let timew_fw = self.time_w.submatrix(0).unwrap(); // shape (2, 4, hunits)
+        let timew_bw = self.time_w.submatrix(1).unwrap(); // shape (2, 4, hunits)
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let mut bies = String::new();
-        for i in 0..input_seq_len {
-            let curr_fw = all_h_fw.submatrix::<1>(i)?;
-            let curr_bw = all_h_bw.submatrix::<1>(i)?;
+        let mut bies = String::with_capacity(input_seq.len());
+        for i in 0..input_seq.len() {
+            let curr_fw = all_h_fw.submatrix::<1>(i).unwrap(); // shape (input_seq.len(), hunits)
+            let curr_bw = all_h_bw.submatrix::<1>(i).unwrap(); // shape (input_seq.len(), hunits)
             let mut weights = [0.0; 4];
             let mut curr_est = MatrixBorrowedMut {
                 data: &mut weights,
@@ -274,11 +267,11 @@ impl<'l> Lstm<'l> {
             };
             curr_est.add_dot_2d(curr_fw, timew_fw);
             curr_est.add_dot_2d(curr_bw, timew_bw);
-            curr_est.add(self.time_b)?;
+            curr_est.add(self.time_b).unwrap(); // both shape (4)
             curr_est.softmax_transform();
             bies.push(self.compute_bies(weights));
         }
-        Some(bies)
+        bies
     }
 }
 
