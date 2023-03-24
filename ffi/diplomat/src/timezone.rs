@@ -6,14 +6,17 @@ use icu_timezone::CustomTimeZone;
 
 #[diplomat::bridge]
 pub mod ffi {
+    #[cfg(feature = "icu_timezone")]
     use crate::datetime::ffi::ICU4XIsoDateTime;
     use crate::errors::ffi::ICU4XError;
+    #[cfg(feature = "icu_timezone")]
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::fmt::Write;
     use core::str::{self};
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
+    #[cfg(feature = "icu_timezone")]
     use icu_timezone::MetazoneCalculator;
     use icu_timezone::ZoneVariant;
 
