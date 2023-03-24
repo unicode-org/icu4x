@@ -9,7 +9,7 @@
 //! String properties are represented as newtypes if their
 //! values represent code points.
 
-use crate::provider::*;
+use crate::provider::{names::*, *};
 use crate::PropertiesError;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::TrieValue;

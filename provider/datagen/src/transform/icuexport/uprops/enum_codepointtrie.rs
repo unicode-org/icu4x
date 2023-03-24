@@ -4,7 +4,7 @@
 
 use crate::SourceData;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::*;
+use icu_properties::provider::{names::*, *};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
