@@ -6,7 +6,11 @@ use self::ffi::ICU4XError;
 use core::fmt;
 #[cfg(feature = "icu_decimal")]
 use fixed_decimal::Error as FixedDecimalError;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 use icu_calendar::CalendarError;
 #[cfg(feature = "icu_collator")]
 use icu_collator::CollatorError;
@@ -233,7 +237,11 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 impl From<CalendarError> for ICU4XError {
     fn from(e: CalendarError) -> Self {
         match e {

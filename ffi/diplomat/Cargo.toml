@@ -69,10 +69,11 @@ cpp_default = ["provider_test", "logging", "simple_logger"]
 wasm_default = ["buffer_provider", "logging"]
 
 # Components
-default_components = ["icu_collator", "icu_datetime", "icu_decimal", "icu_displaynames", "icu_list",
-                      "icu_locid_transform", "icu_normalizer", "icu_plurals",
-                      "icu_properties", "icu_segmenter", "icu_timezone"]
-# icu_calendar = ["dep:icu_calendar"] # Calendars are not currently useful on their own
+default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
+                      "icu_displaynames", "icu_list", "icu_locid_transform",
+                      "icu_normalizer", "icu_plurals", "icu_properties",
+                      "icu_segmenter", "icu_timezone"]
+icu_calendar = ["dep:icu_calendar"]
 icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own
 icu_datetime = ["dep:icu_datetime", "dep:icu_calendar", "dep:icu_timezone", "dep:icu_decimal", "dep:icu_plurals"]

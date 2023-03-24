@@ -265,6 +265,7 @@ rust_library("icu_capi-v1_1_0") {
     "-Cmetadata=c7988772278807f3",
     "-Cextra-filename=-c7988772278807f3",
     "--cfg=feature=\"default_components\"",
+    "--cfg=feature=\"icu_calendar\"",
     "--cfg=feature=\"icu_collator\"",
     "--cfg=feature=\"icu_datetime\"",
     "--cfg=feature=\"icu_decimal\"",

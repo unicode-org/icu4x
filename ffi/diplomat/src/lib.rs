@@ -61,13 +61,25 @@ mod wasm_glue;
 
 #[cfg(feature = "icu_properties")]
 pub mod bidi;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 pub mod calendar;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 pub mod date;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 pub mod datetime;
 #[cfg(feature = "icu_datetime")]
 pub mod datetime_formatter;
@@ -105,13 +117,17 @@ pub mod segmenter_line;
 pub mod segmenter_sentence;
 #[cfg(feature = "icu_segmenter")]
 pub mod segmenter_word;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(
+    feature = "icu_datetime",
+    feature = "icu_timezone",
+    feature = "icu_calendar"
+))]
 pub mod time;
 #[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
-#[cfg(any(feature = "icu_datetime", feature = "icu_timezone"))]
+#[cfg(any(feature = "icu_calendar"))]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;
