@@ -86,7 +86,6 @@ impl MirroredPairedBracketData {
             mirroring_glyph,
             mirrored,
             paired_bracket_type: checked_bpt,
-            ..MirroredPairedBracketData::default()
         }
     }
 }
