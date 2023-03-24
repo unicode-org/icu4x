@@ -31,6 +31,8 @@ all-features = true
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
 denylist = ["bench", "logging", "cpp_default", "wasm_default"]
+# This has a lot of features, run a reduced test that is likely to catch 99% of bugs
+max_combination_size = 2
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
