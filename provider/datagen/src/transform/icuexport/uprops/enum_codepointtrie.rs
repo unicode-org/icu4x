@@ -58,8 +58,42 @@ where
     })
 }
 
+fn load_values_to_names<M>(
+    p: &crate::DatagenProvider,
+    prop_name: &str,
+    is_short: bool,
+) -> Result<DataResponse<M>, DataError>
+where
+    M: DataMarker<Yokeable = PropertyEnumToValueNameMapV1<'static>>,
+{
+    let data = get_enumerated_prop(&p.source, prop_name)
+        .map_err(|_| DataError::custom("Loading icuexport property data failed: \
+                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
+    let mut map: BTreeMap<_, &str> = BTreeMap::new();
+
+    for value in &data.values {
+        let discr = u16::try_from(value.discr)
+            .map_err(|_| DataError::custom(concat!("Found value larger than u16 for property")))?;
+        if is_short {
+            if let Some(ref short) = value.short {
+                map.insert(discr, short);
+            }
+        } else {
+            map.insert(discr, &value.long);
+        }
+    }
+
+    let data_struct = PropertyEnumToValueNameMapV1 {
+        map: map.into_iter().collect(),
+    };
+    Ok(DataResponse {
+        metadata: DataResponseMetadata::default(),
+        payload: Some(DataPayload::from_owned(data_struct)),
+    })
+}
+
 macro_rules! expand {
-    ($(($marker:ident, $names_marker:ident, $prop_name:literal)),+,) => {
+    ($(($marker:ident, $marker_n2e:ident, $marker_e2sn:ident, $marker_e2ln:ident, $prop_name:literal)),+,) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider
             {
@@ -86,9 +120,9 @@ macro_rules! expand {
                 }
             }
 
-            impl DataProvider<$names_marker> for crate::DatagenProvider
+            impl DataProvider<$marker_n2e> for crate::DatagenProvider
             {
-                fn load(&self, _: DataRequest) -> Result<DataResponse<$names_marker>, DataError> {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
                     let data = get_enumerated_prop(&self.source, $prop_name)
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
@@ -101,7 +135,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$names_marker> for crate::DatagenProvider {
+            impl IterableDataProvider<$marker_n2e> for crate::DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -109,6 +143,39 @@ macro_rules! expand {
                     Ok(vec![Default::default()])
                 }
             }
+
+            impl DataProvider<$marker_e2sn> for crate::DatagenProvider
+            {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2sn>, DataError> {
+                    load_values_to_names(self, $prop_name, true)
+                }
+            }
+
+            impl IterableDataProvider<$marker_e2sn> for crate::DatagenProvider {
+                fn supported_locales(
+                    &self,
+                ) -> Result<Vec<DataLocale>, DataError> {
+                    get_enumerated_prop(&self.source, $prop_name)?;
+                    Ok(vec![Default::default()])
+                }
+            }
+
+            impl DataProvider<$marker_e2ln> for crate::DatagenProvider
+            {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker_e2ln>, DataError> {
+                    load_values_to_names(self, $prop_name, false)
+                }
+            }
+
+            impl IterableDataProvider<$marker_e2ln> for crate::DatagenProvider {
+                fn supported_locales(
+                    &self,
+                ) -> Result<Vec<DataLocale>, DataError> {
+                    get_enumerated_prop(&self.source, $prop_name)?;
+                    Ok(vec![Default::default()])
+                }
+            }
+
         )+
     };
 }
@@ -168,30 +235,64 @@ expand!(
     (
         CanonicalCombiningClassV1Marker,
         CanonicalCombiningClassNameToValueV1Marker,
+        CanonicalCombiningClassValueToShortNameV1Marker,
+        CanonicalCombiningClassValueToLongNameV1Marker,
         "ccc"
     ),
     (
         GeneralCategoryV1Marker,
         GeneralCategoryNameToValueV1Marker,
+        GeneralCategoryValueToShortNameV1Marker,
+        GeneralCategoryValueToLongNameV1Marker,
         "gc"
     ),
-    (BidiClassV1Marker, BidiClassNameToValueV1Marker, "bc"),
-    (ScriptV1Marker, ScriptNameToValueV1Marker, "sc"),
+    (
+        BidiClassV1Marker,
+        BidiClassNameToValueV1Marker,
+        BidiClassValueToShortNameV1Marker,
+        BidiClassValueToLongNameV1Marker,
+        "bc"
+    ),
+    (
+        ScriptV1Marker,
+        ScriptNameToValueV1Marker,
+        ScriptValueToShortNameV1Marker,
+        ScriptValueToLongNameV1Marker,
+        "sc"
+    ),
     (
         EastAsianWidthV1Marker,
         EastAsianWidthNameToValueV1Marker,
+        EastAsianWidthValueToShortNameV1Marker,
+        EastAsianWidthValueToLongNameV1Marker,
         "ea"
     ),
-    (LineBreakV1Marker, LineBreakNameToValueV1Marker, "lb"),
+    (
+        LineBreakV1Marker,
+        LineBreakNameToValueV1Marker,
+        LineBreakValueToShortNameV1Marker,
+        LineBreakValueToLongNameV1Marker,
+        "lb"
+    ),
     (
         GraphemeClusterBreakV1Marker,
         GraphemeClusterBreakNameToValueV1Marker,
+        GraphemeClusterBreakValueToShortNameV1Marker,
+        GraphemeClusterBreakValueToLongNameV1Marker,
         "GCB"
     ),
-    (WordBreakV1Marker, WordBreakNameToValueV1Marker, "WB"),
+    (
+        WordBreakV1Marker,
+        WordBreakNameToValueV1Marker,
+        WordBreakValueToShortNameV1Marker,
+        WordBreakValueToLongNameV1Marker,
+        "WB"
+    ),
     (
         SentenceBreakV1Marker,
         SentenceBreakNameToValueV1Marker,
+        SentenceBreakValueToShortNameV1Marker,
+        SentenceBreakValueToLongNameV1Marker,
         "SB"
     ),
 );
