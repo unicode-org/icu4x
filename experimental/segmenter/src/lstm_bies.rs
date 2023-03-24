@@ -6,6 +6,7 @@ use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
 use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
+use alloc::boxed::Box;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
@@ -28,7 +29,24 @@ pub struct Lstm<'l> {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Bies { B, I, E, S }
+pub enum Bies {
+    B,
+    I,
+    E,
+    S,
+}
+
+#[cfg(test)]
+impl Bies {
+    fn as_char(&self) -> char {
+        match self {
+            Bies::B => 'b',
+            Bies::I => 'i',
+            Bies::E => 'e',
+            Bies::S => 's',
+        }
+    }
+}
 
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
@@ -348,7 +366,13 @@ mod tests {
             println!("Estimated bies : {lstm_output:?}");
             println!("True bies      : {}", test_case.true_bies);
             println!("****************************************************");
-            // assert_eq!(test_case.expected_bies, lstm_output);
+            assert_eq!(
+                test_case.expected_bies,
+                lstm_output
+                    .into_iter()
+                    .map(Bies::as_char)
+                    .collect::<String>()
+            );
         }
     }
 }
