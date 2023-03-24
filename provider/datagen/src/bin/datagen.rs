@@ -231,21 +231,25 @@ fn main() -> eyre::Result<()> {
     };
 
     if matches.all_keys {
-        options.keys = KeyInclude::All
+        options.keys = KeyInclude::All;
     } else if !matches.keys.is_empty() {
         options.keys = match matches.keys.as_slice() {
             [x] if x == "none" => KeyInclude::None,
             [x] if x == "all" => KeyInclude::All,
             [x] if x == "experimental-all" => KeyInclude::AllWithExperimental,
             keys => KeyInclude::Explicit(icu_datagen::keys(keys).into_iter().collect()),
-        }
+        };
     } else if let Some(key_file_path) = matches.key_file {
-        options.keys = KeyInclude::Explicit(
-            icu_datagen::keys_from_file(&key_file_path)
-                .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                .into_iter()
-                .collect(),
-        )
+        log::warn!("The --key-file argument is deprecated. Use --options with a TOML file.");
+        #[allow(deprecated)]
+        {
+            options.keys = KeyInclude::Explicit(
+                icu_datagen::keys_from_file(&key_file_path)
+                    .with_context(|| key_file_path.to_string_lossy().into_owned())?
+                    .into_iter()
+                    .collect(),
+            );
+        }
     }
 
     if let KeyInclude::Explicit(e) = &options.keys {

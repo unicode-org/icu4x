@@ -75,27 +75,7 @@ mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 pub use registry::*;
-pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
-
-#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
-#[doc(hidden)]
-#[derive(Debug)]
-pub enum CldrLocaleSubset {
-    Ignored,
-}
-
-impl Default for CldrLocaleSubset {
-    fn default() -> Self {
-        Self::Ignored
-    }
-}
-
-impl CldrLocaleSubset {
-    #[allow(non_upper_case_globals)]
-    pub const Full: Self = Self::Ignored;
-    #[allow(non_upper_case_globals)]
-    pub const Modern: Self = Self::Ignored;
-}
+pub use source::SourceData;
 
 /// [Out::Fs] serialization formats.
 pub mod syntax {
@@ -106,19 +86,23 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{
-        options, syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
-        SourceData,
-    };
+    pub use super::{options, syntax, BakedOptions, Out, SourceData};
     pub use icu_locid::{langid, LanguageIdentifier};
     pub use icu_provider::KeyedDataMarker;
+
+    // SEMVER GRAVEYARD
+    #[doc(hidden)]
+    pub use super::options::{CollationHanDatabase, CoverageLevel};
+    #[doc(hidden)]
+    pub use super::CldrLocaleSubset;
 }
 
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_fs::export::serializers::AbstractSerializer;
 use prelude::*;
 use rayon::prelude::*;
+
+use icu_provider_fs::export::serializers::AbstractSerializer;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
@@ -141,12 +125,6 @@ impl DatagenProvider {
             };
         }
         TEST_PROVIDER.clone()
-    }
-}
-
-impl AnyProvider for DatagenProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.as_any_provider().load_any(key, req)
     }
 }
 
@@ -198,7 +176,6 @@ pub fn options_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<options::Opt
     let mut options = options::Options::default();
     let tags = static_analysis(path.as_ref())?;
     options.keys = options::KeyInclude::Explicit(tags.iter().filter_map(crate::key).collect());
-    options.dictionary_segmenter = tags.contains("dictionary_segmenter");
     Ok(options)
 }
 
@@ -224,23 +201,6 @@ fn static_analysis(path: &Path) -> std::io::Result<HashSet<String>> {
         }
     }
     Ok(result)
-}
-
-#[doc(hidden)]
-pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    BufReader::new(std::fs::File::open(path.as_ref())?)
-        .lines()
-        .filter_map(|k| k.map(crate::key).transpose())
-        .collect()
-}
-
-#[doc(hidden)]
-pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    let mut strings = static_analysis(path.as_ref())?
-        .into_iter()
-        .collect::<Vec<_>>();
-    strings.sort();
-    Ok(strings.into_iter().filter_map(crate::key).collect())
 }
 
 /// Options for configuring the output of databake.
@@ -521,6 +481,7 @@ fn test_keys() {
 
 #[test]
 fn test_keys_from_file() {
+    #[allow(deprecated)]
     assert_eq!(
         keys_from_file(
             PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")
@@ -539,25 +500,85 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_options_from_bin() {
-    // This is the test binary for `cargo test -p icu_segmenter --test complex_word --release`
+    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::buffer_no_fallback`
+    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
+    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         options_from_bin(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                .join("tests/data/complex_word-b46191e5ca4b3378")
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm")
         )
         .unwrap(),
         options::Options {
             keys: options::KeyInclude::Explicit(
                 [
-                    icu_segmenter::provider::LstmDataV1Marker::KEY,
-                    icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY,
-                    icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY,
-                    icu_segmenter::provider::WordBreakDataV1Marker::KEY,
+                    icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+                    icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
+                    icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
+                    icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
+                    icu_calendar::provider::WeekDataV1Marker::KEY,
+                    icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+                    icu_plurals::provider::OrdinalV1Marker::KEY,
                 ]
                 .into()
             ),
-            dictionary_segmenter: true,
             ..Default::default()
         }
-    )
+    );
+}
+
+// SEMVER GRAVEYARD
+
+#[doc(hidden)]
+pub use source::{CollationHanDatabase, CoverageLevel};
+
+#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[doc(hidden)]
+#[derive(Debug)]
+pub enum CldrLocaleSubset {
+    Ignored,
+}
+
+impl Default for CldrLocaleSubset {
+    fn default() -> Self {
+        Self::Ignored
+    }
+}
+
+impl CldrLocaleSubset {
+    #[allow(non_upper_case_globals)]
+    pub const Full: Self = Self::Ignored;
+    #[allow(non_upper_case_globals)]
+    pub const Modern: Self = Self::Ignored;
+}
+
+/// Parses a file of human-readable key identifiers and returns a
+/// list of [`DataKey`]s.
+///
+/// Unknown key names are ignored.
+#[deprecated(
+    since = "1.3",
+    note = "Use Options TOML serialization with options_from_file"
+)]
+pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
+    BufReader::new(std::fs::File::open(path.as_ref())?)
+        .lines()
+        .filter_map(|k| k.map(crate::key).transpose())
+        .collect()
+}
+
+/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
+#[deprecated(since = "1.3", note = "Use Options with options_from_bin")]
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
+    let mut strings = static_analysis(path.as_ref())?
+        .into_iter()
+        .collect::<Vec<_>>();
+    strings.sort();
+    Ok(strings.into_iter().filter_map(crate::key).collect())
+}
+
+
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
+    }
 }

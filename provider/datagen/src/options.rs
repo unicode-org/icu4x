@@ -4,7 +4,9 @@
 
 //! Options bag
 
-use crate::prelude::*;
+pub use crate::transform::cldr::source::CoverageLevel;
+
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -41,7 +43,7 @@ impl Default for Options {
     }
 }
 
-impl SourceData {
+impl crate::SourceData {
     // This should be on Options and take a &mut SourceData, but because of aliasing the call source.options.resolve(&source) doesn't compile.
     pub(crate) fn resolve(&mut self) -> Result<(), DataError> {
         self.options.locales = match core::mem::take(&mut self.options.locales) {
