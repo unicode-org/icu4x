@@ -1,0 +1,13 @@
+::icu_properties::provider::names::PropertyEnumToValueNameMapV1 {
+    map: unsafe {
+        #[allow(unused_unsafe)]
+        ::zerovec::ZeroMap::from_parts_unchecked(
+            unsafe {
+                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0\x07\0\x08\0\t\0\n\0\x0B\0\x0C\0\r\0\x0E\0\x0F\0\x10\0\x11\0\x12\0\x13\0\x14\0\x15\0\x16\0")
+            },
+            unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x17\0\0\0\0\0\x05\0\x0C\0\x12\0\x1A\0#\0)\00\0<\0>\0D\0F\0O\0V\0h\0u\0\x81\0\x8D\0\x93\0\x9D\0\xA7\0\xB5\0\xB8\0OtherALetterFormatKatakanaMidLetterMidNumNumericExtendNumLetCRExtendLFMidNumLetNewlineRegional_IndicatorHebrew_LetterSingle_QuoteDouble_QuoteE_BaseE_Base_GAZE_ModifierGlue_After_ZwjZWJWSegSpace")
+            },
+        )
+    },
+}

@@ -1,0 +1,22 @@
+{
+  "map": {
+    "0": "Other",
+    "1": "Control",
+    "2": "CR",
+    "3": "Extend",
+    "4": "L",
+    "5": "LF",
+    "6": "LV",
+    "7": "LVT",
+    "8": "T",
+    "9": "V",
+    "10": "SpacingMark",
+    "11": "Prepend",
+    "12": "Regional_Indicator",
+    "13": "E_Base",
+    "14": "E_Base_GAZ",
+    "15": "E_Modifier",
+    "16": "Glue_After_Zwj",
+    "17": "ZWJ"
+  }
+}

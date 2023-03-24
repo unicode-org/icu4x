@@ -885,6 +885,32 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::BidiClassValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::bc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::BidiClassValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::bc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiControlV1Marker>, DataError> {
                 props::bidi_c_v1::lookup(&req.locale)
@@ -952,6 +978,45 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::ccc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::ccc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(
+                            ::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY,
+                            req,
+                        )
+                    })
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1150,6 +1215,34 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::ea_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::ea_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiComponentV1Marker>, DataError> {
                 props::ecomp_v1::lookup(&req.locale)
@@ -1345,6 +1438,36 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::gc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::gc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GraphV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphV1Marker>, DataError> {
                 props::graph_v1::lookup(&req.locale)
@@ -1396,6 +1519,42 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::gcb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY, req)
+                    })
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker> for $provider {
+            fn load(
+                &self,
+                req: DataRequest,
+            ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::gcb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY, req)
+                    })
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1552,6 +1711,32 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::LineBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::lb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::LineBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::lb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1776,6 +1961,32 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::ScriptValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::sc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::ScriptValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::sc_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::ScriptValueToShortNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>, DataError> {
                 props::scx_v1::lookup(&req.locale)
@@ -1825,6 +2036,32 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::sb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::sb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -1942,6 +2179,32 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::WordBreakValueToLongNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToLongNameV1Marker>, DataError> {
+                props::names::to::long::wb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_properties")]
+        impl DataProvider<::icu_properties::provider::WordBreakValueToShortNameV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToShortNameV1Marker>, DataError> {
+                props::names::to::short::wb_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_properties")]
@@ -2788,6 +3051,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const BIDICLASSV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiClassV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const BIDICLASSVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::BidiClassValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const BIDICLASSVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::BidiClassValueToShortNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const BIDICONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiControlV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const BIDIMIRROREDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiMirroredV1Marker::KEY.hashed();
@@ -2799,6 +3068,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const CANONICALCOMBININGCLASSVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const CANONICALCOMBININGCLASSVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2838,6 +3113,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const EASTASIANWIDTHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EastAsianWidthV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const EASTASIANWIDTHVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const EMOJICOMPONENTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiComponentV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const EMOJIMODIFIERBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.hashed();
@@ -2876,6 +3157,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const GENERALCATEGORYVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const GENERALCATEGORYVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const GRAPHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.hashed();
@@ -2885,6 +3172,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const GRAPHEMECLUSTERBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2910,6 +3203,12 @@ macro_rules! impl_any_provider {
                     ::icu_properties::provider::LineBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const LINEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LineBreakV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const LINEBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::LineBreakValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const LINEBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::LineBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.hashed();
@@ -2948,6 +3247,12 @@ macro_rules! impl_any_provider {
                 #[cfg(feature = "icu_properties")]
                 const SCRIPTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ScriptV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
+                const SCRIPTVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::ScriptValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const SCRIPTVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::ScriptValueToShortNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
                 const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2957,6 +3262,12 @@ macro_rules! impl_any_provider {
                     ::icu_properties::provider::SentenceBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const SENTENCEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceBreakV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const SENTENCEBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::SentenceBreakValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const SENTENCEBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::SentenceBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const SENTENCETERMINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceTerminalV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -2977,6 +3288,12 @@ macro_rules! impl_any_provider {
                     ::icu_properties::provider::WordBreakNameToValueV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const WORDBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const WORDBREAKVALUETOLONGNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::WordBreakValueToLongNameV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_properties")]
+                const WORDBREAKVALUETOSHORTNAMEV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_properties::provider::WordBreakValueToShortNameV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
                 const XDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XdigitV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_properties")]
@@ -3213,6 +3530,10 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     BIDICLASSV1MARKER => props::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    BIDICLASSVALUETOLONGNAMEV1MARKER => props::names::to::long::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    BIDICLASSVALUETOSHORTNAMEV1MARKER => props::names::to::short::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     BIDICONTROLV1MARKER => props::bidi_c_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     BIDIMIRROREDV1MARKER => props::bidi_m_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3222,6 +3543,14 @@ macro_rules! impl_any_provider {
                     CANONICALCOMBININGCLASSNAMETOVALUEV1MARKER => props::names::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CANONICALCOMBININGCLASSV1MARKER => props::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    CANONICALCOMBININGCLASSVALUETOLONGNAMEV1MARKER => {
+                        props::names::to::long::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                    }
+                    #[cfg(feature = "icu_properties")]
+                    CANONICALCOMBININGCLASSVALUETOSHORTNAMEV1MARKER => {
+                        props::names::to::short::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                    }
                     #[cfg(feature = "icu_properties")]
                     CASEIGNORABLEV1MARKER => props::ci_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3252,6 +3581,10 @@ macro_rules! impl_any_provider {
                     EASTASIANWIDTHNAMETOVALUEV1MARKER => props::names::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     EASTASIANWIDTHV1MARKER => props::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    EASTASIANWIDTHVALUETOLONGNAMEV1MARKER => props::names::to::long::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER => props::names::to::short::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     EMOJICOMPONENTV1MARKER => props::ecomp_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3285,6 +3618,10 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     GENERALCATEGORYV1MARKER => props::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    GENERALCATEGORYVALUETOLONGNAMEV1MARKER => props::names::to::long::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    GENERALCATEGORYVALUETOSHORTNAMEV1MARKER => props::names::to::short::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     GRAPHV1MARKER => props::graph_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEBASEV1MARKER => props::gr_base_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3292,6 +3629,14 @@ macro_rules! impl_any_provider {
                     GRAPHEMECLUSTERBREAKNAMETOVALUEV1MARKER => props::names::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMECLUSTERBREAKV1MARKER => props::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER => {
+                        props::names::to::long::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                    }
+                    #[cfg(feature = "icu_properties")]
+                    GRAPHEMECLUSTERBREAKVALUETOSHORTNAMEV1MARKER => {
+                        props::names::to::short::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                    }
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEEXTENDV1MARKER => props::gr_ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3316,6 +3661,10 @@ macro_rules! impl_any_provider {
                     LINEBREAKNAMETOVALUEV1MARKER => props::names::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     LINEBREAKV1MARKER => props::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    LINEBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    LINEBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     LOGICALORDEREXCEPTIONV1MARKER => props::loe_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3351,6 +3700,10 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     SCRIPTV1MARKER => props::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
+                    SCRIPTVALUETOLONGNAMEV1MARKER => props::names::to::long::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    SCRIPTVALUETOSHORTNAMEV1MARKER => props::names::to::short::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
                     SCRIPTWITHEXTENSIONSPROPERTYV1MARKER => props::scx_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SEGMENTSTARTERV1MARKER => props::segstart_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3358,6 +3711,10 @@ macro_rules! impl_any_provider {
                     SENTENCEBREAKNAMETOVALUEV1MARKER => props::names::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SENTENCEBREAKV1MARKER => props::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    SENTENCEBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    SENTENCEBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SENTENCETERMINALV1MARKER => props::sterm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3376,6 +3733,10 @@ macro_rules! impl_any_provider {
                     WORDBREAKNAMETOVALUEV1MARKER => props::names::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     WORDBREAKV1MARKER => props::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    WORDBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_properties")]
+                    WORDBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     XDIGITV1MARKER => props::xdigit_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
