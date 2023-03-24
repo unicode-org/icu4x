@@ -181,3 +181,26 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub map: ZeroMap<'data, NormalizedPropertyNameStr, u16>,
 }
+
+/// A mapping of property values to their names. A single instance of this map will only cover
+/// either long or short names, determined whilst loading data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct PropertyEnumToValueNameMapV1<'data> {
+    /// A map from names to their value discriminant
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, u16, str>,
+}

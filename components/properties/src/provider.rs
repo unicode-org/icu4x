@@ -339,14 +339,21 @@ macro_rules! expand {
     (
         ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
         ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
-        ($(($code_point_map_marker:ident, $value_name_marker:ident, $enum_s:literal, $value_ty:ident),)+)
+        ($(($code_point_map_marker:ident,
+            $name_value_marker:ident, $value_short_name_marker:ident, $value_long_name_marker:ident,
+            $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
             // Data keys that return code point sets (represented as CodePointSetData).
             // For now, synonymous with binary properties of code points only.
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_cp_s, "' Unicode property")]
-                #[derive(Debug)]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $code_point_set_marker;
 
                 impl DataMarker for $code_point_set_marker {
@@ -356,20 +363,6 @@ macro_rules! expand {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_cp_s, "@1"));
                 }
 
-                #[cfg(feature = "datagen")]
-                impl Default for $code_point_set_marker {
-                    fn default() -> Self {
-                        Self
-                    }
-                }
-
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $code_point_set_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$code_point_set_marker }
-                    }
-                }
             )+
 
             // Data keys that return sets of strings + code points (represented as UnicodeSetData).
@@ -378,7 +371,12 @@ macro_rules! expand {
             //   - exemplar characters
             $(
                 #[doc = core::concat!("Data marker for the '", $bin_us_s, "' Unicode property")]
-                #[derive(Debug)]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $unicode_set_marker;
 
                 impl DataMarker for $unicode_set_marker {
@@ -387,28 +385,18 @@ macro_rules! expand {
                 impl KeyedDataMarker for $unicode_set_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_us_s, "@1"));
                 }
-
-                #[cfg(feature = "datagen")]
-                impl Default for $unicode_set_marker {
-                    fn default() -> Self {
-                        Self
-                    }
-                }
-
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $unicode_set_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$unicode_set_marker }
-                    }
-                }
             )+
 
             // Data keys that return code point map (represented as CodePointMapData).
             // For now, synonymous with enumerated properties [of code points only].
             $(
                 #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
-                #[derive(Debug)]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
                 pub struct $code_point_map_marker;
 
                 impl DataMarker for $code_point_map_marker {
@@ -419,46 +407,57 @@ macro_rules! expand {
                     const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
                 }
 
-                #[cfg(feature = "datagen")]
-                impl Default for $code_point_map_marker {
-                    fn default() -> Self {
-                        Self
-                    }
-                }
 
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $code_point_map_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$code_point_map_marker }
-                    }
-                }
+                #[doc = core::concat!("Data marker for parsing the names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
+                pub struct $name_value_marker;
 
-                #[doc = core::concat!("Data marker for the names of the values of the '", $enum_s, "' Unicode property")]
-                #[derive(Debug)]
-                pub struct $value_name_marker;
-
-                impl DataMarker for $value_name_marker {
+                impl DataMarker for $name_value_marker {
                     type Yokeable = names::PropertyValueNameToEnumMapV1<'static>;
                 }
 
-                impl KeyedDataMarker for $value_name_marker {
+                impl KeyedDataMarker for $name_value_marker {
                     const KEY: DataKey = data_key!(concat!("props/names/", $enum_s, "@1"));
                 }
 
-                #[cfg(feature = "datagen")]
-                impl Default for $value_name_marker {
-                    fn default() -> Self {
-                        Self
-                    }
+
+                #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
+                pub struct $value_short_name_marker;
+
+                impl DataMarker for $value_short_name_marker {
+                    type Yokeable = names::PropertyEnumToValueNameMapV1<'static>;
                 }
 
-                #[cfg(feature = "datagen")]
-                impl databake::Bake for $value_name_marker {
-                    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                        env.insert("icu_properties");
-                        databake::quote!{ ::icu_properties::provider::$value_name_marker }
-                    }
+                impl KeyedDataMarker for $value_short_name_marker {
+                    const KEY: DataKey = data_key!(concat!("props/names/to/short/", $enum_s, "@1"));
+                }
+
+                #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                #[derive(Debug, Default)]
+                #[cfg_attr(
+                    feature = "datagen",
+                    derive(databake::Bake),
+                    databake(path = icu_properties::provider),
+                )]
+                pub struct $value_long_name_marker;
+
+                impl DataMarker for $value_long_name_marker {
+                    type Yokeable = names::PropertyEnumToValueNameMapV1<'static>;
+                }
+
+                impl KeyedDataMarker for $value_long_name_marker {
+                    const KEY: DataKey = data_key!(concat!("props/names/to/long/", $enum_s, "@1"));
                 }
             )+
     };
@@ -555,49 +554,72 @@ expand!(
         (
             CanonicalCombiningClassV1Marker,
             CanonicalCombiningClassNameToValueV1Marker,
+            CanonicalCombiningClassValueToShortNameV1Marker,
+            CanonicalCombiningClassValueToLongNameV1Marker,
             "ccc",
             CanonicalCombiningClass
         ),
         (
             GeneralCategoryV1Marker,
             GeneralCategoryNameToValueV1Marker,
+            GeneralCategoryValueToShortNameV1Marker,
+            GeneralCategoryValueToLongNameV1Marker,
             "gc",
             GeneralCategory
         ),
         (
             BidiClassV1Marker,
             BidiClassNameToValueV1Marker,
+            BidiClassValueToShortNameV1Marker,
+            BidiClassValueToLongNameV1Marker,
             "bc",
             BidiClass
         ),
-        (ScriptV1Marker, ScriptNameToValueV1Marker, "sc", Script),
+        (
+            ScriptV1Marker,
+            ScriptNameToValueV1Marker,
+            ScriptValueToShortNameV1Marker,
+            ScriptValueToLongNameV1Marker,
+            "sc",
+            Script
+        ),
         (
             EastAsianWidthV1Marker,
             EastAsianWidthNameToValueV1Marker,
+            EastAsianWidthValueToShortNameV1Marker,
+            EastAsianWidthValueToLongNameV1Marker,
             "ea",
             EastAsianWidth
         ),
         (
             LineBreakV1Marker,
             LineBreakNameToValueV1Marker,
+            LineBreakValueToShortNameV1Marker,
+            LineBreakValueToLongNameV1Marker,
             "lb",
             LineBreak
         ),
         (
             GraphemeClusterBreakV1Marker,
             GraphemeClusterBreakNameToValueV1Marker,
+            GraphemeClusterBreakValueToShortNameV1Marker,
+            GraphemeClusterBreakValueToLongNameV1Marker,
             "GCB",
             GraphemeClusterBreak
         ),
         (
             WordBreakV1Marker,
             WordBreakNameToValueV1Marker,
+            WordBreakValueToShortNameV1Marker,
+            WordBreakValueToLongNameV1Marker,
             "WB",
             WordBreak
         ),
         (
             SentenceBreakV1Marker,
             SentenceBreakNameToValueV1Marker,
+            SentenceBreakValueToShortNameV1Marker,
+            SentenceBreakValueToLongNameV1Marker,
             "SB",
             SentenceBreak
         ),
