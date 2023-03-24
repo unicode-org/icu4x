@@ -275,6 +275,7 @@ rust_library("icu_capi-v1_1_0") {
     "--cfg=feature=\"icu_plurals\"",
     "--cfg=feature=\"icu_properties\"",
     "--cfg=feature=\"icu_segmenter\"",
+    "--cfg=feature=\"icu_timezone\"",
   ]
 
   visibility = [ ":*" ]
