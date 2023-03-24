@@ -209,10 +209,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
-            calculator: &ICU4XWeekCalculator,
-        ) -> Result<ICU4XWeekOf, ICU4XError> {
+            calculator: &crate::week::ffi::ICU4XWeekCalculator,
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.week_of_year(&calculator.0)?.into())
         }
 
