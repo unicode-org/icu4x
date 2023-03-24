@@ -5,48 +5,50 @@
 use crate::lstm_bies::Lstm;
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use crate::SegmenterError;
+use alloc::borrow::ToOwned;
 use alloc::string::String;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use icu_provider::DataPayload;
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
-pub struct LstmSegmenterIterator<'a> {
-    chars: core::str::CharIndices<'a>,
-    bies: alloc::vec::IntoIter<u8>,
+pub struct LstmSegmenterIterator {
+    input: String,
+    bies_str: String,
+    pos: usize,
+    pos_utf8: usize,
 }
 
-impl Iterator for LstmSegmenterIterator<'_> {
+impl Iterator for LstmSegmenterIterator {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let (i, _) = self.chars.next()?;
-            let bies = self.bies.next()?;
-
-            if matches!(bies, b'b' | b's') {
-                return Some(i);
+            let ch = self.bies_str.chars().nth(self.pos)?;
+            self.pos_utf8 += self.input.chars().nth(self.pos)?.len_utf8();
+            self.pos += 1;
+            if ch == 'e' && self.bies_str.len() > self.pos {
+                return Some(self.pos_utf8);
             }
         }
     }
 }
 
-impl<'a> LstmSegmenterIterator<'a> {
-    pub fn new(lstm: &Lstm, input: &'a str) -> Self {
-        let bies = lstm.word_segmenter(input);
-        debug_assert_eq!(bies.len(), input.chars().count());
-        let mut chars = input.char_indices();
-        let mut bies = bies.into_bytes().into_iter();
-        // Skip first char as we don't want to output 0 as the first element
-        // TODO: why not actually?
-        chars.next();
-        bies.next();
-        Self { chars, bies }
+impl LstmSegmenterIterator {
+    pub fn new(lstm: &Lstm, input: &str) -> Self {
+        let lstm_output = lstm.word_segmenter(input);
+        Self {
+            input: input.to_owned(),
+            bies_str: lstm_output,
+            pos: 0,
+            pos_utf8: 0,
+        }
     }
 }
 
 pub struct LstmSegmenterIteratorUtf16 {
-    bies: core::iter::Enumerate<alloc::vec::IntoIter<u8>>,
+    bies_str: String,
+    pos: usize,
 }
 
 impl Iterator for LstmSegmenterIteratorUtf16 {
@@ -54,9 +56,11 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let (i, bies) = self.bies.next()?;
-            if matches!(bies, b'b' | b's') {
-                return Some(i);
+            let ch = self.bies_str.chars().nth(self.pos)?;
+            // This ch is always in bitmap.
+            self.pos += 1;
+            if ch == 'e' && self.bies_str.len() > self.pos {
+                return Some(self.pos);
             }
         }
     }
@@ -64,15 +68,14 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 
 impl LstmSegmenterIteratorUtf16 {
     pub fn new(lstm: &Lstm, input: &[u16]) -> Self {
-        let input: String = decode_utf16(input.iter().copied())
+        let input: String = decode_utf16(input.iter().cloned())
             .map(|r| r.unwrap_or(REPLACEMENT_CHARACTER))
             .collect();
-        let bies = lstm.word_segmenter(&input);
-        let mut bies = bies.into_bytes().into_iter().enumerate();
-        // Skip first char as we don't want to output 0 as the first element
-        // TODO: why not actually?
-        bies.next();
-        Self { bies }
+        let lstm_output = lstm.word_segmenter(&input);
+        Self {
+            bies_str: lstm_output,
+            pos: 0,
+        }
     }
 }
 
@@ -90,7 +93,7 @@ impl<'l> LstmSegmenter<'l> {
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str(&self, input: &'l str) -> LstmSegmenterIterator {
+    pub fn segment_str(&self, input: &str) -> LstmSegmenterIterator {
         LstmSegmenterIterator::new(&self.lstm, input)
     }
 
