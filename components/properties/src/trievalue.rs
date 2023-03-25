@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::bidi_data::MirroredPairedBracketData;
+use crate::provider::bidi_data::{CheckedBidiPairedBracketType, MirroredPairedBracketData};
 use crate::script::ScriptWithExt;
+use crate::PropertiesError;
 use crate::{
-    BidiClass, BidiPairedBracketType, CanonicalCombiningClass, EastAsianWidth, GeneralCategory,
-    GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
+    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
 };
-use core::char::CharTryFromError;
 use core::convert::TryInto;
 use core::num::TryFromIntError;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -99,11 +99,15 @@ impl TrieValue for SentenceBreak {
     }
 }
 
-impl TrieValue for BidiPairedBracketType {
+impl TrieValue for CheckedBidiPairedBracketType {
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        u8::try_from(i).map(Self)
+        Ok(match i {
+            1 => CheckedBidiPairedBracketType::Open,
+            2 => CheckedBidiPairedBracketType::Close,
+            _ => CheckedBidiPairedBracketType::None,
+        })
     }
 }
 
@@ -175,20 +179,28 @@ impl TrieValue for GeneralCategoryGroup {
 }
 
 impl TrieValue for MirroredPairedBracketData {
-    type TryFromU32Error = CharTryFromError;
+    type TryFromU32Error = PropertiesError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         let code_point = i & 0x1FFFFF;
-        let mirroring_glyph = char::try_from_u32(code_point)?;
+        let mirroring_glyph = char::try_from_u32(code_point)
+            .map_err(|_| PropertiesError::MirroredPairedBracketDataFromU32(i))?;
         let mirrored = ((i >> 21) & 0x1) == 1;
         let paired_bracket_type = {
             let value = ((i >> 22) & 0x3) as u8;
-            BidiPairedBracketType(value)
+            match value {
+                0 => CheckedBidiPairedBracketType::None,
+                1 => CheckedBidiPairedBracketType::Open,
+                2 => CheckedBidiPairedBracketType::Close,
+                _ => {
+                    return Err(PropertiesError::MirroredPairedBracketDataFromU32(i));
+                }
+            }
         };
-        Ok(MirroredPairedBracketData::new(
+        Ok(MirroredPairedBracketData {
             mirroring_glyph,
             mirrored,
             paired_bracket_type,
-        ))
+        })
     }
 }

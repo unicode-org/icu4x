@@ -19,8 +19,6 @@
 //! - `Bidi_Mirrored`
 //! - `Bidi_Mirroring_Glyph`
 
-use crate::props::BidiPairedBracketType;
-
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, CharULE, ULE};
@@ -69,27 +67,6 @@ pub struct MirroredPairedBracketData {
     pub paired_bracket_type: CheckedBidiPairedBracketType,
 }
 
-impl MirroredPairedBracketData {
-    /// Construct a new [`MirroredPairedBracketData`] that coerces the input into
-    /// valid values of `MirroredPairedBracketData`.
-    ///
-    /// GIGO: This function will return `CheckedBidiPairedBracketType::None` if
-    /// the input `BidiPairedBracketType` value is not valid for `MirroredPairedBracketData`.
-    /// See [`CheckedBidiPairedBracketType::from(BidiPairedBracketType)`].
-    pub fn new(
-        mirroring_glyph: char,
-        mirrored: bool,
-        paired_bracket_type: BidiPairedBracketType,
-    ) -> Self {
-        let checked_bpt = CheckedBidiPairedBracketType::from(paired_bracket_type);
-        MirroredPairedBracketData {
-            mirroring_glyph,
-            mirrored,
-            paired_bracket_type: checked_bpt,
-        }
-    }
-}
-
 impl Default for MirroredPairedBracketData {
     fn default() -> Self {
         Self {
@@ -117,13 +94,15 @@ impl TryFrom<u32> for MirroredPairedBracketData {
     }
 }
 
-/// A closed Rust enum used to enforce invariants of expected values for `BidiPairedBracketType`
-/// necessary in the internal representation of [`MirroredPairedBracketData`] to satisfy
-/// the ULE invariants on valid values.
+/// A closed Rust enum representing a closed set of the incoming Bidi_Paired_Bracket_Type
+/// property values necessary in the internal representation of [`MirroredPairedBracketData`]
+/// to satisfy the ULE invariants on valid values.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::provider::bidi_data))]
+#[repr(u8)]
+#[zerovec::make_ule(CheckedBidiPairedBracketTypeULE)]
 // This enum is closed in order to help with ULE validation for MirroredPairedBracketData.
 #[allow(clippy::exhaustive_enums)]
 pub enum CheckedBidiPairedBracketType {
@@ -133,25 +112,6 @@ pub enum CheckedBidiPairedBracketType {
     Open = 1,
     /// Close paired bracket.
     Close = 2,
-}
-
-impl From<BidiPairedBracketType> for CheckedBidiPairedBracketType {
-    /// GIGO: This function will return `CheckedBidiPairedBracketType::None` if
-    /// the input `BidiPairedBracketType` value does not have a matching variant
-    /// in `CheckedBidiPairedBracketType`.
-    fn from(paired_bracket_type: BidiPairedBracketType) -> CheckedBidiPairedBracketType {
-        match paired_bracket_type {
-            BidiPairedBracketType::Open => CheckedBidiPairedBracketType::Open,
-            BidiPairedBracketType::Close => CheckedBidiPairedBracketType::Close,
-            _ => CheckedBidiPairedBracketType::None,
-        }
-    }
-}
-
-impl From<CheckedBidiPairedBracketType> for BidiPairedBracketType {
-    fn from(checked_bpt: CheckedBidiPairedBracketType) -> BidiPairedBracketType {
-        BidiPairedBracketType(checked_bpt as u8)
-    }
 }
 
 /// Bit layout for the 24 bits (0..=23) of the `[u8; 3]` ULE raw type.
@@ -236,9 +196,24 @@ impl AsULE for MirroredPairedBracketData {
             .map(|ule| char::from_unaligned(*ule))
             .unwrap_or(char::REPLACEMENT_CHARACTER);
         let mirrored = ((unaligned.0[2] >> 5) & 0x1) == 1;
-        let bpt = BidiPairedBracketType(unaligned.0[2] >> 6);
+        let paired_bracket_type = {
+            let discriminant = unaligned.0[2] >> 6;
+            debug_assert!(
+                discriminant != 3,
+                "Bidi_Paired_Bracket_Type can only be Open/Close/None in MirroredPairedBracketData"
+            );
+            match discriminant {
+                1 => CheckedBidiPairedBracketType::Open,
+                2 => CheckedBidiPairedBracketType::Close,
+                _ => CheckedBidiPairedBracketType::None,
+            }
+        };
 
-        Self::new(mirroring_glyph, mirrored, bpt)
+        MirroredPairedBracketData {
+            mirroring_glyph,
+            mirrored,
+            paired_bracket_type,
+        }
     }
 }
 
@@ -273,8 +248,8 @@ mod tests {
         // data for U+007B LEFT CURLY BRACKET
         let ule_bytes = &mut [0x7D, 0x0, 0x60];
 
-        // Set discriminant value for the BidiPairedBracketType enum to be invalid.
-        // BidiPairedBracketType only has 3 values (discriminants => 0..=2), so the 4th
+        // Set discriminant value for the CheckedBidiPairedBracketType enum to be invalid.
+        // CheckedBidiPairedBracketType only has 3 values (discriminants => 0..=2), so the 4th
         // expressible value from the 2 bits (3) should not parse successfully.
         ule_bytes[2] |= 0xC0;
 

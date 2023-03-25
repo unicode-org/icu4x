@@ -289,29 +289,6 @@ impl BidiClass {
     pub const PopDirectionalIsolate: BidiClass = BidiClass(22);
 }
 
-/// Enumerated property Bidi_Paired_Bracket_Type.
-///
-/// Bidi_Paired_Bracket_Type represents the type of a paired bracket, either
-/// opening or closing. This property is used in the implementation of parenthesis matching.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
-#[allow(clippy::exhaustive_structs)] // newtype
-#[repr(transparent)]
-#[zerovec::make_ule(BidiPairedBracketTypeULE)]
-pub struct BidiPairedBracketType(pub u8);
-
-#[allow(non_upper_case_globals)]
-impl BidiPairedBracketType {
-    /// Not a paired bracket.
-    pub const None: BidiPairedBracketType = BidiPairedBracketType(0);
-    /// Open paired bracket.
-    pub const Open: BidiPairedBracketType = BidiPairedBracketType(1);
-    /// Close paired bracket.
-    pub const Close: BidiPairedBracketType = BidiPairedBracketType(2);
-}
-
 impl_value_getter! {
     marker: BidiClassNameToValueV1Marker;
     impl BidiClass {

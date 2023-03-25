@@ -67,13 +67,12 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
         // Create the equivalent of CPT<MirroredPairedBracketData>, but since the
         // trie's value type's ULE serializes to 24 bits, which CPT builder cannot handle, widen
         // to 32 bits using u32.
-        let trie_vals_structured_iter = (0..=(char::MAX as u32)).map(|cp| {
-            MirroredPairedBracketData::new(
-                bmg_trie.get32(cp),
-                bidi_m_cpinvlist.contains32(cp),
-                bpt_trie.get32(cp),
-            )
-        });
+        let trie_vals_structured_iter =
+            (0..=(char::MAX as u32)).map(|cp| MirroredPairedBracketData {
+                mirroring_glyph: bmg_trie.get32(cp),
+                mirrored: bidi_m_cpinvlist.contains32(cp),
+                paired_bracket_type: bpt_trie.get32(cp),
+            });
         let trie_vals_ule_iter = trie_vals_structured_iter.map(u32::from);
         let trie_vals_vec: Vec<u32> = trie_vals_ule_iter.collect();
         let trie_data = CodePointTrieBuilderData::ValuesByCodePoint(&trie_vals_vec);

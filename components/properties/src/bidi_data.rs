@@ -135,7 +135,6 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     ///
     /// # Examples
     /// ```
-    /// use icu_properties::BidiPairedBracketType;
     /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
     /// let data =
