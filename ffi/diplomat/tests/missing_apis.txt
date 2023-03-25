@@ -14,12 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::properties::BidiPairedBracketType#Struct
-icu::properties::BidiPairedBracketType::Close#AssociatedConstantInStruct
-icu::properties::BidiPairedBracketType::None#AssociatedConstantInStruct
-icu::properties::BidiPairedBracketType::Open#AssociatedConstantInStruct
-icu::properties::BidiPairedBracketType::TryFromU32Error#AssociatedTypeInStruct
-icu::properties::BidiPairedBracketType::try_from_u32#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
