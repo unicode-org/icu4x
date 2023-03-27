@@ -33,14 +33,10 @@ const DATA: [(Language, &str); 11] = [
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let mut map = LiteMap::new_vec();
-    // https://github.com/rust-lang/rust/issues/62633 was declined :(
-    for (lang, name) in DATA.iter() {
-        map.try_append(lang, name).ok_or(()).unwrap_err();
-    }
+    let map: LiteMap<Language, &str, Vec<_>> = LiteMap::from_iter(DATA.iter().cloned());
 
     assert_eq!(11, map.len());
-    assert_eq!(Some(&&"Thai"), map.get(&language!("th")));
+    assert_eq!(Some(&"Thai"), map.get(&language!("th")));
     assert_eq!(None, map.get(&language!("de")));
 
     0

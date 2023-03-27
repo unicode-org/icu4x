@@ -52,6 +52,13 @@ impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
     }
 }
 
+impl<K: Ord, V> StoreFromIterable<K, V> for VecWithDefaults<(K, V)> {
+    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let v: Vec<_> = Vec::from_iter_sorted(iter);
+        Self(v)
+    }
+}
+
 impl<K, V> StoreMut<K, V> for VecWithDefaults<(K, V)> {
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {
@@ -66,11 +73,6 @@ impl<K, V> StoreMut<K, V> for VecWithDefaults<(K, V)> {
     #[inline]
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
         self.0.as_mut_slice().get_mut(index).map(map_f_mut)
-    }
-
-    #[inline]
-    fn lm_push(&mut self, key: K, value: V) {
-        self.0.push((key, value))
     }
 
     #[inline]

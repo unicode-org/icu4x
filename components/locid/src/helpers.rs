@@ -197,6 +197,13 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     }
 }
 
+impl<K: Ord, V> StoreFromIterable<K, V> for ShortVec<(K, V)> {
+    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let v: Vec<(K, V)> = Vec::from_iter_sorted(iter);
+        v.into()
+    }
+}
+
 impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
         ShortVec::ZeroOne(None)
@@ -208,10 +215,6 @@ impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
         self.as_mut_slice()
             .get_mut(index)
             .map(|elt| (&elt.0, &mut elt.1))
-    }
-
-    fn lm_push(&mut self, key: K, value: V) {
-        self.push((key, value))
     }
 
     fn lm_insert(&mut self, index: usize, key: K, value: V) {

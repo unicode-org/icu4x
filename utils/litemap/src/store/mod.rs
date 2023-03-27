@@ -71,6 +71,11 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
         F: FnMut(&K) -> Ordering;
 }
 
+pub trait StoreFromIterable<K, V>: Store<K, V> {
+    /// Create store from iterator
+    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
+}
+
 pub trait StoreMut<K, V>: Store<K, V> {
     /// Creates a new store with the specified capacity hint.
     ///
@@ -84,8 +89,6 @@ pub trait StoreMut<K, V>: Store<K, V> {
 
     /// Gets a key/value pair at the specified index, with a mutable value.
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
-    /// Pushes one additional item onto the store.
-    fn lm_push(&mut self, key: K, value: V);
 
     /// Inserts an item at a specific index in the store.
     ///
@@ -139,16 +142,6 @@ pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a,
 
     /// Returns an iterator that moves every item from this store.
     fn lm_into_iter(self) -> Self::KeyValueIntoIter;
-
-    /// Adds items from another store to the end of this store.
-    fn lm_extend_end(&mut self, other: Self)
-    where
-        Self: Sized,
-    {
-        for item in other.lm_into_iter() {
-            self.lm_push(item.0, item.1);
-        }
-    }
 
     /// Adds items from another store to the beginning of this store.
     fn lm_extend_start(&mut self, other: Self)

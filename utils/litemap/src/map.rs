@@ -153,9 +153,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.first(), Some((&1, &"uno")));
     /// ```
@@ -171,9 +170,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.last(), Some((&3, &"tres")));
     /// ```
@@ -256,46 +254,6 @@ where
             Ok(found) => Some(self.values.lm_get_mut(found).unwrap().1),
             Err(_) => None,
         }
-    }
-
-    /// Appends `value` with `key` to the end of the underlying vector, returning
-    /// `key` and `value` _if it failed_. Useful for extending with an existing
-    /// sorted list.
-    /// ```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
-    ///
-    /// assert!(
-    ///     matches!(map.try_append(3, "tres-updated"), Some((3, "tres-updated"))),
-    ///     "append duplicate of last key",
-    /// );
-    ///
-    /// assert!(
-    ///     matches!(map.try_append(2, "dos"), Some((2, "dos"))),
-    ///     "append out of order"
-    /// );
-    ///
-    /// assert_eq!(map.get(&1), Some(&"uno"));
-    ///
-    /// // contains the original value for the key: 3
-    /// assert_eq!(map.get(&3), Some(&"tres"));
-    ///
-    /// // not appended since it wasn't in order
-    /// assert_eq!(map.get(&2), None);
-    /// ```
-    #[must_use]
-    pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
-        if let Some(last) = self.values.lm_last() {
-            if last.0 >= &key {
-                return Some((key, value));
-            }
-        }
-
-        self.values.lm_push(key, value);
-        None
     }
 
     /// Insert `value` with `key`, returning the existing value if it exists.
@@ -384,80 +342,6 @@ where
     }
 }
 
-impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
-where
-    K: Ord,
-    S: StoreIterableMut<'a, K, V> + StoreFromIterator<K, V>,
-{
-    /// Insert all elements from `other` into this `LiteMap`.
-    ///
-    /// If `other` contains keys that already exist in `self`, the values in `other` replace the
-    /// corresponding ones in `self`, and the rejected items from `self` are returned as a new
-    /// `LiteMap`. Otherwise, `None` is returned.
-    ///
-    /// The implementation of this function is optimized if `self` and `other` have no overlap.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map1 = LiteMap::new_vec();
-    /// map1.insert(1, "one");
-    /// map1.insert(2, "two");
-    ///
-    /// let mut map2 = LiteMap::new_vec();
-    /// map2.insert(2, "TWO");
-    /// map2.insert(4, "FOUR");
-    ///
-    /// let leftovers = map1.extend_from_litemap(map2);
-    ///
-    /// assert_eq!(map1.len(), 3);
-    /// assert_eq!(map1.get(&1), Some("one").as_ref());
-    /// assert_eq!(map1.get(&2), Some("TWO").as_ref());
-    /// assert_eq!(map1.get(&4), Some("FOUR").as_ref());
-    ///
-    /// let map3 = leftovers.expect("Duplicate keys");
-    /// assert_eq!(map3.len(), 1);
-    /// assert_eq!(map3.get(&2), Some("two").as_ref());
-    /// ```
-    pub fn extend_from_litemap(&mut self, other: Self) -> Option<Self> {
-        if self.is_empty() {
-            self.values = other.values;
-            return None;
-        }
-        if other.is_empty() {
-            return None;
-        }
-        if self.last().map(|(k, _)| k) < other.first().map(|(k, _)| k) {
-            // append other to self
-            self.values.lm_extend_end(other.values);
-            None
-        } else if self.first().map(|(k, _)| k) > other.last().map(|(k, _)| k) {
-            // prepend other to self
-            self.values.lm_extend_start(other.values);
-            None
-        } else {
-            // insert every element
-            let leftover_tuples = other
-                .values
-                .lm_into_iter()
-                .filter_map(|(k, v)| self.insert_save_key(k, v))
-                .collect();
-            let ret = LiteMap {
-                values: leftover_tuples,
-                _key_type: PhantomData,
-                _value_type: PhantomData,
-            };
-            if ret.is_empty() {
-                None
-            } else {
-                Some(ret)
-            }
-        }
-    }
-}
-
 impl<K, V, S> Default for LiteMap<K, V, S>
 where
     S: Store<K, V> + Default,
@@ -500,22 +384,11 @@ where
 impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreMut<K, V>,
+    S: StoreMut<K, V> + StoreFromIterable<K, V>,
 {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let iter = iter.into_iter();
-        let mut map = match iter.size_hint() {
-            (_, Some(upper)) => Self::with_capacity(upper),
-            (lower, None) => Self::with_capacity(lower),
-        };
-
-        for (key, value) in iter {
-            if let Some((key, value)) = map.try_append(key, value) {
-                map.insert(key, value);
-            }
-        }
-
-        map
+        let values = S::from_iter_sorted(iter);
+        Self::from_sorted_store_unchecked(values)
     }
 }
 
@@ -608,65 +481,5 @@ mod test {
         .collect::<LiteMap<_, _>>();
 
         assert_eq!(expected, actual);
-    }
-
-    fn make_13() -> LiteMap<usize, &'static str> {
-        let mut result = LiteMap::new();
-        result.insert(1, "one");
-        result.insert(3, "three");
-        result
-    }
-
-    fn make_24() -> LiteMap<usize, &'static str> {
-        let mut result = LiteMap::new();
-        result.insert(2, "TWO");
-        result.insert(4, "FOUR");
-        result
-    }
-
-    fn make_46() -> LiteMap<usize, &'static str> {
-        let mut result = LiteMap::new();
-        result.insert(4, "four");
-        result.insert(6, "six");
-        result
-    }
-
-    #[test]
-    fn extend_from_litemap_append() {
-        let mut map = LiteMap::new();
-        map.extend_from_litemap(make_13())
-            .ok_or(())
-            .expect_err("Append to empty map");
-        map.extend_from_litemap(make_46())
-            .ok_or(())
-            .expect_err("Append to lesser map");
-        assert_eq!(map.len(), 4);
-    }
-
-    #[test]
-    fn extend_from_litemap_prepend() {
-        let mut map = LiteMap::new();
-        map.extend_from_litemap(make_46())
-            .ok_or(())
-            .expect_err("Prepend to empty map");
-        map.extend_from_litemap(make_13())
-            .ok_or(())
-            .expect_err("Prepend to lesser map");
-        assert_eq!(map.len(), 4);
-    }
-
-    #[test]
-    fn extend_from_litemap_insert() {
-        let mut map = LiteMap::new();
-        map.extend_from_litemap(make_13())
-            .ok_or(())
-            .expect_err("Append to empty map");
-        map.extend_from_litemap(make_24())
-            .ok_or(())
-            .expect_err("Insert with no conflict");
-        map.extend_from_litemap(make_46())
-            .ok_or(())
-            .expect("Insert with conflict");
-        assert_eq!(map.len(), 5);
     }
 }

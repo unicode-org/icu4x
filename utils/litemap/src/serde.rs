@@ -4,6 +4,7 @@
 
 use super::LiteMap;
 use crate::store::*;
+use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
@@ -64,7 +65,7 @@ impl<'de, K, V, R> Visitor<'de> for LiteMapVisitor<K, V, R>
 where
     K: Deserialize<'de> + Ord,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreMut<K, V> + StoreFromIterable<K, V>,
 {
     type Value = LiteMap<K, V, R>;
 
@@ -76,50 +77,30 @@ where
     where
         S: SeqAccess<'de>,
     {
-        let mut map = LiteMap::with_capacity(access.size_hint().unwrap_or(0));
+        let mut kvs = Vec::with_capacity(access.size_hint().unwrap_or(0));
 
         // While there are entries remaining in the input, add them
         // into our map.
         while let Some((key, value)) = access.next_element()? {
-            // Try to append it at the end, hoping for a sorted map.
-            // If not sorted, insert as usual.
-            // This allows for arbitrary maps (e.g. from user JSON)
-            // to be deserialized into LiteMap
-            // without impacting performance in the case of deserializing
-            // a serialized map that came from another LiteMap
-            if let Some((key, value)) = map.try_append(key, value) {
-                // Note: this effectively selection sorts the map,
-                // which isn't efficient for large maps
-                map.insert(key, value);
-            }
+            kvs.push((key, value));
         }
 
-        Ok(map)
+        Ok(LiteMap::from_iter(kvs.into_iter()))
     }
 
     fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
     where
         M: MapAccess<'de>,
     {
-        let mut map = LiteMap::with_capacity(access.size_hint().unwrap_or(0));
+        let mut kvs = Vec::with_capacity(access.size_hint().unwrap_or(0));
 
         // While there are entries remaining in the input, add them
         // into our map.
         while let Some((key, value)) = access.next_entry()? {
-            // Try to append it at the end, hoping for a sorted map.
-            // If not sorted, insert as usual.
-            // This allows for arbitrary maps (e.g. from user JSON)
-            // to be deserialized into LiteMap
-            // without impacting performance in the case of deserializing
-            // a serialized map that came from another LiteMap
-            if let Some((key, value)) = map.try_append(key, value) {
-                // Note: this effectively selection sorts the map,
-                // which isn't efficient for large maps
-                map.insert(key, value);
-            }
+            kvs.push((key, value));
         }
 
-        Ok(map)
+        Ok(LiteMap::from_iter(kvs.into_iter()))
     }
 }
 
@@ -127,7 +108,7 @@ impl<'de, K, V, R> Deserialize<'de> for LiteMap<K, V, R>
 where
     K: Ord + Deserialize<'de>,
     V: Deserialize<'de>,
-    R: StoreMut<K, V>,
+    R: StoreMut<K, V> + StoreFromIterable<K, V>,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
