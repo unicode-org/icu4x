@@ -14,6 +14,15 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
+icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_mirroring_props#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props#FnInStruct
+icu::properties::bidi_data::BidiMirroringProperties#Struct
+icu::properties::bidi_data::BidiPairingProperties#Enum
+icu::properties::bidi_data::load_bidi_auxiliary_properties_unstable#Fn
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
