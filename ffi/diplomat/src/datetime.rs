@@ -19,6 +19,9 @@ pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
 
+    #[cfg(feature = "icu_calendar")]
+    use crate::week::ffi::ICU4XWeekCalculator;
+
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
     #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
@@ -151,7 +154,7 @@ pub mod ffi {
         #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
-            calculator: &crate::week::ffi::ICU4XWeekCalculator,
+            calculator: &ICU4XWeekCalculator,
         ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }
@@ -333,7 +336,7 @@ pub mod ffi {
         #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
-            calculator: &crate::week::ffi::ICU4XWeekCalculator,
+            calculator: &ICU4XWeekCalculator,
         ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }

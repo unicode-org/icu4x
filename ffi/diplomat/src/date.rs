@@ -15,6 +15,9 @@ pub mod ffi {
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::errors::ffi::ICU4XError;
 
+    #[cfg(feature = "icu_calendar")]
+    use crate::week::ffi::ICU4XWeekCalculator;
+
     #[diplomat::enum_convert(IsoWeekday)]
     pub enum ICU4XIsoWeekday {
         Monday = 1,
@@ -87,7 +90,7 @@ pub mod ffi {
         #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
-            calculator: &crate::week::ffi::ICU4XWeekCalculator,
+            calculator: &ICU4XWeekCalculator,
         ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.week_of_year(&calculator.0)?.into())
         }
@@ -212,7 +215,7 @@ pub mod ffi {
         #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
-            calculator: &crate::week::ffi::ICU4XWeekCalculator,
+            calculator: &ICU4XWeekCalculator,
         ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.week_of_year(&calculator.0)?.into())
         }
