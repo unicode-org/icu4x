@@ -28,20 +28,6 @@ impl<T> ShortVec<T> {
         Self::ZeroOne(Some(item))
     }
 
-    pub fn push(&mut self, item: T) {
-        *self = match core::mem::replace(self, Self::ZeroOne(None)) {
-            ShortVec::ZeroOne(None) => ShortVec::ZeroOne(Some(item)),
-            ShortVec::ZeroOne(Some(prev_item)) => {
-                ShortVec::Multi(vec![prev_item, item].into_boxed_slice())
-            }
-            ShortVec::Multi(items) => {
-                let mut items = items.into_vec();
-                items.push(item);
-                ShortVec::Multi(items.into_boxed_slice())
-            }
-        };
-    }
-
     #[inline]
     pub fn as_slice(&self) -> &[T] {
         match self {

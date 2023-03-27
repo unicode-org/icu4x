@@ -52,7 +52,7 @@ impl Value {
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
     pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
-        let mut v = ShortVec::new();
+        let mut v = Vec::new();
 
         if !input.is_empty() {
             for subtag in SubtagIterator::new(input) {
@@ -62,7 +62,7 @@ impl Value {
                 }
             }
         }
-        Ok(Self(v))
+        Ok(Self(v.into()))
     }
 
     /// Const constructor for when the value contains only a single subtag.
