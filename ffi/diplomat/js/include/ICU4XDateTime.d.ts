@@ -127,7 +127,7 @@ export class ICU4XDateTime {
 
    * Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
-   * `first_weekday` can be obtained via `first_weekday()` on {@link ICU4XWeekCalculator `ICU4XWeekCalculator`}
+   * `first_weekday` can be obtained via `first_weekday()` on {@link crate::week::ffi::ICU4XWeekCalculator `ICU4XWeekCalculator`}
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month Rust documentation for `week_of_month`} for more information.
    */

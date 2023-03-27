@@ -66,7 +66,8 @@ pub mod ffi {
         /// Returns the week number in this month, 1-indexed, based on what
         /// is considered the first day of the week (often a locale preference).
         ///
-        /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
+        /// `first_weekday` can be obtained via `first_weekday()` on
+        /// [`ICU4XWeekCalculator`](crate::week::ffi::ICU4XWeekCalculator)
         #[diplomat::rust_link(icu::calendar::Date::week_of_month, FnInStruct)]
         #[diplomat::rust_link(
             icu::calendar::week::WeekCalculator::week_of_month,
@@ -191,7 +192,8 @@ pub mod ffi {
         /// Returns the week number in this month, 1-indexed, based on what
         /// is considered the first day of the week (often a locale preference).
         ///
-        /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
+        /// `first_weekday` can be obtained via `first_weekday()` on
+        /// [`ICU4XWeekCalculator`](crate::week::ffi::ICU4XWeekCalculator)
         #[diplomat::rust_link(icu::calendar::Date::week_of_month, FnInStruct)]
         #[diplomat::rust_link(
             icu::calendar::week::WeekCalculator::week_of_month,
