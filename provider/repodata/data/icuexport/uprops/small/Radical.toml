@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Radical"
 short_name = "Radical"
+uproperty_discr = 0x1A
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x2e80, 0x2e99],

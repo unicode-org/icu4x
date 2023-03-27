@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Canonical_Combining_Class"
 short_name = "ccc"
+uproperty_discr = 0x1002
 values = [
   {discr = 0, long = "Not_Reordered", short = "NR"},
   {discr = 1, long = "Overlay", short = "OV"},
