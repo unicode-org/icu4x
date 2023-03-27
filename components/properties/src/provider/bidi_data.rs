@@ -19,6 +19,7 @@
 //! - `Bidi_Mirrored`
 //! - `Bidi_Mirroring_Glyph`
 
+use displaydoc::Display;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, CharULE, ULE};
@@ -86,11 +87,35 @@ impl From<MirroredPairedBracketData> for u32 {
     }
 }
 
-impl TryFrom<u32> for MirroredPairedBracketData {
-    type Error = ZeroVecError;
+/// A `u32` serialized value of `MirroredPairedBracketData` did not encode either a valid Bidi_Mirroring_Glyph or a valid Bidi_Paired_Bracket_Type
+#[derive(Display, Debug, PartialEq, Eq)]
+#[displaydoc("Invalid MirroredPairedBracketData serialized in int: {0}")]
+pub struct MirroredPairedBracketDataTryFromError(u32);
 
-    fn try_from(x: u32) -> Result<Self, ZeroVecError> {
-        MirroredPairedBracketData::try_from_u32(x).map_err(|_| ZeroVecError::parse::<Self>())
+impl TryFrom<u32> for MirroredPairedBracketData {
+    type Error = MirroredPairedBracketDataTryFromError;
+
+    fn try_from(i: u32) -> Result<Self, MirroredPairedBracketDataTryFromError> {
+        let code_point = i & 0x1FFFFF;
+        let mirroring_glyph =
+            char::try_from_u32(code_point).map_err(|_| MirroredPairedBracketDataTryFromError(i))?;
+        let mirrored = ((i >> 21) & 0x1) == 1;
+        let paired_bracket_type = {
+            let value = ((i >> 22) & 0x3) as u8;
+            match value {
+                0 => CheckedBidiPairedBracketType::None,
+                1 => CheckedBidiPairedBracketType::Open,
+                2 => CheckedBidiPairedBracketType::Close,
+                _ => {
+                    return Err(MirroredPairedBracketDataTryFromError(i));
+                }
+            }
+        };
+        Ok(MirroredPairedBracketData {
+            mirroring_glyph,
+            mirrored,
+            paired_bracket_type,
+        })
     }
 }
 

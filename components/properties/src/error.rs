@@ -31,9 +31,6 @@ pub enum PropertiesError {
     /// An unknown or unexpected property name was used for an API dealing with properties specified as strings at runtime
     #[displaydoc("Unexpected or unknown property name")]
     UnexpectedPropertyName,
-    /// A `u32` serialized value of `MirroredPairedBracketData` did not encode either a valid Bidi_Mirroring_Glyph or a valid Bidi_Paired_Bracket_Type
-    #[displaydoc("Invalid MirroredPairedBracketData serialized in int: {0}")]
-    MirroredPairedBracketDataFromU32(u32),
 }
 
 impl From<DataError> for PropertiesError {
