@@ -103,7 +103,7 @@
 
         Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
-        ``first_weekday`` can be obtained via ``first_weekday()`` on ```ICU4XWeekCalculator`` <crate::week::ffi::ICU4XWeekCalculator>`__
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
 
         See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
 
@@ -296,7 +296,7 @@
 
         Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
-        ``first_weekday`` can be obtained via ``first_weekday()`` on ```ICU4XWeekCalculator`` <crate::week::ffi::ICU4XWeekCalculator>`__
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
 
         See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
 
