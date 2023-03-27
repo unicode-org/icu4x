@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::helpers::ShortVec;
+use crate::helpers::ShortSlice;
 use crate::parser::{ParserError, SubtagIterator};
 use alloc::vec::Vec;
 use core::ops::RangeInclusive;
@@ -35,7 +35,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(value!("true").to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
-pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
+pub struct Value(ShortSlice<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
@@ -96,11 +96,11 @@ impl Value {
     #[doc(hidden)]
     pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
         match subtag {
-            None => Self(ShortVec::new()),
+            None => Self(ShortSlice::new()),
             Some(val) => {
                 debug_assert!(val.is_ascii_alphanumeric());
                 debug_assert!(!matches!(val, TRUE_VALUE));
-                Self(ShortVec::new_single(val))
+                Self(ShortSlice::new_single(val))
             }
         }
     }
