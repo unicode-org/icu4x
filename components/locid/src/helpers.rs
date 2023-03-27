@@ -202,7 +202,6 @@ impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
         ShortVec::ZeroOne(None)
     }
 
-    // ShortVec supports reserving capacity for additional elements only if we have already allocated a vector
     fn lm_reserve(&mut self, _additional: usize) {}
 
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
