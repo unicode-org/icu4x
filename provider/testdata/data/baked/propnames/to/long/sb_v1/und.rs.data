@@ -1,0 +1,3 @@
+::icu_properties::provider::names::PropertyEnumToValueNameMapV1::Linear(unsafe {
+    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x0E\0\0\0\0\0\x05\0\n\0\x0F\0\x15\0\x1A\0!\0(\0+\0-\02\07\09\0?\0OtherATermCloseFormatLowerNumericOLetterSepSpSTermUpperCRExtendLF")
+})

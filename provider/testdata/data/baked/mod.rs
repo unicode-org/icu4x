@@ -11,6 +11,7 @@ mod list;
 mod locid_transform;
 mod normalizer;
 mod plurals;
+mod propnames;
 mod props;
 mod relativetime;
 mod segmenter;
@@ -861,7 +862,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::BidiClassNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassNameToValueV1Marker>, DataError> {
-                props::names::bc_v1::lookup(&req.locale)
+                propnames::from::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -887,7 +888,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::BidiClassValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::bc_v1::lookup(&req.locale)
+                propnames::to::long::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -900,7 +901,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::BidiClassValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::bc_v1::lookup(&req.locale)
+                propnames::to::short::bc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -955,7 +956,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassNameToValueV1Marker>, DataError> {
-                props::names::ccc_v1::lookup(&req.locale)
+                propnames::from::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -986,7 +987,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::ccc_v1::lookup(&req.locale)
+                propnames::to::long::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1004,7 +1005,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::ccc_v1::lookup(&req.locale)
+                propnames::to::short::ccc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1191,7 +1192,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::EastAsianWidthNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthNameToValueV1Marker>, DataError> {
-                props::names::ea_v1::lookup(&req.locale)
+                propnames::from::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1217,7 +1218,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::ea_v1::lookup(&req.locale)
+                propnames::to::long::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1230,7 +1231,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::ea_v1::lookup(&req.locale)
+                propnames::to::short::ea_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1414,7 +1415,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GeneralCategoryNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryNameToValueV1Marker>, DataError> {
-                props::names::gc_v1::lookup(&req.locale)
+                propnames::from::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1440,7 +1441,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::gc_v1::lookup(&req.locale)
+                propnames::to::long::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1455,7 +1456,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::gc_v1::lookup(&req.locale)
+                propnames::to::short::gc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1496,7 +1497,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakNameToValueV1Marker>, DataError> {
-                props::names::gcb_v1::lookup(&req.locale)
+                propnames::from::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1527,7 +1528,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::gcb_v1::lookup(&req.locale)
+                propnames::to::long::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1545,7 +1546,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::gcb_v1::lookup(&req.locale)
+                propnames::to::short::gcb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1690,7 +1691,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::LineBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakNameToValueV1Marker>, DataError> {
-                props::names::lb_v1::lookup(&req.locale)
+                propnames::from::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1716,7 +1717,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::LineBreakValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::lb_v1::lookup(&req.locale)
+                propnames::to::long::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1729,7 +1730,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::LineBreakValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::lb_v1::lookup(&req.locale)
+                propnames::to::short::lb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1937,7 +1938,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::ScriptNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptNameToValueV1Marker>, DataError> {
-                props::names::sc_v1::lookup(&req.locale)
+                propnames::from::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1963,7 +1964,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::ScriptValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::sc_v1::lookup(&req.locale)
+                propnames::to::long::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -1976,7 +1977,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::ScriptValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::sc_v1::lookup(&req.locale)
+                propnames::to::short::sc_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2015,7 +2016,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::SentenceBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakNameToValueV1Marker>, DataError> {
-                props::names::sb_v1::lookup(&req.locale)
+                propnames::from::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2041,7 +2042,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::sb_v1::lookup(&req.locale)
+                propnames::to::long::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2054,7 +2055,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::sb_v1::lookup(&req.locale)
+                propnames::to::short::sb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2158,7 +2159,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::WordBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakNameToValueV1Marker>, DataError> {
-                props::names::wb_v1::lookup(&req.locale)
+                propnames::from::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2184,7 +2185,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::WordBreakValueToLongNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToLongNameV1Marker>, DataError> {
-                props::names::to::long::wb_v1::lookup(&req.locale)
+                propnames::to::long::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2197,7 +2198,7 @@ macro_rules! impl_data_provider {
         #[cfg(feature = "icu_properties")]
         impl DataProvider<::icu_properties::provider::WordBreakValueToShortNameV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakValueToShortNameV1Marker>, DataError> {
-                props::names::to::short::wb_v1::lookup(&req.locale)
+                propnames::to::short::wb_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -2270,7 +2271,7 @@ macro_rules! impl_data_provider {
                 &self,
                 req: DataRequest,
             ) -> Result<DataResponse<::icu_properties::provider::names::GeneralCategoryMaskNameToValueV1Marker>, DataError> {
-                props::names::gcm_v1::lookup(&req.locale)
+                propnames::from::gcm_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
@@ -3526,13 +3527,13 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     BASICEMOJIV1MARKER => props::basic_emoji_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    BIDICLASSNAMETOVALUEV1MARKER => props::names::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    BIDICLASSNAMETOVALUEV1MARKER => propnames::from::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     BIDICLASSV1MARKER => props::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    BIDICLASSVALUETOLONGNAMEV1MARKER => props::names::to::long::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    BIDICLASSVALUETOLONGNAMEV1MARKER => propnames::to::long::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    BIDICLASSVALUETOSHORTNAMEV1MARKER => props::names::to::short::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    BIDICLASSVALUETOSHORTNAMEV1MARKER => propnames::to::short::bc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     BIDICONTROLV1MARKER => props::bidi_c_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3540,16 +3541,16 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     BLANKV1MARKER => props::blank_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    CANONICALCOMBININGCLASSNAMETOVALUEV1MARKER => props::names::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    CANONICALCOMBININGCLASSNAMETOVALUEV1MARKER => propnames::from::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CANONICALCOMBININGCLASSV1MARKER => props::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     CANONICALCOMBININGCLASSVALUETOLONGNAMEV1MARKER => {
-                        props::names::to::long::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                        propnames::to::long::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
                     }
                     #[cfg(feature = "icu_properties")]
                     CANONICALCOMBININGCLASSVALUETOSHORTNAMEV1MARKER => {
-                        props::names::to::short::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                        propnames::to::short::ccc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
                     }
                     #[cfg(feature = "icu_properties")]
                     CASEIGNORABLEV1MARKER => props::ci_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3578,13 +3579,13 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     DIACRITICV1MARKER => props::dia_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    EASTASIANWIDTHNAMETOVALUEV1MARKER => props::names::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    EASTASIANWIDTHNAMETOVALUEV1MARKER => propnames::from::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     EASTASIANWIDTHV1MARKER => props::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    EASTASIANWIDTHVALUETOLONGNAMEV1MARKER => props::names::to::long::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    EASTASIANWIDTHVALUETOLONGNAMEV1MARKER => propnames::to::long::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER => props::names::to::short::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    EASTASIANWIDTHVALUETOSHORTNAMEV1MARKER => propnames::to::short::ea_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     EMOJICOMPONENTV1MARKER => props::ecomp_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3614,28 +3615,26 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     FULLCOMPOSITIONEXCLUSIONV1MARKER => props::comp_ex_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GENERALCATEGORYNAMETOVALUEV1MARKER => props::names::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    GENERALCATEGORYNAMETOVALUEV1MARKER => propnames::from::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GENERALCATEGORYV1MARKER => props::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GENERALCATEGORYVALUETOLONGNAMEV1MARKER => props::names::to::long::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    GENERALCATEGORYVALUETOLONGNAMEV1MARKER => propnames::to::long::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GENERALCATEGORYVALUETOSHORTNAMEV1MARKER => props::names::to::short::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    GENERALCATEGORYVALUETOSHORTNAMEV1MARKER => propnames::to::short::gc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHV1MARKER => props::graph_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEBASEV1MARKER => props::gr_base_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GRAPHEMECLUSTERBREAKNAMETOVALUEV1MARKER => props::names::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    GRAPHEMECLUSTERBREAKNAMETOVALUEV1MARKER => propnames::from::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMECLUSTERBREAKV1MARKER => props::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER => {
-                        props::names::to::long::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
-                    }
+                    GRAPHEMECLUSTERBREAKVALUETOLONGNAMEV1MARKER => propnames::to::long::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMECLUSTERBREAKVALUETOSHORTNAMEV1MARKER => {
-                        props::names::to::short::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
+                        propnames::to::short::gcb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref)
                     }
                     #[cfg(feature = "icu_properties")]
                     GRAPHEMEEXTENDV1MARKER => props::gr_ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
@@ -3658,13 +3657,13 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     JOINCONTROLV1MARKER => props::join_c_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    LINEBREAKNAMETOVALUEV1MARKER => props::names::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    LINEBREAKNAMETOVALUEV1MARKER => propnames::from::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     LINEBREAKV1MARKER => props::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    LINEBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    LINEBREAKVALUETOLONGNAMEV1MARKER => propnames::to::long::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    LINEBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    LINEBREAKVALUETOSHORTNAMEV1MARKER => propnames::to::short::lb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     LOGICALORDEREXCEPTIONV1MARKER => props::loe_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3696,25 +3695,25 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     REGIONALINDICATORV1MARKER => props::ri_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SCRIPTNAMETOVALUEV1MARKER => props::names::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SCRIPTNAMETOVALUEV1MARKER => propnames::from::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SCRIPTV1MARKER => props::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SCRIPTVALUETOLONGNAMEV1MARKER => props::names::to::long::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SCRIPTVALUETOLONGNAMEV1MARKER => propnames::to::long::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SCRIPTVALUETOSHORTNAMEV1MARKER => props::names::to::short::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SCRIPTVALUETOSHORTNAMEV1MARKER => propnames::to::short::sc_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SCRIPTWITHEXTENSIONSPROPERTYV1MARKER => props::scx_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SEGMENTSTARTERV1MARKER => props::segstart_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SENTENCEBREAKNAMETOVALUEV1MARKER => props::names::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SENTENCEBREAKNAMETOVALUEV1MARKER => propnames::from::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SENTENCEBREAKV1MARKER => props::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SENTENCEBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SENTENCEBREAKVALUETOLONGNAMEV1MARKER => propnames::to::long::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    SENTENCEBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    SENTENCEBREAKVALUETOSHORTNAMEV1MARKER => propnames::to::short::sb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     SENTENCETERMINALV1MARKER => props::sterm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3730,13 +3729,13 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     WHITESPACEV1MARKER => props::wspace_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    WORDBREAKNAMETOVALUEV1MARKER => props::names::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    WORDBREAKNAMETOVALUEV1MARKER => propnames::from::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     WORDBREAKV1MARKER => props::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    WORDBREAKVALUETOLONGNAMEV1MARKER => props::names::to::long::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    WORDBREAKVALUETOLONGNAMEV1MARKER => propnames::to::long::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    WORDBREAKVALUETOSHORTNAMEV1MARKER => props::names::to::short::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    WORDBREAKVALUETOSHORTNAMEV1MARKER => propnames::to::short::wb_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
                     XDIGITV1MARKER => props::xdigit_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
@@ -3746,7 +3745,7 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_properties")]
                     BIDIAUXILIARYPROPERTIESV1MARKER => props::bidiauxiliaryprops_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_properties")]
-                    GENERALCATEGORYMASKNAMETOVALUEV1MARKER => props::names::gcm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    GENERALCATEGORYMASKNAMETOVALUEV1MARKER => propnames::from::gcm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     HELLOWORLDV1MARKER => core::helloworld_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     LOCALEFALLBACKLIKELYSUBTAGSV1MARKER => fallback::likelysubtags_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
