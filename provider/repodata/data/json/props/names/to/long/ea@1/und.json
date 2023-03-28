@@ -1,10 +1,9 @@
 {
-  "map": {
-    "0": "Neutral",
-    "1": "Ambiguous",
-    "2": "Halfwidth",
-    "3": "Fullwidth",
-    "4": "Narrow",
-    "5": "Wide"
-  }
+  "map": [
+    "Neutral",
+    "Ambiguous",
+    "Halfwidth",
+    "Fullwidth",
+    "Narrow"
+  ]
 }

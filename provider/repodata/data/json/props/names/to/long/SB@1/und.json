@@ -1,19 +1,18 @@
 {
-  "map": {
-    "0": "Other",
-    "1": "ATerm",
-    "2": "Close",
-    "3": "Format",
-    "4": "Lower",
-    "5": "Numeric",
-    "6": "OLetter",
-    "7": "Sep",
-    "8": "Sp",
-    "9": "STerm",
-    "10": "Upper",
-    "11": "CR",
-    "12": "Extend",
-    "13": "LF",
-    "14": "SContinue"
-  }
+  "map": [
+    "Other",
+    "ATerm",
+    "Close",
+    "Format",
+    "Lower",
+    "Numeric",
+    "OLetter",
+    "Sep",
+    "Sp",
+    "STerm",
+    "Upper",
+    "CR",
+    "Extend",
+    "LF"
+  ]
 }
