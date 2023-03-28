@@ -169,6 +169,16 @@ where
     let mut litemap_std: LiteMap<u32, u64, Vec<_>> = populate_litemap();
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
     check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
+    let extras_test = litemap_test.clone();
+    let extras_test = litemap_test
+        .extend_from_litemap(extras_test)
+        .expect("duplicates");
+    assert_eq!(extras_test, litemap_test);
+    let extras_std = litemap_std.clone();
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
     litemap_test.retain(|_, v| v % 2 == 0);
     litemap_std.retain(|_, v| v % 2 == 0);
     assert_eq!(11, litemap_test.len());
@@ -176,18 +186,31 @@ where
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
     check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
+    let extras_test = litemap_test
+        .extend_from_litemap(extras_test)
+        .expect("duplicates");
+    let extras_std = litemap_std
+        .extend_from_litemap(extras_std)
+        .expect("duplicates");
+    assert_eq!(11, extras_test.len());
+    assert_eq!(11, extras_std.len());
+    assert_eq!(20, litemap_test.len());
+    assert_eq!(20, litemap_std.len());
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
     litemap_test
         .remove(&175)
         .ok_or(())
         .expect_err("does not exist");
-    litemap_test.remove(&188).ok_or(()).expect("exists");
+    litemap_test.remove(&176).ok_or(()).expect("exists");
     litemap_std
         .remove(&175)
         .ok_or(())
         .expect_err("does not exist");
-    litemap_std.remove(&188).ok_or(()).expect("exists");
-    assert_eq!(10, litemap_test.len());
-    assert_eq!(10, litemap_std.len());
+    litemap_std.remove(&176).ok_or(()).expect("exists");
+    assert_eq!(19, litemap_test.len());
+    assert_eq!(19, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
     check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 

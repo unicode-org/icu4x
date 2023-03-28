@@ -150,6 +150,11 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for Vec<(K, V)> {
     }
 
     #[inline]
+    fn lm_extend_end(&mut self, other: Self) {
+        self.extend(other)
+    }
+
+    #[inline]
     fn lm_extend_start(&mut self, other: Self) {
         self.splice(0..0, other);
     }
