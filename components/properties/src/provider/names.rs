@@ -168,7 +168,10 @@ impl NormalizedPropertyNameStr {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[derive(Debug, Clone)]
-#[icu_provider::data_struct(marker(GeneralCategoryMaskNameToValueV1Marker, "propnames/from/gcm@1"))]
+#[icu_provider::data_struct(marker(
+    GeneralCategoryMaskNameToValueV1Marker,
+    "propnames/from/gcm@1"
+))]
 #[cfg_attr(
     feature = "datagen", 
     derive(serde::Serialize, databake::Bake),
