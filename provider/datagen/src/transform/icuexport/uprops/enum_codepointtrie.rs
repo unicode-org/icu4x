@@ -73,7 +73,7 @@ where
 
     for value in &data.values {
         let discr = u16::try_from(value.discr)
-            .map_err(|_| DataError::custom(concat!("Found value larger than u16 for property")))?;
+            .map_err(|_| DataError::custom("Found value larger than u16 for property".into()))?;
         if is_short {
             if let Some(ref short) = value.short {
                 map.insert(discr, short);
@@ -83,9 +83,44 @@ where
         }
     }
 
-    let data_struct = PropertyEnumToValueNameMapV1 {
-        map: map.into_iter().collect(),
+    let first = if let Some((&first, _)) = map.first_key_value() {
+        if first > 10 {
+            return Err(DataError::custom(
+                "Property has large starting discriminant, perhaps consider \
+                                          storing its names in a different data structure?",
+            )
+            .with_display_context(&format!("Property: {prop_name}, discr: {first}")));
+        }
+
+        first
+    } else {
+        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
     };
+    let last = if let Some((&last, _)) = map.last_key_value() {
+        let range = usize::from(1 + last - first);
+        let count = map.len();
+        let gaps = range - count;
+        if gaps > 200 {
+            return Err(DataError::custom("Property has more than 200 gaps, \
+                perhaps consider storing its names in a different data structure?")
+                .with_display_context(&format!("Property: {prop_name}, discriminant range: {first}..{last}, discriminant count: {count}")));
+        }
+
+        last
+    } else {
+        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
+    };
+
+    let mut v = Vec::new();
+    for i in 0..last {
+        if let Some(&val) = map.get(&i) {
+            v.push(val)
+        } else {
+            v.push("")
+        }
+    }
+
+    let data_struct = PropertyEnumToValueNameMapV1 { map: (&v).into() };
     Ok(DataResponse {
         metadata: DataResponseMetadata::default(),
         payload: Some(DataPayload::from_owned(data_struct)),
