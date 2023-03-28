@@ -87,7 +87,8 @@ where
         // CCC has lots of gaps
         PropertyEnumToValueNameMapV1::Map(map.into_iter().collect())
     } else {
-        let first = if let Some((&first, _)) = map.first_key_value() {
+        // Use .first_key_value() and .last_key_value() after bumping MSRV
+        let first = if let Some((&first, _)) = map.iter().next() {
             if first > 0 {
                 return Err(DataError::custom(
                     "Property has nonzero starting discriminant, perhaps consider \
@@ -102,7 +103,7 @@ where
                 DataError::custom("Property has no values!").with_display_context(prop_name)
             );
         };
-        let last = if let Some((&last, _)) = map.last_key_value() {
+        let last = if let Some((&last, _)) = map.iter().rev().next() {
             let range = usize::from(1 + last - first);
             let count = map.len();
             let gaps = range - count;
