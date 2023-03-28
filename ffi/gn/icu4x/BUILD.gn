@@ -264,6 +264,19 @@ rust_library("icu_capi-v1_1_0") {
     "--edition=2021",
     "-Cmetadata=c7988772278807f3",
     "-Cextra-filename=-c7988772278807f3",
+    "--cfg=feature=\"default_components\"",
+    "--cfg=feature=\"icu_calendar\"",
+    "--cfg=feature=\"icu_collator\"",
+    "--cfg=feature=\"icu_datetime\"",
+    "--cfg=feature=\"icu_decimal\"",
+    "--cfg=feature=\"icu_displaynames\"",
+    "--cfg=feature=\"icu_list\"",
+    "--cfg=feature=\"icu_locid_transform\"",
+    "--cfg=feature=\"icu_normalizer\"",
+    "--cfg=feature=\"icu_plurals\"",
+    "--cfg=feature=\"icu_properties\"",
+    "--cfg=feature=\"icu_segmenter\"",
+    "--cfg=feature=\"icu_timezone\"",
   ]
 
   visibility = [ ":*" ]

@@ -339,13 +339,13 @@ where
             general_category_map_ptr as *mut c_void,
             Some(icu4x_hb_unicode_general_category_destroy),
         );
-
         hb_unicode_funcs_set_mirroring_func(
             ufuncs,
             Some(icu4x_hb_unicode_mirroring),
             bidi_auxiliary_props_map_ptr as *mut c_void,
             Some(icu4x_hb_unicode_mirroring_destroy),
         );
+
         // TODO(#2832):
         // hb_unicode_funcs_set_script_func();
 
