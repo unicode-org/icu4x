@@ -73,7 +73,7 @@ where
 
     for value in &data.values {
         let discr = u16::try_from(value.discr)
-            .map_err(|_| DataError::custom("Found value larger than u16 for property".into()))?;
+            .map_err(|_| DataError::custom("Found value larger than u16 for property"))?;
         if is_short {
             if let Some(ref short) = value.short {
                 map.insert(discr, short);
