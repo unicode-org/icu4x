@@ -22,7 +22,7 @@ struct ProcessedArgs {
     )]
     os: Option<String>,
     #[arg(value_name = "EXAMPLES", num_args = 1.., index=1)]
-    #[arg(help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>",)]
+    #[arg(help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")]
     examples: Vec<String>,
     #[arg(
         long,
