@@ -24,7 +24,7 @@ impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(resources.get_common())),
+            payload: Some(DataPayload::from_owned(transform(resources.get_common()))),
         })
     }
 }
@@ -50,7 +50,9 @@ impl DataProvider<LikelySubtagsExtendedV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(resources.get_extended().into())),
+            payload: Some(DataPayload::from_owned(
+                transform(resources.get_extended()).into(),
+            )),
         })
     }
 }
@@ -99,13 +101,13 @@ impl IterableDataProvider<LikelySubtagsForScriptRegionV1Marker> for crate::Datag
     }
 }
 
-struct LikelySubtagsResources<'a> {
+pub(crate) struct LikelySubtagsResources<'a> {
     likely_subtags: &'a cldr_serde::likely_subtags::Resource,
     basic_plus_languages: HashSet<Language>,
 }
 
 impl<'a> LikelySubtagsResources<'a> {
-    fn try_from_source_data(
+    pub fn try_from_source_data(
         source_data: &'a SourceData,
     ) -> Result<LikelySubtagsResources, DataError> {
         let likely_subtags: &cldr_serde::likely_subtags::Resource = source_data
@@ -147,24 +149,24 @@ impl<'a> LikelySubtagsResources<'a> {
             || **minimized == LanguageIdentifier::UND
     }
 
-    fn get_common(&self) -> LikelySubtagsV1<'static> {
-        transform(
-            self.likely_subtags
-                .supplemental
-                .likely_subtags
-                .iter()
-                .filter(|min_max| self.common_predicate(min_max)),
-        )
+    pub fn get_common(
+        &self,
+    ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
+        self.likely_subtags
+            .supplemental
+            .likely_subtags
+            .iter()
+            .filter(|min_max| self.common_predicate(min_max))
     }
 
-    fn get_extended(&self) -> LikelySubtagsV1<'static> {
-        transform(
-            self.likely_subtags
-                .supplemental
-                .likely_subtags
-                .iter()
-                .filter(|min_max| !self.common_predicate(min_max)),
-        )
+    pub fn get_extended(
+        &self,
+    ) -> impl Iterator<Item = (&LanguageIdentifier, &LanguageIdentifier)> + '_ {
+        self.likely_subtags
+            .supplemental
+            .likely_subtags
+            .iter()
+            .filter(|min_max| !self.common_predicate(min_max))
     }
 }
 

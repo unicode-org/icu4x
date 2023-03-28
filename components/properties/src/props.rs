@@ -2,7 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! A collection of enums for enumerated properties.
+//! A collection of property definitions shared across contexts
+//! (ex: representing trie values).
+//!
+//! This module defines enums / newtypes for enumerated properties.
+//! String properties are represented as newtypes if their
+//! values represent code points.
 
 use crate::provider::*;
 use crate::PropertiesError;

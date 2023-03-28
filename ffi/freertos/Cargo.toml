@@ -41,3 +41,4 @@ freertos-rust = "0.1.2"
 [features]
 # Currently we don't enable anything here as WearOS loads data manually, but the feature remains for future use
 wearos = []
+default = ["icu_capi/default_components"]

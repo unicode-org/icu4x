@@ -236,6 +236,7 @@ impl ScriptExtensionsSet<'_> {
         self.values.get(index)
     }
 }
+
 /// A wrapper around script extensions data. Can be obtained via [`load_script_with_extensions_unstable()`] and
 /// related getters.
 ///

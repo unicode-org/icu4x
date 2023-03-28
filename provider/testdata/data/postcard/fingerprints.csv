@@ -750,7 +750,7 @@ displaynames/regions@1, sr-Cyrl, 7715B, 51420e0d3503da27
 displaynames/regions@1, sr-Latn, 4776B, e5961905fd208c83
 displaynames/regions@1, th, 10811B, 84aad4d11372eb38
 displaynames/regions@1, tr, 4650B, 8f8bd5f16f02a43
-fallback/likelysubtags@1, und, 47699B, 98b2162b609bd0e1
+fallback/likelysubtags@1, und, 1707B, 9684abe0fc91ad70
 fallback/parents@1, und, 2515B, 71c0356eb7926b0a
 fallback/supplement/co@1, und, 70B, 71e01f2099eca417
 list/and@1, ar, 18B, 82ed6c556b40aa1e
@@ -907,6 +907,7 @@ props/XIDC@1, und, 6203B, a56eb6caa45889e2
 props/XIDS@1, und, 5331B, 4a51de90f68a8dd7
 props/alnum@1, und, 6179B, 66f9bcaabdbeaa23
 props/bc@1, und, 9468B, a628834e07382120
+props/bidiauxiliaryprops@1, und, 4672B, 82f34dee36202d63
 props/blank@1, und, 66B, 1e75f3c7a32d0e8a
 props/casemap@1, und, 23338B, d041b2cdfc86279d
 props/ccc@1, und, 5270B, 85887761e8c0b554

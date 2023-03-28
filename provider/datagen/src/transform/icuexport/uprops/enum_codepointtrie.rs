@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
-fn get_enumerated_prop<'a>(
+pub(crate) fn get_enumerated_prop<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {

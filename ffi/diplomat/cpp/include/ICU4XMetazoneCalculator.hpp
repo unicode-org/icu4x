@@ -25,7 +25,11 @@ struct ICU4XMetazoneCalculatorDeleter {
 };
 
 /**
+ * An object capable of computing the metazone from a timezone.
  * 
+ * This can be used via `maybe_calculate_metazone()` on [`ICU4XCustomTimeZone`].
+ * 
+ * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
  * 
  * See the [Rust documentation for `MetazoneCalculator`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html) for more information.
  */

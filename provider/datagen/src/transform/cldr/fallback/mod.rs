@@ -4,6 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 
+use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use icu_locid::{
     extensions::unicode::Key,
     extensions_unicode_key, langid,
@@ -29,16 +30,12 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvide
             return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
-        let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
-            .source
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/likelySubtags.json")?;
+        let resources = LikelySubtagsResources::try_from_source_data(&self.source)?;
 
         let metadata = DataResponseMetadata::default();
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_owned(likely_subtags_data.into())),
+            payload: Some(DataPayload::from_owned(transform(resources.get_common()))),
         })
     }
 }
@@ -118,71 +115,61 @@ impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::Datage
     }
 }
 
-impl From<&cldr_serde::likely_subtags::Resource> for LocaleFallbackLikelySubtagsV1<'static> {
-    fn from(source_data: &cldr_serde::likely_subtags::Resource) -> Self {
-        let mut l2s = BTreeMap::<TinyAsciiStr<3>, _>::new();
-        let mut lr2s = ZeroMap2d::new();
-        let mut l2r = BTreeMap::<TinyAsciiStr<3>, _>::new();
-        let mut ls2r = ZeroMap2d::new();
+fn transform<'x>(
+    it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
+) -> LocaleFallbackLikelySubtagsV1<'static> {
+    let mut l2s = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut lr2s = ZeroMap2d::new();
+    let mut l2r = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut ls2r = ZeroMap2d::new();
 
-        // First collect the l2s and l2r maps
-        for (minimized, maximized) in source_data
-            .supplemental
-            .likely_subtags
-            .iter()
-            // Skip "und" for vertical fallback
-            .filter(|(lid, _)| !lid.language.is_empty())
-            // Find language-only entries
-            .filter(|(lid, _)| **lid == LanguageIdentifier::from(lid.language))
-        {
-            let language = minimized.language;
-            let script = maximized.script.expect("maximized");
-            let region = maximized.region.expect("maximized");
-            if script != DEFAULT_SCRIPT {
-                l2s.insert(language.into(), script);
-            }
-            if region != DEFAULT_REGION {
-                l2r.insert(language.into(), region);
-            }
-        }
+    let (part0, part1) = it
+        // Skip "und" for vertical fallback
+        .filter(|(lid, _)| !lid.language.is_empty())
+        // Find language-only entries
+        .partition::<Vec<_>, _>(|(lid, _)| **lid == LanguageIdentifier::from(lid.language));
 
-        // Now populate the other maps
-        for (minimized, maximized) in source_data
-            .supplemental
-            .likely_subtags
-            .iter()
-            // Skip "und" for vertical fallback
-            .filter(|(lid, _)| !lid.language.is_empty())
-            // Find non-language-only entries
-            .filter(|(lid, _)| **lid != LanguageIdentifier::from(lid.language))
-        {
-            let language = maximized.language;
-            let script = maximized.script.expect("maximized");
-            let region = maximized.region.expect("maximized");
-            if minimized.script.is_some() {
-                assert!(minimized.region.is_none(), "{minimized:?}");
-                let region_for_lang = l2r.get(&language.into()).copied().unwrap_or(DEFAULT_REGION);
-                if region != region_for_lang {
-                    ls2r.insert(&language.into(), &script.into(), &region);
-                }
-                continue;
-            }
-            if minimized.region.is_some() {
-                let script_for_lang = l2s.get(&language.into()).copied().unwrap_or(DEFAULT_SCRIPT);
-                if script != script_for_lang {
-                    lr2s.insert(&language.into(), &region.into(), &script);
-                }
-                continue;
-            }
-            unreachable!();
+    // First collect the l2s and l2r maps
+    for (minimized, maximized) in part0.iter() {
+        let language = minimized.language;
+        let script = maximized.script.expect("maximized");
+        let region = maximized.region.expect("maximized");
+        if script != DEFAULT_SCRIPT {
+            l2s.insert(language.into(), script);
         }
+        if region != DEFAULT_REGION {
+            l2r.insert(language.into(), region);
+        }
+    }
 
-        LocaleFallbackLikelySubtagsV1 {
-            l2s: l2s.into_iter().collect(),
-            lr2s,
-            l2r: l2r.into_iter().collect(),
-            ls2r,
+    // Now populate the other maps
+    for (minimized, maximized) in part1.iter() {
+        let language = maximized.language;
+        let script = maximized.script.expect("maximized");
+        let region = maximized.region.expect("maximized");
+        if minimized.script.is_some() {
+            assert!(minimized.region.is_none(), "{minimized:?}");
+            let region_for_lang = l2r.get(&language.into()).copied().unwrap_or(DEFAULT_REGION);
+            if region != region_for_lang {
+                ls2r.insert(&language.into(), &script.into(), &region);
+            }
+            continue;
         }
+        if minimized.region.is_some() {
+            let script_for_lang = l2s.get(&language.into()).copied().unwrap_or(DEFAULT_SCRIPT);
+            if script != script_for_lang {
+                lr2s.insert(&language.into(), &region.into(), &script);
+            }
+            continue;
+        }
+        unreachable!();
+    }
+
+    LocaleFallbackLikelySubtagsV1 {
+        l2s: l2s.into_iter().collect(),
+        lr2s,
+        l2r: l2r.into_iter().collect(),
+        ls2r,
     }
 }
 

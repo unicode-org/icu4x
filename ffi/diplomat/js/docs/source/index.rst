@@ -22,6 +22,7 @@ Documentation
    locale_ffi
    locid_transform_ffi
    logging_ffi
+   metazone_calculator_ffi
    normalizer_ffi
    normalizer_properties_ffi
    pluralrules_ffi
