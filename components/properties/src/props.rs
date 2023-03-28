@@ -290,9 +290,16 @@ impl<T: TrieValue> PropertyEnumToValueNameMapperBorrowed<'_, T> {
     /// ```
     #[inline]
     pub fn get(&self, property: T) -> Option<&str> {
-        let prop = usize::try_from(property.to_u32()).ok()?;
-
-        self.map.map.get(prop).filter(|x| x.is_empty())
+        match *self.map {
+            PropertyEnumToValueNameMapV1::Linear(ref vec) => {
+                let prop = usize::try_from(property.to_u32()).ok()?;
+                vec.get(prop).filter(|x| x.is_empty())
+            }
+            PropertyEnumToValueNameMapV1::Map(ref map) => {
+                let prop = u16::try_from(property.to_u32()).ok()?;
+                map.get(&prop)
+            }
+        }
     }
 }
 

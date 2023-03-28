@@ -199,9 +199,10 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PropertyEnumToValueNameMapV1<'data> {
-    /// A map from the value discriminant (the index) to the names
-    /// (empty strings count as missing)
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: VarZeroVec<'data, str>,
+pub enum PropertyEnumToValueNameMapV1<'data> {
+    /// A map from the value discriminant (the index) to the names, for mostly
+    /// contiguous data. Empty strings count as missing.
+    Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+    /// A map from the value discriminant to the names
+    Map(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, u16, str>),
 }

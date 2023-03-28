@@ -83,44 +83,54 @@ where
         }
     }
 
-    let first = if let Some((&first, _)) = map.first_key_value() {
-        if first > 10 {
-            return Err(DataError::custom(
-                "Property has large starting discriminant, perhaps consider \
-                                          storing its names in a different data structure?",
-            )
-            .with_display_context(&format!("Property: {prop_name}, discr: {first}")));
-        }
-
-        first
+    let data_struct = if prop_name == "ccc" {
+        // CCC has lots of gaps
+        PropertyEnumToValueNameMapV1::Map(map.into_iter().collect())
     } else {
-        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
-    };
-    let last = if let Some((&last, _)) = map.last_key_value() {
-        let range = usize::from(1 + last - first);
-        let count = map.len();
-        let gaps = range - count;
-        if gaps > 200 {
-            return Err(DataError::custom("Property has more than 200 gaps, \
-                perhaps consider storing its names in a different data structure?")
-                .with_display_context(&format!("Property: {prop_name}, discriminant range: {first}..{last}, discriminant count: {count}")));
-        }
+        let first = if let Some((&first, _)) = map.first_key_value() {
+            if first > 0 {
+                return Err(DataError::custom(
+                    "Property has nonzero starting discriminant, perhaps consider \
+                     storing its names as a map or by specializing this error",
+                )
+                .with_display_context(&format!("Property: {prop_name}, discr: {first}")));
+            }
 
-        last
-    } else {
-        return Err(DataError::custom("Property has no values!").with_display_context(prop_name));
-    };
-
-    let mut v = Vec::new();
-    for i in 0..last {
-        if let Some(&val) = map.get(&i) {
-            v.push(val)
+            first
         } else {
-            v.push("")
-        }
-    }
+            return Err(
+                DataError::custom("Property has no values!").with_display_context(prop_name)
+            );
+        };
+        let last = if let Some((&last, _)) = map.last_key_value() {
+            let range = usize::from(1 + last - first);
+            let count = map.len();
+            let gaps = range - count;
+            if gaps > 0 {
+                return Err(DataError::custom("Property has more than 0 gaps, \
+                    perhaps consider storing its names in a map or by specializing this error")
+                    .with_display_context(&format!("Property: {prop_name}, discriminant range: {first}..{last}, discriminant count: {count}")));
+            }
 
-    let data_struct = PropertyEnumToValueNameMapV1 { map: (&v).into() };
+            last
+        } else {
+            return Err(
+                DataError::custom("Property has no values!").with_display_context(prop_name)
+            );
+        };
+
+        let mut v = Vec::new();
+        for i in 0..last {
+            if let Some(&val) = map.get(&i) {
+                v.push(val)
+            } else {
+                v.push("")
+            }
+        }
+
+        PropertyEnumToValueNameMapV1::Linear((&v).into())
+    };
+
     Ok(DataResponse {
         metadata: DataResponseMetadata::default(),
         payload: Some(DataPayload::from_owned(data_struct)),
