@@ -422,7 +422,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $name_value_marker {
-                    const KEY: DataKey = data_key!(concat!("props/names/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"));
                 }
 
 
@@ -440,7 +440,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $value_short_name_marker {
-                    const KEY: DataKey = data_key!(concat!("props/names/to/short/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("propnames/to/short/", $enum_s, "@1"));
                 }
 
                 #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
@@ -457,7 +457,7 @@ macro_rules! expand {
                 }
 
                 impl KeyedDataMarker for $value_long_name_marker {
-                    const KEY: DataKey = data_key!(concat!("props/names/to/long/", $enum_s, "@1"));
+                    const KEY: DataKey = data_key!(concat!("propnames/to/long/", $enum_s, "@1"));
                 }
             )+
     };
