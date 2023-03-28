@@ -122,6 +122,31 @@ unsafe extern "C" fn icu4x_hb_unicode_general_category_destroy(user_data: *mut c
     let _ = Box::from_raw(user_data as *mut CodePointMapData<GeneralCategory>);
 }
 
+/// Returns the Bidi_Mirroring_Glyph, but adjusting the return value
+/// to fix HarfBuzz expected behavior for code points whose property value
+/// for Bidi_Mirroring_Glyph is the undefined value.
+///
+/// From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
+/// <note>Note: If a code point does not have a specified
+/// Bi-Directional Mirroring Glyph defined, the method should
+/// return the original code point.</note>
+unsafe extern "C" fn icu4x_hb_unicode_mirroring(
+    _ufuncs: *mut hb_unicode_funcs_t,
+    unicode: hb_codepoint_t,
+    user_data: *mut c_void,
+) -> hb_codepoint_t {
+    (*(user_data as *mut BidiAuxiliaryProperties))
+        .as_borrowed()
+        .get32_mirroring_props(unicode)
+        .mirroring_glyph
+        .map(u32::from)
+        .unwrap_or(unicode) as hb_codepoint_t
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
+    let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
+}
+
 unsafe extern "C" fn icu4x_hb_unicode_compose(
     _ufuncs: *mut hb_unicode_funcs_t,
     a: hb_codepoint_t,
@@ -198,31 +223,6 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose(
 
 unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) {
     let _ = Box::from_raw(user_data as *mut CanonicalDecomposition);
-}
-
-/// Returns the Bidi_Mirroring_Glyph, but adjusting the return value
-/// to fix HarfBuzz expected behavior for code points whose property value
-/// for Bidi_Mirroring_Glyph is the undefined value.
-///
-/// From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
-/// <note>Note: If a code point does not have a specified
-/// Bi-Directional Mirroring Glyph defined, the method should
-/// return the original code point.</note>
-unsafe extern "C" fn icu4x_hb_unicode_mirroring(
-    _ufuncs: *mut hb_unicode_funcs_t,
-    unicode: hb_codepoint_t,
-    user_data: *mut c_void,
-) -> hb_codepoint_t {
-    (*(user_data as *mut BidiAuxiliaryProperties))
-        .as_borrowed()
-        .get32_mirroring_props(unicode)
-        .mirroring_glyph
-        .map(u32::from)
-        .unwrap_or(unicode) as hb_codepoint_t
-}
-
-unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
-    let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
 }
 
 /// RAII holder for `*mut hb_unicode_funcs_t`.
