@@ -35,7 +35,9 @@ use icu_normalizer::provider::CanonicalCompositionsV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
+use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps::CodePointMapData;
+use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::GeneralCategoryV1Marker;
 use icu_properties::GeneralCategory;
 use icu_provider::prelude::*;
@@ -198,6 +200,31 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) 
     let _ = Box::from_raw(user_data as *mut CanonicalDecomposition);
 }
 
+/// Returns the Bidi_Mirroring_Glyph, but adjusting the return value
+/// to fix HarfBuzz expected behavior for code points whose property value
+/// for Bidi_Mirroring_Glyph is the undefined value.
+///
+/// From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
+/// <note>Note: If a code point does not have a specified
+/// Bi-Directional Mirroring Glyph defined, the method should
+/// return the original code point.</note>
+unsafe extern "C" fn icu4x_hb_unicode_mirroring(
+    _ufuncs: *mut hb_unicode_funcs_t,
+    unicode: hb_codepoint_t,
+    user_data: *mut c_void,
+) -> hb_codepoint_t {
+    (*(user_data as *mut BidiAuxiliaryProperties))
+        .as_borrowed()
+        .get32_mirroring_props(unicode)
+        .mirroring_glyph
+        .map(u32::from)
+        .unwrap_or(unicode) as hb_codepoint_t
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
+    let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
+}
+
 /// RAII holder for `*mut hb_unicode_funcs_t`.
 #[derive(Debug)]
 pub struct UnicodeFuncs {
@@ -252,7 +279,8 @@ impl Drop for UnicodeFuncs {
 // are violated in principle.
 pub fn new_hb_unicode_funcs_unstable<D>(data_provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
 where
-    D: DataProvider<CanonicalCompositionsV1Marker>
+    D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
+        + DataProvider<CanonicalCompositionsV1Marker>
         + DataProvider<CanonicalDecompositionDataV1Marker>
         + DataProvider<CanonicalDecompositionTablesV1Marker>
         + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
@@ -266,7 +294,9 @@ where
         Box::new(CanonicalCombiningClassMap::try_new_unstable(data_provider)?);
     let general_category_map =
         Box::new(icu_properties::maps::load_general_category(data_provider)?);
-    // TODO(#2833): mirroring
+    let bidi_auxiliary_props_map = Box::new(
+        icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
+    );
     // TODO(#2832): script
     let canonical_composition = Box::new(CanonicalComposition::try_new_unstable(data_provider)?);
     let canonical_decomposition =
@@ -289,7 +319,8 @@ where
             Box::into_raw(canonical_combining_class_map);
         let general_category_map_ptr: *mut CodePointMapData<GeneralCategory> =
             Box::into_raw(general_category_map);
-        // TODO(#2833): mirroring
+        let bidi_auxiliary_props_map_ptr: *mut BidiAuxiliaryProperties =
+            Box::into_raw(bidi_auxiliary_props_map);
         // TODO(#2832): script
         let canonical_composition_ptr: *mut CanonicalComposition =
             Box::into_raw(canonical_composition);
@@ -309,8 +340,12 @@ where
             Some(icu4x_hb_unicode_general_category_destroy),
         );
 
-        // TODO(#2833):
-        // hb_unicode_funcs_set_mirroring_func();
+        hb_unicode_funcs_set_mirroring_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_mirroring),
+            bidi_auxiliary_props_map_ptr as *mut c_void,
+            Some(icu4x_hb_unicode_mirroring_destroy),
+        );
         // TODO(#2832):
         // hb_unicode_funcs_set_script_func();
 
