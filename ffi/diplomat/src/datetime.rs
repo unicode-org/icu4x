@@ -18,7 +18,9 @@ pub mod ffi {
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
-    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf};
+
+    #[cfg(feature = "icu_calendar")]
+    use crate::week::ffi::ICU4XWeekCalculator;
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -149,10 +151,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<ICU4XWeekOf, ICU4XError> {
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }
 
@@ -330,10 +333,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[cfg(feature = "icu_calendar")]
         pub fn week_of_year(
             &self,
             calculator: &ICU4XWeekCalculator,
-        ) -> Result<ICU4XWeekOf, ICU4XError> {
+        ) -> Result<crate::week::ffi::ICU4XWeekOf, ICU4XError> {
             Ok(self.0.date.week_of_year(&calculator.0)?.into())
         }
 

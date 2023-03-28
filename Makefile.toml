@@ -27,7 +27,7 @@ ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["IC
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
 category = "ICU4X Development"
 dependencies = [
-    "check-all-features",
+    "check",
     "check-no-features",
     "ci-job-fmt",
     "ci-job-clippy",
@@ -44,14 +44,14 @@ dependencies = [
     "ci-job-tidy",
 ]
 
-[tasks.check-all-features]
-description = "Check ICU4X build with no features (covered in CI via cargo check-all-features)"
+[tasks.check]
+description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
 args = ["check", "--all-targets", "--all-features"]
 
 [tasks.check-no-features]
-description = "Check ICU4X build with no features (covered in CI via cargo check-all-features)"
+description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
 args = ["check", "--all-targets", "--no-default-features"]
