@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{App, Arg};
+use clap::{ArgAction, Parser};
 use eyre::WrapErr;
 use icu_datagen::SourceData;
 use icu_locid::*;
@@ -15,31 +15,26 @@ use zip::ZipArchive;
 include!("../../globs.rs.data");
 include!("../../locales.rs.data");
 
-fn main() -> eyre::Result<()> {
-    let args = App::new("ICU4X Test Data Downloader")
-        .version("0.0.1")
-        .author("The ICU4X Project Developers")
-        .about("Download data from CLDR and ICU for ICU4X testing")
-        .arg(
-            Arg::with_name("VERBOSE")
-                .short("v")
-                .long("verbose")
-                .multiple(true)
-                .help("Sets the level of verbosity (-v, -vv, or -vvv)"),
-        )
-        .arg(
-            Arg::with_name("OUTPUT")
-                .short("o")
-                .long("out")
-                .help(
-                    "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree.",
-                )
-                .takes_value(true)
-                .required(true),
-        )
-        .get_matches();
+#[derive(Parser)]
+#[command(
+    author = "The ICU4X Project Developers",
+    about = "Download data from CLDR and ICU for ICU4X testing"
+)]
+struct Args {
+    #[arg(short, long, help = "Sets the level of verbosity (-v, -vv, or -vvv)", action = ArgAction::Count)]
+    verbose: u8,
+    #[arg(
+        short,
+        long,
+        help = "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree"
+    )]
+    out: PathBuf,
+}
 
-    match args.occurrences_of("VERBOSE") {
+fn main() -> eyre::Result<()> {
+    let args = Args::parse();
+
+    match args.verbose {
         0 => SimpleLogger::new()
             .env()
             .with_level(log::LevelFilter::Info)
@@ -60,7 +55,7 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let output_path = PathBuf::from(args.value_of_os("OUTPUT").expect("arg is required"));
+    let output_path = &args.out;
 
     let cached = cached_path::CacheBuilder::new()
         .freshness_lifetime(u64::MAX)
