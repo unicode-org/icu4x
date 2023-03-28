@@ -142,6 +142,8 @@ pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a,
 
     /// Returns an iterator that moves every item from this store.
     fn lm_into_iter(self) -> Self::KeyValueIntoIter;
+
+    /// Adds items from another store to the end of this store.
     fn lm_extend_end(&mut self, other: Self)
     where
         Self: Sized;
