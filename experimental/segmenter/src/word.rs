@@ -62,6 +62,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
+#[derive(Debug)]
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
     dictionary: Dictionary,
@@ -183,6 +184,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -202,6 +204,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -216,6 +219,7 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 
@@ -230,10 +234,12 @@ impl WordSegmenter {
             dictionary: Some(&self.dictionary),
             lstm: Some(&self.lstm),
             grapheme: Some(self.grapheme.get()),
+            boundary_property: 0,
         }
     }
 }
 
+#[derive(Debug)]
 pub struct WordBreakTypeUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
@@ -251,6 +257,8 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+
+#[derive(Debug)]
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
@@ -318,6 +326,7 @@ where
     }
 }
 
+#[derive(Debug)]
 pub struct WordBreakTypeUtf16;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {

@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::bidi_data::{
+    CheckedBidiPairedBracketType, MirroredPairedBracketData, MirroredPairedBracketDataTryFromError,
+};
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
@@ -97,6 +100,18 @@ impl TrieValue for SentenceBreak {
     }
 }
 
+impl TrieValue for CheckedBidiPairedBracketType {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        Ok(match i {
+            1 => CheckedBidiPairedBracketType::Open,
+            2 => CheckedBidiPairedBracketType::Close,
+            _ => CheckedBidiPairedBracketType::None,
+        })
+    }
+}
+
 // GCG is not used inside tries, but it is used in the name lookup type, and we want
 // to squeeze it into a u16 for storage. Its named mask values are specced so we can
 // do this in code.
@@ -161,5 +176,13 @@ impl TrieValue for GeneralCategoryGroup {
         // trie storage types to the actual type. This type will always be a packed u16
         // in our case since the names map upcasts from u16
         u16::try_from(i).map(packed_u16_to_gcg)
+    }
+}
+
+impl TrieValue for MirroredPairedBracketData {
+    type TryFromU32Error = MirroredPairedBracketDataTryFromError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        Self::try_from(i)
     }
 }

@@ -56,7 +56,7 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "42.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-02-24/72.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-03-22a/72.x";
 
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
@@ -344,6 +344,10 @@ impl SerdeCache {
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
         self.root.list(path)
     }
+
+    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.root.file_exists(path)
+    }
 }
 
 pub(crate) enum AbstractFs {
@@ -466,6 +470,21 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+        })
+    }
+
+    fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+        self.init()?;
+        Ok(match self {
+            Self::Fs(root) => root.join(path).is_file(),
+            Self::Zip(zip) => zip
+                .read()
+                .expect("poison")
+                .as_ref()
+                .ok()
+                .unwrap() // init called
+                .file_names()
+                .any(|p| p == path),
         })
     }
 }

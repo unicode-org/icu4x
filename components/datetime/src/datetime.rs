@@ -61,6 +61,7 @@ use crate::options::components;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct TimeFormatter(pub(super) raw::TimeFormatter);
 
 impl TimeFormatter {
@@ -214,6 +215,7 @@ impl TimeFormatter {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct TypedDateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateFormatter<C> {
@@ -410,6 +412,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct TypedDateTimeFormatter<C>(pub(super) raw::DateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateTimeFormatter<C> {

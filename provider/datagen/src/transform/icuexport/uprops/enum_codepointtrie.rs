@@ -10,7 +10,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::convert::TryFrom;
 
-fn get_enumerated_prop<'a>(
+pub(crate) fn get_enumerated_prop<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
@@ -146,7 +146,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
 
             // sentinel value
             if packed == 0xFF00 {
-                return Err(DataError::custom("Found unknown general category mask value {v}, properties code may need to be updated."));
+                return Err(DataError::custom("Found unknown general category mask value, properties code may need to be updated."));
             }
             Ok(packed)
         })?;

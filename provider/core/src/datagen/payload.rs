@@ -43,6 +43,14 @@ pub struct ExportBox {
     payload: Box<dyn ExportableYoke + Sync>,
 }
 
+impl core::fmt::Debug for ExportBox {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("ExportBox")
+            .field("payload", &"<payload>")
+            .finish()
+    }
+}
+
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DataMarker,
@@ -130,6 +138,7 @@ impl DataPayload<ExportMarker> {
 
 /// Marker type for [`ExportBox`].
 #[allow(clippy::exhaustive_structs)] // marker type
+#[derive(Debug)]
 pub struct ExportMarker {}
 
 impl DataMarker for ExportMarker {

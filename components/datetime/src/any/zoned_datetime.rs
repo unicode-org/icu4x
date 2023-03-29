@@ -119,6 +119,7 @@ use writeable::Writeable;
 /// ```
 ///
 /// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
+#[derive(Debug)]
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {

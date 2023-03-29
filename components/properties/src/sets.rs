@@ -32,6 +32,7 @@ use icu_provider::prelude::*;
 /// property data in a set-like form, ex: a set of code points sharing the same
 /// value for a Unicode property. Access its data via the borrowed version,
 /// [`CodePointSetDataBorrowed`].
+#[derive(Debug)]
 pub struct CodePointSetData {
     data: DataPayload<ErasedSetlikeMarker>,
 }
@@ -115,7 +116,7 @@ impl CodePointSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct CodePointSetDataBorrowed<'a> {
     set: &'a PropertyCodePointSetV1<'a>,
 }
@@ -183,6 +184,31 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     pub fn iter_ranges(self) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.set.iter_ranges()
     }
+
+    // Yields an [`Iterator`] returning the ranges of the code points that are
+    /// *not* included in the [`CodePointSetData`]
+    ///
+    /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
+    /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
+    /// behavior of ranges, ex: `UnicodeSet::contains(UChar32 start, UChar32 end)`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::sets;
+    ///
+    /// let data = sets::load_alphabetic(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
+    /// let alphabetic = data.as_borrowed();
+    /// let mut ranges = alphabetic.iter_ranges();
+    ///
+    /// assert_eq!(Some(0x0041..=0x005A), ranges.next()); // 'A'..'Z'
+    /// assert_eq!(Some(0x0061..=0x007A), ranges.next()); // 'a'..'z'
+    /// ```
+    #[inline]
+    pub fn iter_ranges_complemented(self) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.set.iter_ranges_complemented()
+    }
 }
 
 //
@@ -191,6 +217,7 @@ impl<'a> CodePointSetDataBorrowed<'a> {
 //
 
 /// A wrapper around `UnicodeSet` data (characters and strings)
+#[derive(Debug)]
 pub struct UnicodeSetData {
     data: DataPayload<ErasedUnicodeSetlikeMarker>,
 }
@@ -266,7 +293,7 @@ impl UnicodeSetData {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`UnicodeSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct UnicodeSetDataBorrowed<'a> {
     set: &'a PropertyUnicodeSetV1<'a>,
 }

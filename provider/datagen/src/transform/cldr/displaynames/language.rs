@@ -41,6 +41,15 @@ impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvid
             .cldr()?
             .displaynames()
             .list_langs()?
+            .filter(|langid| {
+                // The directory might exist without languages.json
+                self.source
+                    .cldr()
+                    .unwrap()
+                    .displaynames()
+                    .file_exists(langid, "languages.json")
+                    .unwrap_or_default()
+            })
             .map(DataLocale::from)
             .collect())
     }

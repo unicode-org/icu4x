@@ -37,6 +37,7 @@ type UnvalidatedLanguageIdentifier = str;
 type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 
 #[zerovec::make_varule(StrStrPairVarULE)]
+#[zerovec::derive(Debug)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(
     feature = "serde",
@@ -89,6 +90,7 @@ pub struct StrStrPair<'a>(
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 // TODO: Use validated types as value types
+#[derive(Debug)]
 pub struct AliasesV1<'data> {
     /// `[language(-variant)+\] -> [langid]`
     /// This is not a map as it's searched linearly according to the canonicalization rules.

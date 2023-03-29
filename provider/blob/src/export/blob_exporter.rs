@@ -29,6 +29,16 @@ pub struct BlobExporter<'w> {
     sink: Box<dyn std::io::Write + Sync + 'w>,
 }
 
+impl core::fmt::Debug for BlobExporter<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("BlobExporter")
+            .field("resources", &self.resources)
+            .field("unique_resources", &self.unique_resources)
+            .field("sink", &"<sink>")
+            .finish()
+    }
+}
+
 impl<'w> BlobExporter<'w> {
     /// Create a [`BlobExporter`] that writes to the given I/O stream.
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {

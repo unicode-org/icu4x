@@ -15,9 +15,7 @@ use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "lstm")]
-use crate::lstm_error::Error;
-#[cfg(feature = "lstm")]
-use ndarray::{Array, Array1, Array2};
+use crate::{lstm_error::Error, math_helper::MatrixZero};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -41,6 +39,10 @@ pub struct RuleBreakDataV1<'data> {
     /// Break state table for rule-based breaking.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub break_state_table: RuleBreakStateTable<'data>,
+
+    /// Rule status table for rule-based breaking.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub rule_status_table: RuleStatusTable<'data>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
@@ -84,6 +86,18 @@ pub struct RuleBreakStateTable<'data>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
 );
 
+/// Rules status data for rule_status and is_word_like of word segmenter.
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct RuleStatusTable<'data>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, u8>,
+);
+
 /// char16trie data for dictionary break
 #[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/dictionary@1")]
 #[derive(Debug, PartialEq, Clone)]
@@ -111,7 +125,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 pub struct LstmMatrix<'data> {
     #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dim: ZeroVec<'data, i16>,
+    pub dims: ZeroVec<'data, u16>,
     #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, f32>,
@@ -119,29 +133,13 @@ pub struct LstmMatrix<'data> {
 
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub(crate) fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
-        if self.dim.len() == 1 {
-            Ok(Array::from_vec(self.data.to_vec()))
-        } else {
-            Err(Error::DimensionMismatch)
-        }
-    }
-
-    pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
-        if self.dim.len() == 2 {
-            #[allow(clippy::unwrap_used)]
-            Array::from_shape_vec(
-                (
-                    // `unwrap` cannot fail due to `dim.len()` check above.
-                    self.dim.get(0).unwrap() as usize,
-                    self.dim.get(1).unwrap() as usize,
-                ),
-                self.data.to_vec(),
-            )
-            .map_err(|_| Error::DimensionMismatch)
-        } else {
-            Err(Error::DimensionMismatch)
-        }
+    pub(crate) fn as_matrix_zero<const D: usize>(&self) -> Result<MatrixZero<D>, Error> {
+        let dims = self
+            .dims
+            .get_as_array()
+            .ok_or(Error::DimensionMismatch)?
+            .map(|x| x as usize);
+        MatrixZero::try_from_parts(&self.data, dims)
     }
 }
 

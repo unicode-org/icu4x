@@ -18,10 +18,21 @@ pub enum SegmenterError {
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),
+    /// An error occurred while preparing the LSTM data.
+    #[displaydoc("LSTM data error")]
+    #[cfg(feature = "lstm")]
+    LstmDataError,
 }
 
 impl From<DataError> for SegmenterError {
     fn from(e: DataError) -> Self {
         Self::Data(e)
+    }
+}
+
+#[cfg(feature = "lstm")]
+impl From<crate::lstm_error::Error> for SegmenterError {
+    fn from(_: crate::lstm_error::Error) -> Self {
+        Self::LstmDataError
     }
 }

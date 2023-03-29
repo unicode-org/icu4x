@@ -12,7 +12,7 @@ use icu_provider::prelude::*;
 #[cfg(feature = "lstm")]
 use crate::lstm::LstmSegmenter;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct LstmPayloads {
     pub burmese: Option<DataPayload<LstmDataV1Marker>>,
     pub khmer: Option<DataPayload<LstmDataV1Marker>>,
@@ -36,7 +36,7 @@ impl LstmPayloads {
     /// Construct a [`LstmPayloads`] for all supported languages.
     pub(crate) fn new<D: DataProvider<LstmDataV1Marker> + ?Sized>(provider: &D) -> Self {
         let burmese = Self::load(provider, locale!("my")).ok();
-        let khmer = Self::load(provider, locale!("lo")).ok();
+        let khmer = Self::load(provider, locale!("km")).ok();
         let lao = Self::load(provider, locale!("lo")).ok();
         let thai = Self::load(provider, locale!("th")).ok();
         LstmPayloads {
@@ -60,7 +60,7 @@ impl LstmPayloads {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Dictionary {
     pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
     pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
@@ -100,7 +100,7 @@ impl Dictionary {
     }
 
     /// Construct a [`Dictionary`] for Chinese and Japanese.
-    #[cfg(feature = "lstm")] // Use by WordSegmenter with "lstm" enabled.
+    #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     pub(crate) fn new_chinese_japanese<
         D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
     >(
@@ -162,7 +162,7 @@ pub fn complex_language_segment_utf16(
             if let Some(lstm) = lstm {
                 if let Some(model) = lstm.best(*first_ch as u32) {
                     if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                        let breaks = segmenter.segment_utf16(&str_per_lang);
+                        let breaks = segmenter.segment_utf16(str_per_lang);
                         result.extend(breaks.map(|n| offset + n));
                         offset += str_per_lang.len();
                         result.push(offset);
@@ -177,7 +177,7 @@ pub fn complex_language_segment_utf16(
                         if let Ok(segmenter) =
                             DictionarySegmenter::try_new_unstable(payload, grapheme)
                         {
-                            let breaks = segmenter.segment_utf16(&str_per_lang);
+                            let breaks = segmenter.segment_utf16(str_per_lang);
                             result.extend(breaks.map(|n| offset + n));
                             offset += str_per_lang.len();
                             continue;
@@ -210,7 +210,7 @@ pub fn complex_language_segment_str(
             if let Some(lstm) = lstm {
                 if let Some(model) = lstm.best(first_ch as u32) {
                     if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
-                        let breaks = segmenter.segment_str(&str_per_lang);
+                        let breaks = segmenter.segment_str(str_per_lang);
                         result.extend(breaks.map(|n| offset + n));
                         offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
                         result.push(offset);
@@ -225,7 +225,7 @@ pub fn complex_language_segment_str(
                         if let Ok(segmenter) =
                             DictionarySegmenter::try_new_unstable(payload, grapheme)
                         {
-                            let breaks = segmenter.segment_str(&str_per_lang);
+                            let breaks = segmenter.segment_str(str_per_lang);
                             result.extend(breaks.map(|n| offset + n));
                             offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
                             continue;

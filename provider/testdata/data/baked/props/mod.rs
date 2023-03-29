@@ -6,6 +6,7 @@ pub mod basic_emoji_v1;
 pub mod bc_v1;
 pub mod bidi_c_v1;
 pub mod bidi_m_v1;
+pub mod bidiauxiliaryprops_v1;
 pub mod blank_v1;
 pub mod cased_v1;
 pub mod casemap_v1;
