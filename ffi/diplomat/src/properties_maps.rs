@@ -10,6 +10,7 @@ pub mod ffi {
     use icu_properties::maps;
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
@@ -55,6 +56,33 @@ pub mod ffi {
         )]
         pub fn get32(&self, cp: u32) -> u8 {
             self.0.as_borrowed().get32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points that map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value<'a>(&'a self, value: u8) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_for_value(value),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points that do not map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value_complemented<'a>(
+            &'a self,
+            value: u8,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .iter_ranges_for_value_complemented(value),
+            )))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -142,6 +170,33 @@ pub mod ffi {
         )]
         pub fn get32(&self, cp: u32) -> u16 {
             self.0.as_borrowed().get32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points that map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_for_value(value),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points that do not map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value_complemented<'a>(
+            &'a self,
+            value: u16,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .iter_ranges_for_value_complemented(value),
+            )))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
