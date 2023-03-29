@@ -90,7 +90,9 @@ macro_rules! impl_primitive_trie_value {
             }
 
             fn to_u32(self) -> u32 {
-                u32::try_from(self).unwrap_or(0)
+                // bitcast when the same size, zero-extend/sign-extend
+                // when not the same size
+                self as u32
             }
         }
     };
