@@ -35,6 +35,16 @@ export class ICU4XCodePointMapData8 {
 
   /**
 
+   * Converts a general category to its corresponding mask value
+
+   * Nonexistant general categories will map to the empty mask
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html Rust documentation for `GeneralCategoryGroup`} for more information.
+   */
+  static general_category_to_mask(gc: u8): u32;
+
+  /**
+
    * Produces an iterator over ranges of code points that map to `value`
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
@@ -48,6 +58,16 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
    */
   iter_ranges_for_value_complemented(value: u8): CodePointRangeIterator;
+
+  /**
+
+   * Given a General Category Mask value (obtained via `general_category_to_mask()` or by using `ICU4XGeneralCategoryNameToMaskMapper`, produce an iterator over ranges of code points whose `General_Category` values are contained in the mask.
+
+   * Should only be used on maps obtained via `load_general_category()`, other maps will have unpredictable results
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group Rust documentation for `iter_ranges_for_group`} for more information.
+   */
+  iter_ranges_for_general_category_mask(mask: u32): CodePointRangeIterator;
 
   /**
 

@@ -77,6 +77,15 @@
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
+    .. js:function:: general_category_to_mask(gc)
+
+        Converts a general category to its corresponding mask value
+
+        Nonexistant general categories will map to the empty mask
+
+        See the `Rust documentation for GeneralCategoryGroup <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html>`__ for more information.
+
+
     .. js:method:: iter_ranges_for_value(value)
 
         Produces an iterator over ranges of code points that map to ``value``
@@ -89,6 +98,15 @@
         Produces an iterator over ranges of code points that do not map to ``value``
 
         See the `Rust documentation for iter_ranges_for_value_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented>`__ for more information.
+
+
+    .. js:method:: iter_ranges_for_general_category_mask(mask)
+
+        Given a General Category Mask value (obtained via ``general_category_to_mask()`` or by using ``ICU4XGeneralCategoryNameToMaskMapper``, produce an iterator over ranges of code points whose ``General_Category`` values are contained in the mask.
+
+        Should only be used on maps obtained via ``load_general_category()``, other maps will have unpredictable results
+
+        See the `Rust documentation for iter_ranges_for_group <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group>`__ for more information.
 
 
     .. js:method:: get_set_for_value(value)

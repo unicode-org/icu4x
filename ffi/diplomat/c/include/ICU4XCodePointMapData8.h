@@ -27,9 +27,13 @@ uint8_t ICU4XCodePointMapData8_get(const ICU4XCodePointMapData8* self, char32_t 
 
 uint8_t ICU4XCodePointMapData8_get32(const ICU4XCodePointMapData8* self, uint32_t cp);
 
+uint32_t ICU4XCodePointMapData8_general_category_to_mask(uint8_t gc);
+
 CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 
 CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_value_complemented(const ICU4XCodePointMapData8* self, uint8_t value);
+
+CodePointRangeIterator* ICU4XCodePointMapData8_iter_ranges_for_general_category_mask(const ICU4XCodePointMapData8* self, uint32_t mask);
 
 ICU4XCodePointSetData* ICU4XCodePointMapData8_get_set_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 

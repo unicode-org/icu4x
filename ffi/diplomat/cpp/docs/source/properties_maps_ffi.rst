@@ -81,6 +81,15 @@
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
+    .. cpp:function:: static uint32_t general_category_to_mask(uint8_t gc)
+
+        Converts a general category to its corresponding mask value
+
+        Nonexistant general categories will map to the empty mask
+
+        See the `Rust documentation for GeneralCategoryGroup <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html>`__ for more information.
+
+
     .. cpp:function:: CodePointRangeIterator iter_ranges_for_value(uint8_t value) const
 
         Produces an iterator over ranges of code points that map to ``value``
@@ -95,6 +104,17 @@
         Produces an iterator over ranges of code points that do not map to ``value``
 
         See the `Rust documentation for iter_ranges_for_value_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented>`__ for more information.
+
+        Lifetimes: ``this`` must live at least as long as the output.
+
+
+    .. cpp:function:: CodePointRangeIterator iter_ranges_for_general_category_mask(uint32_t mask) const
+
+        Given a General Category Mask value (obtained via ``general_category_to_mask()`` or by using ``ICU4XGeneralCategoryNameToMaskMapper``, produce an iterator over ranges of code points whose ``General_Category`` values are contained in the mask.
+
+        Should only be used on maps obtained via ``load_general_category()``, other maps will have unpredictable results
+
+        See the `Rust documentation for iter_ranges_for_group <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group>`__ for more information.
 
         Lifetimes: ``this`` must live at least as long as the output.
 
