@@ -89,10 +89,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         "TestRandomWordsUDHR_tr",
         &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
-    let content_viet: (&str, &str) = (
-        "udhr_vie",
-        &strip_headers(include_str!("./data/udhr_vie.txt")),
-    );
+    let content_viet: (&str, &str) = ("udhr_vie", &strip_headers(include_str!("data/wotw.txt")));
 
     [
         content_latin,

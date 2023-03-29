@@ -1899,7 +1899,7 @@ dependencies = [
  "arraystring",
  "arrayvec",
  "atoi",
- "criterion 0.4.0",
+ "criterion",
  "databake",
  "detone",
  "displaydoc",

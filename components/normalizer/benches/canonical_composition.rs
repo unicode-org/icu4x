@@ -122,14 +122,14 @@ fn normalizer_bench_data() -> [BenchDataContent; 16] {
         BenchDataContent {
             file_name: "udhr_vie".to_owned(),
             pairs: decompose_data(
-                &nfc_normalizer.normalize(&strip_headers(include_str!("./data/udhr_vie.txt"))),
+                &nfc_normalizer.normalize(&strip_headers(include_str!("data/wotw.txt"))),
             ),
         },
         BenchDataContent {
             file_name: "udhr_vie_detone".to_owned(),
             pairs: {
                 let result: Vec<(char, char)> = nfc_normalizer
-                    .normalize(&strip_headers(include_str!("./data/udhr_vie.txt")))
+                    .normalize(&strip_headers(include_str!("data/wotw.txt")))
                     .chars()
                     .filter_map(|c| {
                         let mut iter = std::iter::once(c).decompose_vietnamese_tones(true);
