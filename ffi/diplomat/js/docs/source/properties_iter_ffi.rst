@@ -8,6 +8,11 @@
 
     .. js:method:: next()
 
+        Advance the iterator by one and return the next range.
+
+        If the iterator is out of items, ``done`` will be true
+
+
 .. js:class:: CodePointRangeIteratorResult
 
     Result of a single iteration of :js:class:`CodePointRangeIterator`. Logically can be considered to be an ``Option<RangeInclusive<u32>>``,

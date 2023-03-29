@@ -8,6 +8,10 @@
 
     .. cpp:function:: CodePointRangeIteratorResult next()
 
+        Advance the iterator by one and return the next range.
+
+        If the iterator is out of items, ``done`` will be true
+
 
 .. cpp:struct:: CodePointRangeIteratorResult
 

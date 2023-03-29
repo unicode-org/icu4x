@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
@@ -22,6 +26,10 @@ pub mod ffi {
     pub struct CodePointRangeIterator<'a>(pub Box<dyn Iterator<Item = RangeInclusive<u32>> + 'a>);
 
     impl<'a> CodePointRangeIterator<'a> {
+        /// Advance the iterator by one and return the next range.
+        ///
+        /// If the iterator is out of items, `done` will be true
+        #[allow(clippy::should_implement_trait)] // Rust isn't calling this code
         pub fn next(&mut self) -> CodePointRangeIteratorResult {
             self.0
                 .next()

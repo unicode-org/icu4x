@@ -28,6 +28,12 @@ struct CodePointRangeIteratorDeleter {
  */
 class CodePointRangeIterator {
  public:
+
+  /**
+   * Advance the iterator by one and return the next range.
+   * 
+   * If the iterator is out of items, `done` will be true
+   */
   CodePointRangeIteratorResult next();
   inline const capi::CodePointRangeIterator* AsFFI() const { return this->inner.get(); }
   inline capi::CodePointRangeIterator* AsFFIMut() { return this->inner.get(); }
