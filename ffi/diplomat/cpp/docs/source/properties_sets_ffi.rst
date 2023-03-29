@@ -24,6 +24,24 @@
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 
 
+    .. cpp:function:: CodePointRangeIterator iter_ranges() const
+
+        Produces an iterator over ranges of code points contained in this set
+
+        See the `Rust documentation for iter_ranges <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges>`__ for more information.
+
+        Lifetimes: ``this`` must live at least as long as the output.
+
+
+    .. cpp:function:: CodePointRangeIterator iter_ranges_complemented() const
+
+        Produces an iterator over ranges of code points not contained in this set
+
+        See the `Rust documentation for iter_ranges_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented>`__ for more information.
+
+        Lifetimes: ``this`` must live at least as long as the output.
+
+
     .. cpp:function:: static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group)
 
         which is a mask with the same format as the ``U_GC_XX_MASK`` mask in ICU4C

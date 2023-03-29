@@ -1,5 +1,6 @@
 import { u16, u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { CodePointRangeIterator } from "./CodePointRangeIterator";
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
@@ -31,6 +32,22 @@ export class ICU4XCodePointMapData16 {
    * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
    */
   get32(cp: u32): u16;
+
+  /**
+
+   * Produces an iterator over ranges of code points that map to `value`
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
+   */
+  iter_ranges_for_value(value: u16): CodePointRangeIterator;
+
+  /**
+
+   * Produces an iterator over ranges of code points that do not map to `value`
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
+   */
+  iter_ranges_for_value_complemented(value: u16): CodePointRangeIterator;
 
   /**
 

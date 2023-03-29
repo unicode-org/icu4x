@@ -26,6 +26,20 @@
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
 
+    .. js:method:: iter_ranges_for_value(value)
+
+        Produces an iterator over ranges of code points that map to ``value``
+
+        See the `Rust documentation for iter_ranges_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value>`__ for more information.
+
+
+    .. js:method:: iter_ranges_for_value_complemented(value)
+
+        Produces an iterator over ranges of code points that do not map to ``value``
+
+        See the `Rust documentation for iter_ranges_for_value_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented>`__ for more information.
+
+
     .. js:method:: get_set_for_value(value)
 
         Gets a :js:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
@@ -61,6 +75,20 @@
     .. js:method:: get32(cp)
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+
+
+    .. js:method:: iter_ranges_for_value(value)
+
+        Produces an iterator over ranges of code points that map to ``value``
+
+        See the `Rust documentation for iter_ranges_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value>`__ for more information.
+
+
+    .. js:method:: iter_ranges_for_value_complemented(value)
+
+        Produces an iterator over ranges of code points that do not map to ``value``
+
+        See the `Rust documentation for iter_ranges_for_value_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented>`__ for more information.
 
 
     .. js:method:: get_set_for_value(value)

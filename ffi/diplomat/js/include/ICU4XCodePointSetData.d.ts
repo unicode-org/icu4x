@@ -1,5 +1,6 @@
 import { u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { CodePointRangeIterator } from "./CodePointRangeIterator";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 
@@ -28,6 +29,22 @@ export class ICU4XCodePointSetData {
    * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
    */
   contains32(cp: u32): boolean;
+
+  /**
+
+   * Produces an iterator over ranges of code points contained in this set
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges Rust documentation for `iter_ranges`} for more information.
+   */
+  iter_ranges(): CodePointRangeIterator;
+
+  /**
+
+   * Produces an iterator over ranges of code points not contained in this set
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented Rust documentation for `iter_ranges_complemented`} for more information.
+   */
+  iter_ranges_complemented(): CodePointRangeIterator;
 
   /**
 

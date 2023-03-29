@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { CodePointRangeIterator } from "./CodePointRangeIterator.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
 const ICU4XCodePointSetData_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -22,6 +23,14 @@ export class ICU4XCodePointSetData {
 
   contains32(arg_cp) {
     return wasm.ICU4XCodePointSetData_contains32(this.underlying, arg_cp);
+  }
+
+  iter_ranges() {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointSetData_iter_ranges(this.underlying), true, [this]);
+  }
+
+  iter_ranges_complemented() {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointSetData_iter_ranges_complemented(this.underlying), true, [this]);
   }
 
   static load_for_general_category_group(arg_provider, arg_group) {

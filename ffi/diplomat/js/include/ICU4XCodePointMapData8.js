@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { CodePointRangeIterator } from "./CodePointRangeIterator.js"
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
@@ -23,6 +24,14 @@ export class ICU4XCodePointMapData8 {
 
   get32(arg_cp) {
     return wasm.ICU4XCodePointMapData8_get32(this.underlying, arg_cp);
+  }
+
+  iter_ranges_for_value(arg_value) {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData8_iter_ranges_for_value(this.underlying, arg_value), true, [this]);
+  }
+
+  iter_ranges_for_value_complemented(arg_value) {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this.underlying, arg_value), true, [this]);
   }
 
   get_set_for_value(arg_value) {
