@@ -436,6 +436,15 @@ impl_value_getter! {
     }
 }
 
+impl TryFrom<u8> for GeneralCategory {
+    type Error = ();
+    /// Construct this [`GeneralCategory`] from an integer, returning
+    /// an error if it is out of bounds
+    fn try_from(val: u8) -> Result<Self, ()> {
+        GeneralCategory::new_from_u8(val).ok_or(())
+    }
+}
+
 /// Groupings of multiple General_Category property values.
 ///
 /// Instances of `GeneralCategoryGroup` represent the defined multi-category

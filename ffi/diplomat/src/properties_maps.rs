@@ -7,7 +7,7 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_collections::codepointtrie::TrieValue;
-    use icu_properties::maps;
+    use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup};
 
     use crate::errors::ffi::ICU4XError;
     use crate::properties_iter::ffi::CodePointRangeIterator;
@@ -58,6 +58,19 @@ pub mod ffi {
             self.0.as_borrowed().get32(cp)
         }
 
+        /// Converts a general category to its corresponding mask value
+        ///
+        /// Nonexistant general categories will map to the empty mask
+        #[diplomat::rust_link(icu::properties::GeneralCategoryGroup, Struct)]
+        pub fn general_category_to_mask(gc: u8) -> u32 {
+            if let Ok(gc) = GeneralCategory::try_from(gc) {
+                let group: GeneralCategoryGroup = gc.into();
+                group.into()
+            } else {
+                0
+            }
+        }
+
         /// Produces an iterator over ranges of code points that map to `value`
         #[diplomat::rust_link(
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
@@ -83,6 +96,32 @@ pub mod ffi {
                     .as_borrowed()
                     .iter_ranges_for_value_complemented(value),
             )))
+        }
+
+        /// Given a General Category Mask value (obtained via `general_category_to_mask()` or
+        /// by using `ICU4XGeneralCategoryNameToMaskMapper`, produce an iterator over ranges of code points
+        /// whose `General_Category` values are contained in the mask.
+        ///
+        /// Should only be used on maps obtained via `load_general_category()`, other maps will have unpredictable results
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_general_category_mask<'a>(
+            &'a self,
+            mask: u32,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            let mask = GeneralCategoryGroup::from(mask);
+            let ranges = self
+                .0
+                .as_borrowed()
+                .iter_ranges_mapped(move |v| {
+                    let gc = GeneralCategory::try_from(v).unwrap_or(GeneralCategory::Unassigned);
+                    mask.contains(gc)
+                })
+                .filter(|v| v.value)
+                .map(|v| v.range);
+            Box::new(CodePointRangeIterator(Box::new(ranges)))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
