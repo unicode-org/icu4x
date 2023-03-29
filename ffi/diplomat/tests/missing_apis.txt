@@ -27,6 +27,10 @@ icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented#FnInStruct
+icu::properties::names::PropertyEnumToValueNameMapper#Struct
+icu::properties::names::PropertyEnumToValueNameMapper::as_borrowed#FnInStruct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed#Struct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed::get#FnInStruct
 icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented#FnInStruct

@@ -29,7 +29,7 @@ independent = true
 all-features = true
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = { version = "0.8", features = ["small_rng"] }
 

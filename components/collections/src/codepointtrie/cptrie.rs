@@ -64,6 +64,21 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// When the serialization type width is smaller than 32 bits, then it is expected
     /// that the call site will widen the value to a `u32` first.
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error>;
+
+    /// A method for converting back to a u32 that can roundtrip through
+    /// [`Self::try_from_u32()`]. The default implementation of this trait
+    /// method panics in debug mode and returns 0 in release mode.
+    ///
+    /// This method is allowed to have GIGO behavior when fed a value that has
+    /// no corresponding u32 (since such values cannot be stored in the trie)
+    fn to_u32(self) -> u32 {
+        debug_assert!(
+            false,
+            "TrieValue::to_u32() not implemented for {}",
+            ::core::any::type_name::<Self>()
+        );
+        0
+    }
 }
 
 macro_rules! impl_primitive_trie_value {
@@ -72,6 +87,12 @@ macro_rules! impl_primitive_trie_value {
             type TryFromU32Error = $error;
             fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
                 Self::try_from(i)
+            }
+
+            fn to_u32(self) -> u32 {
+                // bitcast when the same size, zero-extend/sign-extend
+                // when not the same size
+                self as u32
             }
         }
     };
