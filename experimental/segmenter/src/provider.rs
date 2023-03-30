@@ -166,7 +166,7 @@ pub struct LstmDataV1<'data> {
     /// The forward layer's first matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub fw_w: LstmMatrix<'data>,
-    /// The forward layte's second matrix
+    /// The forward layer's second matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub fw_u: LstmMatrix<'data>,
     /// The forward layer's bias
