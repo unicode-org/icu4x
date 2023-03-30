@@ -2,10 +2,22 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_fs::FsDataProvider;
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakRule;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::WordBreakRule;
+use std::path::PathBuf;
+
+fn get_segmenter_testdata_provider() -> impl BufferProvider {
+    let segmenter_fs_provider = FsDataProvider::try_new(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/json"),
+    )
+    .unwrap();
+    ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
+}
 
 fn check_with_options(
     s: &str,
@@ -13,9 +25,11 @@ fn check_with_options(
     expect_utf16: Vec<usize>,
     options: LineBreakOptions,
 ) {
-    let segmenter =
-        LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
-            .expect("Data exists");
+    let segmenter = LineSegmenter::try_new_dictionary_with_options_with_buffer_provider(
+        &get_segmenter_testdata_provider(),
+        options,
+    )
+    .expect("Data exists");
 
     let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
@@ -169,7 +183,6 @@ fn wordbreak_normal() {
 }
 
 #[test]
-#[ignore = "We don't have km breaking rule yet"]
 fn wordbreak_normal_km() {
     // from css/css-text/word-break/word-break-normal-km-000.html
     let _s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
@@ -177,7 +190,6 @@ fn wordbreak_normal_km() {
 }
 
 #[test]
-#[ignore = "We don't have lo breaking rule yet"]
 fn wordbreak_normal_lo() {
     // from css/css-text/word-break/word-break-normal-lo-000.html
     let _s = "ພາສາລາວພາສາລາວພາສາລາວ";
