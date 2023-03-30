@@ -3,7 +3,7 @@
     "fr": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fr"
       },
@@ -70,7 +70,6 @@
           "bfd": "bafut",
           "bfq": "badaga",
           "bg": "bulgare",
-          "bgc": "bgc",
           "bgn": "baloutchi occidental",
           "bho": "bhodjpouri",
           "bi": "bichelamar",
@@ -241,7 +240,6 @@
           "hax": "haïda du Sud",
           "he": "hébreu",
           "hi": "hindi",
-          "hi-Latn": "hindi (latin)",
           "hi-Latn-alt-variant": "hinglish",
           "hif": "hindi fidjien",
           "hil": "hiligaynon",

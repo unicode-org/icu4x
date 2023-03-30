@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "fil"
       },
@@ -46,7 +46,6 @@
           "bem": "Bemba",
           "bez": "Bena",
           "bg": "Bulgarian",
-          "bgc": "bgc",
           "bgn": "Kanlurang Balochi",
           "bho": "Bhojpuri",
           "bi": "Bislama",
@@ -95,7 +94,6 @@
           "dar": "Dargwa",
           "dav": "Taita",
           "de": "German",
-          "de-AT": "German (Austria)",
           "de-CH": "Swiss High German",
           "dgr": "Dogrib",
           "dje": "Zarma",
@@ -112,8 +110,6 @@
           "eka": "Ekajuk",
           "el": "Greek",
           "en": "Ingles",
-          "en-AU": "Ingles (Australia)",
-          "en-CA": "Ingles (Canada)",
           "en-GB": "Ingles na British",
           "en-GB-alt-short": "Ingles sa UK",
           "en-US": "Ingles na American",
@@ -135,7 +131,6 @@
           "fo": "Faroese",
           "fon": "Fon",
           "fr": "French",
-          "fr-CA": "French (Canada)",
           "fr-CH": "Swiss na French",
           "frc": "Cajun French",
           "frr": "Hilagang Frisian",
@@ -161,8 +156,6 @@
           "hax": "Katimugang Haida",
           "he": "Hebrew",
           "hi": "Hindi",
-          "hi-Latn": "Hindi (Latin)",
-          "hi-Latn-alt-variant": "Hindi (Latin)",
           "hil": "Hiligaynon",
           "hmn": "Hmong",
           "hr": "Croatian",
@@ -240,9 +233,9 @@
           "lez": "Lezghian",
           "lg": "Ganda",
           "li": "Limburgish",
-          "lij": "lij",
           "lil": "Lillooet",
           "lkt": "Lakota",
+          "lmo": "Lombard",
           "ln": "Lingala",
           "lo": "Lao",
           "lou": "Louisiana Creole",
@@ -342,7 +335,6 @@
           "pt-PT": "European Portuguese",
           "qu": "Quechua",
           "quc": "Kʼicheʼ",
-          "raj": "raj",
           "rap": "Rapanui",
           "rar": "Rarotongan",
           "rhg": "Rohingya",
@@ -442,7 +434,6 @@
           "uz": "Uzbek",
           "vai": "Vai",
           "ve": "Venda",
-          "vec": "vec",
           "vi": "Vietnamese",
           "vo": "Volapük",
           "vun": "Vunjo",

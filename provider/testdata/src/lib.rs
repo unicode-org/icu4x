@@ -81,7 +81,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("42.0.0", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("43.0.0-BETA3", icu_testdata::versions::cldr_tag());
     /// ```
     pub fn cldr_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::CLDR_TAG)
