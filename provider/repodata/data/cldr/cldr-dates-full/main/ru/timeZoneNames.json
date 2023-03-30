@@ -3,7 +3,7 @@
     "ru": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ru"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "Чиуауа"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Сьюдад-Хуарес"
               },
               "Coral_Harbour": {
                 "exemplarCity": "Корал-Харбор"

@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "42"
+      "_unicodeVersion": "15.0.0",
+      "_cldrVersion": "43"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -1039,7 +1039,42 @@
               {
                 "usesMetazone": {
                   "_mzone": "Mexico_Pacific",
-                  "_from": "1998-04-05 09:00"
+                  "_from": "1998-04-05 09:00",
+                  "_to": "2022-10-30 08:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_from": "2022-10-30 08:00"
+                }
+              }
+            ],
+            "Ciudad_Juarez": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_to": "1998-04-05 09:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Mexico_Pacific",
+                  "_from": "1998-04-05 09:00",
+                  "_to": "2022-10-30 08:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_from": "2022-10-30 08:00",
+                  "_to": "2022-11-30 06:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Mountain",
+                  "_from": "2022-11-30 06:00"
                 }
               }
             ],
@@ -1949,7 +1984,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "America_Mountain",
-                  "_from": "1998-04-05 09:00"
+                  "_from": "1998-04-05 09:00",
+                  "_to": "2022-10-30 08:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_from": "2022-10-30 08:00"
                 }
               }
             ],
@@ -1963,14 +2005,7 @@
             "Pangnirtung": [
               {
                 "usesMetazone": {
-                  "_mzone": "Atlantic",
-                  "_to": "1995-04-02 06:00"
-                }
-              },
-              {
-                "usesMetazone": {
                   "_mzone": "America_Eastern",
-                  "_from": "1995-04-02 06:00",
                   "_to": "1999-10-31 06:00"
                 }
               },

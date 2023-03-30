@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "sr",
         "script": "Latn"
@@ -1200,7 +1200,7 @@
                   "M": "d. MMM – d. MMM"
                 },
                 "MMMEd": {
-                  "d": "E, dd. – E, dd. MMM",
+                  "d": "E, dd. – E, dd. MMM",
                   "M": "E, dd. MMM – E, dd. MMM"
                 },
                 "y": {
@@ -1212,7 +1212,7 @@
                 },
                 "yMd": {
                   "d": "d.M.y – d.M.y. GGGGG",
-                  "M": "d.M.y. – d.M.y.",
+                  "M": "d.M.y. – d.M.y.",
                   "y": "d.M.y – d.M.y. GGGGG"
                 },
                 "yMEd": {
@@ -1227,7 +1227,7 @@
                 "yMMMd": {
                   "d": "d–d. MMM y. G",
                   "M": "d. MMM – d. MMM y. G",
-                  "y": "d. MMM y. – d. MMM y. G"
+                  "y": "d. MMM y. – d. MMM y. G"
                 },
                 "yMMMEd": {
                   "d": "E, d. MMM – E, d. MMM y. G",
@@ -1236,7 +1236,7 @@
                 },
                 "yMMMM": {
                   "M": "MMMM – MMMM y. G",
-                  "y": "MMMM y. – MMMM y. G"
+                  "y": "MMMM y. – MMMM y. G"
                 }
               }
             },

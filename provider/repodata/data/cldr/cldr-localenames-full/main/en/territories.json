@@ -3,7 +3,7 @@
     "en": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "en"
       },
@@ -95,6 +95,7 @@
           "CN": "China",
           "CO": "Colombia",
           "CP": "Clipperton Island",
+          "CQ": "Sark",
           "CR": "Costa Rica",
           "CU": "Cuba",
           "CV": "Cape Verde",
@@ -288,8 +289,8 @@
           "TM": "Turkmenistan",
           "TN": "Tunisia",
           "TO": "Tonga",
-          "TR": "Turkey",
-          "TR-alt-variant": "Türkiye",
+          "TR": "Türkiye",
+          "TR-alt-variant": "Turkey",
           "TT": "Trinidad & Tobago",
           "TV": "Tuvalu",
           "TW": "Taiwan",

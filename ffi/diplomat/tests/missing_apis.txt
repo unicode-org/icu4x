@@ -23,4 +23,8 @@ icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props
 icu::properties::bidi_data::BidiMirroringProperties#Struct
 icu::properties::bidi_data::BidiPairingProperties#Enum
 icu::properties::bidi_data::load_bidi_auxiliary_properties_unstable#Fn
+icu::properties::names::PropertyEnumToValueNameMapper#Struct
+icu::properties::names::PropertyEnumToValueNameMapper::as_borrowed#FnInStruct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed#Struct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed::get#FnInStruct
 icu::segmenter::RuleStatusType#Enum
