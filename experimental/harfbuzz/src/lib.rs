@@ -89,11 +89,6 @@ static ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ: [u8; 30] = [
     HB_UNICODE_GENERAL_CATEGORY_FINAL_PUNCTUATION as u8, // FinalPunctuation = 29,
 ];
 
-pub struct ScriptDataForHarfBuzz {
-    script_map: CodePointMapData<Script>,
-    enum_to_name_mapper: PropertyEnumToValueNameMapper<Script>,
-}
-
 unsafe extern "C" fn icu4x_hb_unicode_combining_class(
     _ufuncs: *mut hb_unicode_funcs_t,
     unicode: hb_codepoint_t,
@@ -151,6 +146,27 @@ unsafe extern "C" fn icu4x_hb_unicode_mirroring(
 
 unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
     let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
+}
+
+struct ScriptDataForHarfBuzz {
+    script_map: CodePointMapData<Script>,
+    enum_to_name_mapper: PropertyEnumToValueNameMapper<Script>,
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_script(
+    _ufuncs: *mut hb_unicode_funcs_t,
+    unicode: hb_codepoint_t,
+    user_data: *mut c_void,
+) -> hb_script_t {
+    let script_data: &ScriptDataForHarfBuzz = &*(user_data as *mut ScriptDataForHarfBuzz);
+    let script: Script = script_data.script_map.as_borrowed().get32(unicode);
+    let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
+    let name: &str = enum_to_name_mapper.get(script).unwrap_or("Zzzz");
+    hb_script_from_string(name.as_ptr() as *const i8, name.len().try_into().unwrap_or(0))
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_script_destroy(user_data: *mut c_void) {
+    let _ = Box::from_raw(user_data as *mut ScriptDataForHarfBuzz);
 }
 
 unsafe extern "C" fn icu4x_hb_unicode_compose(
@@ -361,15 +377,12 @@ where
             bidi_auxiliary_props_map_ptr as *mut c_void,
             Some(icu4x_hb_unicode_mirroring_destroy),
         );
-
-        // TODO(#2832):
         hb_unicode_funcs_set_script_func(
             ufuncs,
             Some(icu4x_hb_unicode_script),
             script_map_ptr as *mut c_void,
-            Some(icu4x_hb_script_destroy),
+            Some(icu4x_hb_unicode_script_destroy),
         );
-
         hb_unicode_funcs_set_compose_func(
             ufuncs,
             Some(icu4x_hb_unicode_compose),
