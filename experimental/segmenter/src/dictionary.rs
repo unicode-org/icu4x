@@ -183,7 +183,7 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use crate::{LineSegmenter, WordSegmenter};
+    use crate::{dictionary::DictionarySegmenter, LineSegmenter, WordSegmenter};
     use icu_provider::prelude::*;
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_provider_fs::FsDataProvider;
@@ -214,26 +214,60 @@ mod tests {
     #[test]
     fn cj_dictionary_test() {
         let provider = get_segmenter_testdata_provider();
-        let segmenter = WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let dict_payload: DataPayload<crate::provider::UCharDictionaryBreakDataV1Marker> = provider
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &icu_locid::locale!("ja").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let grph_payload: DataPayload<crate::provider::GraphemeClusterBreakDataV1Marker> = provider
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &icu_locid::locale!("ja").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let word_segmenter =
+            WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let dict_segmenter =
+            DictionarySegmenter::try_new_unstable(&dict_payload, grph_payload.get()).unwrap();
 
         // Match case
         let s = "龟山岛龟山岛";
-        let result: Vec<usize> = segmenter.segment_str(s).collect();
+        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![9, 18]);
+
+        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![0, 9, 18]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
+        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![3, 6]);
+
+        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
         assert_eq!(result, vec![0, 3, 6]);
 
-        // TODO(#3236): These tests are not passing with WordSegmenter.
-        // // Match case, then no match case
-        // let s = "エディターエディ";
-        // let result: Vec<usize> = segmenter.segment_str(s).collect();
-        // assert_eq!(result, vec![0, 15, 24]);
+        // Match case, then no match case
+        let s = "エディターエディ";
+        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![15, 24]);
 
-        // let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        // let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        // assert_eq!(result, vec![0, 5, 8]);
+        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
+        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![0, 24]);
+
+        let s_utf16: Vec<u16> = s.encode_utf16().collect();
+        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![5, 8]);
+
+        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
+        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![0, 8]);
     }
 
     #[test]
