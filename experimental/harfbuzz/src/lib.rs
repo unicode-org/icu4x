@@ -25,6 +25,7 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
+use icu_properties::names::PropertyEnumToValueNameMapper;
 use core::ffi::c_void;
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
@@ -38,8 +39,8 @@ use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
-use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::GeneralCategory;
+use icu_properties::provider::{GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker};
+use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
 /// The total number of General Category values is fixed per
@@ -87,6 +88,11 @@ static ICU4X_GENERAL_CATEGORY_TO_HARFBUZZ: [u8; 30] = [
     HB_UNICODE_GENERAL_CATEGORY_INITIAL_PUNCTUATION as u8, // InitialPunctuation = 28,
     HB_UNICODE_GENERAL_CATEGORY_FINAL_PUNCTUATION as u8, // FinalPunctuation = 29,
 ];
+
+pub struct ScriptDataForHarfBuzz {
+    script_map: CodePointMapData<Script>,
+    enum_to_name_mapper: PropertyEnumToValueNameMapper<Script>,
+}
 
 unsafe extern "C" fn icu4x_hb_unicode_combining_class(
     _ufuncs: *mut hb_unicode_funcs_t,
@@ -285,6 +291,8 @@ where
         + DataProvider<CanonicalDecompositionTablesV1Marker>
         + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptValueToShortNameV1Marker>
+        + DataProvider<ScriptV1Marker>
         + ?Sized,
 {
     // Let's do all the provider operations up front so that if there's
@@ -297,7 +305,14 @@ where
     let bidi_auxiliary_props_map = Box::new(
         icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
     );
-    // TODO(#2832): script
+    let script_map =
+        icu_properties::maps::load_script(data_provider)?;
+    let script_enum_to_short_name_lookup =
+        Script::get_enum_to_short_name_mapper(data_provider)?;
+    let script_data = Box::new(ScriptDataForHarfBuzz {
+        script_map,
+        enum_to_name_mapper: script_enum_to_short_name_lookup,
+    });
     let canonical_composition = Box::new(CanonicalComposition::try_new_unstable(data_provider)?);
     let canonical_decomposition =
         Box::new(CanonicalDecomposition::try_new_unstable(data_provider)?);
@@ -321,7 +336,8 @@ where
             Box::into_raw(general_category_map);
         let bidi_auxiliary_props_map_ptr: *mut BidiAuxiliaryProperties =
             Box::into_raw(bidi_auxiliary_props_map);
-        // TODO(#2832): script
+        let script_map_ptr: *mut ScriptDataForHarfBuzz =
+            Box::into_raw(script_data);
         let canonical_composition_ptr: *mut CanonicalComposition =
             Box::into_raw(canonical_composition);
         let canonical_decomposition_ptr: *mut CanonicalDecomposition =
@@ -347,7 +363,12 @@ where
         );
 
         // TODO(#2832):
-        // hb_unicode_funcs_set_script_func();
+        hb_unicode_funcs_set_script_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_script),
+            script_map_ptr as *mut c_void,
+            Some(icu4x_hb_script_destroy),
+        );
 
         hb_unicode_funcs_set_compose_func(
             ufuncs,
