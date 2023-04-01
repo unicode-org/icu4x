@@ -277,9 +277,10 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         //         dest.add_dot_2d(a, rhs);
         //     }
         // }
+        use rayon::prelude::*;
         let lhs = a.as_slice();
         self.as_mut_slice()
-            .iter_mut()
+            .par_iter_mut()
             .enumerate()
             .for_each(|(i, dest)| {
                 if let Some(rhs) = b.as_slice().get_subslice(i * m..(i + 1) * m) {
@@ -317,9 +318,10 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         //         dest.add_dot_2d(a, rhs);
         //     }
         // }
+        use rayon::prelude::*;
         let lhs = a.as_slice();
         self.as_mut_slice()
-            .iter_mut()
+            .par_iter_mut()
             .enumerate()
             .for_each(|(i, dest)| {
                 if let Some(rhs) = b.as_slice().get_subslice(i * m..(i + 1) * m) {
