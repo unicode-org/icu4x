@@ -273,19 +273,19 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         // Note: The following two loops are equivalent, but the second has more opportunity for
         // vectorization since it allows the vectorization to span submatrices.
         // for i in 0..b.dim().0 {
-        //     self.submatrix_mut::<1>(i).add_dot_2d(a, b.submatrix(i));
+        //     if let (Some(mut dest), Some(rhs)) = (self.submatrix_mut::<1>(i), b.submatrix(i)) {
+        //         dest.add_dot_2d(a, rhs);
+        //     }
         // }
         let lhs = a.as_slice();
-        for i in 0..n {
-            if let (Some(dest), Some(rhs)) = (
-                self.as_mut_slice().get_mut(i),
-                b.as_slice().get_subslice(i * m..(i + 1) * m),
-            ) {
-                *dest += unrolled_dot_1(lhs, rhs);
-            } else {
-                debug_assert!(false, "unreachable: dims checked above");
-            }
-        }
+        self.as_mut_slice()
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, dest)| {
+                if let Some(rhs) = b.as_slice().get_subslice(i * m..(i + 1) * m) {
+                    *dest += unrolled_dot_1(lhs, rhs)
+                }
+            })
     }
 
     /// Calculate the dot product of a and b, adding the result to self.
@@ -313,19 +313,19 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
         // Note: The following two loops are equivalent, but the second has more opportunity for
         // vectorization since it allows the vectorization to span submatrices.
         // for i in 0..b.dim().0 {
-        //     self.submatrix_mut::<1>(i).add_dot_2d(a, b.submatrix(i));
+        //     if let (Some(mut dest), Some(rhs)) = (self.submatrix_mut::<1>(i), b.submatrix(i)) {
+        //         dest.add_dot_2d(a, rhs);
+        //     }
         // }
         let lhs = a.as_slice();
-        for i in 0..n {
-            if let (Some(dest), Some(rhs)) = (
-                self.as_mut_slice().get_mut(i),
-                b.as_slice().get_subslice(i * m..(i + 1) * m),
-            ) {
-                *dest += unrolled_dot_2(lhs, rhs);
-            } else {
-                debug_assert!(false, "unreachable: dims checked above");
-            }
-        }
+        self.as_mut_slice()
+            .iter_mut()
+            .enumerate()
+            .for_each(|(i, dest)| {
+                if let Some(rhs) = b.as_slice().get_subslice(i * m..(i + 1) * m) {
+                    *dest += unrolled_dot_2(lhs, rhs)
+                }
+            })
     }
 }
 
