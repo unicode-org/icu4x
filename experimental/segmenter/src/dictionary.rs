@@ -191,7 +191,7 @@ mod tests {
 
     fn get_segmenter_testdata_provider() -> impl BufferProvider {
         let segmenter_fs_provider = FsDataProvider::try_new(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/json"),
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
         )
         .unwrap();
         ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
