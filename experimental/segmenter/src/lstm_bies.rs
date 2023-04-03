@@ -384,7 +384,7 @@ mod tests {
             assert_eq!(
                 test_case.expected_bies,
                 lstm_output
-                    .into_iter()
+                    .iter()
                     .map(Bies::as_char)
                     .collect::<String>()
             );
