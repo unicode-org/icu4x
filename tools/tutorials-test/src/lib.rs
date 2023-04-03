@@ -18,3 +18,5 @@ mod js {}
 mod markdown_tips {}
 #[doc = include_str!("../../../README.md")]
 mod readme {}
+#[doc = include_str!("../../../docs/design/data_safety.md")]
+mod data_safety {}

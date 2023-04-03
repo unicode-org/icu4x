@@ -36,6 +36,7 @@ Once the release is complete, the assigned release driver will:
   * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public
+  * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
 
 
 ## Publishing utils
