@@ -24,7 +24,10 @@ use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_locid::extensions_unicode_value as value;
+use icu_locid::{
+    extensions::unicode::Key, extensions::unicode::Keywords, extensions_unicode_key as key,
+    extensions_unicode_value as value, subtags_language as language, Locale,
+};
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
@@ -91,6 +94,8 @@ impl Collator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
+        let holder;
+
         let locale = {
             // Remove irrelevant extensions, i.e. everything but -u-co-.
             //
@@ -100,26 +105,37 @@ impl Collator {
             // the default, the code here that omits the explicit
             // variant if it matches the default should become
             // unnecessary.
-            let original_locale = locale;
-            let mut filtered_locale = alloc::borrow::Cow::Borrowed(locale);
-
-            let key = icu_locid::extensions_unicode_key!("co");
-            if let Some(variant) = original_locale.get_unicode_ext(&key) {
-                let zh = filtered_locale.language() == icu_locid::subtags_language!("zh");
-                let sv = filtered_locale.language() == icu_locid::subtags_language!("sv");
+            const KEY: Key = key!("co");
+            if let Some(variant) = locale.get_unicode_ext(&KEY) {
+                let zh = locale.language() == language!("zh");
+                let sv = locale.language() == language!("sv");
                 // Omit the explicit collation variant if it is the default.
                 // "standard" is the default for all languages except zh and sv.
-                if !((!zh && !sv && variant == value!("standard"))
+                if (!zh && !sv && variant == value!("standard"))
                     || (zh && variant == value!("pinyin"))
-                    || (sv && variant == value!("reformed")))
+                    || (sv && variant == value!("reformed"))
                 {
-                    filtered_locale.to_mut().set_unicode_ext(key, variant);
+                    // Remove -u-co- and all other extensions by cloning just the langid
+                    holder = DataLocale::from(locale.get_langid());
+                    &holder
+                } else {
+                    // Remove all other extensions by cloning the langid and adding -u-co-
+                    let mut locale = Locale::from(locale.get_langid());
+                    locale.extensions.unicode.keywords = Keywords::new_single(KEY, variant);
+                    holder = DataLocale::from(locale);
+                    &holder
                 }
+            } else if locale.has_unicode_ext() {
+                // Remove all extensions by cloning the langid
+                holder = DataLocale::from(locale.get_langid());
+                &holder
+            } else {
+                // No extensions, can use locale as-is
+                locale
             }
-            filtered_locale
         };
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
