@@ -13,6 +13,10 @@ use core::str;
 use icu_provider::DataPayload;
 use zerovec::ule::AsULE;
 
+// Polyfill float operations with libm in case we're no_std.
+#[allow(unused_imports)]
+use num_traits::Float;
+
 pub struct Lstm<'l> {
     data: &'l LstmDataV1<'l>,
     embedding: MatrixZero<'l, 2>,
@@ -213,9 +217,10 @@ impl<'l> Lstm<'l> {
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
     pub fn word_segmenter(&self, input: &str) -> Box<[Bies]> {
-        // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
-        // in the embedding layer of the model.
-        // Already checked that the name of the model is either "codepoints" or "graphclsut"
+        #![allow(clippy::unwrap_used)] // unwraps justified
+                                       // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
+                                       // in the embedding layer of the model.
+                                       // Already checked that the name of the model is either "codepoints" or "graphclsut"
         let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
             GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
                 .collect::<Vec<usize>>()

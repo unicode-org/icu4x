@@ -23,6 +23,7 @@ impl Iterator for LstmSegmenterIterator<'_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
+        #[allow(clippy::indexing_slicing)] // pos_utf8 in range
         loop {
             let bies = *self.bies_str.get(self.pos)?;
             self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
