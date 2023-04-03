@@ -217,10 +217,9 @@ impl<'l> Lstm<'l> {
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
     pub fn word_segmenter(&self, input: &str) -> Box<[Bies]> {
-        #![allow(clippy::unwrap_used)] // unwraps justified
-                                       // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
-                                       // in the embedding layer of the model.
-                                       // Already checked that the name of the model is either "codepoints" or "graphclsut"
+        // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
+        // in the embedding layer of the model.
+        // Already checked that the name of the model is either "codepoints" or "graphclsut"
         let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
             GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
                 .collect::<Vec<usize>>()
@@ -245,10 +244,13 @@ impl<'l> Lstm<'l> {
         let mut c_fw = MatrixOwned::<1>::new_zero([self.hunits]);
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
         for (i, &g_id) in input_seq.iter().enumerate() {
-            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap(); // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            #[allow(clippy::unwrap_used)]
+            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
+            #[allow(clippy::unwrap_used)]
             self.compute_hc(
                 x_t,
                 all_h_fw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
@@ -263,10 +265,13 @@ impl<'l> Lstm<'l> {
         let mut c_bw = MatrixOwned::<1>::new_zero([self.hunits]);
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
         for (i, &g_id) in input_seq.iter().enumerate().rev() {
-            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap(); // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            #[allow(clippy::unwrap_used)]
+            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
             if i + 1 < input_seq.len() {
                 all_h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
             }
+            #[allow(clippy::unwrap_used)]
             self.compute_hc(
                 x_t,
                 all_h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
@@ -277,14 +282,18 @@ impl<'l> Lstm<'l> {
             );
         }
 
-        let timew_fw = self.time_w.submatrix(0).unwrap(); // shape (2, 4, hunits)
-        let timew_bw = self.time_w.submatrix(1).unwrap(); // shape (2, 4, hunits)
+        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        let timew_fw = self.time_w.submatrix(0).unwrap();
+        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        let timew_bw = self.time_w.submatrix(1).unwrap();
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
         (0..input_seq.len())
             .map(|i| {
-                let curr_fw = all_h_fw.submatrix::<1>(i).unwrap(); // shape (input_seq.len(), hunits)
-                let curr_bw = all_h_bw.submatrix::<1>(i).unwrap(); // shape (input_seq.len(), hunits)
+                #[allow(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
+                let curr_fw = all_h_fw.submatrix::<1>(i).unwrap();
+                #[allow(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
+                let curr_bw = all_h_bw.submatrix::<1>(i).unwrap();
                 let mut weights = [0.0; 4];
                 let mut curr_est = MatrixBorrowedMut {
                     data: &mut weights,
@@ -292,7 +301,8 @@ impl<'l> Lstm<'l> {
                 };
                 curr_est.add_dot_2d(curr_fw, timew_fw);
                 curr_est.add_dot_2d(curr_bw, timew_bw);
-                curr_est.add(self.time_b).unwrap(); // both shape (4)
+                #[allow(clippy::unwrap_used)] // both shape (4)
+                curr_est.add(self.time_b).unwrap();
                 curr_est.softmax_transform();
                 self.compute_bies(weights)
             })
