@@ -105,34 +105,83 @@ impl<'l> LstmSegmenter<'l> {
 
 #[cfg(test)]
 mod tests {
-    use crate::lstm::*;
-    use icu_locid::locale;
+    use crate::LineSegmenter;
     use icu_provider::prelude::*;
+    use icu_provider_adapters::fork::ForkByKeyProvider;
+    use icu_provider_fs::FsDataProvider;
+    use std::path::PathBuf;
+
+    fn get_segmenter_testdata_provider() -> impl BufferProvider {
+        let segmenter_fs_provider = FsDataProvider::try_new(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
+        )
+        .unwrap();
+        ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
+    }
 
     #[test]
     #[cfg(feature = "serde")]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let payload = icu_testdata::buffer()
-            .as_deserializing()
-            .load(DataRequest {
-                locale: &DataLocale::from(locale!("th")),
-                metadata: Default::default(),
-            })
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let segmenter = LstmSegmenter::try_new_unstable(&payload, None).unwrap();
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
-        assert_eq!(breaks, [12, 21, 33], "Thai test");
+        assert_eq!(breaks, [12, 21, 33, TEST_STR.len()], "Thai test");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [4, 7, 11], "Thai test");
+        assert_eq!(breaks, [4, 7, 11, utf16.len()], "Thai test");
 
-        //let utf16: [u16; 4] = [0x0e20, 0x0e32, 0x0e29, 0x0e32];
-        //let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        //assert_eq!(breaks, [4], "Thai test");
+        let utf16: [u16; 4] = [0x0e20, 0x0e32, 0x0e29, 0x0e32];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4], "Thai test");
+    }
+
+    #[test]
+    fn burmese_word_break() {
+        // "Burmese Language" in Burmese
+        const TEST_STR: &str = "မြန်မာဘာသာစကား";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // LSTM model breaks more characters, but it is better to return [30].
+        assert_eq!(breaks, [12, 18, 30, TEST_STR.len()], "Burmese test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        // LSTM model breaks more characters, but it is better to return [10].
+        assert_eq!(breaks, [4, 6, 10, utf16.len()], "Burmese utf-16 test");
+    }
+
+    #[test]
+    fn khmer_word_break() {
+        const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: This small sample matches the ICU dictionary segmenter
+        assert_eq!(breaks, [39, 48, 54, 72, TEST_STR.len()], "Khmer test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [13, 16, 18, 24, utf16.len()], "Khmer utf-16 test");
+    }
+
+    #[test]
+    fn lao_word_break() {
+        const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: LSTM finds a break at '12' that the dictionary does not find
+        assert_eq!(breaks, [12, 21, 30, 39, TEST_STR.len()], "Lao test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4, 7, 10, 13, utf16.len()], "Lao utf-16 test");
     }
 }

@@ -2067,6 +2067,8 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_fs",
  "icu_testdata",
  "num-traits",
  "serde",
