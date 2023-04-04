@@ -383,10 +383,7 @@ mod tests {
             println!("****************************************************");
             assert_eq!(
                 test_case.expected_bies,
-                lstm_output
-                    .iter()
-                    .map(Bies::as_char)
-                    .collect::<String>()
+                lstm_output.iter().map(Bies::as_char).collect::<String>()
             );
         }
     }
