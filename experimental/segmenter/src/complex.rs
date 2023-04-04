@@ -34,7 +34,9 @@ impl LstmPayloads {
     }
 
     /// Construct a [`LstmPayloads`] for all supported languages.
-    pub(crate) fn try_new<D: DataProvider<LstmDataV1Marker> + ?Sized>(provider: &D) -> Result<Self, DataError> {
+    pub(crate) fn try_new<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+        provider: &D,
+    ) -> Result<Self, DataError> {
         let burmese = Self::load(provider, locale!("my"))?;
         let khmer = Self::load(provider, locale!("km"))?;
         let lao = Self::load(provider, locale!("lo"))?;
@@ -51,14 +53,16 @@ impl LstmPayloads {
         provider: &D,
         locale: Locale,
     ) -> Result<Option<DataPayload<LstmDataV1Marker>>, DataError> {
-        match provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: Default::default(),
-            }) {
+        match provider.load(DataRequest {
+            locale: &DataLocale::from(locale),
+            metadata: Default::default(),
+        }) {
             Ok(response) => Ok(Some(response.take_payload()?)),
-            Err(DataError { kind: DataErrorKind::MissingLocale, .. }) => Ok(None),
-            Err(e) => Err(e)
+            Err(DataError {
+                kind: DataErrorKind::MissingLocale,
+                ..
+            }) => Ok(None),
+            Err(e) => Err(e),
         }
     }
 }
