@@ -4,7 +4,6 @@
 
 use crate::lstm_bies::{Bies, Lstm};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
-use crate::SegmenterError;
 use alloc::boxed::Box;
 use alloc::string::String;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
@@ -87,9 +86,9 @@ impl<'l> LstmSegmenter<'l> {
     pub fn try_new_unstable(
         payload: &'l DataPayload<LstmDataV1Marker>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
-    ) -> Result<Self, SegmenterError> {
+    ) -> Option<Self> {
         let lstm = Lstm::try_new(payload.get(), grapheme)?;
-        Ok(Self { lstm })
+        Some(Self { lstm })
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).

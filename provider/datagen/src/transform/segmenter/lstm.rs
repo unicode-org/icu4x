@@ -9,7 +9,6 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
@@ -28,15 +27,14 @@ impl RawLstmMatrix {
         if self.dim.len() == 1 {
             Ok(Array::from_vec(self.data.clone()))
         } else {
-            Err(DataError::custom("LSTM dimension mismatch"))
+            Err(DIMENSION_MISMATCH_ERROR)
         }
     }
 
     fn to_ndarray2(&self) -> Result<Array2<f32>, DataError> {
         let [d0, d1] =
             *<&[usize; 2]>::try_from(self.dim.as_slice()).map_err(|_| DIMENSION_MISMATCH_ERROR)?;
-        Array::from_shape_vec((d0, d1), self.data.clone())
-            .map_err(|_| DataError::custom("LSTM dimension mismatch"))
+        Array::from_shape_vec((d0, d1), self.data.clone()).map_err(|_| DIMENSION_MISMATCH_ERROR)
     }
 }
 
@@ -44,7 +42,7 @@ impl RawLstmMatrix {
 #[derive(serde::Deserialize, Debug)]
 struct RawLstmData {
     model: String,
-    dic: HashMap<String, i16>,
+    dic: HashMap<String, u16>,
     #[serde(rename = "mat1")]
     embedding: RawLstmMatrix,
     #[serde(rename = "mat2")]
@@ -112,19 +110,28 @@ impl RawLstmData {
         let bw_b = bw_b.as_standard_layout().into_owned();
         let time_w = time_w.as_standard_layout().into_owned();
 
-        Ok(LstmDataV1 {
-            model: Cow::from(self.model.clone()),
-            dic: self.dic.iter().map(|(k, v)| (k.as_str(), v)).collect(),
-            embedding: ndarray_to_lstm_matrix(embedding)?,
-            fw_w: ndarray_to_lstm_matrix(fw_w)?,
-            fw_u: ndarray_to_lstm_matrix(fw_u)?,
-            fw_b: ndarray_to_lstm_matrix(fw_b)?,
-            bw_w: ndarray_to_lstm_matrix(bw_w)?,
-            bw_u: ndarray_to_lstm_matrix(bw_u)?,
-            bw_b: ndarray_to_lstm_matrix(bw_b)?,
-            time_w: ndarray_to_lstm_matrix(time_w)?,
-            time_b: ndarray_to_lstm_matrix(time_b)?,
-        })
+        let model = if self.model.contains("_codepoints") {
+            ModelType::Codepoints
+        } else if self.model.contains("_graphclust_") {
+            ModelType::GraphemeClusters
+        } else {
+            return Err(DataError::custom("Unknown model type"));
+        };
+
+        LstmDataV1::from_parts(
+            model,
+            self.dic.iter().map(|(k, &v)| (k.as_str(), v)).collect(),
+            ndarray_to_lstm_matrix(embedding)?,
+            ndarray_to_lstm_matrix(fw_w)?,
+            ndarray_to_lstm_matrix(fw_u)?,
+            ndarray_to_lstm_matrix(fw_b)?,
+            ndarray_to_lstm_matrix(bw_w)?,
+            ndarray_to_lstm_matrix(bw_u)?,
+            ndarray_to_lstm_matrix(bw_b)?,
+            ndarray_to_lstm_matrix(time_w)?,
+            ndarray_to_lstm_matrix(time_b)?,
+        )
+        .map_err(|_| DataError::custom("Just checked the shapes"))
     }
 }
 
@@ -132,24 +139,23 @@ const DIMENSION_MISMATCH_ERROR: DataError = DataError::custom("LSTM dimension mi
 
 fn ndarray_to_lstm_matrix<const D: usize>(
     nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>,
-) -> Result<LstmMatrix<'static>, DataError>
+) -> Result<LstmMatrix<'static, D>, DataError>
 where
     Dim<[usize; D]>: Dimension,
 {
-    let dims: Vec<u16> = nd
-        .shape()
-        .iter()
-        .copied()
-        .map(u16::try_from)
-        .collect::<Result<Vec<u16>, _>>()
-        .map_err(|_| DataError::custom("LSTM bounds too big for u16"))?;
+    let dims = <[u16; D]>::try_from(
+        nd.shape()
+            .iter()
+            .copied()
+            .map(u16::try_from)
+            .collect::<Result<Vec<u16>, _>>()
+            .map_err(|_| DataError::custom("LSTM bounds too big for u16"))?,
+    )
+    .map_err(|_| DIMENSION_MISMATCH_ERROR)?;
     let data = nd
         .as_slice_memory_order()
         .ok_or_else(|| DataError::custom("ndarray matrix not in memory order"))?;
-    Ok(LstmMatrix {
-        data: ZeroVec::alloc_from_slice(data),
-        dims: ZeroVec::alloc_from_slice(&dims),
-    })
+    LstmMatrix::from_parts(dims, ZeroVec::alloc_from_slice(data))
 }
 
 impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
@@ -201,10 +207,6 @@ mod tests {
         let filename =
             "tests/data/segmenter/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
         let lstm_data = load_lstm_data_directly(filename);
-        assert_eq!(
-            lstm_data.get().model,
-            "Thai_graphclust_exclusive_model4_heavy"
-        );
         let provider = ForkByKeyProvider::new(
             AnyPayloadProvider::from_payload(lstm_data),
             crate::DatagenProvider::for_test(),

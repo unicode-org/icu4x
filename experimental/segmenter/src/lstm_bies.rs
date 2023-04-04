@@ -3,21 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenter;
-use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, ModelType, RuleBreakDataV1};
 use alloc::boxed::Box;
-use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
-use zerovec::ule::AsULE;
+use zerovec::maps::ZeroMapBorrowed;
 
 // Polyfill float operations with libm in case we're no_std.
 #[allow(unused_imports)]
 use num_traits::Float;
 
 pub struct Lstm<'l> {
-    data: &'l LstmDataV1<'l>,
+    dic: ZeroMapBorrowed<'l, str, u16>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
     fw_u: MatrixZero<'l, 3>,
@@ -52,88 +50,29 @@ impl Bies {
 }
 
 impl<'l> Lstm<'l> {
-    /// `try_new` is the initiator of struct `Lstm`
+    /// Returns `None` if grapheme data is required but not present
     pub fn try_new(
         data: &'l LstmDataV1<'l>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
-    ) -> Result<Self, Error> {
-        if data.dic.len() > core::i16::MAX as usize {
-            return Err(Error::Limit);
-        }
-
-        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
-            return Err(Error::Syntax);
-        }
-
-        if data.model.contains("_graphclust_") && grapheme.is_none() {
-            // grapheme cluster model requires grapheme cluster data.
-            return Err(Error::Syntax);
-        }
-
-        #[cfg(debug_assertions)]
-        for &unaligned in data.dic.iter_values() {
-            if i16::from_unaligned(unaligned) as usize >= data.dic.len() {
-                return Err(Error::DimensionMismatch);
-            }
-        }
-
-        let embedding = data.embedding.as_matrix_zero::<2>()?;
-        let fw_w = data.fw_w.as_matrix_zero::<3>()?;
-        let fw_u = data.fw_u.as_matrix_zero::<3>()?;
-        let fw_b = data.fw_b.as_matrix_zero::<2>()?;
-        let bw_w = data.bw_w.as_matrix_zero::<3>()?;
-        let bw_u = data.bw_u.as_matrix_zero::<3>()?;
-        let bw_b = data.bw_b.as_matrix_zero::<2>()?;
-        let time_w = data.time_w.as_matrix_zero::<3>()?;
-        let time_b = data.time_b.as_matrix_zero::<1>()?;
-        let embedd_dim = embedding.dim().1;
-        let hunits = fw_u.dim().0;
-        if embedding.dim() != (data.dic.len() + 1, embedd_dim)
-            || fw_w.dim() != (hunits, 4, embedd_dim)
-            || fw_u.dim() != (hunits, 4, hunits)
-            || fw_b.dim() != (hunits, 4)
-            || bw_w.dim() != (hunits, 4, embedd_dim)
-            || bw_u.dim() != (hunits, 4, hunits)
-            || bw_b.dim() != (hunits, 4)
-            || time_w.dim() != (2, 4, hunits)
-            || time_b.dim() != (4)
-        {
-            return Err(Error::DimensionMismatch);
-        }
-
-        Ok(Self {
-            data,
-            embedding,
-            fw_w,
-            fw_u,
-            fw_b,
-            bw_w,
-            bw_u,
-            bw_b,
-            time_w,
-            time_b,
-            grapheme: if data.model.contains("_codepoints_") {
-                None
+    ) -> Option<Self> {
+        Some(Self {
+            dic: data.dic.as_borrowed(),
+            embedding: data.embedding.as_matrix_zero(),
+            fw_w: data.fw_w.as_matrix_zero(),
+            fw_u: data.fw_u.as_matrix_zero(),
+            fw_b: data.fw_b.as_matrix_zero(),
+            bw_w: data.bw_w.as_matrix_zero(),
+            bw_u: data.bw_u.as_matrix_zero(),
+            bw_b: data.bw_b.as_matrix_zero(),
+            time_w: data.time_w.as_matrix_zero(),
+            time_b: data.time_b.as_matrix_zero(),
+            grapheme: if data.model == ModelType::GraphemeClusters {
+                Some(grapheme?)
             } else {
-                grapheme
+                None
             },
-            hunits,
+            hunits: data.fw_u.as_matrix_zero().dim().0,
         })
-    }
-
-    /// `get_model_name` returns the name of the LSTM model.
-    #[allow(dead_code)]
-    pub fn get_model_name(&self) -> &str {
-        &self.data.model
-    }
-
-    #[cfg(test)]
-    fn embedding_type(&self) -> &'static str {
-        if self.grapheme.is_some() {
-            "grapheme"
-        } else {
-            "codepoints"
-        }
     }
 
     // TODO(#421): Use common BIES normalizer code
@@ -158,13 +97,10 @@ impl<'l> Lstm<'l> {
     }
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
-    fn return_id(&self, g: &str) -> i16 {
-        let id = self.data.dic.get(g);
-        if let Some(id) = id {
-            i16::from_unaligned(*id)
-        } else {
-            self.data.dic.len() as i16
-        }
+    fn return_id(&self, g: &str) -> u16 {
+        self.dic
+            .get_copied(g)
+            .unwrap_or_else(|| self.dic.len() as u16)
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
@@ -218,7 +154,7 @@ impl<'l> Lstm<'l> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
-        let input_seq: Vec<i16> = if let Some(grapheme) = self.grapheme {
+        let input_seq: Vec<u16> = if let Some(grapheme) = self.grapheme {
             GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
                 .collect::<Vec<usize>>()
                 .windows(2)
@@ -367,7 +303,11 @@ mod tests {
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();
-        test_text_filename.push_str(lstm.embedding_type());
+        test_text_filename.push_str(if lstm.grapheme.is_some() {
+            "grapheme"
+        } else {
+            "codepoints"
+        });
         test_text_filename.push_str(".json");
         let test_text_data = load_test_text(&test_text_filename);
         let test_text = TestText::new(test_text_data);

@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::lstm_error::Error;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
@@ -337,12 +336,8 @@ pub struct MatrixZero<'a, const D: usize> {
 }
 
 impl<'a, const D: usize> MatrixZero<'a, D> {
-    pub fn try_from_parts(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Result<Self, Error> {
-        if dims.iter().product::<usize>() == data.len() {
-            Ok(Self { data, dims })
-        } else {
-            Err(Error::DimensionMismatch)
-        }
+    pub fn from_parts_unchecked(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Self {
+        Self { data, dims }
     }
 
     #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
