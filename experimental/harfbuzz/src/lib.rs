@@ -25,7 +25,6 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
-use icu_properties::names::PropertyEnumToValueNameMapper;
 use core::ffi::c_void;
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
@@ -38,8 +37,11 @@ use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps::CodePointMapData;
+use icu_properties::names::PropertyEnumToValueNameMapper;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
-use icu_properties::provider::{GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker};
+use icu_properties::provider::{
+    GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
+};
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 
@@ -321,10 +323,8 @@ where
     let bidi_auxiliary_props_map = Box::new(
         icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
     );
-    let script_map =
-        icu_properties::maps::load_script(data_provider)?;
-    let script_enum_to_short_name_lookup =
-        Script::get_enum_to_short_name_mapper(data_provider)?;
+    let script_map = icu_properties::maps::load_script(data_provider)?;
+    let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(data_provider)?;
     let script_data = Box::new(ScriptDataForHarfBuzz {
         script_map,
         enum_to_name_mapper: script_enum_to_short_name_lookup,
@@ -352,8 +352,7 @@ where
             Box::into_raw(general_category_map);
         let bidi_auxiliary_props_map_ptr: *mut BidiAuxiliaryProperties =
             Box::into_raw(bidi_auxiliary_props_map);
-        let script_map_ptr: *mut ScriptDataForHarfBuzz =
-            Box::into_raw(script_data);
+        let script_map_ptr: *mut ScriptDataForHarfBuzz = Box::into_raw(script_data);
         let canonical_composition_ptr: *mut CanonicalComposition =
             Box::into_raw(canonical_composition);
         let canonical_decomposition_ptr: *mut CanonicalDecomposition =
