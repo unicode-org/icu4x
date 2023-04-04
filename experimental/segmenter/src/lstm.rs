@@ -88,7 +88,7 @@ impl<'l> LstmSegmenter<'l> {
         payload: &'l DataPayload<LstmDataV1Marker>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, SegmenterError> {
-        let lstm = Lstm::try_new(payload, grapheme)?;
+        let lstm = Lstm::try_new(payload.get(), grapheme)?;
         Ok(Self { lstm })
     }
 

@@ -5,12 +5,11 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, RuleBreakDataV1};
 use alloc::boxed::Box;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
-use icu_provider::DataPayload;
 use zerovec::ule::AsULE;
 
 // Polyfill float operations with libm in case we're no_std.
@@ -55,42 +54,41 @@ impl Bies {
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(
-        data: &'l DataPayload<LstmDataV1Marker>,
+        data: &'l LstmDataV1<'l>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, Error> {
-        if data.get().dic.len() > core::i16::MAX as usize {
+        if data.dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
 
-        if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
-        {
+        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
             return Err(Error::Syntax);
         }
 
-        if data.get().model.contains("_graphclust_") && grapheme.is_none() {
+        if data.model.contains("_graphclust_") && grapheme.is_none() {
             // grapheme cluster model requires grapheme cluster data.
             return Err(Error::Syntax);
         }
 
         #[cfg(debug_assertions)]
-        for &unaligned in data.get().dic.iter_values() {
-            if i16::from_unaligned(unaligned) as usize >= data.get().dic.len() {
+        for &unaligned in data.dic.iter_values() {
+            if i16::from_unaligned(unaligned) as usize >= data.dic.len() {
                 return Err(Error::DimensionMismatch);
             }
         }
 
-        let embedding = data.get().embedding.as_matrix_zero::<2>()?;
-        let fw_w = data.get().fw_w.as_matrix_zero::<3>()?;
-        let fw_u = data.get().fw_u.as_matrix_zero::<3>()?;
-        let fw_b = data.get().fw_b.as_matrix_zero::<2>()?;
-        let bw_w = data.get().bw_w.as_matrix_zero::<3>()?;
-        let bw_u = data.get().bw_u.as_matrix_zero::<3>()?;
-        let bw_b = data.get().bw_b.as_matrix_zero::<2>()?;
-        let time_w = data.get().time_w.as_matrix_zero::<3>()?;
-        let time_b = data.get().time_b.as_matrix_zero::<1>()?;
+        let embedding = data.embedding.as_matrix_zero::<2>()?;
+        let fw_w = data.fw_w.as_matrix_zero::<3>()?;
+        let fw_u = data.fw_u.as_matrix_zero::<3>()?;
+        let fw_b = data.fw_b.as_matrix_zero::<2>()?;
+        let bw_w = data.bw_w.as_matrix_zero::<3>()?;
+        let bw_u = data.bw_u.as_matrix_zero::<3>()?;
+        let bw_b = data.bw_b.as_matrix_zero::<2>()?;
+        let time_w = data.time_w.as_matrix_zero::<3>()?;
+        let time_b = data.time_b.as_matrix_zero::<1>()?;
         let embedd_dim = embedding.dim().1;
         let hunits = fw_u.dim().0;
-        if embedding.dim() != (data.get().dic.len() + 1, embedd_dim)
+        if embedding.dim() != (data.dic.len() + 1, embedd_dim)
             || fw_w.dim() != (hunits, 4, embedd_dim)
             || fw_u.dim() != (hunits, 4, hunits)
             || fw_b.dim() != (hunits, 4)
@@ -104,7 +102,7 @@ impl<'l> Lstm<'l> {
         }
 
         Ok(Self {
-            data: data.get(),
+            data,
             embedding,
             fw_w,
             fw_u,
@@ -114,7 +112,7 @@ impl<'l> Lstm<'l> {
             bw_b,
             time_w,
             time_b,
-            grapheme: if data.get().model.contains("_codepoints_") {
+            grapheme: if data.model.contains("_codepoints_") {
                 None
             } else {
                 grapheme
@@ -313,6 +311,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::provider::LstmDataV1Marker;
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
@@ -355,7 +354,7 @@ mod tests {
     #[test]
     fn segment_file_by_lstm() {
         // Choosing the embedding system. It can be "graphclust" or "codepoints".
-        let payload = icu_testdata::buffer()
+        let payload: DataPayload<LstmDataV1Marker> = icu_testdata::buffer()
             .as_deserializing()
             .load(DataRequest {
                 locale: &locale!("th").into(),
@@ -364,7 +363,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let lstm = Lstm::try_new(&payload, None).expect("Test data is invalid");
+        let lstm = Lstm::try_new(payload.get(), None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();
