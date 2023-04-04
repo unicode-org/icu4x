@@ -165,23 +165,23 @@ pub struct LstmDataV1<'data> {
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
     pub(crate) dic: ZeroMap<'data, str, u16>,
-    /// The embedding layer
+    /// The embedding layer. Shape (dic.len + 1, e)
     pub(crate) embedding: LstmMatrix<'data, 2>,
-    /// The forward layer's first matrix
+    /// The forward layer's first matrix. Shape (h, 4, e)
     pub(crate) fw_w: LstmMatrix<'data, 3>,
-    /// The forward layer's second matrix
+    /// The forward layer's second matrix. Shape (h, 4, h)
     pub(crate) fw_u: LstmMatrix<'data, 3>,
-    /// The forward layer's bias
+    /// The forward layer's bias. Shape (h, 4)
     pub(crate) fw_b: LstmMatrix<'data, 2>,
-    /// The backward layer's first matrix
+    /// The backward layer's first matrix. Shape (h, 4, e)
     pub(crate) bw_w: LstmMatrix<'data, 3>,
-    /// The backward layer's second matrix
+    /// The backward layer's second matrix. Shape (h, 4, h)
     pub(crate) bw_u: LstmMatrix<'data, 3>,
-    /// The backward layer's bias
+    /// The backward layer's bias. Shape (h, 4)
     pub(crate) bw_b: LstmMatrix<'data, 2>,
-    /// The output layer's weights
+    /// The output layer's weights. Shape (2, 4, h)
     pub(crate) time_w: LstmMatrix<'data, 3>,
-    /// The output layer's bias
+    /// The output layer's bias. Shape (4)
     pub(crate) time_b: LstmMatrix<'data, 1>,
 }
 
@@ -219,7 +219,7 @@ impl<'data> LstmDataV1<'data> {
     #[cfg(any(feature = "serde", feature = "datagen"))]
     /// Creates a LstmDataV1 with the given data. Fails if the matrix dimensions are inconsisent.
     #[allow(clippy::too_many_arguments)] // constructor
-    pub fn from_parts(
+    pub fn try_from_parts(
         model: ModelType,
         dic: ZeroMap<'data, str, u16>,
         embedding: LstmMatrix<'data, 2>,
@@ -245,7 +245,7 @@ impl<'data> LstmDataV1<'data> {
             || time_w.dims != [2, 4, fw_u.dims[0]]
             || time_b.dims != [4]
         {
-            return Err(DataError::custom("Dimension mismatch"));
+            return Err(DataError::custom("LSTM dimension mismatch"));
         }
 
         #[cfg(debug_assertions)]
@@ -303,7 +303,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataV1<'data> {
         let raw = Raw::deserialize(deserializer)?;
 
         use serde::de::Error;
-        Self::from_parts(
+        Self::try_from_parts(
             raw.model,
             raw.dic,
             raw.embedding,

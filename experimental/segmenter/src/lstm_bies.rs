@@ -170,7 +170,7 @@ impl<'l> Lstm<'l> {
         } else {
             input
                 .chars()
-                .map(|c| self.return_id(&c.to_string()))
+                .map(|c| self.return_id(c.encode_utf8(&mut [0; 4])))
                 .collect()
         };
 

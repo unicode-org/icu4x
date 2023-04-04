@@ -118,7 +118,7 @@ impl RawLstmData {
             return Err(DataError::custom("Unknown model type"));
         };
 
-        LstmDataV1::from_parts(
+        LstmDataV1::try_from_parts(
             model,
             self.dic.iter().map(|(k, &v)| (k.as_str(), v)).collect(),
             ndarray_to_lstm_matrix(embedding)?,
