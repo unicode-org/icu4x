@@ -319,7 +319,7 @@ impl LineSegmenter {
             options,
             payload,
             dictionary: Dictionary::default(),
-            lstm: LstmPayloads::new(provider),
+            lstm: LstmPayloads::try_new(provider)?,
             grapheme,
         })
     }
