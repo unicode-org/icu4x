@@ -5,12 +5,11 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, RuleBreakDataV1};
 use alloc::boxed::Box;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
-use icu_provider::DataPayload;
 use zerovec::ule::AsULE;
 
 // Polyfill float operations with libm in case we're no_std.
@@ -62,8 +61,7 @@ impl<'l> Lstm<'l> {
             return Err(Error::Limit);
         }
 
-        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_")
-        {
+        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
             return Err(Error::Syntax);
         }
 
@@ -313,6 +311,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::provider::LstmDataV1Marker;
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
