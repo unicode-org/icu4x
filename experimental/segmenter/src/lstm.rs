@@ -2,43 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::lstm_bies::Lstm;
+use crate::lstm_bies::{Bies, Lstm};
 use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
 use crate::SegmenterError;
-use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
 use alloc::string::String;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use icu_provider::DataPayload;
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
-pub struct LstmSegmenterIterator {
-    input: String,
-    bies_str: String,
+pub struct LstmSegmenterIterator<'s> {
+    input: &'s str,
+    bies_str: Box<[Bies]>,
     pos: usize,
     pos_utf8: usize,
 }
 
-impl Iterator for LstmSegmenterIterator {
+impl Iterator for LstmSegmenterIterator<'_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
+        #[allow(clippy::indexing_slicing)] // pos_utf8 in range
         loop {
-            let ch = self.bies_str.chars().nth(self.pos)?;
-            self.pos_utf8 += self.input.chars().nth(self.pos)?.len_utf8();
+            let bies = *self.bies_str.get(self.pos)?;
+            self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
             self.pos += 1;
-            if ch == 'e' && self.bies_str.len() > self.pos {
+            if bies == Bies::E && self.bies_str.len() > self.pos {
                 return Some(self.pos_utf8);
             }
         }
     }
 }
 
-impl LstmSegmenterIterator {
-    pub fn new(lstm: &Lstm, input: &str) -> Self {
+impl<'s> LstmSegmenterIterator<'s> {
+    pub fn new(lstm: &Lstm, input: &'s str) -> Self {
         let lstm_output = lstm.word_segmenter(input);
         Self {
-            input: input.to_owned(),
+            input,
             bies_str: lstm_output,
             pos: 0,
             pos_utf8: 0,
@@ -47,7 +48,7 @@ impl LstmSegmenterIterator {
 }
 
 pub struct LstmSegmenterIteratorUtf16 {
-    bies_str: String,
+    bies_str: Box<[Bies]>,
     pos: usize,
 }
 
@@ -56,10 +57,9 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let ch = self.bies_str.chars().nth(self.pos)?;
-            // This ch is always in bitmap.
+            let bies = *self.bies_str.get(self.pos)?;
             self.pos += 1;
-            if ch == 'e' && self.bies_str.len() > self.pos {
+            if bies == Bies::E && self.bies_str.len() > self.pos {
                 return Some(self.pos);
             }
         }
@@ -92,12 +92,12 @@ impl<'l> LstmSegmenter<'l> {
         Ok(Self { lstm })
     }
 
-    /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str(&self, input: &str) -> LstmSegmenterIterator {
+    /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
+    pub fn segment_str<'s>(&self, input: &'s str) -> LstmSegmenterIterator<'s> {
         LstmSegmenterIterator::new(&self.lstm, input)
     }
 
-    /// Create a dictionary based break iterator for a UTF-16 string.
+    /// Create an LSTM based break iterator for a UTF-16 string.
     pub fn segment_utf16(&self, input: &[u16]) -> LstmSegmenterIteratorUtf16 {
         LstmSegmenterIteratorUtf16::new(&self.lstm, input)
     }
