@@ -122,7 +122,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LstmMatrix<'data> {
+pub struct ZeroMatrix32<'data> {
     #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dims: ZeroVec<'data, u16>,
@@ -132,7 +132,7 @@ pub struct LstmMatrix<'data> {
 }
 
 #[cfg(feature = "lstm")]
-impl<'data> LstmMatrix<'data> {
+impl<'data> ZeroMatrix32<'data> {
     pub(crate) fn as_matrix_zero<const D: usize>(&self) -> Result<MatrixZero<D>, Error> {
         let dims = self
             .dims
@@ -143,9 +143,8 @@ impl<'data> LstmMatrix<'data> {
     }
 }
 
-/// The struct that stores a LSTM model.
-#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
-#[derive(PartialEq, Debug, Clone)]
+/// The struct that stores a LSTM model, as matrices of zerovec f32 values.
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize,databake::Bake),
@@ -153,7 +152,7 @@ impl<'data> LstmMatrix<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LstmDataV1<'data> {
+pub struct LstmDataZeroMatrix32<'data> {
     /// Name of the model
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub model: Cow<'data, str>,
@@ -162,29 +161,62 @@ pub struct LstmDataV1<'data> {
     pub dic: ZeroMap<'data, str, i16>,
     /// The embedding layer
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub embedding: LstmMatrix<'data>,
+    pub embedding: ZeroMatrix32<'data>,
     /// The forward layer's first matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_w: LstmMatrix<'data>,
+    pub fw_w: ZeroMatrix32<'data>,
     /// The forward layer's second matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_u: LstmMatrix<'data>,
+    pub fw_u: ZeroMatrix32<'data>,
     /// The forward layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_b: LstmMatrix<'data>,
+    pub fw_b: ZeroMatrix32<'data>,
     /// The backward layer's first matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_w: LstmMatrix<'data>,
+    pub bw_w: ZeroMatrix32<'data>,
     /// The backward layer's second matrix
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_u: LstmMatrix<'data>,
+    pub bw_u: ZeroMatrix32<'data>,
     /// The backward layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_b: LstmMatrix<'data>,
+    pub bw_b: ZeroMatrix32<'data>,
     /// The output layer's weights
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_w: LstmMatrix<'data>,
+    pub time_w: ZeroMatrix32<'data>,
     /// The output layer's bias
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_b: LstmMatrix<'data>,
+    pub time_b: ZeroMatrix32<'data>,
+}
+
+/// The data to power the LSTM segmentation model.
+///
+/// This data enum is extensible: more backends may be added in the future.
+/// Old data can be used with newer code but not vice versa.
+///
+/// Examples of possible future extensions:
+///
+/// 1. Variant to store data in 16 instead of 32 bits
+/// 2. Minor changes to the LSTM model, such as different forward/backward matrix sizes
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+#[non_exhaustive]
+pub enum LstmDataV1<'data> {
+    /// The data as matrices of zerovec f32 values.
+    ZeroMatrix32(#[cfg_attr(feature = "serde", serde(borrow))] LstmDataZeroMatrix32<'data>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }

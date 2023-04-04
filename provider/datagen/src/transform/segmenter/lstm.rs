@@ -112,7 +112,7 @@ impl RawLstmData {
         let bw_b = bw_b.as_standard_layout().into_owned();
         let time_w = time_w.as_standard_layout().into_owned();
 
-        Ok(LstmDataV1 {
+        Ok(LstmDataV1::ZeroMatrix32(LstmDataZeroMatrix32 {
             model: Cow::from(self.model.clone()),
             dic: self.dic.iter().map(|(k, v)| (k.as_str(), v)).collect(),
             embedding: ndarray_to_lstm_matrix(embedding)?,
@@ -124,7 +124,7 @@ impl RawLstmData {
             bw_b: ndarray_to_lstm_matrix(bw_b)?,
             time_w: ndarray_to_lstm_matrix(time_w)?,
             time_b: ndarray_to_lstm_matrix(time_b)?,
-        })
+        }))
     }
 }
 
@@ -132,7 +132,7 @@ const DIMENSION_MISMATCH_ERROR: DataError = DataError::custom("LSTM dimension mi
 
 fn ndarray_to_lstm_matrix<const D: usize>(
     nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>,
-) -> Result<LstmMatrix<'static>, DataError>
+) -> Result<ZeroMatrix32<'static>, DataError>
 where
     Dim<[usize; D]>: Dimension,
 {
@@ -146,7 +146,7 @@ where
     let data = nd
         .as_slice_memory_order()
         .ok_or_else(|| DataError::custom("ndarray matrix not in memory order"))?;
-    Ok(LstmMatrix {
+    Ok(ZeroMatrix32 {
         data: ZeroVec::alloc_from_slice(data),
         dims: ZeroVec::alloc_from_slice(&dims),
     })
@@ -201,10 +201,11 @@ mod tests {
         let filename =
             "tests/data/segmenter/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
         let lstm_data = load_lstm_data_directly(filename);
-        assert_eq!(
-            lstm_data.get().model,
-            "Thai_graphclust_exclusive_model4_heavy"
-        );
+        let model_name = match lstm_data.get() {
+            LstmDataV1::ZeroMatrix32(payload_variant) => &payload_variant.model,
+            _ => panic!("non_exhaustive enum"),
+        };
+        assert_eq!(model_name, "Thai_graphclust_exclusive_model4_heavy");
         let provider = ForkByKeyProvider::new(
             AnyPayloadProvider::from_payload(lstm_data),
             crate::DatagenProvider::for_test(),

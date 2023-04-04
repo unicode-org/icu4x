@@ -5,7 +5,7 @@
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1, RuleBreakDataV1};
+use crate::provider::{LstmDataZeroMatrix32, RuleBreakDataV1};
 use alloc::boxed::Box;
 use alloc::string::ToString;
 use alloc::vec::Vec;
@@ -17,7 +17,7 @@ use zerovec::ule::AsULE;
 use num_traits::Float;
 
 pub struct Lstm<'l> {
-    data: &'l LstmDataV1<'l>,
+    data: &'l LstmDataZeroMatrix32<'l>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
     fw_u: MatrixZero<'l, 3>,
@@ -54,7 +54,7 @@ impl Bies {
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(
-        data: &'l LstmDataV1<'l>,
+        data: &'l LstmDataZeroMatrix32<'l>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, Error> {
         if data.dic.len() > core::i16::MAX as usize {
@@ -311,7 +311,7 @@ impl<'l> Lstm<'l> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::provider::LstmDataV1Marker;
+    use crate::provider::{LstmDataV1, LstmDataV1Marker};
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
@@ -363,7 +363,8 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let lstm = Lstm::try_new(payload.get(), None).expect("Test data is invalid");
+        let LstmDataV1::ZeroMatrix32(payload_variant) = payload.get();
+        let lstm = Lstm::try_new(payload_variant, None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();

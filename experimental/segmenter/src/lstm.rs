@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::lstm_bies::{Bies, Lstm};
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, LstmDataV1Marker, RuleBreakDataV1};
 use crate::SegmenterError;
 use alloc::boxed::Box;
 use alloc::string::String;
@@ -88,7 +88,8 @@ impl<'l> LstmSegmenter<'l> {
         payload: &'l DataPayload<LstmDataV1Marker>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, SegmenterError> {
-        let lstm = Lstm::try_new(payload.get(), grapheme)?;
+        let LstmDataV1::ZeroMatrix32(payload_variant) = payload.get();
+        let lstm = Lstm::try_new(payload_variant, grapheme)?;
         Ok(Self { lstm })
     }
 
