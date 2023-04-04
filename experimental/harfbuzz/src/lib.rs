@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+// TODO(#3275) Make this no_std again
+//#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
 #![cfg_attr(
     not(test),
     deny(
@@ -25,7 +28,6 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
-use core::ffi::c_void;
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
@@ -44,6 +46,7 @@ use icu_properties::provider::{
 };
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
+use std::os::raw::{c_char, c_void};
 
 /// The total number of General Category values is fixed per
 /// https://www.unicode.org/policies/stability_policy.html :
@@ -165,7 +168,7 @@ unsafe extern "C" fn icu4x_hb_unicode_script(
     let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
     let name: &str = enum_to_name_mapper.get(script).unwrap_or("Zzzz");
     hb_script_from_string(
-        name.as_ptr() as *const core::ffi::c_char,
+        name.as_ptr() as *const c_char,
         name.len().try_into().unwrap_or(0),
     )
 }
