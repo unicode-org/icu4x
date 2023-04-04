@@ -164,7 +164,10 @@ unsafe extern "C" fn icu4x_hb_unicode_script(
     let script: Script = script_data.script_map.as_borrowed().get32(unicode);
     let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
     let name: &str = enum_to_name_mapper.get(script).unwrap_or("Zzzz");
-    hb_script_from_string(name.as_ptr() as *const i8, name.len().try_into().unwrap_or(0))
+    hb_script_from_string(
+        name.as_ptr() as *const core::ffi::c_char,
+        name.len().try_into().unwrap_or(0),
+    )
 }
 
 unsafe extern "C" fn icu4x_hb_unicode_script_destroy(user_data: *mut c_void) {
