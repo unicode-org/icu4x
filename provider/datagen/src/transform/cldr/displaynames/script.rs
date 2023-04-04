@@ -17,11 +17,11 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::script_displaynames::Resource = self
-            .source
-            .cldr()?
-            .displaynames()
-            .read_and_parse(&langid, "scripts.json")?;
+        let data: &cldr_serde::script_displaynames::Resource =
+            self.source
+                .cldr()?
+                .displaynames()
+                .read_and_parse(&langid, "scripts.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
