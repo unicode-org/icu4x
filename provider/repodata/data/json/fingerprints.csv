@@ -1526,7 +1526,7 @@ segmenter/dictionary/wl_ext@1, th, 1078278B, 56b1112fa508e4b6
 segmenter/grapheme@1, und, 66905B, 445a7c30c1bbfd6d
 segmenter/line@1, und, 154400B, 36dc3e278178555e
 segmenter/lstm/wl_auto@1, th, 361075B, 7cc52fea99e54fcf
-segmenter/sentence@1, und, 108644B, 77527cbb8703af7
+segmenter/sentence@1, und, 109564B, 9b71678f3be4f07f
 segmenter/word@1, und, 113449B, 1103532d45a51419
 time_zone/exemplar_cities@1, ar, 12513B, 40d4e7d38c2e9cf5
 time_zone/exemplar_cities@1, ar-EG, 12513B, 40d4e7d38c2e9cf5

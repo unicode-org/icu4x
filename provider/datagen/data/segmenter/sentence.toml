@@ -255,7 +255,7 @@ right = "Sep"
 
 [[tables]]
 # SB8
-name = "ATerm_Close_Sp_ParaSep"
+name = "ATerm_Close_Sp_CR"
 left = "ATerm_Close"
 right = "CR"
 
@@ -273,7 +273,7 @@ right = "Sep"
 
 [[tables]]
 # SB8
-name = "ATerm_Close_Sp_ParaSep"
+name = "ATerm_Close_Sp_CR"
 left = "ATerm_Close_Sp"
 right = "CR"
 
@@ -281,6 +281,42 @@ right = "CR"
 # SB8
 name = "ATerm_Close_Sp_ParaSep"
 left = "ATerm_Close_Sp"
+right = "LF"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_ParaSep"
+left = "Lower_ATerm"
+right = "Sep"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_CR"
+left = "Lower_ATerm"
+right = "CR"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_ParaSep"
+left = "Lower_ATerm"
+right = "LF"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_ParaSep"
+left = "Upper_ATerm"
+right = "Sep"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_CR"
+left = "Upper_ATerm"
+right = "CR"
+
+[[tables]]
+# SB8/SB9/SB10/SB11
+name = "ATerm_Close_Sp_ParaSep"
+left = "Upper_ATerm"
 right = "LF"
 
 [[tables]]
@@ -321,7 +357,7 @@ right = "Sep"
 
 [[tables]]
 # SB9/10
-name = "STerm_Close_Sp_ParaSep"
+name = "STerm_Close_Sp_CR"
 left = "STerm_Close"
 right = "CR"
 
@@ -339,7 +375,7 @@ right = "Sep"
 
 [[tables]]
 # SB9/10
-name = "STerm_Close_Sp_ParaSep"
+name = "STerm_Close_Sp_CR"
 left = "STerm_Close_Sp"
 right = "CR"
 
@@ -400,9 +436,11 @@ left = [
   "ATerm_Close",
   "ATerm_Close_Sp",
   "ATerm_Close_Sp_ParaSep",
+  "ATerm_Close_Sp_CR",
   "STerm_Close",
   "STerm_Close_Sp",
   "STerm_Close_Sp_ParaSep",
+  "STerm_Close_Sp_CR",
   "Lower_ATerm",
   "Upper_ATerm"
 ]
@@ -411,7 +449,11 @@ break_state = true
 
 [[rules]]
 # SB3
-left = [ "CR" ]
+left = [
+  "CR",
+  "ATerm_Close_Sp_CR",
+  "STerm_Close_Sp_CR"
+]
 right = [ "LF" ]
 break_state = false
 
@@ -444,7 +486,12 @@ break_state = true
 
 [[rules]]
 # SB4
-left = [ "ATerm_Close_Sp_ParaSep", "STerm_Close_Sp_ParaSep" ]
+left = [
+  "ATerm_Close_Sp_ParaSep",
+  "ATerm_Close_Sp_CR",
+  "STerm_Close_Sp_ParaSep",
+  "STerm_Close_Sp_CR"
+]
 right = [
   "ATerm",
   "Numeric",
@@ -507,17 +554,13 @@ right = [ "SContinue", "ATerm", "STerm" ]
 break_state = false
 
 [[rules]]
-# SB10
-left = [
-  "Lower_ATerm",
-  "Upper_ATerm"
-]
-right = [ "Sep", "CR", "LF" ]
-break_state = false
-
-[[rules]]
 # SB11
-left = [ "ATerm_Close_Sp_ParaSep", "STerm_Close_Sp_ParaSep" ]
+left = [
+  "ATerm_Close_Sp_ParaSep",
+  "ATerm_Close_Sp_CR",
+  "STerm_Close_Sp_ParaSep",
+  "STerm_Close_Sp_CR"
+]
 right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm" ]
 break_state = true
 
