@@ -6,7 +6,7 @@ import { ICU4XLanguageDisplay } from "./ICU4XLanguageDisplay";
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html Rust documentation for `DisplayNamesOptions`} for more information.
  */
-export class ICU4XDisplayNamesOptions {
+export class ICU4XDisplayNamesOptionsV1 {
   style: ICU4XDisplayNamesStyle;
   fallback: ICU4XDisplayNamesFallback;
   language_display: ICU4XLanguageDisplay;

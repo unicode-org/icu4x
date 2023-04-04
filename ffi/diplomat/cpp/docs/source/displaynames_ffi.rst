@@ -10,7 +10,7 @@
 
     .. cpp:enumerator:: None
 
-.. cpp:struct:: ICU4XDisplayNamesOptions
+.. cpp:struct:: ICU4XDisplayNamesOptionsV1
 
     See the `Rust documentation for DisplayNamesOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html>`__ for more information.
 
@@ -59,7 +59,7 @@
     See the `Rust documentation for LanguageDisplayNames <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
 
         Creates a new ``LanguageDisplayNames`` from locale data and an options bag.
 
