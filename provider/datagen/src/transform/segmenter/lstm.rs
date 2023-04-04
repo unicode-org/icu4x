@@ -11,7 +11,7 @@ use icu_segmenter::provider::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
 use std::collections::HashMap;
 use std::fmt::Debug;
-use zerovec::ZeroVec;
+use zerovec::{ule::UnvalidatedStr, ZeroVec};
 
 // ndarray data structure in LSTM JSON data.
 #[derive(serde::Deserialize, Debug)]
@@ -120,7 +120,10 @@ impl RawLstmData {
 
         LstmDataV1::try_from_parts(
             model,
-            self.dic.iter().map(|(k, &v)| (k.as_str(), v)).collect(),
+            self.dic
+                .iter()
+                .map(|(k, &v)| (UnvalidatedStr::from_str(k), v))
+                .collect(),
             ndarray_to_lstm_matrix(embedding)?,
             ndarray_to_lstm_matrix(fw_w)?,
             ndarray_to_lstm_matrix(fw_u)?,

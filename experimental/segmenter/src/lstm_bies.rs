@@ -8,14 +8,14 @@ use crate::provider::{LstmDataV1, ModelType, RuleBreakDataV1};
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::str;
-use zerovec::maps::ZeroMapBorrowed;
+use zerovec::{maps::ZeroMapBorrowed, ule::UnvalidatedStr};
 
 // Polyfill float operations with libm in case we're no_std.
 #[allow(unused_imports)]
 use num_traits::Float;
 
 pub struct Lstm<'l> {
-    dic: ZeroMapBorrowed<'l, str, u16>,
+    dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
     fw_u: MatrixZero<'l, 3>,
@@ -99,7 +99,7 @@ impl<'l> Lstm<'l> {
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> u16 {
         self.dic
-            .get_copied(g)
+            .get_copied(UnvalidatedStr::from_str(g))
             .unwrap_or_else(|| self.dic.len() as u16)
     }
 

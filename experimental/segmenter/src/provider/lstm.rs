@@ -9,7 +9,7 @@
 
 use crate::math_helper::MatrixZero;
 use icu_provider::prelude::*;
-use zerovec::{ZeroMap, ZeroVec};
+use zerovec::{ule::UnvalidatedStr, ZeroMap, ZeroVec};
 
 /// The struct that stores a LSTM's matrix.
 #[derive(PartialEq, Debug, Clone)]
@@ -164,7 +164,7 @@ pub struct LstmDataV1<'data> {
     /// Type of the model
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
-    pub(crate) dic: ZeroMap<'data, str, u16>,
+    pub(crate) dic: ZeroMap<'data, UnvalidatedStr, u16>,
     /// The embedding layer. Shape (dic.len + 1, e)
     pub(crate) embedding: LstmMatrix<'data, 2>,
     /// The forward layer's first matrix. Shape (h, 4, e)
@@ -190,7 +190,7 @@ impl<'data> LstmDataV1<'data> {
     #[allow(clippy::too_many_arguments)] // constructor
     pub const fn from_parts_unchecked(
         model: ModelType,
-        dic: ZeroMap<'data, str, u16>,
+        dic: ZeroMap<'data, UnvalidatedStr, u16>,
         embedding: LstmMatrix<'data, 2>,
         fw_w: LstmMatrix<'data, 3>,
         fw_u: LstmMatrix<'data, 3>,
@@ -221,7 +221,7 @@ impl<'data> LstmDataV1<'data> {
     #[allow(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,
-        dic: ZeroMap<'data, str, u16>,
+        dic: ZeroMap<'data, UnvalidatedStr, u16>,
         embedding: LstmMatrix<'data, 2>,
         fw_w: LstmMatrix<'data, 3>,
         fw_u: LstmMatrix<'data, 3>,
@@ -279,7 +279,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataV1<'data> {
         struct Raw<'data> {
             model: ModelType,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            dic: ZeroMap<'data, str, u16>,
+            dic: ZeroMap<'data, UnvalidatedStr, u16>,
             #[cfg_attr(feature = "serde", serde(borrow))]
             embedding: LstmMatrix<'data, 2>,
             #[cfg_attr(feature = "serde", serde(borrow))]
