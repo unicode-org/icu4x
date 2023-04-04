@@ -102,7 +102,7 @@ impl<'l> Lstm<'l> {
         }
 
         Ok(Self {
-            data: data,
+            data,
             embedding,
             fw_w,
             fw_u,
