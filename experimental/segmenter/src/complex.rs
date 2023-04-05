@@ -56,7 +56,7 @@ impl LstmPayloads {
         match provider.load(DataRequest {
             locale: &DataLocale::from(locale),
             metadata: {
-                let m = DataRequestMetadata::default();
+                let mut m = DataRequestMetadata::default();
                 m.silent = true;
                 m
             },
