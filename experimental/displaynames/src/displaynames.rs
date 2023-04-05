@@ -106,7 +106,7 @@ impl RegionDisplayNames {
 /// assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
 /// ```
 #[derive(Default)]
-pub struct ScriptDisplayNames {
+pub(crate) struct ScriptDisplayNames {
     options: DisplayNamesOptions,
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
 }
@@ -180,7 +180,7 @@ impl ScriptDisplayNames {
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
 #[derive(Default)]
-pub struct LanguageDisplayNames {
+pub(crate) struct LanguageDisplayNames {
     options: DisplayNamesOptions,
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
 }
@@ -265,7 +265,7 @@ pub struct LocaleDisplayNamesFormatter {
     locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
 
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
-    // script_data: DataPayload<ScriptDisplayNamesV1Marker>,
+    script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
     // variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
