@@ -76,7 +76,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 ///
 /// [Rules]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules
 /// [GC]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries
-/// [Sample_GC]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries
+/// [Sample_GC]: https://www.unicode.org/reports/tr29/#Table_Sample_Grapheme_Clusters
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterSegmenter;
