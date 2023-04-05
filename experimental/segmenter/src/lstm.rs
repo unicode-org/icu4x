@@ -4,7 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1Marker, ModelType, RuleBreakDataV1};
+use crate::provider::{LstmDataV1, LstmDataV1Marker, ModelType, RuleBreakDataV1};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -76,7 +76,7 @@ impl<'l> LstmSegmenter<'l> {
         payload: &'l DataPayload<LstmDataV1Marker>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, ()> {
-        let data = payload.get();
+        let LstmDataV1::Float32(data) = payload.get();
         Ok(Self {
             dic: data.dic.as_borrowed(),
             embedding: data.embedding.as_matrix_zero(),
