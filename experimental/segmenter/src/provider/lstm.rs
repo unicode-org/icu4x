@@ -10,135 +10,89 @@
 use icu_provider::prelude::*;
 use zerovec::{ule::UnvalidatedStr, ZeroMap, ZeroVec};
 
-/// The struct that stores a LSTM's matrix.
-#[derive(PartialEq, Debug, Clone)]
-pub struct LstmMatrix<'data, const D: usize> {
-    // Invariant: dims.product() == data.len()
-    #[allow(missing_docs)]
-    dims: [u16; D],
-    #[allow(missing_docs)]
-    data: ZeroVec<'data, f32>,
-}
-
-// TODO: make the yoke derive work with const generics
-unsafe impl<'a, const D: usize> yoke::Yokeable<'a> for LstmMatrix<'static, D> {
-    type Output = LstmMatrix<'a, D>;
-
-    #[inline]
-    fn transform(&'a self) -> &'a Self::Output {
-        self
-    }
-
-    #[inline]
-    fn transform_owned(self) -> Self::Output {
-        self
-    }
-
-    #[inline]
-    unsafe fn make(this: Self::Output) -> Self {
-        use core::{mem, ptr};
-        let ptr: *const Self = (&this as *const Self::Output).cast();
-        mem::forget(this);
-        ptr::read(ptr)
-    }
-
-    #[inline]
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        unsafe {
-            f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(
-                self,
-            ))
-        }
-    }
-}
-
-// TODO: make the zerofrom derive work with const generics
-impl<'zf, 'zf_inner, const D: usize> zerofrom::ZeroFrom<'zf, LstmMatrix<'zf_inner, D>>
-    for LstmMatrix<'zf, D>
-{
-    fn zero_from(this: &'zf LstmMatrix<'zf_inner, D>) -> Self {
-        LstmMatrix {
-            dims: this.dims,
-            data: zerofrom::ZeroFrom::zero_from(&this.data),
-        }
-    }
-}
-
-impl<'data, const D: usize> LstmMatrix<'data, D> {
-    #[cfg(any(feature = "serde", feature = "datagen"))]
-    /// Creates a LstmMatrix with the given dimensions. Fails if the dimensions don't match the data.
-    pub fn from_parts(dims: [u16; D], data: ZeroVec<'data, f32>) -> Result<Self, DataError> {
-        if dims.iter().map(|&i| i as usize).product::<usize>() != data.len() {
-            Err(DataError::custom("Dimension mismatch"))
-        } else {
-            Ok(Self { dims, data })
-        }
-    }
-
-    #[doc(hidden)] // databake
-    pub const fn from_parts_unchecked(dims: [u16; D], data: ZeroVec<'data, f32>) -> Self {
-        Self { dims, data }
-    }
-
-    #[cfg(feature = "lstm")]
-    pub(crate) fn as_matrix_zero(&self) -> crate::math_helper::MatrixZero<D> {
-        crate::math_helper::MatrixZero::from_parts_unchecked(&self.data, self.dims.map(|x| x as usize))
-    }
-}
-
-#[cfg(feature = "serde")]
-impl<'de: 'data, 'data, const D: usize> serde::Deserialize<'de> for LstmMatrix<'data, D> {
-    fn deserialize<S>(deserializer: S) -> Result<Self, S::Error>
-    where
-        S: serde::de::Deserializer<'de>,
-    {
-        #[derive(serde::Deserialize)]
-        struct Raw<'data> {
-            // no const generic support in serde
-            dims: alloc::borrow::Cow<'data, [u16]>,
-            #[serde(borrow)]
+// We do this instead of const generics because ZeroFrom and Yokeable derives, as well as serde
+// don't support them
+macro_rules! lstm_matrix {
+    ($name:ident, $generic:literal) => {
+        /// The struct that stores a LSTM's matrix.
+        #[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
+        #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+        pub struct $name<'data> {
+            // Invariant: dims.product() == data.len()
+            #[allow(missing_docs)]
+            dims: [u16; $generic],
+            #[allow(missing_docs)]
             data: ZeroVec<'data, f32>,
         }
 
-        let raw = Raw::deserialize(deserializer)?;
+        impl<'data> $name<'data> {
+            #[cfg(any(feature = "serde", feature = "datagen"))]
+            /// Creates a LstmMatrix with the given dimensions. Fails if the dimensions don't match the data.
+            pub fn from_parts(
+                dims: [u16; $generic],
+                data: ZeroVec<'data, f32>,
+            ) -> Result<Self, DataError> {
+                if dims.iter().map(|&i| i as usize).product::<usize>() != data.len() {
+                    Err(DataError::custom("Dimension mismatch"))
+                } else {
+                    Ok(Self { dims, data })
+                }
+            }
 
-        use core::ops::Deref;
-        use serde::de::Error;
-        Self::from_parts(
-            raw.dims
-                .deref()
-                .try_into()
-                .map_err(|_| S::Error::custom("Dimension mismatch"))?,
-            raw.data,
-        )
-        .map_err(|_| S::Error::custom("Dimension mismatch"))
-    }
-}
+            #[doc(hidden)] // databake
+            pub const fn from_parts_unchecked(
+                dims: [u16; $generic],
+                data: ZeroVec<'data, f32>,
+            ) -> Self {
+                Self { dims, data }
+            }
 
-#[cfg(feature = "datagen")]
-impl<const D: usize> serde::Serialize for LstmMatrix<'_, D> {
-    fn serialize<S: serde::ser::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        use serde::ser::SerializeStruct;
-        let mut state = serializer.serialize_struct("LstmMatrix", 2)?;
-        state.serialize_field("dims", self.dims.as_slice())?;
-        state.serialize_field("data", &self.data)?;
-        state.end()
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<const D: usize> databake::Bake for LstmMatrix<'_, D> {
-    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-        let dims = self.dims.bake(env);
-        let data = self.data.bake(env);
-        databake::quote! {
-            icu_segmenter::provider::LstmMatrix::from_parts_unchecked(#dims, #data)
+            #[cfg(feature = "lstm")]
+            pub(crate) fn as_matrix_zero(&self) -> crate::math_helper::MatrixZero<$generic> {
+                crate::math_helper::MatrixZero::from_parts_unchecked(
+                    &self.data,
+                    self.dims.map(|x| x as usize),
+                )
+            }
         }
-    }
+
+        #[cfg(feature = "serde")]
+        impl<'de: 'data, 'data> serde::Deserialize<'de> for $name<'data> {
+            fn deserialize<S>(deserializer: S) -> Result<Self, S::Error>
+            where
+                S: serde::de::Deserializer<'de>,
+            {
+                #[derive(serde::Deserialize)]
+                struct Raw<'data> {
+                    dims: [u16; $generic],
+                    #[serde(borrow)]
+                    data: ZeroVec<'data, f32>,
+                }
+
+                let raw = Raw::deserialize(deserializer)?;
+
+                use serde::de::Error;
+                Self::from_parts(raw.dims, raw.data)
+                    .map_err(|_| S::Error::custom("Dimension mismatch"))
+            }
+        }
+
+        #[cfg(feature = "datagen")]
+        impl databake::Bake for $name<'_> {
+            fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                let dims = self.dims.bake(env);
+                let data = self.data.bake(env);
+                databake::quote! {
+                    icu_segmenter::provider::$name::from_parts_unchecked(#dims, #data)
+                }
+            }
+        }
+    };
 }
+
+lstm_matrix!(LstmMatrix1, 1);
+lstm_matrix!(LstmMatrix2, 2);
+lstm_matrix!(LstmMatrix3, 3);
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 #[cfg_attr(
@@ -166,23 +120,23 @@ pub struct LstmDataV1<'data> {
     /// The grapheme cluster dictionary used to train the model
     pub(crate) dic: ZeroMap<'data, UnvalidatedStr, u16>,
     /// The embedding layer. Shape (dic.len + 1, e)
-    pub(crate) embedding: LstmMatrix<'data, 2>,
+    pub(crate) embedding: LstmMatrix2<'data>,
     /// The forward layer's first matrix. Shape (h, 4, e)
-    pub(crate) fw_w: LstmMatrix<'data, 3>,
+    pub(crate) fw_w: LstmMatrix3<'data>,
     /// The forward layer's second matrix. Shape (h, 4, h)
-    pub(crate) fw_u: LstmMatrix<'data, 3>,
+    pub(crate) fw_u: LstmMatrix3<'data>,
     /// The forward layer's bias. Shape (h, 4)
-    pub(crate) fw_b: LstmMatrix<'data, 2>,
+    pub(crate) fw_b: LstmMatrix2<'data>,
     /// The backward layer's first matrix. Shape (h, 4, e)
-    pub(crate) bw_w: LstmMatrix<'data, 3>,
+    pub(crate) bw_w: LstmMatrix3<'data>,
     /// The backward layer's second matrix. Shape (h, 4, h)
-    pub(crate) bw_u: LstmMatrix<'data, 3>,
+    pub(crate) bw_u: LstmMatrix3<'data>,
     /// The backward layer's bias. Shape (h, 4)
-    pub(crate) bw_b: LstmMatrix<'data, 2>,
+    pub(crate) bw_b: LstmMatrix2<'data>,
     /// The output layer's weights. Shape (2, 4, h)
-    pub(crate) time_w: LstmMatrix<'data, 3>,
+    pub(crate) time_w: LstmMatrix3<'data>,
     /// The output layer's bias. Shape (4)
-    pub(crate) time_b: LstmMatrix<'data, 1>,
+    pub(crate) time_b: LstmMatrix1<'data>,
 }
 
 impl<'data> LstmDataV1<'data> {
@@ -191,15 +145,15 @@ impl<'data> LstmDataV1<'data> {
     pub const fn from_parts_unchecked(
         model: ModelType,
         dic: ZeroMap<'data, UnvalidatedStr, u16>,
-        embedding: LstmMatrix<'data, 2>,
-        fw_w: LstmMatrix<'data, 3>,
-        fw_u: LstmMatrix<'data, 3>,
-        fw_b: LstmMatrix<'data, 2>,
-        bw_w: LstmMatrix<'data, 3>,
-        bw_u: LstmMatrix<'data, 3>,
-        bw_b: LstmMatrix<'data, 2>,
-        time_w: LstmMatrix<'data, 3>,
-        time_b: LstmMatrix<'data, 1>,
+        embedding: LstmMatrix2<'data>,
+        fw_w: LstmMatrix3<'data>,
+        fw_u: LstmMatrix3<'data>,
+        fw_b: LstmMatrix2<'data>,
+        bw_w: LstmMatrix3<'data>,
+        bw_u: LstmMatrix3<'data>,
+        bw_b: LstmMatrix2<'data>,
+        time_w: LstmMatrix3<'data>,
+        time_b: LstmMatrix1<'data>,
     ) -> Self {
         Self {
             model,
@@ -222,15 +176,15 @@ impl<'data> LstmDataV1<'data> {
     pub fn try_from_parts(
         model: ModelType,
         dic: ZeroMap<'data, UnvalidatedStr, u16>,
-        embedding: LstmMatrix<'data, 2>,
-        fw_w: LstmMatrix<'data, 3>,
-        fw_u: LstmMatrix<'data, 3>,
-        fw_b: LstmMatrix<'data, 2>,
-        bw_w: LstmMatrix<'data, 3>,
-        bw_u: LstmMatrix<'data, 3>,
-        bw_b: LstmMatrix<'data, 2>,
-        time_w: LstmMatrix<'data, 3>,
-        time_b: LstmMatrix<'data, 1>,
+        embedding: LstmMatrix2<'data>,
+        fw_w: LstmMatrix3<'data>,
+        fw_u: LstmMatrix3<'data>,
+        fw_b: LstmMatrix2<'data>,
+        bw_w: LstmMatrix3<'data>,
+        bw_u: LstmMatrix3<'data>,
+        bw_b: LstmMatrix2<'data>,
+        time_w: LstmMatrix3<'data>,
+        time_b: LstmMatrix1<'data>,
     ) -> Result<Self, DataError> {
         let dic_len = u16::try_from(dic.len())
             .map_err(|_| DataError::custom("Dictionary does not fit in u16"))?;
@@ -281,23 +235,23 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataV1<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
             dic: ZeroMap<'data, UnvalidatedStr, u16>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            embedding: LstmMatrix<'data, 2>,
+            embedding: LstmMatrix2<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            fw_w: LstmMatrix<'data, 3>,
+            fw_w: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            fw_u: LstmMatrix<'data, 3>,
+            fw_u: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            fw_b: LstmMatrix<'data, 2>,
+            fw_b: LstmMatrix2<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            bw_w: LstmMatrix<'data, 3>,
+            bw_w: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            bw_u: LstmMatrix<'data, 3>,
+            bw_u: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            bw_b: LstmMatrix<'data, 2>,
+            bw_b: LstmMatrix2<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            time_w: LstmMatrix<'data, 3>,
+            time_w: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            time_b: LstmMatrix<'data, 1>,
+            time_b: LstmMatrix1<'data>,
         }
 
         let raw = Raw::deserialize(deserializer)?;

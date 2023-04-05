@@ -124,15 +124,15 @@ impl RawLstmData {
                 .iter()
                 .map(|(k, &v)| (UnvalidatedStr::from_str(k), v))
                 .collect(),
-            ndarray_to_lstm_matrix(embedding)?,
-            ndarray_to_lstm_matrix(fw_w)?,
-            ndarray_to_lstm_matrix(fw_u)?,
-            ndarray_to_lstm_matrix(fw_b)?,
-            ndarray_to_lstm_matrix(bw_w)?,
-            ndarray_to_lstm_matrix(bw_u)?,
-            ndarray_to_lstm_matrix(bw_b)?,
-            ndarray_to_lstm_matrix(time_w)?,
-            ndarray_to_lstm_matrix(time_b)?,
+            ndarray_to_lstm_matrix2(embedding)?,
+            ndarray_to_lstm_matrix3(fw_w)?,
+            ndarray_to_lstm_matrix3(fw_u)?,
+            ndarray_to_lstm_matrix2(fw_b)?,
+            ndarray_to_lstm_matrix3(bw_w)?,
+            ndarray_to_lstm_matrix3(bw_u)?,
+            ndarray_to_lstm_matrix2(bw_b)?,
+            ndarray_to_lstm_matrix3(time_w)?,
+            ndarray_to_lstm_matrix1(time_b)?,
         )
         .map_err(|_| DataError::custom("Just checked the shapes"))
     }
@@ -140,26 +140,34 @@ impl RawLstmData {
 
 const DIMENSION_MISMATCH_ERROR: DataError = DataError::custom("LSTM dimension mismatch");
 
-fn ndarray_to_lstm_matrix<const D: usize>(
-    nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; D]>>,
-) -> Result<LstmMatrix<'static, D>, DataError>
-where
-    Dim<[usize; D]>: Dimension,
-{
-    let dims = <[u16; D]>::try_from(
-        nd.shape()
-            .iter()
-            .copied()
-            .map(u16::try_from)
-            .collect::<Result<Vec<u16>, _>>()
-            .map_err(|_| DataError::custom("LSTM bounds too big for u16"))?,
-    )
-    .map_err(|_| DIMENSION_MISMATCH_ERROR)?;
-    let data = nd
-        .as_slice_memory_order()
-        .ok_or_else(|| DataError::custom("ndarray matrix not in memory order"))?;
-    LstmMatrix::from_parts(dims, ZeroVec::alloc_from_slice(data))
+macro_rules! convert {
+    ($fn_name:ident, $matrix_name:ident, $generic:literal) => {
+        fn $fn_name(
+            nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; $generic]>>,
+        ) -> Result<$matrix_name<'static>, DataError>
+        where
+            Dim<[usize; $generic]>: Dimension,
+        {
+            let dims = <[u16; $generic]>::try_from(
+                nd.shape()
+                    .iter()
+                    .copied()
+                    .map(u16::try_from)
+                    .collect::<Result<Vec<u16>, _>>()
+                    .map_err(|_| DataError::custom("LSTM bounds too big for u16"))?,
+            )
+            .map_err(|_| DIMENSION_MISMATCH_ERROR)?;
+            let data = nd
+                .as_slice_memory_order()
+                .ok_or_else(|| DataError::custom("ndarray matrix not in memory order"))?;
+            $matrix_name::from_parts(dims, ZeroVec::alloc_from_slice(data))
+        }
+    };
 }
+
+convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
+convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
+convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
 impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
