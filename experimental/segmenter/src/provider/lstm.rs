@@ -85,7 +85,7 @@ impl<'data, const D: usize> LstmMatrix<'data, D> {
 
     #[cfg(feature = "lstm")]
     pub(crate) fn as_matrix_zero(&self) -> crate::math_helper::MatrixZero<D> {
-        MatrixZero::from_parts_unchecked(&self.data, self.dims.map(|x| x as usize))
+        crate::math_helper::MatrixZero::from_parts_unchecked(&self.data, self.dims.map(|x| x as usize))
     }
 }
 

@@ -6,7 +6,7 @@
     See the `Rust documentation for Fallback <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html>`__ for more information.
 
 
-.. js:class:: ICU4XDisplayNamesOptions
+.. js:class:: ICU4XDisplayNamesOptionsV1
 
     See the `Rust documentation for DisplayNamesOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html>`__ for more information.
 

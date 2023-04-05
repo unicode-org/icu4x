@@ -13,7 +13,7 @@
 
 class ICU4XDataProvider;
 class ICU4XLocale;
-struct ICU4XDisplayNamesOptions;
+struct ICU4XDisplayNamesOptionsV1;
 class ICU4XLanguageDisplayNames;
 #include "ICU4XError.hpp"
 
@@ -39,7 +39,7 @@ class ICU4XLanguageDisplayNames {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptions options);
+  static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
 
   /**
    * Returns the locale specific display name of a language for a given string.
@@ -70,11 +70,11 @@ class ICU4XLanguageDisplayNames {
 
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
-#include "ICU4XDisplayNamesOptions.hpp"
+#include "ICU4XDisplayNamesOptionsV1.hpp"
 
-inline diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> ICU4XLanguageDisplayNames::try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptions options) {
-  ICU4XDisplayNamesOptions diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLanguageDisplayNames_try_new_unstable(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptions{ .style = static_cast<capi::ICU4XDisplayNamesStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XDisplayNamesFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
+inline diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> ICU4XLanguageDisplayNames::try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
+  ICU4XDisplayNamesOptionsV1 diplomat_wrapped_struct_options = options;
+  auto diplomat_result_raw_out_value = capi::ICU4XLanguageDisplayNames_try_new_unstable(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptionsV1{ .style = static_cast<capi::ICU4XDisplayNamesStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XDisplayNamesFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
   diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLanguageDisplayNames>(std::move(ICU4XLanguageDisplayNames(diplomat_result_raw_out_value.ok)));
