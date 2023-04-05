@@ -71,7 +71,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// (both test data and data produced by `icu_datagen`), the `segment_*`
 /// functions return extended grapheme cluster boundaries, as opposed to
 /// legacy grapheme cluster boundaries.  See [_Section 3, Grapheme Cluster
-/// Boundaries_](GC), and [_Table 1a, Sample Grapheme Clusters_][Sample_GC],
+/// Boundaries_][GC], and [_Table 1a, Sample Grapheme Clusters_][Sample_GC],
 /// in Unicode Standard Annex #29, _Unicode Text Segmentation_.
 ///
 /// [Rules]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules
