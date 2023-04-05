@@ -9,9 +9,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-#[cfg(feature = "lstm")]
 mod lstm;
-#[cfg(feature = "lstm")]
 pub use lstm::*;
 
 use icu_collections::codepointtrie::CodePointTrie;

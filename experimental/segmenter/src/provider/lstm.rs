@@ -7,7 +7,6 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-use crate::math_helper::MatrixZero;
 use icu_provider::prelude::*;
 use zerovec::{ule::UnvalidatedStr, ZeroMap, ZeroVec};
 
@@ -84,7 +83,8 @@ impl<'data, const D: usize> LstmMatrix<'data, D> {
         Self { dims, data }
     }
 
-    pub(crate) fn as_matrix_zero(&self) -> MatrixZero<D> {
+    #[cfg(feature = "lstm")]
+    pub(crate) fn as_matrix_zero(&self) -> crate::math_helper::MatrixZero<D> {
         MatrixZero::from_parts_unchecked(&self.data, self.dims.map(|x| x as usize))
     }
 }
