@@ -106,8 +106,6 @@ pub mod symbols;
 #[cfg(feature = "lstm")]
 mod lstm;
 #[cfg(feature = "lstm")]
-mod lstm_bies;
-#[cfg(feature = "lstm")]
 mod math_helper;
 
 pub use crate::grapheme::{
