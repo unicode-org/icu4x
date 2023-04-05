@@ -34,7 +34,7 @@ export class ICU4XCodePointSetData {
 
    * Produces an iterator over ranges of code points contained in this set
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges Rust documentation for `iter_ranges`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges Rust documentation for `iter_ranges`} for more information.
    */
   iter_ranges(): CodePointRangeIterator;
 
@@ -42,7 +42,7 @@ export class ICU4XCodePointSetData {
 
    * Produces an iterator over ranges of code points not contained in this set
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented Rust documentation for `iter_ranges_complemented`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented Rust documentation for `iter_ranges_complemented`} for more information.
    */
   iter_ranges_complemented(): CodePointRangeIterator;
 

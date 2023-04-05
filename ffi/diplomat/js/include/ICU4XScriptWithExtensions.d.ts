@@ -48,7 +48,7 @@ export class ICU4XScriptWithExtensions {
 
    * Get a list of ranges of code points that contain this script in their Script_Extensions values
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges Rust documentation for `get_script_extensions_ranges`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges Rust documentation for `get_script_extensions_ranges`} for more information.
    */
   iter_ranges_for_script(script: u16): CodePointRangeIterator;
 }

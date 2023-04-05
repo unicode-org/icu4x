@@ -37,7 +37,7 @@ export class ICU4XCodePointMapData16 {
 
    * Produces an iterator over ranges of code points that map to `value`
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
    */
   iter_ranges_for_value(value: u16): CodePointRangeIterator;
 
@@ -45,7 +45,7 @@ export class ICU4XCodePointMapData16 {
 
    * Produces an iterator over ranges of code points that do not map to `value`
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
    */
   iter_ranges_for_value_complemented(value: u16): CodePointRangeIterator;
 

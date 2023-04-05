@@ -66,7 +66,7 @@
 
         Get a list of ranges of code points that contain this script in their Script_Extensions values
 
-        See the `Rust documentation for get_script_extensions_ranges <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges>`__ for more information.
+        See the `Rust documentation for get_script_extensions_ranges <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges>`__ for more information.
 
 
 .. js:class:: ICU4XScriptWithExtensionsBorrowed

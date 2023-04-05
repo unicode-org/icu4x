@@ -55,7 +55,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Produces an iterator over ranges of code points that map to `value`
    * 
-   * See the [Rust documentation for `iter_ranges_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
@@ -64,7 +64,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
    * 
-   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

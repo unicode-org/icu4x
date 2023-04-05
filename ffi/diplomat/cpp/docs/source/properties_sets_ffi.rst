@@ -28,7 +28,7 @@
 
         Produces an iterator over ranges of code points contained in this set
 
-        See the `Rust documentation for iter_ranges <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges>`__ for more information.
+        See the `Rust documentation for iter_ranges <https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges>`__ for more information.
 
         Lifetimes: ``this`` must live at least as long as the output.
 
@@ -37,7 +37,7 @@
 
         Produces an iterator over ranges of code points not contained in this set
 
-        See the `Rust documentation for iter_ranges_complemented <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented>`__ for more information.
+        See the `Rust documentation for iter_ranges_complemented <https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented>`__ for more information.
 
         Lifetimes: ``this`` must live at least as long as the output.
 

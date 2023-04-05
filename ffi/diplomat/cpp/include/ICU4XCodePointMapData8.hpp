@@ -57,14 +57,14 @@ class ICU4XCodePointMapData8 {
    * 
    * Nonexistant general categories will map to the empty mask
    * 
-   * See the [Rust documentation for `GeneralCategoryGroup`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html) for more information.
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
    */
   static uint32_t general_category_to_mask(uint8_t gc);
 
   /**
    * Produces an iterator over ranges of code points that map to `value`
    * 
-   * See the [Rust documentation for `iter_ranges_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
@@ -73,7 +73,7 @@ class ICU4XCodePointMapData8 {
   /**
    * Produces an iterator over ranges of code points that do not map to `value`
    * 
-   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
@@ -89,7 +89,7 @@ class ICU4XCodePointMapData8 {
    * Should only be used on maps for properties with values less than 32 (like Generak_Category),
    * other maps will have unpredictable results
    * 
-   * See the [Rust documentation for `iter_ranges_for_group`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+   * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

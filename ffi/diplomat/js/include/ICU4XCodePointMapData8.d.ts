@@ -39,7 +39,7 @@ export class ICU4XCodePointMapData8 {
 
    * Nonexistant general categories will map to the empty mask
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html Rust documentation for `GeneralCategoryGroup`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html Rust documentation for `GeneralCategoryGroup`} for more information.
    */
   static general_category_to_mask(gc: u8): u32;
 
@@ -47,7 +47,7 @@ export class ICU4XCodePointMapData8 {
 
    * Produces an iterator over ranges of code points that map to `value`
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value Rust documentation for `iter_ranges_for_value`} for more information.
    */
   iter_ranges_for_value(value: u8): CodePointRangeIterator;
 
@@ -55,7 +55,7 @@ export class ICU4XCodePointMapData8 {
 
    * Produces an iterator over ranges of code points that do not map to `value`
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented Rust documentation for `iter_ranges_for_value_complemented`} for more information.
    */
   iter_ranges_for_value_complemented(value: u8): CodePointRangeIterator;
 
@@ -67,7 +67,7 @@ export class ICU4XCodePointMapData8 {
 
    * Should only be used on maps for properties with values less than 32 (like Generak_Category), other maps will have unpredictable results
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group Rust documentation for `iter_ranges_for_group`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group Rust documentation for `iter_ranges_for_group`} for more information.
    */
   iter_ranges_for_mask(mask: u32): CodePointRangeIterator;
 
