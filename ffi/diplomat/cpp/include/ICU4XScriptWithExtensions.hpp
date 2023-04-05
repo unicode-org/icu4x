@@ -71,7 +71,7 @@ class ICU4XScriptWithExtensions {
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
-  CodePointRangeIterator get_script_extensions_ranges(uint16_t script) const;
+  CodePointRangeIterator iter_ranges_for_script(uint16_t script) const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensions* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
@@ -105,7 +105,7 @@ inline bool ICU4XScriptWithExtensions::has_script(uint32_t code_point, uint16_t 
 inline ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensions::as_borrowed() const {
   return ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensions_as_borrowed(this->inner.get()));
 }
-inline CodePointRangeIterator ICU4XScriptWithExtensions::get_script_extensions_ranges(uint16_t script) const {
-  return CodePointRangeIterator(capi::ICU4XScriptWithExtensions_get_script_extensions_ranges(this->inner.get(), script));
+inline CodePointRangeIterator ICU4XScriptWithExtensions::iter_ranges_for_script(uint16_t script) const {
+  return CodePointRangeIterator(capi::ICU4XScriptWithExtensions_iter_ranges_for_script(this->inner.get(), script));
 }
 #endif

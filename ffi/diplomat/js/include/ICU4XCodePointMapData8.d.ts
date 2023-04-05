@@ -61,13 +61,15 @@ export class ICU4XCodePointMapData8 {
 
   /**
 
-   * Given a General Category Mask value (obtained via `general_category_to_mask()` or by using `ICU4XGeneralCategoryNameToMaskMapper`, produce an iterator over ranges of code points whose `General_Category` values are contained in the mask.
+   * Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points whose property values are contained in the mask.
 
-   * Should only be used on maps obtained via `load_general_category()`, other maps will have unpredictable results
+   * The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or by using `ICU4XGeneralCategoryNameToMaskMapper`
+
+   * Should only be used on maps for properties with values less than 32 (like Generak_Category), other maps will have unpredictable results
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group Rust documentation for `iter_ranges_for_group`} for more information.
    */
-  iter_ranges_for_general_category_mask(mask: u32): CodePointRangeIterator;
+  iter_ranges_for_mask(mask: u32): CodePointRangeIterator;
 
   /**
 

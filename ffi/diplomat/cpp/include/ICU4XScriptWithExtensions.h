@@ -31,7 +31,7 @@ bool ICU4XScriptWithExtensions_has_script(const ICU4XScriptWithExtensions* self,
 
 ICU4XScriptWithExtensionsBorrowed* ICU4XScriptWithExtensions_as_borrowed(const ICU4XScriptWithExtensions* self);
 
-CodePointRangeIterator* ICU4XScriptWithExtensions_get_script_extensions_ranges(const ICU4XScriptWithExtensions* self, uint16_t script);
+CodePointRangeIterator* ICU4XScriptWithExtensions_iter_ranges_for_script(const ICU4XScriptWithExtensions* self, uint16_t script);
 void ICU4XScriptWithExtensions_destroy(ICU4XScriptWithExtensions* self);
 
 #ifdef __cplusplus

@@ -80,17 +80,20 @@ class ICU4XCodePointMapData8 {
   CodePointRangeIterator iter_ranges_for_value_complemented(uint8_t value) const;
 
   /**
-   * Given a General Category Mask value (obtained via `general_category_to_mask()` or
-   * by using `ICU4XGeneralCategoryNameToMaskMapper`, produce an iterator over ranges of code points
-   * whose `General_Category` values are contained in the mask.
+   * Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
+   * whose property values are contained in the mask.
    * 
-   * Should only be used on maps obtained via `load_general_category()`, other maps will have unpredictable results
+   * The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+   * by using `ICU4XGeneralCategoryNameToMaskMapper`
+   * 
+   * Should only be used on maps for properties with values less than 32 (like Generak_Category),
+   * other maps will have unpredictable results
    * 
    * See the [Rust documentation for `iter_ranges_for_group`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */
-  CodePointRangeIterator iter_ranges_for_general_category_mask(uint32_t mask) const;
+  CodePointRangeIterator iter_ranges_for_mask(uint32_t mask) const;
 
   /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -176,8 +179,8 @@ inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value(uint
 inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
   return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this->inner.get(), value));
 }
-inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_general_category_mask(uint32_t mask) const {
-  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_general_category_mask(this->inner.get(), mask));
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_mask(this->inner.get(), mask));
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData8_get_set_for_value(this->inner.get(), value));

@@ -62,7 +62,7 @@
         See the `Rust documentation for as_borrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed>`__ for more information.
 
 
-    .. js:method:: get_script_extensions_ranges(script)
+    .. js:method:: iter_ranges_for_script(script)
 
         Get a list of ranges of code points that contain this script in their Script_Extensions values
 

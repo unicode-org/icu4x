@@ -47,7 +47,7 @@ export class ICU4XScriptWithExtensions {
     return new ICU4XScriptWithExtensionsBorrowed(wasm.ICU4XScriptWithExtensions_as_borrowed(this.underlying), true, [this]);
   }
 
-  get_script_extensions_ranges(arg_script) {
-    return new CodePointRangeIterator(wasm.ICU4XScriptWithExtensions_get_script_extensions_ranges(this.underlying, arg_script), true, [this]);
+  iter_ranges_for_script(arg_script) {
+    return new CodePointRangeIterator(wasm.ICU4XScriptWithExtensions_iter_ranges_for_script(this.underlying, arg_script), true, [this]);
   }
 }

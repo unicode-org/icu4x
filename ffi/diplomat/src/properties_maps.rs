@@ -110,10 +110,7 @@ pub mod ffi {
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
             FnInStruct
         )]
-        pub fn iter_ranges_for_mask<'a>(
-            &'a self,
-            mask: u32,
-        ) -> Box<CodePointRangeIterator<'a>> {
+        pub fn iter_ranges_for_mask<'a>(&'a self, mask: u32) -> Box<CodePointRangeIterator<'a>> {
             let ranges = self
                 .0
                 .as_borrowed()

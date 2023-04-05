@@ -38,8 +38,8 @@ export class ICU4XCodePointMapData8 {
     return new CodePointRangeIterator(wasm.ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this.underlying, arg_value), true, [this]);
   }
 
-  iter_ranges_for_general_category_mask(arg_mask) {
-    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData8_iter_ranges_for_general_category_mask(this.underlying, arg_mask), true, [this]);
+  iter_ranges_for_mask(arg_mask) {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointMapData8_iter_ranges_for_mask(this.underlying, arg_mask), true, [this]);
   }
 
   get_set_for_value(arg_value) {

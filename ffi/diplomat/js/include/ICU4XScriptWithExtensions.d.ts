@@ -50,5 +50,5 @@ export class ICU4XScriptWithExtensions {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges Rust documentation for `get_script_extensions_ranges`} for more information.
    */
-  get_script_extensions_ranges(script: u16): CodePointRangeIterator;
+  iter_ranges_for_script(script: u16): CodePointRangeIterator;
 }
