@@ -7,7 +7,7 @@
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
-use icu_locid::{subtags::Language, subtags::Region, Locale, subtags::Script};
+use icu_locid::{subtags::Language, subtags::Region, subtags::Script, Locale};
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 
@@ -106,11 +106,12 @@ impl RegionDisplayNames {
 /// assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
 /// ```
 #[derive(Default)]
-pub(crate) struct ScriptDisplayNames {
+pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
 }
 
+#[allow(dead_code)] // not public at the moment
 impl ScriptDisplayNames {
     /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
     ///
@@ -180,11 +181,12 @@ impl ScriptDisplayNames {
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
 #[derive(Default)]
-pub(crate) struct LanguageDisplayNames {
+pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
 }
 
+#[allow(dead_code)] // not public at the moment
 impl LanguageDisplayNames {
     /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
     ///
@@ -265,6 +267,7 @@ pub struct LocaleDisplayNamesFormatter {
     locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
 
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
+    #[allow(dead_code)] // TODO use this
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
     // variant_data: DataPayload<VariantDisplayNamesV1Marker>,
@@ -287,8 +290,9 @@ impl LocaleDisplayNamesFormatter {
         options: DisplayNamesOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LanguageDisplayNamesV1Marker>
-            + DataProvider<LocaleDisplayNamesV1Marker>
+        D: DataProvider<LocaleDisplayNamesV1Marker>
+            + DataProvider<LanguageDisplayNamesV1Marker>
+            + DataProvider<ScriptDisplayNamesV1Marker>
             + DataProvider<RegionDisplayNamesV1Marker>,
     {
         let req = DataRequest {
@@ -300,6 +304,7 @@ impl LocaleDisplayNamesFormatter {
             options,
             language_data: data_provider.load(req)?.take_payload()?,
             locale_data: data_provider.load(req)?.take_payload()?,
+            script_data: data_provider.load(req)?.take_payload()?,
             region_data: data_provider.load(req)?.take_payload()?,
         })
     }

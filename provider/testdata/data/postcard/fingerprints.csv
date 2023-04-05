@@ -772,12 +772,12 @@ displaynames/scripts@1, ar, 3313B, 17c6b819758fb8c6
 displaynames/scripts@1, ar-EG, 3313B, 17c6b819758fb8c6
 displaynames/scripts@1, bn, 4463B, 8fe934d73f6dc5d
 displaynames/scripts@1, ccp, 5467B, 371e4f1d11242f29
-displaynames/scripts@1, en, 3089B, cd8838f7aa993ed7
-displaynames/scripts@1, en-001, 3089B, cd8838f7aa993ed7
-displaynames/scripts@1, en-ZA, 3089B, cd8838f7aa993ed7
+displaynames/scripts@1, en, 2989B, 90d67b5116a20003
+displaynames/scripts@1, en-001, 2989B, 90d67b5116a20003
+displaynames/scripts@1, en-ZA, 2989B, 90d67b5116a20003
 displaynames/scripts@1, es, 2021B, 9c1d0a9f73f9a471
 displaynames/scripts@1, es-AR, 2014B, 55e2f047c4005019
-displaynames/scripts@1, fil, 847B, 6cd3eb7fe3721481
+displaynames/scripts@1, fil, 827B, ff9dd5678874b52d
 displaynames/scripts@1, fr, 2372B, 5ba98747b85e1740
 displaynames/scripts@1, ja, 4360B, 2ce4aab958b0cce4
 displaynames/scripts@1, ru, 4438B, 30d5b43c72fe9453
@@ -785,7 +785,7 @@ displaynames/scripts@1, sr, 4524B, cde0240f7b451d72
 displaynames/scripts@1, sr-Cyrl, 4524B, cde0240f7b451d72
 displaynames/scripts@1, sr-Latn, 2778B, b91a3c0302bb859a
 displaynames/scripts@1, th, 5455B, 464792f923f09161
-displaynames/scripts@1, tr, 2558B, 994a23b2f8e78e00
+displaynames/scripts@1, tr, 2508B, 4d1fd138001a9264
 fallback/likelysubtags@1, und, 1707B, 9684abe0fc91ad70
 fallback/parents@1, und, 2515B, 71c0356eb7926b0a
 fallback/supplement/co@1, und, 70B, 71e01f2099eca417
