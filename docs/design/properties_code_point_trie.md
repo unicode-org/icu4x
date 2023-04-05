@@ -42,7 +42,7 @@ In the binary properties case, we can reduce the scope to there being only two d
 
 The use cases, or manner of data access, inform the designs of APIs and data structures.
 For regular expression parsers (regex), we need to support a text description of a _set of code points_ sharing a property.
-In this case, returning a [`CodePointInversionList`](https://icu4x.unicode.org/doc/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data.
+In this case, returning a [`CodePointInversionList`](https://unicode-org.github.io/icu4x/docs/icu/collections/codepointinvlist/struct.CodePointInversionList.html) (a set of code points, a.k.a. [`UnicodeSet`](https://unicode-org.github.io/icu/userguide/strings/unicodeset.html) in ICU) provides the most efficient usable data.
 For binary properties, the property name is enough for input to determine the output.
 For enumerated properties, the property name and a specific property value are required to uniquely determine a set of code points.
 In these cases, all dimensions except the code point dimension are fixed (given as inputs).

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `MaxVariable`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.MaxVariable.html) for more information.
+ * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
  */
 enum struct ICU4XCollatorMaxVariable {
   Auto = 0,

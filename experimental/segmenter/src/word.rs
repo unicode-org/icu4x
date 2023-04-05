@@ -91,7 +91,7 @@ impl WordSegmenter {
         Ok(Self {
             payload,
             dictionary: Dictionary::new_chinese_japanese(provider),
-            lstm: LstmPayloads::new(provider),
+            lstm: LstmPayloads::try_new(provider)?,
             grapheme,
         })
     }
@@ -125,7 +125,7 @@ impl WordSegmenter {
         Ok(Self {
             payload,
             dictionary: Dictionary::default(),
-            lstm: LstmPayloads::new(provider),
+            lstm: LstmPayloads::try_new(provider)?,
             grapheme,
         })
     }

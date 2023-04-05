@@ -1,7 +1,7 @@
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/options/enum.GroupingStrategy.html Rust documentation for `GroupingStrategy`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html Rust documentation for `GroupingStrategy`} for more information.
  */
 export enum ICU4XFixedDecimalGroupingStrategy {
   /**

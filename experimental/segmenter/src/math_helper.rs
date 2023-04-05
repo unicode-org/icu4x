@@ -2,12 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::lstm_error::Error;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+// Polyfill float operations with libm in case we're no_std.
+#[allow(unused_imports)]
+use num_traits::Float;
+
+/// `tanh` computes the tanh function for a scalar value.
+#[inline]
+pub fn tanh(x: f32) -> f32 {
+    x.tanh()
+}
+
+/// `sigmoid` computes the sigmoid function for a scalar value.
+#[inline]
+pub fn sigmoid(x: f32) -> f32 {
+    1.0 / (1.0 + (-x).exp())
+}
+
+/// computes x * y + z in one instruction
+#[inline]
+pub fn fma(x: f32, y: f32, z: f32) -> f32 {
+    x.mul_add(y, z)
+}
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///
@@ -157,8 +178,8 @@ impl<'a> MatrixBorrowed<'a, 1> {
 
 /// A `D`-dimensional, mutably borrowed matrix.
 pub struct MatrixBorrowedMut<'a, const D: usize> {
-    data: &'a mut [f32],
-    dims: [usize; D],
+    pub(crate) data: &'a mut [f32],
+    pub(crate) dims: [usize; D],
 }
 
 impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
@@ -337,12 +358,8 @@ pub struct MatrixZero<'a, const D: usize> {
 }
 
 impl<'a, const D: usize> MatrixZero<'a, D> {
-    pub fn try_from_parts(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Result<Self, Error> {
-        if dims.iter().product::<usize>() == data.len() {
-            Ok(Self { data, dims })
-        } else {
-            Err(Error::DimensionMismatch)
-        }
+    pub fn from_parts_unchecked(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Self {
+        Self { data, dims }
     }
 
     #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
@@ -384,22 +401,6 @@ impl<'a, const D: usize> MatrixZero<'a, D> {
         let n = sub_dims.iter().product::<usize>();
         (n * index..n * (index + 1), sub_dims)
     }
-}
-
-// Polyfill float operations with libm in case we're no_std.
-#[allow(unused_imports)]
-use num_traits::Float;
-
-/// `tanh` computes the tanh function for a scalar value.
-#[inline]
-pub fn tanh(x: f32) -> f32 {
-    x.tanh()
-}
-
-/// `sigmoid` computes the sigmoid function for a scalar value.
-#[inline]
-pub fn sigmoid(x: f32) -> f32 {
-    1.0 / (1.0 + (-x).exp())
 }
 
 macro_rules! f32c {

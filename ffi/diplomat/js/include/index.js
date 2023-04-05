@@ -34,7 +34,7 @@ export { ICU4XDateTimeFormatter } from './ICU4XDateTimeFormatter.js';
 export { ICU4XDecomposed } from './ICU4XDecomposed.js';
 export { ICU4XDecomposingNormalizer } from './ICU4XDecomposingNormalizer.js';
 export { ICU4XDisplayNamesFallback } from './ICU4XDisplayNamesFallback.js';
-export { ICU4XDisplayNamesOptions } from './ICU4XDisplayNamesOptions.js';
+export { ICU4XDisplayNamesOptionsV1 } from './ICU4XDisplayNamesOptionsV1.js';
 export { ICU4XDisplayNamesStyle } from './ICU4XDisplayNamesStyle.js';
 export { ICU4XError } from './ICU4XError.js';
 export { ICU4XFixedDecimal } from './ICU4XFixedDecimal.js';
