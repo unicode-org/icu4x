@@ -213,7 +213,7 @@ int main() {
 
     mask = mask_mapper.get_strict("Lu");
     ICU4XCodePointMapData8 gc = ICU4XCodePointMapData8::load_general_category(dp).ok().value();
-    auto ranges = gc.iter_ranges_for_general_category_mask(mask);
+    auto ranges = gc.iter_ranges_for_mask(mask);
     auto next = ranges.next();
     if (next.done) {
         std::cout << "Got empty iterator!";
@@ -226,7 +226,7 @@ int main() {
 
     // Test iteration to completion for a small set
     mask = mask_mapper.get_strict("Control");
-    ranges = gc.iter_ranges_for_general_category_mask(mask);
+    ranges = gc.iter_ranges_for_mask(mask);
     next = ranges.next();
 
     if (next.start != 0 || next.end != 0x1f) {

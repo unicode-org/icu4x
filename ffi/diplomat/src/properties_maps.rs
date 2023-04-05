@@ -98,26 +98,28 @@ pub mod ffi {
             )))
         }
 
-        /// Given a General Category Mask value (obtained via `general_category_to_mask()` or
-        /// by using `ICU4XGeneralCategoryNameToMaskMapper`, produce an iterator over ranges of code points
-        /// whose `General_Category` values are contained in the mask.
+        /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
+        /// whose property values are contained in the mask.
         ///
-        /// Should only be used on maps obtained via `load_general_category()`, other maps will have unpredictable results
+        /// The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+        /// by using `ICU4XGeneralCategoryNameToMaskMapper`
+        ///
+        /// Should only be used on maps for properties with values less than 32 (like Generak_Category),
+        /// other maps will have unpredictable results
         #[diplomat::rust_link(
             icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
             FnInStruct
         )]
-        pub fn iter_ranges_for_general_category_mask<'a>(
+        pub fn iter_ranges_for_mask<'a>(
             &'a self,
             mask: u32,
         ) -> Box<CodePointRangeIterator<'a>> {
-            let mask = GeneralCategoryGroup::from(mask);
             let ranges = self
                 .0
                 .as_borrowed()
                 .iter_ranges_mapped(move |v| {
-                    let gc = GeneralCategory::try_from(v).unwrap_or(GeneralCategory::Unassigned);
-                    mask.contains(gc)
+                    let val_mask = 1 << v;
+                    val_mask & mask != 0
                 })
                 .filter(|v| v.value)
                 .map(|v| v.range);

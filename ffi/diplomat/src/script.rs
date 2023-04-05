@@ -72,7 +72,7 @@ pub mod ffi {
             icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges,
             FnInStruct
         )]
-        pub fn get_script_extensions_ranges<'a>(
+        pub fn iter_ranges_for_script<'a>(
             &'a self,
             script: u16,
         ) -> Box<CodePointRangeIterator<'a>> {
