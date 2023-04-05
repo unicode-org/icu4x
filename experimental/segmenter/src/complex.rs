@@ -150,7 +150,11 @@ impl Dictionary {
         provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
-                metadata: Default::default(),
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
             })?
             .take_payload()
     }
