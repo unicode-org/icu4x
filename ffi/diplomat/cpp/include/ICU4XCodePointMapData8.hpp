@@ -11,6 +11,7 @@
 
 #include "ICU4XCodePointMapData8.h"
 
+class CodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XCodePointMapData8;
@@ -50,6 +51,49 @@ class ICU4XCodePointMapData8 {
    * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
    */
   uint8_t get32(uint32_t cp) const;
+
+  /**
+   * Converts a general category to its corresponding mask value
+   * 
+   * Nonexistant general categories will map to the empty mask
+   * 
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
+   */
+  static uint32_t general_category_to_mask(uint8_t gc);
+
+  /**
+   * Produces an iterator over ranges of code points that map to `value`
+   * 
+   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_value(uint8_t value) const;
+
+  /**
+   * Produces an iterator over ranges of code points that do not map to `value`
+   * 
+   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_value_complemented(uint8_t value) const;
+
+  /**
+   * Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
+   * whose property values are contained in the mask.
+   * 
+   * The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+   * by using `ICU4XGeneralCategoryNameToMaskMapper`
+   * 
+   * Should only be used on maps for properties with values less than 32 (like Generak_Category),
+   * other maps will have unpredictable results
+   * 
+   * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_mask(uint32_t mask) const;
 
   /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -116,6 +160,7 @@ class ICU4XCodePointMapData8 {
   std::unique_ptr<capi::ICU4XCodePointMapData8, ICU4XCodePointMapData8Deleter> inner;
 };
 
+#include "CodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 
@@ -124,6 +169,18 @@ inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
 }
 inline uint8_t ICU4XCodePointMapData8::get32(uint32_t cp) const {
   return capi::ICU4XCodePointMapData8_get32(this->inner.get(), cp);
+}
+inline uint32_t ICU4XCodePointMapData8::general_category_to_mask(uint8_t gc) {
+  return capi::ICU4XCodePointMapData8_general_category_to_mask(gc);
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value(uint8_t value) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_value(this->inner.get(), value));
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this->inner.get(), value));
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_mask(this->inner.get(), mask));
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData8_get_set_for_value(this->inner.get(), value));

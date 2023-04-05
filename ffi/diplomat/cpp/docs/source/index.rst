@@ -26,6 +26,7 @@ Documentation
    normalizer_ffi
    normalizer_properties_ffi
    pluralrules_ffi
+   properties_iter_ffi
    properties_maps_ffi
    properties_names_ffi
    properties_sets_ffi

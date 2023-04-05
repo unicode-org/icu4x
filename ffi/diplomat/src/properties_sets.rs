@@ -10,6 +10,7 @@ pub mod ffi {
     use icu_properties::sets;
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -42,6 +43,29 @@ pub mod ffi {
         pub fn contains32(&self, cp: u32) -> bool {
             self.0.as_borrowed().contains32(cp)
         }
+
+        /// Produces an iterator over ranges of code points contained in this set
+        #[diplomat::rust_link(
+            icu::properties::sets::CodePointSetDataBorrowed::iter_ranges,
+            FnInStruct
+        )]
+        pub fn iter_ranges<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges(),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points not contained in this set
+        #[diplomat::rust_link(
+            icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_complemented<'a>(&'a self) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_complemented(),
+            )))
+        }
+
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
         #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn)]
         pub fn load_for_general_category_group(

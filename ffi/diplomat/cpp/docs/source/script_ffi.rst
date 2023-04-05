@@ -64,6 +64,15 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
 
+    .. cpp:function:: CodePointRangeIterator iter_ranges_for_script(uint16_t script) const
+
+        Get a list of ranges of code points that contain this script in their Script_Extensions values
+
+        See the `Rust documentation for get_script_extensions_ranges <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges>`__ for more information.
+
+        Lifetimes: ``this`` must live at least as long as the output.
+
+
 .. cpp:class:: ICU4XScriptWithExtensionsBorrowed
 
     A slightly faster ICU4XScriptWithExtensions object

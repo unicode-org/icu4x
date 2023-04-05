@@ -9,6 +9,7 @@ pub mod ffi {
     use icu_properties::{script, Script};
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
@@ -64,6 +65,22 @@ pub mod ffi {
         )]
         pub fn as_borrowed<'a>(&'a self) -> Box<ICU4XScriptWithExtensionsBorrowed<'a>> {
             Box::new(ICU4XScriptWithExtensionsBorrowed(self.0.as_borrowed()))
+        }
+
+        /// Get a list of ranges of code points that contain this script in their Script_Extensions values
+        #[diplomat::rust_link(
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_script<'a>(
+            &'a self,
+            script: u16,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .get_script_extensions_ranges(Script(script)),
+            )))
         }
     }
 

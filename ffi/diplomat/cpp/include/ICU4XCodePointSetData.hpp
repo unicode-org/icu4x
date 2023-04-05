@@ -11,6 +11,7 @@
 
 #include "ICU4XCodePointSetData.h"
 
+class CodePointRangeIterator;
 class ICU4XDataProvider;
 class ICU4XCodePointSetData;
 #include "ICU4XError.hpp"
@@ -47,6 +48,24 @@ class ICU4XCodePointSetData {
    * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
    */
   bool contains32(uint32_t cp) const;
+
+  /**
+   * Produces an iterator over ranges of code points contained in this set
+   * 
+   * See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges() const;
+
+  /**
+   * Produces an iterator over ranges of code points not contained in this set
+   * 
+   * See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_complemented() const;
 
   /**
    * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
@@ -532,6 +551,7 @@ class ICU4XCodePointSetData {
   std::unique_ptr<capi::ICU4XCodePointSetData, ICU4XCodePointSetDataDeleter> inner;
 };
 
+#include "CodePointRangeIterator.hpp"
 #include "ICU4XDataProvider.hpp"
 
 inline bool ICU4XCodePointSetData::contains(char32_t cp) const {
@@ -539,6 +559,12 @@ inline bool ICU4XCodePointSetData::contains(char32_t cp) const {
 }
 inline bool ICU4XCodePointSetData::contains32(uint32_t cp) const {
   return capi::ICU4XCodePointSetData_contains32(this->inner.get(), cp);
+}
+inline CodePointRangeIterator ICU4XCodePointSetData::iter_ranges() const {
+  return CodePointRangeIterator(capi::ICU4XCodePointSetData_iter_ranges(this->inner.get()));
+}
+inline CodePointRangeIterator ICU4XCodePointSetData::iter_ranges_complemented() const {
+  return CodePointRangeIterator(capi::ICU4XCodePointSetData_iter_ranges_complemented(this->inner.get()));
 }
 inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_for_general_category_group(provider.AsFFI(), group);

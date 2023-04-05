@@ -24,6 +24,20 @@
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 
 
+    .. js:method:: iter_ranges()
+
+        Produces an iterator over ranges of code points contained in this set
+
+        See the `Rust documentation for iter_ranges <https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges>`__ for more information.
+
+
+    .. js:method:: iter_ranges_complemented()
+
+        Produces an iterator over ranges of code points not contained in this set
+
+        See the `Rust documentation for iter_ranges_complemented <https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented>`__ for more information.
+
+
     .. js:function:: load_for_general_category_group(provider, group)
 
         which is a mask with the same format as the ``U_GC_XX_MASK`` mask in ICU4C
