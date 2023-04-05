@@ -29,7 +29,7 @@ struct ICU4XLanguageDisplayNamesDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `LanguageDisplayNames`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html) for more information.
+ * See the [Rust documentation for `LanguageDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html) for more information.
  */
 class ICU4XLanguageDisplayNames {
  public:
@@ -37,7 +37,7 @@ class ICU4XLanguageDisplayNames {
   /**
    * Creates a new `LanguageDisplayNames` from locale data and an options bag.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
 
@@ -46,7 +46,7 @@ class ICU4XLanguageDisplayNames {
    * Note that the funtion returns an empty string in case the display name for a given
    * language code is not found.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const;
 
@@ -55,7 +55,7 @@ class ICU4XLanguageDisplayNames {
    * Note that the funtion returns an empty string in case the display name for a given
    * language code is not found.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.of) for more information.
    */
   diplomat::result<std::string, ICU4XError> of(const std::string_view code) const;
   inline const capi::ICU4XLanguageDisplayNames* AsFFI() const { return this->inner.get(); }

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `Strength`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.Strength.html) for more information.
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/enum.Strength.html) for more information.
  */
 enum struct ICU4XCollatorStrength {
   Auto = 0,

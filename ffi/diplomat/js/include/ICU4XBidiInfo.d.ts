@@ -5,7 +5,7 @@ import { ICU4XBidiParagraph } from "./ICU4XBidiParagraph";
 
  * An object containing bidi information for a given string, produced by `for_text()` on `ICU4XBidi`
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html Rust documentation for `BidiInfo`} for more information.
+ * See the {@link https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html Rust documentation for `BidiInfo`} for more information.
  */
 export class ICU4XBidiInfo {
 

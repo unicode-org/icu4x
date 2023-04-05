@@ -28,11 +28,11 @@ struct ICU4XUnicodeSetDataDeleter {
 /**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
  * 
- * See the [Rust documentation for `properties`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
  * 
- * See the [Rust documentation for `UnicodeSetData`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetData.html) for more information.
+ * See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
  * 
- * See the [Rust documentation for `UnicodeSetDataBorrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
+ * See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
  */
 class ICU4XUnicodeSetData {
  public:
@@ -40,14 +40,14 @@ class ICU4XUnicodeSetData {
   /**
    * Checks whether the string is in the set.
    * 
-   * See the [Rust documentation for `contains`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
+   * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
    */
   bool contains(const std::string_view s) const;
 
   /**
    * Checks whether the code point is in the set.
    * 
-   * See the [Rust documentation for `contains_char`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
+   * See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
    */
   bool contains_char(char32_t cp) const;
 
@@ -59,42 +59,42 @@ class ICU4XUnicodeSetData {
   /**
    * 
    * 
-   * See the [Rust documentation for `load_basic_emoji`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html) for more information.
+   * See the [Rust documentation for `load_basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.load_basic_emoji.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_basic_emoji(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_exemplars_main`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html) for more information.
+   * See the [Rust documentation for `load_exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_main.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_exemplars_auxiliary`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html) for more information.
+   * See the [Rust documentation for `load_exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_exemplars_punctuation`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html) for more information.
+   * See the [Rust documentation for `load_exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_exemplars_numbers`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html) for more information.
+   * See the [Rust documentation for `load_exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_exemplars_index`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html) for more information.
+   * See the [Rust documentation for `load_exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_index.html) for more information.
    */
   static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
   inline const capi::ICU4XUnicodeSetData* AsFFI() const { return this->inner.get(); }
