@@ -118,7 +118,7 @@ impl RawLstmData {
             return Err(DataError::custom("Unknown model type"));
         };
 
-        LstmDataV1::try_from_parts(
+        let lstm_data_float32 = LstmDataFloat32::try_from_parts(
             model,
             self.dic
                 .iter()
@@ -134,7 +134,8 @@ impl RawLstmData {
             ndarray_to_lstm_matrix3(time_w)?,
             ndarray_to_lstm_matrix1(time_b)?,
         )
-        .map_err(|_| DataError::custom("Just checked the shapes"))
+        .map_err(|_| DataError::custom("Just checked the shapes"))?;
+        Ok(LstmDataV1::Float32(lstm_data_float32))
     }
 }
 

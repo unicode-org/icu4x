@@ -110,11 +110,10 @@ pub enum ModelType {
 }
 
 /// The struct that stores a LSTM model.
-#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LstmDataV1<'data> {
+pub struct LstmDataFloat32<'data> {
     /// Type of the model
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
@@ -139,7 +138,7 @@ pub struct LstmDataV1<'data> {
     pub(crate) time_b: LstmMatrix1<'data>,
 }
 
-impl<'data> LstmDataV1<'data> {
+impl<'data> LstmDataFloat32<'data> {
     #[doc(hidden)] // databake
     #[allow(clippy::too_many_arguments)] // constructor
     pub const fn from_parts_unchecked(
@@ -171,7 +170,7 @@ impl<'data> LstmDataV1<'data> {
     }
 
     #[cfg(any(feature = "serde", feature = "datagen"))]
-    /// Creates a LstmDataV1 with the given data. Fails if the matrix dimensions are inconsisent.
+    /// Creates a LstmDataFloat32 with the given data. Fails if the matrix dimensions are inconsisent.
     #[allow(clippy::too_many_arguments)] // constructor
     pub fn try_from_parts(
         model: ModelType,
@@ -224,7 +223,7 @@ impl<'data> LstmDataV1<'data> {
 }
 
 #[cfg(feature = "serde")]
-impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataV1<'data> {
+impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataFloat32<'data> {
     fn deserialize<S>(deserializer: S) -> Result<Self, S::Error>
     where
         S: serde::de::Deserializer<'de>,
@@ -275,7 +274,7 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataV1<'data> {
 }
 
 #[cfg(feature = "datagen")]
-impl databake::Bake for LstmDataV1<'_> {
+impl databake::Bake for LstmDataFloat32<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         let model = self.model.bake(env);
         let dic = self.dic.bake(env);
@@ -289,7 +288,7 @@ impl databake::Bake for LstmDataV1<'_> {
         let time_w = self.time_w.bake(env);
         let time_b = self.time_b.bake(env);
         databake::quote! {
-            icu_segmenter::provider::LstmDataV1::from_parts_unchecked(
+            icu_segmenter::provider::LstmDataFloat32::from_parts_unchecked(
                 #model,
                 #dic,
                 #embedding,
@@ -306,11 +305,35 @@ impl databake::Bake for LstmDataV1<'_> {
     }
 }
 
-#[cfg(feature = "datagen")]
-impl databake::Bake for LstmDataV1Marker {
-    fn bake(&self, _env: &databake::CrateEnv) -> databake::TokenStream {
-        databake::quote! {
-            ::icu_segmenter::provider::LstmDataV1Marker
-        }
-    }
+/// The data to power the LSTM segmentation model.
+///
+/// This data enum is extensible: more backends may be added in the future.
+/// Old data can be used with newer code but not vice versa.
+///
+/// Examples of possible future extensions:
+///
+/// 1. Variant to store data in 16 instead of 32 bits
+/// 2. Minor changes to the LSTM model, such as different forward/backward matrix sizes
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
+#[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+#[non_exhaustive]
+pub enum LstmDataV1<'data> {
+    /// The data as matrices of zerovec f32 values.
+    Float32(#[cfg_attr(feature = "serde", serde(borrow))] LstmDataFloat32<'data>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
