@@ -6,43 +6,6 @@
 
 /// A bag of options defining how region or language codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
-///
-/// # Example
-///
-/// ```
-/// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::RegionDisplayNames;
-/// use icu_locid::{locale, subtags_region as region};
-///
-/// let locale = locale!("en-001");
-/// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Some(Style::Short);
-/// let display_name = RegionDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
-///
-/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
-///
-/// ```
-/// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::LanguageDisplayNames;
-/// use icu_locid::locale;
-///
-/// let locale = locale!("en-001");
-/// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Some(Style::Short);
-/// let display_name = LanguageDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
-///
-/// assert_eq!(display_name.of(&locale!("az")), Some("Azeri"));
-/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {

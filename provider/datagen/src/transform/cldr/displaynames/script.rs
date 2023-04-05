@@ -104,7 +104,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(UnvalidatedStr::from_str("Cans"))
+                .get(&TinyAsciiStr::from_str("Cans").unwrap())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -126,7 +126,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(UnvalidatedStr::from_str("Cans"))
+                .get(&TinyAsciiStr::from_str("Cans").unwrap())
                 .unwrap(),
             "UCAS"
         );

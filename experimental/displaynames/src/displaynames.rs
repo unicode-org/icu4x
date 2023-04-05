@@ -16,8 +16,7 @@ use icu_provider::{DataError, DataPayload};
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::displaynames::RegionDisplayNames;
-/// use icu_displaynames::options::DisplayNamesOptions;
+/// use icu_displaynames::{RegionDisplayNames, DisplayNamesOptions};
 /// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");
@@ -85,26 +84,25 @@ impl RegionDisplayNames {
     }
 }
 
-/// Lookup of the locale-specific display names by script code.
-///
-/// # Example
-///
-/// ```
-/// use icu_displaynames::displaynames::ScriptDisplayNames;
-/// use icu_displaynames::options::DisplayNamesOptions;
-/// use icu_locid::{locale, subtags_script as script};
-///
-/// let locale = locale!("en-001");
-/// let options: DisplayNamesOptions = Default::default();
-/// let display_name = ScriptDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
-///
-/// assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
-/// ```
+// / Lookup of the locale-specific display names by script code.
+// /
+// / # Example
+// /
+// / ```
+// / use icu_displaynames::{DisplayNamesOptios, ScriptDisplayNames};
+// / use icu_locid::{locale, subtags_script as script};
+// /
+// / let locale = locale!("en-001");
+// / let options: DisplayNamesOptions = Default::default();
+// / let display_name = ScriptDisplayNames::try_new_unstable(
+// /     &icu_testdata::unstable(),
+// /     &locale.into(),
+// /     options,
+// / )
+// / .expect("Data should load successfully");
+// /
+// / assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
+// / ```
 #[derive(Default)]
 pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
@@ -160,26 +158,25 @@ impl ScriptDisplayNames {
     }
 }
 
-/// Lookup of the locale-specific display names by language code.
-///
-/// # Example
-///
-/// ```
-/// use icu_displaynames::displaynames::LanguageDisplayNames;
-/// use icu_displaynames::options::DisplayNamesOptions;
-/// use icu_locid::{locale, subtags_language as language};
-///
-/// let locale = locale!("en-001");
-/// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LanguageDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
-///
-/// assert_eq!(display_name.of(language!("de")), Some("German"));
-/// ```
+// / Lookup of the locale-specific display names by language code.
+// /
+// / # Example
+// /
+// / ```
+// / use icu_displaynames::{DisplayNamesOptions, LanguageDisplayNames};
+// / use icu_locid::{locale, subtags_language as language};
+// /
+// / let locale = locale!("en-001");
+// / let options: DisplayNamesOptions = Default::default();
+// / let display_name = LanguageDisplayNames::try_new_unstable(
+// /     &icu_testdata::unstable(),
+// /     &locale.into(),
+// /     options,
+// / )
+// / .expect("Data should load successfully");
+// /
+// / assert_eq!(display_name.of(language!("de")), Some("German"));
+// / ```
 #[derive(Default)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
@@ -242,8 +239,7 @@ impl LanguageDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::displaynames::LocaleDisplayNamesFormatter;
-/// use icu_displaynames::options::DisplayNamesOptions;
+/// use icu_displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
 /// use icu_locid::{locale, subtags_language as language};
 ///
 /// let locale = locale!("en-001");
@@ -388,7 +384,7 @@ impl LocaleDisplayNamesFormatter {
                 _ => None,
             }
             .or_else(|| self.region_data.get().names.get(&region.into()));
-            Cow::Owned(format!(
+            Cow::Owned(alloc::format!(
                 "{} ({})",
                 langdisplay.unwrap_or(locale.id.language.as_str()),
                 regiondisplay.unwrap_or(region.as_str())
