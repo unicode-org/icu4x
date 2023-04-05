@@ -8,6 +8,28 @@ use core::ops::Range;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
+// Polyfill float operations with libm in case we're no_std.
+#[allow(unused_imports)]
+use num_traits::Float;
+
+/// `tanh` computes the tanh function for a scalar value.
+#[inline]
+pub fn tanh(x: f32) -> f32 {
+    x.tanh()
+}
+
+/// `sigmoid` computes the sigmoid function for a scalar value.
+#[inline]
+pub fn sigmoid(x: f32) -> f32 {
+    1.0 / (1.0 + (-x).exp())
+}
+
+/// computes x * y + z in one instruction
+#[inline]
+pub fn fma(x: f32, y: f32, z: f32) -> f32 {
+    x.mul_add(y, z)
+}
+
 /// A `D`-dimensional, heap-allocated matrix.
 ///
 /// This matrix implementation supports slicing matrices into tightly-packed
@@ -379,22 +401,6 @@ impl<'a, const D: usize> MatrixZero<'a, D> {
         let n = sub_dims.iter().product::<usize>();
         (n * index..n * (index + 1), sub_dims)
     }
-}
-
-// Polyfill float operations with libm in case we're no_std.
-#[allow(unused_imports)]
-use num_traits::Float;
-
-/// `tanh` computes the tanh function for a scalar value.
-#[inline]
-pub fn tanh(x: f32) -> f32 {
-    x.tanh()
-}
-
-/// `sigmoid` computes the sigmoid function for a scalar value.
-#[inline]
-pub fn sigmoid(x: f32) -> f32 {
-    1.0 / (1.0 + (-x).exp())
 }
 
 macro_rules! f32c {

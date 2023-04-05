@@ -217,7 +217,7 @@ pub fn complex_language_segment_str(
                     if let Ok(segmenter) = LstmSegmenter::try_new(model, grapheme) {
                         let breaks = segmenter.segment_str(str_per_lang);
                         result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                        offset += str_per_lang.len();
                         result.push(offset);
                         continue;
                     }
@@ -230,13 +230,13 @@ pub fn complex_language_segment_str(
                         if let Ok(segmenter) = DictionarySegmenter::try_new(payload, grapheme) {
                             let breaks = segmenter.segment_str(str_per_lang);
                             result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                            offset += str_per_lang.len();
                             continue;
                         }
                     }
                 }
             }
-            offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
+            offset += str_per_lang.len();
             result.push(offset);
         }
     }

@@ -109,7 +109,7 @@ impl<'l> LstmSegmenter<'l> {
 
     /// Create an LSTM based break iterator for a UTF-16 string.
     pub fn segment_utf16(&self, input: &[u16]) -> LstmSegmenterIteratorUtf16 {
-        let input: String = decode_utf16(input.iter().cloned())
+        let input: String = decode_utf16(input.iter().copied())
             .map(|r| r.unwrap_or(REPLACEMENT_CHARACTER))
             .collect();
         let lstm_output = self.produce_bies(&input);
@@ -188,10 +188,7 @@ impl<'l> LstmSegmenter<'l> {
                 let c = math_helper::tanh(s2);
                 let o = math_helper::sigmoid(s3);
                 let c_old = c_tm1.as_borrowed().as_slice().get(i).unwrap(); // shape (h_units)
-                                                                            // Polyfill float operation with libm in case we're no_std.
-                #[allow(unused_imports)]
-                use num_traits::Float;
-                let c_new = p.mul_add(c, f * c_old);
+                let c_new = math_helper::fma(p, c, f * c_old);
                 *c_tm1.as_mut_slice().get_mut(i).unwrap() = c_new; // shape (h_units)
                 *h_tm1.as_mut_slice().get_mut(i).unwrap() = o * math_helper::tanh(c_new);
                 // shape (hunits)
