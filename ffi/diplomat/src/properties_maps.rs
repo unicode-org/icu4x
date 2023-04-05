@@ -115,7 +115,7 @@ pub mod ffi {
                 .0
                 .as_borrowed()
                 .iter_ranges_mapped(move |v| {
-                    let val_mask = 1.checked_shl(v).unwrap_or(0);
+                    let val_mask = 1_u32.checked_shl(v.into()).unwrap_or(0);
                     val_mask & mask != 0
                 })
                 .filter(|v| v.value)
