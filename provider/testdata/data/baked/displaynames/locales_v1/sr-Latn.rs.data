@@ -3,10 +3,10 @@
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x16\0\0\0\0\0\x06\0\x0B\0\x10\0\x15\0\x1A\0\x1F\0$\0*\0/\04\09\0>\0C\0J\0P\0U\0Z\0_\0d\0i\0p\0ar-001de-ATde-CHen-AUen-CAen-GBen-USes-419es-ESes-MXfa-AFfr-CAfr-CHhi-Latnnds-NLnl-BEpt-BRpt-PTro-MDsw-CDzh-Hanszh-Hant")
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x0E\0\0\0\0\0\x06\0\x0B\0\x10\0\x15\0\x1A\0\x1F\0$\0*\0/\04\09\0>\0E\0ar-001de-ATde-CHen-GBen-USes-ESfa-AFnds-NLnl-BEpt-PTro-MDsw-CDzh-Hanszh-Hant")
             },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x16\0\0\0\0\0\x1C\0/\0J\0_\0p\0\x8B\0\xB2\0\xCD\0\xDE\0\xF0\0\xF4\0\x06\x01\x1D\x01-\x01;\x01D\x01X\x01n\x01w\x01\x80\x01\x98\x01savremeni standardni arapskiaustrijski nema\xC4\x8Dki\xC5\xA1vajcarski visoki nema\xC4\x8Dkiengleski (Australija)engleski (Kanada)engleski (Velika Britanija)engleski (Sjedinjene Ameri\xC4\x8Dke Dr\xC5\xBEave)\xC5\xA1panski (Latinska Amerika)\xC5\xA1panski (Evropa)\xC5\xA1panski (Meksiko)darifrancuski (Kanada)francuski (\xC5\xA0vajcarska)hindi (latinica)niskosaksonskiflamanskiportugalski (Brazil)portugalski (Portugal)moldavskikisvahilipojednostavljeni kineskitradicionalni kineski")
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x0E\0\0\0\0\0\x1C\0/\0J\0e\0\x8C\0\x9D\0\xA1\0\xAF\0\xB8\0\xCE\0\xD7\0\xE0\0\xF8\0savremeni standardni arapskiaustrijski nema\xC4\x8Dki\xC5\xA1vajcarski visoki nema\xC4\x8Dkiengleski (Velika Britanija)engleski (Sjedinjene Ameri\xC4\x8Dke Dr\xC5\xBEave)\xC5\xA1panski (Evropa)dariniskosaksonskiflamanskiportugalski (Portugal)moldavskikisvahilipojednostavljeni kineskitradicionalni kineski")
             },
         )
     },

@@ -14,6 +14,7 @@ Documentation
    datetime_ffi
    datetime_formatter_ffi
    decimal_ffi
+   displaynames_ffi
    errors_ffi
    fallbacker_ffi
    fixed_decimal_ffi
@@ -21,6 +22,7 @@ Documentation
    locale_ffi
    locid_transform_ffi
    logging_ffi
+   metazone_calculator_ffi
    normalizer_ffi
    normalizer_properties_ffi
    pluralrules_ffi

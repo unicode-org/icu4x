@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use cargo_metadata::Metadata;
-use clap::{App, Arg};
+use clap::Parser;
 use serde_json::json;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
@@ -12,68 +12,47 @@ use std::process::Command;
 use std::{env, process::Stdio};
 use std::{fs, io::BufReader};
 
+#[derive(Parser)]
+#[command(about = "Collect a memory report for examples using dhat-rs.")]
 struct ProcessedArgs {
+    #[arg(
+        long,
+        value_name = "OS",
+        help = "Nests the results of the benchmark in a folder per-OS, primarily needed by CI."
+    )]
     os: Option<String>,
+    #[arg(value_name = "EXAMPLES", num_args = 1.., index=1)]
+    #[arg(help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")]
     examples: Vec<String>,
+    #[arg(
+        long,
+        value_name = "TOOLCHAIN",
+        default_value = "stable",
+        help = "The toolchain for cargo to use.."
+    )]
     toolchain: String,
 }
 
 fn process_cli_args() -> ProcessedArgs {
-    let matches = App::new("ICU4X Memory Benchmarks")
-        .about("Collect a memory report for examples using dhat-rs.")
-        .arg(
-            Arg::with_name("EXAMPLES")
-                .index(1)
-                .multiple(true)
-                .required(true)
-                .help("The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")
-            )
-            .arg(
-                Arg::with_name("OS")
-                    .long("os")
-                    .takes_value(true)
-                    .value_name("OS")
-                    .required(false)
-                    .help("Nests the results of the benchmark in a folder per-OS, primarily needed by CI.")
-            )
-            .arg(
-                Arg::with_name("TOOLCHAIN")
-                    .long("toolchain")
-                    .takes_value(true)
-                    .value_name("TOOLCHAIN")
-                    .default_value("stable")
-                    .help("The toolchain for cargo to use..")
-            ).get_matches();
+    let processed = ProcessedArgs::parse();
 
-    ProcessedArgs {
-        // Validate the OS, and copy into an owned String.
-        os: matches.value_of("OS").map(|os| {
-            if !os
-                .chars()
-                .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
-            {
-                panic!("The OS had an unexpected character");
-            }
-            os.to_string()
-        }),
-
-        // Validate the examples, and map them into owned Strings.
-        examples: matches
-            .values_of("EXAMPLES")
-            .expect("At least one example must be provided.")
-            .map(|example| {
-                if !example
-                    .chars()
-                    .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
-                {
-                    panic!("An example had an unexpected character \"{example:?}\"");
-                }
-                example.to_string()
-            })
-            .collect(),
-
-        toolchain: matches.value_of("TOOLCHAIN").unwrap().to_string(),
+    if let Some(ref os) = processed.os {
+        if !os
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '_' || c == '-')
+        {
+            panic!("The OS had an unexpected character");
+        }
     }
+    for example in &processed.examples {
+        if !example
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '_' || c == '/')
+        {
+            panic!("An example had an unexpected character \"{example:?}\"");
+        }
+    }
+    processed
 }
 
 fn parse_dhat_log(dhat_log: &[String]) -> (u64, u64, u64) {

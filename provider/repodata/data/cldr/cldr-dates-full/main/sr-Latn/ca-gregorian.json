@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "sr",
         "script": "Latn"
@@ -510,7 +510,7 @@
                   "M": "dd. MMM – dd. MMM"
                 },
                 "MMMEd": {
-                  "d": "E, dd. – E, dd. MMM",
+                  "d": "E, dd. – E, dd. MMM",
                   "M": "E, dd. MMM – E, dd. MMM"
                 },
                 "y": {
@@ -518,35 +518,35 @@
                 },
                 "yM": {
                   "M": "M – M. y.",
-                  "y": "M.y. – M.y."
+                  "y": "M.y. – M.y."
                 },
                 "yMd": {
-                  "d": "d. M. y. – d. M. y.",
-                  "M": "d. M. y. – d. M. y.",
-                  "y": "d. M. y. – d. M. y."
+                  "d": "d. M. y. – d. M. y.",
+                  "M": "d. M. y. – d. M. y.",
+                  "y": "d. M. y. – d. M. y."
                 },
                 "yMEd": {
-                  "d": "E, d. M. y. – E, d. M. y.",
-                  "M": "E, d. M. y. – E, d. M. y.",
-                  "y": "E, d. M. y. – E, d. M. y."
+                  "d": "E, d. M. y. – E, d. M. y.",
+                  "M": "E, d. M. y. – E, d. M. y.",
+                  "y": "E, d. M. y. – E, d. M. y."
                 },
                 "yMMM": {
                   "M": "MMM–MMM y.",
-                  "y": "MMM y. – MMM y."
+                  "y": "MMM y. – MMM y."
                 },
                 "yMMMd": {
                   "d": "dd.–dd. MMM y.",
                   "M": "dd. MMM – dd. MMM y.",
-                  "y": "dd. MMM y. – dd. MMM y."
+                  "y": "dd. MMM y. – dd. MMM y."
                 },
                 "yMMMEd": {
-                  "d": "E, dd. – E, dd. MMM y.",
+                  "d": "E, dd. – E, dd. MMM y.",
                   "M": "E, dd. MMM – E, dd. MMM y.",
-                  "y": "E, dd. MMM y. – E, dd. MMM y."
+                  "y": "E, dd. MMM y. – E, dd. MMM y."
                 },
                 "yMMMM": {
                   "M": "MMMM – MMMM y.",
-                  "y": "MMMM y. – MMMM y."
+                  "y": "MMMM y. – MMMM y."
                 }
               }
             },

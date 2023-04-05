@@ -1,14 +1,16 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "42"
+      "_unicodeVersion": "15.0.0",
+      "_cldrVersion": "43"
     },
     "calendarData": {
       "buddhist": {
         "calendarSystem": "solar",
         "eras": {
           "0": {
+            "_code": "buddhist",
+            "_aliases": "be",
             "_start": "-542-01-01"
           }
         }
@@ -17,6 +19,7 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
+            "_code": "chinese",
             "_start": "-2636-01-01"
           }
         }
@@ -25,9 +28,11 @@
         "calendarSystem": "other",
         "eras": {
           "0": {
+            "_code": "coptic-inverse",
             "_end": "284-08-28"
           },
           "1": {
+            "_code": "coptic",
             "_start": "284-08-29"
           }
         }
@@ -36,6 +41,7 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
+            "_code": "dangi",
             "_start": "-2332-01-01"
           }
         }
@@ -44,9 +50,13 @@
         "calendarSystem": "other",
         "eras": {
           "0": {
+            "_code": "ethioaa",
+            "_aliases": "ethiopic-amete-alem mundi",
             "_end": "8-08-28"
           },
           "1": {
+            "_code": "ethiopic",
+            "_aliases": "incar",
             "_start": "8-08-29"
           }
         }
@@ -54,6 +64,8 @@
       "ethiopic-amete-alem": {
         "eras": {
           "0": {
+            "_code": "ethioaa",
+            "_aliases": "ethiopic-amete-alem mundi",
             "_end": "-5492-08-29"
           }
         }
@@ -63,9 +75,13 @@
         "calendarSystem": "solar",
         "eras": {
           "0": {
+            "_code": "gregory-inverse",
+            "_aliases": "bc bce",
             "_end": "0-12-31"
           },
           "1": {
+            "_code": "gregory",
+            "_aliases": "ad ce",
             "_start": "1-01-01"
           }
         }
@@ -74,6 +90,8 @@
         "calendarSystem": "lunisolar",
         "eras": {
           "0": {
+            "_code": "hebrew",
+            "_aliases": "am",
             "_start": "-3760-10-7"
           }
         }
@@ -81,6 +99,8 @@
       "indian": {
         "eras": {
           "0": {
+            "_code": "indian",
+            "_aliases": "saka",
             "_start": "79-01-01"
           }
         }
@@ -89,6 +109,8 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
+            "_code": "islamic",
+            "_aliases": "ah",
             "_start": "622-7-15"
           }
         }
@@ -97,6 +119,8 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
+            "_code": "islamic-civil",
+            "_aliases": "islamicc ah",
             "_start": "622-7-16"
           }
         }
@@ -105,6 +129,8 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
+            "_code": "islamic-rgsa",
+            "_aliases": "ah",
             "_start": "622-7-15"
           }
         }
@@ -113,6 +139,8 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
+            "_code": "islamic-tbla",
+            "_aliases": "ah",
             "_start": "622-7-15"
           }
         }
@@ -121,12 +149,17 @@
         "calendarSystem": "lunar",
         "eras": {
           "0": {
+            "_code": "islamic-umalqura",
+            "_aliases": "ah",
             "_start": "622-7-15"
           }
         }
       },
       "japanese": {
         "calendarSystem": "solar",
+        "inheritEras": {
+          "_calendar": "gregorian"
+        },
         "eras": {
           "0": {
             "_start": "645-6-19"
@@ -825,18 +858,23 @@
             "_start": "1865-4-7"
           },
           "232": {
+            "_code": "meiji",
             "_start": "1868-9-8"
           },
           "233": {
+            "_code": "taisho",
             "_start": "1912-7-30"
           },
           "234": {
+            "_code": "showa",
             "_start": "1926-12-25"
           },
           "235": {
+            "_code": "heisei",
             "_start": "1989-1-8"
           },
           "236": {
+            "_code": "reiwa",
             "_start": "2019-5-1"
           }
         }
@@ -845,6 +883,8 @@
         "calendarSystem": "solar",
         "eras": {
           "0": {
+            "_code": "persian",
+            "_aliases": "ap",
             "_start": "622-01-01"
           }
         }
@@ -852,9 +892,13 @@
       "roc": {
         "eras": {
           "0": {
+            "_code": "roc-inverse",
+            "_aliases": "before-roc",
             "_end": "1911-12-31"
           },
           "1": {
+            "_code": "roc",
+            "_aliases": "minguo",
             "_start": "1912-01-01"
           }
         }

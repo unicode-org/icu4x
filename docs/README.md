@@ -42,6 +42,7 @@ List of documents describing design decisions for ICU4X.
 Document | Summary
 ---------|---------
 [data_pipeline.md](design/data_pipeline.md) | One of the key design principles of ICU4X is to make locale data small and portable, allowing it to be pulled from multiple sources depending on the needs of the application. This document explains how that goal can be achieved.
+[data_safety.md](design/data_safety.md) | How we think about error handling in locale data.
 [enums_or_ids.md](design/enums_or_ids.md) | When to use enums and when to use identifiers to represent entities in ICU4X
 [principles.md](design/principles.md) | These principles are not cast in stone, but are strong guidelines for developers.
 [string_representation.md](design/string_representation.md) | String representation on the library boundary.

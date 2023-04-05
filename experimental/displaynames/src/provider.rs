@@ -20,6 +20,7 @@ use zerovec::ZeroMap;
 // become inaccessible).
 type UnvalidatedRegion = TinyAsciiStr<3>;
 type UnvalidatedLanguage = TinyAsciiStr<3>;
+type UnvalidatedScript = TinyAsciiStr<4>;
 type UnvalidatedLocale = UnvalidatedStr;
 
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
@@ -64,6 +65,25 @@ pub struct LanguageDisplayNamesV1<'data> {
     /// Mapping for language to menu variant display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
+}
+
+#[icu_provider::data_struct(ScriptDisplayNamesV1Marker = "displaynames/scripts@1")]
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// ScriptDisplayNames provides mapping between a script code and it's display name.
+pub struct ScriptDisplayNamesV1<'data> {
+    /// Mapping for script to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedScript, str>,
+    /// Mapping for script to locale display short name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub short_names: ZeroMap<'data, UnvalidatedScript, str>,
 }
 
 #[icu_provider::data_struct(LocaleDisplayNamesV1Marker = "displaynames/locales@1")]

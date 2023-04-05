@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Diacritic"
 short_name = "Dia"
+uproperty_discr = 0x7
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x5e, 0x5e],

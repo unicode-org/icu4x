@@ -7,7 +7,7 @@
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
-use icu_locid::{subtags::Language, subtags::Region, Locale};
+use icu_locid::{subtags::Language, subtags::Region, Locale, subtags::Script};
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
 
@@ -81,6 +81,80 @@ impl RegionDisplayNames {
             _ => None,
         }
         .or_else(|| data.names.get(&region.into()))
+        // TODO: Respect options.fallback
+    }
+}
+
+/// Lookup of the locale-specific display names by script code.
+///
+/// # Example
+///
+/// ```
+/// use icu_displaynames::displaynames::ScriptDisplayNames;
+/// use icu_displaynames::options::DisplayNamesOptions;
+/// use icu_locid::{locale, subtags_script as script};
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = ScriptDisplayNames::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
+/// ```
+#[derive(Default)]
+pub struct ScriptDisplayNames {
+    options: DisplayNamesOptions,
+    script_data: DataPayload<ScriptDisplayNamesV1Marker>,
+}
+
+impl ScriptDisplayNames {
+    /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DisplayNamesOptions,
+    ) -> Result<Self, DataError> {
+        let script_data = data_provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self {
+            options,
+            script_data,
+        })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        functions: [
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
+        ]
+    );
+
+    /// Returns the display name of a script.
+    pub fn of(&self, script: Script) -> Option<&str> {
+        let data = self.script_data.get();
+        match self.options.style {
+            Some(Style::Short) => data.short_names.get(&script.into()),
+            _ => None,
+        }
+        .or_else(|| data.names.get(&script.into()))
         // TODO: Respect options.fallback
     }
 }

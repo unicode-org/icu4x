@@ -132,6 +132,8 @@ pub use crate::word::{
 
 pub use crate::rule_segmenter::RuleBreakIterator;
 
+pub use crate::rule_segmenter::RuleStatusType;
+
 pub use error::SegmenterError;
 
 #[doc(inline)]

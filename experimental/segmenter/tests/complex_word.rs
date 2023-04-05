@@ -2,9 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::prelude::*;
+use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_fs::FsDataProvider;
 use icu_segmenter::WordSegmenter;
+use std::path::PathBuf;
 
 // Additional word segmenter tests with complex string.
+
+fn get_segmenter_testdata_provider() -> impl BufferProvider {
+    let segmenter_fs_provider = FsDataProvider::try_new(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
+    )
+    .unwrap();
+    ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
+}
 
 #[test]
 fn word_break_th() {
@@ -42,11 +54,11 @@ fn word_break_th() {
     }
 }
 
-#[ignore = "testdata doesn't have Burmese data"]
 #[test]
 fn word_break_my() {
     let segmenter =
-        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+        WordSegmenter::try_new_auto_with_buffer_provider(&get_segmenter_testdata_provider())
+            .expect("Data exists");
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
     let utf16: Vec<u16> = s.encode_utf16().collect();
