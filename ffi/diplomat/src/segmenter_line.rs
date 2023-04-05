@@ -14,8 +14,8 @@ pub mod ffi {
     use core::convert::TryFrom;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
-        GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, LstmDataV1Marker,
-        UCharDictionaryBreakDataV1Marker,
+        DictionaryForWordLineExtendedV1Marker, GraphemeClusterBreakDataV1Marker,
+        LineBreakDataV1Marker, LstmForWordLineAutoV1Marker,
     };
     use icu_segmenter::{
         LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
@@ -71,7 +71,7 @@ pub mod ffi {
         fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -92,7 +92,7 @@ pub mod ffi {
         fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -116,7 +116,7 @@ pub mod ffi {
         fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -144,7 +144,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -172,7 +172,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -200,7 +200,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {

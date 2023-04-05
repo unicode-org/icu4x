@@ -138,7 +138,7 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
     }
 }
 
-pub struct DictionarySegmenter<'l> {
+pub(crate) struct DictionarySegmenter<'l> {
     payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
     grapheme: &'l RuleBreakDataV1<'l>,
 }
@@ -184,7 +184,10 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use crate::{dictionary::DictionarySegmenter, LineSegmenter, WordSegmenter};
+    use crate::{
+        dictionary::DictionarySegmenter, provider::DictionaryForWordOnlyAutoV1Marker,
+        LineSegmenter, WordSegmenter,
+    };
     use icu_provider::prelude::*;
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_provider_fs::FsDataProvider;
@@ -215,15 +218,18 @@ mod tests {
     #[test]
     fn cj_dictionary_test() {
         let provider = get_segmenter_testdata_provider();
-        let dict_payload: DataPayload<crate::provider::UCharDictionaryBreakDataV1Marker> = provider
-            .as_deserializing()
-            .load(DataRequest {
-                locale: &icu_locid::locale!("ja").into(),
-                metadata: Default::default(),
-            })
+        let dict_payload: DataPayload<crate::provider::UCharDictionaryBreakDataV1Marker> =
+            DataProvider::<DictionaryForWordOnlyAutoV1Marker>::load(
+                &icu_testdata::buffer().as_deserializing(),
+                DataRequest {
+                    locale: &icu_locid::locale!("ja").into(),
+                    metadata: Default::default(),
+                },
+            )
             .unwrap()
             .take_payload()
-            .unwrap();
+            .unwrap()
+            .cast();
         let grph_payload: DataPayload<crate::provider::GraphemeClusterBreakDataV1Marker> = provider
             .as_deserializing()
             .load(DataRequest {

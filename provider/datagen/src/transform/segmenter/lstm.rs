@@ -170,8 +170,11 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
-impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
+impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<LstmForWordLineAutoV1Marker>, DataError> {
         let lstm_data = self
             .source
             .segmenter_lstm()?
@@ -187,7 +190,7 @@ impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<LstmDataV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("km").into(),
@@ -205,7 +208,7 @@ mod tests {
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_segmenter::LineSegmenter;
 
-    fn load_lstm_data_directly(filename: &str) -> DataPayload<LstmDataV1Marker> {
+    fn load_lstm_data_directly(filename: &str) -> DataPayload<LstmForWordLineAutoV1Marker> {
         let json_str = std::fs::read(filename).unwrap();
         let raw_data: RawLstmData = serde_json::from_slice(&json_str).unwrap();
         let data = raw_data.try_convert().unwrap();

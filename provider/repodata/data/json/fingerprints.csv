@@ -1521,11 +1521,11 @@ relativetime/short/year@1, sr-Latn, 640B, 7e4fd5f603ae3073
 relativetime/short/year@1, th, 494B, 31e8c26a002004b8
 relativetime/short/year@1, tr, 548B, da4a4d996cb48710
 relativetime/short/year@1, und, 425B, 7a604578bc7e4265
-segmenter/dictionary@1, ja, 10320776B, 86284c168777fcf1
-segmenter/dictionary@1, th, 1078278B, 56b1112fa508e4b6
+segmenter/dictionary/w_auto@1, ja, 10320776B, 86284c168777fcf1
+segmenter/dictionary/wl_ext@1, th, 1078278B, 56b1112fa508e4b6
 segmenter/grapheme@1, und, 66905B, 445a7c30c1bbfd6d
 segmenter/line@1, und, 154400B, 36dc3e278178555e
-segmenter/lstm@1, th, 361075B, 7cc52fea99e54fcf
+segmenter/lstm/wl_auto@1, th, 361075B, 7cc52fea99e54fcf
 segmenter/sentence@1, und, 108644B, 57c21125cd329c0e
 segmenter/word@1, und, 113449B, 1103532d45a51419
 time_zone/exemplar_cities@1, ar, 12513B, 40d4e7d38c2e9cf5
