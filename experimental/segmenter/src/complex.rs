@@ -55,7 +55,11 @@ impl LstmPayloads {
     ) -> Result<Option<DataPayload<LstmDataV1Marker>>, DataError> {
         match provider.load(DataRequest {
             locale: &DataLocale::from(locale),
-            metadata: Default::default(),
+            metadata: {
+                let m = DataRequestMetadata::default();
+                m.silent = true;
+                m
+            },
         }) {
             Ok(response) => Ok(Some(response.take_payload()?)),
             Err(DataError {
