@@ -42,6 +42,11 @@ pub enum LineBreakRule {
 
     /// Breaks text using the most stringent set of line-breaking rules.
     /// <https://drafts.csswg.org/css-text-3/#valdef-line-break-strict>
+    ///
+    /// This is the default behaviour of the Unicode Line Breaking Algorithm,
+    /// resolving class [CJ](https://www.unicode.org/reports/tr14/#CJ) to
+    /// [NS](https://www.unicode.org/reports/tr14/#NS);
+    /// see rule [LB1](https://www.unicode.org/reports/tr14/#LB1).
     Strict,
 
     /// Breaks text assuming there is a soft wrap opportunity around every
@@ -666,6 +671,10 @@ pub trait LineBreakType<'l, 's> {
 ///
 /// - `'l` = lifetime of the [`LineSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
+///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the break (for a break at the end of text, this index is the length
+/// of the [`str`] or array of code units).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,

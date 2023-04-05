@@ -46,6 +46,10 @@ pub trait RuleBreakType<'l, 's> {
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
 ///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the break (for a break at the end of text, this index is the length
+/// of the [`str`] or array of code units).
+///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
