@@ -1,5 +1,5 @@
-#ifndef ICU4XDisplayNamesOptions_H
-#define ICU4XDisplayNamesOptions_H
+#ifndef ICU4XDisplayNamesOptionsV1_H
+#define ICU4XDisplayNamesOptionsV1_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -13,11 +13,11 @@
 namespace capi {
 #endif
 
-typedef struct ICU4XDisplayNamesOptions {
+typedef struct ICU4XDisplayNamesOptionsV1 {
     ICU4XDisplayNamesStyle style;
     ICU4XDisplayNamesFallback fallback;
     ICU4XLanguageDisplay language_display;
-} ICU4XDisplayNamesOptions;
+} ICU4XDisplayNamesOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -29,7 +29,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XDisplayNamesOptions_destroy(ICU4XDisplayNamesOptions* self);
+void ICU4XDisplayNamesOptionsV1_destroy(ICU4XDisplayNamesOptionsV1* self);
 
 #ifdef __cplusplus
 } // extern "C"

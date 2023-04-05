@@ -5,25 +5,25 @@
 
     An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 
-    See the `Rust documentation for properties <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html>`__ for more information.
+    See the `Rust documentation for properties <https://docs.rs/icu/latest/icu/properties/index.html>`__ for more information.
 
-    See the `Rust documentation for UnicodeSetData <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetData.html>`__ for more information.
+    See the `Rust documentation for UnicodeSetData <https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html>`__ for more information.
 
-    See the `Rust documentation for UnicodeSetDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html>`__ for more information.
+    See the `Rust documentation for UnicodeSetDataBorrowed <https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html>`__ for more information.
 
 
     .. cpp:function:: bool contains(const std::string_view s) const
 
         Checks whether the string is in the set.
 
-        See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains>`__ for more information.
+        See the `Rust documentation for contains <https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains>`__ for more information.
 
 
     .. cpp:function:: bool contains_char(char32_t cp) const
 
         Checks whether the code point is in the set.
 
-        See the `Rust documentation for contains_char <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char>`__ for more information.
+        See the `Rust documentation for contains_char <https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char>`__ for more information.
 
 
     .. cpp:function:: bool contains32(uint32_t cp) const
@@ -33,30 +33,30 @@
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_basic_emoji(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for load_basic_emoji <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html>`__ for more information.
+        See the `Rust documentation for load_basic_emoji <https://docs.rs/icu/latest/icu/properties/sets/fn.load_basic_emoji.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_main(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_main <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html>`__ for more information.
+        See the `Rust documentation for load_exemplars_main <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_main.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_auxiliary(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_auxiliary <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html>`__ for more information.
+        See the `Rust documentation for load_exemplars_auxiliary <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_punctuation(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_punctuation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html>`__ for more information.
+        See the `Rust documentation for load_exemplars_punctuation <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_numbers(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_numbers <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html>`__ for more information.
+        See the `Rust documentation for load_exemplars_numbers <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XUnicodeSetData, ICU4XError> load_exemplars_index(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        See the `Rust documentation for load_exemplars_index <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html>`__ for more information.
+        See the `Rust documentation for load_exemplars_index <https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_index.html>`__ for more information.
 

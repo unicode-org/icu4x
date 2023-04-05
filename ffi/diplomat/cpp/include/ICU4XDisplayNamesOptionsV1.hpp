@@ -1,5 +1,5 @@
-#ifndef ICU4XDisplayNamesOptions_HPP
-#define ICU4XDisplayNamesOptions_HPP
+#ifndef ICU4XDisplayNamesOptionsV1_HPP
+#define ICU4XDisplayNamesOptionsV1_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,7 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XDisplayNamesOptions.h"
+#include "ICU4XDisplayNamesOptionsV1.h"
 
 #include "ICU4XDisplayNamesStyle.hpp"
 #include "ICU4XDisplayNamesFallback.hpp"
@@ -19,9 +19,9 @@
 /**
  * 
  * 
- * See the [Rust documentation for `DisplayNamesOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
  */
-struct ICU4XDisplayNamesOptions {
+struct ICU4XDisplayNamesOptionsV1 {
  public:
 
   /**

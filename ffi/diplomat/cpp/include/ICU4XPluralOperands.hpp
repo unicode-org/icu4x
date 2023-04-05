@@ -26,7 +26,7 @@ struct ICU4XPluralOperandsDeleter {
 /**
  * FFI version of `PluralOperands`.
  * 
- * See the [Rust documentation for `PluralOperands`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html) for more information.
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
  */
 class ICU4XPluralOperands {
  public:
@@ -34,7 +34,7 @@ class ICU4XPluralOperands {
   /**
    * Construct for a given string representing a number
    * 
-   * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+   * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s);
   inline const capi::ICU4XPluralOperands* AsFFI() const { return this->inner.get(); }

@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::*;
+use crate::indices::Utf16Indices;
 use crate::provider::*;
-use crate::{indices::Utf16Indices, SegmenterError};
+use core::convert::Infallible;
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
@@ -143,10 +144,10 @@ pub struct DictionarySegmenter<'l> {
 }
 
 impl<'l> DictionarySegmenter<'l> {
-    pub fn try_new_unstable(
+    pub fn try_new(
         payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
         grapheme: &'l RuleBreakDataV1<'l>,
-    ) -> Result<Self, SegmenterError> {
+    ) -> Result<Self, Infallible> {
         // TODO: no way to verify trie data
         Ok(Self { payload, grapheme })
     }
@@ -235,7 +236,7 @@ mod tests {
         let word_segmenter =
             WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         let dict_segmenter =
-            DictionarySegmenter::try_new_unstable(&dict_payload, grph_payload.get()).unwrap();
+            DictionarySegmenter::try_new(&dict_payload, grph_payload.get()).unwrap();
 
         // Match case
         let s = "龟山岛龟山岛";

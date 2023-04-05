@@ -28,7 +28,7 @@ struct ICU4XScriptWithExtensionsDeleter {
 /**
  * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
  * 
- * See the [Rust documentation for `ScriptWithExtensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
+ * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
  */
 class ICU4XScriptWithExtensions {
  public:
@@ -36,28 +36,28 @@ class ICU4XScriptWithExtensions {
   /**
    * 
    * 
-   * See the [Rust documentation for `load_script_with_extensions_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/fn.load_script_with_extensions_unstable.html) for more information.
+   * See the [Rust documentation for `load_script_with_extensions_unstable`](https://docs.rs/icu/latest/icu/properties/script/fn.load_script_with_extensions_unstable.html) for more information.
    */
   static diplomat::result<ICU4XScriptWithExtensions, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Get the Script property value for a code point
    * 
-   * See the [Rust documentation for `get_script_val`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+   * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
    */
   uint16_t get_script_val(uint32_t code_point) const;
 
   /**
    * Check if the Script_Extensions property of the given code point covers the given script
    * 
-   * See the [Rust documentation for `has_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+   * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
    */
   bool has_script(uint32_t code_point, uint16_t script) const;
 
   /**
    * Borrow this object for a slightly faster variant with more operations
    * 
-   * See the [Rust documentation for `as_borrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+   * See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

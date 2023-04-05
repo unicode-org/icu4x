@@ -7,10 +7,10 @@
 
     This can be used via ``maybe_calculate_metazone()`` on ```ICU4XCustomTimeZone`` <crate::timezone::ffi::ICU4XCustomTimeZone;>`__.
 
-    See the `Rust documentation for MetazoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
+    See the `Rust documentation for MetazoneCalculator <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
 

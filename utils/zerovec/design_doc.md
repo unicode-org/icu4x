@@ -408,26 +408,26 @@ By default, the proc macros work the same. However, it is possible to specify `#
 
 With some elbow grease this technique can even be used to bitpack the discriminant of dataful enums, though in such a case the bit size of every field would need to be known, and the "generate structs and unions" technique cannot work anymore.
 
- [`ZeroVec`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/enum.ZeroVec.html
- [`VarZeroVec`]: https://unicode-org.github.io/icu4x-docs/doc/varzerovec/enum.VarZeroVec.html
- [`VarZeroSlice`]: https://unicode-org.github.io/icu4x-docs/doc/varzerovec/struct.VarZeroSlice.html
- [`ZeroSlice`]: https://unicode-org.github.io/icu4x-docs/doc/struct.ZeroSlice.html
- [`VarZeroVecOwned`]: https://unicode-org.github.io/icu4x-docs/doc/varzerovec/struct.VarZeroVecOwned.html
- [`ZeroMap`]: https://unicode-org.github.io/icu4x-docs/doc/map/struct.ZeroMap.html
- [`ZeroMap2d`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/map2d/struct.ZeroMap2d.html
- [`ZeroMapBorrowed`]: https://unicode-org.github.io/icu4x-docs/doc/map/struct.ZeroMapBorrowed.html
+ [`ZeroVec`]: https://unicode-org.github.io/icu4x/docs/zerovec/enum.ZeroVec.html
+ [`VarZeroVec`]: https://unicode-org.github.io/icu4x/docs/varzerovec/enum.VarZeroVec.html
+ [`VarZeroSlice`]: https://unicode-org.github.io/icu4x/docs/varzerovec/struct.VarZeroSlice.html
+ [`ZeroSlice`]: https://unicode-org.github.io/icu4x/docs/struct.ZeroSlice.html
+ [`VarZeroVecOwned`]: https://unicode-org.github.io/icu4x/docs/varzerovec/struct.VarZeroVecOwned.html
+ [`ZeroMap`]: https://unicode-org.github.io/icu4x/docs/map/struct.ZeroMap.html
+ [`ZeroMap2d`]: https://unicode-org.github.io/icu4x/docs/zerovec/map2d/struct.ZeroMap2d.html
+ [`ZeroMapBorrowed`]: https://unicode-org.github.io/icu4x/docs/map/struct.ZeroMapBorrowed.html
  [`LiteMap`]: https://docs.rs/litemap/latest/litemap/struct.LiteMap.html
- [`ZeroVec::parse_byte_slice()`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/enum.ZeroVec.html#method.parse_byte_slice
+ [`ZeroVec::parse_byte_slice()`]: https://unicode-org.github.io/icu4x/docs/zerovec/enum.ZeroVec.html#method.parse_byte_slice
  [`ZeroVec::get()`]: https://docs.rs/zerovec/latest/zerovec/enum.ZeroVec.html#method.get
- [`RawBytesULE`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/ule/struct.RawBytesULE.html
- [`AsULE`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/ule/trait.AsULE.html
- [`ULE`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/ule/trait.ULE.html
- [`VarULE`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/ule/trait.VarULE.html
- [`EncodeAsVarULE`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/ule/custom/trait.EncodeAsVarULE.html
- [`ZeroMapKV`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/map/trait.ZeroMapKV.html
- [`MutableZeroVecLike`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/map/trait.MutableZeroVecLike.html
- [`ZeroVecLike`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/map/trait.ZeroVecLike.html
- [`BorrowedZeroVecLike`]: https://unicode-org.github.io/icu4x-docs/doc/zerovec/map/trait.BorrowedZeroVecLike.html
+ [`RawBytesULE`]: https://unicode-org.github.io/icu4x/docs/zerovec/ule/struct.RawBytesULE.html
+ [`AsULE`]: https://unicode-org.github.io/icu4x/docs/zerovec/ule/trait.AsULE.html
+ [`ULE`]: https://unicode-org.github.io/icu4x/docs/zerovec/ule/trait.ULE.html
+ [`VarULE`]: https://unicode-org.github.io/icu4x/docs/zerovec/ule/trait.VarULE.html
+ [`EncodeAsVarULE`]: https://unicode-org.github.io/icu4x/docs/zerovec/ule/custom/trait.EncodeAsVarULE.html
+ [`ZeroMapKV`]: https://unicode-org.github.io/icu4x/docs/zerovec/map/trait.ZeroMapKV.html
+ [`MutableZeroVecLike`]: https://unicode-org.github.io/icu4x/docs/zerovec/map/trait.MutableZeroVecLike.html
+ [`ZeroVecLike`]: https://unicode-org.github.io/icu4x/docs/zerovec/map/trait.ZeroVecLike.html
+ [`BorrowedZeroVecLike`]: https://unicode-org.github.io/icu4x/docs/zerovec/map/trait.BorrowedZeroVecLike.html
 
 
 

@@ -5,7 +5,7 @@ import { FFIError } from "./diplomat-runtime"
 
  * An object that represents the Script_Extensions property for a single character
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html Rust documentation for `ScriptExtensionsSet`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html Rust documentation for `ScriptExtensionsSet`} for more information.
  */
 export class ICU4XScriptExtensionsSet {
 
@@ -13,7 +13,7 @@ export class ICU4XScriptExtensionsSet {
 
    * Check if the Script_Extensions property of the given code point covers the given script
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains Rust documentation for `contains`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains Rust documentation for `contains`} for more information.
    */
   contains(script: u16): boolean;
 
@@ -21,7 +21,7 @@ export class ICU4XScriptExtensionsSet {
 
    * Get the number of scripts contained in here
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
    */
   count(): usize;
 
@@ -29,7 +29,7 @@ export class ICU4XScriptExtensionsSet {
 
    * Get script at index, returning an error if out of bounds
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
    * @throws {@link FFIError}<void>
    */
   script_at(index: usize): u16 | never;

@@ -26,7 +26,7 @@ pub mod ffi {
 
     //  FFI version of `DisplayNamesOptions`.
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
-    pub struct ICU4XDisplayNamesOptions {
+    pub struct ICU4XDisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: ICU4XDisplayNamesStyle,
         /// The fallback return when the system does not have the
@@ -71,7 +71,7 @@ pub mod ffi {
         pub fn try_new_unstable(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            options: ICU4XDisplayNamesOptions,
+            options: ICU4XDisplayNamesOptionsV1,
         ) -> Result<Box<ICU4XLanguageDisplayNames>, ICU4XError> {
             let locale = locale.to_datalocale();
             let options = DisplayNamesOptions::from(options);
@@ -130,8 +130,8 @@ impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
     }
 }
 
-impl From<ffi::ICU4XDisplayNamesOptions> for DisplayNamesOptions {
-    fn from(other: ffi::ICU4XDisplayNamesOptions) -> DisplayNamesOptions {
+impl From<ffi::ICU4XDisplayNamesOptionsV1> for DisplayNamesOptions {
+    fn from(other: ffi::ICU4XDisplayNamesOptionsV1) -> DisplayNamesOptions {
         let mut options = DisplayNamesOptions::default();
         options.style = other.style.into();
         options.fallback = other.fallback.into();

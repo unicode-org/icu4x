@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `LanguageDisplay`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
  */
 enum struct ICU4XLanguageDisplay {
   Dialect = 0,
