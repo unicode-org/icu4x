@@ -79,7 +79,7 @@ where
 }
 
 /// The type of the "cart" that is used by `DataPayload`.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
 pub struct Cart(SelectedRc<Box<[u8]>>);
 

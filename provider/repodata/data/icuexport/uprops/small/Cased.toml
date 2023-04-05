@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Cased"
 short_name = "Cased"
+uproperty_discr = 0x31
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x41, 0x5a],

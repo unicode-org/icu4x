@@ -6,6 +6,8 @@
 #include "../../include/ICU4XUnicodeSetData.hpp"
 #include "../../include/ICU4XCodePointMapData16.hpp"
 #include "../../include/ICU4XCodePointMapData8.hpp"
+#include "../../include/ICU4XPropertyValueNameToEnumMapper.hpp"
+#include "../../include/ICU4XGeneralCategoryNameToMaskMapper.hpp"
 #include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
@@ -139,6 +141,72 @@ int main() {
         return result;
     } else {
         std::cout << "Bangla exemplar chars set contains appropriate characters" << std::endl;
+    }
+
+
+    ICU4XPropertyValueNameToEnumMapper mapper = ICU4XPropertyValueNameToEnumMapper::load_script(dp).ok().value();
+    int32_t script = mapper.get_strict("Brah");
+    if (script != 65) {
+        std::cout << "Expected discriminant 64 for script name `Brah`, found " << script << std::endl;
+        result = 1;
+    }
+    script = mapper.get_strict("Brahmi");
+    if (script != 65) {
+        std::cout << "Expected discriminant 64 for script name `Brahmi`, found " << script << std::endl;
+        result = 1;
+    }
+    script = mapper.get_loose("brah");
+    if (script != 65) {
+        std::cout << "Expected discriminant 64 for (loose matched) script name `brah`, found " << script << std::endl;
+        result = 1;
+    }
+    script = mapper.get_strict("Linear_Z");
+    if (script != -1) {
+        std::cout << "Expected no value for fake script name `Linear_Z`, found " << script << std::endl;
+        result = 1;
+    }
+    if (result != 0) {
+        return result;
+    } else {
+        std::cout << "Script name mapper returns correct values" << std::endl;
+    }
+
+    ICU4XGeneralCategoryNameToMaskMapper mask_mapper = ICU4XGeneralCategoryNameToMaskMapper::load(dp).ok().value();
+    int32_t mask = mask_mapper.get_strict("Lu");
+    if (mask != 0x02) {
+        std::cout << "Expected discriminant 0x02 for mask name `Lu`, found " << mask << std::endl;
+        result = 1;
+    }
+    mask = mask_mapper.get_strict("L");
+    if (mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Lu`, found " << mask << std::endl;
+        result = 1;
+    }
+    mask = mask_mapper.get_strict("Letter");
+    if (mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `Letter`, found " << mask << std::endl;
+        result = 1;
+    }
+    mask = mask_mapper.get_loose("l");
+    if (mask != 0x3e) {
+        std::cout << "Expected discriminant 0x3e for mask name `l`, found " << mask << std::endl;
+        result = 1;
+    }
+    mask = mask_mapper.get_strict("letter");
+    if (mask != 0) {
+        std::cout << "Expected no mask for (strict matched) name `letter`, found " << mask << std::endl;
+        result = 1;
+    }
+    mask = mask_mapper.get_strict("EverythingLol");
+    if (mask != 0) {
+        std::cout << "Expected no mask for nonexistant name `EverythingLol`, found " << mask << std::endl;
+        result = 1;
+    }
+
+    if (result != 0) {
+        return result;
+    } else {
+        std::cout << "Mask name mapper returns correct values" << std::endl;
     }
     return 0;
 }

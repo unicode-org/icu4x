@@ -358,7 +358,8 @@
         },
         "cafne": {
           "_description": "Fort Nelson, Canada",
-          "_alias": "America/Fort_Nelson"
+          "_alias": "America/Fort_Nelson",
+          "_since": "29"
         },
         "caglb": {
           "_description": "Glace Bay, Canada",
@@ -383,7 +384,7 @@
         "camtr": {
           "_deprecated": true,
           "_description": "Montreal, Canada",
-          "_alias": "America/Montreal"
+          "_preferred": "cator"
         },
         "canpg": {
           "_description": "Nipigon, Canada",
@@ -411,7 +412,7 @@
         },
         "cator": {
           "_description": "Toronto, Canada",
-          "_alias": "America/Toronto Canada/Eastern"
+          "_alias": "America/Toronto America/Montreal Canada/Eastern"
         },
         "cavan": {
           "_description": "Vancouver, Canada",
@@ -692,7 +693,8 @@
         },
         "gazastrp": {
           "_description": "Gaza Strip, Palestinian Territories",
-          "_alias": "Asia/Gaza"
+          "_alias": "Asia/Gaza",
+          "_since": "40"
         },
         "gblon": {
           "_description": "London, United Kingdom",
@@ -744,7 +746,8 @@
         },
         "gmt": {
           "_description": "Greenwich Mean Time",
-          "_alias": "Etc/GMT Etc/GMT+0 Etc/GMT-0 Etc/GMT0 Etc/Greenwich GMT GMT+0 GMT-0 GMT0 Greenwich"
+          "_alias": "Etc/GMT Etc/GMT+0 Etc/GMT-0 Etc/GMT0 Etc/Greenwich GMT GMT+0 GMT-0 GMT0 Greenwich",
+          "_since": "31"
         },
         "gncky": {
           "_description": "Conakry, Guinea",
@@ -1101,6 +1104,11 @@
         "mxchi": {
           "_description": "Chihuahua, Mexico",
           "_alias": "America/Chihuahua"
+        },
+        "mxcjs": {
+          "_description": "Ciudad Juárez, Mexico",
+          "_alias": "America/Ciudad_Juarez",
+          "_since": "43"
         },
         "mxcun": {
           "_description": "Cancún, Mexico",
@@ -1558,7 +1566,7 @@
           "_alias": "Pacific/Tongatapu"
         },
         "trist": {
-          "_description": "Istanbul, Turkey",
+          "_description": "Istanbul, Türkiye",
           "_alias": "Europe/Istanbul Asia/Istanbul Turkey"
         },
         "ttpos": {

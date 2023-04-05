@@ -76,7 +76,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 // This is a build tool with many invariants being enforced
@@ -96,6 +96,7 @@ mod native;
 ///
 /// There is currently only one variant, but more may be added in the future.
 #[non_exhaustive]
+#[derive(Debug)]
 pub enum CodePointTrieBuilderData<'a, T> {
     /// A list of values for each code point, starting from code point 0.
     ///
@@ -106,6 +107,7 @@ pub enum CodePointTrieBuilderData<'a, T> {
 
 /// Settings for building a CodePointTrie.
 #[allow(clippy::exhaustive_structs)]
+#[derive(Debug)]
 pub struct CodePointTrieBuilder<'a, T> {
     /// The data to be encoded.
     pub data: CodePointTrieBuilderData<'a, T>,
@@ -149,6 +151,7 @@ where
 }
 
 #[test]
+#[cfg(any(feature = "wasm", feature = "icu4c"))]
 fn test_cpt_builder() {
     // Buckets of ten characters for 0 to 100, and then some default values, and then heterogenous "last hex digit" for 0x100 to 0x200
     let values: Vec<u32> = (0..100)

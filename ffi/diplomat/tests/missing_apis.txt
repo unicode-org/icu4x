@@ -14,20 +14,28 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
+icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_mirroring_props#FnInStruct
+icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed::get32_pairing_props#FnInStruct
+icu::properties::bidi_data::BidiMirroringProperties#Struct
+icu::properties::bidi_data::BidiPairingProperties#Enum
+icu::properties::bidi_data::load_bidi_auxiliary_properties_unstable#Fn
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapper#Struct
-icu::properties::names::PropertyValueNameToEnumMapper::as_borrowed#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapper::from_data#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed#Struct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_loose_u16#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict#FnInStruct
-icu::properties::names::PropertyValueNameToEnumMapperBorrowed::get_strict_u16#FnInStruct
+icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented#FnInStruct
+icu::properties::names::PropertyEnumToValueNameMapper#Struct
+icu::properties::names::PropertyEnumToValueNameMapper::as_borrowed#FnInStruct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed#Struct
+icu::properties::names::PropertyEnumToValueNameMapperBorrowed::get#FnInStruct
 icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges#FnInStruct
+icu::properties::sets::CodePointSetDataBorrowed::iter_ranges_complemented#FnInStruct
 icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list#FnInStruct
 icu::properties::sets::UnicodeSetData::from_data#FnInStruct
 icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list#FnInStruct
+icu::segmenter::RuleStatusType#Enum

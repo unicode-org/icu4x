@@ -4,151 +4,217 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::lstm_error::Error;
-use crate::math_helper;
-use crate::provider::{LstmDataV1Marker, RuleBreakDataV1};
-use alloc::string::String;
+use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
+use crate::provider::{LstmDataV1, RuleBreakDataV1};
+use alloc::boxed::Box;
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::str;
-use icu_provider::DataPayload;
-use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
 use zerovec::ule::AsULE;
 
+// Polyfill float operations with libm in case we're no_std.
+#[allow(unused_imports)]
+use num_traits::Float;
+
 pub struct Lstm<'l> {
-    data: &'l DataPayload<LstmDataV1Marker>,
-    mat1: Array2<f32>,
-    mat2: Array2<f32>,
-    mat3: Array2<f32>,
-    mat4: Array1<f32>,
-    mat5: Array2<f32>,
-    mat6: Array2<f32>,
-    mat7: Array1<f32>,
-    mat8: Array2<f32>,
-    mat9: Array1<f32>,
+    data: &'l LstmDataV1<'l>,
+    embedding: MatrixZero<'l, 2>,
+    fw_w: MatrixZero<'l, 3>,
+    fw_u: MatrixZero<'l, 3>,
+    fw_b: MatrixZero<'l, 2>,
+    bw_w: MatrixZero<'l, 3>,
+    bw_u: MatrixZero<'l, 3>,
+    bw_b: MatrixZero<'l, 2>,
+    time_w: MatrixZero<'l, 3>,
+    time_b: MatrixZero<'l, 1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
     hunits: usize,
-    backward_hunits: usize,
+}
+
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Bies {
+    B,
+    I,
+    E,
+    S,
+}
+
+#[cfg(test)]
+impl Bies {
+    fn as_char(&self) -> char {
+        match self {
+            Bies::B => 'b',
+            Bies::I => 'i',
+            Bies::E => 'e',
+            Bies::S => 's',
+        }
+    }
 }
 
 impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
     pub fn try_new(
-        data: &'l DataPayload<LstmDataV1Marker>,
+        data: &'l LstmDataV1<'l>,
         grapheme: Option<&'l RuleBreakDataV1<'l>>,
     ) -> Result<Self, Error> {
-        if data.get().dic.len() > core::i16::MAX as usize {
+        if data.dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
 
-        if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
-        {
+        if !data.model.contains("_codepoints_") && !data.model.contains("_graphclust_") {
             return Err(Error::Syntax);
         }
 
-        if data.get().model.contains("_graphclust_") && grapheme.is_none() {
+        if data.model.contains("_graphclust_") && grapheme.is_none() {
             // grapheme cluster model requires grapheme cluster data.
             return Err(Error::Syntax);
         }
 
-        let mat1 = data.get().mat1.as_ndarray2()?;
-        let mat2 = data.get().mat2.as_ndarray2()?;
-        let mat3 = data.get().mat3.as_ndarray2()?;
-        let mat4 = data.get().mat4.as_ndarray1()?;
-        let mat5 = data.get().mat5.as_ndarray2()?;
-        let mat6 = data.get().mat6.as_ndarray2()?;
-        let mat7 = data.get().mat7.as_ndarray1()?;
-        let mat8 = data.get().mat8.as_ndarray2()?;
-        let mat9 = data.get().mat9.as_ndarray1()?;
-        let embedd_dim = *mat1.shape().get(1).ok_or(Error::DimensionMismatch)?;
-        let hunits = *mat3.shape().first().ok_or(Error::DimensionMismatch)?;
-        let backward_hunits = *mat6.shape().first().ok_or(Error::DimensionMismatch)?;
-        if mat2.shape() != [embedd_dim, 4 * hunits]
-            || mat3.shape() != [hunits, 4 * hunits]
-            || mat4.shape() != [4 * hunits]
-            || mat5.shape() != [embedd_dim, 4 * hunits]
-            || mat6.shape() != [hunits, 4 * hunits]
-            || mat7.shape() != [4 * hunits]
-            || mat8.shape() != [2 * hunits, 4]
-            || mat9.shape() != [4]
+        #[cfg(debug_assertions)]
+        for &unaligned in data.dic.iter_values() {
+            if i16::from_unaligned(unaligned) as usize >= data.dic.len() {
+                return Err(Error::DimensionMismatch);
+            }
+        }
+
+        let embedding = data.embedding.as_matrix_zero::<2>()?;
+        let fw_w = data.fw_w.as_matrix_zero::<3>()?;
+        let fw_u = data.fw_u.as_matrix_zero::<3>()?;
+        let fw_b = data.fw_b.as_matrix_zero::<2>()?;
+        let bw_w = data.bw_w.as_matrix_zero::<3>()?;
+        let bw_u = data.bw_u.as_matrix_zero::<3>()?;
+        let bw_b = data.bw_b.as_matrix_zero::<2>()?;
+        let time_w = data.time_w.as_matrix_zero::<3>()?;
+        let time_b = data.time_b.as_matrix_zero::<1>()?;
+        let embedd_dim = embedding.dim().1;
+        let hunits = fw_u.dim().0;
+        if embedding.dim() != (data.dic.len() + 1, embedd_dim)
+            || fw_w.dim() != (hunits, 4, embedd_dim)
+            || fw_u.dim() != (hunits, 4, hunits)
+            || fw_b.dim() != (hunits, 4)
+            || bw_w.dim() != (hunits, 4, embedd_dim)
+            || bw_u.dim() != (hunits, 4, hunits)
+            || bw_b.dim() != (hunits, 4)
+            || time_w.dim() != (2, 4, hunits)
+            || time_b.dim() != (4)
         {
             return Err(Error::DimensionMismatch);
         }
+
         Ok(Self {
             data,
-            mat1,
-            mat2,
-            mat3,
-            mat4,
-            mat5,
-            mat6,
-            mat7,
-            mat8,
-            mat9,
-            grapheme: if data.get().model.contains("_codepoints_") {
+            embedding,
+            fw_w,
+            fw_u,
+            fw_b,
+            bw_w,
+            bw_u,
+            bw_b,
+            time_w,
+            time_b,
+            grapheme: if data.model.contains("_codepoints_") {
                 None
             } else {
                 grapheme
             },
             hunits,
-            backward_hunits,
         })
     }
 
     /// `get_model_name` returns the name of the LSTM model.
     #[allow(dead_code)]
     pub fn get_model_name(&self) -> &str {
-        &self.data.get().model
+        &self.data.model
+    }
+
+    #[cfg(test)]
+    fn embedding_type(&self) -> &'static str {
+        if self.grapheme.is_some() {
+            "grapheme"
+        } else {
+            "codepoints"
+        }
     }
 
     // TODO(#421): Use common BIES normalizer code
     /// `compute_bies` uses the computed probabilities of BIES and pick the letter with the largest probability
-    fn compute_bies(&self, arr: Array1<f32>) -> Result<char, Error> {
-        let ind = math_helper::max_arr1(arr.view());
-        match ind {
-            0 => Ok('b'),
-            1 => Ok('i'),
-            2 => Ok('e'),
-            3 => Ok('s'),
-            _ => Err(Error::Syntax),
+    fn compute_bies(&self, arr: [f32; 4]) -> Bies {
+        let [b, i, e, s] = arr;
+        let mut result = Bies::B;
+        let mut max = b;
+        if i > max {
+            result = Bies::I;
+            max = i;
         }
+        if e > max {
+            result = Bies::E;
+            max = e;
+        }
+        if s > max {
+            result = Bies::S;
+            // max = s;
+        }
+        result
     }
 
     /// `_return_id` returns the id corresponding to a code point or a grapheme cluster based on the model dictionary.
     fn return_id(&self, g: &str) -> i16 {
-        let id = self.data.get().dic.get(g);
+        let id = self.data.dic.get(g);
         if let Some(id) = id {
             i16::from_unaligned(*id)
         } else {
-            self.data.get().dic.len() as i16
+            self.data.dic.len() as i16
         }
     }
 
     /// `compute_hc1` implemens the evaluation of one LSTM layer.
-    #[allow(clippy::too_many_arguments)]
-    fn compute_hc(
+    fn compute_hc<'a>(
         &self,
-        x_t: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-        h_tm1: &Array1<f32>,
-        c_tm1: &Array1<f32>,
-        warr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        uarr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
-        barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
-        hunits: usize,
-    ) -> (Array1<f32>, Array1<f32>) {
-        // i, f, and o respectively stand for input, forget, and output gates
-        let s_t = x_t.dot(&warr) + h_tm1.dot(&uarr) + barr;
-        let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
-        let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
-        let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
-        let o = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![3 * hunits..]));
-        let c_t = i * _c + f * c_tm1;
-        let h_t = o * math_helper::tanh_arr1(c_t.view());
-        (h_t, c_t)
+        x_t: MatrixZero<'a, 1>,
+        mut h_tm1: MatrixBorrowedMut<'a, 1>,
+        mut c_tm1: MatrixBorrowedMut<'a, 1>,
+        w: MatrixZero<'a, 3>,
+        u: MatrixZero<'a, 3>,
+        b: MatrixZero<'a, 2>,
+    ) {
+        #[cfg(debug_assertions)]
+        {
+            let embedd_dim = x_t.dim();
+            h_tm1.as_borrowed().debug_assert_dims([self.hunits]);
+            c_tm1.as_borrowed().debug_assert_dims([self.hunits]);
+            w.debug_assert_dims([self.hunits, 4, embedd_dim]);
+            u.debug_assert_dims([self.hunits, 4, self.hunits]);
+            b.debug_assert_dims([self.hunits, 4]);
+        }
+
+        let mut s_t = b.to_owned();
+
+        s_t.as_mut().add_dot_3d_2(x_t, w);
+        s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
+
+        #[allow(clippy::unwrap_used)]
+        for i in 0..self.hunits {
+            let [s0, s1, s2, s3] = s_t
+                .as_borrowed()
+                .submatrix::<1>(i)
+                .unwrap()
+                .read_4()
+                .unwrap(); // shape (hunits, 4)
+            let p = math_helper::sigmoid(s0);
+            let f = math_helper::sigmoid(s1);
+            let c = math_helper::tanh(s2);
+            let o = math_helper::sigmoid(s3);
+            let c_old = c_tm1.as_borrowed().as_slice().get(i).unwrap(); // shape (h_units)
+            let c_new = p.mul_add(c, f * c_old);
+            *c_tm1.as_mut_slice().get_mut(i).unwrap() = c_new; // shape (h_units)
+            *h_tm1.as_mut_slice().get_mut(i).unwrap() = o * math_helper::tanh(c_new);
+            // shape (hunits)
+        }
     }
 
     /// `word_segmenter` is a function that gets a "clean" unsegmented string as its input and returns a BIES (B: Beginning, I: Inside, E: End,
     /// S: Single) sequence for grapheme clusters. The boundaries of words can be found easily using this BIES sequence.
-    pub fn word_segmenter(&self, input: &str) -> String {
+    pub fn word_segmenter(&self, input: &str) -> Box<[Bies]> {
         // input_seq is a sequence of id numbers that represents grapheme clusters or code points in the input line. These ids are used later
         // in the embedding layer of the model.
         // Already checked that the name of the model is either "codepoints" or "graphclsut"
@@ -172,72 +238,81 @@ impl<'l> Lstm<'l> {
                 .collect()
         };
 
-        // x_data is the data ready to be feed into the model
-        let input_seq_len = input_seq.len();
-
-        // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.hunits;
         // Forward LSTM
-        let mut c_fw = Array1::<f32>::zeros(hunits);
-        let mut h_fw = Array1::<f32>::zeros(hunits);
-        let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
-        for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
-            let (new_h, new_c) = self.compute_hc(
+        let mut c_fw = MatrixOwned::<1>::new_zero([self.hunits]);
+        let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
+        for (i, &g_id) in input_seq.iter().enumerate() {
+            #[allow(clippy::unwrap_used)]
+            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
+            if i > 0 {
+                all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
+            }
+            #[allow(clippy::unwrap_used)]
+            self.compute_hc(
                 x_t,
-                &h_fw,
-                &c_fw,
-                self.mat2.view(),
-                self.mat3.view(),
-                self.mat4.view(),
-                hunits,
+                all_h_fw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
+                c_fw.as_mut(),
+                self.fw_w,
+                self.fw_u,
+                self.fw_b,
             );
-            h_fw = new_h;
-            c_fw = new_c;
-            all_h_fw = math_helper::change_row(all_h_fw, i, &h_fw);
         }
 
         // Backward LSTM
-        let mut c_bw = Array1::<f32>::zeros(hunits);
-        let mut h_bw = Array1::<f32>::zeros(hunits);
-        let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
-        for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
-            let (new_h, new_c) = self.compute_hc(
+        let mut c_bw = MatrixOwned::<1>::new_zero([self.hunits]);
+        let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq.len(), self.hunits]);
+        for (i, &g_id) in input_seq.iter().enumerate().rev() {
+            #[allow(clippy::unwrap_used)]
+            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
+            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
+            if i + 1 < input_seq.len() {
+                all_h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
+            }
+            #[allow(clippy::unwrap_used)]
+            self.compute_hc(
                 x_t,
-                &h_bw,
-                &c_bw,
-                self.mat5.view(),
-                self.mat6.view(),
-                self.mat7.view(),
-                self.backward_hunits,
+                all_h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
+                c_bw.as_mut(),
+                self.bw_w,
+                self.bw_u,
+                self.bw_b,
             );
-            h_bw = new_h;
-            c_bw = new_c;
-            all_h_bw = math_helper::change_row(all_h_bw, input_seq_len - 1 - i, &h_bw);
         }
 
+        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        let timew_fw = self.time_w.submatrix(0).unwrap();
+        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        let timew_bw = self.time_w.submatrix(1).unwrap();
+
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let timew = self.mat8.view();
-        let timeb = self.mat9.view();
-        let mut bies = String::new();
-        for i in 0..input_seq_len {
-            let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
-            let curr_bw = all_h_bw.slice(ndarray::s![i, ..]);
-            let concat_lstm = math_helper::concatenate_arr1(curr_fw, curr_bw);
-            let curr_est = concat_lstm.dot(&timew) + timeb;
-            let probs = math_helper::softmax(curr_est);
-            // We use `unwrap_or` to fall back and prevent panics.
-            bies.push(self.compute_bies(probs).unwrap_or('s'));
-        }
-        bies
+        (0..input_seq.len())
+            .map(|i| {
+                #[allow(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
+                let curr_fw = all_h_fw.submatrix::<1>(i).unwrap();
+                #[allow(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
+                let curr_bw = all_h_bw.submatrix::<1>(i).unwrap();
+                let mut weights = [0.0; 4];
+                let mut curr_est = MatrixBorrowedMut {
+                    data: &mut weights,
+                    dims: [4],
+                };
+                curr_est.add_dot_2d(curr_fw, timew_fw);
+                curr_est.add_dot_2d(curr_bw, timew_bw);
+                #[allow(clippy::unwrap_used)] // both shape (4)
+                curr_est.add(self.time_b).unwrap();
+                curr_est.softmax_transform();
+                self.compute_bies(weights)
+            })
+            .collect()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::provider::GraphemeClusterBreakDataV1Marker;
+    use crate::provider::LstmDataV1Marker;
+    use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
     use std::fs::File;
@@ -270,15 +345,6 @@ mod tests {
         }
     }
 
-    fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
-        DataPayload::from_owned_buffer(
-            std::fs::read(filename)
-                .expect("File can read to end")
-                .into_boxed_slice(),
-        )
-        .map_project(|bytes, _| serde_json::from_slice(bytes).expect("JSON syntax error"))
-    }
-
     fn load_test_text(filename: &str) -> TestTextData {
         let file = File::open(filename).expect("File should be present");
         let reader = BufReader::new(file);
@@ -286,36 +352,22 @@ mod tests {
     }
 
     #[test]
-    fn test_model_loading() {
-        let filename =
-            "tests/testdata/Thai_graphclust_exclusive_model4_heavy/converted_weights.json";
-        let lstm_data = load_lstm_data(filename);
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let lstm = Lstm::try_new(&lstm_data, Some(grapheme.get())).expect("Test data is invalid");
-        assert_eq!(
-            lstm.get_model_name(),
-            "Thai_graphclust_exclusive_model4_heavy"
-        );
-    }
-
-    #[test]
     fn segment_file_by_lstm() {
         // Choosing the embedding system. It can be "graphclust" or "codepoints".
-        let embedding: &str = "codepoints";
-        let mut model_filename = "tests/testdata/Thai_".to_owned();
-        model_filename.push_str(embedding);
-        model_filename.push_str("_exclusive_model4_heavy/weights.json");
-        let lstm_data = load_lstm_data(&model_filename);
-        let lstm = Lstm::try_new(&lstm_data, None).expect("Test data is invalid");
+        let payload: DataPayload<LstmDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &locale!("th").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let lstm = Lstm::try_new(payload.get(), None).expect("Test data is invalid");
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();
-        test_text_filename.push_str(embedding);
+        test_text_filename.push_str(lstm.embedding_type());
         test_text_filename.push_str(".json");
         let test_text_data = load_test_text(&test_text_filename);
         let test_text = TestText::new(test_text_data);
@@ -325,10 +377,13 @@ mod tests {
             let lstm_output = lstm.word_segmenter(&test_case.unseg);
             println!("Test case      : {}", test_case.unseg);
             println!("Expected bies  : {}", test_case.expected_bies);
-            println!("Estimated bies : {lstm_output}");
+            println!("Estimated bies : {lstm_output:?}");
             println!("True bies      : {}", test_case.true_bies);
             println!("****************************************************");
-            assert_eq!(test_case.expected_bies, lstm_output);
+            assert_eq!(
+                test_case.expected_bies,
+                lstm_output.iter().map(Bies::as_char).collect::<String>()
+            );
         }
     }
 }

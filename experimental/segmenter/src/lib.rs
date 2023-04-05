@@ -78,7 +78,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -131,6 +131,8 @@ pub use crate::word::{
 };
 
 pub use crate::rule_segmenter::RuleBreakIterator;
+
+pub use crate::rule_segmenter::RuleStatusType;
 
 pub use error::SegmenterError;
 

@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "es",
         "territory": "AR"
@@ -58,7 +58,6 @@
           "bez": "bena",
           "bfd": "bafut",
           "bg": "búlgaro",
-          "bgc": "bgc",
           "bgn": "baluchi occidental",
           "bho": "bhojpuri",
           "bi": "bislama",
@@ -213,7 +212,6 @@
           "hax": "haida meridional",
           "he": "hebreo",
           "hi": "hindi",
-          "hi-Latn": "hindi (latín)",
           "hi-Latn-alt-variant": "hinglish",
           "hil": "hiligaynon",
           "hit": "hitita",
@@ -306,9 +304,9 @@
           "lez": "lezgiano",
           "lg": "ganda",
           "li": "limburgués",
-          "lij": "lij",
           "lil": "lillooet",
           "lkt": "lakota",
+          "lmo": "lombardo",
           "ln": "lingala",
           "lo": "lao",
           "lol": "mongo",
@@ -553,7 +551,6 @@
           "uz": "uzbeko",
           "vai": "vai",
           "ve": "venda",
-          "vec": "vec",
           "vi": "vietnamita",
           "vo": "volapük",
           "vot": "vótico",

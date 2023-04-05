@@ -63,6 +63,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 /// ```
+#[derive(Debug)]
 pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
 }
@@ -101,6 +102,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 
@@ -120,6 +122,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -136,6 +139,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 
@@ -161,6 +165,7 @@ impl GraphemeClusterSegmenter {
             dictionary: None,
             lstm: None,
             grapheme: None,
+            boundary_property: 0,
         }
     }
 }

@@ -50,6 +50,7 @@ impl std::error::Error for LexerError {}
 /// let lexer = Lexer::new(input);
 /// assert_eq!(lexer.count(), 3);
 /// ```
+#[derive(Debug)]
 pub struct Lexer<'l> {
     chars: &'l [u8],
     ptr: usize,

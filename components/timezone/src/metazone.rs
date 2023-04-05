@@ -14,6 +14,7 @@ use zerovec::ule::AsULE;
 /// [`MetazoneCalculator`] uses data from the [data provider] to calculate metazone id.
 ///
 /// [data provider]: icu_provider
+#[derive(Debug)]
 pub struct MetazoneCalculator {
     pub(super) metazone_period: DataPayload<MetazonePeriodV1Marker>,
 }

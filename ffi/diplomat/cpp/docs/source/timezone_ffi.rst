@@ -268,13 +268,3 @@
 
         Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone>`__
 
-
-.. cpp:class:: ICU4XMetazoneCalculator
-
-    See the `Rust documentation for MetazoneCalculator <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
-
-
-    .. cpp:function:: static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider)
-
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
-

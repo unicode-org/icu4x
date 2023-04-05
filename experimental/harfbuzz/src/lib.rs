@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+// TODO(#3275) Make this no_std again
+//#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
 #![cfg_attr(
     not(test),
     deny(
@@ -13,7 +16,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -25,7 +28,6 @@ mod error;
 
 use crate::error::HarfBuzzError;
 use alloc::boxed::Box;
-use core::ffi::c_void;
 use harfbuzz_sys::*;
 use icu_normalizer::properties::CanonicalCombiningClassMap;
 use icu_normalizer::properties::CanonicalComposition;
@@ -35,10 +37,16 @@ use icu_normalizer::provider::CanonicalCompositionsV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
+use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps::CodePointMapData;
-use icu_properties::provider::GeneralCategoryV1Marker;
-use icu_properties::GeneralCategory;
+use icu_properties::names::PropertyEnumToValueNameMapper;
+use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
+use icu_properties::provider::{
+    GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
+};
+use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
+use std::os::raw::{c_char, c_void};
 
 /// The total number of General Category values is fixed per
 /// https://www.unicode.org/policies/stability_policy.html :
@@ -120,6 +128,55 @@ unsafe extern "C" fn icu4x_hb_unicode_general_category_destroy(user_data: *mut c
     let _ = Box::from_raw(user_data as *mut CodePointMapData<GeneralCategory>);
 }
 
+/// Returns the Bidi_Mirroring_Glyph, but adjusting the return value
+/// to fix HarfBuzz expected behavior for code points whose property value
+/// for Bidi_Mirroring_Glyph is the undefined value.
+///
+/// From HarfBuzz docs on `hb_unicode_mirroring_func_t`:
+/// <note>Note: If a code point does not have a specified
+/// Bi-Directional Mirroring Glyph defined, the method should
+/// return the original code point.</note>
+unsafe extern "C" fn icu4x_hb_unicode_mirroring(
+    _ufuncs: *mut hb_unicode_funcs_t,
+    unicode: hb_codepoint_t,
+    user_data: *mut c_void,
+) -> hb_codepoint_t {
+    (*(user_data as *mut BidiAuxiliaryProperties))
+        .as_borrowed()
+        .get32_mirroring_props(unicode)
+        .mirroring_glyph
+        .map(u32::from)
+        .unwrap_or(unicode) as hb_codepoint_t
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) {
+    let _ = Box::from_raw(user_data as *mut BidiAuxiliaryProperties);
+}
+
+struct ScriptDataForHarfBuzz {
+    script_map: CodePointMapData<Script>,
+    enum_to_name_mapper: PropertyEnumToValueNameMapper<Script>,
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_script(
+    _ufuncs: *mut hb_unicode_funcs_t,
+    unicode: hb_codepoint_t,
+    user_data: *mut c_void,
+) -> hb_script_t {
+    let script_data: &ScriptDataForHarfBuzz = &*(user_data as *mut ScriptDataForHarfBuzz);
+    let script: Script = script_data.script_map.as_borrowed().get32(unicode);
+    let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
+    let name: &str = enum_to_name_mapper.get(script).unwrap_or("Zzzz");
+    hb_script_from_string(
+        name.as_ptr() as *const c_char,
+        name.len().try_into().unwrap_or(0),
+    )
+}
+
+unsafe extern "C" fn icu4x_hb_unicode_script_destroy(user_data: *mut c_void) {
+    let _ = Box::from_raw(user_data as *mut ScriptDataForHarfBuzz);
+}
+
 unsafe extern "C" fn icu4x_hb_unicode_compose(
     _ufuncs: *mut hb_unicode_funcs_t,
     a: hb_codepoint_t,
@@ -199,6 +256,7 @@ unsafe extern "C" fn icu4x_hb_unicode_decompose_destroy(user_data: *mut c_void) 
 }
 
 /// RAII holder for `*mut hb_unicode_funcs_t`.
+#[derive(Debug)]
 pub struct UnicodeFuncs {
     raw: *mut hb_unicode_funcs_t,
 }
@@ -251,11 +309,14 @@ impl Drop for UnicodeFuncs {
 // are violated in principle.
 pub fn new_hb_unicode_funcs_unstable<D>(data_provider: &D) -> Result<UnicodeFuncs, HarfBuzzError>
 where
-    D: DataProvider<CanonicalCompositionsV1Marker>
+    D: DataProvider<BidiAuxiliaryPropertiesV1Marker>
+        + DataProvider<CanonicalCompositionsV1Marker>
         + DataProvider<CanonicalDecompositionDataV1Marker>
         + DataProvider<CanonicalDecompositionTablesV1Marker>
         + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptValueToShortNameV1Marker>
+        + DataProvider<ScriptV1Marker>
         + ?Sized,
 {
     // Let's do all the provider operations up front so that if there's
@@ -265,8 +326,15 @@ where
         Box::new(CanonicalCombiningClassMap::try_new_unstable(data_provider)?);
     let general_category_map =
         Box::new(icu_properties::maps::load_general_category(data_provider)?);
-    // TODO(#2833): mirroring
-    // TODO(#2832): script
+    let bidi_auxiliary_props_map = Box::new(
+        icu_properties::bidi_data::load_bidi_auxiliary_properties_unstable(data_provider)?,
+    );
+    let script_map = icu_properties::maps::load_script(data_provider)?;
+    let script_enum_to_short_name_lookup = Script::get_enum_to_short_name_mapper(data_provider)?;
+    let script_data = Box::new(ScriptDataForHarfBuzz {
+        script_map,
+        enum_to_name_mapper: script_enum_to_short_name_lookup,
+    });
     let canonical_composition = Box::new(CanonicalComposition::try_new_unstable(data_provider)?);
     let canonical_decomposition =
         Box::new(CanonicalDecomposition::try_new_unstable(data_provider)?);
@@ -288,8 +356,9 @@ where
             Box::into_raw(canonical_combining_class_map);
         let general_category_map_ptr: *mut CodePointMapData<GeneralCategory> =
             Box::into_raw(general_category_map);
-        // TODO(#2833): mirroring
-        // TODO(#2832): script
+        let bidi_auxiliary_props_map_ptr: *mut BidiAuxiliaryProperties =
+            Box::into_raw(bidi_auxiliary_props_map);
+        let script_map_ptr: *mut ScriptDataForHarfBuzz = Box::into_raw(script_data);
         let canonical_composition_ptr: *mut CanonicalComposition =
             Box::into_raw(canonical_composition);
         let canonical_decomposition_ptr: *mut CanonicalDecomposition =
@@ -307,12 +376,18 @@ where
             general_category_map_ptr as *mut c_void,
             Some(icu4x_hb_unicode_general_category_destroy),
         );
-
-        // TODO(#2833):
-        // hb_unicode_funcs_set_mirroring_func();
-        // TODO(#2832):
-        // hb_unicode_funcs_set_script_func();
-
+        hb_unicode_funcs_set_mirroring_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_mirroring),
+            bidi_auxiliary_props_map_ptr as *mut c_void,
+            Some(icu4x_hb_unicode_mirroring_destroy),
+        );
+        hb_unicode_funcs_set_script_func(
+            ufuncs,
+            Some(icu4x_hb_unicode_script),
+            script_map_ptr as *mut c_void,
+            Some(icu4x_hb_unicode_script_destroy),
+        );
         hb_unicode_funcs_set_compose_func(
             ufuncs,
             Some(icu4x_hb_unicode_compose),

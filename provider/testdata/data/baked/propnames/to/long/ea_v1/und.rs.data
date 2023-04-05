@@ -1,0 +1,5 @@
+::icu_properties::provider::names::PropertyEnumToValueNameMapV1::Linear(unsafe {
+    ::zerovec::VarZeroVec::from_bytes_unchecked(
+        b"\x05\0\0\0\0\0\x07\0\x10\0\x19\0\"\0NeutralAmbiguousHalfwidthFullwidthNarrow",
+    )
+})

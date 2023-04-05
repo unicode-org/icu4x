@@ -39,3 +39,5 @@ pub mod char16trie;
 pub mod codepointinvlist;
 pub mod codepointinvliststringlist;
 pub mod codepointtrie;
+
+pub(crate) mod iterator_utils;

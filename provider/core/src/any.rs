@@ -65,6 +65,7 @@ pub struct AnyPayload {
 
 /// The [`DataMarker`] marker type for [`AnyPayload`].
 #[allow(clippy::exhaustive_structs)] // marker type
+#[derive(Debug)]
 pub struct AnyMarker;
 
 impl DataMarker for AnyMarker {
@@ -213,6 +214,7 @@ impl DataPayload<AnyMarker> {
 ///
 /// Convertible to and from `DataResponse<AnyMarker>`.
 #[allow(clippy::exhaustive_structs)] // this type is stable (the metadata is allowed to grow)
+#[derive(Debug)]
 pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
@@ -352,6 +354,7 @@ impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
 
 /// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
+#[derive(Debug)]
 pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_any_provider()`] function.
@@ -382,6 +385,7 @@ where
 
 /// A wrapper over `AnyProvider` that implements `DynamicDataProvider<M>` via downcasting
 #[allow(clippy::exhaustive_structs)] // newtype
+#[derive(Debug)]
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 /// Blanket-implemented trait adding the [`Self::as_downcasting()`] function.

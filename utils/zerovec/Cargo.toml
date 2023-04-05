@@ -46,7 +46,7 @@ t1ha = { version = "0.1", optional = true }
 
 [dev-dependencies]
 bincode = "1.3"
-criterion = "0.3.4"
+criterion = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
 iai = "0.1"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
