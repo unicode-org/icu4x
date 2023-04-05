@@ -565,8 +565,11 @@ where
     ) -> Result<(DataResponseMetadata, DataPayload<M>), DataError> {
         Ok((
             self.metadata,
-            self.payload
-                .ok_or_else(|| DataErrorKind::MissingPayload.with_type_context::<M>())?,
+            self.payload.ok_or_else(|| {
+                DataErrorKind::MissingPayload
+                    .into_error()
+                    .with_type_context::<M>()
+            })?,
         ))
     }
 }
