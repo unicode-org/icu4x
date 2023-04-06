@@ -186,6 +186,7 @@ rust_library("icu-v1_1_0") {
   deps += [ ":icu_plurals-v1_1_0" ]
   deps += [ ":icu_properties-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":icu_segmenter-v0_8_0" ]
   deps += [ ":icu_timezone-v1_1_0" ]
 
   rustenv = []
@@ -195,6 +196,8 @@ rust_library("icu-v1_1_0") {
     "--edition=2021",
     "-Cmetadata=2f550ab455e7aa02",
     "-Cextra-filename=-2f550ab455e7aa02",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"icu_segmenter\"",
   ]
 
   visibility = [ ":*" ]
