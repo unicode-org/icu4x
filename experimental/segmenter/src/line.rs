@@ -189,8 +189,6 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
 /// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
 /// assert_eq!(&breakpoints, &[9, 14, 22]);
-///
-/// use icu::properties::{maps, LineBreak};
 /// ```
 ///
 /// Segment a string with CSS option overrides:
