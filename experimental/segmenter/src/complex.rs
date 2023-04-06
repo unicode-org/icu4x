@@ -55,7 +55,11 @@ impl LstmPayloads {
     ) -> Result<Option<DataPayload<LstmDataV1Marker>>, DataError> {
         match provider.load(DataRequest {
             locale: &DataLocale::from(locale),
-            metadata: Default::default(),
+            metadata: {
+                let mut m = DataRequestMetadata::default();
+                m.silent = true;
+                m
+            },
         }) {
             Ok(response) => Ok(Some(response.take_payload()?.cast())),
             Err(DataError {
@@ -133,7 +137,11 @@ impl Dictionary {
         provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
-                metadata: Default::default(),
+                metadata: {
+                    let mut m = DataRequestMetadata::default();
+                    m.silent = true;
+                    m
+                },
             })?
             .take_payload()
             .map(DataPayload::cast)
