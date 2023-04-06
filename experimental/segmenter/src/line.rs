@@ -137,28 +137,6 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
 ///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
-/// </div>
-///
-/// # Examples
-///
-/// Segment a string with default options:
-///
-/// ```rust
-/// use icu_segmenter::LineSegmenter;
-///
-/// let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-///     .expect("Data exists");
-///
-/// let breakpoints: Vec<usize> =
-///     segmenter.segment_str("Hello World").collect();
-/// assert_eq!(&breakpoints, &[6, 11]);
-/// ```
-///
 /// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
 /// line break opportunities ([definition LD3][LD3]).
@@ -179,16 +157,37 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// [LB5]: https://www.unicode.org/reports/tr14/#LB5
 ///
 /// ```rust
+/// # use icu_segmenter::LineSegmenter;
+/// #
+/// # let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #    .expect("Data exists");
+/// #
+/// let text = "Summary\r\nThis annex…";
+/// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
+/// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
+/// assert_eq!(&breakpoints, &[9, 14, 22]);
+/// ```
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
+///
+/// # Examples
+///
+/// Segment a string with default options:
+///
+/// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
 /// let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 ///     .expect("Data exists");
 ///
-/// let text = "Summary\r\nThis annex…";
-///
-/// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
-/// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
-/// assert_eq!(&breakpoints, &[9, 14, 22]);
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
 ///
 /// Segment a string with CSS option overrides:
