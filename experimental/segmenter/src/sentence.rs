@@ -85,9 +85,7 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
         }
     }
@@ -104,9 +102,7 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
         }
     }
@@ -121,9 +117,7 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
         }
     }
@@ -136,9 +130,7 @@ impl SentenceSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
         }
     }

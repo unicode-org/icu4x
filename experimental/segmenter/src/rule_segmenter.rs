@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::complex::{Dictionary, LstmPayloads};
+use crate::complex::ComplexPayloads;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
@@ -63,9 +63,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakDataV1<'l>,
-    pub(crate) dictionary: Option<&'l Dictionary>,
-    pub(crate) lstm: Option<&'l LstmPayloads>,
-    pub(crate) grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
 }
 

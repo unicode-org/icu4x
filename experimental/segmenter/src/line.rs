@@ -197,9 +197,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 pub struct LineSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
-    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    complex: ComplexPayloads,
 }
 
 impl LineSegmenter {
@@ -317,15 +315,10 @@ impl LineSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
             options,
-            payload,
-            dictionary: Dictionary::default(),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
 
@@ -353,21 +346,16 @@ impl LineSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
             options,
-            payload,
+            payload: provider.load(Default::default())?.take_payload()?,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
             //
             // [1]: https://www.unicode.org/reports/tr14/#ID
             // [2]: https://www.unicode.org/reports/tr14/#SA
-            dictionary: Dictionary::new_southeast_asian(provider),
-            lstm: LstmPayloads::default(),
-            grapheme,
+            complex: ComplexPayloads::try_new_southeast_asian(provider)?,
         })
     }
 
@@ -391,9 +379,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: Some(&self.complex),
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -410,9 +396,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: Some(&self.complex),
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -424,9 +408,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: Some(&self.complex),
         }
     }
 
@@ -439,9 +421,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: Some(&self.complex),
         }
     }
 }
@@ -690,9 +670,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    dictionary: &'l Dictionary,
-    lstm: &'l LstmPayloads,
-    grapheme: &'l RuleBreakDataV1<'l>,
+    complex: Option<&'l ComplexPayloads>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -998,12 +976,8 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(
-        Some(iter.dictionary),
-        Some(iter.lstm),
-        Some(iter.grapheme),
-        &s,
-    );
+    #[allow(clippy::unwrap_used)] // iter.complex present for line segmenter
+    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
@@ -1105,12 +1079,8 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(
-            Some(iterator.dictionary),
-            Some(iterator.lstm),
-            Some(iterator.grapheme),
-            &s,
-        );
+        #[allow(clippy::unwrap_used)] // iter.complex present for line segmenter
+        let breaks = complex_language_segment_utf16(iterator.complex.unwrap(), &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
