@@ -14,6 +14,8 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::locid_transform::LocaleCanonicalizer::try_new_with_expander_unstable#FnInStruct
+icu::locid_transform::LocaleExpander::try_new_extended_unstable#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::as_borrowed#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct

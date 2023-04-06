@@ -15,6 +15,13 @@
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_unstable>`__ for more information.
 
 
+    .. js:function:: create_extended(provider)
+
+        Create a new :js:class:`ICU4XLocaleCanonicalizer` with extended data.
+
+        See the `Rust documentation for try_new_with_expander_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_with_expander_unstable>`__ for more information.
+
+
     .. js:method:: canonicalize(locale)
 
         FFI version of ``LocaleCanonicalizer::canonicalize()``.
@@ -34,6 +41,13 @@
         Create a new :js:class:`ICU4XLocaleExpander`.
 
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable>`__ for more information.
+
+
+    .. js:function:: create_extended(provider)
+
+        Create a new :js:class:`ICU4XLocaleExpander` with extended data.
+
+        See the `Rust documentation for try_new_extended_unstable <https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_extended_unstable>`__ for more information.
 
 
     .. js:method:: maximize(locale)

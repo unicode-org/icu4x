@@ -38,6 +38,20 @@ pub mod ffi {
             )))
         }
 
+        /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleCanonicalizer::try_new_with_expander_unstable,
+            FnInStruct
+        )]
+        pub fn create_extended(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
+            let expander = LocaleExpander::try_new_extended_unstable(&provider.0)?;
+            Ok(Box::new(ICU4XLocaleCanonicalizer(
+                LocaleCanonicalizer::try_new_with_expander_unstable(&provider.0, expander)?,
+            )))
+        }
+
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
         #[diplomat::rust_link(icu::locid_transform::LocaleCanonicalizer::canonicalize, FnInStruct)]
         pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
@@ -58,6 +72,19 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
             Ok(Box::new(ICU4XLocaleExpander(
                 LocaleExpander::try_new_unstable(&provider.0)?,
+            )))
+        }
+
+        /// Create a new [`ICU4XLocaleExpander`] with extended data.
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleExpander::try_new_extended_unstable,
+            FnInStruct
+        )]
+        pub fn create_extended(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XLocaleExpander>, ICU4XError> {
+            Ok(Box::new(ICU4XLocaleExpander(
+                LocaleExpander::try_new_extended_unstable(&provider.0)?,
             )))
         }
 
