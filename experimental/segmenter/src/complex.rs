@@ -205,7 +205,10 @@ pub(crate) fn complex_language_segment_utf16(
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
     for (str_per_lang, lang) in lang_iter {
-        if let Some(lstm) = payloads.select_lstm(lang) {
+        if lang == Language::Unknown {
+            offset += str_per_lang.len();
+            result.push(offset);
+        } else if let Some(lstm) = payloads.select_lstm(lang) {
             #[cfg(feature = "lstm")]
             {
                 let segmenter = crate::lstm::LstmSegmenter::new(lstm, &payloads.grapheme);
@@ -220,7 +223,16 @@ pub(crate) fn complex_language_segment_utf16(
             offset += str_per_lang.len();
         } else {
             // Create error for logging
-            DataError::custom("No segmentation model for language").with_display_context(&lang);
+            DataError::custom("No segmentation model for language").with_display_context(
+                match lang {
+                    Language::Thai => "th",
+                    Language::Lao => "lo",
+                    Language::Burmese => "my",
+                    Language::Khmer => "km",
+                    Language::ChineseOrJapanese => "ja",
+                    Language::Unknown => unreachable!(),
+                },
+            );
             offset += str_per_lang.len();
             result.push(offset);
         }
@@ -235,7 +247,10 @@ pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &s
     let lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
     for (str_per_lang, lang) in lang_iter {
-        if let Some(lstm) = payloads.select_lstm(lang) {
+        if lang == Language::Unknown {
+            offset += str_per_lang.len();
+            result.push(offset);
+        } else if let Some(lstm) = payloads.select_lstm(lang) {
             #[cfg(feature = "lstm")]
             {
                 let segmenter = crate::lstm::LstmSegmenter::new(lstm, &payloads.grapheme);
@@ -250,7 +265,16 @@ pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &s
             offset += str_per_lang.len();
         } else {
             // Create error for logging
-            DataError::custom("No segmentation model for language").with_display_context(&lang);
+            DataError::custom("No segmentation model for language").with_display_context(
+                match lang {
+                    Language::Thai => "th",
+                    Language::Lao => "lo",
+                    Language::Burmese => "my",
+                    Language::Khmer => "km",
+                    Language::ChineseOrJapanese => "ja",
+                    Language::Unknown => unreachable!(),
+                },
+            );
             offset += str_per_lang.len();
             result.push(offset);
         }

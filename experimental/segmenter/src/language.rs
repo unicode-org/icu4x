@@ -12,12 +12,6 @@ pub enum Language {
     Unknown,
 }
 
-impl alloc::fmt::Display for Language {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> Result<(), alloc::fmt::Error> {
-        write!(f, "{:?}", self)
-    }
-}
-
 // TODO: Use data provider
 fn get_language(codepoint: u32) -> Language {
     match codepoint {
