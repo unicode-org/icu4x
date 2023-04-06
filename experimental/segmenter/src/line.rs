@@ -12,6 +12,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+use icu_properties::provider::ScriptWithExtensionsPropertyV1Marker;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -272,6 +273,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Self::try_new_auto_with_options_unstable(provider, Default::default())
@@ -297,6 +299,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Self::try_new_lstm_with_options_unstable(provider, Default::default())
@@ -321,6 +324,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Self::try_new_dictionary_with_options_unstable(provider, Default::default())
@@ -348,6 +352,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Self::try_new_lstm_with_options_unstable(provider, options)
@@ -376,6 +381,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -407,6 +413,7 @@ impl LineSegmenter {
         D: DataProvider<LineBreakDataV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Ok(Self {

@@ -561,6 +561,11 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     pub fn get_script_extensions_set(self, script: Script) -> CodePointInversionList<'a> {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
+
+    /// Construct a new one from loaded data
+    pub fn from_data(data: &'a ScriptWithExtensionsPropertyV1<'a>) -> Self {
+        Self { data }
+    }
 }
 
 /// Returns a [`ScriptWithExtensionsPropertyV1`] struct that represents the data for the Script

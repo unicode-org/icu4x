@@ -7,11 +7,13 @@ use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
 use icu_locid::{locale, Locale};
+use icu_properties::provider::ScriptWithExtensionsPropertyV1Marker;
 use icu_provider::prelude::*;
 
 #[derive(Debug)]
 pub(crate) struct ComplexPayloads {
     grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    language_data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
     burmese_lstm: Option<DataPayload<LstmDataV1Marker>>,
     khmer_lstm: Option<DataPayload<LstmDataV1Marker>>,
     lao_lstm: Option<DataPayload<LstmDataV1Marker>>,
@@ -30,7 +32,8 @@ impl ComplexPayloads {
             Language::Khmer => self.khmer_lstm.as_ref(),
             Language::Lao => self.lao_lstm.as_ref(),
             Language::Thai => self.thai_lstm.as_ref(),
-            Language::ChineseOrJapanese | Language::Unknown => None,
+            Language::ChineseOrJapanese => None,
+            Language::Unknown => unreachable!(),
         }
     }
 
@@ -44,18 +47,20 @@ impl ComplexPayloads {
             Language::Lao => self.lao_dict.as_ref(),
             Language::Thai => self.thai_dict.as_ref(),
             Language::ChineseOrJapanese => self.cj_dict.as_ref(),
-            Language::Unknown => None,
+            Language::Unknown => unreachable!(),
         }
     }
 
     pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
+            language_data: provider.load(Default::default())?.take_payload()?,
             burmese_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("my"))?
                 .map(DataPayload::cast),
             khmer_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("km"))?
@@ -75,12 +80,14 @@ impl ComplexPayloads {
     pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
+            language_data: provider.load(Default::default())?.take_payload()?,
             burmese_lstm: None,
             khmer_lstm: None,
             lao_lstm: None,
@@ -114,12 +121,14 @@ impl ComplexPayloads {
     pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
+            language_data: provider.load(Default::default())?.take_payload()?,
             burmese_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("my"))?
                 .map(DataPayload::cast),
             khmer_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("km"))?
@@ -139,12 +148,14 @@ impl ComplexPayloads {
 
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<DictionaryForWordLineExtendedV1Marker>
-            + DataProvider<GraphemeClusterBreakDataV1Marker>
+        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + ?Sized,
     {
         Ok(Self {
             grapheme: provider.load(Default::default())?.take_payload()?,
+            language_data: provider.load(Default::default())?.take_payload()?,
             burmese_lstm: None,
             khmer_lstm: None,
             lao_lstm: None,
@@ -202,7 +213,7 @@ pub(crate) fn complex_language_segment_utf16(
     input: &[u16],
 ) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
-    let lang_iter = LanguageIteratorUtf16::new(input);
+    let lang_iter = LanguageIteratorUtf16::new(input, &payloads.language_data.get());
     let mut offset = 0;
     for (str_per_lang, lang) in lang_iter {
         if lang == Language::Unknown {
@@ -244,7 +255,7 @@ pub(crate) fn complex_language_segment_utf16(
 #[allow(unused_variables)]
 pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
-    let lang_iter = LanguageIterator::new(input);
+    let lang_iter = LanguageIterator::new(input, &payloads.language_data.get());
     let mut offset = 0;
     for (str_per_lang, lang) in lang_iter {
         if lang == Language::Unknown {
@@ -311,6 +322,12 @@ mod tests {
         .unwrap();
         let payloads = ComplexPayloads {
             grapheme,
+            language_data: icu_testdata::buffer()
+                .as_deserializing()
+                .load(Default::default())
+                .unwrap()
+                .take_payload()
+                .unwrap(),
             burmese_lstm: None,
             khmer_lstm: None,
             lao_lstm: None,

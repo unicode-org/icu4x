@@ -11,6 +11,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_properties::provider::ScriptWithExtensionsPropertyV1Marker;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
@@ -99,6 +100,7 @@ impl WordSegmenter {
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -128,6 +130,7 @@ impl WordSegmenter {
         D: DataProvider<WordBreakDataV1Marker>
             + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Ok(Self {
@@ -156,6 +159,7 @@ impl WordSegmenter {
             + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + ?Sized,
     {
         Ok(Self {
