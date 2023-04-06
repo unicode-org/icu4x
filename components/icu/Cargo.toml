@@ -55,6 +55,9 @@ icu_testdata = { path = "../../provider/testdata" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
+default = [
+    "icu_segmenter/default",
+]
 std = [
     "icu_calendar/std",
     "icu_casemapping?/std",
