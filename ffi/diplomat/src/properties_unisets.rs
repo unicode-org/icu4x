@@ -17,6 +17,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData, Struct)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::as_borrowed, FnInStruct, hidden)]
+    #[diplomat::rust_link(icu::properties::sets::UnicodeSetData::from_data, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed, Struct)]
     pub struct ICU4XUnicodeSetData(pub sets::UnicodeSetData);
 

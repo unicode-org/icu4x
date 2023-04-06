@@ -30,7 +30,7 @@ struct ICU4XCanonicalDecompositionDeleter {
  * 
  * Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
  * 
- * See the [Rust documentation for `CanonicalDecomposition`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
+ * See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
  */
 class ICU4XCanonicalDecomposition {
  public:
@@ -38,14 +38,14 @@ class ICU4XCanonicalDecomposition {
   /**
    * Construct a new ICU4XCanonicalDecomposition instance for NFC
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XCanonicalDecomposition, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Performs non-recursive canonical decomposition (including for Hangul).
    * 
-   * See the [Rust documentation for `decompose`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
+   * See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
    */
   ICU4XDecomposed decompose(char32_t c) const;
   inline const capi::ICU4XCanonicalDecomposition* AsFFI() const { return this->inner.get(); }

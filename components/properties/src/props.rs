@@ -616,6 +616,18 @@ impl_value_getter! {
     }
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash, Default)]
+pub struct GeneralCategoryTryFromError;
+
+impl TryFrom<u8> for GeneralCategory {
+    type Error = GeneralCategoryTryFromError;
+    /// Construct this [`GeneralCategory`] from an integer, returning
+    /// an error if it is out of bounds
+    fn try_from(val: u8) -> Result<Self, GeneralCategoryTryFromError> {
+        GeneralCategory::new_from_u8(val).ok_or(GeneralCategoryTryFromError)
+    }
+}
+
 /// Groupings of multiple General_Category property values.
 ///
 /// Instances of `GeneralCategoryGroup` represent the defined multi-category

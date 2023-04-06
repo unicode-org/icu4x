@@ -19,7 +19,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `DisplayNamesOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
  */
 struct ICU4XDisplayNamesOptionsV1 {
  public:

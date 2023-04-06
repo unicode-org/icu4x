@@ -1140,11 +1140,23 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
 #[cfg(feature = "serde")]
 mod tests {
     use super::*;
+    use crate::LineSegmenter;
+    use icu_provider_adapters::fork::ForkByKeyProvider;
+    use icu_provider_fs::FsDataProvider;
+    use std::path::PathBuf;
+
+    fn get_segmenter_testdata_provider() -> impl BufferProvider {
+        let segmenter_fs_provider = FsDataProvider::try_new(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
+        )
+        .unwrap();
+        ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
+    }
 
     #[test]
-    fn linebreak_propery() {
+    fn linebreak_property() {
         let payload = DataProvider::<LineBreakDataV1Marker>::load(
-            &icu_testdata::buffer().as_deserializing(),
+            &get_segmenter_testdata_provider().as_deserializing(),
             Default::default(),
         )
         .expect("Loading should succeed!")
@@ -1180,7 +1192,7 @@ mod tests {
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         let payload = DataProvider::<LineBreakDataV1Marker>::load(
-            &icu_testdata::buffer().as_deserializing(),
+            &get_segmenter_testdata_provider().as_deserializing(),
             Default::default(),
         )
         .expect("Loading should succeed!")
@@ -1290,9 +1302,10 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineSegmenter::try_new_dictionary_unstable(&icu_testdata::buffer().as_deserializing())
-                .expect("Data exists");
+        let segmenter = LineSegmenter::try_new_dictionary_unstable(
+            &get_segmenter_testdata_provider().as_deserializing(),
+        )
+        .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());
@@ -1371,5 +1384,74 @@ mod tests {
 
         iter = segmenter.segment_str("\u{1F3FB} \u{1F3FB}");
         assert_eq!(Some(5), iter.next());
+    }
+
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn thai_word_break() {
+        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        assert_eq!(breaks, [12, 21, 33, TEST_STR.len()], "Thai test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4, 7, 11, utf16.len()], "Thai test");
+
+        let utf16: [u16; 4] = [0x0e20, 0x0e32, 0x0e29, 0x0e32];
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4], "Thai test");
+    }
+
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn burmese_word_break() {
+        // "Burmese Language" in Burmese
+        const TEST_STR: &str = "မြန်မာဘာသာစကား";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // LSTM model breaks more characters, but it is better to return [30].
+        assert_eq!(breaks, [12, 18, 30, TEST_STR.len()], "Burmese test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        // LSTM model breaks more characters, but it is better to return [10].
+        assert_eq!(breaks, [4, 6, 10, utf16.len()], "Burmese utf-16 test");
+    }
+
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn khmer_word_break() {
+        const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: This small sample matches the ICU dictionary segmenter
+        assert_eq!(breaks, [39, 48, 54, 72, TEST_STR.len()], "Khmer test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [13, 16, 18, 24, utf16.len()], "Khmer utf-16 test");
+    }
+
+    #[test]
+    #[cfg(feature = "lstm")]
+    fn lao_word_break() {
+        const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
+
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: LSTM finds a break at '12' that the dictionary does not find
+        assert_eq!(breaks, [12, 21, 30, 39, TEST_STR.len()], "Lao test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4, 7, 10, 13, utf16.len()], "Lao utf-16 test");
     }
 }

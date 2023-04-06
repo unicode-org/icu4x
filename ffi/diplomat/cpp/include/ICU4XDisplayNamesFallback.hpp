@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `Fallback`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Fallback.html) for more information.
+ * See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Fallback.html) for more information.
  */
 enum struct ICU4XDisplayNamesFallback {
   Code = 0,
