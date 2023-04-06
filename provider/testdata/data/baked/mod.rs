@@ -2795,6 +2795,32 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_segmenter")]
+        impl DataProvider<::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker>, DataError> {
+                segmenter::dictionary::wl_ext_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_segmenter")]
+        impl DataProvider<::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker>, DataError> {
+                segmenter::dictionary::w_auto_v1::lookup(&req.locale)
+                    .map(zerofrom::ZeroFrom::zero_from)
+                    .map(DataPayload::from_owned)
+                    .map(|payload| DataResponse {
+                        metadata: Default::default(),
+                        payload: Some(payload),
+                    })
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY, req))
+            }
+        }
+        #[cfg(feature = "icu_segmenter")]
         impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> for $provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError> {
                 segmenter::grapheme_v1::lookup(&req.locale)
@@ -2821,16 +2847,16 @@ macro_rules! impl_data_provider {
             }
         }
         #[cfg(feature = "icu_segmenter")]
-        impl DataProvider<::icu_segmenter::provider::LstmDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LstmDataV1Marker>, DataError> {
-                segmenter::lstm_v1::lookup(&req.locale)
+        impl DataProvider<::icu_segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LstmForWordLineAutoV1Marker>, DataError> {
+                segmenter::lstm::wl_auto_v1::lookup(&req.locale)
                     .map(zerofrom::ZeroFrom::zero_from)
                     .map(DataPayload::from_owned)
                     .map(|payload| DataResponse {
                         metadata: Default::default(),
                         payload: Some(payload),
                     })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LstmDataV1Marker::KEY, req))
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
@@ -2844,19 +2870,6 @@ macro_rules! impl_data_provider {
                         payload: Some(payload),
                     })
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY, req))
-            }
-        }
-        #[cfg(feature = "icu_segmenter")]
-        impl DataProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker> for $provider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>, DataError> {
-                segmenter::dictionary_v1::lookup(&req.locale)
-                    .map(zerofrom::ZeroFrom::zero_from)
-                    .map(DataPayload::from_owned)
-                    .map(|payload| DataResponse {
-                        metadata: Default::default(),
-                        payload: Some(payload),
-                    })
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY, req))
             }
         }
         #[cfg(feature = "icu_segmenter")]
@@ -3403,17 +3416,20 @@ macro_rules! impl_any_provider {
                 const SHORTYEARRELATIVETIMEFORMATDATAV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_relativetime::provider::ShortYearRelativeTimeFormatDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
+                const DICTIONARYFORWORDLINEEXTENDEDV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_segmenter")]
+                const DICTIONARYFORWORDONLYAUTOV1MARKER: ::icu_provider::DataKeyHash =
+                    ::icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY.hashed();
+                #[cfg(feature = "icu_segmenter")]
                 const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
                     ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
                 const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
-                const LSTMDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LstmDataV1Marker::KEY.hashed();
+                const LSTMFORWORDLINEAUTOV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
                 const SENTENCEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.hashed();
-                #[cfg(feature = "icu_segmenter")]
-                const UCHARDICTIONARYBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-                    ::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_segmenter")]
                 const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
                 #[cfg(feature = "icu_timezone")]
@@ -3825,15 +3841,17 @@ macro_rules! impl_any_provider {
                     #[cfg(feature = "icu_relativetime")]
                     SHORTYEARRELATIVETIMEFORMATDATAV1MARKER => relativetime::short::year_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
+                    DICTIONARYFORWORDLINEEXTENDEDV1MARKER => segmenter::dictionary::wl_ext_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_segmenter")]
+                    DICTIONARYFORWORDONLYAUTOV1MARKER => segmenter::dictionary::w_auto_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    #[cfg(feature = "icu_segmenter")]
                     GRAPHEMECLUSTERBREAKDATAV1MARKER => segmenter::grapheme_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
                     LINEBREAKDATAV1MARKER => segmenter::line_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
-                    LSTMDATAV1MARKER => segmenter::lstm_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
+                    LSTMFORWORDLINEAUTOV1MARKER => segmenter::lstm::wl_auto_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
                     SENTENCEBREAKDATAV1MARKER => segmenter::sentence_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
-                    #[cfg(feature = "icu_segmenter")]
-                    UCHARDICTIONARYBREAKDATAV1MARKER => segmenter::dictionary_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_segmenter")]
                     WORDBREAKDATAV1MARKER => segmenter::word_v1::lookup(&req.locale).map(AnyPayload::from_static_ref),
                     #[cfg(feature = "icu_timezone")]

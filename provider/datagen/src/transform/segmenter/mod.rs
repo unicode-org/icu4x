@@ -744,11 +744,11 @@ impl crate::DatagenProvider {
     }
 }
 
-impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(
+impl crate::DatagenProvider {
+    fn load_dictionary_data(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
+    ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
         let toml_data = self
             .source
             .segmenter()?
@@ -756,9 +756,18 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
                 Self::get_toml_filename(req.locale)
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             )?;
-        let data = UCharDictionaryBreakDataV1 {
+        Ok(UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
-        };
+        })
+    }
+}
+
+impl DataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<DictionaryForWordOnlyAutoV1Marker>, DataError> {
+        let data = self.load_dictionary_data(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data)),
@@ -766,14 +775,32 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![locale!("ja").into()])
+    }
+}
+
+impl DataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<DictionaryForWordLineExtendedV1Marker>, DataError> {
+        let data = self.load_dictionary_data(req)?;
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl IterableDataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("th").into(),
             locale!("km").into(),
             locale!("lo").into(),
             locale!("my").into(),
-            locale!("ja").into(),
         ])
     }
 }

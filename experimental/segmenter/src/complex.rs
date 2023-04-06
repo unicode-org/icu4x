@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use crate::lstm::LstmSegmenter;
 
 #[derive(Default, Debug)]
-pub struct LstmPayloads {
+pub(crate) struct LstmPayloads {
     pub burmese: Option<DataPayload<LstmDataV1Marker>>,
     pub khmer: Option<DataPayload<LstmDataV1Marker>>,
     pub lao: Option<DataPayload<LstmDataV1Marker>>,
@@ -34,7 +34,7 @@ impl LstmPayloads {
     }
 
     /// Construct a [`LstmPayloads`] for all supported languages.
-    pub(crate) fn try_new<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+    pub(crate) fn try_new<D: DataProvider<LstmForWordLineAutoV1Marker> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
         let burmese = Self::load(provider, locale!("my"))?;
@@ -49,7 +49,7 @@ impl LstmPayloads {
         })
     }
 
-    pub(crate) fn load<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+    pub(crate) fn load<D: DataProvider<LstmForWordLineAutoV1Marker> + ?Sized>(
         provider: &D,
         locale: Locale,
     ) -> Result<Option<DataPayload<LstmDataV1Marker>>, DataError> {
@@ -57,7 +57,7 @@ impl LstmPayloads {
             locale: &DataLocale::from(locale),
             metadata: Default::default(),
         }) {
-            Ok(response) => Ok(Some(response.take_payload()?)),
+            Ok(response) => Ok(Some(response.take_payload()?.cast())),
             Err(DataError {
                 kind: DataErrorKind::MissingLocale,
                 ..
@@ -68,7 +68,7 @@ impl LstmPayloads {
 }
 
 #[derive(Default, Debug)]
-pub struct Dictionary {
+pub(crate) struct Dictionary {
     pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
     pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
     pub lao: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
@@ -89,14 +89,18 @@ impl Dictionary {
     }
 
     /// Construct a [`Dictionary`] for all supported languages.
-    pub(crate) fn new<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+    pub(crate) fn new<
+        D: DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + ?Sized,
+    >(
         provider: &D,
     ) -> Self {
-        let burmese = Self::load(provider, locale!("my")).ok();
-        let khmer = Self::load(provider, locale!("km")).ok();
-        let lao = Self::load(provider, locale!("lo")).ok();
-        let thai = Self::load(provider, locale!("th")).ok();
-        let cj = Self::load(provider, locale!("ja")).ok();
+        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
+        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
+        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
+        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
+        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
         Dictionary {
             burmese,
             khmer,
@@ -109,37 +113,20 @@ impl Dictionary {
     /// Construct a [`Dictionary`] for Chinese and Japanese.
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
     pub(crate) fn new_chinese_japanese<
-        D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
+        D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized,
     >(
         provider: &D,
     ) -> Self {
-        let cj = Self::load(provider, locale!("ja")).ok();
+        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
         Dictionary {
             cj,
             ..Default::default()
         }
     }
 
-    /// Construct a [`Dictionary`] for Southeast Asian languages (Burmese, Khmer, Lao, and Thai).
-    pub(crate) fn new_southeast_asian<
-        D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized,
+    pub(crate) fn load_chinese_japanese<
+        D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized,
     >(
-        provider: &D,
-    ) -> Self {
-        let burmese = Self::load(provider, locale!("my")).ok();
-        let khmer = Self::load(provider, locale!("km")).ok();
-        let lao = Self::load(provider, locale!("lo")).ok();
-        let thai = Self::load(provider, locale!("th")).ok();
-        Dictionary {
-            burmese,
-            khmer,
-            lao,
-            thai,
-            ..Default::default()
-        }
-    }
-
-    pub(crate) fn load<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,
         locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
@@ -149,12 +136,47 @@ impl Dictionary {
                 metadata: Default::default(),
             })?
             .take_payload()
+            .map(DataPayload::cast)
+    }
+
+    /// Construct a [`Dictionary`] for Southeast Asian languages (Burmese, Khmer, Lao, and Thai).
+    pub(crate) fn new_southeast_asian<
+        D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized,
+    >(
+        provider: &D,
+    ) -> Self {
+        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
+        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
+        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
+        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
+        Dictionary {
+            burmese,
+            khmer,
+            lao,
+            thai,
+            ..Default::default()
+        }
+    }
+
+    pub(crate) fn load_southeast_asian<
+        D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized,
+    >(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+            .map(DataPayload::cast)
     }
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
-pub fn complex_language_segment_utf16(
+pub(crate) fn complex_language_segment_utf16(
     dictionary: Option<&Dictionary>,
     lstm: Option<&LstmPayloads>,
     grapheme: Option<&RuleBreakDataV1>,
@@ -200,7 +222,7 @@ pub fn complex_language_segment_utf16(
 
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
-pub fn complex_language_segment_str(
+pub(crate) fn complex_language_segment_str(
     dictionary: Option<&Dictionary>,
     lstm: Option<&LstmPayloads>,
     grapheme: Option<&RuleBreakDataV1>,
@@ -253,15 +275,17 @@ mod tests {
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let data_locale = locale!("th").into();
-        let payload = icu_testdata::buffer()
-            .as_deserializing()
-            .load(DataRequest {
+        let payload = DataProvider::<DictionaryForWordLineExtendedV1Marker>::load(
+            &icu_testdata::buffer().as_deserializing(),
+            DataRequest {
                 locale: &data_locale,
                 metadata: Default::default(),
-            })
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
+            },
+        )
+        .expect("Loading should succeed!")
+        .take_payload()
+        .expect("Data should be present!")
+        .cast();
         let dictionary = Dictionary {
             burmese: None,
             khmer: None,
@@ -269,15 +293,17 @@ mod tests {
             thai: Some(payload),
             cj: None,
         };
-        let payload = icu_testdata::buffer()
-            .as_deserializing()
-            .load(DataRequest {
+        let payload = DataProvider::<LstmForWordLineAutoV1Marker>::load(
+            &icu_testdata::buffer().as_deserializing(),
+            DataRequest {
                 locale: &data_locale,
                 metadata: Default::default(),
-            })
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
+            },
+        )
+        .expect("Loading should succeed!")
+        .take_payload()
+        .expect("Data should be present!")
+        .cast();
         let lstm = LstmPayloads {
             burmese: None,
             khmer: None,

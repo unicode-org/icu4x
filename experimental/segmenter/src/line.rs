@@ -209,7 +209,7 @@ impl LineSegmenter {
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -234,7 +234,7 @@ impl LineSegmenter {
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -258,7 +258,7 @@ impl LineSegmenter {
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -285,7 +285,7 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -313,7 +313,7 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -349,7 +349,7 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
