@@ -60,6 +60,25 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBrea
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 11]);
 /// ```
+///
+/// Successive boundaries can be used to retrieve the sentences.
+/// In particular, the first boundary is always 0, and the last one is the
+/// length of the segmented text in code units.
+///
+/// ```rust
+/// use icu_segmenter::SentenceSegmenter;
+/// let segmenter =
+///     SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
+/// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
+/// let words: Vec<&str> = segmenter
+///    .segment_str(text)
+///    .collect::<Vec<_>>()
+///    .windows(2)
+///    .map(|i| &text[i[0]..i[1]])
+///    .collect();
+/// assert_eq!(&words, &["Ceci tuera cela. ", "Le livre tuera l’édifice."]);
+/// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,

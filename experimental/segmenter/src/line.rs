@@ -159,6 +159,31 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
 ///
+/// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
+/// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
+/// line break opportunities ([definition LD3][LD3]).
+/// It does not distinguish them.
+///
+/// Note that contrary to the grapheme, word, and sentence segmenters, the
+/// breaks returned by this segmenter do not determine a partition of the text
+/// into meaningful segments.  In particular, there is no break opportunity at
+/// the start of text.
+///
+/// [LD3]: https://www.unicode.org/reports/tr14/#LD3
+/// [LD7]: https://www.unicode.org/reports/tr14/#LD7
+///
+/// ```rust
+/// use icu_segmenter::LineSegmenter;
+///
+/// let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
+///
+/// let breakpoints: Vec<usize> =
+///     segmenter.segment_str("Summary\r\nThis annex…").collect();
+/// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
+/// assert_eq!(&breakpoints, &[9, 14, 22]);
+/// ```
+///
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust

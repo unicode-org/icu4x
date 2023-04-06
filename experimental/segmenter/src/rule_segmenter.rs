@@ -39,7 +39,7 @@ pub trait RuleBreakType<'l, 's> {
     ) -> Option<usize>;
 }
 
-/// Implements the [`Iterator`] trait over the segmenter break opportunities of the given string.
+/// Implements the [`Iterator`] trait over the segmenter boundaries of the given string.
 ///
 /// Lifetimes:
 ///
@@ -47,7 +47,7 @@ pub trait RuleBreakType<'l, 's> {
 /// - `'s` = lifetime of the string being segmented
 ///
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
-/// _after_ the break (for a break at the end of text, this index is the length
+/// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 ///
 /// <div class="stab unstable">

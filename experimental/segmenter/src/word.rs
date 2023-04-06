@@ -62,6 +62,24 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
+///
+/// Successive boundaries can be used to retrieve the words.
+/// In particular, the first boundary is always 0, and the last one is the
+/// length of the segmented text in code units.
+///
+/// ```rust
+/// use icu_segmenter::WordSegmenter;
+/// let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///     .expect("Data exists");
+/// let text = "Mark’d ye his words?";
+/// let words: Vec<&str> = segmenter
+///    .segment_str(text)
+///    .collect::<Vec<_>>()
+///    .windows(2)
+///    .map(|i| &text[i[0]..i[1]])
+///    .collect();
+/// assert_eq!(&words, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
+/// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,

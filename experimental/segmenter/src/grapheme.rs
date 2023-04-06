@@ -64,6 +64,25 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
+/// Successive boundaries can be used to retrieve the grapheme clusters.
+/// In particular, the first boundary is always 0, and the last one is the
+/// length of the segmented text in code units.
+///
+/// ```rust
+/// use icu_segmenter::GraphemeClusterSegmenter;
+/// let segmenter =
+///     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
+/// let text = "मांजर";
+/// let grapheme_clusters: Vec<&str> = segmenter
+///    .segment_str(text)
+///    .collect::<Vec<_>>()
+///    .windows(2)
+///    .map(|i| &text[i[0]..i[1]])
+///    .collect();
+/// assert_eq!(&grapheme_clusters, &["मां", "ज", "र"]);
+/// ```
+///
 /// This segmenter applies all rules provided to the constructor.
 /// Thus, if the data supplied by the provider comprises all
 /// [grapheme cluster boundary rules][Rules] from Unicode Standard Annex #29,
