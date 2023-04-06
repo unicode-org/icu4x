@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// Similar to [`core::str::CharIndices`] for Latin-1 strings, represented as [`[u8]`].
+/// Similar to [`core::str::CharIndices`] for Latin-1 strings, represented as `[u8]`.
 ///
 /// Contrary to [`core::str::CharIndices`], the second element of the
 /// [`Iterator::Item`] is a [`u8`], representing a Unicode scalar value in the
