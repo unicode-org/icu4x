@@ -6,7 +6,7 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html Rust documentation for `LocaleDisplayNamesFormatter`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html Rust documentation for `LocaleDisplayNamesFormatter`} for more information.
  */
 export class ICU4XLocaleDisplayNamesFormatter {
 
@@ -14,7 +14,7 @@ export class ICU4XLocaleDisplayNamesFormatter {
 
    * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new_unstable(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XDisplayNamesOptionsV1): ICU4XLocaleDisplayNamesFormatter | never;
@@ -23,7 +23,7 @@ export class ICU4XLocaleDisplayNamesFormatter {
 
    * Returns the locale-specific display name of a locale.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of Rust documentation for `of`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of Rust documentation for `of`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   of(locale: ICU4XLocale): string | never;

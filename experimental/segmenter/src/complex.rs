@@ -168,7 +168,7 @@ pub fn complex_language_segment_utf16(
             #[cfg(feature = "lstm")]
             if let Some(lstm) = lstm {
                 if let Some(model) = lstm.best(*first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new(model, grapheme) {
                         let breaks = segmenter.segment_utf16(str_per_lang);
                         result.extend(breaks.map(|n| offset + n));
                         offset += str_per_lang.len();
@@ -181,9 +181,7 @@ pub fn complex_language_segment_utf16(
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(*first_ch as u32) {
-                        if let Ok(segmenter) =
-                            DictionarySegmenter::try_new_unstable(payload, grapheme)
-                        {
+                        if let Ok(segmenter) = DictionarySegmenter::try_new(payload, grapheme) {
                             let breaks = segmenter.segment_utf16(str_per_lang);
                             result.extend(breaks.map(|n| offset + n));
                             offset += str_per_lang.len();
@@ -216,10 +214,10 @@ pub fn complex_language_segment_str(
             #[cfg(feature = "lstm")]
             if let Some(lstm) = lstm {
                 if let Some(model) = lstm.best(first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new_unstable(model, grapheme) {
+                    if let Ok(segmenter) = LstmSegmenter::try_new(model, grapheme) {
                         let breaks = segmenter.segment_str(str_per_lang);
                         result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                        offset += str_per_lang.len();
                         result.push(offset);
                         continue;
                     }
@@ -229,18 +227,16 @@ pub fn complex_language_segment_str(
             if let Some(dictionary) = dictionary {
                 if let Some(grapheme) = grapheme {
                     if let Some(payload) = dictionary.best(first_ch as u32) {
-                        if let Ok(segmenter) =
-                            DictionarySegmenter::try_new_unstable(payload, grapheme)
-                        {
+                        if let Ok(segmenter) = DictionarySegmenter::try_new(payload, grapheme) {
                             let breaks = segmenter.segment_str(str_per_lang);
                             result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.chars().map(|c| c.len_utf8()).sum::<usize>();
+                            offset += str_per_lang.len();
                             continue;
                         }
                     }
                 }
             }
-            offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
+            offset += str_per_lang.len();
             result.push(offset);
         }
     }

@@ -28,7 +28,7 @@ struct ICU4XFixedDecimalDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+ * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
  */
 class ICU4XFixedDecimal {
  public:
@@ -36,55 +36,55 @@ class ICU4XFixedDecimal {
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create_from_i32(int32_t v);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create_from_u32(uint32_t v);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create_from_i64(int64_t v);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer.
    * 
-   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
    */
   static ICU4XFixedDecimal create_from_u64(uint64_t v);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an integer-valued float
    * 
-   * See the [Rust documentation for `try_from_f64`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+   * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_integer_precision(double f);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
    * 
-   * See the [Rust documentation for `try_from_f64`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+   * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
    * 
-   * See the [Rust documentation for `try_from_f64`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+   * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits);
 
@@ -92,114 +92,114 @@ class ICU4XFixedDecimal {
    * Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
    * the original floating point in IEEE 754 without needing trailing zeros
    * 
-   * See the [Rust documentation for `try_from_f64`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+   * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_floating_precision(double f);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from a string.
    * 
-   * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
+   * See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_string(const std::string_view v);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `digit_at`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
+   * See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
    */
   uint8_t digit_at(int16_t magnitude) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `magnitude_range`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
+   * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
    */
   int16_t magnitude_start() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `magnitude_range`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
+   * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
    */
   int16_t magnitude_end() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `nonzero_magnitude_start`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
+   * See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
    */
   int16_t nonzero_magnitude_start() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `nonzero_magnitude_end`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
+   * See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
    */
   int16_t nonzero_magnitude_end() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `is_zero`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
+   * See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
    */
   bool is_zero() const;
 
   /**
    * Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
    * 
-   * See the [Rust documentation for `multiply_pow10`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
+   * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
    */
   void multiply_pow10(int16_t power);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `sign`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
+   * See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
    */
   ICU4XFixedDecimalSign sign() const;
 
   /**
    * Set the sign of the [`ICU4XFixedDecimal`].
    * 
-   * See the [Rust documentation for `set_sign`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
+   * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
    */
   void set_sign(ICU4XFixedDecimalSign sign);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `apply_sign_display`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
+   * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
    */
   void apply_sign_display(ICU4XFixedDecimalSignDisplay sign_display);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `trim_start`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
+   * See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
    */
   void trim_start();
 
   /**
    * 
    * 
-   * See the [Rust documentation for `trim_end`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
+   * See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
    */
   void trim_end();
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
    * 
-   * See the [Rust documentation for `pad_start`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
+   * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
    */
   void pad_start(int16_t position);
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular position
    * 
-   * See the [Rust documentation for `pad_end`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_end) for more information.
+   * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_end) for more information.
    */
   void pad_end(int16_t position);
 
@@ -207,70 +207,70 @@ class ICU4XFixedDecimal {
    * Truncate the [`ICU4XFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
    * ("2022" -> "22")
    * 
-   * See the [Rust documentation for `set_max_position`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
+   * See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
    */
   void set_max_position(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `trunc`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
+   * See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
    */
   void trunc(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `half_trunc`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
+   * See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
    */
   void half_trunc(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `expand`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
+   * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
    */
   void expand(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `half_expand`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
+   * See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
    */
   void half_expand(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `ceil`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
+   * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
    */
   void ceil(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `half_ceil`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
+   * See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
    */
   void half_ceil(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `floor`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
+   * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
    */
   void floor(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `half_floor`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
+   * See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
    */
   void half_floor(int16_t position);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `half_even`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
+   * See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
    */
   void half_even(int16_t position);
 
@@ -281,21 +281,21 @@ class ICU4XFixedDecimal {
    * 
    * If not successful, `other` will be unchanged and an error is returned.
    * 
-   * See the [Rust documentation for `concatenate_end`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
+   * See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
    */
   diplomat::result<std::monostate, std::monostate> concatenate_end(ICU4XFixedDecimal& other);
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
    * 
-   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
   template<typename W> void to_string_to_writeable(W& to) const;
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
    * 
-   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
+   * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
    */
   std::string to_string() const;
   inline const capi::ICU4XFixedDecimal* AsFFI() const { return this->inner.get(); }

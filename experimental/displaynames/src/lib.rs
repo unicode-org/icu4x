@@ -39,6 +39,7 @@ mod displaynames;
 mod options;
 pub mod provider;
 
+pub use displaynames::LanguageDisplayNames;
 pub use displaynames::LocaleDisplayNamesFormatter;
 pub use displaynames::RegionDisplayNames;
 pub use options::DisplayNamesOptions;

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `LineBreakRule`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.LineBreakRule.html) for more information.
+ * See the [Rust documentation for `LineBreakRule`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakRule.html) for more information.
  */
 enum struct ICU4XLineBreakRule {
   Loose = 0,

@@ -158,32 +158,31 @@ impl ScriptDisplayNames {
     }
 }
 
-// / Lookup of the locale-specific display names by language code.
-// /
-// / # Example
-// /
-// / ```
-// / use icu_displaynames::{DisplayNamesOptions, LanguageDisplayNames};
-// / use icu_locid::{locale, subtags_language as language};
-// /
-// / let locale = locale!("en-001");
-// / let options: DisplayNamesOptions = Default::default();
-// / let display_name = LanguageDisplayNames::try_new_unstable(
-// /     &icu_testdata::unstable(),
-// /     &locale.into(),
-// /     options,
-// / )
-// / .expect("Data should load successfully");
-// /
-// / assert_eq!(display_name.of(language!("de")), Some("German"));
-// / ```
+/// Lookup of the locale-specific display names by language code.
+///
+/// # Example
+///
+/// ```
+/// use icu_displaynames::{DisplayNamesOptions, LanguageDisplayNames};
+/// use icu_locid::{locale, subtags_language as language};
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = LanguageDisplayNames::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// assert_eq!(display_name.of(language!("de")), Some("German"));
+/// ```
 #[derive(Default)]
 pub struct LanguageDisplayNames {
     options: DisplayNamesOptions,
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl LanguageDisplayNames {
     /// Creates a new [`LanguageDisplayNames`] from locale data and an options bag.
     ///
@@ -384,6 +383,7 @@ impl LocaleDisplayNamesFormatter {
                 _ => None,
             }
             .or_else(|| self.region_data.get().names.get(&region.into()));
+            // TODO: Use data patterns
             Cow::Owned(alloc::format!(
                 "{} ({})",
                 langdisplay.unwrap_or(locale.id.language.as_str()),

@@ -31,7 +31,7 @@ struct ICU4XFixedDecimalFormatterDeleter {
 /**
  * An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
  * 
- * See the [Rust documentation for `FixedDecimalFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
+ * See the [Rust documentation for `FixedDecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
  */
 class ICU4XFixedDecimalFormatter {
  public:
@@ -39,7 +39,7 @@ class ICU4XFixedDecimalFormatter {
   /**
    * Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
@@ -55,14 +55,14 @@ class ICU4XFixedDecimalFormatter {
   /**
    * Formats a [`ICU4XFixedDecimal`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XFixedDecimal& value, W& write) const;
 
   /**
    * Formats a [`ICU4XFixedDecimal`] to a string.
    * 
-   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format(const ICU4XFixedDecimal& value) const;
   inline const capi::ICU4XFixedDecimalFormatter* AsFFI() const { return this->inner.get(); }

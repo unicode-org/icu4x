@@ -29,7 +29,7 @@ struct ICU4XLocaleDisplayNamesFormatterDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
+ * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
  */
 class ICU4XLocaleDisplayNamesFormatter {
  public:
@@ -37,21 +37,21 @@ class ICU4XLocaleDisplayNamesFormatter {
   /**
    * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
 
   /**
    * Returns the locale-specific display name of a locale.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const ICU4XLocale& locale, W& write) const;
 
   /**
    * Returns the locale-specific display name of a locale.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
   diplomat::result<std::string, ICU4XError> of(const ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleDisplayNamesFormatter* AsFFI() const { return this->inner.get(); }

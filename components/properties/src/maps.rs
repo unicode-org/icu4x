@@ -278,6 +278,18 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
             .filter(|v| v.value)
             .map(|v| v.range)
     }
+
+    /// Exposed for FFI needs, could be exposed in general in the future but we should
+    /// have a use case first.
+    ///
+    /// FFI needs this since it operates on erased maps and can't use `iter_ranges_for_group()`
+    #[doc(hidden)]
+    pub fn iter_ranges_mapped<U: Eq + 'a>(
+        self,
+        predicate: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        self.map.iter_ranges_mapped(predicate)
+    }
 }
 
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {

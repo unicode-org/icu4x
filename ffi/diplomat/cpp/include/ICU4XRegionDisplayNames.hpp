@@ -28,7 +28,7 @@ struct ICU4XRegionDisplayNamesDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `RegionDisplayNames`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html) for more information.
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 class ICU4XRegionDisplayNames {
  public:
@@ -36,7 +36,7 @@ class ICU4XRegionDisplayNames {
   /**
    * Creates a new `RegionDisplayNames` from locale data and an options bag.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
@@ -45,7 +45,7 @@ class ICU4XRegionDisplayNames {
    * Note that the funtion returns an empty string in case the display name for a given
    * region code is not found.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view region, W& write) const;
 
@@ -54,7 +54,7 @@ class ICU4XRegionDisplayNames {
    * Note that the funtion returns an empty string in case the display name for a given
    * region code is not found.
    * 
-   * See the [Rust documentation for `of`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+   * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
   diplomat::result<std::string, ICU4XError> of(const std::string_view region) const;
   inline const capi::ICU4XRegionDisplayNames* AsFFI() const { return this->inner.get(); }

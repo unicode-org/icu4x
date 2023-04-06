@@ -9,13 +9,12 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
-use alloc::borrow::Cow;
+mod lstm;
+pub use lstm::*;
+
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::{ZeroMap, ZeroVec};
-
-#[cfg(feature = "lstm")]
-use crate::{lstm_error::Error, math_helper::MatrixZero};
+use zerovec::ZeroVec;
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -111,80 +110,4 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie_data: ZeroVec<'data, u16>,
-}
-
-/// The struct that stores a LSTM's matrix.
-#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct LstmMatrix<'data> {
-    #[allow(missing_docs)]
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dims: ZeroVec<'data, u16>,
-    #[allow(missing_docs)]
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ZeroVec<'data, f32>,
-}
-
-#[cfg(feature = "lstm")]
-impl<'data> LstmMatrix<'data> {
-    pub(crate) fn as_matrix_zero<const D: usize>(&self) -> Result<MatrixZero<D>, Error> {
-        let dims = self
-            .dims
-            .get_as_array()
-            .ok_or(Error::DimensionMismatch)?
-            .map(|x| x as usize);
-        MatrixZero::try_from_parts(&self.data, dims)
-    }
-}
-
-/// The struct that stores a LSTM model.
-#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
-#[derive(PartialEq, Debug, Clone)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct LstmDataV1<'data> {
-    /// Name of the model
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub model: Cow<'data, str>,
-    /// The grapheme cluster dictionary used to train the model
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dic: ZeroMap<'data, str, i16>,
-    /// The embedding layer
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub embedding: LstmMatrix<'data>,
-    /// The forward layer's first matrix
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_w: LstmMatrix<'data>,
-    /// The forward layer's second matrix
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_u: LstmMatrix<'data>,
-    /// The forward layer's bias
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub fw_b: LstmMatrix<'data>,
-    /// The backward layer's first matrix
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_w: LstmMatrix<'data>,
-    /// The backward layer's second matrix
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_u: LstmMatrix<'data>,
-    /// The backward layer's bias
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bw_b: LstmMatrix<'data>,
-    /// The output layer's weights
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_w: LstmMatrix<'data>,
-    /// The output layer's bias
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub time_b: LstmMatrix<'data>,
 }

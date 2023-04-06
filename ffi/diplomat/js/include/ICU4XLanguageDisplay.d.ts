@@ -1,7 +1,7 @@
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.LanguageDisplay.html Rust documentation for `LanguageDisplay`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html Rust documentation for `LanguageDisplay`} for more information.
  */
 export enum ICU4XLanguageDisplay {
   /**
