@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `WordBreakRule`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.WordBreakRule.html) for more information.
+ * See the [Rust documentation for `WordBreakRule`](https://docs.rs/icu/latest/icu/segmenter/enum.WordBreakRule.html) for more information.
  */
 enum struct ICU4XWordBreakRule {
   Normal = 0,

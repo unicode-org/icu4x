@@ -118,4 +118,13 @@ impl<'a> CldrDirLang<'a> {
         dir.push_str("/main");
         Ok(dir)
     }
+
+    pub fn file_exists(
+        &self,
+        lang: &LanguageIdentifier,
+        file_name: &str,
+    ) -> Result<bool, DataError> {
+        self.0
+            .file_exists(&format!("{}/{lang}/{file_name}", self.dir()?))
+    }
 }

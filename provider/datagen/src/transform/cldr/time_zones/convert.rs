@@ -119,47 +119,51 @@ impl Location {
 
 impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
-        let time_zone_names_data = other.time_zone_names_resource;
-        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
         Self(
-            time_zone_names_data
-                .zone
-                .0
+            other
+                .bcp47_tzids_resource
                 .iter()
-                .flat_map(|(key, region)| {
-                    region
-                        .0
-                        .iter()
-                        .flat_map(move |(inner_key, place_or_region)| {
-                            let mut key = key.clone();
-                            key.push('/');
-                            key.push_str(inner_key);
-                            match place_or_region {
-                                LocationOrSubRegion::Location(place) => {
-                                    match bcp47_tzid_data.get(&key) {
-                                        Some(bcp47) => place
-                                            .exemplar_city()
-                                            .map(|city| vec![(bcp47, city)])
-                                            .unwrap_or_default(),
-                                        None => panic!("Cannot find bcp47 for {key:?}."),
-                                    }
+                .filter_map(|(bcp47, bcp47_tzid_data)| {
+                    bcp47_tzid_data
+                        .alias
+                        .as_ref()
+                        .map(|aliases| (bcp47, aliases))
+                })
+                // Montreal is meant to be deprecated, but pre-43 the deprecation
+                // fallback was not set, which is why it might show up here.
+                .filter(|(bcp47, _)| bcp47.0 != "camtr")
+                .filter_map(|(bcp47, aliases)| {
+                    let alias = aliases.split(' ').next().expect("split non-empty");
+                    let mut alias_parts = alias.split('/');
+                    let continent = alias_parts.next().expect("split non-empty");
+                    let location_or_subregion = alias_parts.next()?;
+                    let location_in_subregion = alias_parts.next();
+
+                    Some((
+                        bcp47,
+                        other
+                            .time_zone_names_resource
+                            .zone
+                            .0
+                            .get(continent)
+                            .and_then(|x| x.0.get(location_or_subregion))
+                            .and_then(|x| match x {
+                                LocationOrSubRegion::Location(place) => Some(place),
+                                LocationOrSubRegion::SubRegion(region) => {
+                                    region.get(location_in_subregion?)
                                 }
-                                LocationOrSubRegion::SubRegion(region) => region
-                                    .iter()
-                                    .filter_map(|(inner_key, place)| {
-                                        let mut key = key.clone();
-                                        key.push('/');
-                                        key.push_str(inner_key);
-                                        match bcp47_tzid_data.get(&key) {
-                                            Some(bcp47) => {
-                                                place.exemplar_city().map(|city| (bcp47, city))
-                                            }
-                                            None => panic!("Cannot find bcp47 for {key:?}."),
-                                        }
-                                    })
-                                    .collect::<Vec<_>>(),
-                            }
-                        })
+                            })
+                            .and_then(|p| p.exemplar_city())
+                            .or_else(|| {
+                                (continent != "Etc").then(|| {
+                                    alias
+                                        .split('/')
+                                        .next_back()
+                                        .expect("split non-empty")
+                                        .replace('_', " ")
+                                })
+                            })?,
+                    ))
                 })
                 .collect(),
         )

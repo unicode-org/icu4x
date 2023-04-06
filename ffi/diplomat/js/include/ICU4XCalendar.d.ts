@@ -6,7 +6,7 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html Rust documentation for `AnyCalendar`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html Rust documentation for `AnyCalendar`} for more information.
  */
 export class ICU4XCalendar {
 
@@ -14,7 +14,7 @@ export class ICU4XCalendar {
 
    * Creates a new {@link ICU4XCalendar `ICU4XCalendar`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable Rust documentation for `try_new_for_locale_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable Rust documentation for `try_new_for_locale_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_for_locale(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XCalendar | never;
@@ -23,7 +23,7 @@ export class ICU4XCalendar {
 
    * Creates a new {@link ICU4XCalendar `ICU4XCalendar`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_for_kind(provider: ICU4XDataProvider, kind: ICU4XAnyCalendarKind): ICU4XCalendar | never;
@@ -32,7 +32,7 @@ export class ICU4XCalendar {
 
    * Returns the kind of this calendar
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind Rust documentation for `kind`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind Rust documentation for `kind`} for more information.
    */
   kind(): ICU4XAnyCalendarKind;
 }

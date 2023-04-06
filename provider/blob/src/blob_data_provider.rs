@@ -90,6 +90,14 @@ pub struct BlobDataProvider {
     data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
 }
 
+impl core::fmt::Debug for BlobDataProvider {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("BlobDataProvider")
+            .field("data", &"[...]")
+            .finish()
+    }
+}
+
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {

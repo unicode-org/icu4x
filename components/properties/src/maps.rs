@@ -26,6 +26,7 @@ use zerovec::ZeroVecError;
 /// property data in a map-like form, ex: enumerated property value data keyed
 /// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
+#[derive(Debug)]
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
 }
@@ -145,7 +146,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 
 /// A borrowed wrapper around code point set data, returned by
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
     map: &'a PropertyCodePointMapV1<'a, T>,
 }
@@ -265,6 +266,30 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
             .filter(move |r| r.value == val)
             .map(|r| r.range)
     }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// do *not* have the value `v` in the [`CodePointMapData`].
+    pub fn iter_ranges_for_value_complemented(
+        self,
+        val: T,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
+        self.map
+            .iter_ranges_mapped(move |value| value != val)
+            .filter(|v| v.value)
+            .map(|v| v.range)
+    }
+
+    /// Exposed for FFI needs, could be exposed in general in the future but we should
+    /// have a use case first.
+    ///
+    /// FFI needs this since it operates on erased maps and can't use `iter_ranges_for_group()`
+    #[doc(hidden)]
+    pub fn iter_ranges_mapped<U: Eq + 'a>(
+        self,
+        predicate: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        self.map.iter_ranges_mapped(predicate)
+    }
 }
 
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
@@ -289,16 +314,16 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     /// assert_eq!(ranges.next().unwrap(), 'µ' as u32..='µ' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'º' as u32..='º' as u32);
     /// assert_eq!(ranges.next().unwrap(), 'À' as u32..='Ö' as u32);
-    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='Þ' as u32);
+    /// assert_eq!(ranges.next().unwrap(), 'Ø' as u32..='ö' as u32);
     /// ```
     pub fn iter_ranges_for_group(
         self,
-        val: crate::GeneralCategoryGroup,
+        group: crate::GeneralCategoryGroup,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.map
-            .iter_ranges()
-            .filter(move |r| val.contains(r.value))
-            .map(|r| r.range)
+            .iter_ranges_mapped(move |value| group.contains(value))
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 }
 

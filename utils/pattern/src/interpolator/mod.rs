@@ -153,6 +153,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 /// [`HashMap`]: std::collections::HashMap
 /// [`Parser`]: crate::parser::Parser
 /// [`IntoIterVec`]: crate::pattern::IntoIterVec
+#[derive(Debug)]
 pub struct Interpolator<'i, 'p, R, E>
 where
     R: ReplacementProvider<'i, E>,

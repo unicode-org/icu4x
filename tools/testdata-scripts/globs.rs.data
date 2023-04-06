@@ -30,6 +30,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-bcp47/bcp47/timezone.json",
     "cldr-localenames-full/main/$LOCALES/territories.json",
     "cldr-localenames-full/main/$LOCALES/languages.json",
+    "cldr-localenames-full/main/$LOCALES/scripts.json",
     // Extra data for icu_datagen tests:
     "cldr-dates-full/main/cs/ca-gregorian.json",
     "cldr-dates-full/main/cs/timeZoneNames.json",
@@ -76,6 +77,8 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/Bidi_C.toml",
     "uprops/small/Bidi_M.toml",
     "uprops/small/blank.toml",
+    "uprops/small/bmg.toml",
+    "uprops/small/bpt.toml",
     "uprops/small/Cased.toml",
     "uprops/small/ccc.toml",
     "uprops/small/CI.toml",

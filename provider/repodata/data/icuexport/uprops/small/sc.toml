@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "Script"
 short_name = "sc"
+uproperty_discr = 0x100A
 values = [
   {discr = 0, long = "Common", short = "Zyyy"},
   {discr = 1, long = "Inherited", short = "Zinh", aliases = ["Qaai"]},

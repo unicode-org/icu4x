@@ -43,6 +43,7 @@ use tinystr::TinyAsciiStr;
 /// [`ICU4X`]: ../icu/index.html
 /// [`CLDR`]: http://cldr.unicode.org/
 /// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
+#[derive(Debug)]
 pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.
     aliases: DataPayload<AliasesV1Marker>,

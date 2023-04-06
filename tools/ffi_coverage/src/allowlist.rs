@@ -210,9 +210,13 @@ lazy_static::lazy_static! {
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
+        "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
         "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
         "icu::collections::codepointinvlist",
         "icu::collections::codepointinvliststringlist",
@@ -356,15 +360,6 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralCategory::all",
         // associated type
         "icu::plurals::PluralOperands::Err",
-
-        // Properties Rust internals
-        "icu::properties::maps::CodePointMapData::from_data",
-        "icu::properties::maps::CodePointMapData::try_into_converted",
-        "icu::properties::sets::CodePointSetData::from_data",
-        "icu::properties::script::ScriptWithExtensions::from_data",
-
-        // typedef
-        "icu::properties::script::ScriptWithExtensionsResult",
 
         // locid macros
         "icu::locid::langid",

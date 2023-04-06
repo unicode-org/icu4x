@@ -236,17 +236,19 @@ impl ScriptExtensionsSet<'_> {
         self.values.get(index)
     }
 }
+
 /// A wrapper around script extensions data. Can be obtained via [`load_script_with_extensions_unstable()`] and
 /// related getters.
 ///
 /// Most useful methods are on [`ScriptWithExtensionsBorrowed`] obtained by calling [`ScriptWithExtensions::as_borrowed()`]
+#[derive(Debug)]
 pub struct ScriptWithExtensions {
     data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
 }
 
 /// A borrowed wrapper around script extension data, returned by
 /// [`ScriptWithExtensions::as_borrowed()`]. More efficient to query.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct ScriptWithExtensionsBorrowed<'a> {
     data: &'a ScriptWithExtensionsPropertyV1<'a>,
 }
@@ -482,8 +484,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///
     /// let exp_ranges = vec![
     ///     0x060C..=0x060C, // ARABIC COMMA
-    ///     0x061B..=0x061B, // ARABIC SEMICOLON
-    ///     0x061C..=0x061C, // ARABIC LETTER MARK
+    ///     0x061B..=0x061C, // ARABIC SEMICOLON, ARABIC LETTER MARK
     ///     0x061F..=0x061F, // ARABIC QUESTION MARK
     ///     0x0640..=0x0640, // ARABIC TATWEEL
     ///     0x064B..=0x0655, // ARABIC FATHATAN..ARABIC HAMZA BELOW
@@ -515,9 +516,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ) -> impl Iterator<Item = RangeInclusive<u32>> + 'a {
         self.data
             .trie
-            .iter_ranges()
-            .filter(move |cpm_range| {
-                let sc_with_ext = ScriptWithExt(cpm_range.value.0);
+            .iter_ranges_mapped(move |value| {
+                let sc_with_ext = ScriptWithExt(value.0);
                 if sc_with_ext.has_extensions() {
                     self.get_scx_val_using_trie_val(&sc_with_ext.to_unaligned())
                         .iter()
@@ -526,7 +526,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
                     script == sc_with_ext.into()
                 }
             })
-            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
+            .filter(|v| v.value)
+            .map(|v| v.range)
     }
 
     /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all

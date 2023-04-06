@@ -29,7 +29,7 @@ struct ICU4XCanonicalCompositionDeleter {
  * 
  * Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
  * 
- * See the [Rust documentation for `CanonicalComposition`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
  */
 class ICU4XCanonicalComposition {
  public:
@@ -37,7 +37,7 @@ class ICU4XCanonicalComposition {
   /**
    * Construct a new ICU4XCanonicalComposition instance for NFC
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XCanonicalComposition, ICU4XError> create(const ICU4XDataProvider& provider);
 
@@ -45,7 +45,7 @@ class ICU4XCanonicalComposition {
    * Performs canonical composition (including Hangul) on a pair of characters
    * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
    * 
-   * See the [Rust documentation for `compose`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
+   * See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
    */
   char32_t compose(char32_t starter, char32_t second) const;
   inline const capi::ICU4XCanonicalComposition* AsFFI() const { return this->inner.get(); }
