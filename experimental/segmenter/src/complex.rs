@@ -100,11 +100,11 @@ impl Dictionary {
     >(
         provider: &D,
     ) -> Self {
-        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
-        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
-        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
-        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
-        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
+        let burmese = Self::load_wl_ext(provider, locale!("my")).ok();
+        let khmer = Self::load_wl_ext(provider, locale!("km")).ok();
+        let lao = Self::load_wl_ext(provider, locale!("lo")).ok();
+        let thai = Self::load_wl_ext(provider, locale!("th")).ok();
+        let cj = Self::load_w_auto(provider, locale!("ja")).ok();
         Dictionary {
             burmese,
             khmer,
@@ -121,30 +121,11 @@ impl Dictionary {
     >(
         provider: &D,
     ) -> Self {
-        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
+        let cj = Self::load_w_auto(provider, locale!("ja")).ok();
         Dictionary {
             cj,
             ..Default::default()
         }
-    }
-
-    pub(crate) fn load_chinese_japanese<
-        D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized,
-    >(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: {
-                    let mut m = DataRequestMetadata::default();
-                    m.silent = true;
-                    m
-                },
-            })?
-            .take_payload()
-            .map(DataPayload::cast)
     }
 
     /// Construct a [`Dictionary`] for Southeast Asian languages (Burmese, Khmer, Lao, and Thai).
@@ -153,10 +134,10 @@ impl Dictionary {
     >(
         provider: &D,
     ) -> Self {
-        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
-        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
-        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
-        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
+        let burmese = Self::load_wl_ext(provider, locale!("my")).ok();
+        let khmer = Self::load_wl_ext(provider, locale!("km")).ok();
+        let lao = Self::load_wl_ext(provider, locale!("lo")).ok();
+        let thai = Self::load_wl_ext(provider, locale!("th")).ok();
         Dictionary {
             burmese,
             khmer,
@@ -166,12 +147,27 @@ impl Dictionary {
         }
     }
 
-    pub(crate) fn load_southeast_asian<
-        D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized,
-    >(
+    pub(crate) fn load_w_auto<D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized>(
         provider: &D,
         locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        Self::load(provider, locale)
+    }
+
+    pub(crate) fn load_wl_ext<D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        Self::load(provider, locale)
+    }
+
+    pub(crate) fn load<M, D: DataProvider<M> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError>
+    where
+        M: KeyedDataMarker<Yokeable = UCharDictionaryBreakDataV1<'static>>,
+    {
         provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
