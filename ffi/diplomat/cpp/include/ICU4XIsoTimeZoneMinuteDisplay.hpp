@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `IsoMinutes`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
+ * See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
  */
 enum struct ICU4XIsoTimeZoneMinuteDisplay {
   Required = 0,

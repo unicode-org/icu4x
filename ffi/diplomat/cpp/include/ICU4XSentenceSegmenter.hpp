@@ -30,7 +30,7 @@ struct ICU4XSentenceSegmenterDeleter {
 /**
  * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
  * 
- * See the [Rust documentation for `SentenceSegmenter`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html) for more information.
+ * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
  */
 class ICU4XSentenceSegmenter {
  public:
@@ -38,14 +38,14 @@ class ICU4XSentenceSegmenter {
   /**
    * Construct an [`ICU4XSentenceSegmenter`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XSentenceSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Segments a (potentially ill-formed) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf8) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf8) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
@@ -54,7 +54,7 @@ class ICU4XSentenceSegmenter {
   /**
    * Segments a UTF-16 string.
    * 
-   * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
@@ -63,7 +63,7 @@ class ICU4XSentenceSegmenter {
   /**
    * Segments a Latin-1 string.
    * 
-   * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_latin1) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */

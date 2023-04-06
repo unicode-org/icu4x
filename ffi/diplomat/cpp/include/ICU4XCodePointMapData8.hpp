@@ -11,6 +11,7 @@
 
 #include "ICU4XCodePointMapData8.h"
 
+class CodePointRangeIterator;
 class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XCodePointMapData8;
@@ -30,11 +31,11 @@ struct ICU4XCodePointMapData8Deleter {
  * 
  * For properties whose values fit into 8 bits.
  * 
- * See the [Rust documentation for `properties`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html) for more information.
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
  * 
- * See the [Rust documentation for `CodePointMapData`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapData.html) for more information.
+ * See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapData.html) for more information.
  * 
- * See the [Rust documentation for `CodePointMapDataBorrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
  */
 class ICU4XCodePointMapData8 {
  public:
@@ -42,7 +43,7 @@ class ICU4XCodePointMapData8 {
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   uint8_t get(char32_t cp) const;
 
@@ -52,58 +53,101 @@ class ICU4XCodePointMapData8 {
   uint8_t get32(uint32_t cp) const;
 
   /**
+   * Converts a general category to its corresponding mask value
+   * 
+   * Nonexistant general categories will map to the empty mask
+   * 
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
+   */
+  static uint32_t general_category_to_mask(uint8_t gc);
+
+  /**
+   * Produces an iterator over ranges of code points that map to `value`
+   * 
+   * See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_value(uint8_t value) const;
+
+  /**
+   * Produces an iterator over ranges of code points that do not map to `value`
+   * 
+   * See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_value_complemented(uint8_t value) const;
+
+  /**
+   * Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
+   * whose property values are contained in the mask.
+   * 
+   * The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+   * by using `ICU4XGeneralCategoryNameToMaskMapper`
+   * 
+   * Should only be used on maps for properties with values less than 32 (like Generak_Category),
+   * other maps will have unpredictable results
+   * 
+   * See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
+   * 
+   * Lifetimes: `this` must live at least as long as the output.
+   */
+  CodePointRangeIterator iter_ranges_for_mask(uint32_t mask) const;
+
+  /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
    * 
-   * See the [Rust documentation for `get_set_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+   * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
    */
   ICU4XCodePointSetData get_set_for_value(uint8_t value) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_general_category`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_general_category.html) for more information.
+   * See the [Rust documentation for `load_general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_general_category.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_bidi_class`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_bidi_class.html) for more information.
+   * See the [Rust documentation for `load_bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_bidi_class.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_east_asian_width`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_east_asian_width.html) for more information.
+   * See the [Rust documentation for `load_east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_east_asian_width.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_line_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_line_break.html) for more information.
+   * See the [Rust documentation for `load_line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_line_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_grapheme_cluster_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_grapheme_cluster_break.html) for more information.
+   * See the [Rust documentation for `load_grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_grapheme_cluster_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_grapheme_cluster_break(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_word_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_word_break.html) for more information.
+   * See the [Rust documentation for `load_word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_word_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_word_break(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `load_sentence_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html) for more information.
+   * See the [Rust documentation for `load_sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.load_sentence_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_sentence_break(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData8* AsFFI() const { return this->inner.get(); }
@@ -116,6 +160,7 @@ class ICU4XCodePointMapData8 {
   std::unique_ptr<capi::ICU4XCodePointMapData8, ICU4XCodePointMapData8Deleter> inner;
 };
 
+#include "CodePointRangeIterator.hpp"
 #include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 
@@ -124,6 +169,18 @@ inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
 }
 inline uint8_t ICU4XCodePointMapData8::get32(uint32_t cp) const {
   return capi::ICU4XCodePointMapData8_get32(this->inner.get(), cp);
+}
+inline uint32_t ICU4XCodePointMapData8::general_category_to_mask(uint8_t gc) {
+  return capi::ICU4XCodePointMapData8_general_category_to_mask(gc);
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value(uint8_t value) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_value(this->inner.get(), value));
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_value_complemented(uint8_t value) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_value_complemented(this->inner.get(), value));
+}
+inline CodePointRangeIterator ICU4XCodePointMapData8::iter_ranges_for_mask(uint32_t mask) const {
+  return CodePointRangeIterator(capi::ICU4XCodePointMapData8_iter_ranges_for_mask(this->inner.get(), mask));
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData8_get_set_for_value(this->inner.get(), value));

@@ -1,4 +1,6 @@
 export { FFIError } from './diplomat-runtime.js';
+export { CodePointRangeIterator } from './CodePointRangeIterator.js';
+export { CodePointRangeIteratorResult } from './CodePointRangeIteratorResult.js';
 export { ICU4XAnyCalendarKind } from './ICU4XAnyCalendarKind.js';
 export { ICU4XBidi } from './ICU4XBidi.js';
 export { ICU4XBidiDirection } from './ICU4XBidiDirection.js';

@@ -63,6 +63,33 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 /// ```
+///
+/// This segmenter applies all rules provided to the constructor.
+/// Thus, if the data supplied by the provider comprises all
+/// [grapheme cluster boundary rules][Rules] from Unicode Standard Annex #29,
+/// _Unicode Text Segmentation_, which is the case of default data
+/// (both test data and data produced by `icu_datagen`), the `segment_*`
+/// functions return extended grapheme cluster boundaries, as opposed to
+/// legacy grapheme cluster boundaries.  See [_Section 3, Grapheme Cluster
+/// Boundaries_][GC], and [_Table 1a, Sample Grapheme Clusters_][Sample_GC],
+/// in Unicode Standard Annex #29, _Unicode Text Segmentation_.
+///
+/// [Rules]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundary_Rules
+/// [GC]: https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries
+/// [Sample_GC]: https://www.unicode.org/reports/tr29/#Table_Sample_Grapheme_Clusters
+///
+/// ```rust
+/// use icu_segmenter::GraphemeClusterSegmenter;
+/// let segmenter =
+///     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
+///
+/// // நி (TAMIL LETTER NA, TAMIL VOWEL SIGN I) is an extended grapheme cluster,
+/// // but not a legacy grapheme cluster.
+/// let ni = "நி";
+/// let egc_boundaries: Vec<usize> = segmenter.segment_str(ni).collect();
+/// assert_eq!(&egc_boundaries, &[0, ni.len()]);
+/// ```
 #[derive(Debug)]
 pub struct GraphemeClusterSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
