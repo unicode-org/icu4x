@@ -191,25 +191,6 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// assert_eq!(&breakpoints, &[9, 14, 22]);
 ///
 /// use icu::properties::{maps, LineBreak};
-///
-/// let data = maps::load_line_break(&icu_testdata::unstable()).expect("The data should be valid!");
-/// let lb = data.as_borrowed();
-///
-/// let mandatory_breaks: Vec<usize> = breakpoints
-///     .into_iter()
-///     .filter(|&i| {
-///         text[..i].chars().next_back().map_or(false, |c| {
-///             matches!(
-///                 lb.get(c),
-///                 LineBreak::MandatoryBreak
-///                     | LineBreak::CarriageReturn
-///                     | LineBreak::LineFeed
-///                     | LineBreak::NextLine
-///                 ) || i == text.len()
-///         })
-///     })
-///     .collect();
-/// assert_eq!(&mandatory_breaks, &[9,  22]);
 /// ```
 ///
 /// Segment a string with CSS option overrides:
@@ -245,6 +226,38 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
+/// ```
+///
+/// Separate mandatory breaks from the break opportunities:
+///
+/// ```rust
+/// # use icu::properties::{maps, LineBreak};
+/// # use icu_segmenter::LineSegmenter;
+/// #
+/// # let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #   .expect("Data exists");
+/// #
+/// let data = maps::load_line_break(&icu_testdata::unstable()).expect("The data should be valid!");
+/// let lb = data.as_borrowed();
+///
+/// let text = "Summary\r\nThis annex…";
+///
+/// let mandatory_breaks: Vec<usize> = segmenter
+///     .segment_str(text)
+///     .into_iter()
+///     .filter(|&i| {
+///         text[..i].chars().next_back().map_or(false, |c| {
+///             matches!(
+///                 lb.get(c),
+///                 LineBreak::MandatoryBreak
+///                     | LineBreak::CarriageReturn
+///                     | LineBreak::LineFeed
+///                     | LineBreak::NextLine
+///                 ) || i == text.len()
+///         })
+///     })
+///     .collect();
+/// assert_eq!(&mandatory_breaks, &[9,  22]);
 /// ```
 #[derive(Debug)]
 pub struct LineSegmenter {
