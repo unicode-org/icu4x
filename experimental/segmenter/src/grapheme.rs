@@ -29,7 +29,9 @@ pub struct GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
 ///
 /// For more information, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
-pub struct GraphemeClusterBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
+pub struct GraphemeClusterBreakIteratorLatin1<'l, 's>(
+    RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>,
+);
 
 /// Grapheme cluster break iterator for a UTF-16 string.
 ///
