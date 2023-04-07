@@ -2070,6 +2070,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_fs",
  "icu_testdata",
+ "itertools",
  "num-traits",
  "serde",
  "serde_json",

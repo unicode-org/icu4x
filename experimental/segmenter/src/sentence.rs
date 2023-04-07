@@ -71,13 +71,13 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBrea
 /// #     SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
 /// #         .expect("Data exists");
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
-/// let words: Vec<&str> = segmenter
+/// let sentences: Vec<&str> = segmenter
 ///    .segment_str(text)
 ///    .collect::<Vec<_>>()
 ///    .windows(2)
 ///    .map(|i| &text[i[0]..i[1]])
 ///    .collect();
-/// assert_eq!(&words, &["Ceci tuera cela. ", "Le livre tuera l’édifice."]);
+/// assert_eq!(&sentences, &["Ceci tuera cela. ", "Le livre tuera l’édifice."]);
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {
