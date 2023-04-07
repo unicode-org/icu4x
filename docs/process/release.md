@@ -13,6 +13,8 @@ Once the release is complete, the assigned release driver will:
 * Verify that the milestone and checklist are complete
 * Verify with component owners that they're ready for release
 * Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
+* Verify that we have acceptable FFI coverage (should be a part of the checklist issue)
+  * Verify that `ffi/diplomat/tests/missing_apis.txt` is empty. If not, check with the team that we are okay punting these to the next release.
 * Take a bird-eye view at:
   * READMEs
   * Documentation
@@ -34,6 +36,7 @@ Once the release is complete, the assigned release driver will:
   * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public
+  * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
 
 
 ## Publishing utils

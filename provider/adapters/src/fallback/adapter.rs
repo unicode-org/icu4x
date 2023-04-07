@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::helpers::result_is_err_missing_data_options;
+use crate::helpers::result_is_err_missing_locale;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -43,7 +43,7 @@ use crate::helpers::result_is_err_missing_data_options;
 ///     "こんにちは世界",
 /// );
 /// ```
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct LocaleFallbackProvider<P> {
     inner: P,
     fallbacker: LocaleFallbacker,
@@ -182,7 +182,7 @@ impl<P> LocaleFallbackProvider<P> {
     fn run_fallback<F1, F2, R>(
         &self,
         key: DataKey,
-        base_req: DataRequest,
+        mut base_req: DataRequest,
         mut f1: F1,
         mut f2: F2,
     ) -> Result<R, DataError>
@@ -192,19 +192,23 @@ impl<P> LocaleFallbackProvider<P> {
     {
         let key_fallbacker = self.fallbacker.for_key(key);
         let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.clone());
+        let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {
             let result = f1(DataRequest {
                 locale: fallback_iterator.get(),
-                metadata: Default::default(),
+                metadata: base_req.metadata,
             });
-            if !result_is_err_missing_data_options(&result) {
+            if !result_is_err_missing_locale(&result) {
                 return result
                     .map(|mut res| {
                         f2(&mut res).locale = Some(fallback_iterator.take());
                         res
                     })
                     // Log the original request rather than the fallback request
-                    .map_err(|e| e.with_req(key, base_req));
+                    .map_err(|e| {
+                        base_req.metadata.silent = base_silent;
+                        e.with_req(key, base_req)
+                    });
             }
             // If we just checked und, break out of the loop.
             if fallback_iterator.get().is_empty() {
@@ -212,6 +216,7 @@ impl<P> LocaleFallbackProvider<P> {
             }
             fallback_iterator.step();
         }
+        base_req.metadata.silent = base_silent;
         Err(DataErrorKind::MissingLocale.with_req(key, base_req))
     }
 }

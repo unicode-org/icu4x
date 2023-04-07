@@ -31,6 +31,7 @@ use std::io;
 /// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
+#[derive(Debug)]
 pub struct Serializer;
 
 /// Options bag for initializing a [`postcard::Serializer`].

@@ -103,8 +103,7 @@ checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 [[package]]
 name = "diplomat"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "715c9a09a3623bfc1e3e7f602dd46ff28271869b97c7141b250c2041e3f50742"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -115,14 +114,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72436165c1437c454114de69a35992c2fe33a8a538bb0a7f781fe10d34a8ad5e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 
 [[package]]
 name = "diplomat_core"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c59c2b777f3d2914166b3f9106348118c67959c5fae4aecab88d5f2620d5bd5b"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -201,6 +198,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_segmenter",
  "icu_timezone",
 ]
 
@@ -228,6 +226,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -237,6 +236,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_segmenter",
+ "icu_testdata",
  "icu_timezone",
  "log",
  "tinystr",
@@ -307,6 +307,17 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "writeable",
+]
+
+[[package]]
+name = "icu_displaynames"
+version = "0.9.0"
+dependencies = [
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "tinystr",
+ "zerovec",
 ]
 
 [[package]]
@@ -420,9 +431,30 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "ndarray",
  "num-traits",
  "utf8_iter",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_testdata"
+version = "1.1.2"
+dependencies = [
+ "icu_calendar",
+ "icu_collator",
+ "icu_collections",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_segmenter",
+ "icu_timezone",
  "zerovec",
 ]
 
@@ -485,51 +517,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "matrixmultiply"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "add85d4dd35074e6fedc608f8c8f513a3548619a9024b751949ef0e8e45a4d84"
-dependencies = [
- "rawpointer",
-]
-
-[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
-
-[[package]]
-name = "ndarray"
-version = "0.15.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adb12d4e967ec485a5f71c6311fe28158e9d6f4bc4a447b474184d0f91a8fa32"
-dependencies = [
- "matrixmultiply",
- "num-complex",
- "num-integer",
- "num-traits",
- "rawpointer",
-]
-
-[[package]]
-name = "num-complex"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02e0d21255c828d6f128a1e41534206671e8c3ea0c62f32291e808dc82cff17d"
-dependencies = [
- "num-traits",
-]
-
-[[package]]
-name = "num-integer"
-version = "0.1.45"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "225d3389fb3509a24c93f5c29eb6bde2586b98d9f016636dff58d7c6f7569cd9"
-dependencies = [
- "autocfg",
- "num-traits",
-]
 
 [[package]]
 name = "num-traits"
@@ -568,12 +559,6 @@ checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
 dependencies = [
  "proc-macro2",
 ]
-
-[[package]]
-name = "rawpointer"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60a357793950651c4ed0f3f52338f53b2f809f32d83a07f72909fa13e4c6c1e3"
 
 [[package]]
 name = "redox_syscall"
@@ -732,9 +717,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-bidi"
-version = "0.3.8"
+version = "0.3.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
+checksum = "92888ba5573ff080736b3648696b70cafad7d250551175acbaa4e0385b3e1460"
 
 [[package]]
 name = "unicode-ident"

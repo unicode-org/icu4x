@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "sr",
         "script": "Latn"
@@ -119,6 +119,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "Čihuahua"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Siudad Huarez"
               },
               "Coral_Harbour": {
                 "exemplarCity": "Koral Harbur"

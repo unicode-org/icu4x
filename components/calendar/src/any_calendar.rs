@@ -70,6 +70,7 @@ use core::fmt;
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();
 /// ```
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum AnyCalendar {
     /// A [`Gregorian`] calendar

@@ -15,6 +15,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
+use icu_segmenter::RuleStatusType;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
@@ -279,6 +280,7 @@ impl crate::DatagenProvider {
         let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
         let mut properties_names = Vec::<String>::new();
         let mut simple_properties_count = 0;
+        let mut rule_status_table = Vec::<u8>::new();
 
         properties_names.push("Unknown".to_string());
         simple_properties_count += 1;
@@ -616,9 +618,26 @@ impl crate::DatagenProvider {
             debug_assert_eq!(property_trie.get32(0xe0020), CM);
         }
 
+        // rule status for word segmenter
+        if segmenter.segmenter_type == "word" {
+            for p in &segmenter.tables {
+                let rule_state = match &*p.name {
+                    "Numeric" => RuleStatusType::Number,
+                    "ALetter" => RuleStatusType::Letter,
+                    "Hebrew_Letter" => RuleStatusType::Letter,
+                    "ExtendNumLet" => RuleStatusType::Letter,
+                    "Katakana" => RuleStatusType::Letter,
+                    "SA" => RuleStatusType::Letter,
+                    _ => RuleStatusType::None,
+                };
+                rule_status_table.push(rule_state as u8);
+            }
+        }
+
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
             break_state_table: RuleBreakStateTable(ZeroVec::new_owned(break_state_table)),
+            rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
             property_count: property_length as u8,
             last_codepoint_property: (simple_properties_count - 1) as i8,
             sot_property: (property_length - 2) as u8,
@@ -725,11 +744,11 @@ impl crate::DatagenProvider {
     }
 }
 
-impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(
+impl crate::DatagenProvider {
+    fn load_dictionary_data(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
+    ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
         let toml_data = self
             .source
             .segmenter()?
@@ -737,9 +756,18 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
                 Self::get_toml_filename(req.locale)
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             )?;
-        let data = UCharDictionaryBreakDataV1 {
+        Ok(UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
-        };
+        })
+    }
+}
+
+impl DataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<DictionaryForWordOnlyAutoV1Marker>, DataError> {
+        let data = self.load_dictionary_data(req)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(data)),
@@ -747,14 +775,32 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![locale!("ja").into()])
+    }
+}
+
+impl DataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<DictionaryForWordLineExtendedV1Marker>, DataError> {
+        let data = self.load_dictionary_data(req)?;
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl IterableDataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("th").into(),
             locale!("km").into(),
             locale!("lo").into(),
             locale!("my").into(),
-            locale!("ja").into(),
         ])
     }
 }

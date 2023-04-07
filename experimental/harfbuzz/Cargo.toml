@@ -44,5 +44,6 @@ displaydoc = { version = "0.2.3", default-features = false }
 
 [features]
 default = []
-std = []
+# TODO(#3275) Make this no_std again
+# std = []
 serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]

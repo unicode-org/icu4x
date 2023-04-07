@@ -17,7 +17,7 @@ icu_provider = { path = "../../provider/core" }
 repodata = { path = "../../provider/repodata" }
 
 cached-path = ">=0.5, <0.7"
-clap = "2.33"
+clap = {version = "4", features = ["derive"] }
 eyre = "0.6"
 log = "0.4"
 quote = "1"

@@ -245,6 +245,10 @@ impl TrieValue for CaseMappingData {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(CaseMappingData)
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
 }
 
 /// Reverse case folding data. Maps from multi-character strings back

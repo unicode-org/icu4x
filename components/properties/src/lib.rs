@@ -72,7 +72,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -91,8 +91,10 @@ pub mod maps;
 // name of that struct without coordination.
 mod props;
 
+pub mod bidi_data;
 pub mod exemplar_chars;
 pub mod provider;
+pub(crate) mod runtime;
 #[allow(clippy::exhaustive_structs)] // TODO
 pub mod script;
 pub mod sets;
@@ -105,6 +107,7 @@ pub use props::{
 
 /// Module for working with the names of property values
 pub mod names {
+    pub use crate::props::{PropertyEnumToValueNameMapper, PropertyEnumToValueNameMapperBorrowed};
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
 

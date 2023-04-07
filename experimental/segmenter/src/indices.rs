@@ -2,8 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// Similar to CharIndices for Latin-1 character
-#[derive(Clone)]
+/// Similar to [`core::str::CharIndices`] for Latin-1 strings, represented as `[u8]`.
+///
+/// Contrary to [`core::str::CharIndices`], the second element of the
+/// [`Iterator::Item`] is a [`u8`], representing a Unicode scalar value in the
+/// range U+0000–U+00FF.
+#[derive(Clone, Debug)]
 pub struct Latin1Indices<'a> {
     front_offset: usize,
     iter: &'a [u8],
@@ -30,8 +34,13 @@ impl<'a> Iterator for Latin1Indices<'a> {
     }
 }
 
-/// Similar to CharIndices for UTF-16 character
-#[derive(Clone)]
+/// Similar to [`core::str::CharIndices`] for UTF-16 strings, represented as `[u16]`.
+///
+/// Contrary to [`core::str::CharIndices`], the second element of the
+/// [`Iterator::Item`] is a Unicode code point represented by a [`u32`],
+/// rather than a Unicode scalar value represented by a [`char`], because this
+/// iterator preserves unpaired surrogates.
+#[derive(Clone, Debug)]
 pub struct Utf16Indices<'a> {
     front_offset: usize,
     iter: &'a [u16],

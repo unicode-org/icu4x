@@ -63,3 +63,22 @@ pub struct LanguageDisplayNamesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub menu_names: ZeroMap<'data, UnvalidatedStr, str>,
 }
+
+#[icu_provider::data_struct(ScriptDisplayNamesV1Marker = "displaynames/scripts@1")]
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// ScriptDisplayNames provides mapping between a script code and it's display name.
+pub struct ScriptDisplayNamesV1<'data> {
+    /// Mapping for script to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
+    /// Mapping for script to locale display short name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub short_names: ZeroMap<'data, UnvalidatedStr, str>,
+}

@@ -7,9 +7,10 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_collections::codepointtrie::TrieValue;
-    use icu_properties::maps;
+    use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup};
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_iter::ffi::CodePointRangeIterator;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
 
     #[diplomat::opaque]
@@ -18,6 +19,17 @@ pub mod ffi {
     /// For properties whose values fit into 8 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
+    #[diplomat::rust_link(
+        icu::properties::maps::CodePointMapData::as_borrowed,
+        FnInStruct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::properties::maps::CodePointMapData::from_data, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::properties::maps::CodePointMapData::try_into_converted,
+        FnInStruct,
+        hidden
+    )]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
@@ -44,6 +56,71 @@ pub mod ffi {
         )]
         pub fn get32(&self, cp: u32) -> u8 {
             self.0.as_borrowed().get32(cp)
+        }
+
+        /// Converts a general category to its corresponding mask value
+        ///
+        /// Nonexistant general categories will map to the empty mask
+        #[diplomat::rust_link(icu::properties::GeneralCategoryGroup, Struct)]
+        pub fn general_category_to_mask(gc: u8) -> u32 {
+            if let Ok(gc) = GeneralCategory::try_from(gc) {
+                let group: GeneralCategoryGroup = gc.into();
+                group.into()
+            } else {
+                0
+            }
+        }
+
+        /// Produces an iterator over ranges of code points that map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value<'a>(&'a self, value: u8) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_for_value(value),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points that do not map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value_complemented<'a>(
+            &'a self,
+            value: u8,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .iter_ranges_for_value_complemented(value),
+            )))
+        }
+
+        /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
+        /// whose property values are contained in the mask.
+        ///
+        /// The main mask property supported is that for General_Category, which can be obtained via `general_category_to_mask()` or
+        /// by using `ICU4XGeneralCategoryNameToMaskMapper`
+        ///
+        /// Should only be used on maps for properties with values less than 32 (like Generak_Category),
+        /// other maps will have unpredictable results
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_group,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_mask<'a>(&'a self, mask: u32) -> Box<CodePointRangeIterator<'a>> {
+            let ranges = self
+                .0
+                .as_borrowed()
+                .iter_ranges_mapped(move |v| {
+                    let val_mask = 1_u32.checked_shl(v.into()).unwrap_or(0);
+                    val_mask & mask != 0
+                })
+                .filter(|v| v.value)
+                .map(|v| v.range);
+            Box::new(CodePointRangeIterator(Box::new(ranges)))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -131,6 +208,33 @@ pub mod ffi {
         )]
         pub fn get32(&self, cp: u32) -> u16 {
             self.0.as_borrowed().get32(cp)
+        }
+
+        /// Produces an iterator over ranges of code points that map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value<'a>(&'a self, value: u16) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0.as_borrowed().iter_ranges_for_value(value),
+            )))
+        }
+
+        /// Produces an iterator over ranges of code points that do not map to `value`
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::iter_ranges_for_value_complemented,
+            FnInStruct
+        )]
+        pub fn iter_ranges_for_value_complemented<'a>(
+            &'a self,
+            value: u16,
+        ) -> Box<CodePointRangeIterator<'a>> {
+            Box::new(CodePointRangeIterator(Box::new(
+                self.0
+                    .as_borrowed()
+                    .iter_ranges_for_value_complemented(value),
+            )))
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value

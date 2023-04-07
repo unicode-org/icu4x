@@ -10,8 +10,8 @@ pub mod ffi {
     use core::convert::TryFrom;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
-        GraphemeClusterBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
-        WordBreakDataV1Marker,
+        DictionaryForWordLineExtendedV1Marker, DictionaryForWordOnlyAutoV1Marker,
+        GraphemeClusterBreakDataV1Marker, LstmForWordLineAutoV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
         WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
@@ -48,8 +48,8 @@ pub mod ffi {
         fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -73,7 +73,7 @@ pub mod ffi {
         fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -97,7 +97,8 @@ pub mod ffi {
         fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {

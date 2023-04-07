@@ -37,7 +37,7 @@ yoke = { version = "0.7.0", path = "../yoke", features = ["derive"], optional = 
 [dev-dependencies]
 bincode = "1"
 bytecheck = "0.6"
-criterion = "0.3.4"
+criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locid = { path = "../../components/locid" }
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }

@@ -12,11 +12,8 @@ edition = "2021"
 crate-type = ["staticlib"]
 
 [dependencies]
-icu_capi = { path = "../../../..", default-features = false, features = ["buffer_provider"] }
+icu_capi = { path = "../../../..", default-features = false, features = ["buffer_provider", "icu_decimal"] }
 dlmalloc = { version = "0.2", features = ["global"] }
-# This is the last version that builds on our current pinned nightly due to
-# https://github.com/rust-lang/libc/issues/3066
-libc = "=0.2.126" 
 
 [profile.release]
 lto = true

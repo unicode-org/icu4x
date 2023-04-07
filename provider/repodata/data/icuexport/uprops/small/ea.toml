@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[enum_property]]
 long_name = "East_Asian_Width"
 short_name = "ea"
+uproperty_discr = 0x1004
 values = [
   {discr = 0, long = "Neutral", short = "N"},
   {discr = 1, long = "Ambiguous", short = "A"},

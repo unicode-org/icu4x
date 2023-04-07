@@ -1,8 +1,8 @@
 {
   "supplemental": {
     "version": {
-      "_unicodeVersion": "14.0.0",
-      "_cldrVersion": "42"
+      "_unicodeVersion": "15.0.0",
+      "_cldrVersion": "43"
     },
     "parentLocales": {
       "parentLocale": {
@@ -125,6 +125,7 @@
         "ht": "fr-HT",
         "nb": "no",
         "nn": "no",
+        "no-NO": "no",
         "pt-AO": "pt-PT",
         "pt-CH": "pt-PT",
         "pt-CV": "pt-PT",
@@ -180,6 +181,20 @@
         "yue-Hans": "und",
         "zh-Hant": "und",
         "zh-Hant-MO": "zh-Hant-HK"
+      },
+      "collations": {
+        "bs-Cyrl": "bs",
+        "sr-Latn": "sr",
+        "sr-Cyrl-ME": "sr-ME",
+        "zh-Hant": "zh",
+        "yue-CN": "zh-Hans",
+        "yue-Hans": "zh-Hans",
+        "yue-Hans-CN": "zh-Hans",
+        "yue": "zh-Hant",
+        "yue-Hant": "zh-Hant"
+      },
+      "segmentations": {
+        "zh-Hant": "zh"
       }
     }
   }

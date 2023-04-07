@@ -130,7 +130,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -179,6 +179,7 @@ pub mod prelude {
     pub use crate::marker::KeyedDataMarker;
     pub use crate::request::DataLocale;
     pub use crate::request::DataRequest;
+    pub use crate::request::DataRequestMetadata;
     pub use crate::response::DataPayload;
     pub use crate::response::DataResponse;
     pub use crate::response::DataResponseMetadata;

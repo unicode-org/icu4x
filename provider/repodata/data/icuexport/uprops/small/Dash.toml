@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "Dash"
 short_name = "Dash"
+uproperty_discr = 0x4
 # Inclusive ranges of the code points in the set.
 ranges = [
   [0x2d, 0x2d],

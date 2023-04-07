@@ -3,7 +3,7 @@
     "ccp": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ccp"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "𑄌𑄨𑄦𑄪𑄠𑄦𑄪𑄠"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "Ciudad Juárez"
               },
               "Coral_Harbour": {
                 "exemplarCity": "𑄇𑄮𑄢𑄣𑄴 𑄦𑄢𑄴𑄝𑄢𑄴"
@@ -373,9 +376,6 @@
               },
               "Puerto_Rico": {
                 "exemplarCity": "𑄛𑄪𑄠𑄬𑄢𑄴𑄖𑄮 𑄢𑄨𑄇𑄮"
-              },
-              "Punta_Arenas": {
-                "exemplarCity": "Punta Arenas"
               },
               "Rainy_River": {
                 "exemplarCity": "𑄣𑄬𑄭𑄚𑄨 𑄢𑄨𑄞𑄢𑄴"
@@ -636,9 +636,6 @@
               "Sarajevo": {
                 "exemplarCity": "𑄥𑄢𑄎𑄨𑄞𑄮"
               },
-              "Saratov": {
-                "exemplarCity": "Saratov"
-              },
               "Simferopol": {
                 "exemplarCity": "𑄥𑄨𑄟𑄴𑄜𑄬𑄢𑄮𑄛𑄮𑄣𑄴"
               },
@@ -871,9 +868,6 @@
               "Ashgabat": {
                 "exemplarCity": "𑄃𑄌𑄴𑄉𑄪𑄝𑄖𑄴"
               },
-              "Atyrau": {
-                "exemplarCity": "Atyrau"
-              },
               "Baghdad": {
                 "exemplarCity": "𑄝𑄇𑄴𑄘𑄖𑄴"
               },
@@ -924,9 +918,6 @@
               },
               "Dushanbe": {
                 "exemplarCity": "𑄘𑄪𑄥𑄚𑄴𑄝𑄬"
-              },
-              "Famagusta": {
-                "exemplarCity": "Famagusta"
               },
               "Gaza": {
                 "exemplarCity": "𑄉𑄎"
@@ -1020,9 +1011,6 @@
               },
               "Qatar": {
                 "exemplarCity": "𑄇𑄖𑄢𑄴"
-              },
-              "Qostanay": {
-                "exemplarCity": "Qostanay"
               },
               "Qyzylorda": {
                 "exemplarCity": "𑄇𑄨𑄎𑄨𑄣𑄧𑄢𑄴𑄓"
@@ -1221,9 +1209,6 @@
               },
               "Johnston": {
                 "exemplarCity": "𑄎𑄧𑄚𑄴𑄥𑄳𑄑𑄧𑄚𑄴"
-              },
-              "Kanton": {
-                "exemplarCity": "Kanton"
               },
               "Kiritimati": {
                 "exemplarCity": "𑄇𑄨𑄢𑄨𑄖𑄨𑄟𑄖𑄨"

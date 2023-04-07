@@ -142,6 +142,7 @@ where
 ///
 /// [data provider]: icu_provider
 /// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
+#[derive(Debug)]
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
@@ -150,6 +151,7 @@ pub struct TimeZoneFormatter {
 }
 
 /// A container contains all data payloads for CustomTimeZone.
+#[derive(Debug)]
 pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,

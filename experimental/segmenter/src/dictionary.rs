@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::*;
+use crate::indices::Utf16Indices;
 use crate::provider::*;
-use crate::{indices::Utf16Indices, SegmenterError};
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
@@ -137,18 +137,21 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
     }
 }
 
-pub struct DictionarySegmenter<'l> {
-    payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+pub(crate) struct DictionarySegmenter<'l> {
+    dict: &'l UCharDictionaryBreakDataV1<'l>,
     grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
-    pub fn try_new_unstable(
-        payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-        grapheme: &'l RuleBreakDataV1<'l>,
-    ) -> Result<Self, SegmenterError> {
+    pub fn new(
+        dict: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+        grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
+    ) -> Self {
         // TODO: no way to verify trie data
-        Ok(Self { payload, grapheme })
+        Self {
+            dict: dict.get(),
+            grapheme: grapheme.get(),
+        }
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
@@ -158,7 +161,7 @@ impl<'l> DictionarySegmenter<'l> {
     ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_str(input, self.grapheme);
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.payload.get().trie_data.clone()),
+            trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: input.char_indices(),
             len: input.len(),
             grapheme_iter,
@@ -172,7 +175,7 @@ impl<'l> DictionarySegmenter<'l> {
     ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, self.grapheme);
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.payload.get().trie_data.clone()),
+            trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: Utf16Indices::new(input),
             len: input.len(),
             grapheme_iter,
@@ -183,49 +186,27 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use super::*;
-    use icu_locid::{locale, Locale};
-    use zerovec::ZeroSlice;
+    use crate::{
+        dictionary::DictionarySegmenter, provider::DictionaryForWordOnlyAutoV1Marker,
+        LineSegmenter, WordSegmenter,
+    };
+    use icu_provider::prelude::*;
+    use icu_provider_adapters::fork::ForkByKeyProvider;
+    use icu_provider_fs::FsDataProvider;
+    use std::path::PathBuf;
 
-    fn get_payload(
-        locale: Locale,
-    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        icu_testdata::buffer()
-            .as_deserializing()
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: Default::default(),
-            })?
-            .take_payload()
+    fn get_segmenter_testdata_provider() -> impl BufferProvider {
+        let segmenter_fs_provider = FsDataProvider::try_new(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
+        )
+        .unwrap();
+        ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
     }
 
     #[test]
     fn burmese_dictionary_test() {
-        // TODO:
-        // testdata doesn't include Khmer data. If adding it, replace with testdata.
-        //
-        // This test data is created by the following using ICU4C tools
-        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/burmesedict.txt tmp.bin
-        // dd if=tmp.bin of=cjdict.dict bs=1 skip=64
-        const BURMESE_DICTIONARY: &ZeroSlice<u16> = match ZeroSlice::<u16>::try_from_bytes(
-            include_bytes!("../tests/testdata/burmese.dict"),
-        ) {
-            Ok(s) => s,
-            Err(_) => panic!("invalid dictionary data"),
-        };
-
-        let data = UCharDictionaryBreakDataV1 {
-            trie_data: BURMESE_DICTIONARY.as_zerovec(),
-        };
-        let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -238,62 +219,69 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let payload = get_payload(locale!("ja")).expect("Data exists");
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
+        let provider = get_segmenter_testdata_provider();
+        let dict_payload: DataPayload<crate::provider::UCharDictionaryBreakDataV1Marker> =
+            DataProvider::<DictionaryForWordOnlyAutoV1Marker>::load(
+                &icu_testdata::buffer().as_deserializing(),
+                DataRequest {
+                    locale: &icu_locid::locale!("ja").into(),
+                    metadata: Default::default(),
+                },
+            )
+            .unwrap()
             .take_payload()
-            .expect("Data should be present!");
-        let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
+            .unwrap()
+            .cast();
+        let grph_payload: DataPayload<crate::provider::GraphemeClusterBreakDataV1Marker> = provider
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &icu_locid::locale!("ja").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let word_segmenter =
+            WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let dict_segmenter = DictionarySegmenter::new(&dict_payload, &grph_payload);
 
         // Match case
         let s = "龟山岛龟山岛";
-        let result: Vec<usize> = segmenter.segment_str(s).collect();
+        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![9, 18]);
 
+        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![0, 9, 18]);
+
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
+        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
         assert_eq!(result, vec![3, 6]);
+
+        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![0, 3, 6]);
 
         // Match case, then no match case
         let s = "エディターエディ";
-        let result: Vec<usize> = segmenter.segment_str(s).collect();
+        let result: Vec<usize> = dict_segmenter.segment_str(s).collect();
         assert_eq!(result, vec![15, 24]);
 
+        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
+        let result: Vec<usize> = word_segmenter.segment_str(s).collect();
+        assert_eq!(result, vec![0, 24]);
+
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
-        let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
+        let result: Vec<usize> = dict_segmenter.segment_utf16(&s_utf16).collect();
         assert_eq!(result, vec![5, 8]);
+
+        // TODO(#3236): Why is WordSegmenter not returning the middle segment?
+        let result: Vec<usize> = word_segmenter.segment_utf16(&s_utf16).collect();
+        assert_eq!(result, vec![0, 8]);
     }
 
     #[test]
     fn khmer_dictionary_test() {
-        // TODO:
-        // testdata doesn't include Khmer data. If adding it, replace with testdata.
-        //
-        // This test data is created by the following using ICU4C tools
-        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/khmerdict.txt tmp.bin
-        // dd if=tmp.bin of=khmer.dict bs=1 skip=64
-        const KHMER_DICTIONARY: &ZeroSlice<u16> = match ZeroSlice::<u16>::try_from_bytes(
-            include_bytes!("../tests/testdata/khmer.dict"),
-        ) {
-            Ok(s) => s,
-            Err(_) => panic!("invalid dictionary data"),
-        };
-
-        let data = UCharDictionaryBreakDataV1 {
-            trie_data: KHMER_DICTIONARY.as_zerovec(),
-        };
-        let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![27, 54, 81]);
@@ -305,30 +293,8 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
-        // TODO:
-        // testdata doesn't include Lao. If adding it, replace with testdata.
-        //
-        // This test data is created by the following using ICU4C tools
-        // LD_LIBRARY_PATH=lib bin/gendict --uchars data/brkitr/dictionaries/laodict.txt tmp.bin
-        // dd if=tmp.bin of=lao.dict bs=1 skip=64
-        static LAO_DICTIONARY: &ZeroSlice<u16> =
-            match ZeroSlice::<u16>::try_from_bytes(include_bytes!("../tests/testdata/lao.dict")) {
-                Ok(s) => s,
-                Err(_) => panic!("invalid dictionary data"),
-            };
-
-        let data = UCharDictionaryBreakDataV1 {
-            trie_data: LAO_DICTIONARY.as_zerovec(),
-        };
-        let payload = DataPayload::<UCharDictionaryBreakDataV1Marker>::from_owned(data);
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let segmenter =
-            DictionarySegmenter::try_new_unstable(&payload, grapheme.get()).expect("Data exists");
+        let provider = get_segmenter_testdata_provider();
+        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);

@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[script_extensions]]
 long_name = "Script_Extensions"
 short_name = "scx"
+uproperty_discr = 0x7000
 script_code_array = [
   [4],
   [0xa],
