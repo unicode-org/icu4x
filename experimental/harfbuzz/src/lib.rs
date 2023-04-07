@@ -39,7 +39,7 @@ use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker;
 use icu_properties::bidi_data::BidiAuxiliaryProperties;
 use icu_properties::maps::CodePointMapData;
-use icu_properties::names::PropertyEnumToValueNameMapper;
+use icu_properties::names::PropertyEnumToValueNameLinearTiny4Mapper;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::{
     GeneralCategoryV1Marker, ScriptV1Marker, ScriptValueToShortNameV1Marker,
@@ -47,6 +47,7 @@ use icu_properties::provider::{
 use icu_properties::{GeneralCategory, Script};
 use icu_provider::prelude::*;
 use std::os::raw::{c_char, c_void};
+use tinystr::{tinystr, TinyStr4};
 
 /// The total number of General Category values is fixed per
 /// https://www.unicode.org/policies/stability_policy.html :
@@ -155,7 +156,7 @@ unsafe extern "C" fn icu4x_hb_unicode_mirroring_destroy(user_data: *mut c_void) 
 
 struct ScriptDataForHarfBuzz {
     script_map: CodePointMapData<Script>,
-    enum_to_name_mapper: PropertyEnumToValueNameMapper<Script>,
+    enum_to_name_mapper: PropertyEnumToValueNameLinearTiny4Mapper<Script>,
 }
 
 unsafe extern "C" fn icu4x_hb_unicode_script(
@@ -166,7 +167,9 @@ unsafe extern "C" fn icu4x_hb_unicode_script(
     let script_data: &ScriptDataForHarfBuzz = &*(user_data as *mut ScriptDataForHarfBuzz);
     let script: Script = script_data.script_map.as_borrowed().get32(unicode);
     let enum_to_name_mapper = script_data.enum_to_name_mapper.as_borrowed();
-    let name: &str = enum_to_name_mapper.get(script).unwrap_or("Zzzz");
+    let name: TinyStr4 = enum_to_name_mapper
+        .get(script)
+        .unwrap_or(tinystr!(4, "Zzzz"));
     hb_script_from_string(
         name.as_ptr() as *const c_char,
         name.len().try_into().unwrap_or(0),

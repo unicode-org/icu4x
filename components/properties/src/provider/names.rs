@@ -20,7 +20,8 @@ use core::str;
 
 use icu_provider::prelude::*;
 
-use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap};
+use tinystr::TinyStr4;
+use zerovec::{maps::ZeroMapKV, ule::VarULE, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a property name that can be "loose matched" as according to
 /// [PropertyValueAliases.txt](https://www.unicode.org/Public/UCD/latest/ucd/PropertyValueAliases.txt)
@@ -150,7 +151,7 @@ impl NormalizedPropertyNameStr {
         self_iter.cmp(other_iter)
     }
     #[cfg(feature = "serde")]
-    /// Get a Box<NormalizedPropertyName> from a byte slice
+    /// Get a `Box<NormalizedPropertyName>` from a byte slice
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         #[allow(clippy::expect_used)] // Self has no invariants
         // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310
@@ -202,10 +203,56 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum PropertyEnumToValueNameMapV1<'data> {
+pub struct PropertyEnumToValueNameSparseMapV1<'data> {
+    /// A map from the value discriminant to the names
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroMap<'data, u16, str>,
+}
+
+/// A mapping of property values to their names. A single instance of this map will only cover
+/// either long or short names, determined whilst loading data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct PropertyEnumToValueNameLinearMapV1<'data> {
     /// A map from the value discriminant (the index) to the names, for mostly
     /// contiguous data. Empty strings count as missing.
-    Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
-    /// A map from the value discriminant to the names
-    Map(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, u16, str>),
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: VarZeroVec<'data, str>,
+}
+
+/// A mapping of property values to their names. A single instance of this map will only cover
+/// either long or short names, determined whilst loading data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, Clone)]
+#[icu_provider::data_struct]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider::names),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct PropertyEnumToValueNameLinearTiny4MapV1<'data> {
+    /// A map from the value discriminant (the index) to the names, for mostly
+    /// contiguous data. Empty strings count as missing.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub map: ZeroVec<'data, TinyStr4>,
 }

@@ -107,7 +107,15 @@ pub use props::{
 
 /// Module for working with the names of property values
 pub mod names {
-    pub use crate::props::{PropertyEnumToValueNameMapper, PropertyEnumToValueNameMapperBorrowed};
+    pub use crate::props::{
+        PropertyEnumToValueNameLinearMapper, PropertyEnumToValueNameLinearMapperBorrowed,
+    };
+    pub use crate::props::{
+        PropertyEnumToValueNameLinearTiny4Mapper, PropertyEnumToValueNameLinearTiny4MapperBorrowed,
+    };
+    pub use crate::props::{
+        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
+    };
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
 

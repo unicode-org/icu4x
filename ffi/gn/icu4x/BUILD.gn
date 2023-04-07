@@ -554,6 +554,7 @@ rust_library("icu_properties-v1_1_0") {
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
   deps += [ ":icu_collections-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":unicode-bidi-v0_3_13" ]
   deps += [ ":zerovec-v0_9_3" ]
 
