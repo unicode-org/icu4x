@@ -73,12 +73,12 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// # let segmenter =
 /// #     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
 /// #         .expect("Data exists");
+/// use itertools::Itertools;
 /// let text = "मांजर";
 /// let grapheme_clusters: Vec<&str> = segmenter
 ///    .segment_str(text)
-///    .collect::<Vec<_>>()
-///    .windows(2)
-///    .map(|i| &text[i[0]..i[1]])
+///    .tuple_windows()
+///    .map(|(i, j)| &text[i..j])
 ///    .collect();
 /// assert_eq!(&grapheme_clusters, &["मां", "ज", "र"]);
 /// ```
