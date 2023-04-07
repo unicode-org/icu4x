@@ -24,7 +24,7 @@ struct ICU4XGraphemeClusterBreakIteratorLatin1Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `GraphemeClusterBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorLatin1.html) for more information.
+ * See the [Rust documentation for `GraphemeClusterBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorLatin1.html) for more information.
  */
 class ICU4XGraphemeClusterBreakIteratorLatin1 {
  public:

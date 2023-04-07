@@ -24,7 +24,7 @@ struct ICU4XWordBreakIteratorLatin1Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `WordBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorLatin1.html) for more information.
+ * See the [Rust documentation for `WordBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html) for more information.
  */
 class ICU4XWordBreakIteratorLatin1 {
  public:

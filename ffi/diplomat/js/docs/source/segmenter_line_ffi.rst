@@ -3,50 +3,32 @@
 
 .. js:class:: ICU4XLineBreakIteratorLatin1
 
-    See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-    Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html>`__
+    See the `Rust documentation for LineBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIteratorLatin1.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
-
-        See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-        Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.into_iter>`__
 
 
 .. js:class:: ICU4XLineBreakIteratorUtf16
 
-    See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-    Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html>`__
+    See the `Rust documentation for LineBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIteratorUtf16.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
-
-        See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-        Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.into_iter>`__
 
 
 .. js:class:: ICU4XLineBreakIteratorUtf8
 
-    See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-    Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorPotentiallyIllFormedUtf8.html>`__
+    See the `Rust documentation for LineBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
-
-        See the `Rust documentation for LineBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html>`__ for more information.
-
-        Additional information: `1 <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.into_iter>`__
 
 
 .. js:class:: ICU4XLineBreakOptionsV1

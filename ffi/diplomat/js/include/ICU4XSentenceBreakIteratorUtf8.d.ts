@@ -2,7 +2,7 @@ import { i32 } from "./diplomat-runtime"
 
 /**
 
- * See the {@link https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorPotentiallyIllFormedUtf8.html Rust documentation for `SentenceBreakIteratorPotentiallyIllFormedUtf8`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIteratorPotentiallyIllFormedUtf8.html Rust documentation for `SentenceBreakIteratorPotentiallyIllFormedUtf8`} for more information.
  */
 export class ICU4XSentenceBreakIteratorUtf8 {
 

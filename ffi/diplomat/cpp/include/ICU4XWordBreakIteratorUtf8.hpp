@@ -24,7 +24,7 @@ struct ICU4XWordBreakIteratorUtf8Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `WordBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
+ * See the [Rust documentation for `WordBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
  */
 class ICU4XWordBreakIteratorUtf8 {
  public:

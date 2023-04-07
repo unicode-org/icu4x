@@ -3,7 +3,7 @@
 
 .. cpp:class:: ICU4XSentenceBreakIteratorLatin1
 
-    See the `Rust documentation for SentenceBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorLatin1.html>`__ for more information.
+    See the `Rust documentation for SentenceBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIteratorLatin1.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()
@@ -13,7 +13,7 @@
 
 .. cpp:class:: ICU4XSentenceBreakIteratorUtf16
 
-    See the `Rust documentation for SentenceBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorUtf16.html>`__ for more information.
+    See the `Rust documentation for SentenceBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIteratorUtf16.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()
@@ -23,7 +23,7 @@
 
 .. cpp:class:: ICU4XSentenceBreakIteratorUtf8
 
-    See the `Rust documentation for SentenceBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+    See the `Rust documentation for SentenceBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()

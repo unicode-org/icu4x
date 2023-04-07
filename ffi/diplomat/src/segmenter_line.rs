@@ -50,18 +50,15 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8, Typedef, compact)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8, Struct)]
     pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Typedef, compact)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Struct)]
     pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Typedef, compact)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Struct)]
     pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineSegmenter {
@@ -246,10 +243,6 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::into_iter, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::IntoIter, AssociatedTypeInStruct, hidden)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::Item, AssociatedTypeInStruct, hidden)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -262,10 +255,6 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::into_iter, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::IntoIter, AssociatedTypeInStruct, hidden)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::Item, AssociatedTypeInStruct, hidden)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -278,10 +267,6 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::into_iter, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::IntoIter, AssociatedTypeInStruct, hidden)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::Item, AssociatedTypeInStruct, hidden)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
