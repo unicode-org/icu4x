@@ -320,7 +320,7 @@ impl databake::Bake for LstmDataFloat32<'_> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
+#[icu_provider::data_struct(LstmForWordLineAutoV1Marker = "segmenter/lstm/wl_auto@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -336,4 +336,10 @@ pub enum LstmDataV1<'data> {
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
+}
+
+pub(crate) struct LstmDataV1Marker;
+
+impl DataMarker for LstmDataV1Marker {
+    type Yokeable = LstmDataV1<'static>;
 }

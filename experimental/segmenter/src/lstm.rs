@@ -56,7 +56,7 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
     }
 }
 
-pub struct LstmSegmenter<'l> {
+pub(crate) struct LstmSegmenter<'l> {
     dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
@@ -311,7 +311,7 @@ impl Bies {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::provider::LstmDataV1Marker;
+    use crate::provider::{LstmDataV1Marker, LstmForWordLineAutoV1Marker};
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
@@ -347,15 +347,18 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let payload: DataPayload<LstmDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(DataRequest {
-                locale: &locale!("th").into(),
-                metadata: Default::default(),
-            })
+        let payload: DataPayload<LstmDataV1Marker> =
+            DataProvider::<LstmForWordLineAutoV1Marker>::load(
+                &icu_testdata::buffer().as_deserializing(),
+                DataRequest {
+                    locale: &locale!("th").into(),
+                    metadata: Default::default(),
+                },
+            )
             .unwrap()
             .take_payload()
-            .unwrap();
+            .unwrap()
+            .cast();
         let lstm = LstmSegmenter::try_new(&payload, None).expect("Test data is invalid");
 
         // Importing the test data

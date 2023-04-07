@@ -186,6 +186,7 @@ rust_library("icu-v1_1_0") {
   deps += [ ":icu_plurals-v1_1_0" ]
   deps += [ ":icu_properties-v1_1_0" ]
   deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":icu_segmenter-v0_8_0" ]
   deps += [ ":icu_timezone-v1_1_0" ]
 
   rustenv = []
@@ -195,6 +196,8 @@ rust_library("icu-v1_1_0") {
     "--edition=2021",
     "-Cmetadata=2f550ab455e7aa02",
     "-Cextra-filename=-2f550ab455e7aa02",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"icu_segmenter\"",
   ]
 
   visibility = [ ":*" ]
@@ -249,6 +252,7 @@ rust_library("icu_capi-v1_1_0") {
   deps += [ ":icu_provider-v1_1_0" ]
   deps += [ ":icu_provider_adapters-v1_1_0" ]
   deps += [ ":icu_segmenter-v0_8_0" ]
+  deps += [ ":icu_testdata-v1_1_2" ]
   deps += [ ":icu_timezone-v1_1_0" ]
   deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":unicode-bidi-v0_3_13" ]
@@ -264,6 +268,7 @@ rust_library("icu_capi-v1_1_0") {
     "--edition=2021",
     "-Cmetadata=c7988772278807f3",
     "-Cextra-filename=-c7988772278807f3",
+    "--cfg=feature=\"any_provider\"",
     "--cfg=feature=\"default_components\"",
     "--cfg=feature=\"icu_calendar\"",
     "--cfg=feature=\"icu_collator\"",
@@ -277,6 +282,7 @@ rust_library("icu_capi-v1_1_0") {
     "--cfg=feature=\"icu_properties\"",
     "--cfg=feature=\"icu_segmenter\"",
     "--cfg=feature=\"icu_timezone\"",
+    "--cfg=feature=\"provider_test\"",
   ]
 
   visibility = [ ":*" ]
@@ -662,6 +668,53 @@ rust_library("icu_segmenter-v0_8_0") {
     "--cfg=feature=\"auto\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"lstm\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("icu_testdata-v1_1_2") {
+  crate_name = "icu_testdata"
+  crate_root = "//provider/testdata/src/lib.rs"
+  output_name = "icu_testdata-ab82a65c05a00dda"
+
+  deps = []
+  deps += [ ":icu_calendar-v1_1_0" ]
+  deps += [ ":icu_collator-v1_1_0" ]
+  deps += [ ":icu_collections-v1_1_0" ]
+  deps += [ ":icu_datetime-v1_1_0" ]
+  deps += [ ":icu_decimal-v1_1_0" ]
+  deps += [ ":icu_list-v1_1_0" ]
+  deps += [ ":icu_locid-v1_1_0" ]
+  deps += [ ":icu_locid_transform-v1_1_0" ]
+  deps += [ ":icu_normalizer-v1_1_0" ]
+  deps += [ ":icu_plurals-v1_1_0" ]
+  deps += [ ":icu_properties-v1_1_0" ]
+  deps += [ ":icu_provider-v1_1_0" ]
+  deps += [ ":icu_provider_adapters-v1_1_0" ]
+  deps += [ ":icu_segmenter-v0_8_0" ]
+  deps += [ ":icu_timezone-v1_1_0" ]
+  deps += [ ":zerovec-v0_9_3" ]
+
+  rustenv = [ "CARGO_MANIFEST_DIR=.." ]
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=ab82a65c05a00dda",
+    "-Cextra-filename=-ab82a65c05a00dda",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"icu_calendar\"",
+    "--cfg=feature=\"icu_collator\"",
+    "--cfg=feature=\"icu_datetime\"",
+    "--cfg=feature=\"icu_decimal\"",
+    "--cfg=feature=\"icu_list\"",
+    "--cfg=feature=\"icu_locid_transform\"",
+    "--cfg=feature=\"icu_normalizer\"",
+    "--cfg=feature=\"icu_plurals\"",
+    "--cfg=feature=\"icu_properties\"",
+    "--cfg=feature=\"icu_segmenter\"",
+    "--cfg=feature=\"icu_timezone\"",
   ]
 
   visibility = [ ":*" ]

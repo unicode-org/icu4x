@@ -10,9 +10,12 @@ edition = "2021"
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.
-icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false, features = ["default_components"] }
+icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false, features = ["default_components", "provider_test", "any_provider"] }
 icu = { version = "1.0", path = "../../components/icu" }
 icu_provider = { version = "1.0", path = "../../provider/core" }
+
+[gn.package.icu_testdata."1.1.2"]
+env_vars = ["CARGO_MANIFEST_DIR=.."]
 
 [gn.package.log."0.4.14"]
 rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
