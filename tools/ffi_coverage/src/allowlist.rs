@@ -381,25 +381,15 @@ lazy_static::lazy_static! {
         "icu::locid::Locale::strict_cmp_iter",
         "icu::locid::SubtagOrderingResult",
 
-        // Segmenter types and type aliases that are constructed via methods. They don't need FFI.
-        "icu::segmenter::GraphemeClusterBreakIteratorLatin1",
-        "icu::segmenter::GraphemeClusterBreakIteratorUtf16",
-        "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
-        "icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8",
+        // TEMP
         "icu::segmenter::LineBreakIterator",
-        "icu::segmenter::LineBreakIteratorLatin1",
-        "icu::segmenter::LineBreakIteratorUtf16",
-        "icu::segmenter::LineBreakIteratorUtf8",
-        "icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8",
         "icu::segmenter::RuleBreakIterator",
-        "icu::segmenter::SentenceBreakIteratorLatin1",
-        "icu::segmenter::SentenceBreakIteratorUtf16",
+
+        // The only UTF-8 currently allowed over FFI is potentially-ill-formed.
+        "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
+        "icu::segmenter::LineBreakIteratorUtf8",
         "icu::segmenter::SentenceBreakIteratorUtf8",
-        "icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8",
-        "icu::segmenter::WordBreakIteratorLatin1",
-        "icu::segmenter::WordBreakIteratorUtf16",
         "icu::segmenter::WordBreakIteratorUtf8",
-        "icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",

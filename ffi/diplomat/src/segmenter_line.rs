@@ -50,12 +50,15 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8, Typedef)]
     pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Typedef)]
     pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Typedef)]
     pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineSegmenter {

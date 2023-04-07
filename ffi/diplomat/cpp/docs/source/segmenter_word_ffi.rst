@@ -3,6 +3,9 @@
 
 .. cpp:class:: ICU4XWordBreakIteratorLatin1
 
+    See the `Rust documentation for WordBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorLatin1.html>`__ for more information.
+
+
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
@@ -10,12 +13,18 @@
 
 .. cpp:class:: ICU4XWordBreakIteratorUtf16
 
+    See the `Rust documentation for WordBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorUtf16.html>`__ for more information.
+
+
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
 .. cpp:class:: ICU4XWordBreakIteratorUtf8
+
+    See the `Rust documentation for WordBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+
 
     .. cpp:function:: int32_t next()
 

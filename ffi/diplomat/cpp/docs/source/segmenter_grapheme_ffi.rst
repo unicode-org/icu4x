@@ -3,6 +3,9 @@
 
 .. cpp:class:: ICU4XGraphemeClusterBreakIteratorLatin1
 
+    See the `Rust documentation for GraphemeClusterBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorLatin1.html>`__ for more information.
+
+
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
@@ -10,12 +13,18 @@
 
 .. cpp:class:: ICU4XGraphemeClusterBreakIteratorUtf16
 
+    See the `Rust documentation for GraphemeClusterBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorUtf16.html>`__ for more information.
+
+
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
 .. cpp:class:: ICU4XGraphemeClusterBreakIteratorUtf8
+
+    See the `Rust documentation for GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+
 
     .. cpp:function:: int32_t next()
 

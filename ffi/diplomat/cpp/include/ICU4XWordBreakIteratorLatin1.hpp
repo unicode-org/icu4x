@@ -20,6 +20,12 @@ struct ICU4XWordBreakIteratorLatin1Deleter {
     capi::ICU4XWordBreakIteratorLatin1_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `WordBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorLatin1.html) for more information.
+ */
 class ICU4XWordBreakIteratorLatin1 {
  public:
 

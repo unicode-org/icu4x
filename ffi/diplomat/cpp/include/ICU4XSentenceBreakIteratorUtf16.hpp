@@ -20,6 +20,12 @@ struct ICU4XSentenceBreakIteratorUtf16Deleter {
     capi::ICU4XSentenceBreakIteratorUtf16_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `SentenceBreakIteratorUtf16`](https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorUtf16.html) for more information.
+ */
 class ICU4XSentenceBreakIteratorUtf16 {
  public:
 

@@ -24,12 +24,15 @@ pub mod ffi {
     pub struct ICU4XWordSegmenter(WordSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8, Typedef)]
     pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16, Typedef)]
     pub struct ICU4XWordBreakIteratorUtf16<'a>(WordBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1, Typedef)]
     pub struct ICU4XWordBreakIteratorLatin1<'a>(WordBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XWordSegmenter {

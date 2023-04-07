@@ -22,16 +22,19 @@ pub mod ffi {
     pub struct ICU4XGraphemeClusterSegmenter(GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8, Typedef)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
         GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Typedef)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf16<'a>(
         GraphemeClusterBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Typedef)]
     pub struct ICU4XGraphemeClusterBreakIteratorLatin1<'a>(
         GraphemeClusterBreakIteratorLatin1<'a, 'a>,
     );

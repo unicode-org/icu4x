@@ -1,6 +1,8 @@
 import { i32 } from "./diplomat-runtime"
 
 /**
+
+ * See the {@link https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html Rust documentation for `GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8`} for more information.
  */
 export class ICU4XGraphemeClusterBreakIteratorUtf8 {
 

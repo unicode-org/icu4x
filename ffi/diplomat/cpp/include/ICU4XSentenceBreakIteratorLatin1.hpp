@@ -20,6 +20,12 @@ struct ICU4XSentenceBreakIteratorLatin1Deleter {
     capi::ICU4XSentenceBreakIteratorLatin1_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `SentenceBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorLatin1.html) for more information.
+ */
 class ICU4XSentenceBreakIteratorLatin1 {
  public:
 

@@ -20,6 +20,12 @@ struct ICU4XGraphemeClusterBreakIteratorUtf8Deleter {
     capi::ICU4XGraphemeClusterBreakIteratorUtf8_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
+ */
 class ICU4XGraphemeClusterBreakIteratorUtf8 {
  public:
 

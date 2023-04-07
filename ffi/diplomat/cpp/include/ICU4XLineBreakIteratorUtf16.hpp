@@ -20,6 +20,12 @@ struct ICU4XLineBreakIteratorUtf16Deleter {
     capi::ICU4XLineBreakIteratorUtf16_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `LineBreakIteratorUtf16`](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html) for more information.
+ */
 class ICU4XLineBreakIteratorUtf16 {
  public:
 

@@ -20,6 +20,12 @@ struct ICU4XWordBreakIteratorUtf8Deleter {
     capi::ICU4XWordBreakIteratorUtf8_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `WordBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/type.WordBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
+ */
 class ICU4XWordBreakIteratorUtf8 {
  public:
 

@@ -3,6 +3,9 @@
 
 .. js:class:: ICU4XSentenceBreakIteratorLatin1
 
+    See the `Rust documentation for SentenceBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorLatin1.html>`__ for more information.
+
+
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
@@ -10,12 +13,18 @@
 
 .. js:class:: ICU4XSentenceBreakIteratorUtf16
 
+    See the `Rust documentation for SentenceBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorUtf16.html>`__ for more information.
+
+
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
 .. js:class:: ICU4XSentenceBreakIteratorUtf8
+
+    See the `Rust documentation for SentenceBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/type.SentenceBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+
 
     .. js:method:: next()
 

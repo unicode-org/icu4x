@@ -20,6 +20,12 @@ struct ICU4XGraphemeClusterBreakIteratorUtf16Deleter {
     capi::ICU4XGraphemeClusterBreakIteratorUtf16_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `GraphemeClusterBreakIteratorUtf16`](https://docs.rs/icu/latest/icu/segmenter/type.GraphemeClusterBreakIteratorUtf16.html) for more information.
+ */
 class ICU4XGraphemeClusterBreakIteratorUtf16 {
  public:
 

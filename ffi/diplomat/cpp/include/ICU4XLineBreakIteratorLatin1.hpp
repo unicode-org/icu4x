@@ -20,6 +20,12 @@ struct ICU4XLineBreakIteratorLatin1Deleter {
     capi::ICU4XLineBreakIteratorLatin1_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `LineBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html) for more information.
+ */
 class ICU4XLineBreakIteratorLatin1 {
  public:
 

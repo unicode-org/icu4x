@@ -21,14 +21,17 @@ pub mod ffi {
     pub struct ICU4XSentenceSegmenter(SentenceSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8, Typedef)]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
         SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16, Typedef)]
     pub struct ICU4XSentenceBreakIteratorUtf16<'a>(SentenceBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1, Typedef)]
     pub struct ICU4XSentenceBreakIteratorLatin1<'a>(SentenceBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XSentenceSegmenter {

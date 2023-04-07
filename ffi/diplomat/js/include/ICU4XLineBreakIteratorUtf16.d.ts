@@ -1,6 +1,8 @@
 import { i32 } from "./diplomat-runtime"
 
 /**
+
+ * See the {@link https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html Rust documentation for `LineBreakIteratorUtf16`} for more information.
  */
 export class ICU4XLineBreakIteratorUtf16 {
 
