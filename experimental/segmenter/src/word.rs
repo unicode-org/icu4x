@@ -80,7 +80,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///    .collect();
 /// assert_eq!(&segments, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
 /// ```
-/// 
+///
 /// Not all segments delimited by word boundaries are words; some are interword
 /// segments such as spaces and punctuation.
 /// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
