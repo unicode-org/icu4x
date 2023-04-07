@@ -297,6 +297,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
         self.map.map.get(&prop)
     }
 }
+
 /// Private marker type for PropertyEnumToValueNameLinearMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
