@@ -697,7 +697,7 @@ rust_library("icu_testdata-v1_1_2") {
   deps += [ ":icu_timezone-v1_1_0" ]
   deps += [ ":zerovec-v0_9_3" ]
 
-  rustenv = [ "CARGO_MANIFEST_DIR=.." ]
+  rustenv = []
 
   rustflags = [
     "--cap-lints=allow",
