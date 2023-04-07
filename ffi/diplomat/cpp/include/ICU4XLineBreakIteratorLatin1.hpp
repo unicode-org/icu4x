@@ -24,7 +24,9 @@ struct ICU4XLineBreakIteratorLatin1Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `LineBreakIteratorLatin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIteratorLatin1.html) for more information.
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
+ * 
+ *  Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html)
  */
 class ICU4XLineBreakIteratorLatin1 {
  public:
@@ -33,7 +35,7 @@ class ICU4XLineBreakIteratorLatin1 {
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
    * 
-   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIteratorLatin1.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.next) for more information.
    */
   int32_t next();
   inline const capi::ICU4XLineBreakIteratorLatin1* AsFFI() const { return this->inner.get(); }
