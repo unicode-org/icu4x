@@ -68,9 +68,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// use icu_segmenter::WordSegmenter;
-/// let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-///     .expect("Data exists");
+/// # use icu_segmenter::WordSegmenter;
+/// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #     .expect("Data exists");
 /// let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = segmenter
 ///    .segment_str(text)

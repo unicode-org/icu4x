@@ -66,10 +66,10 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBrea
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// use icu_segmenter::SentenceSegmenter;
-/// let segmenter =
-///     SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// # use icu_segmenter::SentenceSegmenter;
+/// # let segmenter =
+/// #     SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
+/// #         .expect("Data exists");
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
 /// let words: Vec<&str> = segmenter
 ///    .segment_str(text)

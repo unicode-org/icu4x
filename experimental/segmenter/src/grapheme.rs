@@ -69,10 +69,10 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// length of the segmented text in code units.
 ///
 /// ```rust
-/// use icu_segmenter::GraphemeClusterSegmenter;
-/// let segmenter =
-///     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
-///         .expect("Data exists");
+/// # use icu_segmenter::GraphemeClusterSegmenter;
+/// # let segmenter =
+/// #     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+/// #         .expect("Data exists");
 /// let text = "मांजर";
 /// let grapheme_clusters: Vec<&str> = segmenter
 ///    .segment_str(text)
