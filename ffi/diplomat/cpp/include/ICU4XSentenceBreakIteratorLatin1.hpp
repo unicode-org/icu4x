@@ -32,6 +32,8 @@ class ICU4XSentenceBreakIteratorLatin1 {
   /**
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
+   * 
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIteratorLatin1.html#method.next) for more information.
    */
   int32_t next();
   inline const capi::ICU4XSentenceBreakIteratorLatin1* AsFFI() const { return this->inner.get(); }

@@ -32,6 +32,8 @@ class ICU4XWordBreakIteratorUtf8 {
   /**
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
+   * 
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html#method.next) for more information.
    */
   int32_t next();
   inline const capi::ICU4XWordBreakIteratorUtf8* AsFFI() const { return this->inner.get(); }

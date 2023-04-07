@@ -30,7 +30,7 @@ lazy_static::lazy_static! {
         "From",
         "Hash",
         "Into",
-        "Iterator", // ???
+        "IntoIterator", // skip IntoIterator but not Iterator
         "Ord",
         "Provider", // new error handling stuff
         "PartialEq",
