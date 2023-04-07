@@ -15,16 +15,24 @@ use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
 /// Word break iterator for an `str` (a UTF-8 string).
+///
+/// For more information, see [`WordSegmenter`].
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
-/// Word break iterator for a potentially invalid UTF-8 string
+/// Word break iterator for a potentially invalid UTF-8 string.
+///
+/// For more information, see [`WordSegmenter`].
 pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
+///
+/// For more information, see [`WordSegmenter`].
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Word break iterator for a UTF-16 string.
+///
+/// For more information, see [`WordSegmenter`].
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string

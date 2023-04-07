@@ -122,16 +122,24 @@ impl Default for LineBreakOptions {
 }
 
 /// Line break iterator for an `str` (a UTF-8 string).
+///
+/// For more information, see [`LineSegmenter`].
 pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
 
-/// Line break iterator for a potentially invalid UTF-8 string
+/// Line break iterator for a potentially invalid UTF-8 string.
+///
+/// For more information, see [`LineSegmenter`].
 pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
+///
+/// For more information, see [`LineSegmenter`].
 pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
 
 /// Line break iterator for a UTF-16 string.
+///
+/// For more information, see [`LineSegmenter`].
 pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
 
 /// Supports loading line break data, and creating line break iterators for different string

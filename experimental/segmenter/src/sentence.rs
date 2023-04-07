@@ -11,16 +11,24 @@ use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
+///
+/// For more information, see [`SentenceSegmenter`].
 pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>;
 
-/// Sentence break iterator for potentially invalid UTF-8 strings
+/// Sentence break iterator for a potentially invalid UTF-8 string.
+///
+/// For more information, see [`SentenceSegmenter`].
 pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
+///
+/// For more information, see [`SentenceSegmenter`].
 pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Sentence break iterator for a UTF-16 string.
+///
+/// For more information, see [`SentenceSegmenter`].
 pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string

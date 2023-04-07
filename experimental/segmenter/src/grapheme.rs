@@ -11,17 +11,25 @@ use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
+///
+/// For more information, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
+///
+/// For more information, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
+///
+/// For more information, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
     RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Grapheme cluster break iterator for a UTF-16 string.
+///
+/// For more information, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>;
 
 /// Segments a string into grapheme clusters.
