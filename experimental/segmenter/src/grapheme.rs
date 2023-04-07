@@ -11,9 +11,25 @@ use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
-/// An iterator over grapheme cluster breaks.
+/// Implements the [`Iterator`] trait over the grapheme cluster boundaries of the given string.
 ///
-/// For more information, see [`GraphemeClusterSegmenter`].
+/// Lifetimes:
+///
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
+///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the boundary (for a boundary at the end of text, this index is the length
+/// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
@@ -23,25 +39,25 @@ derive_usize_iterator_with_type!(GraphemeClusterBreakIterator);
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
 ///
-/// For more information, see [`GraphemeClusterSegmenter`].
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
     GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
 ///
-/// For more information, see [`GraphemeClusterSegmenter`].
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     GraphemeClusterBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 ///
-/// For more information, see [`GraphemeClusterSegmenter`].
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
     GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Grapheme cluster break iterator for a UTF-16 string.
 ///
-/// For more information, see [`GraphemeClusterSegmenter`].
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
     GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeUtf16>;
 

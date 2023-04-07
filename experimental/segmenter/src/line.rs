@@ -4,7 +4,6 @@
 
 use crate::complex::*;
 use crate::indices::*;
-use crate::iterator_helpers::derive_usize_iterator;
 use crate::provider::*;
 use crate::symbols::*;
 use crate::SegmenterError;
@@ -124,34 +123,24 @@ impl Default for LineBreakOptions {
 
 /// Line break iterator for an `str` (a UTF-8 string).
 ///
-/// For more information, see [`LineSegmenter`].
-#[derive(Debug)]
-pub struct LineBreakIteratorUtf8<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeUtf8>);
+/// For examples of use, see [`LineSegmenter`].
+pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
 
 /// Line break iterator for a potentially invalid UTF-8 string.
 ///
-/// For more information, see [`LineSegmenter`].
-#[derive(Debug)]
-pub struct LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
-    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>,
-);
+/// For examples of use, see [`LineSegmenter`].
+pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
 ///
-/// For more information, see [`LineSegmenter`].
-#[derive(Debug)]
-pub struct LineBreakIteratorLatin1<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeLatin1>);
+/// For examples of use, see [`LineSegmenter`].
+pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
 
 /// Line break iterator for a UTF-16 string.
 ///
-/// For more information, see [`LineSegmenter`].
-#[derive(Debug)]
-pub struct LineBreakIteratorUtf16<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeUtf16>);
-
-derive_usize_iterator!(LineBreakIteratorUtf8);
-derive_usize_iterator!(LineBreakIteratorPotentiallyIllFormedUtf8);
-derive_usize_iterator!(LineBreakIteratorLatin1);
-derive_usize_iterator!(LineBreakIteratorUtf16);
+/// For examples of use, see [`LineSegmenter`].
+pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
@@ -454,7 +443,7 @@ impl LineSegmenter {
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
-        LineBreakIteratorUtf8(LineBreakIterator {
+        LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -462,7 +451,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
-        })
+        }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
     ///
@@ -471,7 +460,7 @@ impl LineSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        LineBreakIteratorPotentiallyIllFormedUtf8(LineBreakIterator {
+        LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -479,11 +468,11 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
-        })
+        }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
-        LineBreakIteratorLatin1(LineBreakIterator {
+        LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -491,12 +480,12 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
-        })
+        }
     }
 
     /// Create a line break iterator for a UTF-16 string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
-        LineBreakIteratorUtf16(LineBreakIterator {
+        LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -504,7 +493,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: &self.complex,
-        })
+        }
     }
 }
 
@@ -726,8 +715,7 @@ pub trait LineBreakType<'l, 's> {
     ) -> Option<usize>;
 }
 
-/// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the examples in [`LineSegmenter`] for its usages.
+/// Implements the [`Iterator`] trait over the line break opportunities of the given string.
 ///
 /// Lifetimes:
 ///
@@ -737,6 +725,8 @@ pub trait LineBreakType<'l, 's> {
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
 /// _after_ the break (for a break at the end of text, this index is the length
 /// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`LineSegmenter`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,

@@ -4,20 +4,6 @@
 
 //! Macros and utilities to help implement the various iterator types.
 
-macro_rules! derive_usize_iterator {
-    ($ty:tt) => {
-        impl<'l, 's> Iterator for $ty<'l, 's> {
-            type Item = usize;
-            #[inline]
-            fn next(&mut self) -> Option<Self::Item> {
-                self.0.next()
-            }
-        }
-    };
-}
-
-pub(crate) use derive_usize_iterator;
-
 macro_rules! derive_usize_iterator_with_type {
     ($ty:tt) => {
         impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for $ty<'l, 's, Y> {
