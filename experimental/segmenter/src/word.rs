@@ -93,9 +93,9 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = {
 ///     let mut it = segmenter.segment_str(text);
-///     std::iter::from_fn(move || it.next().and_then(|i| Some((i, it.rule_status()))))
+///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
 ///         .tuple_windows()
-///         .filter(|(_, (_, status))| *status == Letter)
+///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
 ///         .map(|((i, _), (j, _))| &text[i..j])
 ///         .collect()
 /// };
