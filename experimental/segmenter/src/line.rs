@@ -461,7 +461,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            complex: Some(&self.complex),
+            complex: &self.complex,
         })
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -478,7 +478,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            complex: Some(&self.complex),
+            complex: &self.complex,
         })
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -490,7 +490,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            complex: Some(&self.complex),
+            complex: &self.complex,
         })
     }
 
@@ -503,7 +503,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            complex: Some(&self.complex),
+            complex: &self.complex,
         })
     }
 }
@@ -752,7 +752,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    complex: Option<&'l ComplexPayloads>,
+    complex: &'l ComplexPayloads,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -1058,8 +1058,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    #[allow(clippy::unwrap_used)] // iter.complex present for line segmenter
-    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
+    let breaks = complex_language_segment_str(iter.complex, &s);
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
@@ -1161,8 +1160,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        #[allow(clippy::unwrap_used)] // iter.complex present for line segmenter
-        let breaks = complex_language_segment_utf16(iterator.complex.unwrap(), &s);
+        let breaks = complex_language_segment_utf16(iterator.complex, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
