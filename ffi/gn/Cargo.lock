@@ -385,6 +385,7 @@ dependencies = [
  "displaydoc",
  "icu_collections",
  "icu_provider",
+ "tinystr",
  "unicode-bidi",
  "zerovec",
 ]

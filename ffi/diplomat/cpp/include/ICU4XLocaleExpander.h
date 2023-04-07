@@ -25,6 +25,8 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocaleExpander_ICU4XError ICU4XLocaleExpander_create(const ICU4XDataProvider* provider);
 
+diplomat_result_box_ICU4XLocaleExpander_ICU4XError ICU4XLocaleExpander_create_extended(const ICU4XDataProvider* provider);
+
 ICU4XTransformResult ICU4XLocaleExpander_maximize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);
 
 ICU4XTransformResult ICU4XLocaleExpander_minimize(const ICU4XLocaleExpander* self, ICU4XLocale* locale);

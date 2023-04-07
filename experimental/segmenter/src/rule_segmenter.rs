@@ -11,7 +11,7 @@ use utf8_iter::Utf8CharIndices;
 
 /// The category tag that is returned by rule_status.
 #[non_exhaustive]
-#[derive(PartialEq, Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]
 pub enum RuleStatusType {
     /// No category tag
