@@ -22,22 +22,26 @@ pub mod ffi {
     pub struct ICU4XGraphemeClusterSegmenter(GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        Struct
+        Typedef,
+        hidden
     )]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
         GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf16<'a>(
         GraphemeClusterBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XGraphemeClusterBreakIteratorLatin1<'a>(
         GraphemeClusterBreakIteratorLatin1<'a, 'a>,
     );
@@ -107,12 +111,9 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::next,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::Item,
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -128,9 +129,9 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIteratorUtf16::Item,
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -146,9 +147,9 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIteratorLatin1::Item,
+            icu::segmenter::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]

@@ -27,3 +27,17 @@ icu::properties::names::PropertyEnumToValueNameMapper#Struct
 icu::properties::names::PropertyEnumToValueNameMapper::as_borrowed#FnInStruct
 icu::properties::names::PropertyEnumToValueNameMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameMapperBorrowed::get#FnInStruct
+icu::segmenter::SentenceBreakIterator#Struct
+icu::segmenter::SentenceBreakIterator::Item#AssociatedTypeInStruct
+icu::segmenter::SentenceBreakIterator::next#FnInStruct
+icu::segmenter::SentenceBreakIteratorLatin1#Typedef
+icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8#Typedef
+icu::segmenter::SentenceBreakIteratorUtf16#Typedef
+icu::segmenter::WordBreakIterator#Struct
+icu::segmenter::WordBreakIterator::Item#AssociatedTypeInStruct
+icu::segmenter::WordBreakIterator::is_word_like#FnInStruct
+icu::segmenter::WordBreakIterator::next#FnInStruct
+icu::segmenter::WordBreakIterator::rule_status#FnInStruct
+icu::segmenter::WordBreakIteratorLatin1#Typedef
+icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8#Typedef
+icu::segmenter::WordBreakIteratorUtf16#Typedef

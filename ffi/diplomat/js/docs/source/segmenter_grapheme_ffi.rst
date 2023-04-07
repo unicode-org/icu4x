@@ -3,38 +3,38 @@
 
 .. js:class:: ICU4XGraphemeClusterBreakIteratorLatin1
 
-    See the `Rust documentation for GraphemeClusterBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorLatin1.html>`__ for more information.
+    See the `Rust documentation for GraphemeClusterBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorLatin1.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next>`__ for more information.
 
 
 .. js:class:: ICU4XGraphemeClusterBreakIteratorUtf16
 
-    See the `Rust documentation for GraphemeClusterBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorUtf16.html>`__ for more information.
+    See the `Rust documentation for GraphemeClusterBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorUtf16.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next>`__ for more information.
 
 
 .. js:class:: ICU4XGraphemeClusterBreakIteratorUtf8
 
-    See the `Rust documentation for GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+    See the `Rust documentation for GraphemeClusterBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html>`__ for more information.
 
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next>`__ for more information.
 
 
 .. js:class:: ICU4XGraphemeClusterSegmenter
