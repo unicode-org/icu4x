@@ -4,7 +4,7 @@
 
 use crate::grapheme::GraphemeClusterSegmenter;
 use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
-use crate::provider::{LstmDataV1, LstmDataV1Marker, ModelType, RuleBreakDataV1};
+use crate::provider::*;
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -30,7 +30,7 @@ impl Iterator for LstmSegmenterIterator<'_> {
             let bies = *self.bies_str.get(self.pos)?;
             self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
             self.pos += 1;
-            if bies == Bies::E && self.bies_str.len() > self.pos {
+            if bies == Bies::E || self.pos == self.bies_str.len() {
                 return Some(self.pos_utf8);
             }
         }
@@ -49,7 +49,7 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
         loop {
             let bies = *self.bies_str.get(self.pos)?;
             self.pos += 1;
-            if bies == Bies::E && self.bies_str.len() > self.pos {
+            if bies == Bies::E || self.pos == self.bies_str.len() {
                 return Some(self.pos);
             }
         }
@@ -72,28 +72,24 @@ pub(crate) struct LstmSegmenter<'l> {
 
 impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
-    pub fn try_new(
-        payload: &'l DataPayload<LstmDataV1Marker>,
-        grapheme: Option<&'l RuleBreakDataV1<'l>>,
-    ) -> Result<Self, ()> {
-        let LstmDataV1::Float32(data) = payload.get();
-        Ok(Self {
-            dic: data.dic.as_borrowed(),
-            embedding: data.embedding.as_matrix_zero(),
-            fw_w: data.fw_w.as_matrix_zero(),
-            fw_u: data.fw_u.as_matrix_zero(),
-            fw_b: data.fw_b.as_matrix_zero(),
-            bw_w: data.bw_w.as_matrix_zero(),
-            bw_u: data.bw_u.as_matrix_zero(),
-            bw_b: data.bw_b.as_matrix_zero(),
-            time_w: data.time_w.as_matrix_zero(),
-            time_b: data.time_b.as_matrix_zero(),
-            grapheme: if data.model == ModelType::GraphemeClusters {
-                Some(grapheme.ok_or(())?)
-            } else {
-                None
-            },
-        })
+    pub fn new(
+        lstm: &'l DataPayload<LstmDataV1Marker>,
+        grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
+    ) -> Self {
+        let LstmDataV1::Float32(lstm) = lstm.get();
+        Self {
+            dic: lstm.dic.as_borrowed(),
+            embedding: lstm.embedding.as_matrix_zero(),
+            fw_w: lstm.fw_w.as_matrix_zero(),
+            fw_u: lstm.fw_u.as_matrix_zero(),
+            fw_b: lstm.fw_b.as_matrix_zero(),
+            bw_w: lstm.bw_w.as_matrix_zero(),
+            bw_u: lstm.bw_u.as_matrix_zero(),
+            bw_b: lstm.bw_b.as_matrix_zero(),
+            time_w: lstm.time_w.as_matrix_zero(),
+            time_b: lstm.time_b.as_matrix_zero(),
+            grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme.get()),
+        }
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
@@ -347,7 +343,7 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let payload: DataPayload<LstmDataV1Marker> =
+        let lstm: DataPayload<LstmDataV1Marker> =
             DataProvider::<LstmForWordLineAutoV1Marker>::load(
                 &icu_testdata::buffer().as_deserializing(),
                 DataRequest {
@@ -359,7 +355,13 @@ mod tests {
             .take_payload()
             .unwrap()
             .cast();
-        let lstm = LstmSegmenter::try_new(&payload, None).expect("Test data is invalid");
+        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(Default::default())
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let lstm = LstmSegmenter::new(&lstm, &grapheme);
 
         // Importing the test data
         let test_text_data = load_test_text(&format!(

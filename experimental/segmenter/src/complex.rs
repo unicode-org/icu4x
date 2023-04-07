@@ -9,218 +9,230 @@ use alloc::vec::Vec;
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
-#[cfg(feature = "lstm")]
-use crate::lstm::LstmSegmenter;
-
-#[derive(Default, Debug)]
-pub(crate) struct LstmPayloads {
-    pub burmese: Option<DataPayload<LstmDataV1Marker>>,
-    pub khmer: Option<DataPayload<LstmDataV1Marker>>,
-    pub lao: Option<DataPayload<LstmDataV1Marker>>,
-    pub thai: Option<DataPayload<LstmDataV1Marker>>,
+#[derive(Debug)]
+pub(crate) struct ComplexPayloads {
+    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    burmese_lstm: Option<DataPayload<LstmDataV1Marker>>,
+    khmer_lstm: Option<DataPayload<LstmDataV1Marker>>,
+    lao_lstm: Option<DataPayload<LstmDataV1Marker>>,
+    thai_lstm: Option<DataPayload<LstmDataV1Marker>>,
+    burmese_dict: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    khmer_dict: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    lao_dict: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    thai_dict: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    cj_dict: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
 }
 
-#[cfg(feature = "lstm")]
-impl LstmPayloads {
-    pub fn best(&self, codepoint: u32) -> Option<&DataPayload<LstmDataV1Marker>> {
-        let lang = get_language(codepoint);
-        match lang {
-            Language::Burmese => self.burmese.as_ref(),
-            Language::Khmer => self.khmer.as_ref(),
-            Language::Lao => self.lao.as_ref(),
-            Language::Thai => self.thai.as_ref(),
-            _ => None,
+impl ComplexPayloads {
+    fn select_lstm(&self, language: Language) -> Option<&DataPayload<LstmDataV1Marker>> {
+        match language {
+            Language::Burmese => self.burmese_lstm.as_ref(),
+            Language::Khmer => self.khmer_lstm.as_ref(),
+            Language::Lao => self.lao_lstm.as_ref(),
+            Language::Thai => self.thai_lstm.as_ref(),
+            Language::ChineseOrJapanese | Language::Unknown => None,
         }
     }
 
-    /// Construct a [`LstmPayloads`] for all supported languages.
-    pub(crate) fn try_new<D: DataProvider<LstmForWordLineAutoV1Marker> + ?Sized>(
-        provider: &D,
-    ) -> Result<Self, DataError> {
-        let burmese = Self::load(provider, locale!("my"))?;
-        let khmer = Self::load(provider, locale!("km"))?;
-        let lao = Self::load(provider, locale!("lo"))?;
-        let thai = Self::load(provider, locale!("th"))?;
-        Ok(LstmPayloads {
-            burmese,
-            khmer,
-            lao,
-            thai,
+    fn select_dict(
+        &self,
+        language: Language,
+    ) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
+        match language {
+            Language::Burmese => self.burmese_dict.as_ref(),
+            Language::Khmer => self.khmer_dict.as_ref(),
+            Language::Lao => self.lao_dict.as_ref(),
+            Language::Thai => self.thai_dict.as_ref(),
+            Language::ChineseOrJapanese => self.cj_dict.as_ref(),
+            Language::Unknown => None,
+        }
+    }
+
+    pub(crate) fn try_new_lstm<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            grapheme: provider.load(Default::default())?.take_payload()?,
+            burmese_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("my"))?
+                .map(DataPayload::cast),
+            khmer_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("km"))?
+                .map(DataPayload::cast),
+            lao_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("lo"))?
+                .map(DataPayload::cast),
+            thai_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("th"))?
+                .map(DataPayload::cast),
+            burmese_dict: None,
+            khmer_dict: None,
+            lao_dict: None,
+            thai_dict: None,
+            cj_dict: None,
         })
     }
 
-    pub(crate) fn load<D: DataProvider<LstmForWordLineAutoV1Marker> + ?Sized>(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<Option<DataPayload<LstmDataV1Marker>>, DataError> {
-        match provider.load(DataRequest {
-            locale: &DataLocale::from(locale),
-            metadata: {
-                let mut m = DataRequestMetadata::default();
-                m.silent = true;
-                m
-            },
-        }) {
-            Ok(response) => Ok(Some(response.take_payload()?.cast())),
-            Err(DataError {
-                kind: DataErrorKind::MissingLocale,
-                ..
-            }) => Ok(None),
-            Err(e) => Err(e),
-        }
-    }
-}
-
-#[derive(Default, Debug)]
-pub(crate) struct Dictionary {
-    pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub lao: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub thai: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub cj: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
-}
-
-impl Dictionary {
-    fn best(&self, input: u32) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
-        match get_language(input) {
-            Language::Burmese => self.burmese.as_ref(),
-            Language::Khmer => self.khmer.as_ref(),
-            Language::Lao => self.lao.as_ref(),
-            Language::Thai => self.thai.as_ref(),
-            Language::ChineseOrJapanese => self.cj.as_ref(),
-            _ => None,
-        }
-    }
-
-    /// Construct a [`Dictionary`] for all supported languages.
-    pub(crate) fn new<
-        D: DataProvider<DictionaryForWordOnlyAutoV1Marker>
+    pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<GraphemeClusterBreakDataV1Marker>
             + DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
             + ?Sized,
-    >(
-        provider: &D,
-    ) -> Self {
-        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
-        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
-        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
-        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
-        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
-        Dictionary {
-            burmese,
-            khmer,
-            lao,
-            thai,
-            cj,
-        }
+    {
+        Ok(Self {
+            grapheme: provider.load(Default::default())?.take_payload()?,
+            burmese_lstm: None,
+            khmer_lstm: None,
+            lao_lstm: None,
+            thai_lstm: None,
+            burmese_dict: try_load::<DictionaryForWordLineExtendedV1Marker, D>(
+                provider,
+                locale!("my"),
+            )?
+            .map(DataPayload::cast),
+            khmer_dict: try_load::<DictionaryForWordLineExtendedV1Marker, D>(
+                provider,
+                locale!("km"),
+            )?
+            .map(DataPayload::cast),
+            lao_dict: try_load::<DictionaryForWordLineExtendedV1Marker, D>(
+                provider,
+                locale!("lo"),
+            )?
+            .map(DataPayload::cast),
+            thai_dict: try_load::<DictionaryForWordLineExtendedV1Marker, D>(
+                provider,
+                locale!("th"),
+            )?
+            .map(DataPayload::cast),
+            cj_dict: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, locale!("ja"))?
+                .map(DataPayload::cast),
+        })
     }
 
-    /// Construct a [`Dictionary`] for Chinese and Japanese.
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
-    pub(crate) fn new_chinese_japanese<
-        D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized,
-    >(
-        provider: &D,
-    ) -> Self {
-        let cj = Self::load_chinese_japanese(provider, locale!("ja")).ok();
-        Dictionary {
-            cj,
-            ..Default::default()
-        }
+    pub(crate) fn try_new_auto<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<GraphemeClusterBreakDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            grapheme: provider.load(Default::default())?.take_payload()?,
+            burmese_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("my"))?
+                .map(DataPayload::cast),
+            khmer_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("km"))?
+                .map(DataPayload::cast),
+            lao_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("lo"))?
+                .map(DataPayload::cast),
+            thai_lstm: try_load::<LstmForWordLineAutoV1Marker, D>(provider, locale!("th"))?
+                .map(DataPayload::cast),
+            burmese_dict: None,
+            khmer_dict: None,
+            lao_dict: None,
+            thai_dict: None,
+            cj_dict: try_load::<DictionaryForWordOnlyAutoV1Marker, D>(provider, locale!("ja"))?
+                .map(DataPayload::cast),
+        })
     }
 
-    pub(crate) fn load_chinese_japanese<
-        D: DataProvider<DictionaryForWordOnlyAutoV1Marker> + ?Sized,
-    >(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: {
-                    let mut m = DataRequestMetadata::default();
-                    m.silent = true;
-                    m
-                },
-            })?
-            .take_payload()
-            .map(DataPayload::cast)
+    pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<DictionaryForWordLineExtendedV1Marker>
+            + DataProvider<GraphemeClusterBreakDataV1Marker>
+            + ?Sized,
+    {
+        Ok(Self {
+            grapheme: provider.load(Default::default())?.take_payload()?,
+            burmese_lstm: None,
+            khmer_lstm: None,
+            lao_lstm: None,
+            thai_lstm: None,
+            burmese_dict: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                provider,
+                locale!("my"),
+            )?
+            .map(DataPayload::cast),
+            khmer_dict: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                provider,
+                locale!("km"),
+            )?
+            .map(DataPayload::cast),
+            lao_dict: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                provider,
+                locale!("lo"),
+            )?
+            .map(DataPayload::cast),
+            thai_dict: try_load::<DictionaryForWordLineExtendedV1Marker, _>(
+                provider,
+                locale!("th"),
+            )?
+            .map(DataPayload::cast),
+            cj_dict: None,
+        })
     }
+}
 
-    /// Construct a [`Dictionary`] for Southeast Asian languages (Burmese, Khmer, Lao, and Thai).
-    pub(crate) fn new_southeast_asian<
-        D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized,
-    >(
-        provider: &D,
-    ) -> Self {
-        let burmese = Self::load_southeast_asian(provider, locale!("my")).ok();
-        let khmer = Self::load_southeast_asian(provider, locale!("km")).ok();
-        let lao = Self::load_southeast_asian(provider, locale!("lo")).ok();
-        let thai = Self::load_southeast_asian(provider, locale!("th")).ok();
-        Dictionary {
-            burmese,
-            khmer,
-            lao,
-            thai,
-            ..Default::default()
-        }
-    }
-
-    pub(crate) fn load_southeast_asian<
-        D: DataProvider<DictionaryForWordLineExtendedV1Marker> + ?Sized,
-    >(
-        provider: &D,
-        locale: Locale,
-    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        provider
-            .load(DataRequest {
-                locale: &DataLocale::from(locale),
-                metadata: Default::default(),
-            })?
-            .take_payload()
-            .map(DataPayload::cast)
+fn try_load<M: KeyedDataMarker, P: DataProvider<M> + ?Sized>(
+    provider: &P,
+    locale: Locale,
+) -> Result<Option<DataPayload<M>>, DataError> {
+    match provider.load(DataRequest {
+        locale: &DataLocale::from(locale),
+        metadata: {
+            let mut m = DataRequestMetadata::default();
+            m.silent = true;
+            m
+        },
+    }) {
+        Ok(response) => Ok(Some(response.take_payload()?)),
+        Err(DataError {
+            kind: DataErrorKind::MissingLocale,
+            ..
+        }) => Ok(None),
+        Err(e) => Err(e),
     }
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
 pub(crate) fn complex_language_segment_utf16(
-    dictionary: Option<&Dictionary>,
-    lstm: Option<&LstmPayloads>,
-    grapheme: Option<&RuleBreakDataV1>,
+    payloads: &ComplexPayloads,
     input: &[u16],
 ) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
-    for str_per_lang in lang_iter {
-        if let Some(first_ch) = str_per_lang.first() {
+    for (str_per_lang, lang) in lang_iter {
+        if lang == Language::Unknown {
+            offset += str_per_lang.len();
+            result.push(offset);
+        } else if let Some(lstm) = payloads.select_lstm(lang) {
             #[cfg(feature = "lstm")]
-            if let Some(lstm) = lstm {
-                if let Some(model) = lstm.best(*first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new(model, grapheme) {
-                        let breaks = segmenter.segment_utf16(str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.len();
-                        result.push(offset);
-                        continue;
-                    }
-                }
+            {
+                let segmenter = crate::lstm::LstmSegmenter::new(lstm, &payloads.grapheme);
+                let breaks = segmenter.segment_utf16(str_per_lang);
+                result.extend(breaks.map(|n| offset + n));
+                offset += str_per_lang.len();
             }
-
-            if let Some(dictionary) = dictionary {
-                if let Some(grapheme) = grapheme {
-                    if let Some(payload) = dictionary.best(*first_ch as u32) {
-                        if let Ok(segmenter) = DictionarySegmenter::try_new(payload, grapheme) {
-                            let breaks = segmenter.segment_utf16(str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.len();
-                            continue;
-                        }
-                    }
-                }
-            }
-
+        } else if let Some(dict) = payloads.select_dict(lang) {
+            let segmenter = DictionarySegmenter::new(dict, &payloads.grapheme);
+            let breaks = segmenter.segment_utf16(str_per_lang);
+            result.extend(breaks.map(|n| offset + n));
+            offset += str_per_lang.len();
+        } else {
+            // Create error for logging
+            DataError::custom("No segmentation model for language").with_display_context(
+                match lang {
+                    Language::Thai => "th",
+                    Language::Lao => "lo",
+                    Language::Burmese => "my",
+                    Language::Khmer => "km",
+                    Language::ChineseOrJapanese => "ja",
+                    Language::Unknown => unreachable!(),
+                },
+            );
             offset += str_per_lang.len();
             result.push(offset);
         }
@@ -230,42 +242,39 @@ pub(crate) fn complex_language_segment_utf16(
 
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
 #[allow(unused_variables)]
-pub(crate) fn complex_language_segment_str(
-    dictionary: Option<&Dictionary>,
-    lstm: Option<&LstmPayloads>,
-    grapheme: Option<&RuleBreakDataV1>,
-    input: &str,
-) -> Vec<usize> {
+pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
-    for str_per_lang in lang_iter {
-        if let Some(first_ch) = str_per_lang.chars().next() {
+    for (str_per_lang, lang) in lang_iter {
+        if lang == Language::Unknown {
+            offset += str_per_lang.len();
+            result.push(offset);
+        } else if let Some(lstm) = payloads.select_lstm(lang) {
             #[cfg(feature = "lstm")]
-            if let Some(lstm) = lstm {
-                if let Some(model) = lstm.best(first_ch as u32) {
-                    if let Ok(segmenter) = LstmSegmenter::try_new(model, grapheme) {
-                        let breaks = segmenter.segment_str(str_per_lang);
-                        result.extend(breaks.map(|n| offset + n));
-                        offset += str_per_lang.len();
-                        result.push(offset);
-                        continue;
-                    }
-                }
+            {
+                let segmenter = crate::lstm::LstmSegmenter::new(lstm, &payloads.grapheme);
+                let breaks = segmenter.segment_str(str_per_lang);
+                result.extend(breaks.map(|n| offset + n));
+                offset += str_per_lang.len();
             }
-
-            if let Some(dictionary) = dictionary {
-                if let Some(grapheme) = grapheme {
-                    if let Some(payload) = dictionary.best(first_ch as u32) {
-                        if let Ok(segmenter) = DictionarySegmenter::try_new(payload, grapheme) {
-                            let breaks = segmenter.segment_str(str_per_lang);
-                            result.extend(breaks.map(|n| offset + n));
-                            offset += str_per_lang.len();
-                            continue;
-                        }
-                    }
-                }
-            }
+        } else if let Some(dict) = payloads.select_dict(lang) {
+            let segmenter = DictionarySegmenter::new(dict, &payloads.grapheme);
+            let breaks = segmenter.segment_str(str_per_lang);
+            result.extend(breaks.map(|n| offset + n));
+            offset += str_per_lang.len();
+        } else {
+            // Create error for logging
+            DataError::custom("No segmentation model for language").with_display_context(
+                match lang {
+                    Language::Thai => "th",
+                    Language::Lao => "lo",
+                    Language::Burmese => "my",
+                    Language::Khmer => "km",
+                    Language::ChineseOrJapanese => "ja",
+                    Language::Unknown => unreachable!(),
+                },
+            );
             offset += str_per_lang.len();
             result.push(offset);
         }
@@ -282,63 +291,41 @@ mod tests {
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        let data_locale = locale!("th").into();
-        let payload = DataProvider::<DictionaryForWordLineExtendedV1Marker>::load(
+        let grapheme = try_load::<GraphemeClusterBreakDataV1Marker, _>(
             &icu_testdata::buffer().as_deserializing(),
-            DataRequest {
-                locale: &data_locale,
-                metadata: Default::default(),
-            },
+            Locale::UND,
         )
-        .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!")
-        .cast();
-        let dictionary = Dictionary {
-            burmese: None,
-            khmer: None,
-            lao: None,
-            thai: Some(payload),
-            cj: None,
-        };
-        let payload = DataProvider::<LstmForWordLineAutoV1Marker>::load(
+        .unwrap()
+        .unwrap();
+        let dict = try_load::<DictionaryForWordLineExtendedV1Marker, _>(
             &icu_testdata::buffer().as_deserializing(),
-            DataRequest {
-                locale: &data_locale,
-                metadata: Default::default(),
-            },
+            locale!("th"),
         )
-        .expect("Loading should succeed!")
-        .take_payload()
-        .expect("Data should be present!")
-        .cast();
-        let lstm = LstmPayloads {
-            burmese: None,
-            khmer: None,
-            lao: None,
-            thai: Some(payload),
+        .unwrap()
+        .unwrap();
+        let lstm = try_load::<LstmForWordLineAutoV1Marker, _>(
+            &icu_testdata::buffer().as_deserializing(),
+            locale!("th"),
+        )
+        .unwrap()
+        .unwrap();
+        let payloads = ComplexPayloads {
+            grapheme,
+            burmese_lstm: None,
+            khmer_lstm: None,
+            lao_lstm: None,
+            thai_lstm: Some(lstm.cast()),
+            burmese_dict: None,
+            khmer_dict: None,
+            lao_dict: None,
+            thai_dict: Some(dict.cast()),
+            cj_dict: None,
         };
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let breaks = complex_language_segment_str(
-            Some(&dictionary),
-            Some(&lstm),
-            Some(grapheme.get()),
-            TEST_STR,
-        );
+        let breaks = complex_language_segment_str(&payloads, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
-        let breaks = complex_language_segment_utf16(
-            Some(&dictionary),
-            Some(&lstm),
-            Some(grapheme.get()),
-            &utf16,
-        );
+        let breaks = complex_language_segment_utf16(&payloads, &utf16);
         assert_eq!(breaks, [4, 7, 11, 14], "Thai test by UTF-16");
     }
 }

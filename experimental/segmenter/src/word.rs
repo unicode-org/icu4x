@@ -83,9 +83,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 #[derive(Debug)]
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
-    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    complex: ComplexPayloads,
 }
 
 impl WordSegmenter {
@@ -103,14 +101,9 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::new_chinese_japanese(provider),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_auto(provider)?,
         })
     }
 
@@ -137,14 +130,9 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::default(),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
 
@@ -170,14 +158,9 @@ impl WordSegmenter {
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::new(provider),
-            lstm: LstmPayloads::default(),
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_dict(provider)?,
         })
     }
 
@@ -200,9 +183,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
         }
     }
@@ -220,9 +201,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
         }
     }
@@ -235,9 +214,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
         }
     }
@@ -250,9 +227,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
         }
     }
@@ -326,7 +301,8 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
+    #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = iter.get_current_codepoint()?.len_utf8();
@@ -385,7 +361,8 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iter.dictionary, iter.lstm, iter.grapheme, &s);
+        #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+        let breaks = complex_language_segment_utf16(iter.complex.unwrap(), &s);
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
