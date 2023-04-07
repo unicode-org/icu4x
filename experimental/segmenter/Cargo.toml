@@ -52,6 +52,7 @@ icu = { path = "../../components/icu", features = ["icu_segmenter"]}
 icu_provider_fs = { path = "../../provider/fs" }
 icu_provider = { path = "../../provider/core", features = ["deserialize_postcard_1"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
+itertools = "0.10"
 
 [features]
 default = ["auto"]

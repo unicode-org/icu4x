@@ -63,7 +63,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
 ///
-/// Successive boundaries can be used to retrieve the words.
+/// Successive boundaries can be used to retrieve the segments.
 /// In particular, the first boundary is always 0, and the last one is the
 /// length of the segmented text in code units.
 ///
@@ -71,14 +71,35 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// # use icu_segmenter::WordSegmenter;
 /// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 /// #     .expect("Data exists");
+/// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
-/// let words: Vec<&str> = segmenter
+/// let segments: Vec<&str> = segmenter
 ///    .segment_str(text)
-///    .collect::<Vec<_>>()
-///    .windows(2)
-///    .map(|i| &text[i[0]..i[1]])
+///    .tuple_windows()
+///    .map(|(i, j)| &text[i..j])
 ///    .collect();
-/// assert_eq!(&words, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
+/// assert_eq!(&segments, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
+/// ```
+///
+/// Not all segments delimited by word boundaries are words; some are interword
+/// segments such as spaces and punctuation.
+/// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
+/// classify the preceding segment.
+/// ```rust
+/// # use itertools::Itertools;
+/// # use icu_segmenter::{RuleStatusType, WordSegmenter};
+/// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #     .expect("Data exists");
+/// # let text = "Mark’d ye his words?";
+/// let words: Vec<&str> = {
+///     let mut it = segmenter.segment_str(text);
+///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
+///         .tuple_windows()
+///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
+///         .map(|((i, _), (j, _))| &text[i..j])
+///         .collect()
+/// };
+/// assert_eq!(&words, &["Mark’d", "ye", "his", "words"]);
 /// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
