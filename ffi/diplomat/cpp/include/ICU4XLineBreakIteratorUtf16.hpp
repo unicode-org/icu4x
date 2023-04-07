@@ -24,7 +24,9 @@ struct ICU4XLineBreakIteratorUtf16Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `LineBreakIteratorUtf16`](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html) for more information.
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
+ * 
+ *  Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html)
  */
 class ICU4XLineBreakIteratorUtf16 {
  public:
@@ -32,6 +34,10 @@ class ICU4XLineBreakIteratorUtf16 {
   /**
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
+   * 
+   * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
+   * 
+   *  Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.into_iter)
    */
   int32_t next();
   inline const capi::ICU4XLineBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }

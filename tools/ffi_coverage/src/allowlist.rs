@@ -382,7 +382,6 @@ lazy_static::lazy_static! {
         "icu::locid::SubtagOrderingResult",
 
         // TEMP
-        "icu::segmenter::LineBreakIterator",
         "icu::segmenter::RuleBreakIterator",
 
         // The only UTF-8 currently allowed over FFI is potentially-ill-formed.
