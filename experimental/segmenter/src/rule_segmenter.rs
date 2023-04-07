@@ -268,6 +268,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
         }
     }
 
+    /// Returns an iterator over pairs of position and rule status.
+    pub fn with_status<'i: 'l + 's>(
+        &'i mut self,
+    ) -> impl Iterator<Item = (usize, RuleStatusType)> + '_ {
+        core::iter::from_fn(move || self.next().map(|i| (i, self.rule_status())))
+    }
+
     /// Return true when break boundary is word-like such as letter/number/CJK
     /// If segmenter isn't word, return false
     pub fn is_word_like(&self) -> bool {

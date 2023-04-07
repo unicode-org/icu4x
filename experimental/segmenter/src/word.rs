@@ -91,14 +91,13 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 /// #     .expect("Data exists");
 /// # let text = "Mark’d ye his words?";
-/// let words: Vec<&str> = {
-///     let mut it = segmenter.segment_str(text);
-///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
-///         .tuple_windows()
-///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
-///         .map(|((i, _), (j, _))| &text[i..j])
-///         .collect()
-/// };
+/// let words: Vec<&str> = segmenter
+///     .segment_str(text)
+///     .with_status()
+///     .tuple_windows()
+///     .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
+///     .map(|((i, _), (j, _))| &text[i..j])
+///     .collect();
 /// assert_eq!(&words, &["Mark’d", "ye", "his", "words"]);
 /// ```
 #[derive(Debug)]
