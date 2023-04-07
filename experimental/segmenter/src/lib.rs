@@ -114,9 +114,8 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
 };
 pub use crate::line::{
-    LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
-    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter,
-    WordBreakRule,
+    LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
+    LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter, WordBreakRule,
 };
 pub use crate::sentence::{
     SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,

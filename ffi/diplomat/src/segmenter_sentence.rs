@@ -88,8 +88,15 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -103,7 +110,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIteratorUtf16::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -117,7 +128,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakIteratorLatin1::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

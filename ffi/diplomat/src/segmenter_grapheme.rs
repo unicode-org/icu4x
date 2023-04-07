@@ -22,7 +22,10 @@ pub mod ffi {
     pub struct ICU4XGraphemeClusterSegmenter(GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8, Struct)]
+    #[diplomat::rust_link(
+        icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
+        Struct
+    )]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
         GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
@@ -104,8 +107,15 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -119,7 +129,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIteratorUtf16::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -133,7 +147,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakIteratorLatin1::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

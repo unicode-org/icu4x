@@ -243,8 +243,15 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -258,7 +265,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIteratorUtf16::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -272,7 +283,11 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1::next, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1::Item, AssociatedTypeInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIteratorLatin1::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
