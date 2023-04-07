@@ -114,7 +114,7 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
 };
 pub use crate::line::{
-    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
+    LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
     LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter,
     WordBreakRule,
 };
@@ -126,8 +126,6 @@ pub use crate::word::{
     WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
     WordBreakIteratorUtf8, WordSegmenter,
 };
-
-pub use crate::rule_segmenter::RuleBreakIterator;
 
 pub use crate::rule_segmenter::RuleStatusType;
 
