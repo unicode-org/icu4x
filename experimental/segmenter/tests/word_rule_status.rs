@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::RuleStatusType;
-use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
 
 #[test]
@@ -56,6 +55,7 @@ fn rule_status_th() {
     assert!(iter.is_word_like(), "Letter(Thai) is true");
 }
 
+/* The rule status functions are no longer public to non word break iterators.
 #[test]
 fn rule_status_no_word() {
     let segmenter =
@@ -70,3 +70,4 @@ fn rule_status_no_word() {
     assert_eq!(iter.rule_status(), RuleStatusType::None, "none");
     assert!(!iter.is_word_like(), "always false");
 }
+*/

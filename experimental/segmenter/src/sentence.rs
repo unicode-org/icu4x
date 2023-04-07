@@ -6,6 +6,7 @@ use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::iterator_helpers::derive_usize_iterator;
 use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
@@ -13,23 +14,36 @@ use utf8_iter::Utf8CharIndices;
 /// Sentence break iterator for an `str` (a UTF-8 string).
 ///
 /// For more information, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>;
+#[derive(Debug)]
+pub struct SentenceBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>);
+
+derive_usize_iterator!(SentenceBreakIteratorUtf8);
 
 /// Sentence break iterator for a potentially invalid UTF-8 string.
 ///
 /// For more information, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+#[derive(Debug)]
+pub struct SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
+    RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>,
+);
+
+derive_usize_iterator!(SentenceBreakIteratorPotentiallyIllFormedUtf8);
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 ///
 /// For more information, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+#[derive(Debug)]
+pub struct SentenceBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
+
+derive_usize_iterator!(SentenceBreakIteratorLatin1);
 
 /// Sentence break iterator for a UTF-16 string.
 ///
 /// For more information, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>;
+#[derive(Debug)]
+pub struct SentenceBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>);
+
+derive_usize_iterator!(SentenceBreakIteratorUtf16);
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
@@ -106,7 +120,7 @@ impl SentenceSegmenter {
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
-        SentenceBreakIteratorUtf8 {
+        SentenceBreakIteratorUtf8(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -114,7 +128,7 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-        }
+        })
     }
     /// Create a sentence break iterator for a potentially ill-formed UTF8 string
     ///
@@ -123,7 +137,7 @@ impl SentenceSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        SentenceBreakIteratorPotentiallyIllFormedUtf8 {
+        SentenceBreakIteratorPotentiallyIllFormedUtf8(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -131,14 +145,14 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-        }
+        })
     }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
         input: &'s [u8],
     ) -> SentenceBreakIteratorLatin1<'l, 's> {
-        SentenceBreakIteratorLatin1 {
+        SentenceBreakIteratorLatin1(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -146,12 +160,12 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a sentence break iterator for a UTF-16 string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {
-        SentenceBreakIteratorUtf16 {
+        SentenceBreakIteratorUtf16(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -159,6 +173,6 @@ impl SentenceSegmenter {
             data: self.payload.get(),
             complex: None,
             boundary_property: 0,
-        }
+        })
     }
 }
