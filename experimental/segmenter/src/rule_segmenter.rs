@@ -26,10 +26,10 @@ pub enum RuleStatusType {
 /// encoding methods and granularity such as grapheme cluster, word, etc.
 pub trait RuleBreakType<'l, 's> {
     /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
+    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
     /// The character type.
-    type CharType: Copy + Into<u32>;
+    type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
 
@@ -67,7 +67,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) boundary_property: u8,
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -198,7 +198,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
