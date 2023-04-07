@@ -41,6 +41,7 @@ icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
 icu_properties = { version = "1.0.0", path = "../../components/properties" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 displaydoc = { version = "0.2.3", default-features = false }
+tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false }
 
 [features]
 default = []
