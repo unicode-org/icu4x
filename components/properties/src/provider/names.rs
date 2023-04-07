@@ -151,7 +151,7 @@ impl NormalizedPropertyNameStr {
         self_iter.cmp(other_iter)
     }
     #[cfg(feature = "serde")]
-    /// Get a Box<NormalizedPropertyName> from a byte slice
+    /// Get a `Box<NormalizedPropertyName>` from a byte slice
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         #[allow(clippy::expect_used)] // Self has no invariants
         // can be cleaned up with https://github.com/unicode-org/icu4x/issues/2310

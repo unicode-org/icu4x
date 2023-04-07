@@ -242,7 +242,7 @@ pub struct PropertyEnumToValueNameSparseMapper<T> {
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameMapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyEnumToValueNameSparseMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameSparseMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameSparseMapV1<'a>,
@@ -333,7 +333,7 @@ pub struct PropertyEnumToValueNameLinearMapper<T> {
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameMapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyEnumToValueNameLinearMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameLinearMapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearMapV1<'a>,
@@ -423,7 +423,7 @@ pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
 }
 
 /// A borrowed wrapper around property value name-to-enum data, returned by
-/// [`PropertyEnumToValueNameMapper::as_borrowed()`]. More efficient to query.
+/// [`PropertyEnumToValueNameLinearTiny4Mapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameLinearTiny4MapperBorrowed<'a, T> {
     map: &'a PropertyEnumToValueNameLinearTiny4MapV1<'a>,
@@ -614,7 +614,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Upside_Down_Vertical_Backwards_Mirrored"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Bidi_Class` enumerated property
         ///
         /// # Example
@@ -629,7 +629,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(BidiClass::NonspacingMark), Some("NSM"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Bidi_Class` enumerated property
         ///
         /// # Example
@@ -760,7 +760,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_loose("Animated_Gif"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `General_Category` enumerated property
         ///
         /// # Example
@@ -775,7 +775,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `General_Category` enumerated property
         ///
         /// # Example
@@ -1357,7 +1357,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Script` enumerated property
         ///
         /// # Example
@@ -1373,7 +1373,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearTiny4Mapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearTiny4Mapper`], capable of looking up long names
         /// for values of the `Script` enumerated property
         ///
         /// # Example
@@ -1445,7 +1445,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("TwoPointFiveWidth"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `East_Asian_Width` enumerated property
         ///
         /// # Example
@@ -1460,7 +1460,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(EastAsianWidth::Halfwidth), Some("H"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `East_Asian_Width` enumerated property
         ///
         /// # Example
@@ -1569,7 +1569,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Stochastic_Break"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Line_Break` enumerated property
         ///
         /// # Example
@@ -1584,7 +1584,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(LineBreak::Alphabetic), Some("AL"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Line_Break` enumerated property
         ///
         /// # Example
@@ -1673,7 +1673,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Regional_Indicator_Two_Point_Oh"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Grapheme_Cluster_Break` enumerated property
         ///
         /// # Example
@@ -1688,7 +1688,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(GraphemeClusterBreak::RegionalIndicator), Some("RI"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Grapheme_Cluster_Break` enumerated property
         ///
         /// # Example
@@ -1782,7 +1782,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Word_Break` enumerated property
         ///
         /// # Example
@@ -1797,7 +1797,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("LE"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Word_Break` enumerated property
         ///
         /// # Example
@@ -1878,7 +1878,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Fixer_Upper"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up short names
         /// for values of the `Sentence_Break` enumerated property
         ///
         /// # Example
@@ -1893,7 +1893,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("NU"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
         /// for values of the `Sentence_Break` enumerated property
         ///
         /// # Example
@@ -2023,7 +2023,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Linear_Z"), None);
         /// ```
         pub fn get_name_to_enum_mapper();
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up short names
+        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up short names
         /// for values of the `Canonical_Combining_Class` enumerated property
         ///
         /// # Example
@@ -2039,7 +2039,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get(CanonicalCombiningClass::CCC10), Some("CCC10"));
         /// ```
         pub fn get_enum_to_short_name_mapper() -> PropertyEnumToValueNameSparseMapper;
-        /// Return a [`PropertyEnumToValueNameMapper`], capable of looking up long names
+        /// Return a [`PropertyEnumToValueNameSparseMapper`], capable of looking up long names
         /// for values of the `Canonical_Combining_Class` enumerated property
         ///
         /// # Example
