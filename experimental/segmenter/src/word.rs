@@ -84,7 +84,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 /// Not all segments delimited by word boundaries are words; some are interword
 /// segments such as spaces and punctuation.
 /// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
-/// classify the preceding segment.
+/// classify the preceding segment; [`RuleBreakIterator::with_status()`]
+/// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
 /// # use icu_segmenter::{RuleStatusType, WordSegmenter};
