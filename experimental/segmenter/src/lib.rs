@@ -89,6 +89,7 @@ mod complex;
 mod dictionary;
 mod error;
 mod indices;
+mod iterator_helpers;
 mod language;
 mod rule_segmenter;
 

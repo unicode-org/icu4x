@@ -4,6 +4,7 @@
 
 use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::iterator_helpers::derive_usize_iterator;
 use crate::provider::*;
 use crate::rule_segmenter::*;
 use crate::SegmenterError;
@@ -14,26 +15,60 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+macro_rules! derive_word_iterator_methods {
+    ($ty:tt) => {
+        impl<'l, 's> $ty<'l, 's> {
+            /// Return the status value of break boundary.
+            #[inline]
+            pub fn rule_status(&self) -> RuleStatusType {
+                self.0.rule_status()
+            }
+            /// Return true when break boundary is word-like such as letter/number/CJK
+            #[inline]
+            pub fn is_word_like(&self) -> bool {
+                self.0.is_word_like()
+            }
+        }
+    };
+}
+
 /// Word break iterator for an `str` (a UTF-8 string).
 ///
 /// For more information, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
+#[derive(Debug)]
+pub struct WordBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf8>);
+
+derive_usize_iterator!(WordBreakIteratorUtf8);
+derive_word_iterator_methods!(WordBreakIteratorUtf8);
 
 /// Word break iterator for a potentially invalid UTF-8 string.
 ///
 /// For more information, see [`WordSegmenter`].
-pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
+#[derive(Debug)]
+pub struct WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
+    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>,
+);
+
+derive_usize_iterator!(WordBreakIteratorPotentiallyIllFormedUtf8);
+derive_word_iterator_methods!(WordBreakIteratorPotentiallyIllFormedUtf8);
 
 /// Word break iterator for a Latin-1 (8-bit) string.
 ///
 /// For more information, see [`WordSegmenter`].
-pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+#[derive(Debug)]
+pub struct WordBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
+
+derive_usize_iterator!(WordBreakIteratorLatin1);
+derive_word_iterator_methods!(WordBreakIteratorLatin1);
 
 /// Word break iterator for a UTF-16 string.
 ///
 /// For more information, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
+#[derive(Debug)]
+pub struct WordBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf16>);
+
+derive_usize_iterator!(WordBreakIteratorUtf16);
+derive_word_iterator_methods!(WordBreakIteratorUtf16);
 
 /// Supports loading word break data, and creating word break iterators for different string
 /// encodings.
@@ -185,7 +220,7 @@ impl WordSegmenter {
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
-        WordBreakIteratorUtf8 {
+        WordBreakIteratorUtf8(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -193,7 +228,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a potentially ill-formed UTF8 string
@@ -203,7 +238,7 @@ impl WordSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        WordBreakIteratorPotentiallyIllFormedUtf8 {
+        WordBreakIteratorPotentiallyIllFormedUtf8(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -211,12 +246,12 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
-        WordBreakIteratorLatin1 {
+        WordBreakIteratorLatin1(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -224,12 +259,12 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a UTF-16 string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
-        WordBreakIteratorUtf16 {
+        WordBreakIteratorUtf16(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -237,7 +272,7 @@ impl WordSegmenter {
             data: self.payload.get(),
             complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 }
 
