@@ -25,6 +25,8 @@ extern "C" {
 
 diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError ICU4XLocaleCanonicalizer_create(const ICU4XDataProvider* provider);
 
+diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError ICU4XLocaleCanonicalizer_create_extended(const ICU4XDataProvider* provider);
+
 ICU4XTransformResult ICU4XLocaleCanonicalizer_canonicalize(const ICU4XLocaleCanonicalizer* self, ICU4XLocale* locale);
 void ICU4XLocaleCanonicalizer_destroy(ICU4XLocaleCanonicalizer* self);
 
