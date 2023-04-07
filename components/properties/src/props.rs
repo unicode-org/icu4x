@@ -388,6 +388,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
         self.map.map.get(prop).filter(|x| !x.is_empty())
     }
 }
+
 /// Private marker type for PropertyEnumToValueNameLinearTiny4Mapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
