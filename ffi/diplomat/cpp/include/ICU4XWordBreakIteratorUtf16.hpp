@@ -25,7 +25,7 @@ struct ICU4XWordBreakIteratorUtf16Deleter {
 /**
  * 
  * 
- * See the [Rust documentation for `WordBreakIteratorUtf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html) for more information.
+ * See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
  */
 class ICU4XWordBreakIteratorUtf16 {
  public:
@@ -34,21 +34,21 @@ class ICU4XWordBreakIteratorUtf16 {
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
    * 
-   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next) for more information.
    */
   int32_t next();
 
   /**
    * Return the status value of break boundary.
    * 
-   * See the [Rust documentation for `rule_status`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.rule_status) for more information.
+   * See the [Rust documentation for `rule_status`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status) for more information.
    */
   ICU4XSegmenterRuleStatusType rule_status() const;
 
   /**
    * Return true when break boundary is word-like such as letter/number/CJK
    * 
-   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.is_word_like) for more information.
+   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
    */
   bool is_word_like() const;
   inline const capi::ICU4XWordBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }

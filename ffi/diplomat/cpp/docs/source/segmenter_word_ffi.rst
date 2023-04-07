@@ -14,80 +14,80 @@
 
 .. cpp:class:: ICU4XWordBreakIteratorLatin1
 
-    See the `Rust documentation for WordBreakIteratorLatin1 <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html>`__ for more information.
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
     .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const
 
         Return true when break boundary is word-like such as letter/number/CJK
 
-        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.is_word_like>`__ for more information.
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. cpp:class:: ICU4XWordBreakIteratorUtf16
 
-    See the `Rust documentation for WordBreakIteratorUtf16 <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html>`__ for more information.
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
     .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const
 
         Return true when break boundary is word-like such as letter/number/CJK
 
-        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorUtf16.html#method.is_word_like>`__ for more information.
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. cpp:class:: ICU4XWordBreakIteratorUtf8
 
-    See the `Rust documentation for WordBreakIteratorPotentiallyIllFormedUtf8 <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html>`__ for more information.
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
 
 
     .. cpp:function:: int32_t next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html#method.next>`__ for more information.
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
     .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const
 
         Return true when break boundary is word-like such as letter/number/CJK
 
-        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorPotentiallyIllFormedUtf8.html#method.is_word_like>`__ for more information.
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. cpp:class:: ICU4XWordSegmenter

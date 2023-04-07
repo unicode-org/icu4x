@@ -3,7 +3,7 @@ import { ICU4XSegmenterRuleStatusType } from "./ICU4XSegmenterRuleStatusType";
 
 /**
 
- * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html Rust documentation for `WordBreakIteratorLatin1`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html Rust documentation for `WordBreakIterator`} for more information.
  */
 export class ICU4XWordBreakIteratorLatin1 {
 
@@ -11,7 +11,7 @@ export class ICU4XWordBreakIteratorLatin1 {
 
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.next Rust documentation for `next`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next Rust documentation for `next`} for more information.
    */
   next(): i32;
 
@@ -19,7 +19,7 @@ export class ICU4XWordBreakIteratorLatin1 {
 
    * Return the status value of break boundary.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.rule_status Rust documentation for `rule_status`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status Rust documentation for `rule_status`} for more information.
    */
   rule_status(): ICU4XSegmenterRuleStatusType;
 
@@ -27,7 +27,7 @@ export class ICU4XWordBreakIteratorLatin1 {
 
    * Return true when break boundary is word-like such as letter/number/CJK
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIteratorLatin1.html#method.is_word_like Rust documentation for `is_word_like`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like Rust documentation for `is_word_like`} for more information.
    */
   is_word_like(): boolean;
 }

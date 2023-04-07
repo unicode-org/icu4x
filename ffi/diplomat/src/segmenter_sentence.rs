@@ -22,7 +22,11 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(
+        icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8,
+        Typedef,
+        hidden
+    )]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
         SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
@@ -91,10 +95,7 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
-        #[diplomat::rust_link(
-            icu::segmenter::SentenceBreakIterator::next,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::SentenceBreakIterator::Item,
             AssociatedTypeInStruct,
