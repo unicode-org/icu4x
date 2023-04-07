@@ -4,6 +4,7 @@
 
 use crate::complex::*;
 use crate::indices::*;
+use crate::iterator_helpers::derive_usize_iterator;
 use crate::provider::*;
 use crate::symbols::*;
 use crate::SegmenterError;
@@ -124,23 +125,33 @@ impl Default for LineBreakOptions {
 /// Line break iterator for an `str` (a UTF-8 string).
 ///
 /// For more information, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
+#[derive(Debug)]
+pub struct LineBreakIteratorUtf8<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeUtf8>);
 
 /// Line break iterator for a potentially invalid UTF-8 string.
 ///
 /// For more information, see [`LineSegmenter`].
-pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
+#[derive(Debug)]
+pub struct LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
+    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>,
+);
 
 /// Line break iterator for a Latin-1 (8-bit) string.
 ///
 /// For more information, see [`LineSegmenter`].
-pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
+#[derive(Debug)]
+pub struct LineBreakIteratorLatin1<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeLatin1>);
 
 /// Line break iterator for a UTF-16 string.
 ///
 /// For more information, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
+#[derive(Debug)]
+pub struct LineBreakIteratorUtf16<'l, 's>(LineBreakIterator<'l, 's, LineBreakTypeUtf16>);
+
+derive_usize_iterator!(LineBreakIteratorUtf8);
+derive_usize_iterator!(LineBreakIteratorPotentiallyIllFormedUtf8);
+derive_usize_iterator!(LineBreakIteratorLatin1);
+derive_usize_iterator!(LineBreakIteratorUtf16);
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
@@ -443,7 +454,7 @@ impl LineSegmenter {
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
-        LineBreakIterator {
+        LineBreakIteratorUtf8(LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -451,7 +462,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: Some(&self.complex),
-        }
+        })
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
     ///
@@ -460,7 +471,7 @@ impl LineSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        LineBreakIterator {
+        LineBreakIteratorPotentiallyIllFormedUtf8(LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -468,11 +479,11 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: Some(&self.complex),
-        }
+        })
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
-        LineBreakIterator {
+        LineBreakIteratorLatin1(LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -480,12 +491,12 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: Some(&self.complex),
-        }
+        })
     }
 
     /// Create a line break iterator for a UTF-16 string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
-        LineBreakIterator {
+        LineBreakIteratorUtf16(LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -493,7 +504,7 @@ impl LineSegmenter {
             data: self.payload.get(),
             options: &self.options,
             complex: Some(&self.complex),
-        }
+        })
     }
 }
 
