@@ -110,20 +110,22 @@ mod lstm;
 mod math_helper;
 
 pub use crate::grapheme::{
-    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
+    GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
+    GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8, GraphemeClusterBreakIteratorUtf16,
+    GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
 };
 pub use crate::line::{
     LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
     LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter, WordBreakRule,
 };
 pub use crate::sentence::{
-    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
-    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceSegmenter,
+    SentenceBreakIterator, SentenceBreakIteratorLatin1,
+    SentenceBreakIteratorPotentiallyIllFormedUtf8, SentenceBreakIteratorUtf16,
+    SentenceBreakIteratorUtf8, SentenceSegmenter,
 };
 pub use crate::word::{
-    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-    WordBreakIteratorUtf8, WordSegmenter,
+    WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8,
+    WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordSegmenter,
 };
 
 pub use crate::rule_segmenter::RuleStatusType;
