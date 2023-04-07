@@ -140,7 +140,7 @@ where
     let data = get_enumerated_prop(&p.source, prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(&data, is_short)?;
+    let map = load_values_to_names(data, is_short)?;
     let map = map.into_iter().collect();
     let data_struct = PropertyEnumToValueNameSparseMapV1 { map };
     Ok(DataResponse {
@@ -161,7 +161,7 @@ where
     let data = get_enumerated_prop(&p.source, prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(&data, is_short)?;
+    let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
     let varzerovec = (&vec).into();
     let data_struct = PropertyEnumToValueNameLinearMapV1 { map: varzerovec };
@@ -183,9 +183,9 @@ where
     let data = get_enumerated_prop(&p.source, prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
-    let map = load_values_to_names(&data, is_short)?;
+    let map = load_values_to_names(data, is_short)?;
     let vec = map_to_vec(&map, prop_name)?;
-    let vec: Result<Vec<_>, _> = vec.into_iter().map(|s| TinyStr4::from_str(s)).collect();
+    let vec: Result<Vec<_>, _> = vec.into_iter().map(TinyStr4::from_str).collect();
 
     let vec = vec.map_err(|_| {
         DataError::custom("Found property value longer than 4 characters for linear4 property")
