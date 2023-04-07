@@ -17,8 +17,6 @@ use utf8_iter::Utf8CharIndices;
 #[derive(Debug)]
 pub struct SentenceBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>);
 
-derive_usize_iterator!(SentenceBreakIteratorUtf8);
-
 /// Sentence break iterator for a potentially invalid UTF-8 string.
 ///
 /// For more information, see [`SentenceSegmenter`].
@@ -27,15 +25,11 @@ pub struct SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
     RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>,
 );
 
-derive_usize_iterator!(SentenceBreakIteratorPotentiallyIllFormedUtf8);
-
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 ///
 /// For more information, see [`SentenceSegmenter`].
 #[derive(Debug)]
 pub struct SentenceBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
-
-derive_usize_iterator!(SentenceBreakIteratorLatin1);
 
 /// Sentence break iterator for a UTF-16 string.
 ///
@@ -43,6 +37,9 @@ derive_usize_iterator!(SentenceBreakIteratorLatin1);
 #[derive(Debug)]
 pub struct SentenceBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>);
 
+derive_usize_iterator!(SentenceBreakIteratorUtf8);
+derive_usize_iterator!(SentenceBreakIteratorPotentiallyIllFormedUtf8);
+derive_usize_iterator!(SentenceBreakIteratorLatin1);
 derive_usize_iterator!(SentenceBreakIteratorUtf16);
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string

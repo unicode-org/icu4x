@@ -15,6 +15,37 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+/// Word break iterator for an `str` (a UTF-8 string).
+///
+/// For more information, see [`WordSegmenter`].
+#[derive(Debug)]
+pub struct WordBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf8>);
+
+/// Word break iterator for a potentially invalid UTF-8 string.
+///
+/// For more information, see [`WordSegmenter`].
+#[derive(Debug)]
+pub struct WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
+    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>,
+);
+
+/// Word break iterator for a Latin-1 (8-bit) string.
+///
+/// For more information, see [`WordSegmenter`].
+#[derive(Debug)]
+pub struct WordBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
+
+/// Word break iterator for a UTF-16 string.
+///
+/// For more information, see [`WordSegmenter`].
+#[derive(Debug)]
+pub struct WordBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf16>);
+
+derive_usize_iterator!(WordBreakIteratorUtf8);
+derive_usize_iterator!(WordBreakIteratorPotentiallyIllFormedUtf8);
+derive_usize_iterator!(WordBreakIteratorLatin1);
+derive_usize_iterator!(WordBreakIteratorUtf16);
+
 macro_rules! derive_word_iterator_methods {
     ($ty:tt) => {
         impl<'l, 's> $ty<'l, 's> {
@@ -32,42 +63,9 @@ macro_rules! derive_word_iterator_methods {
     };
 }
 
-/// Word break iterator for an `str` (a UTF-8 string).
-///
-/// For more information, see [`WordSegmenter`].
-#[derive(Debug)]
-pub struct WordBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf8>);
-
-derive_usize_iterator!(WordBreakIteratorUtf8);
 derive_word_iterator_methods!(WordBreakIteratorUtf8);
-
-/// Word break iterator for a potentially invalid UTF-8 string.
-///
-/// For more information, see [`WordSegmenter`].
-#[derive(Debug)]
-pub struct WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
-    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>,
-);
-
-derive_usize_iterator!(WordBreakIteratorPotentiallyIllFormedUtf8);
 derive_word_iterator_methods!(WordBreakIteratorPotentiallyIllFormedUtf8);
-
-/// Word break iterator for a Latin-1 (8-bit) string.
-///
-/// For more information, see [`WordSegmenter`].
-#[derive(Debug)]
-pub struct WordBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
-
-derive_usize_iterator!(WordBreakIteratorLatin1);
 derive_word_iterator_methods!(WordBreakIteratorLatin1);
-
-/// Word break iterator for a UTF-16 string.
-///
-/// For more information, see [`WordSegmenter`].
-#[derive(Debug)]
-pub struct WordBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, WordBreakTypeUtf16>);
-
-derive_usize_iterator!(WordBreakIteratorUtf16);
 derive_word_iterator_methods!(WordBreakIteratorUtf16);
 
 /// Supports loading word break data, and creating word break iterators for different string

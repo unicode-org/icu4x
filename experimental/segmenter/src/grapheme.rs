@@ -17,8 +17,6 @@ use utf8_iter::Utf8CharIndices;
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIteratorUtf8<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>);
 
-derive_usize_iterator!(GraphemeClusterBreakIteratorUtf8);
-
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
 ///
 /// For more information, see [`GraphemeClusterSegmenter`].
@@ -27,15 +25,11 @@ pub struct GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's>(
     RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>,
 );
 
-derive_usize_iterator!(GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8);
-
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 ///
 /// For more information, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIteratorLatin1<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>);
-
-derive_usize_iterator!(GraphemeClusterBreakIteratorLatin1);
 
 /// Grapheme cluster break iterator for a UTF-16 string.
 ///
@@ -43,6 +37,9 @@ derive_usize_iterator!(GraphemeClusterBreakIteratorLatin1);
 #[derive(Debug)]
 pub struct GraphemeClusterBreakIteratorUtf16<'l, 's>(RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>);
 
+derive_usize_iterator!(GraphemeClusterBreakIteratorUtf8);
+derive_usize_iterator!(GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8);
+derive_usize_iterator!(GraphemeClusterBreakIteratorLatin1);
 derive_usize_iterator!(GraphemeClusterBreakIteratorUtf16);
 
 /// Segments a string into grapheme clusters.
