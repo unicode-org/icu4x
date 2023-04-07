@@ -209,8 +209,8 @@ fn get_loose_u16(payload: &PropertyValueNameToEnumMapV1<'_>, name: &str) -> Opti
 /// Private marker type for PropertyEnumToValueNameSparseMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToNameSparseMapV1Marker;
-impl DataMarker for ErasedEnumToNameSparseMapV1Marker {
+pub(crate) struct ErasedEnumToValueNameSparseMapV1Marker;
+impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
     type Yokeable = PropertyEnumToValueNameSparseMapV1<'static>;
 }
 
@@ -237,7 +237,7 @@ impl DataMarker for ErasedEnumToNameSparseMapV1Marker {
 /// ```
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameSparseMapper<T> {
-    map: DataPayload<ErasedEnumToNameSparseMapV1Marker>,
+    map: DataPayload<ErasedEnumToValueNameSparseMapV1Marker>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
@@ -301,8 +301,8 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
 /// Private marker type for PropertyEnumToValueNameLinearMapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToNameLinearMapV1Marker;
-impl DataMarker for ErasedEnumToNameLinearMapV1Marker {
+pub(crate) struct ErasedEnumToValueNameLinearMapV1Marker;
+impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearMapV1<'static>;
 }
 
@@ -329,7 +329,7 @@ impl DataMarker for ErasedEnumToNameLinearMapV1Marker {
 /// ```
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameLinearMapper<T> {
-    map: DataPayload<ErasedEnumToNameLinearMapV1Marker>,
+    map: DataPayload<ErasedEnumToValueNameLinearMapV1Marker>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
@@ -393,8 +393,8 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
 /// Private marker type for PropertyEnumToValueNameLinearTiny4Mapper
 /// to work for all properties at once
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub(crate) struct ErasedEnumToNameLinearTiny4MapV1Marker;
-impl DataMarker for ErasedEnumToNameLinearTiny4MapV1Marker {
+pub(crate) struct ErasedEnumToValueNameLinearTiny4MapV1Marker;
+impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
     type Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>;
 }
 
@@ -420,7 +420,7 @@ impl DataMarker for ErasedEnumToNameLinearTiny4MapV1Marker {
 /// ```
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameLinearTiny4Mapper<T> {
-    map: DataPayload<ErasedEnumToNameLinearTiny4MapV1Marker>,
+    map: DataPayload<ErasedEnumToValueNameLinearTiny4MapV1Marker>,
     markers: PhantomData<fn(T) -> ()>,
 }
 
