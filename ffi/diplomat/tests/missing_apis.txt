@@ -27,4 +27,3 @@ icu::properties::names::PropertyEnumToValueNameMapper#Struct
 icu::properties::names::PropertyEnumToValueNameMapper::as_borrowed#FnInStruct
 icu::properties::names::PropertyEnumToValueNameMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameMapperBorrowed::get#FnInStruct
-icu::segmenter::RuleStatusType#Enum

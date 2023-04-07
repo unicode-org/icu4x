@@ -15,8 +15,16 @@ pub mod ffi {
     };
     use icu_segmenter::{
         WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-        WordSegmenter,
+        WordSegmenter, RuleStatusType
     };
+
+    #[diplomat::enum_convert(RuleStatusType, needs_wildcard)]
+    #[diplomat::rust_link(icu::segmenter::RuleStatusType, Enum)]
+    pub enum ICU4XSegmenterRuleStatusType {
+        None = 0,
+        Number = 1,
+        Letter = 2,
+    }
 
     #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
@@ -149,6 +157,18 @@ pub mod ffi {
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
         }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
+        }
     }
 
     impl<'a> ICU4XWordBreakIteratorUtf16<'a> {
@@ -163,6 +183,18 @@ pub mod ffi {
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
         }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
+        }
     }
 
     impl<'a> ICU4XWordBreakIteratorLatin1<'a> {
@@ -176,6 +208,18 @@ pub mod ffi {
                 .next()
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
+        }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
         }
     }
 }
