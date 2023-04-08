@@ -35,4 +35,3 @@ icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapper::as_borrowed#FnInStruct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
-icu::segmenter::RuleStatusType#Enum
