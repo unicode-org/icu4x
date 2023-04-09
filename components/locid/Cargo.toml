@@ -37,7 +37,7 @@ serde = { version = "1.0", default-features = false, features = ["alloc", "deriv
 zerovec = { version = "0.9.2", path = "../../utils/zerovec", optional = true }
 
 [dev-dependencies]
-criterion = "0.3.3"
+criterion = "0.4"
 iai = "0.1.1"
 icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }

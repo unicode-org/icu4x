@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `IsoFormat`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoFormat.html) for more information.
+ * See the [Rust documentation for `IsoFormat`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoFormat.html) for more information.
  */
 enum struct ICU4XIsoTimeZoneFormat {
   Basic = 0,

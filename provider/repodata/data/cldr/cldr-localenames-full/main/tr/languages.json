@@ -3,7 +3,7 @@
     "tr": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "tr"
       },
@@ -72,7 +72,6 @@
           "bfd": "Bafut",
           "bfq": "Badaga",
           "bg": "Bulgarca",
-          "bgc": "bgc",
           "bgn": "Batı Balochi",
           "bho": "Arayanice",
           "bi": "Bislama",
@@ -243,7 +242,6 @@
           "hax": "Güney Haydaca",
           "he": "İbranice",
           "hi": "Hintçe",
-          "hi-Latn": "Hintçe (Latin)",
           "hi-Latn-alt-variant": "Hindilizce",
           "hif": "Fiji Hintçesi",
           "hil": "Hiligaynon dili",

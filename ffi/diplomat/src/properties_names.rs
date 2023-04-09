@@ -27,7 +27,9 @@ pub mod ffi {
     )]
     pub struct ICU4XPropertyValueNameToEnumMapper(PropertyValueNameToEnumMapper<u16>);
 
-    fn load<M: KeyedDataMarker<Yokeable = provider::PropertyValueNameToEnumMapV1<'static>>>(
+    fn load<
+        M: KeyedDataMarker<Yokeable = provider::names::PropertyValueNameToEnumMapV1<'static>>,
+    >(
         provider: &ICU4XDataProvider,
     ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
         let data = DataProvider::<M>::load(&provider.0, Default::default())

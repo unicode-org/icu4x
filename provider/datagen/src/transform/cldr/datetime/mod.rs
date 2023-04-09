@@ -268,6 +268,11 @@ macro_rules! impl_data_provider {
                     );
                 }
 
+                // TODO(#3212): Remove
+                if $marker::KEY == TimeLengthsV1Marker::KEY {
+                    r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
+                }
+
                 Ok(r)
             }
         }

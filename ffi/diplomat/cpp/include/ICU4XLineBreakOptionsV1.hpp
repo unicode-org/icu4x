@@ -18,7 +18,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `LineBreakOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html) for more information.
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
  */
 struct ICU4XLineBreakOptionsV1 {
  public:

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `Style`](https://unicode-org.github.io/icu4x-docs/doc/icu/displaynames/options/enum.Style.html) for more information.
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Style.html) for more information.
  */
 enum struct ICU4XDisplayNamesStyle {
   Auto = 0,

@@ -250,4 +250,4 @@ fn main() {
 
 We have learned how to generate data and load it into our programs, optimize data size, and gotten to know the different data providers that are part of `ICU4X`.
 
-You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://icu4x.unicode.org/doc/icu_datagen/).
+You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_datagen/latest/).

@@ -3,7 +3,7 @@
     "bn": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "bn"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "চিহুয়াহুয়া"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "সিউদাদ জুয়ারেজ"
               },
               "Coral_Harbour": {
                 "exemplarCity": "আটিকোকান"

@@ -179,6 +179,7 @@ pub mod prelude {
     pub use crate::marker::KeyedDataMarker;
     pub use crate::request::DataLocale;
     pub use crate::request::DataRequest;
+    pub use crate::request::DataRequestMetadata;
     pub use crate::response::DataPayload;
     pub use crate::response::DataResponse;
     pub use crate::response::DataResponseMetadata;

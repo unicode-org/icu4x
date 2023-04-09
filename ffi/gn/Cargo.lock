@@ -103,7 +103,7 @@ checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 [[package]]
 name = "diplomat"
 version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -114,12 +114,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 
 [[package]]
 name = "diplomat_core"
 version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=835c985909f46a90403a69f015c7a2996ea34525#835c985909f46a90403a69f015c7a2996ea34525"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -198,6 +198,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_segmenter",
  "icu_timezone",
 ]
 
@@ -235,6 +236,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_segmenter",
+ "icu_testdata",
  "icu_timezone",
  "log",
  "tinystr",
@@ -383,6 +385,7 @@ dependencies = [
  "displaydoc",
  "icu_collections",
  "icu_provider",
+ "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
@@ -431,6 +434,28 @@ dependencies = [
  "icu_provider",
  "num-traits",
  "utf8_iter",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_testdata"
+version = "1.1.2"
+dependencies = [
+ "icu_calendar",
+ "icu_collator",
+ "icu_collections",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_segmenter",
+ "icu_timezone",
  "zerovec",
 ]
 

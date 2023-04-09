@@ -199,9 +199,8 @@ fn run_grapheme_break_test() {
     }
 }
 
-#[test]
-fn run_sentence_break_test() {
-    let test_iter = TestContentIterator::new("./tests/testdata/SentenceBreakTest.txt");
+fn sentence_break_test(filename: &str) {
+    let test_iter = TestContentIterator::new(filename);
     let segmenter =
         SentenceSegmenter::try_new_unstable(&icu_testdata::unstable()).expect("Data exists");
     for test in test_iter {
@@ -229,4 +228,14 @@ fn run_sentence_break_test() {
             );
         }
     }
+}
+
+#[test]
+fn run_sentence_break_test() {
+    sentence_break_test("./tests/testdata/SentenceBreakTest.txt");
+}
+
+#[test]
+fn run_sentence_break_extra_test() {
+    sentence_break_test("./tests/testdata/SentenceBreakExtraTest.txt");
 }

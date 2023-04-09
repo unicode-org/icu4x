@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `Date`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Date.html) for more information.
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/datetime/options/length/enum.Date.html) for more information.
  */
 enum struct ICU4XDateLength {
   Full = 0,

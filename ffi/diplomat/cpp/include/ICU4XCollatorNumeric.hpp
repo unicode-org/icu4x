@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `Numeric`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.Numeric.html) for more information.
+ * See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/collator/enum.Numeric.html) for more information.
  */
 enum struct ICU4XCollatorNumeric {
   Auto = 0,

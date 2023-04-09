@@ -16,7 +16,7 @@
 /**
  * ECMA-402 compatible sign display preference.
  * 
- * See the [Rust documentation for `SignDisplay`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.SignDisplay.html) for more information.
+ * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
  */
 enum struct ICU4XFixedDecimalSignDisplay {
   Auto = 0,

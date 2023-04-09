@@ -11,6 +11,7 @@ unicode_version = "15.0"
 [[binary_property]]
 long_name = "White_Space"
 short_name = "WSpace"
+uproperty_discr = 0x1F
 aliases = ["space"]
 # Inclusive ranges of the code points in the set.
 ranges = [

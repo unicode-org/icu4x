@@ -10,13 +10,21 @@ pub mod ffi {
     use core::convert::TryFrom;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
-        GraphemeClusterBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
-        WordBreakDataV1Marker,
+        DictionaryForWordLineExtendedV1Marker, DictionaryForWordOnlyAutoV1Marker,
+        GraphemeClusterBreakDataV1Marker, LstmForWordLineAutoV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
-        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-        WordSegmenter,
+        RuleStatusType, WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8,
+        WordBreakIteratorUtf16, WordSegmenter,
     };
+
+    #[diplomat::enum_convert(RuleStatusType, needs_wildcard)]
+    #[diplomat::rust_link(icu::segmenter::RuleStatusType, Enum)]
+    pub enum ICU4XSegmenterRuleStatusType {
+        None = 0,
+        Number = 1,
+        Letter = 2,
+    }
 
     #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
@@ -24,12 +32,22 @@ pub mod ffi {
     pub struct ICU4XWordSegmenter(WordSegmenter);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(
+        icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8,
+        Typedef,
+        hidden
+    )]
     pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16, Typedef, hidden)]
     pub struct ICU4XWordBreakIteratorUtf16<'a>(WordBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1, Typedef, hidden)]
     pub struct ICU4XWordBreakIteratorLatin1<'a>(WordBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XWordSegmenter {
@@ -48,8 +66,8 @@ pub mod ffi {
         fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -73,7 +91,7 @@ pub mod ffi {
         fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -97,7 +115,8 @@ pub mod ffi {
         fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XWordSegmenter>, ICU4XError>
         where
             D: DataProvider<WordBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -137,11 +156,29 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
+        }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
         }
     }
 
@@ -149,11 +186,29 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
+        }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
         }
     }
 
@@ -161,11 +216,29 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
                 .and_then(|u| i32::try_from(u).ok())
                 .unwrap_or(-1)
+        }
+
+        /// Return the status value of break boundary.
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
+        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
+            self.0.rule_status().into()
+        }
+
+        /// Return true when break boundary is word-like such as letter/number/CJK
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        pub fn is_word_like(&self) -> bool {
+            self.0.is_word_like()
         }
     }
 }

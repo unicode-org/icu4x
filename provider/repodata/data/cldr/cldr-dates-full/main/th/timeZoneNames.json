@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "th"
       },
@@ -118,6 +118,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "ชีวาวา"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "ซิวดัดฮัวเรซ"
               },
               "Coral_Harbour": {
                 "exemplarCity": "คอรัลฮาร์เบอร์"
