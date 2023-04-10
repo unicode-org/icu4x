@@ -90,6 +90,9 @@ pub trait StoreMut<K, V>: Store<K, V> {
     /// Gets a key/value pair at the specified index, with a mutable value.
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
 
+    /// Pushes one additional item onto the store.
+    fn lm_push(&mut self, key: K, value: V);
+
     /// Inserts an item at a specific index in the store.
     ///
     /// # Panics

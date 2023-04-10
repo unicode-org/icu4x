@@ -256,6 +256,46 @@ where
         }
     }
 
+    /// Appends `value` with `key` to the end of the underlying vector, returning
+    /// `key` and `value` _if it failed_. Useful for extending with an existing
+    /// sorted list.
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// assert!(map.try_append(1, "uno").is_none());
+    /// assert!(map.try_append(3, "tres").is_none());
+    ///
+    /// assert!(
+    ///     matches!(map.try_append(3, "tres-updated"), Some((3, "tres-updated"))),
+    ///     "append duplicate of last key",
+    /// );
+    ///
+    /// assert!(
+    ///     matches!(map.try_append(2, "dos"), Some((2, "dos"))),
+    ///     "append out of order"
+    /// );
+    ///
+    /// assert_eq!(map.get(&1), Some(&"uno"));
+    ///
+    /// // contains the original value for the key: 3
+    /// assert_eq!(map.get(&3), Some(&"tres"));
+    ///
+    /// // not appended since it wasn't in order
+    /// assert_eq!(map.get(&2), None);
+    /// ```
+    #[must_use]
+    pub fn try_append(&mut self, key: K, value: V) -> Option<(K, V)> {
+        if let Some(last) = self.values.lm_last() {
+            if last.0 >= &key {
+                return Some((key, value));
+            }
+        }
+
+        self.values.lm_push(key, value);
+        None
+    }
+
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
     /// ```rust

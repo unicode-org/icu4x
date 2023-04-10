@@ -28,6 +28,20 @@ impl<T> ShortSlice<T> {
         Self::ZeroOne(Some(item))
     }
 
+    pub fn push(&mut self, item: T) {
+        *self = match core::mem::replace(self, Self::ZeroOne(None)) {
+            ShortSlice::ZeroOne(None) => ShortSlice::ZeroOne(Some(item)),
+            ShortSlice::ZeroOne(Some(prev_item)) => {
+                ShortSlice::Multi(vec![prev_item, item].into_boxed_slice())
+            }
+            ShortSlice::Multi(items) => {
+                let mut items = items.into_vec();
+                items.push(item);
+                ShortSlice::Multi(items.into_boxed_slice())
+            }
+        };
+    }
+
     #[inline]
     pub fn as_slice(&self) -> &[T] {
         match self {
@@ -201,6 +215,10 @@ impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
         self.as_mut_slice()
             .get_mut(index)
             .map(|elt| (&elt.0, &mut elt.1))
+    }
+
+    fn lm_push(&mut self, key: K, value: V) {
+        self.push((key, value))
     }
 
     fn lm_insert(&mut self, index: usize, key: K, value: V) {
