@@ -37,7 +37,11 @@ const POSTCARD: [u8; 117] = [
 /// Run this function to print new data to the console.
 #[allow(dead_code)]
 fn generate() {
-    let map: LiteMap<&str, &str, Vec<_>> = LiteMap::from_iter(DATA.iter().cloned());
+    let mut map = LiteMap::new_vec();
+    for (lang, name) in DATA.iter() {
+        map.try_append(lang, name).ok_or(()).unwrap_err();
+    }
+
     let buf = postcard::to_stdvec(&map).unwrap();
     println!("{buf:?}");
 }

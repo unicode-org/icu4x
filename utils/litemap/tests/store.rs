@@ -76,6 +76,11 @@ impl<K, V> StoreMut<K, V> for VecWithDefaults<(K, V)> {
     }
 
     #[inline]
+    fn lm_push(&mut self, key: K, value: V) {
+        self.0.push((key, value))
+    }
+
+    #[inline]
     fn lm_insert(&mut self, index: usize, key: K, value: V) {
         self.0.insert(index, (key, value))
     }
