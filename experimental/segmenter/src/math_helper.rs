@@ -231,6 +231,14 @@ impl<'a> MatrixBorrowed<'a, 1> {
         debug_assert_eq!(self.dims, other.dims);
         unrolled_dot_1(self.data, other.data)
     }
+
+    pub fn view(&'a self, r: Range<usize>) -> MatrixBorrowed<'a, 1> {
+        MatrixBorrowed {
+            #[allow(clippy::indexing_slicing)]
+            data: &self.data[r],
+            dims: self.dims,
+        }
+    }
 }
 
 impl<'a> MatrixBorrowedMut<'a, 1> {
@@ -265,6 +273,75 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
                 debug_assert!(false, "unreachable: dims checked above");
             }
         }
+    }
+
+    // Calculate the dot product of a and b, adding the result to self.
+    ///
+    /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
+    /// this is the opposite of standard practice.
+    pub fn add_dot_2d_1(&mut self, a: MatrixZero<1>, b: MatrixZero<2>) {
+        let m = a.dim();
+        let n = self.as_borrowed().dim();
+        debug_assert_eq!(
+            m,
+            b.dim().1,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        debug_assert_eq!(
+            n,
+            b.dim().0,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        for i in 0..n {
+            if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
+            {
+                *dest += unrolled_dot_2(a.as_slice(), b_sub.data);
+            } else {
+                debug_assert!(false, "unreachable: dims checked above");
+            }
+        }
+    }
+
+    pub fn sigmoid(&mut self, r: Range<usize>) -> Option<()> {
+        let slice = self.data.get_mut(r)?;
+        for i in &mut *slice {
+            *i = sigmoid(*i);
+        }
+        Some(())
+    }
+
+    pub fn tanh(&mut self, r: Range<usize>) -> Option<()> {
+        let slice = self.data.get_mut(r)?;
+        for i in &mut *slice {
+            *i = tanh(*i);
+        }
+        Some(())
+    }
+
+    pub fn convolve(
+        &mut self,
+        i: MatrixBorrowed<'_, 1>,
+        c: MatrixBorrowed<'_, 1>,
+        f: MatrixBorrowed<'_, 1>,
+    ) -> Option<()> {
+        for idx in 0..self.data.len() {
+            *self.data.get_mut(idx)? =
+                i.data.get(idx)? * c.data.get(idx)? + self.data.get(idx)? * f.data.get(idx)?
+        }
+        Some(())
+    }
+
+    pub fn mul_tanh(&mut self, o: MatrixBorrowed<'_, 1>, c: MatrixBorrowed<'_, 1>) -> Option<()> {
+        for idx in 0..self.data.len() {
+            *self.data.get_mut(idx)? = o.data.get(idx)? * tanh(*c.data.get(idx)?);
+        }
+        Some(())
     }
 }
 

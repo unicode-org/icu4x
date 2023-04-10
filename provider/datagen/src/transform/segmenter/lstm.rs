@@ -66,11 +66,11 @@ struct RawLstmData {
 impl RawLstmData {
     pub fn try_convert(&self) -> Result<LstmDataV1<'static>, DataError> {
         let embedding = self.embedding.to_ndarray2()?;
-        let fw_w = self.fw_w.to_ndarray2()?;
-        let fw_u = self.fw_u.to_ndarray2()?;
+        let mut fw_w = self.fw_w.to_ndarray2()?;
+        let mut fw_u = self.fw_u.to_ndarray2()?;
         let fw_b = self.fw_b.to_ndarray1()?;
-        let bw_w = self.bw_w.to_ndarray2()?;
-        let bw_u = self.bw_u.to_ndarray2()?;
+        let mut bw_w = self.bw_w.to_ndarray2()?;
+        let mut bw_u = self.bw_u.to_ndarray2()?;
         let bw_b = self.bw_b.to_ndarray1()?;
         let time_w = self.time_w.to_ndarray2()?;
         let time_b = self.time_b.to_ndarray1()?;
@@ -88,19 +88,11 @@ impl RawLstmData {
             return Err(DIMENSION_MISMATCH_ERROR);
         }
         // Unwraps okay: dimensions checked above
-        let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut fw_b = fw_b.into_shape((4, hunits)).unwrap();
-        let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut bw_b = bw_b.into_shape((4, hunits)).unwrap();
         let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
-        fw_w.swap_axes(0, 2);
-        fw_u.swap_axes(0, 2);
-        fw_b.swap_axes(0, 1);
-        bw_w.swap_axes(0, 2);
-        bw_u.swap_axes(0, 2);
-        bw_b.swap_axes(0, 1);
+        fw_w.swap_axes(0, 1);
+        fw_u.swap_axes(0, 1);
+        bw_w.swap_axes(0, 1);
+        bw_u.swap_axes(0, 1);
         time_w.swap_axes(1, 2);
         let fw_w = fw_w.as_standard_layout().into_owned();
         let fw_u = fw_u.as_standard_layout().into_owned();
@@ -125,12 +117,12 @@ impl RawLstmData {
                 .map(|(k, &v)| (UnvalidatedStr::from_str(k), v))
                 .collect(),
             ndarray_to_lstm_matrix2(embedding)?,
-            ndarray_to_lstm_matrix3(fw_w)?,
-            ndarray_to_lstm_matrix3(fw_u)?,
-            ndarray_to_lstm_matrix2(fw_b)?,
-            ndarray_to_lstm_matrix3(bw_w)?,
-            ndarray_to_lstm_matrix3(bw_u)?,
-            ndarray_to_lstm_matrix2(bw_b)?,
+            ndarray_to_lstm_matrix2(fw_w)?,
+            ndarray_to_lstm_matrix2(fw_u)?,
+            ndarray_to_lstm_matrix1(fw_b)?,
+            ndarray_to_lstm_matrix2(bw_w)?,
+            ndarray_to_lstm_matrix2(bw_u)?,
+            ndarray_to_lstm_matrix1(bw_b)?,
             ndarray_to_lstm_matrix3(time_w)?,
             ndarray_to_lstm_matrix1(time_b)?,
         )

@@ -59,12 +59,12 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 pub(crate) struct LstmSegmenter<'l> {
     dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
     embedding: MatrixZero<'l, 2>,
-    fw_w: MatrixZero<'l, 3>,
-    fw_u: MatrixZero<'l, 3>,
-    fw_b: MatrixZero<'l, 2>,
-    bw_w: MatrixZero<'l, 3>,
-    bw_u: MatrixZero<'l, 3>,
-    bw_b: MatrixZero<'l, 2>,
+    fw_w: MatrixZero<'l, 2>,
+    fw_u: MatrixZero<'l, 2>,
+    fw_b: MatrixZero<'l, 1>,
+    bw_w: MatrixZero<'l, 2>,
+    bw_u: MatrixZero<'l, 2>,
+    bw_b: MatrixZero<'l, 1>,
     time_w: MatrixZero<'l, 3>,
     time_b: MatrixZero<'l, 1>,
     grapheme: Option<&'l RuleBreakDataV1<'l>>,
@@ -152,46 +152,42 @@ impl<'l> LstmSegmenter<'l> {
             x_t: MatrixZero<'a, 1>,
             mut h_tm1: MatrixBorrowedMut<'a, 1>,
             mut c_tm1: MatrixBorrowedMut<'a, 1>,
-            w: MatrixZero<'a, 3>,
-            u: MatrixZero<'a, 3>,
-            b: MatrixZero<'a, 2>,
+            w: MatrixZero<'a, 2>,
+            u: MatrixZero<'a, 2>,
+            b: MatrixZero<'a, 1>,
+            hunits: usize,
         ) {
             #[cfg(debug_assertions)]
             {
                 let hunits = h_tm1.dim();
                 let embedd_dim = x_t.dim();
                 c_tm1.as_borrowed().debug_assert_dims([hunits]);
-                w.debug_assert_dims([hunits, 4, embedd_dim]);
-                u.debug_assert_dims([hunits, 4, hunits]);
-                b.debug_assert_dims([hunits, 4]);
+                w.debug_assert_dims([hunits * 4, embedd_dim]);
+                u.debug_assert_dims([hunits * 4, hunits]);
+                b.debug_assert_dims([hunits * 4]);
             }
 
             let mut s_t = b.to_owned();
 
-            s_t.as_mut().add_dot_3d_2(x_t, w);
-            s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
+            s_t.as_mut().add_dot_2d_1(x_t, w);
+            s_t.as_mut().add_dot_2d(h_tm1.as_borrowed(), u);
 
-            #[allow(clippy::unwrap_used)]
-            for i in 0..s_t.dim().0 {
-                let [s0, s1, s2, s3] = s_t
-                    .as_borrowed()
-                    .submatrix::<1>(i)
-                    .unwrap()
-                    .read_4()
-                    .unwrap(); // shape (hunits, 4)
-                let p = math_helper::sigmoid(s0);
-                let f = math_helper::sigmoid(s1);
-                let c = math_helper::tanh(s2);
-                let o = math_helper::sigmoid(s3);
-                let c_old = c_tm1.as_borrowed().as_slice().get(i).unwrap(); // shape (h_units)
-                let c_new = math_helper::fma(p, c, f * c_old);
-                *c_tm1.as_mut_slice().get_mut(i).unwrap() = c_new; // shape (h_units)
-                *h_tm1.as_mut_slice().get_mut(i).unwrap() = o * math_helper::tanh(c_new);
-                // shape (hunits)
-            }
+            s_t.as_mut().sigmoid(0..2 * hunits);
+            s_t.as_mut().tanh(2 * hunits..3 * hunits);
+            s_t.as_mut().sigmoid(3 * hunits..4 * hunits);
+
+            let sb = s_t.as_borrowed();
+
+            c_tm1.convolve(
+                sb.view(0..hunits),
+                sb.view(2 * hunits..3 * hunits),
+                sb.view(hunits..2 * hunits),
+            );
+
+            h_tm1.mul_tanh(sb.view(3 * hunits..4 * hunits), c_tm1.as_borrowed());
         }
 
-        let hunits = self.fw_u.dim().0;
+        let hunits = self.fw_u.dim().1;
 
         // Forward LSTM
         let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
@@ -211,6 +207,7 @@ impl<'l> LstmSegmenter<'l> {
                 self.fw_w,
                 self.fw_u,
                 self.fw_b,
+                hunits,
             );
         }
 
@@ -232,6 +229,7 @@ impl<'l> LstmSegmenter<'l> {
                 self.bw_w,
                 self.bw_u,
                 self.bw_b,
+                hunits,
             );
         }
 
