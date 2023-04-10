@@ -4,7 +4,6 @@
 
 use super::LiteMap;
 use crate::store::*;
-use alloc::vec::Vec;
 use core::fmt;
 use core::marker::PhantomData;
 use serde::de::{MapAccess, SeqAccess, Visitor};
@@ -77,30 +76,50 @@ where
     where
         S: SeqAccess<'de>,
     {
-        let mut kvs = Vec::with_capacity(access.size_hint().unwrap_or(0));
+        let mut map = LiteMap::with_capacity(access.size_hint().unwrap_or(0));
 
         // While there are entries remaining in the input, add them
         // into our map.
         while let Some((key, value)) = access.next_element()? {
-            kvs.push((key, value));
+            // Try to append it at the end, hoping for a sorted map.
+            // If not sorted, insert as usual.
+            // This allows for arbitrary maps (e.g. from user JSON)
+            // to be deserialized into LiteMap
+            // without impacting performance in the case of deserializing
+            // a serialized map that came from another LiteMap
+            if let Some((key, value)) = map.try_append(key, value) {
+                // Note: this effectively selection sorts the map,
+                // which isn't efficient for large maps
+                map.insert(key, value);
+            }
         }
 
-        Ok(LiteMap::from_iter(kvs.into_iter()))
+        Ok(map)
     }
 
     fn visit_map<M>(self, mut access: M) -> Result<Self::Value, M::Error>
     where
         M: MapAccess<'de>,
     {
-        let mut kvs = Vec::with_capacity(access.size_hint().unwrap_or(0));
+        let mut map = LiteMap::with_capacity(access.size_hint().unwrap_or(0));
 
         // While there are entries remaining in the input, add them
         // into our map.
         while let Some((key, value)) = access.next_entry()? {
-            kvs.push((key, value));
+            // Try to append it at the end, hoping for a sorted map.
+            // If not sorted, insert as usual.
+            // This allows for arbitrary maps (e.g. from user JSON)
+            // to be deserialized into LiteMap
+            // without impacting performance in the case of deserializing
+            // a serialized map that came from another LiteMap
+            if let Some((key, value)) = map.try_append(key, value) {
+                // Note: this effectively selection sorts the map,
+                // which isn't efficient for large maps
+                map.insert(key, value);
+            }
         }
 
-        Ok(LiteMap::from_iter(kvs.into_iter()))
+        Ok(map)
     }
 }
 
