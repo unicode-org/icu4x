@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
-/// an argument when creating a line breaker.
+/// an argument when creating a line segmenter.
 ///
 /// Each enum value has the same meaning with respect to the `line-break`
 /// property values in the CSS Text spec. See the details in
@@ -57,7 +57,7 @@ pub enum LineBreakRule {
 }
 
 /// An enum specifies the line break opportunities between letters. It can be
-/// passed as an argument when creating a line breaker.
+/// passed as an argument when creating a line segmenter.
 ///
 /// Each enum value has the same meaning with respect to the `word-break`
 /// property values in the CSS Text spec. See the details in
@@ -85,7 +85,7 @@ pub enum WordBreakRule {
     KeepAll,
 }
 
-/// Options to tailor line breaking behavior, such as for CSS.
+/// Options to tailor line-breaking behavior.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -102,7 +102,7 @@ pub struct LineBreakOptions {
     /// Line break opportunities between letters. See [`WordBreakRule`].
     pub word_break_rule: WordBreakRule,
 
-    /// Use `true` as a hint to the line breaker that the writing
+    /// Use `true` as a hint to the line segmenter that the writing
     /// system is Chinese or Japanese. This allows more break opportunities when
     /// `LineBreakRule` is `Normal` or `Loose`. See
     /// <https://drafts.csswg.org/css-text-3/#line-break-property> for details.
