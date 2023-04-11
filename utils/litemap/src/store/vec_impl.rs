@@ -99,7 +99,7 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for Vec<(K, V)> {
-    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
         let iter = iter.into_iter();
         let mut container = match iter.size_hint() {
             (_, Some(upper)) => Self::with_capacity(upper),

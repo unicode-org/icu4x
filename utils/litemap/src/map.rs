@@ -501,7 +501,7 @@ where
     S: StoreFromIterable<K, V>,
 {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let values = S::from_iter_sorted(iter);
+        let values = S::lm_sort_from_iter(iter);
         Self::from_sorted_store_unchecked(values)
     }
 }

@@ -72,8 +72,8 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
 }
 
 pub trait StoreFromIterable<K, V>: Store<K, V> {
-    /// Create store from iterator
-    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
+    /// Create a sorted store from `iter`.
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self;
 }
 
 pub trait StoreMut<K, V>: Store<K, V> {

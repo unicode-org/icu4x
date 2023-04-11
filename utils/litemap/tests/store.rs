@@ -53,8 +53,8 @@ impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
 }
 
 impl<K: Ord, V> StoreFromIterable<K, V> for VecWithDefaults<(K, V)> {
-    fn from_iter_sorted<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let v: Vec<_> = Vec::from_iter_sorted(iter);
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let v: Vec<_> = Vec::lm_sort_from_iter(iter);
         Self(v)
     }
 }
