@@ -13,7 +13,7 @@ namespace capi {
 #endif
 
 typedef struct ICU4XLineBreakOptionsV1 {
-    ICU4XLineBreakStrictness line_break_rule;
+    ICU4XLineBreakStrictness line_break_strictness;
     ICU4XWordBreakRule word_break_rule;
     bool ja_zh;
 } ICU4XLineBreakOptionsV1;

@@ -158,7 +158,7 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
 }
 inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_rule = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_strictness), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
@@ -169,7 +169,7 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
 }
 inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_rule = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_strictness), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
@@ -180,7 +180,7 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
 }
 inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_rule = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.line_break_strictness), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));

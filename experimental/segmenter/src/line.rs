@@ -97,7 +97,7 @@ pub enum WordBreakRule {
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct LineBreakOptions {
     /// Strictness of line-breaking rules. See [`LineBreakStrictness`].
-    pub line_break_rule: LineBreakStrictness,
+    pub line_break_strictness: LineBreakStrictness,
 
     /// Line break opportunities between letters. See [`WordBreakRule`].
     pub word_break_rule: WordBreakRule,
@@ -114,7 +114,7 @@ pub struct LineBreakOptions {
 impl Default for LineBreakOptions {
     fn default() -> Self {
         Self {
-            line_break_rule: LineBreakStrictness::Strict,
+            line_break_strictness: LineBreakStrictness::Strict,
             word_break_rule: WordBreakRule::Normal,
             ja_zh: false,
         }
@@ -206,7 +206,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// };
 ///
 /// let mut options = LineBreakOptions::default();
-/// options.line_break_rule = LineBreakStrictness::Strict;
+/// options.line_break_strictness = LineBreakStrictness::Strict;
 /// options.word_break_rule = WordBreakRule::BreakAll;
 /// options.ja_zh = false;
 /// let segmenter = LineSegmenter::try_new_auto_with_options_unstable(
@@ -500,15 +500,15 @@ impl LineSegmenter {
 fn get_linebreak_property_utf32_with_rule(
     property_table: &RuleBreakPropertyTable<'_>,
     codepoint: u32,
-    line_break_rule: LineBreakStrictness,
+    line_break_strictness: LineBreakStrictness,
     word_break_rule: WordBreakRule,
 ) -> u8 {
     // Note: Default value is 0 == UNKNOWN
     let prop = property_table.0.get32(codepoint);
 
     if word_break_rule == WordBreakRule::BreakAll
-        || line_break_rule == LineBreakStrictness::Loose
-        || line_break_rule == LineBreakStrictness::Normal
+        || line_break_strictness == LineBreakStrictness::Loose
+        || line_break_strictness == LineBreakStrictness::Normal
     {
         return match prop {
             CJ => ID, // All CJ's General_Category is Other_Letter (Lo).
@@ -804,7 +804,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             }
 
             // CSS line-break property handling
-            match self.options.line_break_rule {
+            match self.options.line_break_strictness {
                 LineBreakStrictness::Normal => {
                     if self.is_break_by_normal(right_codepoint) {
                         return self.get_current_position();
@@ -964,7 +964,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         get_linebreak_property_with_rule(
             &iterator.data.property_table,
             c,
-            iterator.options.line_break_rule,
+            iterator.options.line_break_strictness,
             iterator.options.word_break_rule,
         )
     }
@@ -997,7 +997,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
         get_linebreak_property_with_rule(
             &iterator.data.property_table,
             c,
-            iterator.options.line_break_rule,
+            iterator.options.line_break_strictness,
             iterator.options.word_break_rule,
         )
     }
@@ -1107,7 +1107,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         get_linebreak_property_utf32_with_rule(
             &iterator.data.property_table,
             c,
-            iterator.options.line_break_rule,
+            iterator.options.line_break_strictness,
             iterator.options.word_break_rule,
         )
     }

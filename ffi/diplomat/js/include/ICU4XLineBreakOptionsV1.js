@@ -5,7 +5,7 @@ import { ICU4XWordBreakRule_js_to_rust, ICU4XWordBreakRule_rust_to_js } from "./
 
 export class ICU4XLineBreakOptionsV1 {
   constructor(underlying) {
-    this.line_break_rule = ICU4XLineBreakStrictness_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
+    this.line_break_strictness = ICU4XLineBreakStrictness_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
     this.word_break_rule = ICU4XWordBreakRule_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying + 4)];
     this.ja_zh = (new Uint8Array(wasm.memory.buffer, underlying + 8, 1))[0] == 1;
   }
