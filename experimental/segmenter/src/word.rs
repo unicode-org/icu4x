@@ -47,7 +47,15 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     pub fn rule_status(&self) -> RuleStatusType {
         self.0.rule_status()
     }
-    /// Return true when break boundary is word-like such as letter/number/CJK
+
+    /// Returns an iterator over pairs of position and rule status.
+    pub fn with_status<'i: 'l + 's>(
+        &'i mut self,
+    ) -> impl Iterator<Item = (usize, RuleStatusType)> + '_ {
+        core::iter::from_fn(move || self.next().map(|i| (i, self.rule_status())))
+    }
+
+    /// Return true when the segment preceding the boundary is word-like, such as letters, numbers, or CJKV ideographs.
     #[inline]
     pub fn is_word_like(&self) -> bool {
         self.0.is_word_like()
@@ -131,8 +139,8 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// Not all segments delimited by word boundaries are words; some are interword
 /// segments such as spaces and punctuation.
-/// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
-/// classify the preceding segment; [`RuleBreakIterator::with_status()`]
+/// The [`WordBreakIterator::rule_status()`] of a boundary can be used to
+/// classify the preceding segment; [`WordBreakIterator::with_status()`]
 /// associates each boundary with its status.
 /// ```rust
 /// # use itertools::Itertools;
