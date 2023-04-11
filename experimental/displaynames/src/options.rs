@@ -6,6 +6,25 @@
 
 /// A bag of options defining how region or language codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
+/// # Example
+///
+/// ```
+/// use icu_displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu_locid::{locale, subtags_region as region};
+///
+/// let locale = locale!("en-001");
+/// let mut options: DisplayNamesOptions = Default::default();
+/// options.style = Some(Style::Short);
+/// let display_name = RegionDisplayNames::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// // Full name would be "Bosnia & Herzegovina"
+/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
+/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
 pub struct DisplayNamesOptions {
