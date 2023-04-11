@@ -120,11 +120,6 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for VecWithDefaults<(K, V)> {
         IntoIterator::into_iter(self.0)
     }
 
-    #[inline]
-    fn lm_extend_end(&mut self, other: Self) {
-        self.0.extend(other.0);
-    }
-
     // leave lm_extend_end as default
 
     // leave lm_extend_start as default
