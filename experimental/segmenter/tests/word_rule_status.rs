@@ -12,27 +12,27 @@ fn rule_status() {
     let mut iter = segmenter.segment_str("hello world 123");
 
     assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.rule_status(), RuleStatusType::None, "none");
+    assert_eq!(iter.word_type(), RuleStatusType::None, "none");
     assert!(!iter.is_word_like(), "SOT is false");
 
     assert_eq!(iter.next(), Some(5), "after hello");
-    assert_eq!(iter.rule_status(), RuleStatusType::Letter, "letter");
+    assert_eq!(iter.word_type(), RuleStatusType::Letter, "letter");
     assert!(iter.is_word_like(), "Letter is true");
 
     assert_eq!(iter.next(), Some(6), "after space");
-    assert_eq!(iter.rule_status(), RuleStatusType::None, "none");
+    assert_eq!(iter.word_type(), RuleStatusType::None, "none");
     assert!(!iter.is_word_like(), "None is false");
 
     assert_eq!(iter.next(), Some(11), "after world");
-    assert_eq!(iter.rule_status(), RuleStatusType::Letter, "letter");
+    assert_eq!(iter.word_type(), RuleStatusType::Letter, "letter");
     assert!(iter.is_word_like(), "Letter is true");
 
     assert_eq!(iter.next(), Some(12), "after space");
-    assert_eq!(iter.rule_status(), RuleStatusType::None, "none");
+    assert_eq!(iter.word_type(), RuleStatusType::None, "none");
     assert!(!iter.is_word_like(), "None is false");
 
     assert_eq!(iter.next(), Some(15), "after number");
-    assert_eq!(iter.rule_status(), RuleStatusType::Number, "number");
+    assert_eq!(iter.word_type(), RuleStatusType::Number, "number");
     assert!(iter.is_word_like(), "Number is true");
 }
 
@@ -43,15 +43,15 @@ fn rule_status_th() {
     let mut iter = segmenter.segment_str("ภาษาไทยภาษาไทย");
 
     assert_eq!(iter.next(), Some(0), "SOT");
-    assert_eq!(iter.rule_status(), RuleStatusType::None, "none");
+    assert_eq!(iter.word_type(), RuleStatusType::None, "none");
     assert!(!iter.is_word_like(), "SOT is false");
 
     assert_eq!(iter.next(), Some(12), "after 1st word");
-    assert_eq!(iter.rule_status(), RuleStatusType::Letter, "letter");
+    assert_eq!(iter.word_type(), RuleStatusType::Letter, "letter");
     assert!(iter.is_word_like(), "Letter(Thai) is true");
 
     assert_eq!(iter.next(), Some(21), "after 2nd word");
-    assert_eq!(iter.rule_status(), RuleStatusType::Letter, "letter");
+    assert_eq!(iter.word_type(), RuleStatusType::Letter, "letter");
     assert!(iter.is_word_like(), "Letter(Thai) is true");
 }
 

@@ -90,7 +90,7 @@ export { ICU4XReorderedIndexMap } from './ICU4XReorderedIndexMap.js';
 export { ICU4XScriptExtensionsSet } from './ICU4XScriptExtensionsSet.js';
 export { ICU4XScriptWithExtensions } from './ICU4XScriptWithExtensions.js';
 export { ICU4XScriptWithExtensionsBorrowed } from './ICU4XScriptWithExtensionsBorrowed.js';
-export { ICU4XSegmenterRuleStatusType } from './ICU4XSegmenterRuleStatusType.js';
+export { ICU4XSegmenterWordType } from './ICU4XSegmenterWordType.js';
 export { ICU4XSentenceBreakIteratorLatin1 } from './ICU4XSentenceBreakIteratorLatin1.js';
 export { ICU4XSentenceBreakIteratorUtf16 } from './ICU4XSentenceBreakIteratorUtf16.js';
 export { ICU4XSentenceBreakIteratorUtf8 } from './ICU4XSentenceBreakIteratorUtf8.js';

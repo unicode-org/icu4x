@@ -1,9 +1,9 @@
 ``segmenter_word::ffi``
 =======================
 
-.. cpp:enum-struct:: ICU4XSegmenterRuleStatusType
+.. cpp:enum-struct:: ICU4XSegmenterWordType
 
-    See the `Rust documentation for RuleStatusType <https://docs.rs/icu/latest/icu/segmenter/enum.RuleStatusType.html>`__ for more information.
+    See the `Rust documentation for WordType <https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html>`__ for more information.
 
 
     .. cpp:enumerator:: None
@@ -24,11 +24,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
+    .. cpp:function:: ICU4XSegmenterWordType word_type() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const
@@ -50,11 +50,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
+    .. cpp:function:: ICU4XSegmenterWordType word_type() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const
@@ -76,11 +76,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. cpp:function:: ICU4XSegmenterRuleStatusType rule_status() const
+    .. cpp:function:: ICU4XSegmenterWordType word_type() const
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. cpp:function:: bool is_word_like() const

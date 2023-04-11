@@ -11,7 +11,7 @@
 
 #include "ICU4XWordBreakIteratorUtf16.h"
 
-#include "ICU4XSegmenterRuleStatusType.hpp"
+#include "ICU4XSegmenterWordType.hpp"
 
 /**
  * A destruction policy for using ICU4XWordBreakIteratorUtf16 with std::unique_ptr.
@@ -41,9 +41,9 @@ class ICU4XWordBreakIteratorUtf16 {
   /**
    * Return the status value of break boundary.
    * 
-   * See the [Rust documentation for `rule_status`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status) for more information.
+   * See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
    */
-  ICU4XSegmenterRuleStatusType rule_status() const;
+  ICU4XSegmenterWordType word_type() const;
 
   /**
    * Return true when break boundary is word-like such as letter/number/CJK
@@ -65,8 +65,8 @@ class ICU4XWordBreakIteratorUtf16 {
 inline int32_t ICU4XWordBreakIteratorUtf16::next() {
   return capi::ICU4XWordBreakIteratorUtf16_next(this->inner.get());
 }
-inline ICU4XSegmenterRuleStatusType ICU4XWordBreakIteratorUtf16::rule_status() const {
-  return static_cast<ICU4XSegmenterRuleStatusType>(capi::ICU4XWordBreakIteratorUtf16_rule_status(this->inner.get()));
+inline ICU4XSegmenterWordType ICU4XWordBreakIteratorUtf16::word_type() const {
+  return static_cast<ICU4XSegmenterWordType>(capi::ICU4XWordBreakIteratorUtf16_word_type(this->inner.get()));
 }
 inline bool ICU4XWordBreakIteratorUtf16::is_word_like() const {
   return capi::ICU4XWordBreakIteratorUtf16_is_word_like(this->inner.get());

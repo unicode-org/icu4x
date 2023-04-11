@@ -123,7 +123,7 @@ pub use crate::word::WordSegmenter;
 pub use crate::line::LineBreakOptions;
 pub use crate::line::LineBreakStrictness;
 pub use crate::line::LineBreakWordOption;
-pub use crate::rule_segmenter::RuleStatusType;
+pub use crate::word::WordType;
 
 // Typedefs
 pub use crate::grapheme::GraphemeClusterBreakIteratorLatin1;
