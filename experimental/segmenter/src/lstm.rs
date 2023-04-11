@@ -172,9 +172,9 @@ impl<'l> LstmSegmenter<'l> {
             s_t.as_mut().add_dot_2d_1(x_t, w);
             s_t.as_mut().add_dot_2d(h_tm1.as_borrowed(), u);
 
-            s_t.as_mut().sigmoid(0..2 * hunits);
-            s_t.as_mut().tanh(2 * hunits..3 * hunits);
-            s_t.as_mut().sigmoid(3 * hunits..4 * hunits);
+            s_t.as_mut().sigmoid_transform(0..2 * hunits);
+            s_t.as_mut().tanh_transform(2 * hunits..3 * hunits);
+            s_t.as_mut().sigmoid_transform(3 * hunits..4 * hunits);
 
             let sb = s_t.as_borrowed();
 

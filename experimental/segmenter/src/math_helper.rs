@@ -308,7 +308,7 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         }
     }
 
-    pub fn sigmoid(&mut self, r: Range<usize>) -> Option<()> {
+    pub fn sigmoid_transform(&mut self, r: Range<usize>) -> Option<()> {
         let slice = self.data.get_mut(r)?;
         for i in &mut *slice {
             *i = sigmoid(*i);
@@ -316,7 +316,7 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
         Some(())
     }
 
-    pub fn tanh(&mut self, r: Range<usize>) -> Option<()> {
+    pub fn tanh_transform(&mut self, r: Range<usize>) -> Option<()> {
         let slice = self.data.get_mut(r)?;
         for i in &mut *slice {
             *i = tanh(*i);
