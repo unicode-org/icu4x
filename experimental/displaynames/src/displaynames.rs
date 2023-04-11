@@ -5,21 +5,19 @@
 //! This module contains types and implementations for the Displaynames component.
 
 use crate::options::*;
-use crate::provider::LanguageDisplayNamesV1Marker;
-use crate::provider::RegionDisplayNamesV1Marker;
+use crate::provider::*;
+use alloc::borrow::Cow;
+use icu_locid::{subtags::Language, subtags::Region, subtags::Script, Locale};
 use icu_provider::prelude::*;
 use icu_provider::{DataError, DataPayload};
-use tinystr::TinyAsciiStr;
-use zerovec::ule::UnvalidatedStr;
 
 /// Lookup of the locale-specific display names by region code.
 ///
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::displaynames::RegionDisplayNames;
-/// use icu_displaynames::options::DisplayNamesOptions;
-/// use icu_locid::locale;
+/// use icu_displaynames::{RegionDisplayNames, DisplayNamesOptions};
+/// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -30,8 +28,7 @@ use zerovec::ule::UnvalidatedStr;
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "AE";
-/// assert_eq!(display_name.of(&region_code), Some("United Arab Emirates"));
+/// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
 /// ```
 #[derive(Default)]
 pub struct RegionDisplayNames {
@@ -75,20 +72,89 @@ impl RegionDisplayNames {
         ]
     );
 
-    /// Returns the locale specific display name of a region for a given string.
-    /// This function is locale-sensitive.
-    pub fn of(&self, code: &str) -> Option<&str> {
-        match <TinyAsciiStr<3>>::from_str(code) {
-            Ok(key) => {
-                let data = self.region_data.get();
-                match self.options.style {
-                    Some(Style::Short) => data.short_names.get(&key),
-                    _ => None,
-                }
-                .or_else(|| data.names.get(&key))
-            }
-            Err(_) => None,
+    /// Returns the display name of a region.
+    pub fn of(&self, region: Region) -> Option<&str> {
+        let data = self.region_data.get();
+        match self.options.style {
+            Some(Style::Short) => data.short_names.get(&region.into()),
+            _ => None,
         }
+        .or_else(|| data.names.get(&region.into()))
+        // TODO: Respect options.fallback
+    }
+}
+
+// / Lookup of the locale-specific display names by script code.
+// /
+// / # Example
+// /
+// / ```
+// / use icu_displaynames::{DisplayNamesOptios, ScriptDisplayNames};
+// / use icu_locid::{locale, subtags_script as script};
+// /
+// / let locale = locale!("en-001");
+// / let options: DisplayNamesOptions = Default::default();
+// / let display_name = ScriptDisplayNames::try_new_unstable(
+// /     &icu_testdata::unstable(),
+// /     &locale.into(),
+// /     options,
+// / )
+// / .expect("Data should load successfully");
+// /
+// / assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
+// / ```
+#[derive(Default)]
+pub struct ScriptDisplayNames {
+    options: DisplayNamesOptions,
+    script_data: DataPayload<ScriptDisplayNamesV1Marker>,
+}
+
+#[allow(dead_code)] // not public at the moment
+impl ScriptDisplayNames {
+    /// Creates a new [`ScriptDisplayNames`] from locale data and an options bag.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<D: DataProvider<ScriptDisplayNamesV1Marker> + ?Sized>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DisplayNamesOptions,
+    ) -> Result<Self, DataError> {
+        let script_data = data_provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self {
+            options,
+            script_data,
+        })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        functions: [
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
+        ]
+    );
+
+    /// Returns the display name of a script.
+    pub fn of(&self, script: Script) -> Option<&str> {
+        let data = self.script_data.get();
+        match self.options.style {
+            Some(Style::Short) => data.short_names.get(&script.into()),
+            _ => None,
+        }
+        .or_else(|| data.names.get(&script.into()))
+        // TODO: Respect options.fallback
     }
 }
 
@@ -97,9 +163,8 @@ impl RegionDisplayNames {
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::displaynames::LanguageDisplayNames;
-/// use icu_displaynames::options::DisplayNamesOptions;
-/// use icu_locid::locale;
+/// use icu_displaynames::{DisplayNamesOptions, LanguageDisplayNames};
+/// use icu_locid::{locale, subtags_language as language};
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
@@ -110,8 +175,7 @@ impl RegionDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let language_code = "aa";
-/// assert_eq!(display_name.of(&language_code), Some("Afar"));
+/// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
 #[derive(Default)]
 pub struct LanguageDisplayNames {
@@ -155,17 +219,178 @@ impl LanguageDisplayNames {
         ]
     );
 
-    /// Returns the locale specific display name of a language for a given string.
-    /// This function is locale-sensitive.
-    pub fn of(&self, code: &str) -> Option<&str> {
-        let key = UnvalidatedStr::from_str(code);
+    /// Returns the display name of a language.
+    pub fn of(&self, language: Language) -> Option<&str> {
         let data = self.language_data.get();
         match self.options.style {
-            Some(Style::Short) => data.short_names.get(key),
-            Some(Style::Long) => data.long_names.get(key),
-            Some(Style::Menu) => data.menu_names.get(key),
+            Some(Style::Short) => data.short_names.get(&language.into()),
+            Some(Style::Long) => data.long_names.get(&language.into()),
+            Some(Style::Menu) => data.menu_names.get(&language.into()),
             _ => None,
         }
-        .or_else(|| data.names.get(key))
+        .or_else(|| data.names.get(&language.into()))
+        // TODO: Respect options.fallback
+    }
+}
+
+/// Format a locale as a display string.
+///
+/// # Example
+///
+/// ```
+/// use icu_displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
+/// use icu_locid::{locale, subtags_language as language};
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = LocaleDisplayNamesFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// assert_eq!(display_name.of(&locale!("de-CH")), "Swiss High German");
+/// assert_eq!(display_name.of(&locale!("de")), "German");
+/// assert_eq!(display_name.of(&locale!("de-MX")), "German (Mexico)");
+/// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
+/// assert_eq!(display_name.of(&locale!("xx")), "xx");
+/// ```
+pub struct LocaleDisplayNamesFormatter {
+    options: DisplayNamesOptions,
+    // patterns: DataPayload<LocaleDisplayNamesPatternsV1Marker>,
+    locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
+
+    language_data: DataPayload<LanguageDisplayNamesV1Marker>,
+    #[allow(dead_code)] // TODO use this
+    script_data: DataPayload<ScriptDisplayNamesV1Marker>,
+    region_data: DataPayload<RegionDisplayNamesV1Marker>,
+    // variant_data: DataPayload<VariantDisplayNamesV1Marker>,
+    // key_data: DataPayload<KeyDisplayNamesV1Marker>,
+    // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
+    // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1Marker>,
+    // transforms_data: DataPayload<TransformsDisplayNamesV1Marker>,
+}
+
+impl LocaleDisplayNamesFormatter {
+    /// Creates a new [`LocaleDisplayNamesFormatter`] from locale data and an options bag.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_unstable<D: ?Sized>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DisplayNamesOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<LocaleDisplayNamesV1Marker>
+            + DataProvider<LanguageDisplayNamesV1Marker>
+            + DataProvider<ScriptDisplayNamesV1Marker>
+            + DataProvider<RegionDisplayNamesV1Marker>,
+    {
+        let req = DataRequest {
+            locale,
+            metadata: Default::default(),
+        };
+
+        Ok(Self {
+            options,
+            language_data: data_provider.load(req)?.take_payload()?,
+            locale_data: data_provider.load(req)?.take_payload()?,
+            script_data: data_provider.load(req)?.take_payload()?,
+            region_data: data_provider.load(req)?.take_payload()?,
+        })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DisplayNamesOptions,
+        error: DataError,
+        functions: [
+            Self::try_new_unstable,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider
+        ]
+    );
+
+    /// Returns the display name of a locale.
+    // TODO: Make this return a writeable instead of using alloc
+    pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
+        // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements
+
+        // TODO: This binary search needs to return the longest matching found prefix
+        // instead of just perfect matches
+        if let Some(displayname) = match self.options.style {
+            Some(Style::Short) => self
+                .locale_data
+                .get()
+                .short_names
+                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
+            Some(Style::Long) => self
+                .locale_data
+                .get()
+                .long_names
+                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
+            Some(Style::Menu) => self
+                .locale_data
+                .get()
+                .menu_names
+                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
+            _ => None,
+        }
+        .or_else(|| {
+            self.locale_data
+                .get()
+                .names
+                .get_by(|bytes| locale.strict_cmp(bytes).reverse())
+        }) {
+            return Cow::Borrowed(displayname);
+        }
+
+        // TODO: This is a dummy implementation which does not adhere to UTS35. It only uses
+        // the language and region code, and uses a hardcoded pattern to combine them.
+
+        let langdisplay = match self.options.style {
+            Some(Style::Short) => self
+                .language_data
+                .get()
+                .short_names
+                .get(&locale.id.language.into()),
+            Some(Style::Long) => self
+                .language_data
+                .get()
+                .long_names
+                .get(&locale.id.language.into()),
+            Some(Style::Menu) => self
+                .language_data
+                .get()
+                .menu_names
+                .get(&locale.id.language.into()),
+            _ => None,
+        }
+        .or_else(|| {
+            self.language_data
+                .get()
+                .names
+                .get(&locale.id.language.into())
+        });
+
+        if let Some(region) = locale.id.region {
+            let regiondisplay = match self.options.style {
+                Some(Style::Short) => self.region_data.get().short_names.get(&region.into()),
+                _ => None,
+            }
+            .or_else(|| self.region_data.get().names.get(&region.into()));
+            // TODO: Use data patterns
+            Cow::Owned(alloc::format!(
+                "{} ({})",
+                langdisplay.unwrap_or(locale.id.language.as_str()),
+                regiondisplay.unwrap_or(region.as_str())
+            ))
+        } else {
+            Cow::Borrowed(langdisplay.unwrap_or(locale.id.language.as_str()))
+        }
     }
 }
