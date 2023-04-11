@@ -5,7 +5,7 @@ import { ICU4XLineBreakIteratorLatin1 } from "./ICU4XLineBreakIteratorLatin1.js"
 import { ICU4XLineBreakIteratorUtf16 } from "./ICU4XLineBreakIteratorUtf16.js"
 import { ICU4XLineBreakIteratorUtf8 } from "./ICU4XLineBreakIteratorUtf8.js"
 import { ICU4XLineBreakStrictness_js_to_rust, ICU4XLineBreakStrictness_rust_to_js } from "./ICU4XLineBreakStrictness.js"
-import { ICU4XWordBreakRule_js_to_rust, ICU4XWordBreakRule_rust_to_js } from "./ICU4XWordBreakRule.js"
+import { ICU4XLineBreakWordOption_js_to_rust, ICU4XLineBreakWordOption_rust_to_js } from "./ICU4XLineBreakWordOption.js"
 
 const ICU4XLineSegmenter_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLineSegmenter_destroy(underlying);
@@ -78,7 +78,7 @@ export class ICU4XLineSegmenter {
     const field_ja_zh_arg_options = arg_options["ja_zh"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLineSegmenter_create_auto_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XWordBreakRule_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
+      wasm.ICU4XLineSegmenter_create_auto_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XLineBreakWordOption_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -98,7 +98,7 @@ export class ICU4XLineSegmenter {
     const field_ja_zh_arg_options = arg_options["ja_zh"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLineSegmenter_create_lstm_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XWordBreakRule_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
+      wasm.ICU4XLineSegmenter_create_lstm_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XLineBreakWordOption_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -118,7 +118,7 @@ export class ICU4XLineSegmenter {
     const field_ja_zh_arg_options = arg_options["ja_zh"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLineSegmenter_create_dictionary_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XWordBreakRule_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
+      wasm.ICU4XLineSegmenter_create_dictionary_with_options_v1(diplomat_receive_buffer, arg_provider.underlying, ICU4XLineBreakStrictness_js_to_rust[field_line_break_strictness_arg_options], ICU4XLineBreakWordOption_js_to_rust[field_word_break_rule_arg_options], field_ja_zh_arg_options);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLineSegmenter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

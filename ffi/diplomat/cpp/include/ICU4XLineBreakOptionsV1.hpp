@@ -12,7 +12,7 @@
 #include "ICU4XLineBreakOptionsV1.h"
 
 #include "ICU4XLineBreakStrictness.hpp"
-#include "ICU4XWordBreakRule.hpp"
+#include "ICU4XLineBreakWordOption.hpp"
 
 
 /**
@@ -23,7 +23,7 @@
 struct ICU4XLineBreakOptionsV1 {
  public:
   ICU4XLineBreakStrictness line_break_strictness;
-  ICU4XWordBreakRule word_break_rule;
+  ICU4XLineBreakWordOption word_break_rule;
   bool ja_zh;
 };
 
