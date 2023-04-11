@@ -48,15 +48,15 @@
     See the `Rust documentation for LineBreakOptions <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XLineBreakRule line_break_rule
+    .. cpp:member:: ICU4XLineBreakStrictness line_break_rule
 
     .. cpp:member:: ICU4XWordBreakRule word_break_rule
 
     .. cpp:member:: bool ja_zh
 
-.. cpp:enum-struct:: ICU4XLineBreakRule
+.. cpp:enum-struct:: ICU4XLineBreakStrictness
 
-    See the `Rust documentation for LineBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
+    See the `Rust documentation for LineBreakStrictness <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html>`__ for more information.
 
 
     .. cpp:enumerator:: Loose

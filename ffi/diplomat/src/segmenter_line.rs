@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakRule;
+use icu_segmenter::LineBreakStrictness;
 use icu_segmenter::WordBreakRule;
 
 #[diplomat::bridge]
@@ -27,8 +27,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
     pub struct ICU4XLineSegmenter(LineSegmenter);
 
-    #[diplomat::rust_link(icu::segmenter::LineBreakRule, Enum)]
-    pub enum ICU4XLineBreakRule {
+    #[diplomat::rust_link(icu::segmenter::LineBreakStrictness, Enum)]
+    pub enum ICU4XLineBreakStrictness {
         Loose,
         Normal,
         Strict,
@@ -44,7 +44,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptionsV1 {
-        pub line_break_rule: ICU4XLineBreakRule,
+        pub line_break_rule: ICU4XLineBreakStrictness,
         pub word_break_rule: ICU4XWordBreakRule,
         pub ja_zh: bool,
     }
@@ -301,13 +301,13 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XLineBreakRule> for LineBreakRule {
-    fn from(other: ffi::ICU4XLineBreakRule) -> Self {
+impl From<ffi::ICU4XLineBreakStrictness> for LineBreakStrictness {
+    fn from(other: ffi::ICU4XLineBreakStrictness) -> Self {
         match other {
-            ffi::ICU4XLineBreakRule::Loose => Self::Loose,
-            ffi::ICU4XLineBreakRule::Normal => Self::Normal,
-            ffi::ICU4XLineBreakRule::Strict => Self::Strict,
-            ffi::ICU4XLineBreakRule::Anywhere => Self::Anywhere,
+            ffi::ICU4XLineBreakStrictness::Loose => Self::Loose,
+            ffi::ICU4XLineBreakStrictness::Normal => Self::Normal,
+            ffi::ICU4XLineBreakStrictness::Strict => Self::Strict,
+            ffi::ICU4XLineBreakStrictness::Anywhere => Self::Anywhere,
         }
     }
 }

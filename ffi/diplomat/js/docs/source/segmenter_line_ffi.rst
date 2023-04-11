@@ -54,9 +54,9 @@
 
     .. js:attribute:: ja_zh
 
-.. js:class:: ICU4XLineBreakRule
+.. js:class:: ICU4XLineBreakStrictness
 
-    See the `Rust documentation for LineBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
+    See the `Rust documentation for LineBreakStrictness <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html>`__ for more information.
 
 
 .. js:class:: ICU4XLineSegmenter

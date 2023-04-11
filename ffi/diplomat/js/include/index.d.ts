@@ -63,7 +63,7 @@ export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js'
 export { ICU4XLineBreakIteratorUtf16 } from './ICU4XLineBreakIteratorUtf16.js';
 export { ICU4XLineBreakIteratorUtf8 } from './ICU4XLineBreakIteratorUtf8.js';
 export { ICU4XLineBreakOptionsV1 } from './ICU4XLineBreakOptionsV1.js';
-export { ICU4XLineBreakRule } from './ICU4XLineBreakRule.js';
+export { ICU4XLineBreakStrictness } from './ICU4XLineBreakStrictness.js';
 export { ICU4XLineSegmenter } from './ICU4XLineSegmenter.js';
 export { ICU4XList } from './ICU4XList.js';
 export { ICU4XListFormatter } from './ICU4XListFormatter.js';

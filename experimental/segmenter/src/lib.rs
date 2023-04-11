@@ -121,7 +121,7 @@ pub use crate::word::WordSegmenter;
 
 // Options structs and enums
 pub use crate::line::LineBreakOptions;
-pub use crate::line::LineBreakRule;
+pub use crate::line::LineBreakStrictness;
 pub use crate::line::WordBreakRule;
 pub use crate::rule_segmenter::RuleStatusType;
 

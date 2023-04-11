@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakRule;
+use icu_segmenter::LineBreakStrictness;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::WordBreakRule;
 
@@ -29,7 +29,7 @@ fn check_with_options(
 
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Strict;
+    options.line_break_rule = LineBreakStrictness::Strict;
     options.word_break_rule = WordBreakRule::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
@@ -37,7 +37,7 @@ fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
 
 fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Normal;
+    options.line_break_rule = LineBreakStrictness::Normal;
     options.word_break_rule = WordBreakRule::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
@@ -45,7 +45,7 @@ fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
 
 fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Loose;
+    options.line_break_rule = LineBreakStrictness::Loose;
     options.word_break_rule = WordBreakRule::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
@@ -53,7 +53,7 @@ fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>
 
 fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Anywhere;
+    options.line_break_rule = LineBreakStrictness::Anywhere;
     options.word_break_rule = WordBreakRule::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
