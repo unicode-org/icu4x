@@ -9,7 +9,8 @@ use crate::symbols::*;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 
-/// The category tag that is returned by rule_status.
+/// The category tag that is returned by
+/// [`WordBreakIterator::rule_status()`][crate::WordBreakIterator::rule_status()].
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]
