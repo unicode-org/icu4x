@@ -48,7 +48,7 @@
     See the `Rust documentation for LineBreakOptions <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XLineBreakStrictness line_break_strictness
+    .. cpp:member:: ICU4XLineBreakStrictness strictness
 
     .. cpp:member:: ICU4XLineBreakWordOption word_option
 

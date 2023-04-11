@@ -44,7 +44,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptionsV1 {
-        pub line_break_strictness: ICU4XLineBreakStrictness,
+        pub strictness: ICU4XLineBreakStrictness,
         pub word_option: ICU4XLineBreakWordOption,
         pub ja_zh: bool,
     }
@@ -325,7 +325,7 @@ impl From<ffi::ICU4XLineBreakWordOption> for LineBreakWordOption {
 impl From<ffi::ICU4XLineBreakOptionsV1> for LineBreakOptions {
     fn from(other: ffi::ICU4XLineBreakOptionsV1) -> Self {
         let mut options = LineBreakOptions::default();
-        options.line_break_strictness = other.line_break_strictness.into();
+        options.strictness = other.strictness.into();
         options.word_option = other.word_option.into();
         options.ja_zh = other.ja_zh;
         options

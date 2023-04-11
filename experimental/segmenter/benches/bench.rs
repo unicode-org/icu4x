@@ -21,7 +21,7 @@ fn line_break_iter_latin1(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_strictness = LineBreakStrictness::Anywhere;
+    options.strictness = LineBreakStrictness::Anywhere;
     options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
@@ -55,7 +55,7 @@ fn line_break_iter_utf8(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_strictness = LineBreakStrictness::Anywhere;
+    options.strictness = LineBreakStrictness::Anywhere;
     options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css_dictionary =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
@@ -109,7 +109,7 @@ fn line_break_iter_utf16(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_strictness = LineBreakStrictness::Anywhere;
+    options.strictness = LineBreakStrictness::Anywhere;
     options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css_dictionary =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
