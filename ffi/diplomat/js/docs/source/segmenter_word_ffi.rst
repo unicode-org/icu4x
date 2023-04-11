@@ -1,25 +1,87 @@
 ``segmenter_word::ffi``
 =======================
 
+.. js:class:: ICU4XSegmenterRuleStatusType
+
+    See the `Rust documentation for RuleStatusType <https://docs.rs/icu/latest/icu/segmenter/enum.RuleStatusType.html>`__ for more information.
+
+
 .. js:class:: ICU4XWordBreakIteratorLatin1
+
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
+
 
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
+
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
+
+
+    .. js:method:: rule_status()
+
+        Return the status value of break boundary.
+
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+
+
+    .. js:method:: is_word_like()
+
+        Return true when break boundary is word-like such as letter/number/CJK
+
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. js:class:: ICU4XWordBreakIteratorUtf16
 
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
+
+
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
+
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
+
+
+    .. js:method:: rule_status()
+
+        Return the status value of break boundary.
+
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+
+
+    .. js:method:: is_word_like()
+
+        Return true when break boundary is word-like such as letter/number/CJK
+
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. js:class:: ICU4XWordBreakIteratorUtf8
 
+    See the `Rust documentation for WordBreakIterator <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html>`__ for more information.
+
+
     .. js:method:: next()
 
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
+
+        See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
+
+
+    .. js:method:: rule_status()
+
+        Return the status value of break boundary.
+
+        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+
+
+    .. js:method:: is_word_like()
+
+        Return true when break boundary is word-like such as letter/number/CJK
+
+        See the `Rust documentation for is_word_like <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like>`__ for more information.
 
 
 .. js:class:: ICU4XWordSegmenter

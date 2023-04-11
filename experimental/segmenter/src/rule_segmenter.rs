@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::complex::{Dictionary, LstmPayloads};
+use crate::complex::ComplexPayloads;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
@@ -26,10 +26,10 @@ pub enum RuleStatusType {
 /// encoding methods and granularity such as grapheme cluster, word, etc.
 pub trait RuleBreakType<'l, 's> {
     /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
+    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
     /// The character type.
-    type CharType: Copy + Into<u32>;
+    type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
 
@@ -63,13 +63,11 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakDataV1<'l>,
-    pub(crate) dictionary: Option<&'l Dictionary>,
-    pub(crate) lstm: Option<&'l LstmPayloads>,
-    pub(crate) grapheme: Option<&'l RuleBreakDataV1<'l>>,
+    pub(crate) complex: Option<&'l ComplexPayloads>,
     pub(crate) boundary_property: u8,
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -200,7 +198,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y>
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }

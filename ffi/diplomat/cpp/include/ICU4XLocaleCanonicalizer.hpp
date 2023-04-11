@@ -42,6 +42,13 @@ class ICU4XLocaleCanonicalizer {
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
+   * Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
+   * 
+   * See the [Rust documentation for `try_new_with_expander_unstable`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_with_expander_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create_extended(const ICU4XDataProvider& provider);
+
+  /**
    * FFI version of `LocaleCanonicalizer::canonicalize()`.
    * 
    * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
@@ -62,6 +69,16 @@ class ICU4XLocaleCanonicalizer {
 
 inline diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> ICU4XLocaleCanonicalizer::create(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XLocaleCanonicalizer_create(provider.AsFFI());
+  diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLocaleCanonicalizer>(std::move(ICU4XLocaleCanonicalizer(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> ICU4XLocaleCanonicalizer::create_extended(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocaleCanonicalizer_create_extended(provider.AsFFI());
   diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLocaleCanonicalizer>(std::move(ICU4XLocaleCanonicalizer(diplomat_result_raw_out_value.ok)));

@@ -1835,6 +1835,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
+ "tinystr 0.7.1",
 ]
 
 [[package]]
@@ -1953,6 +1954,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
+ "tinystr 0.7.1",
  "unicode-bidi",
  "zerovec",
 ]

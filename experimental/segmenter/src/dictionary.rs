@@ -5,7 +5,6 @@
 use crate::grapheme::*;
 use crate::indices::Utf16Indices;
 use crate::provider::*;
-use core::convert::Infallible;
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
@@ -139,17 +138,20 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
 }
 
 pub(crate) struct DictionarySegmenter<'l> {
-    payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dict: &'l UCharDictionaryBreakDataV1<'l>,
     grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
-    pub fn try_new(
-        payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-        grapheme: &'l RuleBreakDataV1<'l>,
-    ) -> Result<Self, Infallible> {
+    pub fn new(
+        dict: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+        grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
+    ) -> Self {
         // TODO: no way to verify trie data
-        Ok(Self { payload, grapheme })
+        Self {
+            dict: dict.get(),
+            grapheme: grapheme.get(),
+        }
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
@@ -159,7 +161,7 @@ impl<'l> DictionarySegmenter<'l> {
     ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_str(input, self.grapheme);
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.payload.get().trie_data.clone()),
+            trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: input.char_indices(),
             len: input.len(),
             grapheme_iter,
@@ -173,7 +175,7 @@ impl<'l> DictionarySegmenter<'l> {
     ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, self.grapheme);
         DictionaryBreakIterator {
-            trie: Char16Trie::new(self.payload.get().trie_data.clone()),
+            trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: Utf16Indices::new(input),
             len: input.len(),
             grapheme_iter,
@@ -241,8 +243,7 @@ mod tests {
             .unwrap();
         let word_segmenter =
             WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
-        let dict_segmenter =
-            DictionarySegmenter::try_new(&dict_payload, grph_payload.get()).unwrap();
+        let dict_segmenter = DictionarySegmenter::new(&dict_payload, &grph_payload);
 
         // Match case
         let s = "龟山岛龟山岛";

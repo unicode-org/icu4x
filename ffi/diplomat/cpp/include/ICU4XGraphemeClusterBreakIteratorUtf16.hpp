@@ -20,12 +20,20 @@ struct ICU4XGraphemeClusterBreakIteratorUtf16Deleter {
     capi::ICU4XGraphemeClusterBreakIteratorUtf16_destroy(l);
   }
 };
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
+ */
 class ICU4XGraphemeClusterBreakIteratorUtf16 {
  public:
 
   /**
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
+   * 
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
    */
   int32_t next();
   inline const capi::ICU4XGraphemeClusterBreakIteratorUtf16* AsFFI() const { return this->inner.get(); }

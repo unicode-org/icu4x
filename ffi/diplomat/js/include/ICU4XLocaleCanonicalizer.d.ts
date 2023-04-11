@@ -23,6 +23,15 @@ export class ICU4XLocaleCanonicalizer {
 
   /**
 
+   * Create a new {@link ICU4XLocaleCanonicalizer `ICU4XLocaleCanonicalizer`} with extended data.
+
+   * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.try_new_with_expander_unstable Rust documentation for `try_new_with_expander_unstable`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static create_extended(provider: ICU4XDataProvider): ICU4XLocaleCanonicalizer | never;
+
+  /**
+
    * FFI version of `LocaleCanonicalizer::canonicalize()`.
 
    * See the {@link https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize Rust documentation for `canonicalize`} for more information.
