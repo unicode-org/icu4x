@@ -245,6 +245,8 @@ impl WordSegmenter {
     );
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
@@ -260,6 +262,8 @@ impl WordSegmenter {
     /// Create a word break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -276,6 +280,8 @@ impl WordSegmenter {
     }
 
     /// Create a word break iterator for a Latin-1 (8-bit) string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
@@ -289,6 +295,8 @@ impl WordSegmenter {
     }
 
     /// Create a word break iterator for a UTF-16 string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
@@ -450,4 +458,13 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
             i += 1;
         }
     }
+}
+
+#[cfg(all(test, feature = "serde"))]
+#[test]
+fn empty_string() {
+    let segmenter =
+        WordSegmenter::try_new_auto_with_buffer_provider(&icu_testdata::buffer()).unwrap();
+    let breaks: Vec<usize> = segmenter.segment_str("").collect();
+    assert!(breaks.is_empty());
 }

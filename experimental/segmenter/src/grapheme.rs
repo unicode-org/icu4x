@@ -172,6 +172,8 @@ impl GraphemeClusterSegmenter {
     }
 
     /// Create a grapheme cluster break iterator from grapheme cluster rule payload.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub(crate) fn new_and_segment_str<'l, 's>(
         input: &'s str,
         payload: &'l RuleBreakDataV1<'l>,
@@ -190,6 +192,8 @@ impl GraphemeClusterSegmenter {
     /// Create a grapheme cluster break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -205,6 +209,8 @@ impl GraphemeClusterSegmenter {
         })
     }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_latin1<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -221,6 +227,8 @@ impl GraphemeClusterSegmenter {
     }
 
     /// Create a grapheme cluster break iterator for a UTF-16 string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf16<'l, 's>(
         &'l self,
         input: &'s [u16],
@@ -243,4 +251,13 @@ impl GraphemeClusterSegmenter {
             boundary_property: 0,
         })
     }
+}
+
+#[cfg(all(test, feature = "serde"))]
+#[test]
+fn empty_string() {
+    let segmenter =
+        GraphemeClusterSegmenter::try_new_with_buffer_provider(&icu_testdata::buffer()).unwrap();
+    let breaks: Vec<usize> = segmenter.segment_str("").collect();
+    assert!(breaks.is_empty());
 }

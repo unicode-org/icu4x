@@ -37,7 +37,7 @@
 //!
 //! let breakpoints: Vec<usize> =
 //!     segmenter.segment_str("Hello World").collect();
-//! assert_eq!(&breakpoints, &[6, 11]);
+//! assert_eq!(&breakpoints, &[0, 6, 11]);
 //! ```
 //!
 //! See [`LineSegmenter`] for more examples.

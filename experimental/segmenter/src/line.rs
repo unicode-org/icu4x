@@ -153,10 +153,9 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
 /// according to [LB3][LB3].
 ///
-/// Note that contrary to the grapheme, word, and sentence segmenters, the
-/// breaks returned by this segmenter do not determine a partition of the text
-/// into meaningful segments.  In particular, there is no break opportunity at
-/// the start of text.
+/// For consistency with the grapheme, word, and sentence segmenters, there is
+/// always a breakpoint returned at index 0, but this breakpoint is not a
+/// meaningful line break opportunity.
 ///
 /// [LD3]: https://www.unicode.org/reports/tr14/#LD3
 /// [LD7]: https://www.unicode.org/reports/tr14/#LD7
@@ -173,7 +172,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let text = "Summary\r\nThis annex…";
 /// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
 /// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
-/// assert_eq!(&breakpoints, &[9, 14, 22]);
+/// assert_eq!(&breakpoints, &[0, 9, 14, 22]);
 /// ```
 ///
 /// <div class="stab unstable">
@@ -195,7 +194,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
-/// assert_eq!(&breakpoints, &[6, 11]);
+/// assert_eq!(&breakpoints, &[0, 6, 11]);
 /// ```
 ///
 /// Segment a string with CSS option overrides:
@@ -217,7 +216,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
-/// assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
+/// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
 /// ```
 ///
 /// Segment a Latin1 byte string:
@@ -230,15 +229,15 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
-/// assert_eq!(&breakpoints, &[6, 11]);
+/// assert_eq!(&breakpoints, &[0, 6, 11]);
 /// ```
 ///
 /// Separate mandatory breaks from the break opportunities:
 ///
 /// ```rust
-/// # use icu::properties::{maps, LineBreak};
-/// # use icu_segmenter::LineSegmenter;
-/// #
+/// use icu::properties::{maps, LineBreak};
+/// use icu_segmenter::LineSegmenter;
+///
 /// # let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 /// #   .expect("Data exists");
 /// #
@@ -442,6 +441,8 @@ impl LineSegmenter {
     );
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
         LineBreakIterator {
             iter: input.char_indices(),
@@ -456,6 +457,8 @@ impl LineSegmenter {
     /// Create a line break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -471,6 +474,8 @@ impl LineSegmenter {
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
@@ -484,6 +489,8 @@ impl LineSegmenter {
     }
 
     /// Create a line break iterator for a UTF-16 string.
+    ///
+    /// If the string is empty, no breakpoints are returned.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
@@ -749,8 +756,10 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.check_eof() {
-            return None;
+        match self.check_eof() {
+            StringBoundaryPosType::Start => return Some(0),
+            StringBoundaryPosType::End => return None,
+            _ => (),
         }
 
         // If we have break point cache by previous run, return this result
@@ -893,6 +902,12 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
     }
 }
 
+enum StringBoundaryPosType {
+    Start,
+    Middle,
+    End,
+}
+
 impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
@@ -903,14 +918,19 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 
     #[inline]
-    fn check_eof(&mut self) -> bool {
+    fn check_eof(&mut self) -> StringBoundaryPosType {
         if self.is_eof() {
             self.advance_iter();
             if self.is_eof() {
-                return true;
+                // NOTE: If we desired returning a breakpoint for the empty string, we could:
+                // if self.len == 0 { self.len = 1; return StringBoundaryPosType::Start; }
+                StringBoundaryPosType::End
+            } else {
+                StringBoundaryPosType::Start
             }
+        } else {
+            StringBoundaryPosType::Middle
         }
-        false
     }
 
     fn get_current_position(&self) -> Option<usize> {
@@ -1348,106 +1368,145 @@ mod tests {
         .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(6), iter.next());
         assert_eq!(Some(11), iter.next());
         assert_eq!(None, iter.next());
 
         iter = segmenter.segment_str("$10 $10");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(4), iter.next());
         assert_eq!(Some(7), iter.next());
+        assert_eq!(None, iter.next());
 
         // LB10
 
         // LB14
         iter = segmenter.segment_str("[  abc def");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(7), iter.next());
         assert_eq!(Some(10), iter.next());
         assert_eq!(None, iter.next());
 
         let input: [u8; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
         let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
         assert_eq!(Some(7), iter_u8.next());
         assert_eq!(Some(10), iter_u8.next());
         assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x5B, 0x20, 0x20, 0x61, 0x62, 0x63, 0x20, 0x64, 0x65, 0x66];
         let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(7), iter_u16.next());
+        assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
 
         // LB15
         iter = segmenter.segment_str("abc\u{0022}  (def");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(10), iter.next());
+        assert_eq!(None, iter.next());
 
         let input: [u8; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u8 = segmenter.segment_latin1(&input);
+        assert_eq!(Some(0), iter_u8.next());
         assert_eq!(Some(10), iter_u8.next());
+        assert_eq!(None, iter_u8.next());
 
         let input: [u16; 10] = [0x61, 0x62, 0x63, 0x22, 0x20, 0x20, 0x28, 0x64, 0x65, 0x66];
         let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
 
         // LB16
         iter = segmenter.segment_str("\u{0029}\u{203C}");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(4), iter.next());
+        assert_eq!(None, iter.next());
         iter = segmenter.segment_str("\u{0029}  \u{203C}");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(6), iter.next());
+        assert_eq!(None, iter.next());
 
         let input: [u16; 4] = [0x29, 0x20, 0x20, 0x203c];
         let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(4), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
 
         // LB17
         iter = segmenter.segment_str("\u{2014}\u{2014}aa");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(6), iter.next());
-        iter = segmenter.segment_str("\u{2014}  \u{2014}aa");
         assert_eq!(Some(8), iter.next());
+        assert_eq!(None, iter.next());
+        iter = segmenter.segment_str("\u{2014}  \u{2014}aa");
+        assert_eq!(Some(0), iter.next());
+        assert_eq!(Some(8), iter.next());
+        assert_eq!(Some(10), iter.next());
+        assert_eq!(None, iter.next());
 
         iter = segmenter.segment_str("\u{2014}\u{2014}  \u{2014}\u{2014}123 abc");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(14), iter.next());
         assert_eq!(Some(18), iter.next());
         assert_eq!(Some(21), iter.next());
+        assert_eq!(None, iter.next());
 
         // LB25
         let mut iter = segmenter.segment_str("(0,1)+(2,3)");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(11), iter.next());
+        assert_eq!(None, iter.next());
         let input: [u16; 11] = [
             0x28, 0x30, 0x2C, 0x31, 0x29, 0x2B, 0x28, 0x32, 0x2C, 0x33, 0x29,
         ];
         let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(11), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
 
         let input: [u16; 13] = [
             0x2014, 0x2014, 0x20, 0x20, 0x2014, 0x2014, 0x31, 0x32, 0x33, 0x20, 0x61, 0x62, 0x63,
         ];
         let mut iter_u16 = segmenter.segment_utf16(&input);
+        assert_eq!(Some(0), iter_u16.next());
         assert_eq!(Some(6), iter_u16.next());
+        assert_eq!(Some(10), iter_u16.next());
+        assert_eq!(Some(13), iter_u16.next());
+        assert_eq!(None, iter_u16.next());
 
         iter = segmenter.segment_str("\u{1F3FB} \u{1F3FB}");
+        assert_eq!(Some(0), iter.next());
         assert_eq!(Some(5), iter.next());
+        assert_eq!(Some(9), iter.next());
+        assert_eq!(None, iter.next());
     }
 
     #[test]
     #[cfg(feature = "lstm")]
-    fn thai_word_break() {
+    fn thai_line_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
         let provider = get_segmenter_testdata_provider();
         let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
-        assert_eq!(breaks, [12, 21, 33, TEST_STR.len()], "Thai test");
+        assert_eq!(breaks, [0, 12, 21, 33, TEST_STR.len()], "Thai test");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [4, 7, 11, utf16.len()], "Thai test");
+        assert_eq!(breaks, [0, 4, 7, 11, utf16.len()], "Thai test");
 
         let utf16: [u16; 4] = [0x0e20, 0x0e32, 0x0e29, 0x0e32];
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [4], "Thai test");
+        assert_eq!(breaks, [0, 4], "Thai test");
     }
 
     #[test]
     #[cfg(feature = "lstm")]
-    fn burmese_word_break() {
+    fn burmese_line_break() {
         // "Burmese Language" in Burmese
         const TEST_STR: &str = "မြန်မာဘာသာစကား";
 
@@ -1455,43 +1514,55 @@ mod tests {
         let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
-        assert_eq!(breaks, [12, 18, 30, TEST_STR.len()], "Burmese test");
+        assert_eq!(breaks, [0, 12, 18, 30, TEST_STR.len()], "Burmese test");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
         // LSTM model breaks more characters, but it is better to return [10].
-        assert_eq!(breaks, [4, 6, 10, utf16.len()], "Burmese utf-16 test");
+        assert_eq!(breaks, [0, 4, 6, 10, utf16.len()], "Burmese utf-16 test");
     }
 
     #[test]
     #[cfg(feature = "lstm")]
-    fn khmer_word_break() {
+    fn khmer_line_break() {
         const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
 
         let provider = get_segmenter_testdata_provider();
         let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: This small sample matches the ICU dictionary segmenter
-        assert_eq!(breaks, [39, 48, 54, 72, TEST_STR.len()], "Khmer test");
+        assert_eq!(breaks, [0, 39, 48, 54, 72, TEST_STR.len()], "Khmer test");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [13, 16, 18, 24, utf16.len()], "Khmer utf-16 test");
+        assert_eq!(
+            breaks,
+            [0, 13, 16, 18, 24, utf16.len()],
+            "Khmer utf-16 test"
+        );
     }
 
     #[test]
     #[cfg(feature = "lstm")]
-    fn lao_word_break() {
+    fn lao_line_break() {
         const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
 
         let provider = get_segmenter_testdata_provider();
         let segmenter = LineSegmenter::try_new_lstm_with_buffer_provider(&provider).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // Note: LSTM finds a break at '12' that the dictionary does not find
-        assert_eq!(breaks, [12, 21, 30, 39, TEST_STR.len()], "Lao test");
+        assert_eq!(breaks, [0, 12, 21, 30, 39, TEST_STR.len()], "Lao test");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
-        assert_eq!(breaks, [4, 7, 10, 13, utf16.len()], "Lao utf-16 test");
+        assert_eq!(breaks, [0, 4, 7, 10, 13, utf16.len()], "Lao utf-16 test");
+    }
+
+    #[test]
+    fn empty_string() {
+        let segmenter =
+            LineSegmenter::try_new_auto_with_buffer_provider(&icu_testdata::buffer()).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str("").collect();
+        assert!(breaks.is_empty());
     }
 }
