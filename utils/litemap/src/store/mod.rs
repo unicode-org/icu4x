@@ -149,7 +149,12 @@ pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a,
     /// Adds items from another store to the end of this store.
     fn lm_extend_end(&mut self, other: Self)
     where
-        Self: Sized;
+        Self: Sized,
+    {
+        for item in other.lm_into_iter() {
+            self.lm_push(item.0, item.1);
+        }
+    }
 
     /// Adds items from another store to the beginning of this store.
     fn lm_extend_start(&mut self, other: Self)

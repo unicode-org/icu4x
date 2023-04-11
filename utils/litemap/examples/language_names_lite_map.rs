@@ -32,6 +32,7 @@ const DATA: [(Language, &str); 11] = [
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
+
     let mut map = LiteMap::new_vec();
     // https://github.com/rust-lang/rust/issues/62633 was declined :(
     for (lang, name) in DATA.iter() {
