@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenter;
-use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
+use crate::math_helper::{MatrixBorrowedMut, MatrixOwned, MatrixZero};
 use crate::provider::*;
 use alloc::boxed::Box;
 use alloc::string::String;

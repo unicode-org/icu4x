@@ -25,6 +25,7 @@ pub fn sigmoid(x: f32) -> f32 {
 }
 
 /// computes x * y + z in one instruction
+#[allow(dead_code)]
 #[inline]
 pub fn fma(x: f32, y: f32, z: f32) -> f32 {
     x.mul_add(y, z)
@@ -105,11 +106,13 @@ impl<'a, const D: usize> MatrixBorrowed<'a, D> {
         debug_assert_eq!(expected_len, self.data.len());
     }
 
+    #[allow(dead_code)]
     pub fn as_slice(&self) -> &'a [f32] {
         self.data
     }
 
     /// See [`MatrixOwned::submatrix`].
+    #[allow(dead_code)]
     #[inline]
     pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
@@ -171,6 +174,7 @@ impl_basic_dim!(
 impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
 
 impl<'a> MatrixBorrowed<'a, 1> {
+    #[allow(dead_code)]
     pub fn read_4(&self) -> Option<[f32; 4]> {
         <&[f32; 4]>::try_from(self.data).ok().copied()
     }
@@ -349,6 +353,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    #[allow(dead_code)]
     pub fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
@@ -389,6 +394,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    #[allow(dead_code)]
     pub fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
