@@ -4,8 +4,8 @@
 
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakStrictness;
-use icu_segmenter::LineSegmenter;
 use icu_segmenter::LineBreakWordOption;
+use icu_segmenter::LineSegmenter;
 
 fn check_with_options(
     s: &str,

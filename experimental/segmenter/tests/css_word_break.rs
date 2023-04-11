@@ -7,8 +7,8 @@ use icu_provider_adapters::fork::ForkByKeyProvider;
 use icu_provider_fs::FsDataProvider;
 use icu_segmenter::LineBreakOptions;
 use icu_segmenter::LineBreakStrictness;
-use icu_segmenter::LineSegmenter;
 use icu_segmenter::LineBreakWordOption;
+use icu_segmenter::LineSegmenter;
 use std::path::PathBuf;
 
 fn get_segmenter_testdata_provider() -> impl BufferProvider {

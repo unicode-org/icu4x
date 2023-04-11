@@ -14,8 +14,8 @@ pub mod ffi {
         GraphemeClusterBreakDataV1Marker, LstmForWordLineAutoV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
-        WordType, WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8,
-        WordBreakIteratorUtf16, WordSegmenter,
+        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
+        WordSegmenter, WordType,
     };
 
     #[diplomat::enum_convert(WordType, needs_wildcard)]
