@@ -89,6 +89,7 @@ mod complex;
 mod dictionary;
 mod error;
 mod indices;
+mod iterator_helpers;
 mod language;
 mod rule_segmenter;
 
@@ -108,27 +109,39 @@ mod lstm;
 #[cfg(feature = "lstm")]
 mod math_helper;
 
-pub use crate::grapheme::{
-    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8, GraphemeClusterSegmenter,
-};
-pub use crate::line::{
-    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
-    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule, LineSegmenter,
-    WordBreakRule,
-};
-pub use crate::sentence::{
-    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
-    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceSegmenter,
-};
-pub use crate::word::{
-    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
-    WordBreakIteratorUtf8, WordSegmenter,
-};
+// Main Segmenter and BreakIterator public types
+pub use crate::grapheme::GraphemeClusterBreakIterator;
+pub use crate::grapheme::GraphemeClusterSegmenter;
+pub use crate::line::LineBreakIterator;
+pub use crate::line::LineSegmenter;
+pub use crate::sentence::SentenceBreakIterator;
+pub use crate::sentence::SentenceSegmenter;
+pub use crate::word::WordBreakIterator;
+pub use crate::word::WordSegmenter;
 
-pub use crate::rule_segmenter::RuleBreakIterator;
-
+// Options structs and enums
+pub use crate::line::LineBreakOptions;
+pub use crate::line::LineBreakRule;
+pub use crate::line::WordBreakRule;
 pub use crate::rule_segmenter::RuleStatusType;
+
+// Typedefs
+pub use crate::grapheme::GraphemeClusterBreakIteratorLatin1;
+pub use crate::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8;
+pub use crate::grapheme::GraphemeClusterBreakIteratorUtf16;
+pub use crate::grapheme::GraphemeClusterBreakIteratorUtf8;
+pub use crate::line::LineBreakIteratorLatin1;
+pub use crate::line::LineBreakIteratorPotentiallyIllFormedUtf8;
+pub use crate::line::LineBreakIteratorUtf16;
+pub use crate::line::LineBreakIteratorUtf8;
+pub use crate::sentence::SentenceBreakIteratorLatin1;
+pub use crate::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8;
+pub use crate::sentence::SentenceBreakIteratorUtf16;
+pub use crate::sentence::SentenceBreakIteratorUtf8;
+pub use crate::word::WordBreakIteratorLatin1;
+pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
+pub use crate::word::WordBreakIteratorUtf16;
+pub use crate::word::WordBreakIteratorUtf8;
 
 pub use error::SegmenterError;
 

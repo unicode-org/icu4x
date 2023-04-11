@@ -6,23 +6,60 @@ use alloc::vec::Vec;
 use icu_provider::prelude::*;
 
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::rule_segmenter::*;
 use crate::{provider::*, SegmenterError};
 use utf8_iter::Utf8CharIndices;
 
+/// Implements the [`Iterator`] trait over the grapheme cluster boundaries of the given string.
+///
+/// Lifetimes:
+///
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
+///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the boundary (for a boundary at the end of text, this index is the length
+/// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
+#[derive(Debug)]
+pub struct GraphemeClusterBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
+    RuleBreakIterator<'l, 's, Y>,
+);
+
+derive_usize_iterator_with_type!(GraphemeClusterBreakIterator);
+
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
-pub type GraphemeClusterBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf8>;
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
+pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
+    GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    GraphemeClusterBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
-    RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+    GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Grapheme cluster break iterator for a UTF-16 string.
-pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeUtf16>;
+///
+/// For examples of use, see [`GraphemeClusterSegmenter`].
+pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
+    GraphemeClusterBreakIterator<'l, 's, RuleBreakTypeUtf16>;
 
 /// Segments a string into grapheme clusters.
 ///
@@ -62,6 +99,25 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, R
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+/// ```
+///
+/// Successive boundaries can be used to retrieve the grapheme clusters.
+/// In particular, the first boundary is always 0, and the last one is the
+/// length of the segmented text in code units.
+///
+/// ```rust
+/// # use icu_segmenter::GraphemeClusterSegmenter;
+/// # let segmenter =
+/// #     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+/// #         .expect("Data exists");
+/// use itertools::Itertools;
+/// let text = "मांजर";
+/// let grapheme_clusters: Vec<&str> = segmenter
+///    .segment_str(text)
+///    .tuple_windows()
+///    .map(|(i, j)| &text[i..j])
+///    .collect();
+/// assert_eq!(&grapheme_clusters, &["मां", "ज", "र"]);
 /// ```
 ///
 /// This segmenter applies all rules provided to the constructor.
@@ -120,17 +176,15 @@ impl GraphemeClusterSegmenter {
         input: &'s str,
         payload: &'l RuleBreakDataV1<'l>,
     ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
-        GraphemeClusterBreakIteratorUtf8 {
+        GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: payload,
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a grapheme cluster break iterator for a potentially ill-formed UTF8 string
@@ -140,34 +194,30 @@ impl GraphemeClusterSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8 {
+        GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
-        }
+        })
     }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
         input: &'s [u8],
     ) -> GraphemeClusterBreakIteratorLatin1<'l, 's> {
-        GraphemeClusterBreakIteratorLatin1 {
+        GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a grapheme cluster break iterator for a UTF-16 string.
@@ -183,16 +233,14 @@ impl GraphemeClusterSegmenter {
         input: &'s [u16],
         payload: &'l RuleBreakDataV1<'l>,
     ) -> GraphemeClusterBreakIteratorUtf16<'l, 's> {
-        GraphemeClusterBreakIteratorUtf16 {
+        GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: payload,
-            dictionary: None,
-            lstm: None,
-            grapheme: None,
+            complex: None,
             boundary_property: 0,
-        }
+        })
     }
 }

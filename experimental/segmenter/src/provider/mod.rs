@@ -98,7 +98,10 @@ pub struct RuleStatusTable<'data>(
 );
 
 /// char16trie data for dictionary break
-#[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/dictionary@1")]
+#[icu_provider::data_struct(
+    DictionaryForWordOnlyAutoV1Marker = "segmenter/dictionary/w_auto@1",
+    DictionaryForWordLineExtendedV1Marker = "segmenter/dictionary/wl_ext@1"
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -110,4 +113,10 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie_data: ZeroVec<'data, u16>,
+}
+
+pub(crate) struct UCharDictionaryBreakDataV1Marker;
+
+impl DataMarker for UCharDictionaryBreakDataV1Marker {
+    type Yokeable = UCharDictionaryBreakDataV1<'static>;
 }

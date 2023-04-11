@@ -14,8 +14,8 @@ pub mod ffi {
     use core::convert::TryFrom;
     use icu_provider::DataProvider;
     use icu_segmenter::provider::{
-        GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, LstmDataV1Marker,
-        UCharDictionaryBreakDataV1Marker,
+        DictionaryForWordLineExtendedV1Marker, GraphemeClusterBreakDataV1Marker,
+        LineBreakDataV1Marker, LstmForWordLineAutoV1Marker,
     };
     use icu_segmenter::{
         LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
@@ -50,12 +50,22 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(
+        icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8,
+        Typedef,
+        compact
+    )]
     pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Typedef, compact)]
     pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Typedef, compact)]
     pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineSegmenter {
@@ -71,7 +81,7 @@ pub mod ffi {
         fn try_new_auto_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -92,7 +102,7 @@ pub mod ffi {
         fn try_new_lstm_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -116,7 +126,7 @@ pub mod ffi {
         fn try_new_dictionary_impl<D>(provider: &D) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -144,7 +154,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -172,7 +182,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<LstmDataV1Marker>
+                + DataProvider<LstmForWordLineAutoV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -200,7 +210,7 @@ pub mod ffi {
         ) -> Result<Box<ICU4XLineSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
-                + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<DictionaryForWordLineExtendedV1Marker>
                 + DataProvider<GraphemeClusterBreakDataV1Marker>
                 + ?Sized,
         {
@@ -240,6 +250,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -252,6 +268,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -264,6 +286,12 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[allow(clippy::should_implement_trait)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

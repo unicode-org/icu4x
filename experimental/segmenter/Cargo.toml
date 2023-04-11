@@ -45,13 +45,14 @@ num-traits = { version = "0.2", default-features = false, features = ["libm"], o
 
 [dev-dependencies]
 criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter", "icu_properties"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../../components/icu", features = ["icu_segmenter"]}
 icu_provider_fs = { path = "../../provider/fs" }
 icu_provider = { path = "../../provider/core", features = ["deserialize_postcard_1"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
+itertools = "0.10"
 
 [features]
 default = ["auto"]

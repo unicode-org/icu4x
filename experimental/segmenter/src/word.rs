@@ -4,6 +4,7 @@
 
 use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::iterator_helpers::derive_usize_iterator_with_type;
 use crate::provider::*;
 use crate::rule_segmenter::*;
 use crate::SegmenterError;
@@ -14,18 +15,65 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
-/// Word break iterator for an `str` (a UTF-8 string).
-pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
+/// Implements the [`Iterator`] trait over the word boundaries of the given string.
+///
+/// Lifetimes:
+///
+/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'s` = lifetime of the string being segmented
+///
+/// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
+/// _after_ the boundary (for a boundary at the end of text, this index is the length
+/// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`WordSegmenter`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
+#[derive(Debug)]
+pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
+    RuleBreakIterator<'l, 's, Y>,
+);
 
-/// Word break iterator for a potentially invalid UTF-8 string
+derive_usize_iterator_with_type!(WordBreakIterator);
+
+impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
+    /// Return the status value of break boundary.
+    #[inline]
+    pub fn rule_status(&self) -> RuleStatusType {
+        self.0.rule_status()
+    }
+    /// Return true when break boundary is word-like such as letter/number/CJK
+    #[inline]
+    pub fn is_word_like(&self) -> bool {
+        self.0.is_word_like()
+    }
+}
+
+/// Word break iterator for an `str` (a UTF-8 string).
+///
+/// For examples of use, see [`WordSegmenter`].
+pub type WordBreakIteratorUtf8<'l, 's> = WordBreakIterator<'l, 's, WordBreakTypeUtf8>;
+
+/// Word break iterator for a potentially invalid UTF-8 string.
+///
+/// For examples of use, see [`WordSegmenter`].
 pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
+    WordBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
-pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+///
+/// For examples of use, see [`WordSegmenter`].
+pub type WordBreakIteratorLatin1<'l, 's> = WordBreakIterator<'l, 's, RuleBreakTypeLatin1>;
 
 /// Word break iterator for a UTF-16 string.
-pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
+///
+/// For examples of use, see [`WordSegmenter`].
+pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
 /// encodings.
@@ -62,12 +110,49 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 /// ```
+///
+/// Successive boundaries can be used to retrieve the segments.
+/// In particular, the first boundary is always 0, and the last one is the
+/// length of the segmented text in code units.
+///
+/// ```rust
+/// # use icu_segmenter::WordSegmenter;
+/// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #     .expect("Data exists");
+/// use itertools::Itertools;
+/// let text = "Mark’d ye his words?";
+/// let segments: Vec<&str> = segmenter
+///    .segment_str(text)
+///    .tuple_windows()
+///    .map(|(i, j)| &text[i..j])
+///    .collect();
+/// assert_eq!(&segments, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
+/// ```
+///
+/// Not all segments delimited by word boundaries are words; some are interword
+/// segments such as spaces and punctuation.
+/// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
+/// classify the preceding segment.
+/// ```rust
+/// # use itertools::Itertools;
+/// # use icu_segmenter::{RuleStatusType, WordSegmenter};
+/// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #     .expect("Data exists");
+/// # let text = "Mark’d ye his words?";
+/// let words: Vec<&str> = {
+///     let mut it = segmenter.segment_str(text);
+///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
+///         .tuple_windows()
+///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
+///         .map(|((i, _), (j, _))| &text[i..j])
+///         .collect()
+/// };
+/// assert_eq!(&words, &["Mark’d", "ye", "his", "words"]);
+/// ```
 #[derive(Debug)]
 pub struct WordSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
-    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    complex: ComplexPayloads,
 }
 
 impl WordSegmenter {
@@ -80,19 +165,14 @@ impl WordSegmenter {
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::new_chinese_japanese(provider),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_auto(provider)?,
         })
     }
 
@@ -115,18 +195,13 @@ impl WordSegmenter {
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::default(),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
 
@@ -147,18 +222,14 @@ impl WordSegmenter {
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<DictionaryForWordOnlyAutoV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
-            payload,
-            dictionary: Dictionary::new(provider),
-            lstm: LstmPayloads::default(),
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_dict(provider)?,
         })
     }
 
@@ -175,17 +246,15 @@ impl WordSegmenter {
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
-        WordBreakIteratorUtf8 {
+        WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a potentially ill-formed UTF8 string
@@ -195,47 +264,41 @@ impl WordSegmenter {
         &'l self,
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        WordBreakIteratorPotentiallyIllFormedUtf8 {
+        WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
-        WordBreakIteratorLatin1 {
+        WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 
     /// Create a word break iterator for a UTF-16 string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
-        WordBreakIteratorUtf16 {
+        WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary: Some(&self.dictionary),
-            lstm: Some(&self.lstm),
-            grapheme: Some(self.grapheme.get()),
+            complex: Some(&self.complex),
             boundary_property: 0,
-        }
+        })
     }
 }
 
@@ -307,7 +370,8 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, iter.grapheme, &s);
+    #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = iter.get_current_codepoint()?.len_utf8();
@@ -366,7 +430,8 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iter.dictionary, iter.lstm, iter.grapheme, &s);
+        #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+        let breaks = complex_language_segment_utf16(iter.complex.unwrap(), &s);
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

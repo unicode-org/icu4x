@@ -122,20 +122,59 @@ impl Default for LineBreakOptions {
 }
 
 /// Line break iterator for an `str` (a UTF-8 string).
+///
+/// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
 
-/// Line break iterator for a potentially invalid UTF-8 string
+/// Line break iterator for a potentially invalid UTF-8 string.
+///
+/// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
     LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
+///
+/// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
 
 /// Line break iterator for a UTF-16 string.
+///
+/// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
+///
+/// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
+/// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
+/// line break opportunities ([definition LD3][LD3]).
+/// It does not distinguish them.  Callers requiring that distinction can check
+/// the Line_Break property of the code point preceding the break against those
+/// listed in rules [LB4][LB4] and [LB5][LB5], special-casing the end of text
+/// according to [LB3][LB3].
+///
+/// Note that contrary to the grapheme, word, and sentence segmenters, the
+/// breaks returned by this segmenter do not determine a partition of the text
+/// into meaningful segments.  In particular, there is no break opportunity at
+/// the start of text.
+///
+/// [LD3]: https://www.unicode.org/reports/tr14/#LD3
+/// [LD7]: https://www.unicode.org/reports/tr14/#LD7
+/// [LB3]: https://www.unicode.org/reports/tr14/#LB3
+/// [LB4]: https://www.unicode.org/reports/tr14/#LB4
+/// [LB5]: https://www.unicode.org/reports/tr14/#LB5
+///
+/// ```rust
+/// # use icu_segmenter::LineSegmenter;
+/// #
+/// # let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #    .expect("Data exists");
+/// #
+/// let text = "Summary\r\nThis annex…";
+/// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
+/// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
+/// assert_eq!(&breakpoints, &[9, 14, 22]);
+/// ```
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -193,13 +232,43 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///     segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[6, 11]);
 /// ```
+///
+/// Separate mandatory breaks from the break opportunities:
+///
+/// ```rust
+/// # use icu::properties::{maps, LineBreak};
+/// # use icu_segmenter::LineSegmenter;
+/// #
+/// # let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+/// #   .expect("Data exists");
+/// #
+/// let data = maps::load_line_break(&icu_testdata::unstable()).expect("The data should be valid!");
+/// let lb = data.as_borrowed();
+///
+/// let text = "Summary\r\nThis annex…";
+///
+/// let mandatory_breaks: Vec<usize> = segmenter
+///     .segment_str(text)
+///     .into_iter()
+///     .filter(|&i| {
+///         text[..i].chars().next_back().map_or(false, |c| {
+///             matches!(
+///                 lb.get(c),
+///                 LineBreak::MandatoryBreak
+///                     | LineBreak::CarriageReturn
+///                     | LineBreak::LineFeed
+///                     | LineBreak::NextLine
+///                 ) || i == text.len()
+///         })
+///     })
+///     .collect();
+/// assert_eq!(&mandatory_breaks, &[9,  22]);
+/// ```
 #[derive(Debug)]
 pub struct LineSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
-    dictionary: Dictionary,
-    lstm: LstmPayloads,
-    grapheme: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    complex: ComplexPayloads,
 }
 
 impl LineSegmenter {
@@ -209,7 +278,7 @@ impl LineSegmenter {
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -234,7 +303,7 @@ impl LineSegmenter {
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -258,7 +327,7 @@ impl LineSegmenter {
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -285,7 +354,7 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
@@ -313,19 +382,14 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<LstmDataV1Marker>
+            + DataProvider<LstmForWordLineAutoV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
             options,
-            payload,
-            dictionary: Dictionary::default(),
-            lstm: LstmPayloads::try_new(provider)?,
-            grapheme,
+            payload: provider.load(Default::default())?.take_payload()?,
+            complex: ComplexPayloads::try_new_lstm(provider)?,
         })
     }
 
@@ -349,25 +413,20 @@ impl LineSegmenter {
     ) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
-            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<DictionaryForWordLineExtendedV1Marker>
             + DataProvider<GraphemeClusterBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(Default::default())?.take_payload()?;
-        let grapheme = provider.load(Default::default())?.take_payload()?;
-
         Ok(Self {
             options,
-            payload,
+            payload: provider.load(Default::default())?.take_payload()?,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
             //
             // [1]: https://www.unicode.org/reports/tr14/#ID
             // [2]: https://www.unicode.org/reports/tr14/#SA
-            dictionary: Dictionary::new_southeast_asian(provider),
-            lstm: LstmPayloads::default(),
-            grapheme,
+            complex: ComplexPayloads::try_new_southeast_asian(provider)?,
         })
     }
 
@@ -391,9 +450,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: &self.complex,
         }
     }
     /// Create a line break iterator for a potentially ill-formed UTF8 string
@@ -410,9 +467,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: &self.complex,
         }
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
@@ -424,9 +479,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: &self.complex,
         }
     }
 
@@ -439,9 +492,7 @@ impl LineSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary: &self.dictionary,
-            lstm: &self.lstm,
-            grapheme: self.grapheme.get(),
+            complex: &self.complex,
         }
     }
 }
@@ -664,8 +715,7 @@ pub trait LineBreakType<'l, 's> {
     ) -> Option<usize>;
 }
 
-/// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the examples in [`LineSegmenter`] for its usages.
+/// Implements the [`Iterator`] trait over the line break opportunities of the given string.
 ///
 /// Lifetimes:
 ///
@@ -675,6 +725,8 @@ pub trait LineBreakType<'l, 's> {
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
 /// _after_ the break (for a break at the end of text, this index is the length
 /// of the [`str`] or array of code units).
+///
+/// For examples of use, see [`LineSegmenter`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
@@ -690,9 +742,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    dictionary: &'l Dictionary,
-    lstm: &'l LstmPayloads,
-    grapheme: &'l RuleBreakDataV1<'l>,
+    complex: &'l ComplexPayloads,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -998,12 +1048,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(
-        Some(iter.dictionary),
-        Some(iter.lstm),
-        Some(iter.grapheme),
-        &s,
-    );
+    let breaks = complex_language_segment_str(iter.complex, &s);
     iter.result_cache = breaks;
     let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
@@ -1105,12 +1150,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(
-            Some(iterator.dictionary),
-            Some(iterator.lstm),
-            Some(iterator.grapheme),
-            &s,
-        );
+        let breaks = complex_language_segment_utf16(iterator.complex, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
