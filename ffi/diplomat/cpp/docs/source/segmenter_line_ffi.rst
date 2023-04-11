@@ -50,7 +50,7 @@
 
     .. cpp:member:: ICU4XLineBreakStrictness line_break_strictness
 
-    .. cpp:member:: ICU4XLineBreakWordOption word_break_rule
+    .. cpp:member:: ICU4XLineBreakWordOption word_option
 
     .. cpp:member:: bool ja_zh
 

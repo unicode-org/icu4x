@@ -14,7 +14,7 @@ namespace capi {
 
 typedef struct ICU4XLineBreakOptionsV1 {
     ICU4XLineBreakStrictness line_break_strictness;
-    ICU4XLineBreakWordOption word_break_rule;
+    ICU4XLineBreakWordOption word_option;
     bool ja_zh;
 } ICU4XLineBreakOptionsV1;
 #ifdef __cplusplus

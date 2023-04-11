@@ -30,7 +30,7 @@ fn check_with_options(
 fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.line_break_strictness = LineBreakStrictness::Strict;
-    options.word_break_rule = LineBreakWordOption::Normal;
+    options.word_option = LineBreakWordOption::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
@@ -38,7 +38,7 @@ fn strict(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
 fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.line_break_strictness = LineBreakStrictness::Normal;
-    options.word_break_rule = LineBreakWordOption::Normal;
+    options.word_option = LineBreakWordOption::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
@@ -46,7 +46,7 @@ fn normal(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize
 fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.line_break_strictness = LineBreakStrictness::Loose;
-    options.word_break_rule = LineBreakWordOption::Normal;
+    options.word_option = LineBreakWordOption::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }
@@ -54,7 +54,7 @@ fn loose(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>
 fn anywhere(s: &str, ja_zh: bool, expect_utf8: Vec<usize>, expect_utf16: Vec<usize>) {
     let mut options = LineBreakOptions::default();
     options.line_break_strictness = LineBreakStrictness::Anywhere;
-    options.word_break_rule = LineBreakWordOption::Normal;
+    options.word_option = LineBreakWordOption::Normal;
     options.ja_zh = ja_zh;
     check_with_options(s, expect_utf8, expect_utf16, options);
 }

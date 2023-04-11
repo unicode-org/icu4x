@@ -100,7 +100,7 @@ pub struct LineBreakOptions {
     pub line_break_strictness: LineBreakStrictness,
 
     /// Line break opportunities between letters. See [`LineBreakWordOption`].
-    pub word_break_rule: LineBreakWordOption,
+    pub word_option: LineBreakWordOption,
 
     /// Use `true` as a hint to the line breaker that the writing
     /// system is Chinese or Japanese. This allows more break opportunities when
@@ -115,7 +115,7 @@ impl Default for LineBreakOptions {
     fn default() -> Self {
         Self {
             line_break_strictness: LineBreakStrictness::Strict,
-            word_break_rule: LineBreakWordOption::Normal,
+            word_option: LineBreakWordOption::Normal,
             ja_zh: false,
         }
     }
@@ -207,7 +207,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.line_break_strictness = LineBreakStrictness::Strict;
-/// options.word_break_rule = LineBreakWordOption::BreakAll;
+/// options.word_option = LineBreakWordOption::BreakAll;
 /// options.ja_zh = false;
 /// let segmenter = LineSegmenter::try_new_auto_with_options_unstable(
 ///     &icu_testdata::unstable(),
@@ -501,12 +501,12 @@ fn get_linebreak_property_utf32_with_rule(
     property_table: &RuleBreakPropertyTable<'_>,
     codepoint: u32,
     line_break_strictness: LineBreakStrictness,
-    word_break_rule: LineBreakWordOption,
+    word_option: LineBreakWordOption,
 ) -> u8 {
     // Note: Default value is 0 == UNKNOWN
     let prop = property_table.0.get32(codepoint);
 
-    if word_break_rule == LineBreakWordOption::BreakAll
+    if word_option == LineBreakWordOption::BreakAll
         || line_break_strictness == LineBreakStrictness::Loose
         || line_break_strictness == LineBreakStrictness::Normal
     {
@@ -786,7 +786,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             let right_prop = self.get_linebreak_property(right_codepoint);
 
             // CSS word-break property handling
-            match self.options.word_break_rule {
+            match self.options.word_option {
                 LineBreakWordOption::BreakAll => {
                     left_prop = match left_prop {
                         AL => ID,
@@ -830,7 +830,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             };
 
             // UAX14 doesn't have Thai etc, so use another way.
-            if self.options.word_break_rule != LineBreakWordOption::BreakAll
+            if self.options.word_option != LineBreakWordOption::BreakAll
                 && Y::use_complex_breaking(self, left_codepoint)
                 && Y::use_complex_breaking(self, right_codepoint)
             {
@@ -965,7 +965,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
             &iterator.data.property_table,
             c,
             iterator.options.line_break_strictness,
-            iterator.options.word_break_rule,
+            iterator.options.word_option,
         )
     }
 
@@ -998,7 +998,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
             &iterator.data.property_table,
             c,
             iterator.options.line_break_strictness,
-            iterator.options.word_break_rule,
+            iterator.options.word_option,
         )
     }
 
@@ -1108,7 +1108,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
             &iterator.data.property_table,
             c,
             iterator.options.line_break_strictness,
-            iterator.options.word_break_rule,
+            iterator.options.word_option,
         )
     }
 

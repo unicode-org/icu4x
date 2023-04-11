@@ -23,7 +23,7 @@
 struct ICU4XLineBreakOptionsV1 {
  public:
   ICU4XLineBreakStrictness line_break_strictness;
-  ICU4XLineBreakWordOption word_break_rule;
+  ICU4XLineBreakWordOption word_option;
   bool ja_zh;
 };
 

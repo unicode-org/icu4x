@@ -50,7 +50,7 @@
 
     .. js:attribute:: line_break_strictness
 
-    .. js:attribute:: word_break_rule
+    .. js:attribute:: word_option
 
     .. js:attribute:: ja_zh
 

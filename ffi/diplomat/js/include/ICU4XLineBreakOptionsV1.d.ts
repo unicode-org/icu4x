@@ -7,6 +7,6 @@ import { ICU4XLineBreakWordOption } from "./ICU4XLineBreakWordOption";
  */
 export class ICU4XLineBreakOptionsV1 {
   line_break_strictness: ICU4XLineBreakStrictness;
-  word_break_rule: ICU4XLineBreakWordOption;
+  word_option: ICU4XLineBreakWordOption;
   ja_zh: boolean;
 }
