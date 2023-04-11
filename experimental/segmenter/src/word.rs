@@ -42,20 +42,23 @@ pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
 derive_usize_iterator_with_type!(WordBreakIterator);
 
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
-    /// Return the status value of break boundary.
+    /// Return the status value of the boundary last returned by
+    /// [`Iterator::next`].
     #[inline]
     pub fn rule_status(&self) -> RuleStatusType {
         self.0.rule_status()
     }
 
-    /// Returns an iterator over pairs of position and rule status.
+    /// Returns an iterator over pairs of boundary position and rule status.
     pub fn with_status<'i: 'l + 's>(
         &'i mut self,
     ) -> impl Iterator<Item = (usize, RuleStatusType)> + '_ {
         core::iter::from_fn(move || self.next().map(|i| (i, self.rule_status())))
     }
 
-    /// Return true when the segment preceding the boundary is word-like, such as letters, numbers, or CJKV ideographs.
+    /// Returns `true` when the segment preceding the boundary last returned by
+    /// [`Iterator::next`] is word-like, such as letters, numbers, or CJKV
+    /// ideographs.
     #[inline]
     pub fn is_word_like(&self) -> bool {
         self.0.is_word_like()
