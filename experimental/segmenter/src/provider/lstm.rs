@@ -188,14 +188,17 @@ impl<'data> LstmDataFloat32<'data> {
         let dic_len = u16::try_from(dic.len())
             .map_err(|_| DataError::custom("Dictionary does not fit in u16"))?;
 
-        if embedding.dims[0] - 1 != dic_len
-            || fw_w.dims != [fw_u.dims[0], 4, embedding.dims[1]]
-            || fw_u.dims != [fw_u.dims[0], 4, fw_u.dims[0]]
-            || fw_b.dims != [fw_u.dims[0], 4]
-            || bw_w.dims != [fw_u.dims[0], 4, embedding.dims[1]]
-            || bw_u.dims != [fw_u.dims[0], 4, fw_u.dims[0]]
-            || bw_b.dims != [fw_u.dims[0], 4]
-            || time_w.dims != [2, 4, fw_u.dims[0]]
+        let num_classes = embedding.dims[0];
+        let embedd_dim = embedding.dims[1];
+        let hunits = fw_u.dims[2];
+        if num_classes - 1 != dic_len
+            || fw_w.dims != [4, hunits, embedd_dim]
+            || fw_u.dims != [4, hunits, hunits]
+            || fw_b.dims != [4, hunits]
+            || bw_w.dims != [4, hunits, embedd_dim]
+            || bw_u.dims != [4, hunits, hunits]
+            || bw_b.dims != [4, hunits]
+            || time_w.dims != [2, 4, hunits]
             || time_b.dims != [4]
         {
             return Err(DataError::custom("LSTM dimension mismatch"));
