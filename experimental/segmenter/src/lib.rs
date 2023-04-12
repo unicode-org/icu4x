@@ -64,7 +64,7 @@
 //!
 //! ## Word Break
 //!
-//! Segment the string into words:
+//! Find all word boundaries:
 //!
 //!```rust
 //! use icu::segmenter::WordSegmenter;
