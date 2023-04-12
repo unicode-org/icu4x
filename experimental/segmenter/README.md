@@ -25,7 +25,7 @@ of the icu meta-crate. Use with caution.
 
 ### Line Break
 
-Segment a string with default options:
+Find line break opportunities:
 
 ```rust
 use icu::segmenter::LineSegmenter;
@@ -34,19 +34,35 @@ let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
     .expect("Data exists");
 
 let breakpoints: Vec<usize> =
-    segmenter.segment_str("Hello World").collect();
-assert_eq!(&breakpoints, &[6, 11]);
+    segmenter.segment_str("Hello World. Xin chào thế giới!").collect();
+assert_eq!(&breakpoints, &[0, 6, 13, 17, 23, 29, 36]);
 ```
 
 See [`LineSegmenter`] for more examples.
 
 ### Grapheme Cluster Break
 
-See [`GraphemeClusterSegmenter`] for examples.
+Find all grapheme cluster boundaries:
+
+```rust
+use icu::segmenter::GraphemeClusterSegmenter;
+
+let segmenter = GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
+    .expect("Data exists");
+
+let breakpoints: Vec<usize> =
+    segmenter.segment_str("Hello World. Xin chào thế giới!").collect();
+assert_eq!(&breakpoints, &[
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21,
+    22, 23, 24, 25, 28, 29, 30, 31, 34, 35, 36
+]);
+```
+
+See [`GraphemeClusterSegmenter`] for more examples.
 
 ### Word Break
 
-Segment a string:
+Find all word boundaries:
 
 ```rust
 use icu::segmenter::WordSegmenter;
@@ -55,15 +71,28 @@ let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
     .expect("Data exists");
 
 let breakpoints: Vec<usize> =
-    segmenter.segment_str("Hello World").collect();
-assert_eq!(&breakpoints, &[0, 5, 6, 11]);
+    segmenter.segment_str("Hello World. Xin chào thế giới!").collect();
+assert_eq!(&breakpoints, &[0, 5, 6, 11, 12, 13, 16, 17, 22, 23, 28, 29, 35, 36]);
 ```
 
 See [`WordSegmenter`] for more examples.
 
 ### Sentence Break
 
-See [`SentenceSegmenter`] for examples.
+Segment the string into sentences:
+
+```rust
+use icu::segmenter::SentenceSegmenter;
+
+let segmenter = SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
+    .expect("Data exists");
+
+let breakpoints: Vec<usize> =
+    segmenter.segment_str("Hello World. Xin chào thế giới!").collect();
+assert_eq!(&breakpoints, &[0, 13, 36]);
+```
+
+See [`SentenceSegmenter`] for more examples.
 
 ## More Information
 
