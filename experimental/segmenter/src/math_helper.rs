@@ -223,6 +223,38 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
             *v = v.exp() / sm;
         });
     }
+
+    pub fn sigmoid_transform(&mut self) {
+        for x in &mut self.data.iter_mut() {
+            *x = sigmoid(*x);
+        }
+    }
+
+    pub fn tanh_transform(&mut self) {
+        for x in &mut self.data.iter_mut() {
+            *x = tanh(*x);
+        }
+    }
+
+    pub fn convolve(
+        &mut self,
+        i: MatrixBorrowed<'_, D>,
+        c: MatrixBorrowed<'_, D>,
+        f: MatrixBorrowed<'_, D>,
+    ) {
+        #[allow(clippy::unwrap_used)] // All the matrices are the same size
+        for idx in 0..self.data.len() {
+            *self.data.get_mut(idx).unwrap() =
+                i.data.get(idx).unwrap() * c.data.get(idx).unwrap() + self.data.get(idx).unwrap() * f.data.get(idx).unwrap()
+        }
+    }
+
+    pub fn mul_tanh(&mut self, o: MatrixBorrowed<'_, D>, c: MatrixBorrowed<'_, D>) {
+        #[allow(clippy::unwrap_used)] // All the matrices are the same size
+        for idx in 0..self.data.len() {
+            *self.data.get_mut(idx).unwrap() = o.data.get(idx).unwrap() * tanh(*c.data.get(idx).unwrap());
+        }
+    }
 }
 
 impl<'a> MatrixBorrowed<'a, 1> {
