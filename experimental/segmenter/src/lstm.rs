@@ -156,9 +156,9 @@ impl<'l> LstmSegmenter<'l> {
             u: MatrixZero<'a, 3>,
             b: MatrixZero<'a, 2>,
         ) {
+            let hunits = h_tm1.dim();
             #[cfg(debug_assertions)]
             {
-                let hunits = h_tm1.dim();
                 let embedd_dim = x_t.dim();
                 c_tm1.as_borrowed().debug_assert_dims([hunits]);
                 w.debug_assert_dims([hunits, 4, embedd_dim]);
@@ -171,8 +171,73 @@ impl<'l> LstmSegmenter<'l> {
             s_t.as_mut().add_dot_3d_2(x_t, w);
             s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
 
+            let fhunits = (hunits - 1) / 4;
+
+            for j in 0..fhunits {
+                let ja = j*4;
+                let jb = j*4+1;
+                let jc = j*4+2;
+                let jd = j*4+3;
+                let [s0a, s1a, s2a, s3a] = s_t
+                    .as_borrowed()
+                    .submatrix::<1>(ja)
+                    .unwrap()
+                    .read_4()
+                    .unwrap(); // shape (hunits, 4)
+                let [s0b, s1b, s2b, s3b] = s_t
+                    .as_borrowed()
+                    .submatrix::<1>(jb)
+                    .unwrap()
+                    .read_4()
+                    .unwrap(); // shape (hunits, 4)
+                let [s0c, s1c, s2c, s3c] = s_t
+                    .as_borrowed()
+                    .submatrix::<1>(jc)
+                    .unwrap()
+                    .read_4()
+                    .unwrap(); // shape (hunits, 4)
+                let [s0d, s1d, s2d, s3d] = s_t
+                    .as_borrowed()
+                    .submatrix::<1>(jd)
+                    .unwrap()
+                    .read_4()
+                    .unwrap(); // shape (hunits, 4)
+                let pa = math_helper::sigmoid(s0a);
+                let pb = math_helper::sigmoid(s0b);
+                let pc = math_helper::sigmoid(s0c);
+                let pd = math_helper::sigmoid(s0d);
+                let fa = math_helper::sigmoid(s1a);
+                let fb = math_helper::sigmoid(s1b);
+                let fc = math_helper::sigmoid(s1c);
+                let fd = math_helper::sigmoid(s1d);
+                let ca = math_helper::tanh(s2a);
+                let cb = math_helper::tanh(s2b);
+                let cc = math_helper::tanh(s2c);
+                let cd = math_helper::tanh(s2d);
+                let oa = math_helper::sigmoid(s3a);
+                let ob = math_helper::sigmoid(s3b);
+                let oc = math_helper::sigmoid(s3c);
+                let od = math_helper::sigmoid(s3d);
+                let ua = *c_tm1.as_borrowed().as_slice().get(ja).unwrap();
+                let ub = *c_tm1.as_borrowed().as_slice().get(jb).unwrap();
+                let uc = *c_tm1.as_borrowed().as_slice().get(jc).unwrap();
+                let ud = *c_tm1.as_borrowed().as_slice().get(jd).unwrap();
+                let va = math_helper::fma(pa, ca, fa * ua);
+                let vb = math_helper::fma(pb, cb, fb * ub);
+                let vc = math_helper::fma(pc, cc, fc * uc);
+                let vd = math_helper::fma(pd, cd, fd * ud);
+                *c_tm1.as_mut_slice().get_mut(ja).unwrap() = va;
+                *c_tm1.as_mut_slice().get_mut(jb).unwrap() = vb;
+                *c_tm1.as_mut_slice().get_mut(jc).unwrap() = vc;
+                *c_tm1.as_mut_slice().get_mut(jd).unwrap() = vd;
+                *h_tm1.as_mut_slice().get_mut(ja).unwrap() = oa * math_helper::tanh(va);
+                *h_tm1.as_mut_slice().get_mut(jb).unwrap() = ob * math_helper::tanh(vb);
+                *h_tm1.as_mut_slice().get_mut(jc).unwrap() = oc * math_helper::tanh(vc);
+                *h_tm1.as_mut_slice().get_mut(jd).unwrap() = od * math_helper::tanh(vd);
+            }
+
             #[allow(clippy::unwrap_used)]
-            for i in 0..s_t.dim().0 {
+            for i in 4*fhunits..hunits {
                 let [s0, s1, s2, s3] = s_t
                     .as_borrowed()
                     .submatrix::<1>(i)
