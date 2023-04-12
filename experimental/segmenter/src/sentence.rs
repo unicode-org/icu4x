@@ -120,7 +120,7 @@ pub struct SentenceSegmenter {
 }
 
 impl SentenceSegmenter {
-    /// Construct a [`SentenceSegmenter`].
+    /// Constructs a [`SentenceSegmenter`] with an invariant locale.
     pub fn try_new_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
@@ -131,7 +131,7 @@ impl SentenceSegmenter {
 
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: SegmenterError);
 
-    /// Create a sentence break iterator for an `str` (a UTF-8 string).
+    /// Creates a sentence break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
@@ -145,7 +145,7 @@ impl SentenceSegmenter {
             boundary_property: 0,
         })
     }
-    /// Create a sentence break iterator for a potentially ill-formed UTF8 string
+    /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
@@ -164,7 +164,7 @@ impl SentenceSegmenter {
             boundary_property: 0,
         })
     }
-    /// Create a sentence break iterator for a Latin-1 (8-bit) string.
+    /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(
@@ -182,7 +182,7 @@ impl SentenceSegmenter {
         })
     }
 
-    /// Create a sentence break iterator for a UTF-16 string.
+    /// Creates a sentence break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {

@@ -309,7 +309,7 @@ impl WordSegmenter {
         ]
     );
 
-    /// Create a word break iterator for an `str` (a UTF-8 string).
+    /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
@@ -324,7 +324,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a potentially ill-formed UTF8 string
+    /// Creates a word break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
@@ -344,7 +344,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a Latin-1 (8-bit) string.
+    /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
@@ -359,7 +359,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a UTF-16 string.
+    /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
