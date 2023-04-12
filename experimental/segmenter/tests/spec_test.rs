@@ -108,14 +108,18 @@ fn run_line_break_test() {
     let test_iter = TestContentIterator::new("./tests/testdata/LineBreakTest.txt");
     let segmenter =
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
-    for test in test_iter {
+    for mut test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
+        // NOTE: For consistency with ICU4C and other Segmenters, we return a breakpoint at
+        // index 0, despite UAX #14 suggesting otherwise. See issue #3283.
+        test.break_result_utf8.insert(0, 0);
         assert_eq!(result, test.break_result_utf8, "{}", test.original_line);
 
         let iter = segmenter.segment_utf16(&test.utf16_vec);
         let result: Vec<usize> = iter.collect();
+        test.break_result_utf16.insert(0, 0);
         assert_eq!(
             result, test.break_result_utf16,
             "UTF16: {}",
@@ -123,8 +127,9 @@ fn run_line_break_test() {
         );
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
-        if let Some(break_result_latin1) = test.break_result_latin1 {
+        if let Some(mut break_result_latin1) = test.break_result_latin1 {
             let iter = segmenter.segment_latin1(&test.latin1_vec);
+            break_result_latin1.insert(0, 0);
             let result: Vec<usize> = iter.collect();
             assert_eq!(
                 result, break_result_latin1,

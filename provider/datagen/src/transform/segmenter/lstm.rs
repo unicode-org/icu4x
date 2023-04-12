@@ -230,7 +230,7 @@ mod tests {
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(
             breaks,
-            [6, 12, 21, 27, 33, TEST_STR.len()],
+            [0, 6, 12, 21, 27, 33, TEST_STR.len()],
             "Thai test with grapheme model"
         );
     }
