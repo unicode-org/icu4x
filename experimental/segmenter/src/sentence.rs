@@ -133,7 +133,7 @@ impl SentenceSegmenter {
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
@@ -149,7 +149,7 @@ impl SentenceSegmenter {
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -166,7 +166,7 @@ impl SentenceSegmenter {
     }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -184,7 +184,7 @@ impl SentenceSegmenter {
 
     /// Create a sentence break iterator for a UTF-16 string.
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
@@ -204,5 +204,5 @@ fn empty_string() {
     let segmenter =
         SentenceSegmenter::try_new_with_buffer_provider(&icu_testdata::buffer()).unwrap();
     let breaks: Vec<usize> = segmenter.segment_str("").collect();
-    assert!(breaks.is_empty());
+    assert_eq!(breaks, [0]);
 }

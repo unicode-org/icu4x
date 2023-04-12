@@ -90,6 +90,11 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
 
         if self.is_eof() {
             self.advance_iter();
+            if self.is_eof() && self.len == 0 {
+                // Empty string
+                self.len = 1;
+                return Some(0);
+            }
             // SOT x anything
             let right_prop = self.get_current_break_property()?;
             if self.is_break_from_table(self.data.sot_property, right_prop) {

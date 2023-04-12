@@ -442,7 +442,7 @@ impl LineSegmenter {
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
         LineBreakIterator {
             iter: input.char_indices(),
@@ -458,7 +458,7 @@ impl LineSegmenter {
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
@@ -475,7 +475,7 @@ impl LineSegmenter {
     }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
@@ -490,7 +490,7 @@ impl LineSegmenter {
 
     /// Create a line break iterator for a UTF-16 string.
     ///
-    /// If the string is empty, no breakpoints are returned.
+    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
@@ -922,9 +922,13 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
         if self.is_eof() {
             self.advance_iter();
             if self.is_eof() {
-                // NOTE: If we desired returning a breakpoint for the empty string, we could:
-                // if self.len == 0 { self.len = 1; return StringBoundaryPosType::Start; }
-                StringBoundaryPosType::End
+                if self.len == 0 {
+                    // Empty string
+                    self.len = 1;
+                    StringBoundaryPosType::Start
+                } else {
+                    StringBoundaryPosType::End
+                }
             } else {
                 StringBoundaryPosType::Start
             }
@@ -1563,6 +1567,6 @@ mod tests {
         let segmenter =
             LineSegmenter::try_new_auto_with_buffer_provider(&icu_testdata::buffer()).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str("").collect();
-        assert!(breaks.is_empty());
+        assert_eq!(breaks, [0]);
     }
 }
