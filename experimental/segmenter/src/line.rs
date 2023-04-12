@@ -923,7 +923,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
             self.advance_iter();
             if self.is_eof() {
                 if self.len == 0 {
-                    // Empty string
+                    // Empty string. Since `self.current_pos_data` is always going to be empty,
+                    // we never read `self.len` except for here, so we can use it to mark that
+                    // we have already returned the single empty-string breakpoint.
                     self.len = 1;
                     StringBoundaryPosType::Start
                 } else {
