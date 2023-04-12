@@ -156,11 +156,30 @@ pub struct WordSegmenter {
 }
 
 impl WordSegmenter {
-    /// Construct a [`WordSegmenter`] with automatically selecting the best available LSTM and
-    /// dictionary payload data.
+    /// Constructs a [`WordSegmenter`] with an invariant locale and the best available data for
+    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
     ///
-    /// Note: This function loads dictionary for Chinese and Japanese, and LSTM for Burmese, Khmer,
-    /// Lao, and Thai.
+    /// The current behavior, which is subject to change, is to use the LSTM model when available
+    /// and the dictionary model for Chinese and Japanese.
+    ///
+    /// # Examples
+    ///
+    /// Behavior with complex scripts:
+    ///
+    /// ```
+    /// use icu::segmenter::WordSegmenter;
+    ///
+    /// let th_str = "ทุกสองสัปดาห์";
+    /// let ja_str = "こんにちは世界";
+    ///
+    /// let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).unwrap();
+    ///
+    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
+    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    ///
+    /// assert_eq!(th_bps, [0, 9, 18, 39]);
+    /// assert_eq!(ja_bps, [0, 15, 21]);
+    /// ```
     #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -188,9 +207,33 @@ impl WordSegmenter {
         ]
     );
 
-    /// Construct a [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and Thai.
+    /// Constructs a [`WordSegmenter`] with an invariant locale and LSTM data for
+    /// complex scripts (Burmese, Khmer, Lao, and Thai).
     ///
-    /// Warning: [`WordSegmenter`] created by this function doesn't handle Chinese or Japanese.
+    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
+    /// the full dictionary but more expensive during inference.
+    ///
+    /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
+    /// created by this function will have unexpected behavior in spans of those languages.
+    ///
+    /// # Examples
+    ///
+    /// Behavior with complex scripts:
+    ///
+    /// ```
+    /// use icu::segmenter::WordSegmenter;
+    ///
+    /// let th_str = "ทุกสองสัปดาห์";
+    /// let ja_str = "こんにちは世界";
+    ///
+    /// let segmenter = WordSegmenter::try_new_lstm_unstable(&icu_testdata::unstable()).unwrap();
+    ///
+    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
+    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    ///
+    /// assert_eq!(th_bps, [0, 9, 18, 39]);
+    /// assert_eq!(ja_bps, [0, 21]);
+    /// ```
     #[cfg(feature = "lstm")]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -217,8 +260,30 @@ impl WordSegmenter {
         ]
     );
 
-    /// Construct a [`WordSegmenter`] with dictionary payload data for Chinese, Japanese, Burmese,
-    /// Khmer, Lao, and Thai.
+    /// Construct a [`WordSegmenter`] with an invariant locale and dictionary data for
+    /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
+    /// faster than the LSTM model but requires more data.
+    ///
+    /// # Examples
+    ///
+    /// Behavior with complex scripts:
+    ///
+    /// ```
+    /// use icu::segmenter::WordSegmenter;
+    ///
+    /// let th_str = "ทุกสองสัปดาห์";
+    /// let ja_str = "こんにちは世界";
+    ///
+    /// let segmenter = WordSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).unwrap();
+    ///
+    /// let th_bps = segmenter.segment_str(th_str).collect::<Vec<_>>();
+    /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
+    ///
+    /// assert_eq!(th_bps, [0, 9, 18, 39]);
+    /// assert_eq!(ja_bps, [0, 15, 21]);
+    /// ```
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<WordBreakDataV1Marker>
@@ -244,7 +309,7 @@ impl WordSegmenter {
         ]
     );
 
-    /// Create a word break iterator for an `str` (a UTF-8 string).
+    /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
@@ -259,7 +324,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a potentially ill-formed UTF8 string
+    /// Creates a word break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
@@ -279,7 +344,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a Latin-1 (8-bit) string.
+    /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
@@ -294,7 +359,7 @@ impl WordSegmenter {
         })
     }
 
-    /// Create a word break iterator for a UTF-16 string.
+    /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {

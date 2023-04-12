@@ -271,8 +271,12 @@ pub struct LineSegmenter {
 }
 
 impl LineSegmenter {
-    /// Construct a [`LineSegmenter`] via [`Self::try_new_auto_with_options_unstable`] with default
-    /// [`LineBreakOptions`].
+    /// Constructs a [`LineSegmenter`] with an invariant locale and the best available data for
+    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The current behavior, which is subject to change, is to use the LSTM model when available.
+    ///
+    /// See also [`Self::try_new_auto_with_options_unstable`].
     #[cfg(feature = "auto")]
     pub fn try_new_auto_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -296,8 +300,13 @@ impl LineSegmenter {
         ]
     );
 
-    /// Construct a [`LineSegmenter`] via [`Self::try_new_lstm_with_options_unstable`] with default
-    /// [`LineBreakOptions`].
+    /// Constructs a [`LineSegmenter`] with an invariant locale and LSTM data for
+    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
+    /// the full dictionary but more expensive during inference.
+    ///
+    /// See also [`Self::try_new_lstm_with_options_unstable`].
     #[cfg(feature = "lstm")]
     pub fn try_new_lstm_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
@@ -321,8 +330,13 @@ impl LineSegmenter {
         ]
     );
 
-    /// Construct a [`LineSegmenter`] via [`Self::try_new_dictionary_with_options_unstable`] with
-    /// default [`LineBreakOptions`].
+    /// Constructs a [`LineSegmenter`] with an invariant locale and dictionary data for
+    /// complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
+    /// faster than the LSTM model but requires more data.
+    ///
+    /// See also [`Self::try_new_dictionary_with_options_unstable`].
     pub fn try_new_dictionary_unstable<D>(provider: &D) -> Result<Self, SegmenterError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -344,8 +358,12 @@ impl LineSegmenter {
         ]
     );
 
-    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`]. It automatically loads the
-    /// best available payload data for Burmese, Khmer, Lao, and Thai.
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// the best available data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The current behavior, which is subject to change, is to use the LSTM model when available.
+    ///
+    /// See also [`Self::try_new_auto_unstable`].
     #[cfg(feature = "auto")]
     pub fn try_new_auto_with_options_unstable<D>(
         provider: &D,
@@ -372,8 +390,13 @@ impl LineSegmenter {
         ]
     );
 
-    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`] and LSTM payload data for
-    /// Burmese, Khmer, Lao, and Thai.
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
+    /// the full dictionary but more expensive during inference.
+    ///
+    /// See also [`Self::try_new_dictionary_unstable`].
     #[cfg(feature = "lstm")]
     pub fn try_new_lstm_with_options_unstable<D>(
         provider: &D,
@@ -404,8 +427,13 @@ impl LineSegmenter {
         ]
     );
 
-    /// Construct a [`LineSegmenter`] with custom [`LineBreakOptions`] and dictionary payload data
-    /// for Burmese, Khmer, Lao, and Thai.
+    /// Constructs a [`LineSegmenter`] with an invariant locale, custom [`LineBreakOptions`], and
+    /// dictionary data for complex scripts (Khmer, Lao, Myanmar, and Thai).
+    ///
+    /// The dictionary model uses a list of words to determine appropriate breakpoints. It is
+    /// faster than the LSTM model but requires more data.
+    ///
+    /// See also [`Self::try_new_dictionary_unstable`].
     pub fn try_new_dictionary_with_options_unstable<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -440,7 +468,7 @@ impl LineSegmenter {
         ]
     );
 
-    /// Create a line break iterator for an `str` (a UTF-8 string).
+    /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
@@ -454,7 +482,7 @@ impl LineSegmenter {
             complex: &self.complex,
         }
     }
-    /// Create a line break iterator for a potentially ill-formed UTF8 string
+    /// Creates a line break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
@@ -473,7 +501,7 @@ impl LineSegmenter {
             complex: &self.complex,
         }
     }
-    /// Create a line break iterator for a Latin-1 (8-bit) string.
+    /// Creates a line break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
@@ -488,7 +516,7 @@ impl LineSegmenter {
         }
     }
 
-    /// Create a line break iterator for a UTF-16 string.
+    /// Creates a line break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
