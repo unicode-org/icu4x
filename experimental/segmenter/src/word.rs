@@ -211,10 +211,10 @@ impl WordSegmenter {
     /// complex scripts (Burmese, Khmer, Lao, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during inference.
+    /// the full dictionary but more expensive during segmentation (inference).
     ///
     /// Warning: there is not currently an LSTM model for Chinese or Japanese, so the [`WordSegmenter`]
-    /// created by this function will have unexpected behavior in spans of those languages.
+    /// created by this function will have unexpected behavior in spans of those scripts.
     ///
     /// # Examples
     ///
@@ -232,6 +232,8 @@ impl WordSegmenter {
     /// let ja_bps = segmenter.segment_str(ja_str).collect::<Vec<_>>();
     ///
     /// assert_eq!(th_bps, [0, 9, 18, 39]);
+    ///
+    /// // Note: We aren't able to find a suitable breakpoint in Chinese/Japanese.
     /// assert_eq!(ja_bps, [0, 21]);
     /// ```
     #[cfg(feature = "lstm")]
