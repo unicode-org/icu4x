@@ -92,7 +92,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("icu4x/2023-03-22a/72.x", icu_testdata::versions::icu_tag());
+    /// assert_eq!("release-73-1", icu_testdata::versions::icu_tag());
     /// ```
     pub fn icu_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
