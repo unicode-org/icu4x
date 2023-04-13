@@ -1204,6 +1204,7 @@ dependencies = [
  "icu_collections",
  "icu_provider",
  "serde",
+ "tinystr",
  "zerovec",
 ]
 

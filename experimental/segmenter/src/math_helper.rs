@@ -24,12 +24,6 @@ pub fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 
-/// computes x * y + z in one instruction
-#[inline]
-pub fn fma(x: f32, y: f32, z: f32) -> f32 {
-    x.mul_add(y, z)
-}
-
 /// A `D`-dimensional, heap-allocated matrix.
 ///
 /// This matrix implementation supports slicing matrices into tightly-packed
@@ -170,12 +164,6 @@ impl_basic_dim!(
 );
 impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
 
-impl<'a> MatrixBorrowed<'a, 1> {
-    pub fn read_4(&self) -> Option<[f32; 4]> {
-        <&[f32; 4]>::try_from(self.data).ok().copied()
-    }
-}
-
 /// A `D`-dimensional, mutably borrowed matrix.
 pub struct MatrixBorrowedMut<'a, const D: usize> {
     pub(crate) data: &'a mut [f32],
@@ -222,6 +210,58 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         self.data.iter_mut().for_each(|v| {
             *v = v.exp() / sm;
         });
+    }
+
+    pub fn sigmoid_transform(&mut self) {
+        for x in &mut self.data.iter_mut() {
+            *x = sigmoid(*x);
+        }
+    }
+
+    pub fn tanh_transform(&mut self) {
+        for x in &mut self.data.iter_mut() {
+            *x = tanh(*x);
+        }
+    }
+
+    pub fn convolve(
+        &mut self,
+        i: MatrixBorrowed<'_, D>,
+        c: MatrixBorrowed<'_, D>,
+        f: MatrixBorrowed<'_, D>,
+    ) {
+        let i = i.as_slice();
+        let c = c.as_slice();
+        let f = f.as_slice();
+        let len = self.data.len();
+        if len != i.len() || len != c.len() || len != f.len() {
+            debug_assert!(false, "LSTM matrices not the correct dimensions");
+            return;
+        }
+        for idx in 0..len {
+            // Safety: The lengths are all the same (checked above)
+            unsafe {
+                *self.data.get_unchecked_mut(idx) = i.get_unchecked(idx) * c.get_unchecked(idx)
+                    + self.data.get_unchecked(idx) * f.get_unchecked(idx)
+            }
+        }
+    }
+
+    pub fn mul_tanh(&mut self, o: MatrixBorrowed<'_, D>, c: MatrixBorrowed<'_, D>) {
+        let o = o.as_slice();
+        let c = c.as_slice();
+        let len = self.data.len();
+        if len != o.len() || len != c.len() {
+            debug_assert!(false, "LSTM matrices not the correct dimensions");
+            return;
+        }
+        for idx in 0..len {
+            // Safety: The lengths are all the same (checked above)
+            unsafe {
+                *self.data.get_unchecked_mut(idx) =
+                    o.get_unchecked(idx) * tanh(*c.get_unchecked(idx));
+            }
+        }
     }
 }
 

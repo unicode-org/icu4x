@@ -9,8 +9,8 @@ use icu_segmenter::LineSegmenter;
 
 fn check_with_options(
     s: &str,
-    expect_utf8: Vec<usize>,
-    expect_utf16: Vec<usize>,
+    mut expect_utf8: Vec<usize>,
+    mut expect_utf16: Vec<usize>,
     options: LineBreakOptions,
 ) {
     let segmenter =
@@ -19,11 +19,13 @@ fn check_with_options(
 
     let iter = segmenter.segment_str(s);
     let result: Vec<usize> = iter.collect();
+    expect_utf8.insert(0, 0);
     assert_eq!(expect_utf8, result, "{s}");
 
     let s_utf16: Vec<u16> = s.encode_utf16().collect();
     let iter = segmenter.segment_utf16(&s_utf16);
     let result: Vec<usize> = iter.collect();
+    expect_utf16.insert(0, 0);
     assert_eq!(expect_utf16, result, "{s}");
 }
 

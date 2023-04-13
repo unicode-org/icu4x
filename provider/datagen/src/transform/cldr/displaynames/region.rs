@@ -76,8 +76,9 @@ impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV
             }
         }
         Ok(Self {
-            names: names.into_iter().collect(),
-            short_names: short_names.into_iter().collect(),
+            // Old CLDR versions may contain trivial entries, so filter
+            names: names.into_iter().filter(|&(k, v)| k != v).collect(),
+            short_names: short_names.into_iter().filter(|&(k, v)| k != v).collect(),
         })
     }
 }

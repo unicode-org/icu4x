@@ -54,30 +54,30 @@
 
     .. cpp:enumerator:: Standard
 
-.. cpp:class:: ICU4XLanguageDisplayNames
+.. cpp:class:: ICU4XLocaleDisplayNamesFormatter
 
-    See the `Rust documentation for LanguageDisplayNames <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html>`__ for more information.
-
-
-    .. cpp:function:: static diplomat::result<ICU4XLanguageDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
-
-        Creates a new ``LanguageDisplayNames`` from locale data and an options bag.
-
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable>`__ for more information.
+    See the `Rust documentation for LocaleDisplayNamesFormatter <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
+    .. cpp:function:: static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
 
-        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+        Creates a new ``LocaleDisplayNamesFormatter`` from locale data and an options bag.
 
-        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const ICU4XLocale& locale, W& write) const
 
-        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+        Returns the locale-specific display name of a locale.
 
-        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
+        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const ICU4XLocale& locale) const
+
+        Returns the locale-specific display name of a locale.
+
+        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of>`__ for more information.
 
 
 .. cpp:class:: ICU4XRegionDisplayNames
@@ -92,16 +92,16 @@
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view code, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view region, W& write) const
 
-        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
+        Returns the locale specific display name of a region. Note that the funtion returns an empty string in case the display name for a given region code is not found.
 
         See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view code) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> of(const std::string_view region) const
 
-        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
+        Returns the locale specific display name of a region. Note that the funtion returns an empty string in case the display name for a given region code is not found.
 
         See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 

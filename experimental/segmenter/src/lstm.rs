@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenter;
-use crate::math_helper::{self, MatrixBorrowedMut, MatrixOwned, MatrixZero};
+use crate::math_helper::{MatrixBorrowedMut, MatrixOwned, MatrixZero};
 use crate::provider::*;
 use alloc::boxed::Box;
 use alloc::string::String;
@@ -161,9 +161,9 @@ impl<'l> LstmSegmenter<'l> {
                 let hunits = h_tm1.dim();
                 let embedd_dim = x_t.dim();
                 c_tm1.as_borrowed().debug_assert_dims([hunits]);
-                w.debug_assert_dims([hunits, 4, embedd_dim]);
-                u.debug_assert_dims([hunits, 4, hunits]);
-                b.debug_assert_dims([hunits, 4]);
+                w.debug_assert_dims([4, hunits, embedd_dim]);
+                u.debug_assert_dims([4, hunits, hunits]);
+                b.debug_assert_dims([4, hunits]);
             }
 
             let mut s_t = b.to_owned();
@@ -171,27 +171,27 @@ impl<'l> LstmSegmenter<'l> {
             s_t.as_mut().add_dot_3d_2(x_t, w);
             s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
 
-            #[allow(clippy::unwrap_used)]
-            for i in 0..s_t.dim().0 {
-                let [s0, s1, s2, s3] = s_t
-                    .as_borrowed()
-                    .submatrix::<1>(i)
-                    .unwrap()
-                    .read_4()
-                    .unwrap(); // shape (hunits, 4)
-                let p = math_helper::sigmoid(s0);
-                let f = math_helper::sigmoid(s1);
-                let c = math_helper::tanh(s2);
-                let o = math_helper::sigmoid(s3);
-                let c_old = c_tm1.as_borrowed().as_slice().get(i).unwrap(); // shape (h_units)
-                let c_new = math_helper::fma(p, c, f * c_old);
-                *c_tm1.as_mut_slice().get_mut(i).unwrap() = c_new; // shape (h_units)
-                *h_tm1.as_mut_slice().get_mut(i).unwrap() = o * math_helper::tanh(c_new);
-                // shape (hunits)
-            }
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            s_t.submatrix_mut::<1>(0).unwrap().sigmoid_transform();
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            s_t.submatrix_mut::<1>(1).unwrap().sigmoid_transform();
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            s_t.submatrix_mut::<1>(2).unwrap().tanh_transform();
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            s_t.submatrix_mut::<1>(3).unwrap().sigmoid_transform();
+
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            c_tm1.convolve(
+                s_t.as_borrowed().submatrix(0).unwrap(),
+                s_t.as_borrowed().submatrix(2).unwrap(),
+                s_t.as_borrowed().submatrix(1).unwrap(),
+            );
+
+            #[allow(clippy::unwrap_used)] // first dimension is 4
+            h_tm1.mul_tanh(s_t.as_borrowed().submatrix(3).unwrap(), c_tm1.as_borrowed());
         }
 
-        let hunits = self.fw_u.dim().0;
+        let hunits = self.fw_u.dim().1;
 
         // Forward LSTM
         let mut c_fw = MatrixOwned::<1>::new_zero([hunits]);
