@@ -9,9 +9,6 @@ use harfbuzz::{Buffer, Direction, sys};
 use icu_harfbuzz::new_hb_unicode_funcs_unstable;
 
 let mut b = Buffer::with("مساء الخير");
-//b.guess_segment_properties();
-//assert_eq!(b.get_direction(), Direction::RTL);
-//assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
 
 let unicode_funcs = new_hb_unicode_funcs_unstable(&icu_testdata::unstable()).unwrap();
 
