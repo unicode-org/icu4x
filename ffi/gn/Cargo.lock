@@ -161,7 +161,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "displaydoc",
  "ryu",
@@ -509,7 +509,7 @@ checksum = "348108ab3fba42ec82ff6e9564fc4ca0247bdccdc68dd8af9764bbc79c3c8ffb"
 
 [[package]]
 name = "litemap"
-version = "0.6.1"
+version = "0.7.0"
 
 [[package]]
 name = "log"
@@ -779,11 +779,11 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "yoke"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -793,7 +793,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -803,14 +803,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -820,7 +820,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -829,7 +829,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "proc-macro2",
  "quote",
