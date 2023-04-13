@@ -41,21 +41,21 @@ pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
 
 derive_usize_iterator_with_type!(WordBreakIterator);
 
-/// The word type derived from the rule status in a rule-based word segmenter.
+/// The word type tag that is returned by [`WordBreakIterator::word_type()`].
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]
 pub enum WordType {
-    /// No category tag
+    /// No category tag.
     None = 0,
-    /// Number category tag
+    /// Number category tag.
     Number = 1,
     /// Letter category tag, including CJK.
     Letter = 2,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
-    /// Return the status value of break boundary.
+    /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
         match self.0.rule_status() {
@@ -64,7 +64,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
             RuleStatusType::Letter => WordType::Letter,
         }
     }
-    /// Return true when break boundary is word-like such as letter/number/CJK
+    /// Returns `true` when the break boundary is word-like, such as letter, number, or CJK.
     #[inline]
     pub fn is_word_like(&self) -> bool {
         self.0.is_word_like()
