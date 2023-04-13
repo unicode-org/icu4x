@@ -84,25 +84,25 @@ impl RegionDisplayNames {
     }
 }
 
-// / Lookup of the locale-specific display names by script code.
-// /
-// / # Example
-// /
-// / ```
-// / use icu_displaynames::{DisplayNamesOptios, ScriptDisplayNames};
-// / use icu_locid::{locale, subtags_script as script};
-// /
-// / let locale = locale!("en-001");
-// / let options: DisplayNamesOptions = Default::default();
-// / let display_name = ScriptDisplayNames::try_new_unstable(
-// /     &icu_testdata::unstable(),
-// /     &locale.into(),
-// /     options,
-// / )
-// / .expect("Data should load successfully");
-// /
-// / assert_eq!(display_name.of(script!("Hant")), Some("United Arab Emirates"));
-// / ```
+/// Lookup of the locale-specific display names by script code.
+///
+/// # Example
+///
+/// ```
+/// use icu_displaynames::{DisplayNamesOptions, ScriptDisplayNames};
+/// use icu_locid::{locale, subtags_script as script};
+///
+/// let locale = locale!("en-001");
+/// let options: DisplayNamesOptions = Default::default();
+/// let display_name = ScriptDisplayNames::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
+///
+/// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
+/// ```
 #[derive(Default)]
 pub struct ScriptDisplayNames {
     options: DisplayNamesOptions,
