@@ -118,13 +118,13 @@ pub struct LstmDataFloat32<'data> {
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
     pub(crate) dic: ZeroMap<'data, UnvalidatedStr, u16>,
-    /// The forward layer's first matrix. Shape (h, 4, dic.len + 1)
+    /// The forward layer's first matrix. Shape (dic.len + 1, 4, h)
     pub(crate) embedding_x_fw_w: LstmMatrix3<'data>,
     /// The forward layer's second matrix. Shape (h, 4, h)
     pub(crate) fw_u: LstmMatrix3<'data>,
     /// The forward layer's bias. Shape (h, 4)
     pub(crate) fw_b: LstmMatrix2<'data>,
-    /// The backward layer's first matrix. Shape (h, 4, dic.len + 1)
+    /// The backward layer's first matrix. Shape (dic.len + 1, 4, h)
     pub(crate) embedding_x_bw_w: LstmMatrix3<'data>,
     /// The backward layer's second matrix. Shape (h, 4, h)
     pub(crate) bw_u: LstmMatrix3<'data>,
