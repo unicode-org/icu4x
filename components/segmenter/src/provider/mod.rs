@@ -27,6 +27,12 @@ use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     LineBreakDataV1Marker = "segmenter/line@1",
     WordBreakDataV1Marker = "segmenter/word@1",
@@ -72,6 +78,12 @@ pub struct RuleBreakDataV1<'data> {
 }
 
 /// Property table for rule-based breaking.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -84,6 +96,12 @@ pub struct RuleBreakPropertyTable<'data>(
 );
 
 /// Break state table for rule-based breaking.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -96,6 +114,12 @@ pub struct RuleBreakStateTable<'data>(
 );
 
 /// Rules status data for rule_status and is_word_like of word segmenter.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -108,6 +132,12 @@ pub struct RuleStatusTable<'data>(
 );
 
 /// char16trie data for dictionary break
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(
     DictionaryForWordOnlyAutoV1Marker = "segmenter/dictionary/w_auto@1",
     DictionaryForWordLineExtendedV1Marker = "segmenter/dictionary/wl_ext@1"
