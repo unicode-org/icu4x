@@ -4,19 +4,20 @@
 
 use core::iter::FromIterator;
 
+use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
-/// Using ZeroOne(Option<T>) saves 8 bytes in ShortVec via niche optimization.
+/// Using ZeroOne(Option<T>) saves 8 bytes in ShortSlice via niche optimization.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub(crate) enum ShortVec<T> {
+pub(crate) enum ShortSlice<T> {
     ZeroOne(Option<T>),
-    Multi(Vec<T>),
+    Multi(Box<[T]>),
 }
 
-impl<T> ShortVec<T> {
+impl<T> ShortSlice<T> {
     #[inline]
     pub const fn new() -> Self {
         Self::ZeroOne(None)
@@ -29,11 +30,14 @@ impl<T> ShortVec<T> {
 
     pub fn push(&mut self, item: T) {
         *self = match core::mem::replace(self, Self::ZeroOne(None)) {
-            ShortVec::ZeroOne(None) => ShortVec::ZeroOne(Some(item)),
-            ShortVec::ZeroOne(Some(prev_item)) => ShortVec::Multi(vec![prev_item, item]),
-            ShortVec::Multi(mut items) => {
+            ShortSlice::ZeroOne(None) => ShortSlice::ZeroOne(Some(item)),
+            ShortSlice::ZeroOne(Some(prev_item)) => {
+                ShortSlice::Multi(vec![prev_item, item].into_boxed_slice())
+            }
+            ShortSlice::Multi(items) => {
+                let mut items = items.into_vec();
                 items.push(item);
-                ShortVec::Multi(items)
+                ShortSlice::Multi(items.into_boxed_slice())
             }
         };
     }
@@ -41,25 +45,25 @@ impl<T> ShortVec<T> {
     #[inline]
     pub fn as_slice(&self) -> &[T] {
         match self {
-            ShortVec::ZeroOne(None) => &[],
-            ShortVec::ZeroOne(Some(v)) => core::slice::from_ref(v),
-            ShortVec::Multi(v) => v,
+            ShortSlice::ZeroOne(None) => &[],
+            ShortSlice::ZeroOne(Some(v)) => core::slice::from_ref(v),
+            ShortSlice::Multi(v) => v,
         }
     }
 
     #[inline]
     pub fn as_mut_slice(&mut self) -> &mut [T] {
         match self {
-            ShortVec::ZeroOne(None) => &mut [],
-            ShortVec::ZeroOne(Some(v)) => core::slice::from_mut(v),
-            ShortVec::Multi(v) => v,
+            ShortSlice::ZeroOne(None) => &mut [],
+            ShortSlice::ZeroOne(Some(v)) => core::slice::from_mut(v),
+            ShortSlice::Multi(v) => v,
         }
     }
 
     #[inline]
     pub const fn single(&self) -> Option<&T> {
         match self {
-            ShortVec::ZeroOne(Some(v)) => Some(v),
+            ShortSlice::ZeroOne(Some(v)) => Some(v),
             _ => None,
         }
     }
@@ -67,9 +71,9 @@ impl<T> ShortVec<T> {
     #[inline]
     pub fn len(&self) -> usize {
         match self {
-            ShortVec::ZeroOne(None) => 0,
-            ShortVec::ZeroOne(_) => 1,
-            ShortVec::Multi(ref v) => v.len(),
+            ShortSlice::ZeroOne(None) => 0,
+            ShortSlice::ZeroOne(_) => 1,
+            ShortSlice::Multi(ref v) => v.len(),
         }
     }
 
@@ -81,19 +85,20 @@ impl<T> ShortVec<T> {
             self.len()
         );
 
-        *self = match core::mem::replace(self, ShortVec::ZeroOne(None)) {
-            ShortVec::ZeroOne(None) => ShortVec::ZeroOne(Some(elt)),
-            ShortVec::ZeroOne(Some(item)) => {
+        *self = match core::mem::replace(self, ShortSlice::ZeroOne(None)) {
+            ShortSlice::ZeroOne(None) => ShortSlice::ZeroOne(Some(elt)),
+            ShortSlice::ZeroOne(Some(item)) => {
                 let items = if index == 0 {
-                    vec![elt, item]
+                    vec![elt, item].into_boxed_slice()
                 } else {
-                    vec![item, elt]
+                    vec![item, elt].into_boxed_slice()
                 };
-                ShortVec::Multi(items)
+                ShortSlice::Multi(items)
             }
-            ShortVec::Multi(mut items) => {
+            ShortSlice::Multi(items) => {
+                let mut items = items.into_vec();
                 items.insert(index, elt);
-                ShortVec::Multi(items)
+                ShortSlice::Multi(items.into_boxed_slice())
             }
         }
     }
@@ -106,17 +111,18 @@ impl<T> ShortVec<T> {
             self.len()
         );
 
-        let (replaced, removed_item) = match core::mem::replace(self, ShortVec::ZeroOne(None)) {
-            ShortVec::ZeroOne(None) => unreachable!(),
-            ShortVec::ZeroOne(Some(v)) => (ShortVec::ZeroOne(None), v),
-            ShortVec::Multi(mut v) => {
+        let (replaced, removed_item) = match core::mem::replace(self, ShortSlice::ZeroOne(None)) {
+            ShortSlice::ZeroOne(None) => unreachable!(),
+            ShortSlice::ZeroOne(Some(v)) => (ShortSlice::ZeroOne(None), v),
+            ShortSlice::Multi(v) => {
+                let mut v = v.into_vec();
                 let removed_item = v.remove(index);
                 match v.len() {
                     #[allow(clippy::unwrap_used)]
                     // we know that the vec has exactly one element left
-                    1 => (ShortVec::ZeroOne(Some(v.pop().unwrap())), removed_item),
+                    1 => (ShortSlice::ZeroOne(Some(v.pop().unwrap())), removed_item),
                     // v has at least 2 elements, create a Multi variant
-                    _ => (ShortVec::Multi(v), removed_item),
+                    _ => (ShortSlice::Multi(v.into_boxed_slice()), removed_item),
                 }
             }
         };
@@ -126,38 +132,38 @@ impl<T> ShortVec<T> {
 
     #[inline]
     pub fn clear(&mut self) {
-        let _ = core::mem::replace(self, ShortVec::ZeroOne(None));
+        let _ = core::mem::replace(self, ShortSlice::ZeroOne(None));
     }
 }
 
-impl<T> From<Vec<T>> for ShortVec<T> {
+impl<T> From<Vec<T>> for ShortSlice<T> {
     fn from(v: Vec<T>) -> Self {
         match v.len() {
-            0 => ShortVec::ZeroOne(None),
+            0 => ShortSlice::ZeroOne(None),
             #[allow(clippy::unwrap_used)] // we know that the vec is not empty
-            1 => ShortVec::ZeroOne(Some(v.into_iter().next().unwrap())),
-            _ => ShortVec::Multi(v),
+            1 => ShortSlice::ZeroOne(Some(v.into_iter().next().unwrap())),
+            _ => ShortSlice::Multi(v.into_boxed_slice()),
         }
     }
 }
 
-impl<T> Default for ShortVec<T> {
+impl<T> Default for ShortSlice<T> {
     fn default() -> Self {
-        ShortVec::ZeroOne(None)
+        ShortSlice::ZeroOne(None)
     }
 }
 
-impl<T> FromIterator<T> for ShortVec<T> {
+impl<T> FromIterator<T> for ShortSlice<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         iter.into_iter().collect::<Vec<_>>().into()
     }
 }
 
-impl<K, V> StoreConstEmpty<K, V> for ShortVec<(K, V)> {
-    const EMPTY: ShortVec<(K, V)> = ShortVec::ZeroOne(None);
+impl<K, V> StoreConstEmpty<K, V> for ShortSlice<(K, V)> {
+    const EMPTY: ShortSlice<(K, V)> = ShortSlice::ZeroOne(None);
 }
 
-impl<K, V> Store<K, V> for ShortVec<(K, V)> {
+impl<K, V> Store<K, V> for ShortSlice<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {
         self.len()
@@ -165,7 +171,7 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
 
     #[inline]
     fn lm_is_empty(&self) -> bool {
-        matches!(self, ShortVec::ZeroOne(None))
+        matches!(self, ShortSlice::ZeroOne(None))
     }
 
     #[inline]
@@ -176,8 +182,8 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     #[inline]
     fn lm_last(&self) -> Option<(&K, &V)> {
         match self {
-            ShortVec::ZeroOne(v) => v.as_ref(),
-            ShortVec::Multi(v) => v.last(),
+            ShortSlice::ZeroOne(v) => v.as_ref(),
+            ShortSlice::Multi(v) => v.last(),
         }
         .map(|elt| (&elt.0, &elt.1))
     }
@@ -191,17 +197,19 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     }
 }
 
-impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
+impl<K: Ord, V> StoreFromIterable<K, V> for ShortSlice<(K, V)> {
+    fn lm_sort_from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
+        let v: Vec<(K, V)> = Vec::lm_sort_from_iter(iter);
+        v.into()
+    }
+}
+
+impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
-        ShortVec::ZeroOne(None)
+        ShortSlice::ZeroOne(None)
     }
 
-    // ShortVec supports reserving capacity for additional elements only if we have already allocated a vector
-    fn lm_reserve(&mut self, additional: usize) {
-        if let ShortVec::Multi(ref mut v) = self {
-            v.reserve(additional)
-        }
-    }
+    fn lm_reserve(&mut self, _additional: usize) {}
 
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
         self.as_mut_slice()
@@ -226,7 +234,7 @@ impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
     }
 }
 
-impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortSlice<(K, V)> {
     type KeyValueIter =
         core::iter::Map<core::slice::Iter<'a, (K, V)>, for<'r> fn(&'r (K, V)) -> (&'r K, &'r V)>;
 
@@ -235,11 +243,11 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
     }
 }
 
-impl<K, V> StoreFromIterator<K, V> for ShortVec<(K, V)> {}
+impl<K, V> StoreFromIterator<K, V> for ShortSlice<(K, V)> {}
 
 #[test]
 fn test_shortvec_impl() {
-    litemap::testing::check_store::<ShortVec<(u32, u64)>>();
+    litemap::testing::check_store::<ShortSlice<(u32, u64)>>();
 }
 
 macro_rules! impl_tinystr_subtag {

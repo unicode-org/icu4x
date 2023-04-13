@@ -153,9 +153,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.first(), Some((&1, &"uno")));
     /// ```
@@ -171,9 +170,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new_vec();
-    /// assert!(map.try_append(1, "uno").is_none());
-    /// assert!(map.try_append(3, "tres").is_none());
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.last(), Some((&3, &"tres")));
     /// ```
@@ -500,22 +498,11 @@ where
 impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreMut<K, V>,
+    S: StoreFromIterable<K, V>,
 {
     fn from_iter<I: IntoIterator<Item = (K, V)>>(iter: I) -> Self {
-        let iter = iter.into_iter();
-        let mut map = match iter.size_hint() {
-            (_, Some(upper)) => Self::with_capacity(upper),
-            (lower, None) => Self::with_capacity(lower),
-        };
-
-        for (key, value) in iter {
-            if let Some((key, value)) = map.try_append(key, value) {
-                map.insert(key, value);
-            }
-        }
-
-        map
+        let values = S::lm_sort_from_iter(iter);
+        Self::from_sorted_store_unchecked(values)
     }
 }
 
@@ -609,7 +596,6 @@ mod test {
 
         assert_eq!(expected, actual);
     }
-
     fn make_13() -> LiteMap<usize, &'static str> {
         let mut result = LiteMap::new();
         result.insert(1, "one");
