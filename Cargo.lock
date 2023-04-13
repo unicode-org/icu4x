@@ -794,7 +794,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "databake",
  "proc-macro2",
