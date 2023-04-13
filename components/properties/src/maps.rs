@@ -223,8 +223,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategory;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategory;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");
@@ -249,8 +249,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategory;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategory;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");
@@ -301,8 +301,8 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategoryGroup;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategoryGroup;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");

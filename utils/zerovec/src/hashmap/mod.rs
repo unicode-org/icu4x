@@ -176,7 +176,7 @@ where
     /// ```
     /// use zerovec::ZeroHashMap;
     ///
-    /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
+    /// let kv: Vec<(i32, &str)> = vec![(1, "a"), (2, "b"), (3, "c"), (4, "d")];
     /// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::from_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));

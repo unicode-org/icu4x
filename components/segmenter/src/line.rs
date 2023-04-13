@@ -161,8 +161,9 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-///     .expect("Data exists");
+/// let segmenter =
+///     LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -173,7 +174,8 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::{
-///     LineBreakOptions, LineBreakStrictness, LineSegmenter, LineBreakWordOption,
+///     LineBreakOptions, LineBreakStrictness, LineBreakWordOption,
+///     LineSegmenter,
 /// };
 ///
 /// let mut options = LineBreakOptions::default();
@@ -196,8 +198,9 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter = LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-///     .expect("Data exists");
+/// let segmenter =
+///     LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
+///         .expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
