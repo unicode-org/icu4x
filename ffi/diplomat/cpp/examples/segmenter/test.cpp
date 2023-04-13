@@ -48,7 +48,7 @@ void iterate_word_breakpoints(Iterator& iterator) {
             break;
         }
         cout << " " << breakpoint;
-        switch (iterator.rule_status()) {
+        switch (iterator.word_type()) {
             case ICU4XSegmenterWordType::None:
                 cout << " (none";
                 break;

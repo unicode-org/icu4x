@@ -148,19 +148,19 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// Not all segments delimited by word boundaries are words; some are interword
 /// segments such as spaces and punctuation.
-/// The [`RuleBreakIterator::rule_status()`] of a boundary can be used to
+/// The [`RuleBreakIterator::word_type()`] of a boundary can be used to
 /// classify the preceding segment.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu_segmenter::{RuleStatusType, WordSegmenter};
+/// # use icu_segmenter::{WordType, WordSegmenter};
 /// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 /// #     .expect("Data exists");
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = {
 ///     let mut it = segmenter.segment_str(text);
-///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
+///     std::iter::from_fn(move || it.next().map(|i| (i, it.word_type())))
 ///         .tuple_windows()
-///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
+///         .filter(|(_, (_, status))| *status == WordType::Letter)
 ///         .map(|((i, _), (j, _))| &text[i..j])
 ///         .collect()
 /// };
