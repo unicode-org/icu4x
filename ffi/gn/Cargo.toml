@@ -14,27 +14,27 @@ icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = fa
 icu = { version = "1.0", path = "../../components/icu" }
 icu_provider = { version = "1.0", path = "../../provider/core" }
 
-[gn.package.log."0.4.14"]
+[gn.package.log."0.4.17"]
 rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
 
 # TODO: Determine the correct rustflags for memchr
 [gn.package.memchr."2.5.0"]
 rustflags = []
 
-[gn.package.proc-macro2."1.0.32"]
-rustflags = ["--cfg=lexerror_display", "--cfg=hygiene", "--cfg=literal_from_str", "--cfg=is_available", "--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
+[gn.package.proc-macro2."1.0.56"]
+rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
 
-[gn.package.ryu."1.0.5"]
-rustflags = ["--cfg=integer128", "--cfg=maybe_uninit"]
-
-[gn.package.serde."1.0.130"]
-rustflags = ["--cfg=ops_bound", "--cfg=core_reverse", "--cfg=de_boxed_c_str", "--cfg=de_boxed_path", "--cfg=de_rc_dst", "--cfg=core_duration", "--cfg=integer128", "--cfg=range_inclusive", "--cfg=iterator_try_fold", "--cfg=num_nonzero", "--cfg=serde_derive", "--cfg=core_try_from", "--cfg=num_nonzero_signed", "--cfg=systemtime_checked_add", "--cfg=std_atomic64", "--cfg=std_atomic"]
-
-[gn.package.serde_derive."1.0.130"]
-rustflags = ["--cfg=underscore_consts", "--cfg=ptr_addr_of"]
-
-[gn.package.syn."1.0.81"]
+[gn.package.quote."1.0.26"]
 rustflags = []
+
+[gn.package.serde."1.0.156"]
+rustflags = []
+
+[gn.package.serde_derive."1.0.156"]
+rustflags = []
+
+[gn.package.syn."1.0.109"]
+rustflags = ["--cfg=syn_disable_nightly_tests"]
 
 [gn.package.num-traits."0.2.15"]
 rustflags = ["--cfg=has_i128"]
