@@ -304,7 +304,7 @@ impl LineSegmenter {
     /// complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during inference.
+    /// the full dictionary but more expensive during segmentation (inference).
     ///
     /// See also [`Self::try_new_lstm_with_options_unstable`].
     #[cfg(feature = "lstm")]
@@ -394,7 +394,7 @@ impl LineSegmenter {
     /// LSTM data for complex scripts (Khmer, Lao, Myanmar, and Thai).
     ///
     /// The LSTM, or Long Term Short Memory, is a machine learning model. It is smaller than
-    /// the full dictionary but more expensive during inference.
+    /// the full dictionary but more expensive during segmentation (inference).
     ///
     /// See also [`Self::try_new_dictionary_unstable`].
     #[cfg(feature = "lstm")]
