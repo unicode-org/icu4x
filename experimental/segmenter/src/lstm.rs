@@ -58,11 +58,10 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
 
 pub(crate) struct LstmSegmenter<'l> {
     dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
-    embedding: MatrixZero<'l, 2>,
-    fw_w: MatrixZero<'l, 3>,
+    embedding_x_fw_w: MatrixZero<'l, 3>,
     fw_u: MatrixZero<'l, 3>,
     fw_b: MatrixZero<'l, 2>,
-    bw_w: MatrixZero<'l, 3>,
+    embedding_x_bw_w: MatrixZero<'l, 3>,
     bw_u: MatrixZero<'l, 3>,
     bw_b: MatrixZero<'l, 2>,
     time_w: MatrixZero<'l, 3>,
@@ -79,11 +78,10 @@ impl<'l> LstmSegmenter<'l> {
         let LstmDataV1::Float32(lstm) = lstm.get();
         Self {
             dic: lstm.dic.as_borrowed(),
-            embedding: lstm.embedding.as_matrix_zero(),
-            fw_w: lstm.fw_w.as_matrix_zero(),
+            embedding_x_fw_w: lstm.embedding_x_fw_w.as_matrix_zero(),
             fw_u: lstm.fw_u.as_matrix_zero(),
             fw_b: lstm.fw_b.as_matrix_zero(),
-            bw_w: lstm.bw_w.as_matrix_zero(),
+            embedding_x_bw_w: lstm.embedding_x_bw_w.as_matrix_zero(),
             bw_u: lstm.bw_u.as_matrix_zero(),
             bw_b: lstm.bw_b.as_matrix_zero(),
             time_w: lstm.time_w.as_matrix_zero(),
@@ -147,28 +145,27 @@ impl<'l> LstmSegmenter<'l> {
                 .collect()
         };
 
-        /// `compute_hc1` implemens the evaluation of one LSTM layer.
+        /// `compute_hc1` implements the evaluation of one LSTM layer.
         fn compute_hc<'a>(
-            x_t: MatrixZero<'a, 1>,
             mut h_tm1: MatrixBorrowedMut<'a, 1>,
             mut c_tm1: MatrixBorrowedMut<'a, 1>,
-            w: MatrixZero<'a, 3>,
+            embedding_x_w: MatrixZero<'a, 2>,
             u: MatrixZero<'a, 3>,
             b: MatrixZero<'a, 2>,
         ) {
             #[cfg(debug_assertions)]
             {
                 let hunits = h_tm1.dim();
-                let embedd_dim = x_t.dim();
                 c_tm1.as_borrowed().debug_assert_dims([hunits]);
-                w.debug_assert_dims([4, hunits, embedd_dim]);
                 u.debug_assert_dims([4, hunits, hunits]);
+                embedding_x_w.debug_assert_dims([4, hunits]);
                 b.debug_assert_dims([4, hunits]);
             }
 
             let mut s_t = b.to_owned();
 
-            s_t.as_mut().add_dot_3d_2(x_t, w);
+            #[allow(clippy::unwrap_used)] // both dimension (4, hunits)
+            s_t.as_mut().add(embedding_x_w).unwrap();
             s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
 
             #[allow(clippy::unwrap_used)] // first dimension is 4
@@ -198,17 +195,16 @@ impl<'l> LstmSegmenter<'l> {
         let mut all_h_fw = MatrixOwned::<2>::new_zero([input_seq.len(), hunits]);
         for (i, &g_id) in input_seq.iter().enumerate() {
             #[allow(clippy::unwrap_used)]
-            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
-            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
+            // embedding_x_fw_w has shape (dict.len() + 1, 4, hunit), g_id is at most dict.len()
+            let embedding_x_w = self.embedding_x_fw_w.submatrix::<2>(g_id as usize).unwrap();
             if i > 0 {
                 all_h_fw.as_mut().copy_submatrix::<1>(i - 1, i);
             }
             #[allow(clippy::unwrap_used)]
             compute_hc(
-                x_t,
                 all_h_fw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
                 c_fw.as_mut(),
-                self.fw_w,
+                embedding_x_w,
                 self.fw_u,
                 self.fw_b,
             );
@@ -219,17 +215,16 @@ impl<'l> LstmSegmenter<'l> {
         let mut all_h_bw = MatrixOwned::<2>::new_zero([input_seq.len(), hunits]);
         for (i, &g_id) in input_seq.iter().enumerate().rev() {
             #[allow(clippy::unwrap_used)]
-            // embedding has shape (dict.len() + 1, hunit), g_id is at most dict.len()
-            let x_t = self.embedding.submatrix::<1>(g_id as usize).unwrap();
+            // embedding_x_bw_w has shape (dict.len() + 1, 4, hunit), g_id is at most dict.len()
+            let embedding_x_w = self.embedding_x_bw_w.submatrix::<2>(g_id as usize).unwrap();
             if i + 1 < input_seq.len() {
                 all_h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
             }
             #[allow(clippy::unwrap_used)]
             compute_hc(
-                x_t,
                 all_h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
                 c_bw.as_mut(),
-                self.bw_w,
+                embedding_x_w,
                 self.bw_u,
                 self.bw_b,
             );

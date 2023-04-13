@@ -74,6 +74,7 @@ impl RawLstmData {
         let bw_b = self.bw_b.to_ndarray1()?;
         let time_w = self.time_w.to_ndarray2()?;
         let time_b = self.time_b.to_ndarray1()?;
+        let num_classes = *embedding.shape().get(0).ok_or(DIMENSION_MISMATCH_ERROR)?;
         let embedd_dim = *embedding.shape().get(1).ok_or(DIMENSION_MISMATCH_ERROR)?;
         let hunits = *fw_u.shape().first().ok_or(DIMENSION_MISMATCH_ERROR)?;
         if fw_w.shape() != [embedd_dim, 4 * hunits]
@@ -88,19 +89,15 @@ impl RawLstmData {
             return Err(DIMENSION_MISMATCH_ERROR);
         }
         // Unwraps okay: dimensions checked above
-        let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
+        let fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
         let fw_b = fw_b.into_shape((4, hunits)).unwrap();
-        let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
+        let bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
         let bw_b = bw_b.into_shape((4, hunits)).unwrap();
         let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
-        fw_w.swap_axes(0, 2);
-        fw_w.swap_axes(0, 1);
         fw_u.swap_axes(0, 2);
         fw_u.swap_axes(0, 1);
-        bw_w.swap_axes(0, 2);
-        bw_w.swap_axes(0, 1);
         bw_u.swap_axes(0, 2);
         bw_u.swap_axes(0, 1);
         time_w.swap_axes(1, 2);
@@ -112,10 +109,22 @@ impl RawLstmData {
         let bw_b = bw_b.as_standard_layout().into_owned();
         let time_w = time_w.as_standard_layout().into_owned();
 
-        assert_eq!(fw_w.shape(), [4, hunits, embedd_dim]);
+        let embedding_x_fw_w = Array::from_shape_fn((num_classes, 4, hunits), |(i, j, k)| {
+            embedding
+                .slice(ndarray::s![i, ..])
+                .dot(&fw_w.slice(ndarray::s![.., j, k]))
+        });
+
+        let embedding_x_bw_w = Array::from_shape_fn((num_classes, 4, hunits), |(i, j, k)| {
+            embedding
+                .slice(ndarray::s![i, ..])
+                .dot(&bw_w.slice(ndarray::s![.., j, k]))
+        });
+
+        assert_eq!(embedding_x_fw_w.shape(), [num_classes, 4, hunits]);
         assert_eq!(fw_u.shape(), [4, hunits, hunits]);
         assert_eq!(fw_b.shape(), [4, hunits]);
-        assert_eq!(bw_w.shape(), [4, hunits, embedd_dim]);
+        assert_eq!(embedding_x_bw_w.shape(), [num_classes, 4, hunits]);
         assert_eq!(bw_u.shape(), [4, hunits, hunits]);
         assert_eq!(bw_b.shape(), [4, hunits]);
         assert_eq!(time_w.shape(), [2, 4, hunits]);
@@ -135,11 +144,10 @@ impl RawLstmData {
                 .iter()
                 .map(|(k, &v)| (UnvalidatedStr::from_str(k), v))
                 .collect(),
-            ndarray_to_lstm_matrix2(embedding)?,
-            ndarray_to_lstm_matrix3(fw_w)?,
+            ndarray_to_lstm_matrix3(embedding_x_fw_w)?,
             ndarray_to_lstm_matrix3(fw_u)?,
             ndarray_to_lstm_matrix2(fw_b)?,
-            ndarray_to_lstm_matrix3(bw_w)?,
+            ndarray_to_lstm_matrix3(embedding_x_bw_w)?,
             ndarray_to_lstm_matrix3(bw_u)?,
             ndarray_to_lstm_matrix2(bw_b)?,
             ndarray_to_lstm_matrix3(time_w)?,

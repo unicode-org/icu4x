@@ -118,16 +118,14 @@ pub struct LstmDataFloat32<'data> {
     pub(crate) model: ModelType,
     /// The grapheme cluster dictionary used to train the model
     pub(crate) dic: ZeroMap<'data, UnvalidatedStr, u16>,
-    /// The embedding layer. Shape (dic.len + 1, e)
-    pub(crate) embedding: LstmMatrix2<'data>,
-    /// The forward layer's first matrix. Shape (h, 4, e)
-    pub(crate) fw_w: LstmMatrix3<'data>,
+    /// The forward layer's first matrix. Shape (h, 4, dic.len + 1)
+    pub(crate) embedding_x_fw_w: LstmMatrix3<'data>,
     /// The forward layer's second matrix. Shape (h, 4, h)
     pub(crate) fw_u: LstmMatrix3<'data>,
     /// The forward layer's bias. Shape (h, 4)
     pub(crate) fw_b: LstmMatrix2<'data>,
-    /// The backward layer's first matrix. Shape (h, 4, e)
-    pub(crate) bw_w: LstmMatrix3<'data>,
+    /// The backward layer's first matrix. Shape (h, 4, dic.len + 1)
+    pub(crate) embedding_x_bw_w: LstmMatrix3<'data>,
     /// The backward layer's second matrix. Shape (h, 4, h)
     pub(crate) bw_u: LstmMatrix3<'data>,
     /// The backward layer's bias. Shape (h, 4)
@@ -144,11 +142,10 @@ impl<'data> LstmDataFloat32<'data> {
     pub const fn from_parts_unchecked(
         model: ModelType,
         dic: ZeroMap<'data, UnvalidatedStr, u16>,
-        embedding: LstmMatrix2<'data>,
-        fw_w: LstmMatrix3<'data>,
+        embedding_x_fw_w: LstmMatrix3<'data>,
         fw_u: LstmMatrix3<'data>,
         fw_b: LstmMatrix2<'data>,
-        bw_w: LstmMatrix3<'data>,
+        embedding_x_bw_w: LstmMatrix3<'data>,
         bw_u: LstmMatrix3<'data>,
         bw_b: LstmMatrix2<'data>,
         time_w: LstmMatrix3<'data>,
@@ -157,11 +154,10 @@ impl<'data> LstmDataFloat32<'data> {
         Self {
             model,
             dic,
-            embedding,
-            fw_w,
+            embedding_x_fw_w,
             fw_u,
             fw_b,
-            bw_w,
+            embedding_x_bw_w,
             bw_u,
             bw_b,
             time_w,
@@ -175,11 +171,10 @@ impl<'data> LstmDataFloat32<'data> {
     pub fn try_from_parts(
         model: ModelType,
         dic: ZeroMap<'data, UnvalidatedStr, u16>,
-        embedding: LstmMatrix2<'data>,
-        fw_w: LstmMatrix3<'data>,
+        embedding_x_fw_w: LstmMatrix3<'data>,
         fw_u: LstmMatrix3<'data>,
         fw_b: LstmMatrix2<'data>,
-        bw_w: LstmMatrix3<'data>,
+        embedding_x_bw_w: LstmMatrix3<'data>,
         bw_u: LstmMatrix3<'data>,
         bw_b: LstmMatrix2<'data>,
         time_w: LstmMatrix3<'data>,
@@ -188,14 +183,11 @@ impl<'data> LstmDataFloat32<'data> {
         let dic_len = u16::try_from(dic.len())
             .map_err(|_| DataError::custom("Dictionary does not fit in u16"))?;
 
-        let num_classes = embedding.dims[0];
-        let embedd_dim = embedding.dims[1];
         let hunits = fw_u.dims[2];
-        if num_classes - 1 != dic_len
-            || fw_w.dims != [4, hunits, embedd_dim]
+        if embedding_x_fw_w.dims != [dic_len + 1, 4, hunits]
             || fw_u.dims != [4, hunits, hunits]
             || fw_b.dims != [4, hunits]
-            || bw_w.dims != [4, hunits, embedd_dim]
+            || embedding_x_bw_w.dims != [dic_len + 1, 4, hunits]
             || bw_u.dims != [4, hunits, hunits]
             || bw_b.dims != [4, hunits]
             || time_w.dims != [2, 4, hunits]
@@ -212,11 +204,10 @@ impl<'data> LstmDataFloat32<'data> {
         Ok(Self {
             model,
             dic,
-            embedding,
-            fw_w,
+            embedding_x_fw_w,
             fw_u,
             fw_b,
-            bw_w,
+            embedding_x_bw_w,
             bw_u,
             bw_b,
             time_w,
@@ -237,15 +228,13 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataFloat32<'data> {
             #[cfg_attr(feature = "serde", serde(borrow))]
             dic: ZeroMap<'data, UnvalidatedStr, u16>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            embedding: LstmMatrix2<'data>,
-            #[cfg_attr(feature = "serde", serde(borrow))]
-            fw_w: LstmMatrix3<'data>,
+            embedding_x_fw_w: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
             fw_u: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
             fw_b: LstmMatrix2<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
-            bw_w: LstmMatrix3<'data>,
+            embedding_x_bw_w: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
             bw_u: LstmMatrix3<'data>,
             #[cfg_attr(feature = "serde", serde(borrow))]
@@ -262,11 +251,10 @@ impl<'de: 'data, 'data> serde::Deserialize<'de> for LstmDataFloat32<'data> {
         Self::try_from_parts(
             raw.model,
             raw.dic,
-            raw.embedding,
-            raw.fw_w,
+            raw.embedding_x_fw_w,
             raw.fw_u,
             raw.fw_b,
-            raw.bw_w,
+            raw.embedding_x_bw_w,
             raw.bw_u,
             raw.bw_b,
             raw.time_w,
@@ -281,11 +269,10 @@ impl databake::Bake for LstmDataFloat32<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         let model = self.model.bake(env);
         let dic = self.dic.bake(env);
-        let embedding = self.embedding.bake(env);
-        let fw_w = self.fw_w.bake(env);
+        let embedding_x_fw_w = self.embedding_x_fw_w.bake(env);
         let fw_u = self.fw_u.bake(env);
         let fw_b = self.fw_b.bake(env);
-        let bw_w = self.bw_w.bake(env);
+        let embedding_x_bw_w = self.embedding_x_bw_w.bake(env);
         let bw_u = self.bw_u.bake(env);
         let bw_b = self.bw_b.bake(env);
         let time_w = self.time_w.bake(env);
@@ -294,11 +281,10 @@ impl databake::Bake for LstmDataFloat32<'_> {
             icu_segmenter::provider::LstmDataFloat32::from_parts_unchecked(
                 #model,
                 #dic,
-                #embedding,
-                #fw_w,
+                #embedding_x_fw_w,
                 #fw_u,
                 #fw_b,
-                #bw_w,
+                #embedding_x_bw_w,
                 #bw_u,
                 #bw_b,
                 #time_w,

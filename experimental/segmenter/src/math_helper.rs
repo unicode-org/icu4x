@@ -348,46 +348,6 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
             }
         }
     }
-
-    /// Calculate the dot product of a and b, adding the result to self.
-    ///
-    /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
-    pub fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
-        let m = a.dim();
-        let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
-        debug_assert_eq!(
-            m,
-            b.dim().2,
-            "dims: {:?}/{:?}/{:?}",
-            self.as_borrowed().dim(),
-            a.dim(),
-            b.dim()
-        );
-        debug_assert_eq!(
-            n,
-            b.dim().0 * b.dim().1,
-            "dims: {:?}/{:?}/{:?}",
-            self.as_borrowed().dim(),
-            a.dim(),
-            b.dim()
-        );
-        // Note: The following two loops are equivalent, but the second has more opportunity for
-        // vectorization since it allows the vectorization to span submatrices.
-        // for i in 0..b.dim().0 {
-        //     self.submatrix_mut::<1>(i).add_dot_2d(a, b.submatrix(i));
-        // }
-        let lhs = a.as_slice();
-        for i in 0..n {
-            if let (Some(dest), Some(rhs)) = (
-                self.as_mut_slice().get_mut(i),
-                b.as_slice().get_subslice(i * m..(i + 1) * m),
-            ) {
-                *dest += unrolled_dot_2(lhs, rhs);
-            } else {
-                debug_assert!(false, "unreachable: dims checked above");
-            }
-        }
-    }
 }
 
 /// A `D`-dimensional matrix borrowed from a [`ZeroSlice`].
@@ -482,43 +442,6 @@ fn unrolled_dot_1(xs: &[f32], ys: &ZeroSlice<f32>) -> f32 {
         p.5 += x5 * f32c!(y5);
         p.6 += x6 * f32c!(y6);
         p.7 += x7 * f32c!(y7);
-    }
-    sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
-}
-
-/// Compute the dot product of two unaligned f32 slices.
-///
-/// `xs` and `ys` must be the same length
-///
-/// (Based on ndarray 0.15.6)
-fn unrolled_dot_2(xs: &ZeroSlice<f32>, ys: &ZeroSlice<f32>) -> f32 {
-    debug_assert_eq!(xs.len(), ys.len());
-    // eightfold unrolled so that floating point can be vectorized
-    // (even with strict floating point accuracy semantics)
-    let mut p = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let xit = xs.as_ule_slice().chunks_exact(8);
-    let yit = ys.as_ule_slice().chunks_exact(8);
-    let sum = xit
-        .remainder()
-        .iter()
-        .zip(yit.remainder().iter())
-        .map(|(x, y)| f32c!(*x) * f32c!(*y))
-        .sum::<f32>();
-    for (xx, yy) in xit.zip(yit) {
-        // TODO: Use array_chunks once stable to avoid the unwrap.
-        // <https://github.com/rust-lang/rust/issues/74985>
-        #[allow(clippy::unwrap_used)]
-        let [x0, x1, x2, x3, x4, x5, x6, x7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(xx).unwrap();
-        #[allow(clippy::unwrap_used)]
-        let [y0, y1, y2, y3, y4, y5, y6, y7] = *<&[<f32 as AsULE>::ULE; 8]>::try_from(yy).unwrap();
-        p.0 += f32c!(x0) * f32c!(y0);
-        p.1 += f32c!(x1) * f32c!(y1);
-        p.2 += f32c!(x2) * f32c!(y2);
-        p.3 += f32c!(x3) * f32c!(y3);
-        p.4 += f32c!(x4) * f32c!(y4);
-        p.5 += f32c!(x5) * f32c!(y5);
-        p.6 += f32c!(x6) * f32c!(y6);
-        p.7 += f32c!(x7) * f32c!(y7);
     }
     sum + (p.0 + p.4) + (p.1 + p.5) + (p.2 + p.6) + (p.3 + p.7)
 }
