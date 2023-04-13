@@ -48,15 +48,15 @@
     See the `Rust documentation for LineBreakOptions <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
 
-    .. cpp:member:: ICU4XLineBreakRule line_break_rule
+    .. cpp:member:: ICU4XLineBreakStrictness strictness
 
-    .. cpp:member:: ICU4XWordBreakRule word_break_rule
+    .. cpp:member:: ICU4XLineBreakWordOption word_option
 
     .. cpp:member:: bool ja_zh
 
-.. cpp:enum-struct:: ICU4XLineBreakRule
+.. cpp:enum-struct:: ICU4XLineBreakStrictness
 
-    See the `Rust documentation for LineBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
+    See the `Rust documentation for LineBreakStrictness <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html>`__ for more information.
 
 
     .. cpp:enumerator:: Loose
@@ -66,6 +66,17 @@
     .. cpp:enumerator:: Strict
 
     .. cpp:enumerator:: Anywhere
+
+.. cpp:enum-struct:: ICU4XLineBreakWordOption
+
+    See the `Rust documentation for LineBreakWordOption <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Normal
+
+    .. cpp:enumerator:: BreakAll
+
+    .. cpp:enumerator:: KeepAll
 
 .. cpp:class:: ICU4XLineSegmenter
 
@@ -142,14 +153,3 @@
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
 
-
-.. cpp:enum-struct:: ICU4XWordBreakRule
-
-    See the `Rust documentation for WordBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.WordBreakRule.html>`__ for more information.
-
-
-    .. cpp:enumerator:: Normal
-
-    .. cpp:enumerator:: BreakAll
-
-    .. cpp:enumerator:: KeepAll

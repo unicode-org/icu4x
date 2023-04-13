@@ -14,7 +14,7 @@ typedef struct ICU4XWordBreakIteratorLatin1 ICU4XWordBreakIteratorLatin1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XSegmenterRuleStatusType.h"
+#include "ICU4XSegmenterWordType.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -22,7 +22,7 @@ extern "C" {
 
 int32_t ICU4XWordBreakIteratorLatin1_next(ICU4XWordBreakIteratorLatin1* self);
 
-ICU4XSegmenterRuleStatusType ICU4XWordBreakIteratorLatin1_rule_status(const ICU4XWordBreakIteratorLatin1* self);
+ICU4XSegmenterWordType ICU4XWordBreakIteratorLatin1_word_type(const ICU4XWordBreakIteratorLatin1* self);
 
 bool ICU4XWordBreakIteratorLatin1_is_word_like(const ICU4XWordBreakIteratorLatin1* self);
 void ICU4XWordBreakIteratorLatin1_destroy(ICU4XWordBreakIteratorLatin1* self);

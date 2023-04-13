@@ -1,5 +1,5 @@
-#ifndef ICU4XLineBreakRule_H
-#define ICU4XLineBreakRule_H
+#ifndef ICU4XSegmenterWordType_H
+#define ICU4XSegmenterWordType_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,12 +10,11 @@
 namespace capi {
 #endif
 
-typedef enum ICU4XLineBreakRule {
-  ICU4XLineBreakRule_Loose = 0,
-  ICU4XLineBreakRule_Normal = 1,
-  ICU4XLineBreakRule_Strict = 2,
-  ICU4XLineBreakRule_Anywhere = 3,
-} ICU4XLineBreakRule;
+typedef enum ICU4XSegmenterWordType {
+  ICU4XSegmenterWordType_None = 0,
+  ICU4XSegmenterWordType_Number = 1,
+  ICU4XSegmenterWordType_Letter = 2,
+} ICU4XSegmenterWordType;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -24,7 +23,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XLineBreakRule_destroy(ICU4XLineBreakRule* self);
+void ICU4XSegmenterWordType_destroy(ICU4XSegmenterWordType* self);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,13 +14,13 @@ pub mod ffi {
         GraphemeClusterBreakDataV1Marker, LstmForWordLineAutoV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
-        RuleStatusType, WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8,
-        WordBreakIteratorUtf16, WordSegmenter,
+        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
+        WordSegmenter, WordType,
     };
 
-    #[diplomat::enum_convert(RuleStatusType, needs_wildcard)]
-    #[diplomat::rust_link(icu::segmenter::RuleStatusType, Enum)]
-    pub enum ICU4XSegmenterRuleStatusType {
+    #[diplomat::enum_convert(WordType, needs_wildcard)]
+    #[diplomat::rust_link(icu::segmenter::WordType, Enum)]
+    pub enum ICU4XSegmenterWordType {
         None = 0,
         Number = 1,
         Letter = 2,
@@ -170,9 +170,9 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
-        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
-            self.0.rule_status().into()
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        pub fn word_type(&self) -> ICU4XSegmenterWordType {
+            self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
@@ -200,9 +200,9 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
-        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
-            self.0.rule_status().into()
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        pub fn word_type(&self) -> ICU4XSegmenterWordType {
+            self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
@@ -230,9 +230,9 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::rule_status, FnInStruct)]
-        pub fn rule_status(&self) -> ICU4XSegmenterRuleStatusType {
-            self.0.rule_status().into()
+        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        pub fn word_type(&self) -> ICU4XSegmenterWordType {
+            self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK

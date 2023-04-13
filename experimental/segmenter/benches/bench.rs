@@ -5,9 +5,9 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakRule;
+use icu_segmenter::LineBreakStrictness;
+use icu_segmenter::LineBreakWordOption;
 use icu_segmenter::LineSegmenter;
-use icu_segmenter::WordBreakRule;
 
 // Example is MIT license.
 const TEST_STR_EN: &str = "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
@@ -21,8 +21,8 @@ fn line_break_iter_latin1(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Anywhere;
-    options.word_break_rule = WordBreakRule::BreakAll;
+    options.strictness = LineBreakStrictness::Anywhere;
+    options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
@@ -55,8 +55,8 @@ fn line_break_iter_utf8(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Anywhere;
-    options.word_break_rule = WordBreakRule::BreakAll;
+    options.strictness = LineBreakStrictness::Anywhere;
+    options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css_dictionary =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");
@@ -109,8 +109,8 @@ fn line_break_iter_utf16(c: &mut Criterion) {
         LineSegmenter::try_new_dictionary_unstable(&icu_testdata::unstable()).expect("Data exists");
 
     let mut options = LineBreakOptions::default();
-    options.line_break_rule = LineBreakRule::Anywhere;
-    options.word_break_rule = WordBreakRule::BreakAll;
+    options.strictness = LineBreakStrictness::Anywhere;
+    options.word_option = LineBreakWordOption::BreakAll;
     let segmenter_css_dictionary =
         LineSegmenter::try_new_dictionary_with_options_unstable(&icu_testdata::unstable(), options)
             .expect("Data exists");

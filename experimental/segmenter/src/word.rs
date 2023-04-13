@@ -41,13 +41,31 @@ pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
 
 derive_usize_iterator_with_type!(WordBreakIterator);
 
+/// The word type tag that is returned by [`WordBreakIterator::word_type()`].
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Debug)]
+#[repr(u8)]
+pub enum WordType {
+    /// No category tag.
+    None = 0,
+    /// Number category tag.
+    Number = 1,
+    /// Letter category tag, including CJK.
+    Letter = 2,
+}
+
 impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
-    /// Return the status value of the current word break boundary.
+    /// Returns the word type of the segment preceding the current boundary.
     #[inline]
-    pub fn rule_status(&self) -> RuleStatusType {
-        self.0.rule_status()
+    pub fn word_type(&self) -> WordType {
+        match self.0.rule_status() {
+            RuleStatusType::None => WordType::None,
+            RuleStatusType::Number => WordType::Number,
+            RuleStatusType::Letter => WordType::Letter,
+        }
     }
-    /// Return `true` when the current word break boundary is word-like such as letter/number/CJK.
+    /// Returns `true` when the segment preceding the current boundary is word-like,
+    /// such as letter, number, or CJK.
     #[inline]
     pub fn is_word_like(&self) -> bool {
         self.0.is_word_like()
@@ -131,19 +149,19 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 ///
 /// Not all segments delimited by word boundaries are words; some are interword
 /// segments such as spaces and punctuation.
-/// The [`WordBreakIterator::rule_status()`] of a boundary can be used to
+/// The [`WordBreakIterator::word_type()`] of a boundary can be used to
 /// classify the preceding segment.
 /// ```rust
 /// # use itertools::Itertools;
-/// # use icu_segmenter::{RuleStatusType, WordSegmenter};
+/// # use icu_segmenter::{WordType, WordSegmenter};
 /// # let segmenter = WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
 /// #     .expect("Data exists");
 /// # let text = "Mark’d ye his words?";
 /// let words: Vec<&str> = {
 ///     let mut it = segmenter.segment_str(text);
-///     std::iter::from_fn(move || it.next().map(|i| (i, it.rule_status())))
+///     std::iter::from_fn(move || it.next().map(|i| (i, it.word_type())))
 ///         .tuple_windows()
-///         .filter(|(_, (_, status))| *status == RuleStatusType::Letter)
+///         .filter(|(_, (_, status))| *status == WordType::Letter)
 ///         .map(|((i, _), (j, _))| &text[i..j])
 ///         .collect()
 /// };

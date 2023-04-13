@@ -48,15 +48,20 @@
     See the `Rust documentation for LineBreakOptions <https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
 
-    .. js:attribute:: line_break_rule
+    .. js:attribute:: strictness
 
-    .. js:attribute:: word_break_rule
+    .. js:attribute:: word_option
 
     .. js:attribute:: ja_zh
 
-.. js:class:: ICU4XLineBreakRule
+.. js:class:: ICU4XLineBreakStrictness
 
-    See the `Rust documentation for LineBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
+    See the `Rust documentation for LineBreakStrictness <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html>`__ for more information.
+
+
+.. js:class:: ICU4XLineBreakWordOption
+
+    See the `Rust documentation for LineBreakWordOption <https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html>`__ for more information.
 
 
 .. js:class:: ICU4XLineSegmenter
@@ -131,9 +136,4 @@
         See the `Rust documentation for segment_latin1 <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1>`__ for more information.
 
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-
-
-.. js:class:: ICU4XWordBreakRule
-
-    See the `Rust documentation for WordBreakRule <https://docs.rs/icu/latest/icu/segmenter/enum.WordBreakRule.html>`__ for more information.
 

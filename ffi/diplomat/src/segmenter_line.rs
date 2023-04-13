@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakRule;
-use icu_segmenter::WordBreakRule;
+use icu_segmenter::LineBreakStrictness;
+use icu_segmenter::LineBreakWordOption;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -27,16 +27,16 @@ pub mod ffi {
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
     pub struct ICU4XLineSegmenter(LineSegmenter);
 
-    #[diplomat::rust_link(icu::segmenter::LineBreakRule, Enum)]
-    pub enum ICU4XLineBreakRule {
+    #[diplomat::rust_link(icu::segmenter::LineBreakStrictness, Enum)]
+    pub enum ICU4XLineBreakStrictness {
         Loose,
         Normal,
         Strict,
         Anywhere,
     }
 
-    #[diplomat::rust_link(icu::segmenter::WordBreakRule, Enum)]
-    pub enum ICU4XWordBreakRule {
+    #[diplomat::rust_link(icu::segmenter::LineBreakWordOption, Enum)]
+    pub enum ICU4XLineBreakWordOption {
         Normal,
         BreakAll,
         KeepAll,
@@ -44,8 +44,8 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptionsV1 {
-        pub line_break_rule: ICU4XLineBreakRule,
-        pub word_break_rule: ICU4XWordBreakRule,
+        pub strictness: ICU4XLineBreakStrictness,
+        pub word_option: ICU4XLineBreakWordOption,
         pub ja_zh: bool,
     }
 
@@ -301,23 +301,23 @@ pub mod ffi {
     }
 }
 
-impl From<ffi::ICU4XLineBreakRule> for LineBreakRule {
-    fn from(other: ffi::ICU4XLineBreakRule) -> Self {
+impl From<ffi::ICU4XLineBreakStrictness> for LineBreakStrictness {
+    fn from(other: ffi::ICU4XLineBreakStrictness) -> Self {
         match other {
-            ffi::ICU4XLineBreakRule::Loose => Self::Loose,
-            ffi::ICU4XLineBreakRule::Normal => Self::Normal,
-            ffi::ICU4XLineBreakRule::Strict => Self::Strict,
-            ffi::ICU4XLineBreakRule::Anywhere => Self::Anywhere,
+            ffi::ICU4XLineBreakStrictness::Loose => Self::Loose,
+            ffi::ICU4XLineBreakStrictness::Normal => Self::Normal,
+            ffi::ICU4XLineBreakStrictness::Strict => Self::Strict,
+            ffi::ICU4XLineBreakStrictness::Anywhere => Self::Anywhere,
         }
     }
 }
 
-impl From<ffi::ICU4XWordBreakRule> for WordBreakRule {
-    fn from(other: ffi::ICU4XWordBreakRule) -> Self {
+impl From<ffi::ICU4XLineBreakWordOption> for LineBreakWordOption {
+    fn from(other: ffi::ICU4XLineBreakWordOption) -> Self {
         match other {
-            ffi::ICU4XWordBreakRule::Normal => Self::Normal,
-            ffi::ICU4XWordBreakRule::BreakAll => Self::BreakAll,
-            ffi::ICU4XWordBreakRule::KeepAll => Self::KeepAll,
+            ffi::ICU4XLineBreakWordOption::Normal => Self::Normal,
+            ffi::ICU4XLineBreakWordOption::BreakAll => Self::BreakAll,
+            ffi::ICU4XLineBreakWordOption::KeepAll => Self::KeepAll,
         }
     }
 }
@@ -325,8 +325,8 @@ impl From<ffi::ICU4XWordBreakRule> for WordBreakRule {
 impl From<ffi::ICU4XLineBreakOptionsV1> for LineBreakOptions {
     fn from(other: ffi::ICU4XLineBreakOptionsV1) -> Self {
         let mut options = LineBreakOptions::default();
-        options.line_break_rule = other.line_break_rule.into();
-        options.word_break_rule = other.word_break_rule.into();
+        options.strictness = other.strictness.into();
+        options.word_option = other.word_option.into();
         options.ja_zh = other.ja_zh;
         options
     }

@@ -1,5 +1,5 @@
 import { i32 } from "./diplomat-runtime"
-import { ICU4XSegmenterRuleStatusType } from "./ICU4XSegmenterRuleStatusType";
+import { ICU4XSegmenterWordType } from "./ICU4XSegmenterWordType";
 
 /**
 
@@ -19,9 +19,9 @@ export class ICU4XWordBreakIteratorUtf8 {
 
    * Return the status value of break boundary.
 
-   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status Rust documentation for `rule_status`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type Rust documentation for `word_type`} for more information.
    */
-  rule_status(): ICU4XSegmenterRuleStatusType;
+  word_type(): ICU4XSegmenterWordType;
 
   /**
 
