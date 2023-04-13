@@ -44,7 +44,7 @@ rust_proc_macro("diplomat-v0_5_2") {
   deps += [ ":diplomat_core-v0_5_2" ]
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
+  deps += [ ":syn-v2_0_15" ]
 
   rustenv = []
 
@@ -89,7 +89,7 @@ rust_library("diplomat_core-v0_5_2") {
   deps += [ ":serde-v1_0_156" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":strck_ident-v0_1_2" ]
-  deps += [ ":syn-v1_0_109" ]
+  deps += [ ":syn-v2_0_15" ]
 
   rustenv = []
 
@@ -604,7 +604,7 @@ rust_proc_macro("icu_provider_macros-v1_2_0") {
   deps = []
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
+  deps += [ ":syn-v2_0_15" ]
 
   rustenv = []
 
@@ -1039,7 +1039,7 @@ rust_library("strck_ident-v0_1_2") {
 
 rust_library("syn-v1_0_109") {
   crate_name = "syn"
-  crate_root = "//ffi/gn/vendor/syn/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/syn-1.0.109/src/lib.rs"
   output_name = "syn-1f55ec6ab1286b6d"
 
   deps = []
@@ -1058,8 +1058,6 @@ rust_library("syn-v1_0_109") {
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
     "--cfg=feature=\"extra-traits\"",
-    "--cfg=feature=\"fold\"",
-    "--cfg=feature=\"full\"",
     "--cfg=feature=\"parsing\"",
     "--cfg=feature=\"printing\"",
     "--cfg=feature=\"proc-macro\"",
@@ -1071,9 +1069,42 @@ rust_library("syn-v1_0_109") {
   visibility = [ ":*" ]
 }
 
+rust_library("syn-v2_0_15") {
+  crate_name = "syn"
+  crate_root = "//ffi/gn/vendor/syn/src/lib.rs"
+  output_name = "syn-81efed302294e4e7"
+
+  deps = []
+  deps += [ ":proc-macro2-v1_0_56" ]
+  deps += [ ":quote-v1_0_26" ]
+  deps += [ ":unicode-ident-v1_0_8" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=81efed302294e4e7",
+    "-Cextra-filename=-81efed302294e4e7",
+    "--cfg=feature=\"clone-impls\"",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"derive\"",
+    "--cfg=feature=\"extra-traits\"",
+    "--cfg=feature=\"fold\"",
+    "--cfg=feature=\"full\"",
+    "--cfg=feature=\"parsing\"",
+    "--cfg=feature=\"printing\"",
+    "--cfg=feature=\"proc-macro\"",
+    "--cfg=feature=\"quote\"",
+    "--cfg=feature=\"visit\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
 rust_library("synstructure-v0_12_6") {
   crate_name = "synstructure"
-  crate_root = "//ffi/gn/vendor/synstructure/src/lib.rs"
+  crate_root = "//ffi/gn/vendor/synstructure-0.12.6/src/lib.rs"
   output_name = "synstructure-b30be16cba2970c4"
 
   deps = []
@@ -1089,6 +1120,31 @@ rust_library("synstructure-v0_12_6") {
     "--edition=2018",
     "-Cmetadata=b30be16cba2970c4",
     "-Cextra-filename=-b30be16cba2970c4",
+    "--cfg=feature=\"default\"",
+    "--cfg=feature=\"proc-macro\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("synstructure-v0_13_0") {
+  crate_name = "synstructure"
+  crate_root = "//ffi/gn/vendor/synstructure/src/lib.rs"
+  output_name = "synstructure-d99d51d75122a755"
+
+  deps = []
+  deps += [ ":proc-macro2-v1_0_56" ]
+  deps += [ ":quote-v1_0_26" ]
+  deps += [ ":syn-v2_0_15" ]
+  deps += [ ":unicode-xid-v0_2_4" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2018",
+    "-Cmetadata=d99d51d75122a755",
+    "-Cextra-filename=-d99d51d75122a755",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"proc-macro\"",
   ]
@@ -1290,8 +1346,8 @@ rust_proc_macro("yoke-derive-v0_7_1") {
   deps = []
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
-  deps += [ ":synstructure-v0_12_6" ]
+  deps += [ ":syn-v2_0_15" ]
+  deps += [ ":synstructure-v0_13_0" ]
 
   rustenv = []
 
@@ -1336,8 +1392,8 @@ rust_proc_macro("zerofrom-derive-v0_1_2") {
   deps = []
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
-  deps += [ ":synstructure-v0_12_6" ]
+  deps += [ ":syn-v2_0_15" ]
+  deps += [ ":synstructure-v0_13_0" ]
 
   rustenv = []
 
@@ -1383,7 +1439,7 @@ rust_proc_macro("zerovec-derive-v0_9_4") {
   deps = []
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
+  deps += [ ":syn-v2_0_15" ]
   deps += [ ":synstructure-v0_12_6" ]
 
   rustenv = []

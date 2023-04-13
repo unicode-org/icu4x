@@ -23,7 +23,7 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["derive", "parsing"] }
+syn = { version = "2", features = ["derive", "parsing", "extra-traits"] }
 synstructure = "0.12.4"
 
 [dev-dependencies]
