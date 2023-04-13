@@ -9,7 +9,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807" }
+diplomat_core = { version = "0.5.1" }
 elsa = "1"
 lazy_static ="1"
 rustdoc-types = "0.14"
