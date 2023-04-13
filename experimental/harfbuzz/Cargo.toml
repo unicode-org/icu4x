@@ -37,7 +37,6 @@ denylist = ["bench", "serde", "logging"]
 
 [dependencies]
 harfbuzz-sys = { version = "0.5.0" }
-harfbuzz = { version = "0.4.0" }
 icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
 icu_properties = { version = "1.0.0", path = "../../components/properties" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
@@ -46,6 +45,7 @@ tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = 
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata" }
+harfbuzz = { version = "0.4.0" }
 
 [features]
 default = []
