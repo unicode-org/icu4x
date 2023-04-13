@@ -28,7 +28,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-litemap = { version = "0.6.1", path = "../../utils/litemap" }
+litemap = { version = "0.7.0", path = "../../utils/litemap" }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc"], default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 
