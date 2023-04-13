@@ -197,7 +197,6 @@ rust_library("icu-v1_1_0") {
     "-Cmetadata=2f550ab455e7aa02",
     "-Cextra-filename=-2f550ab455e7aa02",
     "--cfg=feature=\"default\"",
-    "--cfg=feature=\"icu_segmenter\"",
   ]
 
   visibility = [ ":*" ]
@@ -647,7 +646,7 @@ rust_proc_macro("icu_provider_macros-v1_1_0") {
 
 rust_library("icu_segmenter-v0_8_0") {
   crate_name = "icu_segmenter"
-  crate_root = "//experimental/segmenter/src/lib.rs"
+  crate_root = "//components/segmenter/src/lib.rs"
   output_name = "icu_segmenter-fa9b09bff56d0368"
 
   deps = []

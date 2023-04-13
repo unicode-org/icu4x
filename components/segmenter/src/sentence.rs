@@ -23,13 +23,6 @@ use utf8_iter::Utf8CharIndices;
 /// of the [`str`] or array of code units).
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
-/// </div>
 #[derive(Debug)]
 pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
@@ -60,13 +53,6 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
-/// </div>
 ///
 /// # Examples
 ///

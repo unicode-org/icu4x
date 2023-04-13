@@ -109,7 +109,7 @@ icu_locid_transform = { version = "1.1.0", path = "../../components/locid_transf
 icu_normalizer = { version = "1.1.0", path = "../../components/normalizer/" , optional = true}
 icu_plurals = { version = "1.1.0", path = "../../components/plurals/" , optional = true}
 icu_properties = { version = "1.1.0", path = "../../components/properties/", features = ["bidi"] , optional = true}
-icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter" , optional = true}
+icu_segmenter = { version = "0.8.0", path = "../../components/segmenter" , optional = true}
 icu_timezone = { version = "1.1.0", path = "../../components/timezone" , optional = true}
 unicode-bidi = { version = "0.3.13", default-features = false, optional = true}
 
