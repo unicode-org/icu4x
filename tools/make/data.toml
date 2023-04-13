@@ -127,7 +127,7 @@ args = [
     "--locales=full",
     "--format=dir",
     "--syntax=postcard",
-    "--out=experimental/segmenter/tests/testdata/provider",
+    "--out=components/segmenter/tests/testdata/provider",
     "--overwrite",
 ]
 

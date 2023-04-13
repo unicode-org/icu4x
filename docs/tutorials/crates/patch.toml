@@ -21,7 +21,7 @@ icu_properties = { path = "../../components/properties" }
 icu_provider = { path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
-icu_segmenter = { path = "../../experimental/segmenter" }
+icu_segmenter = { path = "../../components/segmenter" }
 icu_testdata = { path = "../../provider/testdata" }
 icu_timezone = { path = "../../components/timezone" }
 litemap = { path = "../../utils/litemap" }

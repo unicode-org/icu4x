@@ -15,6 +15,12 @@ use zerovec::{ule::UnvalidatedStr, ZeroMap, ZeroVec};
 macro_rules! lstm_matrix {
     ($name:ident, $generic:literal) => {
         /// The struct that stores a LSTM's matrix.
+        ///
+        /// <div class="stab unstable">
+        /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+        /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+        /// to be stable, their Rust representation might not be. Use with caution.
+        /// </div>
         #[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
         #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
         pub struct $name<'data> {
@@ -102,6 +108,12 @@ lstm_matrix!(LstmMatrix3, 3);
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// The type of LSTM model
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 pub enum ModelType {
     /// A model working on code points
     Codepoints,
@@ -110,6 +122,12 @@ pub enum ModelType {
 }
 
 /// The struct that stores a LSTM model.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
