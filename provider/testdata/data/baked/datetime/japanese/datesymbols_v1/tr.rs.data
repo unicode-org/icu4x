@@ -96,7 +96,7 @@
                     :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x05\0\x0B\0\x10\0\x15\0\x1A\0bceceheiseimeijireiwashowataisho")
                 },
                 unsafe {
-                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x0E\0\x1C\0\"\0'\0,\02\0Milattan \xC3\x96nceMilattan SonraHeiseiMeijiReiwaSh\xC5\x8DwaTaish\xC5\x8D")
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x0E\0\x1C\0\"\0'\0,\x002\0Milattan \xC3\x96nceMilattan SonraHeiseiMeijiReiwaSh\xC5\x8DwaTaish\xC5\x8D")
                 },
             )
         },
