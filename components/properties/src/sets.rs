@@ -1884,10 +1884,12 @@ pub fn load_for_general_category_group(
 /// ```rust
 /// use icu::properties::sets;
 ///
-/// let data = sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "Emoji").expect("loading data failed");
+/// let data =
+///     sets::load_for_ecma262_unstable(&icu_testdata::unstable(), "Emoji")
+///         .expect("loading data failed");
 /// let emoji = data.as_borrowed();
 ///
-/// assert!(emoji.contains('🔥'));  // U+1F525 FIRE
+/// assert!(emoji.contains('🔥')); // U+1F525 FIRE
 /// assert!(!emoji.contains('V'));
 /// ```
 ///

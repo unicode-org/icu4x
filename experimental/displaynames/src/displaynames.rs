@@ -16,7 +16,7 @@ use icu_provider::{DataError, DataPayload};
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::{RegionDisplayNames, DisplayNamesOptions};
+/// use icu_displaynames::{DisplayNamesOptions, RegionDisplayNames};
 /// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! These arrays all list dependencies that are allowed in various contexts
-//!
 
 /// Dependencies that are always allowed as runtime dependencies
 /// In general it is fine to add new ICU4X components or utils here
