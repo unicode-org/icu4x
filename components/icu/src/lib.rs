@@ -162,7 +162,6 @@ pub use icu_properties as properties;
 #[doc(inline)]
 pub use icu_collections as collections;
 
-#[cfg(feature = "icu_segmenter")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
 

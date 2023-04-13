@@ -56,7 +56,7 @@ icu_normalizer = { version = "1.1.0", path = "../../components/normalizer", defa
 icu_plurals = { version = "1.1.0", path = "../../components/plurals", default-features = false, optional = true }
 icu_properties = { version = "1.1.0", path = "../../components/properties", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter", default-features = false, optional = true }
+icu_segmenter = { version = "0.8.0", path = "../../components/segmenter", default-features = false, optional = true }
 icu_timezone = { version = "1.1.0", path = "../../components/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
@@ -75,6 +75,7 @@ default = [
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
+    "icu_segmenter",
     "icu_timezone",
 ]
 icu_datetime_experimental = [

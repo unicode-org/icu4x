@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Experimental\] Segment strings by lines, graphemes, words, and sentences.
+//! Segment strings by lines, graphemes, words, and sentences.
 //!
 //! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
@@ -14,13 +14,6 @@
 //!   [`word-break`] properties.
 //! - Grapheme cluster segmenter, word segmenter, and sentence segmenter that are compatible with
 //!   [Unicode Standard Annex #29][UAX29], _Unicode Text Segmentation_.
-//!
-//! <div class="stab unstable">
-//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-//! of the icu meta-crate. Use with caution.
-//! <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
-//! </div>
 //!
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/

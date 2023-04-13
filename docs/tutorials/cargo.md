@@ -18,12 +18,12 @@ In your main.rs, you can use all stable ICU4X components in the small number of 
 
 ## Cargo.toml with experimental testdata
 
-If you wish to use an experimental feature, such as `icu_segmenter`, set up your Cargo.toml like this:
+If you wish to use an experimental feature, such as `icu_displaynames`, set up your Cargo.toml like this:
 
 ```toml
 [dependencies]
-icu = { version = "1.1", features = ["icu_segmenter"] }
-icu_testdata = { version = "1.1", features = ["icu_segmenter"] }
+icu = { version = "1.1", features = ["icu_displaynames"] }
+icu_testdata = { version = "1.1", features = ["icu_displaynames"] }
 ```
 
 In your main.rs, you can now use the experimental `icu::segmenter` module.
