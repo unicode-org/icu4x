@@ -4,7 +4,7 @@
 
 [package]
 name = "zerofrom"
-version = "0.1.1"
+version = "0.1.2"
 description = "ZeroFrom trait for constructing"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
