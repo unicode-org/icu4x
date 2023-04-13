@@ -210,11 +210,11 @@ mod tests {
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![18, 24, 42, 48, 66, 72]);
+        assert_eq!(result, vec![0, 18, 24, 42, 48, 66, 72]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
         let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![6, 8, 14, 16, 22, 24]);
+        assert_eq!(result, vec![0, 6, 8, 14, 16, 22, 24]);
     }
 
     #[test]
@@ -284,11 +284,11 @@ mod tests {
         let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(result, vec![27, 54, 81]);
+        assert_eq!(result, vec![0, 27, 54, 81]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
         let result: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(result, vec![9, 18, 27]);
+        assert_eq!(result, vec![0, 9, 18, 27]);
     }
 
     #[test]
@@ -297,10 +297,10 @@ mod tests {
         let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
-        assert_eq!(r, vec![12, 21, 33, 42, 54, 63]);
+        assert_eq!(r, vec![0, 12, 21, 33, 42, 54, 63]);
 
         let s_utf16: Vec<u16> = s.encode_utf16().collect();
         let r: Vec<usize> = segmenter.segment_utf16(&s_utf16).collect();
-        assert_eq!(r, vec![4, 7, 11, 14, 18, 21]);
+        assert_eq!(r, vec![0, 4, 7, 11, 14, 18, 21]);
     }
 }

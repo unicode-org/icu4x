@@ -90,17 +90,19 @@ impl RawLstmData {
         // Unwraps okay: dimensions checked above
         let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut fw_b = fw_b.into_shape((4, hunits)).unwrap();
+        let fw_b = fw_b.into_shape((4, hunits)).unwrap();
         let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
         let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let mut bw_b = bw_b.into_shape((4, hunits)).unwrap();
+        let bw_b = bw_b.into_shape((4, hunits)).unwrap();
         let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
         fw_w.swap_axes(0, 2);
+        fw_w.swap_axes(0, 1);
         fw_u.swap_axes(0, 2);
-        fw_b.swap_axes(0, 1);
+        fw_u.swap_axes(0, 1);
         bw_w.swap_axes(0, 2);
+        bw_w.swap_axes(0, 1);
         bw_u.swap_axes(0, 2);
-        bw_b.swap_axes(0, 1);
+        bw_u.swap_axes(0, 1);
         time_w.swap_axes(1, 2);
         let fw_w = fw_w.as_standard_layout().into_owned();
         let fw_u = fw_u.as_standard_layout().into_owned();
@@ -109,6 +111,15 @@ impl RawLstmData {
         let bw_u = bw_u.as_standard_layout().into_owned();
         let bw_b = bw_b.as_standard_layout().into_owned();
         let time_w = time_w.as_standard_layout().into_owned();
+
+        assert_eq!(fw_w.shape(), [4, hunits, embedd_dim]);
+        assert_eq!(fw_u.shape(), [4, hunits, hunits]);
+        assert_eq!(fw_b.shape(), [4, hunits]);
+        assert_eq!(bw_w.shape(), [4, hunits, embedd_dim]);
+        assert_eq!(bw_u.shape(), [4, hunits, hunits]);
+        assert_eq!(bw_b.shape(), [4, hunits]);
+        assert_eq!(time_w.shape(), [2, 4, hunits]);
+        assert_eq!(time_b.shape(), [4]);
 
         let model = if self.model.contains("_codepoints") {
             ModelType::Codepoints
@@ -230,7 +241,7 @@ mod tests {
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(
             breaks,
-            [6, 12, 21, 27, 33, TEST_STR.len()],
+            [0, 6, 12, 21, 27, 33, TEST_STR.len()],
             "Thai test with grapheme model"
         );
     }

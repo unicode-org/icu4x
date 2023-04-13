@@ -13,9 +13,11 @@
     short_names: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"GB\0HK\0MO\0PS\0UN\0US\0") },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"GB\0HK\0MO\0PS\0US\0") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x06\0\0\0\0\0\x04\0\r\0\x12\0\x1B\0\x1D\0U.K.Hong KongMacauPalestineUNU.S.")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x05\0\0\0\0\0\x04\0\r\0\x12\0\x1B\0U.K.Hong KongMacauPalestineU.S.",
+                )
             },
         )
     },

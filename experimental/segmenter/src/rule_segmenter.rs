@@ -9,7 +9,8 @@ use crate::symbols::*;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 
-/// The category tag that is returned by rule_status.
+/// The category tag that is returned by
+/// [`WordBreakIterator::rule_status()`][crate::WordBreakIterator::rule_status()].
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]
@@ -90,6 +91,13 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
 
         if self.is_eof() {
             self.advance_iter();
+            if self.is_eof() && self.len == 0 {
+                // Empty string. Since `self.current_pos_data` is always going to be empty,
+                // we never read `self.len` except for here, so we can use it to mark that
+                // we have already returned the single empty-string breakpoint.
+                self.len = 1;
+                return Some(0);
+            }
             // SOT x anything
             let right_prop = self.get_current_break_property()?;
             if self.is_break_from_table(self.data.sot_property, right_prop) {

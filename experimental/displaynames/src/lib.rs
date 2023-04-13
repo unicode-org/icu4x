@@ -33,11 +33,14 @@
 )]
 #![warn(missing_docs)]
 
-pub mod displaynames;
-pub mod options;
+extern crate alloc;
+
+mod displaynames;
+mod options;
 pub mod provider;
 
 pub use displaynames::LanguageDisplayNames;
+pub use displaynames::LocaleDisplayNamesFormatter;
 pub use displaynames::RegionDisplayNames;
 pub use options::DisplayNamesOptions;
 pub use options::Fallback;

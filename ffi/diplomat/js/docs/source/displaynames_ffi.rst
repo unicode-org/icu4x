@@ -36,23 +36,23 @@
     See the `Rust documentation for LanguageDisplay <https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html>`__ for more information.
 
 
-.. js:class:: ICU4XLanguageDisplayNames
+.. js:class:: ICU4XLocaleDisplayNamesFormatter
 
-    See the `Rust documentation for LanguageDisplayNames <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html>`__ for more information.
+    See the `Rust documentation for LocaleDisplayNamesFormatter <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html>`__ for more information.
 
 
     .. js:function:: try_new_unstable(provider, locale, options)
 
-        Creates a new ``LanguageDisplayNames`` from locale data and an options bag.
+        Creates a new ``LocaleDisplayNamesFormatter`` from locale data and an options bag.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: of(code)
+    .. js:method:: of(locale)
 
-        Returns the locale specific display name of a language for a given string. Note that the funtion returns an empty string in case the display name for a given language code is not found.
+        Returns the locale-specific display name of a locale.
 
-        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LanguageDisplayNames.html#method.of>`__ for more information.
+        See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of>`__ for more information.
 
 
 .. js:class:: ICU4XRegionDisplayNames
@@ -67,9 +67,9 @@
         See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
 
 
-    .. js:method:: of(code)
+    .. js:method:: of(region)
 
-        Returns the locale specific display name of a region for a given string. Note that the funtion returns an empty string in case the display name for a given region code is not found.
+        Returns the locale specific display name of a region. Note that the funtion returns an empty string in case the display name for a given region code is not found.
 
         See the `Rust documentation for of <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of>`__ for more information.
 
