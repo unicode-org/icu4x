@@ -33,6 +33,8 @@
 //!
 //! let unicode_funcs = new_hb_unicode_funcs_unstable(&icu_testdata::unstable()).unwrap();
 //!
+//! // NOTE: This currently requires `unsafe` code. For progress toward a safe abstraction, see:
+//! // <https://github.com/servo/rust-harfbuzz/pull/197>
 //! unsafe {
 //!     harfbuzz::sys::hb_buffer_set_unicode_funcs(b.as_ptr(), unicode_funcs.as_ptr());
 //! }
