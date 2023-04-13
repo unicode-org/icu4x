@@ -36,7 +36,7 @@ icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["m
 utf8_iter = "1.0"
 utf16_iter = "1.0"
 smallvec = { version = "1.7", features = ["union", "const_generics", "const_new"] }
-zerovec = { version = "0.9.2", path = "../../utils/zerovec" }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 
 databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
