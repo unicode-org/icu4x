@@ -1,0 +1,36 @@
+{
+  "names": {
+    "ar-001": "Modern Standard Arabic",
+    "de-AT": "Austrian German",
+    "de-CH": "Swiss High German",
+    "en-AU": "Australian English",
+    "en-CA": "Canadian English",
+    "en-GB": "British English",
+    "en-US": "American English",
+    "es-419": "Latin American Spanish",
+    "es-ES": "European Spanish",
+    "es-MX": "Mexican Spanish",
+    "fa-AF": "Dari",
+    "fr-CA": "Canadian French",
+    "fr-CH": "Swiss French",
+    "hi-Latn": "Hindi (Latin)",
+    "nds-NL": "Low Saxon",
+    "nl-BE": "Flemish",
+    "pt-BR": "Brazilian Portuguese",
+    "pt-PT": "European Portuguese",
+    "ro-MD": "Moldavian",
+    "sr-ME": "Montenegrin",
+    "sw-CD": "Congo Swahili",
+    "zh-Hans": "Simplified Chinese",
+    "zh-Hant": "Traditional Chinese"
+  },
+  "short_names": {
+    "en-GB": "UK English",
+    "en-US": "US English"
+  },
+  "long_names": {
+    "zh-Hans": "Simplified Mandarin Chinese",
+    "zh-Hant": "Traditional Mandarin Chinese"
+  },
+  "menu_names": {}
+}

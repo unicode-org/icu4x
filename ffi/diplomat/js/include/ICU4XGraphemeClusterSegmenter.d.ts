@@ -9,7 +9,7 @@ import { ICU4XGraphemeClusterBreakIteratorUtf8 } from "./ICU4XGraphemeClusterBre
 
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints in strings.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterSegmenter.html Rust documentation for `GraphemeClusterSegmenter`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html Rust documentation for `GraphemeClusterSegmenter`} for more information.
  */
 export class ICU4XGraphemeClusterSegmenter {
 
@@ -17,7 +17,7 @@ export class ICU4XGraphemeClusterSegmenter {
 
    * Construct an {@link ICU4XGraphemeClusterSegmenter `ICU4XGraphemeClusterSegmenter`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XGraphemeClusterSegmenter | never;
@@ -26,7 +26,7 @@ export class ICU4XGraphemeClusterSegmenter {
 
    * Segments a (potentially ill-formed) UTF-8 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
    */
   segment_utf8(input: string): ICU4XGraphemeClusterBreakIteratorUtf8;
 
@@ -34,7 +34,7 @@ export class ICU4XGraphemeClusterSegmenter {
 
    * Segments a UTF-16 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
    */
   segment_utf16(input: Uint16Array): ICU4XGraphemeClusterBreakIteratorUtf16;
 
@@ -42,7 +42,7 @@ export class ICU4XGraphemeClusterSegmenter {
 
    * Segments a Latin-1 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_latin1 Rust documentation for `segment_latin1`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_latin1 Rust documentation for `segment_latin1`} for more information.
    */
   segment_latin1(input: Uint8Array): ICU4XGraphemeClusterBreakIteratorLatin1;
 }

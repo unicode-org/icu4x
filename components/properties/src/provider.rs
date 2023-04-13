@@ -340,7 +340,11 @@ macro_rules! expand {
         ($(($code_point_set_marker:ident, $bin_cp_s:literal),)+),
         ($(($unicode_set_marker:ident, $bin_us_s:literal),)+),
         ($(($code_point_map_marker:ident,
-            $name_value_marker:ident, $value_short_name_marker:ident, $value_long_name_marker:ident,
+            $name_value_marker:ident,
+
+            $((sparse: $value_short_name_marker_sparse:ident, $value_long_name_marker_sparse:ident),)?
+            $((linear: $value_short_name_marker_linear:ident, $value_long_name_marker_linear:ident ),)?
+            $((linear4: $value_short_name_marker_linear4:ident, $value_long_name_marker_linear4:ident ),)?
             $enum_s:literal, $value_ty:ident),)+)
     ) => {
 
@@ -425,40 +429,114 @@ macro_rules! expand {
                     const KEY: DataKey = data_key!(concat!("propnames/from/", $enum_s, "@1"));
                 }
 
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_sparse;
 
-                #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $value_short_name_marker;
+                    impl DataMarker for $value_short_name_marker_sparse {
+                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
+                    }
 
-                impl DataMarker for $value_short_name_marker {
-                    type Yokeable = names::PropertyEnumToValueNameMapV1<'static>;
-                }
+                    impl KeyedDataMarker for $value_short_name_marker_sparse {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/sparse/", $enum_s, "@1"));
+                    }
 
-                impl KeyedDataMarker for $value_short_name_marker {
-                    const KEY: DataKey = data_key!(concat!("propnames/to/short/", $enum_s, "@1"));
-                }
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_sparse;
 
-                #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
-                #[derive(Debug, Default)]
-                #[cfg_attr(
-                    feature = "datagen",
-                    derive(databake::Bake),
-                    databake(path = icu_properties::provider),
-                )]
-                pub struct $value_long_name_marker;
+                    impl DataMarker for $value_long_name_marker_sparse {
+                        type Yokeable = names::PropertyEnumToValueNameSparseMapV1<'static>;
+                    }
 
-                impl DataMarker for $value_long_name_marker {
-                    type Yokeable = names::PropertyEnumToValueNameMapV1<'static>;
-                }
+                    impl KeyedDataMarker for $value_long_name_marker_sparse {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/sparse/", $enum_s, "@1"));
+                    }
+                )?
 
-                impl KeyedDataMarker for $value_long_name_marker {
-                    const KEY: DataKey = data_key!(concat!("propnames/to/long/", $enum_s, "@1"));
-                }
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_linear;
+
+                    impl DataMarker for $value_short_name_marker_linear {
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_short_name_marker_linear {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear/", $enum_s, "@1"));
+                    }
+
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_linear;
+
+                    impl DataMarker for $value_long_name_marker_linear {
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_long_name_marker_linear {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"));
+                    }
+                )?
+
+                $(
+                    #[doc = core::concat!("Data marker for producing short names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_short_name_marker_linear4;
+
+                    impl DataMarker for $value_short_name_marker_linear4 {
+                        type Yokeable = names::PropertyEnumToValueNameLinearTiny4MapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_short_name_marker_linear4 {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/short/linear4/", $enum_s, "@1"));
+                    }
+
+                    #[doc = core::concat!("Data marker for producing long names of the values of the '", $enum_s, "' Unicode property")]
+                    #[derive(Debug, Default)]
+                    #[cfg_attr(
+                        feature = "datagen",
+                        derive(databake::Bake),
+                        databake(path = icu_properties::provider),
+                    )]
+                    pub struct $value_long_name_marker_linear4;
+
+                    impl DataMarker for $value_long_name_marker_linear4 {
+                        // Tiny4 is only for short names
+                        type Yokeable = names::PropertyEnumToValueNameLinearMapV1<'static>;
+                    }
+
+                    impl KeyedDataMarker for $value_long_name_marker_linear4 {
+                        const KEY: DataKey = data_key!(concat!("propnames/to/long/linear/", $enum_s, "@1"));
+                    }
+                )?
             )+
     };
 }
@@ -554,72 +632,90 @@ expand!(
         (
             CanonicalCombiningClassV1Marker,
             CanonicalCombiningClassNameToValueV1Marker,
-            CanonicalCombiningClassValueToShortNameV1Marker,
-            CanonicalCombiningClassValueToLongNameV1Marker,
+            (
+                sparse: CanonicalCombiningClassValueToShortNameV1Marker,
+                CanonicalCombiningClassValueToLongNameV1Marker
+            ),
             "ccc",
             CanonicalCombiningClass
         ),
         (
             GeneralCategoryV1Marker,
             GeneralCategoryNameToValueV1Marker,
-            GeneralCategoryValueToShortNameV1Marker,
-            GeneralCategoryValueToLongNameV1Marker,
+            (
+                linear: GeneralCategoryValueToShortNameV1Marker,
+                GeneralCategoryValueToLongNameV1Marker
+            ),
             "gc",
             GeneralCategory
         ),
         (
             BidiClassV1Marker,
             BidiClassNameToValueV1Marker,
-            BidiClassValueToShortNameV1Marker,
-            BidiClassValueToLongNameV1Marker,
+            (
+                linear: BidiClassValueToShortNameV1Marker,
+                BidiClassValueToLongNameV1Marker
+            ),
             "bc",
             BidiClass
         ),
         (
             ScriptV1Marker,
             ScriptNameToValueV1Marker,
-            ScriptValueToShortNameV1Marker,
-            ScriptValueToLongNameV1Marker,
+            (
+                linear4: ScriptValueToShortNameV1Marker,
+                ScriptValueToLongNameV1Marker
+            ),
             "sc",
             Script
         ),
         (
             EastAsianWidthV1Marker,
             EastAsianWidthNameToValueV1Marker,
-            EastAsianWidthValueToShortNameV1Marker,
-            EastAsianWidthValueToLongNameV1Marker,
+            (
+                linear: EastAsianWidthValueToShortNameV1Marker,
+                EastAsianWidthValueToLongNameV1Marker
+            ),
             "ea",
             EastAsianWidth
         ),
         (
             LineBreakV1Marker,
             LineBreakNameToValueV1Marker,
-            LineBreakValueToShortNameV1Marker,
-            LineBreakValueToLongNameV1Marker,
+            (
+                linear: LineBreakValueToShortNameV1Marker,
+                LineBreakValueToLongNameV1Marker
+            ),
             "lb",
             LineBreak
         ),
         (
             GraphemeClusterBreakV1Marker,
             GraphemeClusterBreakNameToValueV1Marker,
-            GraphemeClusterBreakValueToShortNameV1Marker,
-            GraphemeClusterBreakValueToLongNameV1Marker,
+            (
+                linear: GraphemeClusterBreakValueToShortNameV1Marker,
+                GraphemeClusterBreakValueToLongNameV1Marker
+            ),
             "GCB",
             GraphemeClusterBreak
         ),
         (
             WordBreakV1Marker,
             WordBreakNameToValueV1Marker,
-            WordBreakValueToShortNameV1Marker,
-            WordBreakValueToLongNameV1Marker,
+            (
+                linear: WordBreakValueToShortNameV1Marker,
+                WordBreakValueToLongNameV1Marker
+            ),
             "WB",
             WordBreak
         ),
         (
             SentenceBreakV1Marker,
             SentenceBreakNameToValueV1Marker,
-            SentenceBreakValueToShortNameV1Marker,
-            SentenceBreakValueToLongNameV1Marker,
+            (
+                linear: SentenceBreakValueToShortNameV1Marker,
+                SentenceBreakValueToLongNameV1Marker
+            ),
             "SB",
             SentenceBreak
         ),

@@ -102,8 +102,9 @@ checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 
 [[package]]
 name = "diplomat"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33e9eae368e4141b5f1c594afe819c85bad0aec8fd1f4cc9ac1888837a957491"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -113,13 +114,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e401cc0e98682b1a24220a4f3185bb5ddd8ccb2cd861d09fe23455b401e3cce"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ba145991e24046639916a3199216e29493659398fc2f25673f48aee29b122b2"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -158,7 +161,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "displaydoc",
  "ryu",
@@ -198,6 +201,7 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
+ "icu_segmenter",
  "icu_timezone",
 ]
 
@@ -235,6 +239,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_segmenter",
+ "icu_testdata",
  "icu_timezone",
  "log",
  "tinystr",
@@ -383,6 +388,7 @@ dependencies = [
  "displaydoc",
  "icu_collections",
  "icu_provider",
+ "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
@@ -435,6 +441,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_testdata"
+version = "1.1.2"
+dependencies = [
+ "icu_calendar",
+ "icu_collator",
+ "icu_collections",
+ "icu_datetime",
+ "icu_decimal",
+ "icu_list",
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_normalizer",
+ "icu_plurals",
+ "icu_properties",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_segmenter",
+ "icu_timezone",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_timezone"
 version = "1.1.0"
 dependencies = [
@@ -481,7 +509,7 @@ checksum = "348108ab3fba42ec82ff6e9564fc4ca0247bdccdc68dd8af9764bbc79c3c8ffb"
 
 [[package]]
 name = "litemap"
-version = "0.6.1"
+version = "0.7.0"
 
 [[package]]
 name = "log"
@@ -751,11 +779,11 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.5.1"
+version = "0.5.2"
 
 [[package]]
 name = "yoke"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -765,7 +793,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -775,14 +803,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -792,7 +820,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -801,7 +829,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "proc-macro2",
  "quote",

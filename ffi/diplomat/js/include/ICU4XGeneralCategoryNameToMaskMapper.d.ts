@@ -7,9 +7,9 @@ import { ICU4XError } from "./ICU4XError";
 
  * A type capable of looking up General Category mask values from a string name.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/names/struct.PropertyValueNameToEnumMapper.html Rust documentation for `PropertyValueNameToEnumMapper`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html Rust documentation for `PropertyValueNameToEnumMapper`} for more information.
  */
 export class ICU4XGeneralCategoryNameToMaskMapper {
 
@@ -31,7 +31,7 @@ export class ICU4XGeneralCategoryNameToMaskMapper {
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper Rust documentation for `get_name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load(provider: ICU4XDataProvider): ICU4XGeneralCategoryNameToMaskMapper | never;

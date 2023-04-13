@@ -88,7 +88,7 @@ impl From<MirroredPairedBracketData> for u32 {
 }
 
 /// A `u32` serialized value of `MirroredPairedBracketData` did not encode either a valid Bidi_Mirroring_Glyph or a valid Bidi_Paired_Bracket_Type
-#[derive(Display, Debug, PartialEq, Eq)]
+#[derive(Display, Debug, Clone, Copy, PartialEq, Eq)]
 #[displaydoc("Invalid MirroredPairedBracketData serialized in int: {0}")]
 pub struct MirroredPairedBracketDataTryFromError(u32);
 

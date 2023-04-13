@@ -784,7 +784,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -794,7 +794,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -805,7 +805,7 @@ dependencies = [
 
 [[package]]
 name = "deduplicating_array"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "postcard",
  "serde",
@@ -847,8 +847,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33e9eae368e4141b5f1c594afe819c85bad0aec8fd1f4cc9ac1888837a957491"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -858,13 +859,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e401cc0e98682b1a24220a4f3185bb5ddd8ccb2cd861d09fe23455b401e3cce"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807#0e9eb4f1b64deca826fdd566bd3eabbf5ad9e807"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ba145991e24046639916a3199216e29493659398fc2f25673f48aee29b122b2"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -1056,7 +1059,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1846,6 +1849,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
+ "tinystr 0.7.1",
 ]
 
 [[package]]
@@ -1928,7 +1932,7 @@ dependencies = [
 
 [[package]]
 name = "icu_pattern"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "displaydoc",
  "iai",
@@ -1964,6 +1968,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
+ "tinystr 0.7.1",
  "unicode-bidi",
  "zerovec",
 ]
@@ -2078,7 +2083,10 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_fs",
  "icu_testdata",
+ "itertools",
  "num-traits",
  "serde",
  "serde_json",
@@ -2298,7 +2306,7 @@ dependencies = [
 
 [[package]]
 name = "litemap"
-version = "0.6.1"
+version = "0.7.0"
 dependencies = [
  "bincode",
  "bytecheck",
@@ -3366,9 +3374,9 @@ dependencies = [
 
 [[package]]
 name = "spin"
-version = "0.9.5"
+version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7dccf47db1b41fa1573ed27ccf5e08e3ca771cb994f776668c5ebda893b248fc"
+checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 dependencies = [
  "lock_api",
 ]
@@ -4546,7 +4554,7 @@ dependencies = [
 
 [[package]]
 name = "writeable"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "criterion",
  "icu_benchmark_macros",
@@ -4564,7 +4572,7 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "bincode",
  "serde",
@@ -4575,7 +4583,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4587,14 +4595,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4606,7 +4614,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "bincode",
  "criterion",
@@ -4628,7 +4636,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.3"
+version = "0.9.4"
 dependencies = [
  "bincode",
  "proc-macro2",

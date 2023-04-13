@@ -102,6 +102,8 @@ pub mod normalizer_properties;
 #[cfg(feature = "icu_plurals")]
 pub mod pluralrules;
 #[cfg(feature = "icu_properties")]
+pub mod properties_iter;
+#[cfg(feature = "icu_properties")]
 pub mod properties_maps;
 #[cfg(feature = "icu_properties")]
 pub mod properties_names;

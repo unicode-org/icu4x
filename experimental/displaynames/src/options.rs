@@ -6,13 +6,11 @@
 
 /// A bag of options defining how region or language codes will be translated by
 /// [`DisplayNames`](crate::DisplayNames).
-///
 /// # Example
 ///
 /// ```
-/// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::RegionDisplayNames;
-/// use icu_locid::locale;
+/// use icu_displaynames::{DisplayNamesOptions, RegionDisplayNames, Style};
+/// use icu_locid::{locale, subtags_region as region};
 ///
 /// let locale = locale!("en-001");
 /// let mut options: DisplayNamesOptions = Default::default();
@@ -24,26 +22,8 @@
 /// )
 /// .expect("Data should load successfully");
 ///
-/// let region_code = "BA";
-/// assert_eq!(display_name.of(&region_code), Some("Bosnia"));
-///
-/// ```
-/// use icu_displaynames::options::{DisplayNamesOptions, Style};
-/// use icu_displaynames::displaynames::LanguageDisplayNames;
-/// use icu_locid::locale;
-///
-/// let locale = locale!("en-001");
-/// let mut options: DisplayNamesOptions = Default::default();
-/// options.style = Some(Style::Short);
-/// let display_name = LanguageDisplayNames::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
-///
-/// let language_code = "az";
-/// assert_eq!(display_name.of(&language_code), Some("Azeri"));
+/// // Full name would be "Bosnia & Herzegovina"
+/// assert_eq!(display_name.of(region!("BA")), Some("Bosnia"));
 /// ```
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
@@ -70,7 +50,7 @@ pub enum Style {
 
 /// An enum for fallback return when the system does not have the
 /// requested display name.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
@@ -85,7 +65,7 @@ impl Default for Fallback {
 }
 
 /// An enum for the language display kind.
-#[allow(missing_docs)] // The variants are self explanotory.
+#[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum LanguageDisplay {

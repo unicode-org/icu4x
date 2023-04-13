@@ -218,7 +218,6 @@ impl LocaleCanonicalizer {
         P: DataProvider<AliasesV1Marker>
             + DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
-            + DataProvider<LikelySubtagsExtendedV1Marker>
             + ?Sized,
     {
         let expander = LocaleExpander::try_new_unstable(provider)?;
@@ -244,7 +243,10 @@ impl LocaleCanonicalizer {
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
     }
 
-    fn try_new_with_expander_unstable<P>(
+    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
+    ///
+    /// For example, use this constructor if you wish to support all languages.
+    pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
     ) -> Result<LocaleCanonicalizer, LocaleTransformError>

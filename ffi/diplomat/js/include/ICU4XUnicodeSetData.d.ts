@@ -8,11 +8,11 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html Rust documentation for `properties`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/index.html Rust documentation for `properties`} for more information.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetData.html Rust documentation for `UnicodeSetData`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html Rust documentation for `UnicodeSetData`} for more information.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html Rust documentation for `UnicodeSetDataBorrowed`} for more information.
+ * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html Rust documentation for `UnicodeSetDataBorrowed`} for more information.
  */
 export class ICU4XUnicodeSetData {
 
@@ -20,7 +20,7 @@ export class ICU4XUnicodeSetData {
 
    * Checks whether the string is in the set.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains Rust documentation for `contains`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains Rust documentation for `contains`} for more information.
    */
   contains(s: string): boolean;
 
@@ -28,7 +28,7 @@ export class ICU4XUnicodeSetData {
 
    * Checks whether the code point is in the set.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char Rust documentation for `contains_char`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char Rust documentation for `contains_char`} for more information.
    */
   contains_char(cp: char): boolean;
 
@@ -40,42 +40,42 @@ export class ICU4XUnicodeSetData {
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_basic_emoji.html Rust documentation for `load_basic_emoji`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/sets/fn.load_basic_emoji.html Rust documentation for `load_basic_emoji`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_basic_emoji(provider: ICU4XDataProvider): ICU4XUnicodeSetData | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_main.html Rust documentation for `load_exemplars_main`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_main.html Rust documentation for `load_exemplars_main`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_exemplars_main(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html Rust documentation for `load_exemplars_auxiliary`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_auxiliary.html Rust documentation for `load_exemplars_auxiliary`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_exemplars_auxiliary(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html Rust documentation for `load_exemplars_punctuation`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_punctuation.html Rust documentation for `load_exemplars_punctuation`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_exemplars_punctuation(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html Rust documentation for `load_exemplars_numbers`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_numbers.html Rust documentation for `load_exemplars_numbers`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_exemplars_numbers(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/exemplar_chars/fn.load_exemplars_index.html Rust documentation for `load_exemplars_index`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.load_exemplars_index.html Rust documentation for `load_exemplars_index`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static load_exemplars_index(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XUnicodeSetData | never;

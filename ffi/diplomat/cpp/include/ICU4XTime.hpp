@@ -26,7 +26,7 @@ struct ICU4XTimeDeleter {
 /**
  * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
  * 
- * See the [Rust documentation for `Time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html) for more information.
+ * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
  */
 class ICU4XTime {
  public:
@@ -34,35 +34,35 @@ class ICU4XTime {
   /**
    * Creates a new [`ICU4XTime`] given field values
    * 
-   * See the [Rust documentation for `Time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html) for more information.
+   * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
    */
   static diplomat::result<ICU4XTime, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
    * Returns the hour in this time
    * 
-   * See the [Rust documentation for `hour`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
+   * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
    */
   uint8_t hour() const;
 
   /**
    * Returns the minute in this time
    * 
-   * See the [Rust documentation for `minute`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
+   * See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
    */
   uint8_t minute() const;
 
   /**
    * Returns the second in this time
    * 
-   * See the [Rust documentation for `second`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second) for more information.
+   * See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
    */
   uint8_t second() const;
 
   /**
    * Returns the nanosecond in this time
    * 
-   * See the [Rust documentation for `nanosecond`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+   * See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
    */
   uint32_t nanosecond() const;
   inline const capi::ICU4XTime* AsFFI() const { return this->inner.get(); }

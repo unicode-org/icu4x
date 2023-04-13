@@ -10,14 +10,15 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatWriteable;
     #[allow(unused_imports)] // feature-specific
-    use icu_displaynames::options::{DisplayNamesOptions, Fallback, LanguageDisplay};
-    use icu_displaynames::{LanguageDisplayNames, RegionDisplayNames};
+    use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
+    use icu_displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
+    use icu_locid::subtags::Region;
     use writeable::Writeable;
 
-    //  FFI version of `LanguageDisplayNames`.
+    //  FFI version of `LocaleDisplayNamesFormatter`.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::displaynames::LanguageDisplayNames, Struct)]
-    pub struct ICU4XLanguageDisplayNames(pub LanguageDisplayNames);
+    #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter, Struct)]
+    pub struct ICU4XLocaleDisplayNamesFormatter(pub LocaleDisplayNamesFormatter);
 
     //  FFI version of `RegionDisplayNames`.
     #[diplomat::opaque]
@@ -26,7 +27,7 @@ pub mod ffi {
 
     //  FFI version of `DisplayNamesOptions`.
     #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
-    pub struct ICU4XDisplayNamesOptions {
+    pub struct ICU4XDisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
         pub style: ICU4XDisplayNamesStyle,
         /// The fallback return when the system does not have the
@@ -62,31 +63,33 @@ pub mod ffi {
         Standard,
     }
 
-    impl ICU4XLanguageDisplayNames {
-        /// Creates a new `LanguageDisplayNames` from locale data and an options bag.
+    impl ICU4XLocaleDisplayNamesFormatter {
+        /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
         #[diplomat::rust_link(
-            icu::displaynames::LanguageDisplayNames::try_new_unstable,
+            icu::displaynames::LocaleDisplayNamesFormatter::try_new_unstable,
             FnInStruct
         )]
         pub fn try_new_unstable(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            options: ICU4XDisplayNamesOptions,
-        ) -> Result<Box<ICU4XLanguageDisplayNames>, ICU4XError> {
+            options: ICU4XDisplayNamesOptionsV1,
+        ) -> Result<Box<ICU4XLocaleDisplayNamesFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
             let options = DisplayNamesOptions::from(options);
 
-            Ok(Box::new(ICU4XLanguageDisplayNames(
-                LanguageDisplayNames::try_new_unstable(&provider.0, &locale, options)?,
+            Ok(Box::new(ICU4XLocaleDisplayNamesFormatter(
+                LocaleDisplayNamesFormatter::try_new_unstable(&provider.0, &locale, options)?,
             )))
         }
 
-        /// Returns the locale specific display name of a language for a given string.
-        /// Note that the funtion returns an empty string in case the display name for a given
-        /// language code is not found.
-        #[diplomat::rust_link(icu::displaynames::LanguageDisplayNames::of, FnInStruct)]
-        pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            self.0.of(code).unwrap_or("").write_to(write)?;
+        /// Returns the locale-specific display name of a locale.
+        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::of, FnInStruct)]
+        pub fn of(
+            &self,
+            locale: &ICU4XLocale,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
+            self.0.of(&locale.0).write_to(write)?;
             Ok(())
         }
     }
@@ -104,12 +107,15 @@ pub mod ffi {
             )))
         }
 
-        /// Returns the locale specific display name of a region for a given string.
+        /// Returns the locale specific display name of a region.
         /// Note that the funtion returns an empty string in case the display name for a given
         /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
-        pub fn of(&self, code: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            self.0.of(code).unwrap_or("").write_to(write)?;
+        pub fn of(&self, region: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
+            self.0
+                .of(region.parse::<Region>()?)
+                .unwrap_or("")
+                .write_to(write)?;
             Ok(())
         }
     }
@@ -130,8 +136,8 @@ impl From<ffi::ICU4XDisplayNamesStyle> for Option<Style> {
     }
 }
 
-impl From<ffi::ICU4XDisplayNamesOptions> for DisplayNamesOptions {
-    fn from(other: ffi::ICU4XDisplayNamesOptions) -> DisplayNamesOptions {
+impl From<ffi::ICU4XDisplayNamesOptionsV1> for DisplayNamesOptions {
+    fn from(other: ffi::ICU4XDisplayNamesOptionsV1) -> DisplayNamesOptions {
         let mut options = DisplayNamesOptions::default();
         options.style = other.style.into();
         options.fallback = other.fallback.into();

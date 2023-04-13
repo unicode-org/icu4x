@@ -17,13 +17,13 @@ components/locid/                 @zbraniecki @nciric
 components/locid_transform/       @dminor @zbraniecki
 components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
+components/segmenter/             @aethanyc @makotokato @sffc
 components/timezone/              @nordzilla
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
 experimental/harfbuzz/            @hsivonen
 experimental/relativetime/        @pdogr
-experimental/segmenter/           @aethanyc @makotokato @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
 ffi/gn/                           @sffc
