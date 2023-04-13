@@ -32,7 +32,7 @@ postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 yoke = { version = "0.7.1", path = "../../utils/yoke" }
-zerovec = { version = "0.9.2", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 
 log = { version = "0.4", optional = true }
 
