@@ -10,7 +10,7 @@ use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
 
 /// The category tag that is returned by
-/// [`WordBreakIterator::rule_status()`][crate::WordBreakIterator::rule_status()].
+/// [`WordBreakIterator::word_type()`][crate::WordBreakIterator::word_type()].
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]

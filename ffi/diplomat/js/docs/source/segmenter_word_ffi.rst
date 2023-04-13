@@ -1,9 +1,9 @@
 ``segmenter_word::ffi``
 =======================
 
-.. js:class:: ICU4XSegmenterRuleStatusType
+.. js:class:: ICU4XSegmenterWordType
 
-    See the `Rust documentation for RuleStatusType <https://docs.rs/icu/latest/icu/segmenter/enum.RuleStatusType.html>`__ for more information.
+    See the `Rust documentation for WordType <https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html>`__ for more information.
 
 
 .. js:class:: ICU4XWordBreakIteratorLatin1
@@ -18,11 +18,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. js:method:: rule_status()
+    .. js:method:: word_type()
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. js:method:: is_word_like()
@@ -44,11 +44,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. js:method:: rule_status()
+    .. js:method:: word_type()
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. js:method:: is_word_like()
@@ -70,11 +70,11 @@
         See the `Rust documentation for next <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next>`__ for more information.
 
 
-    .. js:method:: rule_status()
+    .. js:method:: word_type()
 
         Return the status value of break boundary.
 
-        See the `Rust documentation for rule_status <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.rule_status>`__ for more information.
+        See the `Rust documentation for word_type <https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type>`__ for more information.
 
 
     .. js:method:: is_word_like()

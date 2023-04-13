@@ -154,9 +154,9 @@ pub use crate::word::WordSegmenter;
 
 // Options structs and enums
 pub use crate::line::LineBreakOptions;
-pub use crate::line::LineBreakRule;
-pub use crate::line::WordBreakRule;
-pub use crate::rule_segmenter::RuleStatusType;
+pub use crate::line::LineBreakStrictness;
+pub use crate::line::LineBreakWordOption;
+pub use crate::word::WordType;
 
 // Typedefs
 pub use crate::grapheme::GraphemeClusterBreakIteratorLatin1;
