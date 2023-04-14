@@ -13,7 +13,7 @@ use crate::Script;
 #[cfg(feature = "std")]
 impl std::error::Error for PropertiesError {}
 
-/// A list of error outcomes for various operations in the `icu_properties` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone)]

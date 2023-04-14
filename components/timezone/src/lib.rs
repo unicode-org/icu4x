@@ -132,5 +132,5 @@ pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use TimeZoneError as Error;

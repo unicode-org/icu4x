@@ -103,7 +103,7 @@ pub use list_formatter::*;
 
 pub use error::ListError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use ListError as Error;
 
 /// Represents the style of a list. See the
