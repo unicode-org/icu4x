@@ -29,7 +29,7 @@ mod internals;
 
 pub use casemapping::CaseMapping;
 pub use error::Error as CaseMappingError;
-#[doc(no_inline)]
-pub use CaseMappingError as Error;
 #[cfg(feature = "datagen")]
 pub use internals::CaseMappingInternals;
+#[doc(no_inline)]
+pub use CaseMappingError as Error;
