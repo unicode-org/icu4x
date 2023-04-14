@@ -203,7 +203,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -215,7 +215,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -231,7 +231,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "serde",
@@ -242,7 +242,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "either",
@@ -261,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -272,7 +272,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_provider",
@@ -282,7 +282,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -293,7 +293,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -304,7 +304,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -335,7 +335,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -346,7 +346,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -358,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -373,7 +373,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -384,7 +384,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -393,7 +393,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.8.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -405,7 +405,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_collator",
@@ -427,7 +427,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_calendar",
