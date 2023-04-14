@@ -69,7 +69,6 @@
     - Fix SB10 rule (#3126)
     - Polished docs and examples
   - `icu_timezone`: No other changes
-  - (verify that no components were missed)
  - Utils:
   - `crlify`: No change (still at 1.0.1)
   - `databake`: 1.1.3 -> 1.1.4
@@ -115,7 +114,6 @@
      - Add LangaugeDisplayNames with support for variants (#3058, #3113)
      - Add stronger typing (#3190)
    - `icu_harfbuzz`: New experimental port: Harfbuzz integration for ICU4X (v0.1.0)
-   - `ixdtf`: 0.0.0 -> 0.0.1
    - `icu_relativetime`: 0.1.0 -> 0.1.1
 
 
