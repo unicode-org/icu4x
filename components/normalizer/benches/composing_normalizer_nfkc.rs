@@ -12,6 +12,10 @@ struct BenchDataContent {
     pub nfd: String,
     pub nfkc: String,
     pub nfkd: String,
+    pub nfc_u16: Vec<u16>,
+    pub nfd_u16: Vec<u16>,
+    pub nfkc_u16: Vec<u16>,
+    pub nfkd_u16: Vec<u16>,
 }
 
 fn strip_headers(content: &str) -> String {
@@ -89,7 +93,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         "TestRandomWordsUDHR_tr",
         &strip_headers(include_str!("./data/TestRandomWordsUDHR_tr.txt")),
     );
-    let content_viet: (&str, &str) = ("udhr_vie", &strip_headers(include_str!("data/wotw.txt")));
+    let content_viet: (&str, &str) = ("wotw", &strip_headers(include_str!("./data/wotw.txt")));
 
     [
         content_latin,
@@ -108,17 +112,41 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         content_random_words_he,
         content_random_words_de,
     ]
-    .map(|(file_name, raw_content)| BenchDataContent {
-        file_name: file_name.to_owned(),
-        nfc: nfc_normalizer.normalize(raw_content),
-        nfd: nfd_normalizer.normalize(raw_content),
-        nfkc: nfkc_normalizer.normalize(raw_content),
-        nfkd: nfkd_normalizer.normalize(raw_content),
+    .map(|(file_name, raw_content)| {
+        let nfc = &nfc_normalizer.normalize(raw_content);
+        let nfd = &nfd_normalizer.normalize(raw_content);
+        let nfkc = &nfkc_normalizer.normalize(raw_content);
+        let nfkd = &nfkd_normalizer.normalize(raw_content);
+        return BenchDataContent {
+            file_name: file_name.to_owned(),
+            nfc: nfc.to_owned(),
+            nfd: nfd.to_owned(),
+            nfkc: nfkc.to_owned(),
+            nfkd: nfkd.to_owned(),
+            nfc_u16: as_utf16(nfc),
+            nfd_u16: as_utf16(nfd),
+            nfkc_u16: as_utf16(nfkc),
+            nfkd_u16: as_utf16(nfkd),
+        };
     })
+}
+
+fn as_utf16(data: &str) -> Vec<u16> {
+    let mut data_utf16 = Vec::new();
+    let mut buf = [0; 2];
+    for c in data.chars() {
+        let enc = c.encode_utf16(&mut buf);
+        data_utf16.extend_from_slice(enc);
+    }
+    data_utf16
 }
 
 fn function_under_bench(normalizer: &ComposingNormalizer, text: &str) {
     normalizer.normalize(text);
+}
+
+fn function_under_bench_u16(normalizer: &ComposingNormalizer, text: &[u16]) {
+    normalizer.normalize_utf16(text);
 }
 
 pub fn criterion_benchmark(criterion: &mut Criterion) {
@@ -157,6 +185,39 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
             |bencher| {
                 bencher.iter(|| {
                     function_under_bench(&normalizer_under_bench, &bench_data_content.nfkd)
+                })
+            },
+        );
+        // UTF 16
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfc_{}_u16", bench_data_content.file_name)),
+            |bencher| {
+                bencher.iter(|| {
+                    function_under_bench_u16(&normalizer_under_bench, &bench_data_content.nfc_u16)
+                })
+            },
+        );
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfd_{}_u16", bench_data_content.file_name)),
+            |bencher| {
+                bencher.iter(|| {
+                    function_under_bench_u16(&normalizer_under_bench, &bench_data_content.nfd_u16)
+                })
+            },
+        );
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfkc_{}_u16", bench_data_content.file_name)),
+            |bencher| {
+                bencher.iter(|| {
+                    function_under_bench_u16(&normalizer_under_bench, &bench_data_content.nfkc_u16)
+                })
+            },
+        );
+        group.bench_function(
+            BenchmarkId::from_parameter(format!("from_nfkd_{}_u16", bench_data_content.file_name)),
+            |bencher| {
+                bencher.iter(|| {
+                    function_under_bench_u16(&normalizer_under_bench, &bench_data_content.nfkd_u16)
                 })
             },
         );
