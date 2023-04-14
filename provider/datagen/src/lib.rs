@@ -98,8 +98,11 @@ impl CldrLocaleSubset {
 
 /// [Out::Fs] serialization formats.
 pub mod syntax {
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
 }
 
