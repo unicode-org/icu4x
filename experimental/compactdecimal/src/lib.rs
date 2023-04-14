@@ -38,4 +38,5 @@ pub mod provider;
 
 pub use compactdecimal::CompactDecimalFormatter;
 pub use error::CompactDecimalError;
+#[doc(no_inline)]
 pub use CompactDecimalError as Error;

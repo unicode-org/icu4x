@@ -185,4 +185,5 @@ pub use crate::word::WordBreakIteratorUtf8;
 
 pub use error::SegmenterError;
 
+#[doc(no_inline)]
 pub use SegmenterError as Error;

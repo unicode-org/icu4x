@@ -73,6 +73,7 @@ pub mod provider;
 
 pub use crate::error::NormalizerError;
 
+#[doc(no_inline)]
 pub use NormalizerError as Error;
 
 use crate::provider::CanonicalDecompositionDataV1Marker;

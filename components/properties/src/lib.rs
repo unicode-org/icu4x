@@ -121,4 +121,5 @@ pub mod names {
 
 pub use error::PropertiesError;
 
+#[doc(no_inline)]
 pub use PropertiesError as Error;

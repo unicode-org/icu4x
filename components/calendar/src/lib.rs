@@ -151,4 +151,5 @@ pub use error::CalendarError;
 pub use gregorian::Gregorian;
 pub use iso::Iso;
 
+#[doc(no_inline)]
 pub use CalendarError as Error;

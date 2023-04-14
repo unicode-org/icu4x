@@ -110,4 +110,5 @@ pub enum TransformResult {
     Unmodified,
 }
 
+#[doc(no_inline)]
 pub use LocaleTransformError as Error;

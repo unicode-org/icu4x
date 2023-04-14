@@ -77,6 +77,7 @@ pub use locale::Locale;
 pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
 
+#[doc(no_inline)]
 pub use ParserError as Error;
 
 pub mod extensions;
