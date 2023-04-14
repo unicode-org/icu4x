@@ -77,6 +77,8 @@ pub use locale::Locale;
 pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
 
+pub use ParserError as Error;
+
 pub mod extensions;
 pub mod subtags;
 pub mod zerovec;

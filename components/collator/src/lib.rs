@@ -328,5 +328,4 @@ pub use options::MaxVariable;
 pub use options::Numeric;
 pub use options::Strength;
 
-#[doc(inline)]
 pub use CollatorError as Error;

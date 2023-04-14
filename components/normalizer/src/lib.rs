@@ -73,6 +73,8 @@ pub mod provider;
 
 pub use crate::error::NormalizerError;
 
+pub use NormalizerError as Error;
+
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;

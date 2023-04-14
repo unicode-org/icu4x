@@ -106,7 +106,6 @@ pub mod provider;
 pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
 
-#[doc(inline)]
 pub use DecimalError as Error;
 
 use alloc::string::String;
