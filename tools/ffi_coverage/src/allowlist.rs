@@ -308,6 +308,7 @@ lazy_static::lazy_static! {
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
+        "icu::locid::Error",
         "icu::locid_transform::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
