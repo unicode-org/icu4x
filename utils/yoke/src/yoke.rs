@@ -1310,6 +1310,5 @@ const _: () = ();
 /// println!("pre-drop: {reference}");
 /// drop(local);
 /// println!("post-drop: {reference}");
-///
 /// ```
 const _: () = ();

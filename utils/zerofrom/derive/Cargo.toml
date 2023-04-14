@@ -4,7 +4,7 @@
 
 [package]
 name = "zerofrom-derive"
-version = "0.1.1"
+version = "0.1.2"
 description = "Custom derive for the zerofrom crate"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"

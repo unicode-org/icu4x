@@ -184,7 +184,7 @@ fn main() {
         "icu_segmenter",
         "normal",
         "--features lstm",
-        &[&basic, &experimental, &lstm],
+        &[&basic, &lstm],
         "`EXTRA_LSTM_DEPS`",
     );
     test_dep_list(

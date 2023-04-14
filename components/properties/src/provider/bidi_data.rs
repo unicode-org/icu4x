@@ -120,7 +120,7 @@ impl TryFrom<u32> for MirroredPairedBracketData {
 }
 
 /// A closed Rust enum representing a closed set of the incoming Bidi_Paired_Bracket_Type
-/// property values necessary in the internal representation of [`MirroredPairedBracketData`]
+/// property values necessary in the internal representation of `MirroredPairedBracketData`
 /// to satisfy the ULE invariants on valid values.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

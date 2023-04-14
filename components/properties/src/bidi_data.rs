@@ -99,9 +99,10 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// ```
     /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
     ///
-    /// let data =
-    ///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    /// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
+    ///     &icu_testdata::unstable(),
+    /// )
+    /// .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
     /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);
@@ -137,9 +138,10 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
     /// ```
     /// use icu_properties::{bidi_data, bidi_data::BidiPairingProperties};
     ///
-    /// let data =
-    ///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
-    ///         .expect("The data should be valid");
+    /// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
+    ///     &icu_testdata::unstable(),
+    /// )
+    /// .expect("The data should be valid");
     /// let bidi_data = data.as_borrowed();
     ///
     /// let open_paren = bidi_data.get32_pairing_props('(' as u32);
@@ -177,9 +179,10 @@ impl<'a> BidiAuxiliaryPropertiesBorrowed<'a> {
 /// ```
 /// use icu_properties::{bidi_data, bidi_data::BidiMirroringProperties};
 ///
-/// let data =
-///     bidi_data::load_bidi_auxiliary_properties_unstable(&icu_testdata::unstable())
-///         .expect("The data should be valid");
+/// let data = bidi_data::load_bidi_auxiliary_properties_unstable(
+///     &icu_testdata::unstable(),
+/// )
+/// .expect("The data should be valid");
 /// let bidi_data = data.as_borrowed();
 ///
 /// let open_paren = bidi_data.get32_mirroring_props('(' as u32);

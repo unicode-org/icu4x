@@ -8,7 +8,7 @@ use icu_displaynames::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use zerovec::ule::UnvalidatedStr;
+use tinystr::{TinyAsciiStr, TinyStrError};
 
 impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
@@ -56,29 +56,31 @@ impl IterableDataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider
 }
 
 /// Substring used to denote alternative display names data variants for a given script. For example: "BA-alt-short", "TL-alt-variant".
+/// TODO(#3316): Distinguish stand-alone ("Traditional Han") from default ("Traditional")
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
-impl From<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV1<'static> {
-    fn from(other: &cldr_serde::script_displaynames::Resource) -> Self {
+impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV1<'static> {
+    type Error = TinyStrError;
+
+    fn try_from(other: &cldr_serde::script_displaynames::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.scripts.iter() {
                 if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(script);
-                    short_names.insert(key, entry.1.as_ref());
+                    short_names.insert(TinyAsciiStr::from_str(script)?, entry.1.as_ref());
                 } else if !entry.0.contains(ALT_SUBSTRING) {
-                    let key = UnvalidatedStr::from_str(entry.0);
-                    names.insert(key, entry.1.as_ref());
+                    names.insert(TinyAsciiStr::from_str(entry.0)?, entry.1.as_ref());
                 }
             }
         }
-        Self {
-            names: names.into_iter().collect(),
-            short_names: short_names.into_iter().collect(),
-        }
+        Ok(Self {
+            // Old CLDR versions may contain trivial entries, so filter
+            names: names.into_iter().filter(|&(k, v)| k != v).collect(),
+            short_names: short_names.into_iter().filter(|&(k, v)| k != v).collect(),
+        })
     }
 }
 
@@ -103,7 +105,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(UnvalidatedStr::from_str("Cans"))
+                .get(&TinyAsciiStr::from_str("Cans").unwrap())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -125,7 +127,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(UnvalidatedStr::from_str("Cans"))
+                .get(&TinyAsciiStr::from_str("Cans").unwrap())
                 .unwrap(),
             "UCAS"
         );

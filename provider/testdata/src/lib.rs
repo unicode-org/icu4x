@@ -81,7 +81,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("43.0.0-BETA3", icu_testdata::versions::cldr_tag());
+    /// assert_eq!("43.0.0", icu_testdata::versions::cldr_tag());
     /// ```
     pub fn cldr_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::CLDR_TAG)
@@ -92,7 +92,7 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("icu4x/2023-03-22a/72.x", icu_testdata::versions::icu_tag());
+    /// assert_eq!("release-73-1", icu_testdata::versions::icu_tag());
     /// ```
     pub fn icu_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::ICUEXPORT_TAG)

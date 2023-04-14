@@ -44,7 +44,7 @@ icu_normalizer = { version = "1.1.0", path = "../../components/normalizer", feat
 icu_plurals = { version = "1.1.0", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "1.1.0", path = "../../components/properties", features = ["datagen"]}
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", features = ["datagen"] }
-icu_segmenter = { version = "0.8.0", path = "../../experimental/segmenter", features = ["datagen", "lstm"] }
+icu_segmenter = { version = "0.8.0", path = "../../components/segmenter", features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.1.0", path = "../../components/timezone", features = ["datagen"] }
 
 # ICU provider infrastructure
@@ -77,7 +77,7 @@ syn = {version = "1.0", features = ["parsing"] }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 toml = "0.5"
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
-zerovec = { version = "0.9.2", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
 
 # Dependencies for "bin" feature
