@@ -7,7 +7,7 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_properties::{names::PropertyValueNameToEnumMapper, provider, GeneralCategoryGroup};
-    use icu_provider::prelude::*;
+    use icu_provider::prelude::{DataProvider, DataResponse, KeyedDataMarker};
 
     use crate::errors::ffi::ICU4XError;
 

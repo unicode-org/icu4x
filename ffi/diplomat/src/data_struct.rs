@@ -11,7 +11,7 @@ pub mod ffi {
     #[cfg(feature = "icu_decimal")]
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use icu_provider::prelude::*;
+    use icu_provider::{AnyPayload, DataPayload};
 
     #[diplomat::opaque]
     /// A generic data struct to be used by ICU4X
