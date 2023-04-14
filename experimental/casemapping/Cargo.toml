@@ -5,7 +5,7 @@
 [package]
 name = "icu_casemapping"
 description = "Unicode case mapping algorithms"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

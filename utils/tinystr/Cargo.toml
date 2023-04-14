@@ -41,7 +41,7 @@ criterion = "0.4"
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rand = { version = "0.8.5", features = ["small_rng"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
-tinystr_old = { version = "0.4", package = "tinystr", features = ["serde"] }
+tinystr_old = { version = "0.7.1", package = "tinystr", features = ["serde"] }
 
 [features]
 default = ["alloc"]

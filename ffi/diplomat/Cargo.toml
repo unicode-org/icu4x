@@ -5,7 +5,7 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -103,13 +103,13 @@ icu_collator = { version = "1.1.0", path = "../../components/collator" , optiona
 icu_collections = { version = "1.1.0", path = "../../components/collections", optional = true}
 icu_datetime = { version = "1.1.0", path = "../../components/datetime/" , optional = true}
 icu_decimal = { version = "1.1.0", path = "../../components/decimal/" , optional = true}
-icu_displaynames = { version = "0.9.0", path = "../../experimental/displaynames", optional = true }
+icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", optional = true }
 icu_list = { version = "1.1.0", path = "../../components/list" , optional = true}
 icu_locid_transform = { version = "1.1.0", path = "../../components/locid_transform" , optional = true}
 icu_normalizer = { version = "1.1.0", path = "../../components/normalizer/" , optional = true}
 icu_plurals = { version = "1.1.0", path = "../../components/plurals/" , optional = true}
 icu_properties = { version = "1.1.0", path = "../../components/properties/", features = ["bidi"] , optional = true}
-icu_segmenter = { version = "0.8.0", path = "../../components/segmenter" , optional = true}
+icu_segmenter = { version = "1.2.0", path = "../../components/segmenter" , optional = true}
 icu_timezone = { version = "1.1.0", path = "../../components/timezone" , optional = true}
 unicode-bidi = { version = "0.3.13", default-features = false, optional = true}
 
