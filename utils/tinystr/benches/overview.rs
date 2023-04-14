@@ -32,7 +32,6 @@ fn overview(c: &mut Criterion) {
         });
     });
 
-
     let parsed_ascii_4: Vec<TinyAsciiStr<4>> = STRINGS_4
         .iter()
         .map(|s| s.parse::<TinyAsciiStr<4>>().unwrap())
@@ -48,7 +47,6 @@ fn overview(c: &mut Criterion) {
         .chain(STRINGS_16)
         .map(|s| s.parse::<TinyAsciiStr<16>>().unwrap())
         .collect();
-
 
     g.bench_function("read/TinyAsciiStr", |b| {
         b.iter(|| {
@@ -69,7 +67,6 @@ fn overview(c: &mut Criterion) {
         });
     });
 
-
     g.bench_function("compare/TinyAsciiStr", |b| {
         b.iter(|| {
             let mut collector: usize = 0;
@@ -88,7 +85,6 @@ fn overview(c: &mut Criterion) {
             collector
         });
     });
-
 }
 
 criterion_group!(benches, overview,);
