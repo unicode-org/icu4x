@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_compactdecimal"
-version = "0.1.0"
+version = "0.2.0"
 description = "Compact decimal"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
@@ -32,9 +32,9 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_decimal = { version = "1.1.0", path = "../../components/decimal" }
-icu_plurals = { version = "1.1.0", path = "../../components/plurals" }
-icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["macros"] }
+icu_decimal = { version = "1.2.0", path = "../../components/decimal" }
+icu_plurals = { version = "1.2.0", path = "../../components/plurals" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
 

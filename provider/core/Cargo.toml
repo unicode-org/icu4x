@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -28,7 +28,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_locid = { version = "1.1.0", path = "../../components/locid" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
 stable_deref_trait = { version = "1.2.0", default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
@@ -36,7 +36,7 @@ zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["deri
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"]}
 
 # macros
-icu_provider_macros = { version = "1.1.0", path = "../macros", optional = true }
+icu_provider_macros = { version = "1.2.0", path = "../macros", optional = true }
 
 # log
 log = { version = "0.4", optional = true }

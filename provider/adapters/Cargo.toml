@@ -5,7 +5,7 @@
 [package]
 name = "icu_provider_adapters"
 description = "Adapters for composing and manipulating data providers."
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -24,8 +24,8 @@ include = [
 ]
 
 [dependencies]
-icu_locid = { version = "1.1.0", path = "../../components/locid", features = ["zerovec"] }
-icu_provider = { version = "1.1.0", path = "../core", features = ["macros"] }
+icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["zerovec"] }
+icu_provider = { version = "1.2.0", path = "../core", features = ["macros"] }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["zerovec"] }
 yoke = { version = "0.7.1", path = "../../utils/yoke" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }

@@ -5,7 +5,7 @@
 [package]
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
-version = "0.8.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -24,17 +24,14 @@ include = [
     "README.md"
 ]
 
-[package.metadata.workspaces]
-independent = true
-
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.1.0", path = "../../components/collections" }
-icu_locid = { version = "1.1.0", path = "../../components/locid" }
-icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["macros"] }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 utf8_iter = "1.0.3"
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
 

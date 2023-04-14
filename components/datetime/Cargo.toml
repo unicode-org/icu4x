@@ -5,7 +5,7 @@
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -30,12 +30,12 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_calendar = { version = "1.1.0", path = "../calendar" }
-icu_decimal = { version = "1.1.0", path = "../decimal" }
-icu_locid = { version = "1.1.0", path = "../locid" }
-icu_plurals = { version = "1.1.0", path = "../plurals" }
-icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["macros"] }
-icu_timezone = { version = "1.1.0", path = "../timezone" }
+icu_calendar = { version = "1.2.0", path = "../calendar" }
+icu_decimal = { version = "1.2.0", path = "../decimal" }
+icu_locid = { version = "1.2.0", path = "../locid" }
+icu_plurals = { version = "1.2.0", path = "../plurals" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
+icu_timezone = { version = "1.2.0", path = "../timezone" }
 smallvec = "1.6"
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }

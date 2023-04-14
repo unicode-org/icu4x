@@ -149,7 +149,7 @@ checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
 
 [[package]]
 name = "bies"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
  "itertools",
@@ -650,7 +650,7 @@ checksum = "6548a0ad5d2549e111e1f6a11a6c2e2d00ce6a3dafe22948d67c2b443f775e52"
 
 [[package]]
 name = "crlify"
-version = "1.0.1"
+version = "1.0.2"
 
 [[package]]
 name = "crossbeam-channel"
@@ -1514,7 +1514,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_casemapping",
@@ -1565,7 +1565,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1584,7 +1584,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1618,7 +1618,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_cdylib"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_capi",
  "icu_provider",
@@ -1626,7 +1626,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_staticlib"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_capi",
  "icu_provider",
@@ -1634,7 +1634,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1648,7 +1648,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie_builder"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "icu",
  "icu_collections",
@@ -1661,7 +1661,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1684,7 +1684,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1704,7 +1704,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1721,7 +1721,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "cached-path",
  "clap 4.0.32",
@@ -1778,7 +1778,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1807,7 +1807,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1833,7 +1833,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu_displaynames"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "databake",
  "icu_collections",
@@ -1859,7 +1859,7 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "cortex-m",
  "freertos-rust",
@@ -1868,7 +1868,7 @@ dependencies = [
 
 [[package]]
 name = "icu_harfbuzz"
-version = "0.7.0"
+version = "0.1.0"
 dependencies = [
  "displaydoc",
  "harfbuzz",
@@ -1882,7 +1882,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "deduplicating_array",
@@ -1900,7 +1900,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1919,7 +1919,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1937,7 +1937,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1969,7 +1969,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1987,7 +1987,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2003,7 +2003,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "databake",
@@ -2025,7 +2025,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -2041,7 +2041,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -2055,7 +2055,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -2074,7 +2074,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu",
  "icu_provider",
@@ -2085,7 +2085,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2102,7 +2102,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.8.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -2124,7 +2124,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "icu",
@@ -2173,7 +2173,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2287,7 +2287,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 
 [[package]]
 name = "ixdtf"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_testdata",

@@ -5,7 +5,7 @@
 [package]
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -31,8 +31,8 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "1.1.0", path = "../locid", features = ["zerovec"] }
-icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "1.2.0", path = "../locid", features = ["zerovec"] }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
