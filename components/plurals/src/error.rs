@@ -5,7 +5,7 @@
 #[cfg(feature = "experimental")]
 use crate::rules::reference::parser::ParserError;
 use displaydoc::Display;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 /// A list of error outcomes for various operations in this module.
 ///

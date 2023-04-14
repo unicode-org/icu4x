@@ -9,7 +9,6 @@ use crate::provider::*;
 use alloc::borrow::Cow;
 use icu_locid::{subtags::Language, subtags::Region, subtags::Script, Locale};
 use icu_provider::prelude::*;
-use icu_provider::{DataError, DataPayload};
 
 /// Lookup of the locale-specific display names by region code.
 ///

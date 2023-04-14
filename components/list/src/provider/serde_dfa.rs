@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use regex_automata::dfa::sparse::DFA;
 
 /// A serde-compatible version of [regex_automata::dfa::sparse::DFA]. This does not implement

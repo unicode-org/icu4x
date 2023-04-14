@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature

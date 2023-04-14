@@ -8,7 +8,7 @@ use core::{
     fmt, num,
     str::FromStr,
 };
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::{
     ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},

@@ -4,7 +4,7 @@
 
 use core::fmt::Debug;
 use displaydoc::Display;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for ListError {}

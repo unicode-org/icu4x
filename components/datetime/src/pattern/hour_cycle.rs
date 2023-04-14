@@ -6,7 +6,7 @@ use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
 #[cfg(all(feature = "datagen"))]
 use crate::{provider, skeleton};
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// Used to represent either H11/H12, or H23/H24. Skeletons only store these
 /// hour cycles as H12 or H23.

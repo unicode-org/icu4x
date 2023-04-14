@@ -91,7 +91,6 @@ use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use icu_provider::zerofrom::ZeroFrom;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
@@ -101,6 +100,7 @@ use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 

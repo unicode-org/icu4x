@@ -12,7 +12,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
 use icu_decimal::DecimalError;
 use icu_plurals::PluralsError;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
