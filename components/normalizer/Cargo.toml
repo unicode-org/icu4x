@@ -5,7 +5,7 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

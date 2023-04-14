@@ -5,7 +5,7 @@
 [package]
 name = "icu_collections"
 description = "Collection of API for use in ICU libraries."
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

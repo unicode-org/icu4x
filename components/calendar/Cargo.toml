@@ -5,7 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "API for supporting various types of calendars"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
