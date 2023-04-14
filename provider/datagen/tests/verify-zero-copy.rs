@@ -38,7 +38,7 @@ static EXPECTED_TOTAL_VIOLATIONS: &[&str] = &[
 ];
 
 #[test]
-fn main() {
+fn test_zero_copy() {
     // manually drop to avoid dhat from printing stats at the end
     let _profiler = ManuallyDrop::new(dhat::Profiler::new_heap());
 
