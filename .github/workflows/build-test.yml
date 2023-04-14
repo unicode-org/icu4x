@@ -37,13 +37,17 @@ jobs:
   # ci-job-check & ci-job-features
   # Running at MSRV (1.61)
   msrv:
-    runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
     # be killed if check fails.
     strategy:
-      matrix: 
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
         behavior: [check, features]
+        exclude:
+          - os: windows-latest
+            behavior: features
       fail-fast: true
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
 
@@ -75,7 +79,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ ubuntu-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
 
     steps:
