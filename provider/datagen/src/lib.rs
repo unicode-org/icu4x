@@ -32,7 +32,7 @@
 //!
 //! ## Command line
 //!
-//! The command line interface can be installed with the `bin` Cargo feature.
+//! The command line interface can be installed through Cargo.
 //!
 //! ```bash
 //! $ cargo install icu4x-datagen
