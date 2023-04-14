@@ -132,8 +132,9 @@ impl IterableDataProvider<LongCompactDecimalFormatDataV1Marker> for crate::Datag
 mod tests {
     use super::*;
     use icu_locid::locale;
-    use icu_provider::prelude::zerofrom::ZeroFrom;
+    use icu_provider::prelude::*;
     use std::borrow::Cow;
+    use zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
 
     #[test]

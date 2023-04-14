@@ -11,7 +11,7 @@ pub mod ffi {
     #[cfg(feature = "icu_decimal")]
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use icu_provider::prelude::AnyPayload;
+    use icu_provider::AnyPayload;
 
     #[diplomat::opaque]
     /// A generic data struct to be used by ICU4X
@@ -42,7 +42,7 @@ pub mod ffi {
             use icu_decimal::provider::{
                 AffixesV1, DecimalSymbolsV1, DecimalSymbolsV1Marker, GroupingSizesV1,
             };
-            use icu_provider::prelude::DataPayload;
+            use icu_provider::DataPayload;
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
                 new_digits.copy_from_slice(digits);

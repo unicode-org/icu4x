@@ -19,6 +19,7 @@ fn check(attr: Vec<TokenStream2>, item: TokenStream2, expected: TokenStream2) {
 }
 
 #[test]
+#[rustfmt::skip] // inserts a comma
 fn test_basic() {
     // #[data_struct]
     check(
@@ -27,9 +28,7 @@ fn test_basic() {
             pub struct FooV1;
         ),
         quote!(
-            #[derive(
-                icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom,
-            )]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
         ),
     );

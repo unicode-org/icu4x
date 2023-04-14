@@ -6,7 +6,7 @@
 
 use displaydoc::Display;
 use icu_properties::PropertiesError;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 /// Normalizer-specific error
 #[derive(Display, Debug)]
