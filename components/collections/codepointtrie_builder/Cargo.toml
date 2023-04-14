@@ -38,7 +38,7 @@ wasm = ["wasmer", "wasmer-wasi"]
 icu4c = ["zerovec"]
 
 [dependencies]
-icu_collections = { version = "1.1.0", path = "..", features = ["serde"] }
+icu_collections = { version = "1.2.0", path = "..", features = ["serde"] }
 zerovec = { version = "0.9.4", path = "../../../utils/zerovec", optional = true }
 lazy_static = "1.4.0"
 toml = "0.5"
