@@ -305,6 +305,7 @@ lazy_static::lazy_static! {
 
         // Re-exports of errors
         "icu::calendar::Error",
+        "icu::compactdecimal::Error",
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
@@ -313,6 +314,7 @@ lazy_static::lazy_static! {
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
+        "icu::relativetime::Error",
         "icu::segmenter::Error",
         "icu::timezone::Error",
         "icu::collator::Error",
