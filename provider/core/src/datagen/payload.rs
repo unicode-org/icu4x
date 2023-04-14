@@ -4,9 +4,9 @@
 
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
-use crate::yoke::*;
 use alloc::boxed::Box;
 use databake::{Bake, CrateEnv, TokenStream};
+use yoke::*;
 
 trait ExportableYoke {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;

@@ -371,7 +371,7 @@ impl TryFrom<&DecimalFormat> for CompactDecimalPatternDataV1<'static> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_provider::zerofrom::ZeroFrom;
+    use icu_provider::prelude::zerofrom::ZeroFrom;
     use zerovec::ule::AsULE;
 
     #[test]

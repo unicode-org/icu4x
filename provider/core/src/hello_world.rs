@@ -9,12 +9,12 @@
 #[cfg(feature = "datagen")]
 use crate::datagen::IterableDataProvider;
 use crate::prelude::*;
-use crate::yoke::{self, *};
-use crate::zerofrom::{self, *};
 use alloc::borrow::Cow;
 use alloc::string::String;
 use core::fmt::Debug;
 use writeable::Writeable;
+use yoke::*;
+use zerofrom::*;
 
 /// A struct containing "Hello World" in the requested language.
 #[derive(Debug, PartialEq, Clone, Yokeable, ZeroFrom)]

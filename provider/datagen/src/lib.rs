@@ -105,11 +105,13 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{
-        syntax, BakedOptions, CldrLocaleSubset, CollationHanDatabase, CoverageLevel, Out,
-        SourceData,
-    };
+    #[doc(hidden)]
+    pub use crate::CldrLocaleSubset;
+    #[doc(no_inline)]
+    pub use crate::{syntax, BakedOptions, CollationHanDatabase, CoverageLevel, Out, SourceData};
+    #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
+    #[doc(no_inline)]
     pub use icu_provider::KeyedDataMarker;
 }
 

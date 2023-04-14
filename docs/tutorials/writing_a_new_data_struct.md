@@ -138,7 +138,7 @@ The following example shows all the pieces that make up the data pipeline for `D
 
 ```rust
 use std::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use icu::decimal::provider::{ AffixesV1, GroupingSizesV1 };
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).

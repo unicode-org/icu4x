@@ -12,7 +12,7 @@ pub mod runtime;
 use crate::fields;
 pub use error::PatternError;
 pub use hour_cycle::CoarseHourCycle;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 pub use item::{GenericPatternItem, PatternItem};
 
 /// The granularity of time represented in a pattern item.

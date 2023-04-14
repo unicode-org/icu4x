@@ -10,7 +10,7 @@ use crate::{
 };
 use either::Either;
 use icu_plurals::{PluralCategory, PluralRules};
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
