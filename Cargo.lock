@@ -1859,7 +1859,7 @@ dependencies = [
 
 [[package]]
 name = "icu_harfbuzz"
-version = "1.2.0"
+version = "0.8.0"
 dependencies = [
  "displaydoc",
  "harfbuzz-sys",
@@ -2276,7 +2276,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 
 [[package]]
 name = "ixdtf"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_testdata",
