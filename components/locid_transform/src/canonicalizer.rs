@@ -227,7 +227,7 @@ impl LocaleCanonicalizer {
     // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
     #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
     pub fn try_new_with_any_provider(
-        provider: &impl AnyProvider,
+        provider: &(impl AnyProvider + ?Sized),
     ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
         let expander = LocaleExpander::try_new_with_any_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
@@ -237,7 +237,7 @@ impl LocaleCanonicalizer {
     #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
-        provider: &impl BufferProvider,
+        provider: &(impl BufferProvider + ?Sized),
     ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
         let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
         Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
