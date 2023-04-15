@@ -180,6 +180,7 @@ extern crate alloc; // required as my-data-mod is written for #[no_std]
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
 const LOCALE: Locale = locale!("ja");
 
@@ -241,8 +242,8 @@ $ cargo add icu_provider_fs
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
-use icu_provider_fs::FsDataProvider;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_fs::FsDataProvider;
 
 const LOCALE: Locale = locale!("ja");
 
