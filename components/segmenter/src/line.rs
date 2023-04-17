@@ -1072,20 +1072,21 @@ where
     iter.current_pos_data = start_point;
     let breaks = complex_language_segment_str(iter.complex, &s);
     iter.result_cache = breaks;
-    let mut i = iter.get_current_codepoint()?.len_utf8();
     let first_pos = *iter.result_cache.first()?;
+    let mut i = left_codepoint.len_utf8();
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return iter.get_current_position();
         }
+        debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iter.get_current_position());
+        i += T::get_current_position_character_len(iter);
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
         }
-        i += T::get_current_position_character_len(iter);
     }
 }
 
@@ -1173,10 +1174,10 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
         let breaks = complex_language_segment_utf16(iterator.complex, &s);
-        let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
+        let mut i = 1;
         loop {
             if i == first_pos {
                 // Re-calculate breaking offset
@@ -1188,12 +1189,13 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
                     .collect();
                 return iterator.get_current_position();
             }
+            debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iterator.get_current_position());
+            i += 1;
             iterator.advance_iter();
             if iterator.is_eof() {
                 iterator.result_cache.clear();
                 return Some(iterator.len);
             }
-            i += 1;
         }
     }
 }
