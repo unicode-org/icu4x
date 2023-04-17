@@ -107,22 +107,59 @@ fn word_break_mixed_han() {
 }
 
 #[test]
-fn word_break_th_wikipedia() {
+fn word_line_th_wikipedia_auto() {
+    use icu_segmenter::LineSegmenter;
+
     let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
-
     assert_eq!(text.len(), 297);
+    let utf16: Vec<u16> = text.encode_utf16().collect();
+    assert_eq!(utf16.len(), 142);
 
-    let segmenter_line_auto =
+    let segmenter_word_auto =
         WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+    let segmenter_line_auto =
+        LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
 
-    let breakpoints = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
-
+    let breakpoints_word_utf8 = segmenter_word_auto.segment_str(text).collect::<Vec<_>>();
     assert_eq!(
-        breakpoints,
+        breakpoints_word_utf8,
         [
             0, 9, 18, 27, 28, 29, 38, 47, 48, 49, 52, 53, 58, 59, 60, 67, 68, 71, 72, 73, 82, 83,
             84, 90, 93, 94, 95, 104, 113, 114, 115, 120, 121, 131, 132, 133, 148, 166, 175, 187,
             193, 205, 220, 221, 227, 239, 272, 281, 282, 289, 290, 297
+        ]
+    );
+
+    let breakpoints_line_utf8 = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
+    assert_eq!(
+        breakpoints_line_utf8,
+        [
+            0, 9, 18, 27, 28, 38, 47, 49, 53, 60, 68, 73, 82, 84, 87, 90, 95, 104, 113, 115, 121,
+            133, 148, 166, 175, 187, 193, 205, 220, 221, 227, 239, 272, 281, 282, 290, 297
+        ]
+    );
+
+    let breakpoints_word_utf16 = segmenter_word_auto
+        .segment_utf16(&utf16)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        breakpoints_word_utf16,
+        [
+            0, 3, 6, 9, 10, 11, 14, 17, 18, 19, 22, 23, 28, 29, 30, 37, 38, 41, 42, 43, 46, 47, 48,
+            50, 51, 52, 53, 56, 59, 60, 61, 65, 66, 74, 75, 76, 81, 87, 90, 94, 96, 100, 105, 106,
+            108, 112, 123, 126, 127, 134, 135, 142
+        ]
+    );
+
+    let breakpoints_word_utf16 = segmenter_word_auto
+        .segment_utf16(&utf16)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        breakpoints_word_utf16,
+        [
+            0, 3, 6, 9, 10, 11, 14, 17, 18, 19, 22, 23, 28, 29, 30, 37, 38, 41, 42, 43, 46, 47, 48,
+            50, 51, 52, 53, 56, 59, 60, 61, 65, 66, 74, 75, 76, 81, 87, 90, 94, 96, 100, 105, 106,
+            108, 112, 123, 126, 127, 134, 135, 142
         ]
     );
 }

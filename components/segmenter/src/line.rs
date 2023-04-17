@@ -1080,7 +1080,11 @@ where
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return iter.get_current_position();
         }
-        debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iter.get_current_position());
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iter.get_current_position()
+        );
         i += T::get_current_position_character_len(iter);
         iter.advance_iter();
         if iter.is_eof() {
@@ -1189,7 +1193,11 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
                     .collect();
                 return iterator.get_current_position();
             }
-            debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iterator.get_current_position());
+            debug_assert!(
+                i < first_pos,
+                "we should always arrive at first_pos: near index {:?}",
+                iterator.get_current_position()
+            );
             i += 1;
             iterator.advance_iter();
             if iterator.is_eof() {

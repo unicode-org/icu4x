@@ -468,7 +468,11 @@ where
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return iter.get_current_position();
         }
-        debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iter.get_current_position());
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iter.get_current_position()
+        );
         i += T::get_current_position_character_len(iter);
         iter.advance_iter();
         if iter.is_eof() {
@@ -530,7 +534,11 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
                 iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
                 return iter.get_current_position();
             }
-            debug_assert!(i < first_pos, "we should always arrive at first_pos: near index {:?}", iter.get_current_position());
+            debug_assert!(
+                i < first_pos,
+                "we should always arrive at first_pos: near index {:?}",
+                iter.get_current_position()
+            );
             i += 1;
             iter.advance_iter();
             if iter.is_eof() {
