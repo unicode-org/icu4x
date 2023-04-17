@@ -105,3 +105,20 @@ fn word_break_mixed_han() {
         );
     }
 }
+
+#[test]
+fn word_break_th_wikipedia() {
+    let text = "แพนด้าแดง (อังกฤษ: Red panda, Shining cat; จีน: 小熊貓; พินอิน: Xiǎo xióngmāo) สัตว์เลี้ยงลูกด้วยนมชนิดหนึ่ง มีชื่อวิทยาศาสตร์ว่า Ailurus fulgens";
+
+    assert_eq!(text.len(), 297);
+
+    let segmenter_line_auto =
+        WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable()).expect("Data exists");
+
+    let breakpoints = segmenter_line_auto.segment_str(text).collect::<Vec<_>>();
+
+    assert_eq!(
+        breakpoints,
+        [0, 9, 18, 27, 28, 29, 38, 47, 48, 49, 52, 53, 58, 59, 60, 67, 68, 71, 72, 73, 297]
+    );
+}

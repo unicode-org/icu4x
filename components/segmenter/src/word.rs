@@ -468,6 +468,7 @@ where
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return iter.get_current_position();
         }
+        debug_assert!(i < first_pos, "we should always arrive back at the same index when resolving the complex script: near index {:?}", iter.get_current_position());
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
