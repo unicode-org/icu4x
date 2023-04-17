@@ -1,5 +1,14 @@
 # Changelog
 
+## icu4x 1.2.1 (Apr 17, 2023)
+
+- `icu_datagen`
+  - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
+- `icu_locid_transform`
+  - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
+- `icu_segmenter`
+  - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
+
 ## icu4x 1.2 (Apr 13, 2023)
 
 - General
