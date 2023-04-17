@@ -18,10 +18,6 @@ pub struct Options {
     pub keys: KeyInclude,
     /// Defines the locales to include
     pub locales: LocaleInclude,
-    /// Set this to true if `WordSegmenter::try_new_dictionary` is used. If only
-    /// `try_new_auto` is used, we don't need dictionary data for languages that
-    /// use LSTM.
-    pub dictionary_segmenter: bool,
     /// Whether to optimize tries for speed or size
     pub trie_type: IcuTrieType,
     /// Which Han collation to use
@@ -35,7 +31,6 @@ impl Default for Options {
         Options {
             keys: Default::default(),
             locales: Default::default(),
-            dictionary_segmenter: Default::default(),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: Default::default(),

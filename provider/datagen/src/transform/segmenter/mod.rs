@@ -17,6 +17,7 @@ use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
+use icu_locid::locale;
 
 mod lstm;
 
@@ -749,27 +750,13 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        let supported = [
-            langid!("th"),
-            langid!("km"),
-            langid!("lo"),
-            langid!("my"),
-            langid!("ja"),
-        ];
-
-        let needed = supported
-            .iter()
-            .filter(|l| self.source.options.dictionary_segmenter || langid!("ja") == **l);
-
-        use crate::options::LocaleInclude;
-        Ok(match &self.source.options.locales {
-            LocaleInclude::All => needed.map(DataLocale::from).collect(),
-            LocaleInclude::Explicit(set) => needed
-                .filter(|l| set.contains(l))
-                .map(DataLocale::from)
-                .collect(),
-            _ => unreachable!("resolved"),
-        })
+        Ok(vec![
+            locale!("th").into(),
+            locale!("km").into(),
+            locale!("lo").into(),
+            locale!("my").into(),
+            locale!("ja").into(),
+        ])
     }
 }
 

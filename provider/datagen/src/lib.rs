@@ -419,9 +419,7 @@ pub fn datagen_with_options(
                 .map_err(|e| e.with_key(key))?;
 
             // TODO: Push this down into `supported_locales_for_key` and implement per-key locale logic for all keys
-            if key != icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY
-                && key != icu_calendar::provider::WeekDataV1Marker::KEY
-            {
+            if key != icu_calendar::provider::WeekDataV1Marker::KEY {
                 locales = match &provider.source.options.locales {
                     options::LocaleInclude::All => locales,
                     options::LocaleInclude::Explicit(set) => locales
