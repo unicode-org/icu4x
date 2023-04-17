@@ -5,7 +5,7 @@
 [package]
 name = "icu_harfbuzz"
 description = "HarfBuzz glue code for ICU4X"
-version = "0.7.0"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -23,6 +23,9 @@ include = [
     "LICENSE",
     "README.md"
 ]
+
+[package.metadata.workspaces]
+independent = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -42,6 +45,10 @@ icu_properties = { version = "1.0.0", path = "../../components/properties" }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 displaydoc = { version = "0.2.3", default-features = false }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false }
+
+[dev-dependencies]
+icu_testdata = { path = "../../provider/testdata" }
+harfbuzz = { version = "0.4.0" }
 
 [features]
 default = []

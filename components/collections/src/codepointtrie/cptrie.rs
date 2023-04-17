@@ -429,13 +429,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use icu_collections::codepointtrie::CodePointTrie;
     /// use icu_collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
-    /// let planes_trie_i8: CodePointTrie<i8> = planes_trie_u8
-    ///     .try_into_converted()
-    ///     .expect("infallible");
+    /// let planes_trie_i8: CodePointTrie<i8> =
+    ///     planes_trie_u8.try_into_converted().expect("infallible");
     ///
     /// assert_eq!(planes_trie_i8.get32(0x30000), 3);
     /// ```
@@ -469,9 +468,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::codepointtrie::CodePointTrie;
-    /// use icu_collections::codepointtrie::planes;
     /// use core::convert::Infallible;
+    /// use icu_collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let planes_trie_u8: CodePointTrie<u8> = planes::get_planes_trie();
     /// let planes_trie_u16: CodePointTrie<u16> = planes_trie_u8

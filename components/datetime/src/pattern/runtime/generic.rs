@@ -9,7 +9,7 @@ use super::{
 };
 use alloc::vec::Vec;
 use core::str::FromStr;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]

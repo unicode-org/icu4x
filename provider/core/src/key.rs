@@ -213,7 +213,7 @@ impl Default for DataKeyMetadata {
 /// `DataKey`s are created with the [`data_key!`](crate::data_key) macro:
 ///
 /// ```
-/// # use icu_provider::prelude::DataKey;
+/// # use icu_provider::DataKey;
 /// const K: DataKey = icu_provider::data_key!("foo/bar@1");
 /// ```
 ///
@@ -223,7 +223,7 @@ impl Default for DataKeyMetadata {
 /// Invalid paths are compile-time errors (as [`data_key!`](crate::data_key) uses `const`).
 ///
 /// ```compile_fail,E0080
-/// # use icu_provider::prelude::DataKey;
+/// # use icu_provider::DataKey;
 /// const K: DataKey = icu_provider::data_key!("foo/../bar@1");
 /// ```
 #[derive(Copy, Clone)]

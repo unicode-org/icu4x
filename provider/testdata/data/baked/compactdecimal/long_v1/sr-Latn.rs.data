@@ -14,7 +14,7 @@
                 )
             },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\t\0\0\0\0\0\n\0\x14\0\x1D\0'\03\0?\0K\0T\0\x03\0 hiljade\x03\0 hiljada\x06\0 milion\x06\0 miliona\t\0 milijarda\t\0 milijarde\t\0 milijardi\x0C\0 bilion\x0C\0 biliona")
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\t\0\0\0\0\0\n\0\x14\0\x1D\0'\x003\0?\0K\0T\0\x03\0 hiljade\x03\0 hiljada\x06\0 milion\x06\0 miliona\t\0 milijarda\t\0 milijarde\t\0 milijardi\x0C\0 bilion\x0C\0 biliona")
             },
         )
     },

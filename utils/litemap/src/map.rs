@@ -154,7 +154,7 @@ where
     /// use litemap::LiteMap;
     ///
     /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.first(), Some((&1, &"uno")));
     /// ```
@@ -171,7 +171,7 @@ where
     /// use litemap::LiteMap;
     ///
     /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///         LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
     ///
     /// assert_eq!(map.last(), Some((&3, &"tres")));
     /// ```

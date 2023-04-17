@@ -17,7 +17,7 @@
 #![allow(clippy::exhaustive_enums)]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// A collection of strings to affix to a decimal number.
 ///

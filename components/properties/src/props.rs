@@ -43,19 +43,35 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-///                  .expect("The data should be valid");
+/// let lookup =
+///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+///         .expect("The data should be valid");
 /// let lookup = lookup.as_borrowed();
 /// // short name for value
-/// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
-/// assert_eq!(lookup.get_strict("Pd"), Some(GeneralCategory::DashPunctuation));
+/// assert_eq!(
+///     lookup.get_strict("Lu"),
+///     Some(GeneralCategory::UppercaseLetter)
+/// );
+/// assert_eq!(
+///     lookup.get_strict("Pd"),
+///     Some(GeneralCategory::DashPunctuation)
+/// );
 /// // long name for value
-/// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
-/// assert_eq!(lookup.get_strict("Dash_Punctuation"), Some(GeneralCategory::DashPunctuation));
+/// assert_eq!(
+///     lookup.get_strict("Uppercase_Letter"),
+///     Some(GeneralCategory::UppercaseLetter)
+/// );
+/// assert_eq!(
+///     lookup.get_strict("Dash_Punctuation"),
+///     Some(GeneralCategory::DashPunctuation)
+/// );
 /// // name has incorrect casing
 /// assert_eq!(lookup.get_strict("dashpunctuation"), None);
 /// // loose matching of name
-/// assert_eq!(lookup.get_loose("dash-punctuation"), Some(GeneralCategory::DashPunctuation));
+/// assert_eq!(
+///     lookup.get_loose("dash-punctuation"),
+///     Some(GeneralCategory::DashPunctuation)
+/// );
 /// // fake property
 /// assert_eq!(lookup.get_strict("Animated_Gif"), None);
 /// ```
@@ -111,11 +127,18 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup =
+    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
-    /// assert_eq!(lookup.get_strict_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
-    /// assert_eq!(lookup.get_strict_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(
+    ///     lookup.get_strict_u16("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_strict_u16("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
     /// // does not do loose matching
     /// assert_eq!(lookup.get_strict_u16("UppercaseLetter"), None);
     /// ```
@@ -132,11 +155,18 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup =
+    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
-    /// assert_eq!(lookup.get_strict("Lu"), Some(GeneralCategory::UppercaseLetter));
-    /// assert_eq!(lookup.get_strict("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(
+    ///     lookup.get_strict("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_strict("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
     /// // does not do loose matching
     /// assert_eq!(lookup.get_strict("UppercaseLetter"), None);
     /// ```
@@ -154,13 +184,23 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup =
+    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
-    /// assert_eq!(lookup.get_loose_u16("Lu"), Some(GeneralCategory::UppercaseLetter as u16));
-    /// assert_eq!(lookup.get_loose_u16("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(
+    ///     lookup.get_loose_u16("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_loose_u16("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
     /// // does do loose matching
-    /// assert_eq!(lookup.get_loose_u16("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter as u16));
+    /// assert_eq!(
+    ///     lookup.get_loose_u16("UppercaseLetter"),
+    ///     Some(GeneralCategory::UppercaseLetter as u16)
+    /// );
     /// ```
     #[inline]
     pub fn get_loose_u16(&self, name: &str) -> Option<u16> {
@@ -176,13 +216,23 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup =
+    ///     GeneralCategory::get_name_to_enum_mapper(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
-    /// assert_eq!(lookup.get_loose("Lu"), Some(GeneralCategory::UppercaseLetter));
-    /// assert_eq!(lookup.get_loose("Uppercase_Letter"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(
+    ///     lookup.get_loose("Lu"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
+    /// assert_eq!(
+    ///     lookup.get_loose("Uppercase_Letter"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
     /// // does do loose matching
-    /// assert_eq!(lookup.get_loose("UppercaseLetter"), Some(GeneralCategory::UppercaseLetter));
+    /// assert_eq!(
+    ///     lookup.get_loose("UppercaseLetter"),
+    ///     Some(GeneralCategory::UppercaseLetter)
+    /// );
     /// ```
     #[inline]
     pub fn get_loose(&self, name: &str) -> Option<T> {
@@ -229,11 +279,19 @@ impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
 /// ```
 /// use icu::properties::CanonicalCombiningClass;
 ///
-/// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-///                  .expect("The data should be valid");
+/// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(
+///     &icu_testdata::unstable(),
+/// )
+/// .expect("The data should be valid");
 /// let lookup = lookup.as_borrowed();
-/// assert_eq!(lookup.get(CanonicalCombiningClass::KanaVoicing), Some("Kana_Voicing"));
-/// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("Above_Left"));
+/// assert_eq!(
+///     lookup.get(CanonicalCombiningClass::KanaVoicing),
+///     Some("Kana_Voicing")
+/// );
+/// assert_eq!(
+///     lookup.get(CanonicalCombiningClass::AboveLeft),
+///     Some("Above_Left")
+/// );
 /// ```
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameSparseMapper<T> {
@@ -285,11 +343,19 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::CanonicalCombiningClass;
     ///
-    /// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup = CanonicalCombiningClass::get_enum_to_long_name_mapper(
+    ///     &icu_testdata::unstable(),
+    /// )
+    /// .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
-    /// assert_eq!(lookup.get(CanonicalCombiningClass::KanaVoicing), Some("Kana_Voicing"));
-    /// assert_eq!(lookup.get(CanonicalCombiningClass::AboveLeft), Some("Above_Left"));
+    /// assert_eq!(
+    ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
+    ///     Some("Kana_Voicing")
+    /// );
+    /// assert_eq!(
+    ///     lookup.get(CanonicalCombiningClass::AboveLeft),
+    ///     Some("Above_Left")
+    /// );
     /// ```
     #[inline]
     pub fn get(&self, property: T) -> Option<&str> {
@@ -321,11 +387,19 @@ impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::get_enum_to_long_name_mapper(&icu_testdata::unstable())
-///                  .expect("The data should be valid");
+/// let lookup = GeneralCategory::get_enum_to_long_name_mapper(
+///     &icu_testdata::unstable(),
+/// )
+/// .expect("The data should be valid");
 /// let lookup = lookup.as_borrowed();
-/// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Uppercase_Letter"));
-/// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Dash_Punctuation"));
+/// assert_eq!(
+///     lookup.get(GeneralCategory::UppercaseLetter),
+///     Some("Uppercase_Letter")
+/// );
+/// assert_eq!(
+///     lookup.get(GeneralCategory::DashPunctuation),
+///     Some("Dash_Punctuation")
+/// );
 /// ```
 #[derive(Debug)]
 pub struct PropertyEnumToValueNameLinearMapper<T> {
@@ -377,8 +451,10 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup = GeneralCategory::get_enum_to_short_name_mapper(
+    ///     &icu_testdata::unstable(),
+    /// )
+    /// .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
     /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
@@ -412,8 +488,9 @@ impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
 /// use icu::properties::Script;
 /// use tinystr::tinystr;
 ///
-/// let lookup = Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-///                  .expect("The data should be valid");
+/// let lookup =
+///     Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
+///         .expect("The data should be valid");
 /// let lookup = lookup.as_borrowed();
 /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
 /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
@@ -469,8 +546,9 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
     /// use icu::properties::Script;
     /// use tinystr::tinystr;
     ///
-    /// let lookup = Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
-    ///                  .expect("The data should be valid");
+    /// let lookup =
+    ///     Script::get_enum_to_short_name_mapper(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let lookup = lookup.as_borrowed();
     /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
     /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));

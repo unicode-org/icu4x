@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

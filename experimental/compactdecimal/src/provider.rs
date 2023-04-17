@@ -13,7 +13,7 @@
 
 use alloc::borrow::Cow;
 use icu_plurals::PluralCategory;
-use icu_provider::{yoke, zerofrom, DataMarker};
+use icu_provider::prelude::*;
 use zerovec::ZeroMap2d;
 
 /// Relative time format V1 data struct.

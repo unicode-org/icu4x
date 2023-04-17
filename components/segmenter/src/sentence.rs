@@ -94,11 +94,14 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// use itertools::Itertools;
 /// let text = "Ceci tuera cela. Le livre tuera l’édifice.";
 /// let sentences: Vec<&str> = segmenter
-///    .segment_str(text)
-///    .tuple_windows()
-///    .map(|(i, j)| &text[i..j])
-///    .collect();
-/// assert_eq!(&sentences, &["Ceci tuera cela. ", "Le livre tuera l’édifice."]);
+///     .segment_str(text)
+///     .tuple_windows()
+///     .map(|(i, j)| &text[i..j])
+///     .collect();
+/// assert_eq!(
+///     &sentences,
+///     &["Ceci tuera cela. ", "Le livre tuera l’édifice."]
+/// );
 /// ```
 #[derive(Debug)]
 pub struct SentenceSegmenter {

@@ -66,8 +66,9 @@ use crate::TransformResult;
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
 ///
-/// let lc = LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc =
+///     LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
+///         .expect("create failed");
 ///
 /// let mut locale = locale!("atj");
 /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
