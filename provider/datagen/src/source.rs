@@ -386,35 +386,32 @@ impl AbstractFs {
 
     fn init(&self) -> Result<(), DataError> {
         #[cfg(feature = "networking")]
-        match self {
-            Self::Zip(lock) => {
-                if lock.read().expect("poison").is_ok() {
-                    return Ok(());
-                }
-                let mut lock = lock.write().expect("poison");
-                let resource = if let Err(resource) = &*lock {
-                    resource
-                } else {
-                    return Ok(());
-                };
-
-                let root: PathBuf = {
-                    lazy_static::lazy_static! {
-                        static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                            .freshness_lifetime(u64::MAX)
-                            .progress_bar(None)
-                            .build()
-                            .unwrap();
-                    }
-
-                    CACHE
-                        .cached_path(resource)
-                        .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                };
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
+        if let Self::Zip(lock) = self {
+            if lock.read().expect("poison").is_ok() {
+                return Ok(());
             }
-            _ => {}
+            let mut lock = lock.write().expect("poison");
+            let resource = if let Err(resource) = &*lock {
+                resource
+            } else {
+                return Ok(());
+            };
+
+            let root = {
+                lazy_static::lazy_static! {
+                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                        .freshness_lifetime(u64::MAX)
+                        .progress_bar(None)
+                        .build()
+                        .unwrap();
+                }
+
+                CACHE
+                    .cached_path(resource)
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+            };
+            *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
+                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
         }
         Ok(())
     }
