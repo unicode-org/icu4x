@@ -12,12 +12,12 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
 use icu_decimal::DecimalError;
 use icu_plurals::PluralsError;
-use icu_provider::prelude::DataError;
+use icu_provider::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
 
-/// A list of error outcomes for various operations in the `icu_datetime` crate.
+/// A list of error outcomes for various operations in this module.
 ///
 /// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]

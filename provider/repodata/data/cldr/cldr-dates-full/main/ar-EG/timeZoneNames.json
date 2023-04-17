@@ -3,7 +3,7 @@
     "ar-EG": {
       "identity": {
         "version": {
-          "_cldrVersion": "42"
+          "_cldrVersion": "43"
         },
         "language": "ar",
         "territory": "EG"
@@ -119,6 +119,9 @@
               },
               "Chihuahua": {
                 "exemplarCity": "تشيواوا"
+              },
+              "Ciudad_Juarez": {
+                "exemplarCity": "سيوداد خواريز"
               },
               "Coral_Harbour": {
                 "exemplarCity": "كورال هاربر"

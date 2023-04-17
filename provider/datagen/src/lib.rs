@@ -32,7 +32,7 @@
 //!
 //! ## Command line
 //!
-//! The command line interface can be installed with the `bin` Cargo feature.
+//! The command line interface can be installed through Cargo.
 //!
 //! ```bash
 //! $ cargo install icu4x-datagen
@@ -79,15 +79,21 @@ pub use source::SourceData;
 
 /// [Out::Fs] serialization formats.
 pub mod syntax {
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
 }
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    pub use super::{options, syntax, BakedOptions, Out, SourceData};
+    #[doc(no_inline)]
+    pub use crate::{options, syntax, BakedOptions, Out, SourceData};
+    #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
+    #[doc(no_inline)]
     pub use icu_provider::KeyedDataMarker;
 
     // SEMVER GRAVEYARD

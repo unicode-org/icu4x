@@ -9,7 +9,7 @@ use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -244,6 +244,10 @@ impl TrieValue for CaseMappingData {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(CaseMappingData)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }
 

@@ -27,7 +27,7 @@ struct ICU4XDecomposingNormalizerDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `DecomposingNormalizer`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
+ * See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
  */
 class ICU4XDecomposingNormalizer {
  public:
@@ -35,14 +35,14 @@ class ICU4XDecomposingNormalizer {
   /**
    * Construct a new ICU4XDecomposingNormalizer instance for NFC
    * 
-   * See the [Rust documentation for `try_new_nfd_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable) for more information.
+   * See the [Rust documentation for `try_new_nfd_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable) for more information.
    */
   static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfd(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XDecomposingNormalizer instance for NFKC
    * 
-   * See the [Rust documentation for `try_new_nfkd_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable) for more information.
+   * See the [Rust documentation for `try_new_nfkd_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable) for more information.
    */
   static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfkd(const ICU4XDataProvider& provider);
 
@@ -51,7 +51,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * Errors are mapped to REPLACEMENT CHARACTER
    * 
-   * See the [Rust documentation for `normalize_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
+   * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> normalize_to_writeable(const std::string_view s, W& write) const;
 
@@ -60,7 +60,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * Errors are mapped to REPLACEMENT CHARACTER
    * 
-   * See the [Rust documentation for `normalize_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
+   * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
    */
   diplomat::result<std::string, ICU4XError> normalize(const std::string_view s) const;
 
@@ -69,7 +69,7 @@ class ICU4XDecomposingNormalizer {
    * 
    * Errors are mapped to REPLACEMENT CHARACTER
    * 
-   * See the [Rust documentation for `is_normalized_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
+   * See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
    */
   bool is_normalized(const std::string_view s) const;
   inline const capi::ICU4XDecomposingNormalizer* AsFFI() const { return this->inner.get(); }

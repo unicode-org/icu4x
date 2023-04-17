@@ -16,8 +16,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
+use icu_provider::prelude::*;
 use icu_provider::DataMarker;
-use icu_provider::{yoke, zerofrom};
 
 #[cfg(doc)]
 use crate::PluralCategory;

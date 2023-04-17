@@ -1,0 +1,33 @@
+{
+  "map": [
+    "Unassigned",
+    "Uppercase_Letter",
+    "Lowercase_Letter",
+    "Titlecase_Letter",
+    "Modifier_Letter",
+    "Other_Letter",
+    "Nonspacing_Mark",
+    "Enclosing_Mark",
+    "Spacing_Mark",
+    "Decimal_Number",
+    "Letter_Number",
+    "Other_Number",
+    "Space_Separator",
+    "Line_Separator",
+    "Paragraph_Separator",
+    "Control",
+    "Format",
+    "Private_Use",
+    "Surrogate",
+    "Dash_Punctuation",
+    "Open_Punctuation",
+    "Close_Punctuation",
+    "Connector_Punctuation",
+    "Other_Punctuation",
+    "Math_Symbol",
+    "Currency_Symbol",
+    "Modifier_Symbol",
+    "Other_Symbol",
+    "Initial_Punctuation"
+  ]
+}

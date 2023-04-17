@@ -25,9 +25,13 @@ struct ICU4XMetazoneCalculatorDeleter {
 };
 
 /**
+ * An object capable of computing the metazone from a timezone.
  * 
+ * This can be used via `maybe_calculate_metazone()` on [`ICU4XCustomTimeZone`].
  * 
- * See the [Rust documentation for `MetazoneCalculator`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html) for more information.
+ * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
+ * 
+ * See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
  */
 class ICU4XMetazoneCalculator {
  public:
@@ -35,7 +39,7 @@ class ICU4XMetazoneCalculator {
   /**
    * 
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider);
   inline const capi::ICU4XMetazoneCalculator* AsFFI() const { return this->inner.get(); }

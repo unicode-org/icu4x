@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -37,7 +37,7 @@ writeable = { version = "0.5.1", path = "../../utils/writeable" }
 ryu = { version = "1.0.5", features = ["small"], optional = true }
 
 [dev-dependencies]
-criterion = "0.3.4"
+criterion = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 rand = "0.8"

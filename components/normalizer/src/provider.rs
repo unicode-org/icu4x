@@ -17,7 +17,7 @@
 
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 /// Main data for NFD

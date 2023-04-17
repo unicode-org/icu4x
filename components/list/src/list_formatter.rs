@@ -9,6 +9,9 @@ use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
 
+#[cfg(doc)]
+extern crate writeable;
+
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
 #[derive(Debug)]

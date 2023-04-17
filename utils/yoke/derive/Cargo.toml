@@ -4,7 +4,7 @@
 
 [package]
 name = "yoke-derive"
-version = "0.7.0"
+version = "0.7.1"
 description = "Custom derive for the yoke crate"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"

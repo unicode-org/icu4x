@@ -2,6 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::provider::bidi_data::{
+    CheckedBidiPairedBracketType, MirroredPairedBracketData, MirroredPairedBracketDataTryFromError,
+};
 use crate::script::ScriptWithExt;
 use crate::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
@@ -21,6 +24,10 @@ impl TrieValue for CanonicalCombiningClass {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
 }
 
 impl TrieValue for BidiClass {
@@ -28,6 +35,10 @@ impl TrieValue for BidiClass {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }
 
@@ -39,6 +50,10 @@ impl TrieValue for GeneralCategory {
         GeneralCategory::new_from_u8(i.try_into().unwrap_or(u8::MAX))
             .ok_or("Cannot parse GeneralCategory from integer")
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self as u8)
+    }
 }
 
 impl TrieValue for Script {
@@ -46,6 +61,10 @@ impl TrieValue for Script {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(Script)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }
 
@@ -55,6 +74,10 @@ impl TrieValue for ScriptWithExt {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u16::try_from(i).map(Self)
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
 }
 
 impl TrieValue for EastAsianWidth {
@@ -62,6 +85,10 @@ impl TrieValue for EastAsianWidth {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }
 
@@ -71,6 +98,10 @@ impl TrieValue for LineBreak {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
 }
 
 impl TrieValue for GraphemeClusterBreak {
@@ -78,6 +109,10 @@ impl TrieValue for GraphemeClusterBreak {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
     }
 }
 
@@ -87,6 +122,10 @@ impl TrieValue for WordBreak {
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
     }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
 }
 
 impl TrieValue for SentenceBreak {
@@ -94,6 +133,22 @@ impl TrieValue for SentenceBreak {
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
+}
+
+impl TrieValue for CheckedBidiPairedBracketType {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        Ok(match i {
+            1 => CheckedBidiPairedBracketType::Open,
+            2 => CheckedBidiPairedBracketType::Close,
+            _ => CheckedBidiPairedBracketType::None,
+        })
     }
 }
 
@@ -111,23 +166,7 @@ impl TrieValue for SentenceBreak {
 impl AsULE for GeneralCategoryGroup {
     type ULE = RawBytesULE<2>;
     fn to_unaligned(self) -> Self::ULE {
-        // if it's a single property, translate to that property
-        let value = if self.0.count_ones() == 1 {
-            // inverse operation of a bitshift
-            self.0.trailing_zeros() as u16
-        } else {
-            match self {
-                GeneralCategoryGroup::CasedLetter => 0xFFFF,
-                GeneralCategoryGroup::Letter => 0xFFFE,
-                GeneralCategoryGroup::Mark => 0xFFFD,
-                GeneralCategoryGroup::Number => 0xFFFC,
-                GeneralCategoryGroup::Separator => 0xFFFB,
-                GeneralCategoryGroup::Other => 0xFFFA,
-                GeneralCategoryGroup::Punctuation => 0xFFF9,
-                GeneralCategoryGroup::Symbol => 0xFFF8,
-                _ => 0xFF00, // random sentinel value
-            }
-        };
+        let value = gcg_to_packed_u16(self);
         value.to_unaligned()
     }
     fn from_unaligned(ule: Self::ULE) -> Self {
@@ -154,6 +193,26 @@ fn packed_u16_to_gcg(value: u16) -> GeneralCategoryGroup {
     }
 }
 
+fn gcg_to_packed_u16(gcg: GeneralCategoryGroup) -> u16 {
+    // if it's a single property, translate to that property
+    if gcg.0.count_ones() == 1 {
+        // inverse operation of a bitshift
+        gcg.0.trailing_zeros() as u16
+    } else {
+        match gcg {
+            GeneralCategoryGroup::CasedLetter => 0xFFFF,
+            GeneralCategoryGroup::Letter => 0xFFFE,
+            GeneralCategoryGroup::Mark => 0xFFFD,
+            GeneralCategoryGroup::Number => 0xFFFC,
+            GeneralCategoryGroup::Separator => 0xFFFB,
+            GeneralCategoryGroup::Other => 0xFFFA,
+            GeneralCategoryGroup::Punctuation => 0xFFF9,
+            GeneralCategoryGroup::Symbol => 0xFFF8,
+            _ => 0xFF00, // random sentinel value
+        }
+    }
+}
+
 impl TrieValue for GeneralCategoryGroup {
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -161,5 +220,17 @@ impl TrieValue for GeneralCategoryGroup {
         // trie storage types to the actual type. This type will always be a packed u16
         // in our case since the names map upcasts from u16
         u16::try_from(i).map(packed_u16_to_gcg)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(gcg_to_packed_u16(self))
+    }
+}
+
+impl TrieValue for MirroredPairedBracketData {
+    type TryFromU32Error = MirroredPairedBracketDataTryFromError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        Self::try_from(i)
     }
 }

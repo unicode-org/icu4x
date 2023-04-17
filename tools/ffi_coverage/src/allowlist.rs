@@ -30,7 +30,7 @@ lazy_static::lazy_static! {
         "From",
         "Hash",
         "Into",
-        "Iterator", // ???
+        "IntoIterator", // skip IntoIterator but not Iterator
         "Ord",
         "Provider", // new error handling stuff
         "PartialEq",
@@ -210,9 +210,13 @@ lazy_static::lazy_static! {
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
+        "icu::properties::sets::UnicodeSetData::as_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::from_code_point_inversion_list_string_list",
+        "icu::properties::sets::UnicodeSetData::to_code_point_inversion_list_string_list",
         "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
         "icu::collections::codepointinvlist",
         "icu::collections::codepointinvliststringlist",
@@ -301,13 +305,16 @@ lazy_static::lazy_static! {
 
         // Re-exports of errors
         "icu::calendar::Error",
+        "icu::compactdecimal::Error",
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
+        "icu::locid::Error",
         "icu::locid_transform::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
+        "icu::relativetime::Error",
         "icu::segmenter::Error",
         "icu::timezone::Error",
         "icu::collator::Error",
@@ -377,25 +384,11 @@ lazy_static::lazy_static! {
         "icu::locid::Locale::strict_cmp_iter",
         "icu::locid::SubtagOrderingResult",
 
-        // Segmenter types and type aliases that are constructed via methods. They don't need FFI.
-        "icu::segmenter::GraphemeClusterBreakIteratorLatin1",
-        "icu::segmenter::GraphemeClusterBreakIteratorUtf16",
+        // The only UTF-8 currently allowed over FFI is potentially-ill-formed.
         "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
-        "icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8",
-        "icu::segmenter::LineBreakIterator",
-        "icu::segmenter::LineBreakIteratorLatin1",
-        "icu::segmenter::LineBreakIteratorUtf16",
         "icu::segmenter::LineBreakIteratorUtf8",
-        "icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8",
-        "icu::segmenter::RuleBreakIterator",
-        "icu::segmenter::SentenceBreakIteratorLatin1",
-        "icu::segmenter::SentenceBreakIteratorUtf16",
         "icu::segmenter::SentenceBreakIteratorUtf8",
-        "icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8",
-        "icu::segmenter::WordBreakIteratorLatin1",
-        "icu::segmenter::WordBreakIteratorUtf16",
         "icu::segmenter::WordBreakIteratorUtf8",
-        "icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8",
 
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",

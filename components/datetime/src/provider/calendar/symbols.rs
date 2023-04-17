@@ -8,7 +8,6 @@
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
-use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 

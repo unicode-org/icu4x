@@ -54,7 +54,7 @@ pub mod ffi {
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> Result<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            use icu_provider::prelude::AsDowncastingAnyProvider;
+            use icu_provider::AsDowncastingAnyProvider;
             let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
                 // Note: This clone is free, since cloning AnyPayload is free.
                 data_struct.0.clone(),

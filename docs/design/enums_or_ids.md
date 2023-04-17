@@ -40,11 +40,11 @@ enum FooEnum {
 
 Examples of entities that are represented by enums:
 
-1. [`Signum`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/signum/enum.Signum.html):
+1. [`Signum`](https://unicode-org.github.io/icu4x/docs/fixed_decimal/signum/enum.Signum.html):
     - Set of 4 values, determined by ECMA-402
     - Unlikely to change over time
     - Does not directly relate to peoples and cultures
-2. [`PluralCategory`](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralCategory.html):
+2. [`PluralCategory`](https://unicode-org.github.io/icu4x/docs/icu_plurals/enum.PluralCategory.html):
     - Set of 6 values, determined by Unicode/CLDR
     - Could theoretically change, but has not grown for a long period of time
     - Correctly represents all languages supported by CLDR
@@ -109,10 +109,10 @@ Using a new type means that any instance of an identifier is guaranteed to be va
 
 Examples of entities that are represented by strings:
 
-1. [`Language`](https://unicode-org.github.io/icu4x-docs/doc/icu_locid/subtags/struct.Language.html):
+1. [`Language`](https://unicode-org.github.io/icu4x/docs/icu_locid/subtags/struct.Language.html):
     - New languages are frequently added to CLDR
     - Thousands of possible language codes
-2. [Time zones](https://unicode-org.github.io/icu4x-docs/doc/icu_datetime/date/trait.TimeZoneInput.html):
+2. [Time zones](https://unicode-org.github.io/icu4x/docs/icu_datetime/date/trait.TimeZoneInput.html):
     - New time zones are frequently created by governments
     - No ceiling to the number of possible IANA time zones
 

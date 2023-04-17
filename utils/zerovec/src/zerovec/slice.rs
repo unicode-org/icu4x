@@ -202,7 +202,8 @@ where
     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x80];
     /// let zerovec: ZeroVec<u16> =
     ///     ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// let array: [u16; 4] = zerovec.get_as_array().expect("should be 4 items in array");
+    /// let array: [u16; 4] =
+    ///     zerovec.get_as_array().expect("should be 4 items in array");
     ///
     /// assert_eq!(array[2], 421);
     /// ```

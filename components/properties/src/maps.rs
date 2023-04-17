@@ -223,8 +223,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategory;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategory;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");
@@ -249,8 +249,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategory;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategory;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");
@@ -278,6 +278,18 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
             .filter(|v| v.value)
             .map(|v| v.range)
     }
+
+    /// Exposed for FFI needs, could be exposed in general in the future but we should
+    /// have a use case first.
+    ///
+    /// FFI needs this since it operates on erased maps and can't use `iter_ranges_for_group()`
+    #[doc(hidden)]
+    pub fn iter_ranges_mapped<U: Eq + 'a>(
+        self,
+        predicate: impl FnMut(T) -> U + Copy + 'a,
+    ) -> impl Iterator<Item = CodePointMapRange<U>> + 'a {
+        self.map.iter_ranges_mapped(predicate)
+    }
 }
 
 impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
@@ -289,8 +301,8 @@ impl<'a> CodePointMapDataBorrowed<'a, crate::GeneralCategory> {
     ///
     /// ```
     /// use core::ops::RangeInclusive;
-    /// use icu::properties::GeneralCategoryGroup;
     /// use icu::properties::maps::{self, CodePointMapData};
+    /// use icu::properties::GeneralCategoryGroup;
     ///
     /// let data = maps::load_general_category(&icu_testdata::unstable())
     ///     .expect("The data should be valid");

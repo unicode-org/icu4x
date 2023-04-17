@@ -7,6 +7,8 @@ use displaydoc::Display;
 /// List of parser errors that can be generated
 /// while parsing [`LanguageIdentifier`](crate::LanguageIdentifier), [`Locale`](crate::Locale),
 /// [`subtags`](crate::subtags) or [`extensions`](crate::extensions).
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, PartialEq, Copy, Clone)]
 #[non_exhaustive]
 pub enum ParserError {

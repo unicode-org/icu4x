@@ -27,7 +27,7 @@ struct ICU4XCanonicalCombiningClassMapDeleter {
 /**
  * Lookup of the Canonical_Combining_Class Unicode property
  * 
- * See the [Rust documentation for `CanonicalCombiningClassMap`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
+ * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
  */
 class ICU4XCanonicalCombiningClassMap {
  public:
@@ -35,25 +35,25 @@ class ICU4XCanonicalCombiningClassMap {
   /**
    * Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/properties/struct.CanonicalCombiningClass.html)
+   *  Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
    */
   uint8_t get(char32_t ch) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `get32`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
+   * See the [Rust documentation for `get32`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/properties/struct.CanonicalCombiningClass.html)
+   *  Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
    */
   uint8_t get32(uint32_t ch) const;
   inline const capi::ICU4XCanonicalCombiningClassMap* AsFFI() const { return this->inner.get(); }

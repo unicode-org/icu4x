@@ -40,6 +40,36 @@ void iterate_breakpoints(Iterator& iterator) {
     cout << endl;
 }
 
+template <typename Iterator>
+void iterate_word_breakpoints(Iterator& iterator) {
+    while (true) {
+        int32_t breakpoint = iterator.next();
+        if (breakpoint == -1) {
+            break;
+        }
+        cout << " " << breakpoint;
+        switch (iterator.word_type()) {
+            case ICU4XSegmenterWordType::None:
+                cout << " (none";
+                break;
+            case ICU4XSegmenterWordType::Number:
+                cout << " (number";
+                break;
+            case ICU4XSegmenterWordType::Letter:
+                cout << " (letter";
+                break;
+            default:
+                cout << " (unknown status";
+                break;
+        }
+        if (iterator.is_word_like()) {
+            cout << ", word-like";
+        }
+        cout << ")";
+    }
+    cout << endl;
+}
+
 void test_line(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
     const auto segmenter_auto =
@@ -90,7 +120,7 @@ void test_word(const std::string_view& str) {
 
         cout << "Word breakpoints:";
         auto iterator = segmenter->segment_utf8(str);
-        iterate_breakpoints(iterator);
+        iterate_word_breakpoints(iterator);
     }
 }
 
@@ -112,7 +142,7 @@ int main(int argc, char* argv[]) {
     if (argc >= 2) {
         str = argv[1];
     } else {
-        str = "The quick brown fox jumps over the lazy dog.";
+        str = "The 101 quick brown foxes jump over the lazy dog.";
     }
 
     test_line(str);

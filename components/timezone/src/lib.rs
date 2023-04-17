@@ -51,8 +51,7 @@
 //! ICU4X uses the short form.
 //!
 //! Note: in ICU4X, "metazone" is one word and "time zone" is two words, except for this crate
-//! and module name, where "timezone" is used with no separators. See
-//! <https://github.com/unicode-org/icu4x/issues/2507>.
+//! and module name, where "timezone" is used with no separators.
 //!
 //! ## Zone Variant
 //!
@@ -133,5 +132,5 @@ pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use TimeZoneError as Error;

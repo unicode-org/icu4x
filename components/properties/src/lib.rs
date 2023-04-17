@@ -91,6 +91,7 @@ pub mod maps;
 // name of that struct without coordination.
 mod props;
 
+pub mod bidi_data;
 pub mod exemplar_chars;
 pub mod provider;
 pub(crate) mod runtime;
@@ -106,10 +107,19 @@ pub use props::{
 
 /// Module for working with the names of property values
 pub mod names {
+    pub use crate::props::{
+        PropertyEnumToValueNameLinearMapper, PropertyEnumToValueNameLinearMapperBorrowed,
+    };
+    pub use crate::props::{
+        PropertyEnumToValueNameLinearTiny4Mapper, PropertyEnumToValueNameLinearTiny4MapperBorrowed,
+    };
+    pub use crate::props::{
+        PropertyEnumToValueNameSparseMapper, PropertyEnumToValueNameSparseMapperBorrowed,
+    };
     pub use crate::props::{PropertyValueNameToEnumMapper, PropertyValueNameToEnumMapperBorrowed};
 }
 
 pub use error::PropertiesError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use PropertiesError as Error;

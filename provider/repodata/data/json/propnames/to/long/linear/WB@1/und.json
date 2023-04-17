@@ -1,0 +1,26 @@
+{
+  "map": [
+    "Other",
+    "ALetter",
+    "Format",
+    "Katakana",
+    "MidLetter",
+    "MidNum",
+    "Numeric",
+    "ExtendNumLet",
+    "CR",
+    "Extend",
+    "LF",
+    "MidNumLet",
+    "Newline",
+    "Regional_Indicator",
+    "Hebrew_Letter",
+    "Single_Quote",
+    "Double_Quote",
+    "E_Base",
+    "E_Base_GAZ",
+    "E_Modifier",
+    "Glue_After_Zwj",
+    "ZWJ"
+  ]
+}

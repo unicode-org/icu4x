@@ -6,8 +6,9 @@ use core::char::DecodeUtf16Error;
 use displaydoc::Display;
 use icu_collections::codepointtrie::CodePointTrieError;
 
-/// A list of possible errors for the [`CaseMapping`](crate::CaseMapping) struct
+/// A list of error outcomes for various operations in this module.
 ///
+/// Re-exported as [`Error`](crate::Error).
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature

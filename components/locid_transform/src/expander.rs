@@ -23,6 +23,8 @@ use crate::TransformResult;
 ///
 /// # Examples
 ///
+/// Add likely subtags:
+///
 /// ```
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
@@ -39,6 +41,8 @@ use crate::TransformResult;
 /// assert_eq!(locale, locale!("zh-Hant-TW"));
 /// ```
 ///
+/// Remove likely subtags:
+///
 /// ```
 /// use icu_locid::locale;
 /// use icu_locid_transform::{LocaleExpander, TransformResult};
@@ -53,6 +57,22 @@ use crate::TransformResult;
 /// let mut locale = locale!("zh");
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
 /// assert_eq!(locale, locale!("zh"));
+/// ```
+///
+/// Normally, only CLDR locales with Basic or higher coverage are included. To include more
+/// locales for maximization, use [`try_new_extended`](Self::try_new_extended_unstable):
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_locid_transform::{LocaleExpander, TransformResult};
+///
+/// let lc =
+///     LocaleExpander::try_new_extended_unstable(&icu_testdata::unstable())
+///         .expect("create failed");
+///
+/// let mut locale = locale!("atj");
+/// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+/// assert_eq!(locale, locale!("atj-Latn-CA"));
 /// ```
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
@@ -165,13 +185,42 @@ fn update_langid(
 }
 
 impl LocaleExpander {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleExpander`].
+    /// Creates a [`LocaleExpander`] with data for CLDR locales with Basic or higher coverage.
+    ///
+    /// Use this contructor if you are using likely subtags for data lookup.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     /// <div class="stab unstable">
     /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
     /// </div>
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
+    where
+        P: DataProvider<LikelySubtagsForLanguageV1Marker>
+            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+            + ?Sized,
+    {
+        let likely_subtags_l = provider.load(Default::default())?.take_payload()?;
+        let likely_subtags_sr = provider.load(Default::default())?.take_payload()?;
+
+        Ok(LocaleExpander {
+            likely_subtags_l,
+            likely_subtags_sr,
+            likely_subtags_ext: None,
+        })
+    }
+
+    /// Creates a [`LocaleExpander`] with data for all locales.
+    ///
+    /// Use this constructor if you are using likely subtags for comprehensive support of all
+    /// languages and regions, including ones that may not have CLDR data.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    /// <div class="stab unstable">
+    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
+    /// </div>
+    pub fn try_new_extended_unstable<P>(
+        provider: &P,
+    ) -> Result<LocaleExpander, LocaleTransformError>
     where
         P: DataProvider<LikelySubtagsForLanguageV1Marker>
             + DataProvider<LikelySubtagsForScriptRegionV1Marker>
@@ -188,6 +237,12 @@ impl LocaleExpander {
             likely_subtags_ext,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: LocaleTransformError, functions: [
+        Self::try_new_extended_unstable,
+        try_new_extended_with_any_provider,
+        try_new_extended_with_buffer_provider
+    ]);
 
     fn try_new_compat<P>(provider: &P) -> Result<LocaleExpander, LocaleTransformError>
     where

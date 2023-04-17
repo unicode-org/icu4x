@@ -6,14 +6,17 @@
 //! 
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
-use icu::segmenter::GraphemeClusterSegmenter;
+use icu::displaynames::RegionDisplayNames;
+use icu::locid::{locale, subtags_region as region};
 
 fn main() {
-    let segmenter = GraphemeClusterSegmenter::try_new_unstable(
+    let names = RegionDisplayNames::try_new_unstable(
         &icu_testdata::unstable(),
+        &locale!("fr").into(),
+        Default::default(),
     )
-    .expect("Grapheme break data should be present in testdata");
-    let breakpoints = segmenter.segment_str("🐻🏴‍☠️🐯").collect::<Vec<usize>>();
-    assert_eq!(breakpoints, &[0, 4, 17, 21]);
-    println!("{:?}", breakpoints);
+    .expect("Display names should be present in testdata");
+    let name = names.of(region!("DE")).unwrap();
+    assert_eq!(name, "Allemagne");
+    println!("{}", name);
 }

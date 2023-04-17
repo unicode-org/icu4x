@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! These arrays all list dependencies that are allowed in various contexts
-//!
 
 /// Dependencies that are always allowed as runtime dependencies
 /// In general it is fine to add new ICU4X components or utils here
@@ -25,6 +24,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_properties",
     "icu_provider",
     "icu_provider_adapters", // not included in icu, but needed generally
+    "icu_segmenter",
     "icu_timezone",
     "litemap",
     "memchr",
@@ -68,20 +68,11 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_casemapping",
     "icu_displaynames",
     "icu_relativetime",
-    "icu_segmenter",
     "icu_compactdecimal",
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &[
-    "libm",
-    "matrixmultiply",
-    "ndarray",
-    "num-complex",
-    "num-integer",
-    "num-traits",
-    "rawpointer",
-];
+pub const EXTRA_LSTM_DEPS: &[&str] = &["libm", "num-traits"];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
@@ -127,6 +118,11 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "itertools",
     "itoa",
     "lazy_static",
+    "matrixmultiply",
+    "ndarray",
+    "num-complex",
+    "num-integer",
+    "rawpointer",
     "regex-syntax",
     "rust-format",
     "ryu",

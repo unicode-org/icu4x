@@ -4,7 +4,7 @@ Welcome! We're glad you want to try out ICU4X! This page serves as a landing pag
 
 If new to ICU4X, we recommend reading through [the introduction tutorial][intro.md]: it walks through the process of using ICU4X as a Rust dependency, and some of the basics common to most ICU4X components.
 
-It leads in to the [Data management tutorial][data_management.md], which covers how internationalization data can be generated and loaded into ICU4X.
+It leads in to the [Data management tutorial][data_management.md], which covers how internationalization data can be generated and loaded into ICU4X. Users needing more control over their flow of locale data can then read [the data provider tutorial][data_provider.md].
 
 After going through that, you can take a look at [the ICU4X root docs][icu-crate-docs] and check out the various components, each of which covers some area of internationalization and has usage docs for doing so.
 
@@ -20,6 +20,7 @@ Contributors should also check out [CONTRIBUTING.md].
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [intro.md]: ./intro.md
  [data_management.md]: ./data_management.md
+ [data_provider.md]: ./data_provider.md
  [cpp.md]: ./cpp.md
  [js.md]: ./js.md
  [icu-crate-docs]: https://docs.rs/icu/latest/icu/

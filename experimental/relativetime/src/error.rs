@@ -7,7 +7,9 @@ use icu_decimal::DecimalError;
 use icu_plurals::PluralsError;
 use icu_provider::DataError;
 
-/// A list of error outcomes for various operations in the `icu_relativetime` crate.
+/// A list of error outcomes for various operations in this module.
+///
+/// Re-exported as [`Error`](crate::Error).
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum RelativeTimeError {

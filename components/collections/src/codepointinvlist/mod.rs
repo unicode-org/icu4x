@@ -84,5 +84,5 @@ pub enum CodePointInversionListError {
 #[cfg(feature = "std")]
 impl std::error::Error for CodePointInversionListError {}
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointInversionListError as Error;

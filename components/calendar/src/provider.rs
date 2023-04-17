@@ -17,7 +17,7 @@
 
 use crate::types::IsoWeekday;
 use core::str::FromStr;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 

@@ -137,75 +137,120 @@
 
 extern crate alloc;
 
+mod data_provider;
+mod error;
+mod helpers;
+mod key;
+mod request;
+mod response;
+
 pub mod any;
 pub mod buf;
 pub mod constructors;
-mod data_provider;
 #[cfg(feature = "datagen")]
 #[macro_use]
 pub mod datagen;
 #[macro_use]
 pub mod dynutil;
-mod error;
 pub mod hello_world;
-mod helpers;
 #[macro_use]
-mod key;
 pub mod marker;
-mod request;
-mod response;
 #[cfg(feature = "serde")]
 pub mod serde;
 
+// Types from private modules
+pub use crate::data_provider::DataProvider;
+pub use crate::data_provider::DynamicDataProvider;
+pub use crate::error::DataError;
+pub use crate::error::DataErrorKind;
+pub use crate::key::DataKey;
+pub use crate::key::DataKeyHash;
+pub use crate::key::DataKeyMetadata;
+pub use crate::key::DataKeyPath;
+pub use crate::key::FallbackPriority;
+pub use crate::key::FallbackSupplement;
+pub use crate::request::DataLocale;
+pub use crate::request::DataRequest;
+pub use crate::request::DataRequestMetadata;
+pub use crate::response::Cart;
+pub use crate::response::DataPayload;
+pub use crate::response::DataResponse;
+pub use crate::response::DataResponseMetadata;
 #[cfg(feature = "macros")]
 pub use icu_provider_macros::data_struct;
 
+// Reexports from public modules
+pub use crate::any::AnyMarker;
+pub use crate::any::AnyPayload;
+pub use crate::any::AnyProvider;
+pub use crate::any::AnyResponse;
+pub use crate::any::AsDowncastingAnyProvider;
+pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
+pub use crate::any::MaybeSendSync;
+pub use crate::buf::BufferMarker;
+pub use crate::buf::BufferProvider;
+pub use crate::marker::DataMarker;
+pub use crate::marker::KeyedDataMarker;
+#[cfg(feature = "serde")]
+pub use crate::serde::AsDeserializingBufferProvider;
+
+/// Core selection of APIs and structures for the ICU4X data provider.
 pub mod prelude {
-    //! Core selection of APIs and structures for the ICU4X data provider.
-    pub use crate::any::AnyMarker;
-    pub use crate::any::AnyPayload;
-    pub use crate::any::AnyProvider;
-    pub use crate::any::AnyResponse;
-    pub use crate::buf::BufferMarker;
-    pub use crate::buf::BufferProvider;
+    #[doc(no_inline)]
     pub use crate::data_key;
-    pub use crate::data_provider::DataProvider;
-    pub use crate::data_provider::DynamicDataProvider;
-    pub use crate::error::DataError;
-    pub use crate::error::DataErrorKind;
-    pub use crate::key::DataKey;
-    pub use crate::key::DataKeyHash;
-    pub use crate::marker::DataMarker;
-    pub use crate::marker::KeyedDataMarker;
-    pub use crate::request::DataLocale;
-    pub use crate::request::DataRequest;
-    pub use crate::response::DataPayload;
-    pub use crate::response::DataResponse;
-    pub use crate::response::DataResponseMetadata;
-
-    pub use crate::any::AsDowncastingAnyProvider;
-    pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
+    #[doc(no_inline)]
+    pub use crate::AnyMarker;
+    #[doc(no_inline)]
+    pub use crate::AnyPayload;
+    #[doc(no_inline)]
+    pub use crate::AnyProvider;
+    #[doc(no_inline)]
+    pub use crate::AnyResponse;
+    #[doc(no_inline)]
     #[cfg(feature = "serde")]
-    pub use crate::serde::AsDeserializingBufferProvider;
+    pub use crate::AsDeserializingBufferProvider;
+    #[doc(no_inline)]
+    pub use crate::AsDowncastingAnyProvider;
+    #[doc(no_inline)]
+    pub use crate::AsDynamicDataProviderAnyMarkerWrap;
+    #[doc(no_inline)]
+    pub use crate::BufferMarker;
+    #[doc(no_inline)]
+    pub use crate::BufferProvider;
+    #[doc(no_inline)]
+    pub use crate::DataError;
+    #[doc(no_inline)]
+    pub use crate::DataErrorKind;
+    #[doc(no_inline)]
+    pub use crate::DataKey;
+    #[doc(no_inline)]
+    pub use crate::DataKeyHash;
+    #[doc(no_inline)]
+    pub use crate::DataLocale;
+    #[doc(no_inline)]
+    pub use crate::DataMarker;
+    #[doc(no_inline)]
+    pub use crate::DataPayload;
+    #[doc(no_inline)]
+    pub use crate::DataProvider;
+    #[doc(no_inline)]
+    pub use crate::DataRequest;
+    #[doc(no_inline)]
+    pub use crate::DataRequestMetadata;
+    #[doc(no_inline)]
+    pub use crate::DataResponse;
+    #[doc(no_inline)]
+    pub use crate::DataResponseMetadata;
+    #[doc(no_inline)]
+    pub use crate::DynamicDataProvider;
+    #[doc(no_inline)]
+    pub use crate::KeyedDataMarker;
 
-    /// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
     #[doc(hidden)]
     pub use yoke;
     #[doc(hidden)]
     pub use zerofrom;
 }
-
-// Also include the same symbols at the top level for selective inclusion
-pub use prelude::*;
-
-// Less important non-prelude items
-pub use crate::any::MaybeSendSync;
-pub use crate::key::DataKeyMetadata;
-pub use crate::key::DataKeyPath;
-pub use crate::key::FallbackPriority;
-pub use crate::key::FallbackSupplement;
-pub use crate::request::DataRequestMetadata;
-pub use crate::response::Cart;
 
 // For macros
 #[doc(hidden)]

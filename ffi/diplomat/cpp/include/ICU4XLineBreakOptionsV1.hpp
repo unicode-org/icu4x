@@ -11,19 +11,19 @@
 
 #include "ICU4XLineBreakOptionsV1.h"
 
-#include "ICU4XLineBreakRule.hpp"
-#include "ICU4XWordBreakRule.hpp"
+#include "ICU4XLineBreakStrictness.hpp"
+#include "ICU4XLineBreakWordOption.hpp"
 
 
 /**
  * 
  * 
- * See the [Rust documentation for `LineBreakOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html) for more information.
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
  */
 struct ICU4XLineBreakOptionsV1 {
  public:
-  ICU4XLineBreakRule line_break_rule;
-  ICU4XWordBreakRule word_break_rule;
+  ICU4XLineBreakStrictness strictness;
+  ICU4XLineBreakWordOption word_option;
   bool ja_zh;
 };
 
