@@ -1610,7 +1610,7 @@ dependencies = [
  "icu_timezone",
  "log",
  "serde",
- "simple_logger",
+ "simple_logger 1.16.0",
  "tinystr",
  "unicode-bidi",
  "writeable",
@@ -1767,7 +1767,7 @@ dependencies = [
  "serde",
  "serde-aux",
  "serde_json",
- "simple_logger",
+ "simple_logger 4.1.0",
  "syn 1.0.109",
  "tinystr",
  "toml",
@@ -2167,7 +2167,7 @@ dependencies = [
  "quote",
  "repodata",
  "rust-format",
- "simple_logger",
+ "simple_logger 4.1.0",
  "zip",
 ]
 
@@ -3418,6 +3418,17 @@ dependencies = [
  "log",
  "time 0.3.17",
  "winapi",
+]
+
+[[package]]
+name = "simple_logger"
+version = "4.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e78beb34673091ccf96a8816fce8bfd30d1292c7621ca2bcb5f2ba0fae4f558d"
+dependencies = [
+ "atty",
+ "log",
+ "windows-sys 0.42.0",
 ]
 
 [[package]]
