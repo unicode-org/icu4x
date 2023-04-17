@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.0"
+version = "1.2.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -105,7 +105,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # If neither `use_wasm` nor `use_icu4c` are enabled,
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
-networking = ["cached-path"]
+networking = ["dep:cached-path"]
 
 [[bin]]
 name = "icu4x-datagen"

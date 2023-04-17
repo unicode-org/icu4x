@@ -11,7 +11,6 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use std::io::Cursor;
 use std::io::Read;
-use std::ops::Deref;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -61,6 +60,9 @@ impl SourceData {
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
     /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn latest_tested() -> Self {
         Self::default()
             .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
@@ -110,6 +112,9 @@ impl SourceData {
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
@@ -128,6 +133,9 @@ impl SourceData {
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
@@ -147,6 +155,7 @@ impl SourceData {
         since = "1.1.0",
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
+    #[cfg(feature = "networking")]
     /// Deprecated
     pub fn with_cldr_latest(
         self,
@@ -159,6 +168,7 @@ impl SourceData {
         since = "1.1.0",
         note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
     )]
+    #[cfg(feature = "networking")]
     /// Deprecated
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
@@ -237,15 +247,6 @@ impl SourceData {
 pub(crate) enum IcuTrieType {
     Fast,
     Small,
-}
-
-impl IcuTrieType {
-    pub(crate) fn to_internal(self) -> icu_collections::codepointtrie::TrieType {
-        match self {
-            IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-            IcuTrieType::Small => icu_collections::codepointtrie::TrieType::Small,
-        }
-    }
 }
 
 impl std::fmt::Display for IcuTrieType {
@@ -378,48 +379,41 @@ impl AbstractFs {
         }
     }
 
+    #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
     }
 
     fn init(&self) -> Result<(), DataError> {
-        match self {
-            Self::Zip(lock) => {
-                if lock.read().expect("poison").is_ok() {
-                    return Ok(());
-                }
-                let mut lock = lock.write().expect("poison");
-                let resource = if let Err(resource) = lock.deref() {
-                    resource
-                } else {
-                    return Ok(());
-                };
-
-                let root: PathBuf = {
-                    #[cfg(not(feature = "networking"))]
-                    unreachable!("AbstractFs URL mode only possible when using CLDR/ICU tags, which cannot be set without the `networking` feature");
-
-                    #[cfg(feature = "networking")]
-                    {
-                        lazy_static::lazy_static! {
-                            static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                                .freshness_lifetime(u64::MAX)
-                                .progress_bar(None)
-                                .build()
-                                .unwrap();
-                        }
-
-                        CACHE
-                            .cached_path(resource)
-                            .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                    }
-                };
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
-                Ok(())
+        #[cfg(feature = "networking")]
+        if let Self::Zip(lock) = self {
+            if lock.read().expect("poison").is_ok() {
+                return Ok(());
             }
-            _ => Ok(()),
+            let mut lock = lock.write().expect("poison");
+            let resource = if let Err(resource) = &*lock {
+                resource
+            } else {
+                return Ok(());
+            };
+
+            let root = {
+                lazy_static::lazy_static! {
+                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                        .freshness_lifetime(u64::MAX)
+                        .progress_bar(None)
+                        .build()
+                        .unwrap();
+                }
+
+                CACHE
+                    .cached_path(resource)
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+            };
+            *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
+                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
         }
+        Ok(())
     }
 
     fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {

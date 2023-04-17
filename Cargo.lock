@@ -1721,7 +1721,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "cached-path",
  "clap 4.0.32",
