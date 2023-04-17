@@ -4,6 +4,10 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+// Some code gated on icu_codepointtrie_builder features
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::{langid, locale};
@@ -222,6 +226,7 @@ fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoi
 }
 
 impl crate::DatagenProvider {
+    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn generate_rule_break_data(
         &self,
         key: DataKey,
@@ -583,21 +588,18 @@ impl crate::DatagenProvider {
         let complex_property = get_index_from_name(&properties_names, "SA").unwrap_or(127);
 
         // Generate a CodePointTrie from properties_map
-        let property_trie: CodePointTrie<u8> = {
-            #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-            return Err(DataError::custom(
-                "icu_datagen must be built with use_icu4c or use_wasm to build segmenter data",
-            ));
-
-            #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-            CodePointTrieBuilder {
-                data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
-                default_value: 0,
-                error_value: 0,
-                trie_type: self.source.trie_type().to_internal(),
-            }
-            .build()
-        };
+        let property_trie: CodePointTrie<u8> = CodePointTrieBuilder {
+            data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
+            default_value: 0,
+            error_value: 0,
+            trie_type: match self.source.trie_type() {
+                crate::source::IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::source::IcuTrieType::Small => {
+                    icu_collections::codepointtrie::TrieType::Small
+                }
+            },
+        }
+        .build();
 
         if segmenter.segmenter_type == "line" {
             // Note: The following match statement had been used in line.rs:
@@ -648,12 +650,18 @@ impl crate::DatagenProvider {
 
 impl DataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
-        let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
-
-        Ok(DataResponse {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/line@1",
+        )
+        .with_req(LineBreakDataV1Marker::KEY, _req));
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        return Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(break_data)),
-        })
+            payload: Some(DataPayload::from_owned(
+                self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?,
+            )),
+        });
     }
 }
 
@@ -662,23 +670,35 @@ impl DataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
         &self,
         _req: DataRequest,
     ) -> Result<DataResponse<GraphemeClusterBreakDataV1Marker>, DataError> {
-        let break_data = self.generate_rule_break_data(GraphemeClusterBreakDataV1Marker::KEY)?;
-
-        Ok(DataResponse {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/grapheme@1",
+        )
+        .with_req(GraphemeClusterBreakDataV1Marker::KEY, _req));
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        return Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(break_data)),
-        })
+            payload: Some(DataPayload::from_owned(
+                self.generate_rule_break_data(GraphemeClusterBreakDataV1Marker::KEY)?,
+            )),
+        });
     }
 }
 
 impl DataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
-        let break_data = self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?;
-
-        Ok(DataResponse {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/word@1",
+        )
+        .with_req(WordBreakDataV1Marker::KEY, _req));
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        return Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(break_data)),
-        })
+            payload: Some(DataPayload::from_owned(
+                self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?,
+            )),
+        });
     }
 }
 
@@ -687,12 +707,18 @@ impl DataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
         &self,
         _req: DataRequest,
     ) -> Result<DataResponse<SentenceBreakDataV1Marker>, DataError> {
-        let break_data = self.generate_rule_break_data(SentenceBreakDataV1Marker::KEY)?;
-
-        Ok(DataResponse {
+        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+        return Err(DataError::custom(
+            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/sentence@1",
+        )
+        .with_req(SentenceBreakDataV1Marker::KEY, _req));
+        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+        return Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(break_data)),
-        })
+            payload: Some(DataPayload::from_owned(
+                self.generate_rule_break_data(SentenceBreakDataV1Marker::KEY)?,
+            )),
+        });
     }
 }
 
