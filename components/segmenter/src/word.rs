@@ -461,7 +461,7 @@ where
     let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
-    let mut i = iter.get_current_codepoint()?.len_utf8();
+    let mut i = left_codepoint.len_utf8();
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
@@ -469,12 +469,12 @@ where
             return iter.get_current_position();
         }
         debug_assert!(i < first_pos, "we should always arrive back at the same index when resolving the complex script: near index {:?}", iter.get_current_position());
+        i += T::get_current_position_character_len(iter);
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
         }
-        i += T::get_current_position_character_len(iter);
     }
 }
 
