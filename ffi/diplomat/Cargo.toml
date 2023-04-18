@@ -41,6 +41,7 @@ any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
     "dep:serde",
+    "icu_calendar?/serde",
     "icu_collator?/serde",
     "icu_datetime?/serde",
     "icu_decimal?/serde",
