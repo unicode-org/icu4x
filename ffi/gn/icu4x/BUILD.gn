@@ -9,7 +9,7 @@ group("icu") {
 }
 
 group("icu_capi") {
-  public_deps = [ ":icu_capi-v1_2_0" ]
+  public_deps = [ ":icu_capi-v1_2_1" ]
 }
 
 group("icu_provider") {
@@ -227,10 +227,10 @@ rust_library("icu_calendar-v1_2_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_capi-v1_2_0") {
+rust_library("icu_capi-v1_2_1") {
   crate_name = "icu_capi"
   crate_root = "//ffi/diplomat/src/lib.rs"
-  output_name = "icu_capi-b51c929cdeb02cfc"
+  output_name = "icu_capi-21b7630bfb7b7ffe"
 
   deps = []
   deps += [ ":diplomat-v0_5_1($host_toolchain)" ]
@@ -265,8 +265,8 @@ rust_library("icu_capi-v1_2_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=b51c929cdeb02cfc",
-    "-Cextra-filename=-b51c929cdeb02cfc",
+    "-Cmetadata=21b7630bfb7b7ffe",
+    "-Cextra-filename=-21b7630bfb7b7ffe",
     "--cfg=feature=\"any_provider\"",
     "--cfg=feature=\"default_components\"",
     "--cfg=feature=\"icu_calendar\"",

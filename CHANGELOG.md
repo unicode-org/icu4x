@@ -10,6 +10,8 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
 - `icu_segmenter`
   - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
+- `icu_capi`
+  - Fixed issue with `buffer_provider` feature accidentally pulling in extra crates
 
 ## icu4x 1.2 (Apr 13, 2023)
 
