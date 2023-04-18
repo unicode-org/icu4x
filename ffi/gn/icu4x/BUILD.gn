@@ -241,7 +241,6 @@ rust_library("icu_capi-v1_2_1") {
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_datetime-v1_2_0" ]
   deps += [ ":icu_decimal-v1_2_0" ]
-  deps += [ ":icu_displaynames-v0_10_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_locid_transform-v1_2_1" ]
@@ -273,7 +272,6 @@ rust_library("icu_capi-v1_2_1") {
     "--cfg=feature=\"icu_collator\"",
     "--cfg=feature=\"icu_datetime\"",
     "--cfg=feature=\"icu_decimal\"",
-    "--cfg=feature=\"icu_displaynames\"",
     "--cfg=feature=\"icu_list\"",
     "--cfg=feature=\"icu_locid_transform\"",
     "--cfg=feature=\"icu_normalizer\"",
@@ -390,30 +388,6 @@ rust_library("icu_decimal-v1_2_0") {
     "--edition=2021",
     "-Cmetadata=ef118e12a60375a8",
     "-Cextra-filename=-ef118e12a60375a8",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("icu_displaynames-v0_10_0") {
-  crate_name = "icu_displaynames"
-  crate_root = "//experimental/displaynames/src/lib.rs"
-  output_name = "icu_displaynames-5a5f8e0b4a99042f"
-
-  deps = []
-  deps += [ ":icu_collections-v1_2_0" ]
-  deps += [ ":icu_locid-v1_2_0" ]
-  deps += [ ":icu_provider-v1_2_0" ]
-  deps += [ ":tinystr-v0_7_1" ]
-  deps += [ ":zerovec-v0_9_4" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2021",
-    "-Cmetadata=5a5f8e0b4a99042f",
-    "-Cextra-filename=-5a5f8e0b4a99042f",
   ]
 
   visibility = [ ":*" ]
