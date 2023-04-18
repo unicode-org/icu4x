@@ -461,19 +461,24 @@ where
     let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
-    let mut i = iter.get_current_codepoint()?.len_utf8();
+    let mut i = left_codepoint.len_utf8();
     loop {
         if i == first_pos {
             // Re-calculate breaking offset
             iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
             return iter.get_current_position();
         }
+        debug_assert!(
+            i < first_pos,
+            "we should always arrive at first_pos: near index {:?}",
+            iter.get_current_position()
+        );
+        i += T::get_current_position_character_len(iter);
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
             return Some(iter.len);
         }
-        i += T::get_current_position_character_len(iter);
     }
 }
 
@@ -519,22 +524,27 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         iter.current_pos_data = start_point;
         #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
         let breaks = complex_language_segment_utf16(iter.complex.unwrap(), &s);
-        let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iter.result_cache.first()?;
+        let mut i = 1;
         loop {
             if i == first_pos {
                 // Re-calculate breaking offset
                 iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
                 return iter.get_current_position();
             }
+            debug_assert!(
+                i < first_pos,
+                "we should always arrive at first_pos: near index {:?}",
+                iter.get_current_position()
+            );
+            i += 1;
             iter.advance_iter();
             if iter.is_eof() {
                 iter.result_cache.clear();
                 return Some(iter.len);
             }
-            i += 1;
         }
     }
 }
