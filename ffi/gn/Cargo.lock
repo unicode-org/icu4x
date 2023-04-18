@@ -252,7 +252,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -262,7 +262,6 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -343,17 +342,6 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "writeable",
-]
-
-[[package]]
-name = "icu_displaynames"
-version = "0.10.0"
-dependencies = [
- "icu_collections",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "zerovec",
 ]
 
 [[package]]

@@ -5,7 +5,7 @@
 [package]
 name = "icu_capi"
 description = "C interface to ICU4X"
-version = "1.2.0"
+version = "1.2.1"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -41,20 +41,22 @@ any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
     "dep:serde",
-    "icu_collator/serde",
-    "icu_datetime/serde",
-    "icu_decimal/serde",
-    "icu_displaynames/serde",
-    "icu_list/serde",
-    "icu_locid_transform/serde",
+    "icu_calendar?/serde",
+    "icu_collator?/serde",
+    "icu_datetime?/serde",
+    "icu_decimal?/serde",
+    "icu_displaynames?/serde",
+    "icu_list?/serde",
+    "icu_locid_transform?/serde",
     "icu_locid/serde",
-    "icu_normalizer/serde",
-    "icu_plurals/serde",
-    "icu_properties/serde",
+    "icu_normalizer?/serde",
+    "icu_plurals?/serde",
+    "icu_properties?/serde",
     "icu_provider/serde",
     "icu_provider_adapters/serde",
-    "icu_segmenter/serde",
+    "icu_segmenter?/serde",
     "icu_testdata?/buffer",
+    "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
 provider_test = ["dep:icu_testdata"]
@@ -70,9 +72,11 @@ wasm_default = ["buffer_provider", "logging"]
 
 # Components
 default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
-                      "icu_displaynames", "icu_list", "icu_locid_transform",
+                      "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
+# icu_displaynames is experimental, not included by default
+
 icu_calendar = ["dep:icu_calendar"]
 icu_collator = ["dep:icu_collator"]
 # icu_collections = ["dep:icu_collections"] # Not useful on its own

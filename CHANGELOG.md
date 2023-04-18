@@ -4,6 +4,8 @@
 
 Note: A subset of crates received patch releases in the 1.2 stream.
 
+- `icu_capi`
+  - Fixed [#3344](https://github.com/unicode-org/icu4x/pull/3344), `buffer_provider` feature accidentally pulling in extra crates
 - `icu_datagen`
   - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
 - `icu_locid_transform`
