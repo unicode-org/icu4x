@@ -181,7 +181,7 @@ rust_library("icu-v1_2_0") {
   deps += [ ":icu_decimal-v1_2_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
-  deps += [ ":icu_locid_transform-v1_2_0" ]
+  deps += [ ":icu_locid_transform-v1_2_1" ]
   deps += [ ":icu_normalizer-v1_2_0" ]
   deps += [ ":icu_plurals-v1_2_0" ]
   deps += [ ":icu_properties-v1_2_0" ]
@@ -244,7 +244,7 @@ rust_library("icu_capi-v1_2_0") {
   deps += [ ":icu_displaynames-v0_10_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
-  deps += [ ":icu_locid_transform-v1_2_0" ]
+  deps += [ ":icu_locid_transform-v1_2_1" ]
   deps += [ ":icu_normalizer-v1_2_0" ]
   deps += [ ":icu_plurals-v1_2_0" ]
   deps += [ ":icu_properties-v1_2_0" ]
@@ -467,10 +467,10 @@ rust_library("icu_locid-v1_2_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_locid_transform-v1_2_0") {
+rust_library("icu_locid_transform-v1_2_1") {
   crate_name = "icu_locid_transform"
   crate_root = "//components/locid_transform/src/lib.rs"
-  output_name = "icu_locid_transform-a54ff31cc0ef0709"
+  output_name = "icu_locid_transform-1b3d062f0eab94f7"
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
@@ -484,8 +484,8 @@ rust_library("icu_locid_transform-v1_2_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=a54ff31cc0ef0709",
-    "-Cextra-filename=-a54ff31cc0ef0709",
+    "-Cmetadata=1b3d062f0eab94f7",
+    "-Cextra-filename=-1b3d062f0eab94f7",
     "--cfg=feature=\"default\"",
   ]
 
@@ -686,7 +686,7 @@ rust_library("icu_testdata-v1_2_0") {
   deps += [ ":icu_decimal-v1_2_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
-  deps += [ ":icu_locid_transform-v1_2_0" ]
+  deps += [ ":icu_locid_transform-v1_2_1" ]
   deps += [ ":icu_normalizer-v1_2_0" ]
   deps += [ ":icu_plurals-v1_2_0" ]
   deps += [ ":icu_properties-v1_2_0" ]
