@@ -186,7 +186,7 @@ rust_library("icu-v1_2_0") {
   deps += [ ":icu_plurals-v1_2_0" ]
   deps += [ ":icu_properties-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
-  deps += [ ":icu_segmenter-v1_2_0" ]
+  deps += [ ":icu_segmenter-v1_2_1" ]
   deps += [ ":icu_timezone-v1_2_0" ]
 
   rustenv = []
@@ -249,7 +249,7 @@ rust_library("icu_capi-v1_2_1") {
   deps += [ ":icu_properties-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
   deps += [ ":icu_provider_adapters-v1_2_0" ]
-  deps += [ ":icu_segmenter-v1_2_0" ]
+  deps += [ ":icu_segmenter-v1_2_1" ]
   deps += [ ":icu_testdata-v1_2_0" ]
   deps += [ ":icu_timezone-v1_2_0" ]
   deps += [ ":tinystr-v0_7_1" ]
@@ -618,10 +618,10 @@ rust_proc_macro("icu_provider_macros-v1_2_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_segmenter-v1_2_0") {
+rust_library("icu_segmenter-v1_2_1") {
   crate_name = "icu_segmenter"
   crate_root = "//components/segmenter/src/lib.rs"
-  output_name = "icu_segmenter-354c770177b0a66d"
+  output_name = "icu_segmenter-9c67817750522b21"
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
@@ -637,8 +637,8 @@ rust_library("icu_segmenter-v1_2_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=354c770177b0a66d",
-    "-Cextra-filename=-354c770177b0a66d",
+    "-Cmetadata=9c67817750522b21",
+    "-Cextra-filename=-9c67817750522b21",
     "--cfg=feature=\"auto\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"lstm\"",
@@ -666,7 +666,7 @@ rust_library("icu_testdata-v1_2_0") {
   deps += [ ":icu_properties-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
   deps += [ ":icu_provider_adapters-v1_2_0" ]
-  deps += [ ":icu_segmenter-v1_2_0" ]
+  deps += [ ":icu_segmenter-v1_2_1" ]
   deps += [ ":icu_timezone-v1_2_0" ]
   deps += [ ":zerovec-v0_9_4" ]
 
