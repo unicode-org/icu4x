@@ -56,7 +56,7 @@ buffer_provider = [
     "icu_provider_adapters/serde",
     "icu_segmenter?/serde",
     "icu_testdata?/buffer",
-    "icu_timezone?/buffer",
+    "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
 provider_test = ["dep:icu_testdata"]
