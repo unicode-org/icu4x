@@ -133,7 +133,7 @@ diplomat-runtime = { version = "0.5.1" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging is automagical in wasm, we only need this for native
-simple_logger = { version = "1.12", optional = true }
+simple_logger = { version = "4.1.0", optional = true }
 log = { version = "0.4", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

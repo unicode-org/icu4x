@@ -83,7 +83,7 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["cargo", "derive"] }
 eyre = { version = "0.6", optional = true }
-simple_logger = { version = "1.12", default-features = false, optional = true }
+simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
