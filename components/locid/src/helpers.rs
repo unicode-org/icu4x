@@ -7,8 +7,8 @@ use core::iter::FromIterator;
 use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
-use litemap::store::*;
 use core::ops::{Deref, DerefMut};
+use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
 /// Using ZeroOne(Option<T>) saves 8 bytes in ShortSlice via niche optimization.
@@ -120,17 +120,18 @@ impl<T> ShortSlice<T> {
 
     pub fn retain<F>(&mut self, mut f: F)
     where
-        F: FnMut(&T) -> bool {
-            *self = match core::mem::take(self) {
-                Self::ZeroOne(Some(one)) if f(&one) => Self::ZeroOne(Some(one)),
-                Self::ZeroOne(_) => Self::ZeroOne(None),
-                Self::Multi(slice) => {
-                    let mut vec = slice.into_vec();
-                    vec.retain(f);
-                    Self::from(vec)
-                } 
-            };
-        }
+        F: FnMut(&T) -> bool,
+    {
+        *self = match core::mem::take(self) {
+            Self::ZeroOne(Some(one)) if f(&one) => Self::ZeroOne(Some(one)),
+            Self::ZeroOne(_) => Self::ZeroOne(None),
+            Self::Multi(slice) => {
+                let mut vec = slice.into_vec();
+                vec.retain(f);
+                Self::from(vec)
+            }
+        };
+    }
 }
 
 impl<T> Deref for ShortSlice<T> {
@@ -242,8 +243,7 @@ impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
     fn lm_reserve(&mut self, _additional: usize) {}
 
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        self.get_mut(index)
-            .map(|elt| (&elt.0, &mut elt.1))
+        self.get_mut(index).map(|elt| (&elt.0, &mut elt.1))
     }
 
     fn lm_push(&mut self, key: K, value: V) {

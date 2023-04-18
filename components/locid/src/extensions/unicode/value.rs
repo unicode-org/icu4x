@@ -61,7 +61,7 @@ impl Value {
                 }
             }
         }
-        Ok(Self(v.into()))
+        Ok(Self(v))
     }
 
     /// Const constructor for when the value contains only a single subtag.
@@ -84,7 +84,7 @@ impl Value {
 
     #[doc(hidden)]
     pub fn as_tinystr_slice(&self) -> &[TinyAsciiStr<8>] {
-        &*self.0
+        &self.0
     }
 
     #[doc(hidden)]
