@@ -7,6 +7,7 @@ use core::iter::FromIterator;
 use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
+use core::ops::{Deref, DerefMut};
 use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
@@ -40,24 +41,6 @@ impl<T> ShortSlice<T> {
                 ShortSlice::Multi(items.into_boxed_slice())
             }
         };
-    }
-
-    #[inline]
-    pub fn as_slice(&self) -> &[T] {
-        match self {
-            ShortSlice::ZeroOne(None) => &[],
-            ShortSlice::ZeroOne(Some(v)) => core::slice::from_ref(v),
-            ShortSlice::Multi(v) => v,
-        }
-    }
-
-    #[inline]
-    pub fn as_mut_slice(&mut self) -> &mut [T] {
-        match self {
-            ShortSlice::ZeroOne(None) => &mut [],
-            ShortSlice::ZeroOne(Some(v)) => core::slice::from_mut(v),
-            ShortSlice::Multi(v) => v,
-        }
     }
 
     #[inline]
@@ -134,6 +117,43 @@ impl<T> ShortSlice<T> {
     pub fn clear(&mut self) {
         let _ = core::mem::replace(self, ShortSlice::ZeroOne(None));
     }
+
+    pub fn retain<F>(&mut self, mut f: F)
+    where
+        F: FnMut(&T) -> bool,
+    {
+        *self = match core::mem::take(self) {
+            Self::ZeroOne(Some(one)) if f(&one) => Self::ZeroOne(Some(one)),
+            Self::ZeroOne(_) => Self::ZeroOne(None),
+            Self::Multi(slice) => {
+                let mut vec = slice.into_vec();
+                vec.retain(f);
+                Self::from(vec)
+            }
+        };
+    }
+}
+
+impl<T> Deref for ShortSlice<T> {
+    type Target = [T];
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            ShortSlice::ZeroOne(None) => &[],
+            ShortSlice::ZeroOne(Some(v)) => core::slice::from_ref(v),
+            ShortSlice::Multi(v) => v,
+        }
+    }
+}
+
+impl<T> DerefMut for ShortSlice<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        match self {
+            ShortSlice::ZeroOne(None) => &mut [],
+            ShortSlice::ZeroOne(Some(v)) => core::slice::from_mut(v),
+            ShortSlice::Multi(v) => v,
+        }
+    }
 }
 
 impl<T> From<Vec<T>> for ShortSlice<T> {
@@ -155,7 +175,18 @@ impl<T> Default for ShortSlice<T> {
 
 impl<T> FromIterator<T> for ShortSlice<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        iter.into_iter().collect::<Vec<_>>().into()
+        let mut iter = iter.into_iter();
+        match (iter.next(), iter.next()) {
+            (Some(first), Some(second)) => {
+                // Size hint behaviour same as `Vec::extend` + 2
+                let mut vec = Vec::with_capacity(iter.size_hint().0.saturating_add(3));
+                vec.push(first);
+                vec.push(second);
+                vec.extend(iter);
+                Self::Multi(vec.into_boxed_slice())
+            }
+            (first, _) => Self::ZeroOne(first),
+        }
     }
 }
 
@@ -176,7 +207,7 @@ impl<K, V> Store<K, V> for ShortSlice<(K, V)> {
 
     #[inline]
     fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
-        self.as_slice().get(index).map(|elt| (&elt.0, &elt.1))
+        self.get(index).map(|elt| (&elt.0, &elt.1))
     }
 
     #[inline]
@@ -193,7 +224,7 @@ impl<K, V> Store<K, V> for ShortSlice<(K, V)> {
     where
         F: FnMut(&K) -> core::cmp::Ordering,
     {
-        self.as_slice().binary_search_by(|(k, _)| cmp(k))
+        self.binary_search_by(|(k, _)| cmp(k))
     }
 }
 
@@ -212,9 +243,7 @@ impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
     fn lm_reserve(&mut self, _additional: usize) {}
 
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        self.as_mut_slice()
-            .get_mut(index)
-            .map(|elt| (&elt.0, &mut elt.1))
+        self.get_mut(index).map(|elt| (&elt.0, &mut elt.1))
     }
 
     fn lm_push(&mut self, key: K, value: V) {
@@ -232,6 +261,13 @@ impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
     fn lm_clear(&mut self) {
         self.clear();
     }
+
+    fn lm_retain<F>(&mut self, mut predicate: F)
+    where
+        F: FnMut(&K, &V) -> bool,
+    {
+        self.retain(|(k, v)| predicate(k, v))
+    }
 }
 
 impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortSlice<(K, V)> {
@@ -239,14 +275,14 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortSlice<(K, V)> {
         core::iter::Map<core::slice::Iter<'a, (K, V)>, for<'r> fn(&'r (K, V)) -> (&'r K, &'r V)>;
 
     fn lm_iter(&'a self) -> Self::KeyValueIter {
-        self.as_slice().iter().map(|elt| (&elt.0, &elt.1))
+        self.iter().map(|elt| (&elt.0, &elt.1))
     }
 }
 
 impl<K, V> StoreFromIterator<K, V> for ShortSlice<(K, V)> {}
 
 #[test]
-fn test_shortvec_impl() {
+fn test_short_slice_impl() {
     litemap::testing::check_store::<ShortSlice<(u32, u64)>>();
 }
 
@@ -610,20 +646,20 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
 
 macro_rules! impl_writeable_for_subtag_list {
     ($type:tt, $sample1:literal, $sample2:literal) => {
-        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => alloc::borrow::Cow::Borrowed(selff.0.as_slice().get(0).unwrap().as_str()));
+        impl_writeable_for_each_subtag_str_no_test!($type, selff, selff.0.len() == 1 => alloc::borrow::Cow::Borrowed(selff.0.get(0).unwrap().as_str()));
 
         #[test]
         fn test_writeable() {
             writeable::assert_writeable_eq!(&$type::default(), "");
             writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(alloc::vec![$sample1.parse().unwrap()]),
+                &$type::from_short_slice_unchecked(alloc::vec![$sample1.parse().unwrap()].into()),
                 $sample1,
             );
             writeable::assert_writeable_eq!(
-                &$type::from_vec_unchecked(vec![
+                &$type::from_short_slice_unchecked(vec![
                     $sample1.parse().unwrap(),
                     $sample2.parse().unwrap()
-                ]),
+                ].into()),
                 core::concat!($sample1, "-", $sample2),
             );
         }
