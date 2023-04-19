@@ -2115,7 +2115,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "itertools",
- "num-traits",
  "serde",
  "serde_json",
  "utf8_iter",

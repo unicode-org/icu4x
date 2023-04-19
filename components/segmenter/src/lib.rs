@@ -106,6 +106,19 @@
 //! ```
 //!
 //! See [`SentenceSegmenter`] for more examples.
+//!
+//! # `#![no_std]` support
+//!
+//! Like all of ICU4X, this module is `#![no_std]` by default. However, the LSTM segmenters (enabled
+//! with features `default`, `auto` or `lstm`) require `f32::exp` and `f32::tanh`, which are currently
+//! not included in `core`[^1]. Building without `std` will instead use `math.h`'s `expf` and `tanhf`
+//! functions, which need to be linked. There are two ways to do this:
+//! * If your target has a `libm` implementation, you can link with `-lm` to use native implementations.
+//! * If your target does not have a `libm` implementation, you can use the [`compiler_builtins`](https://github.com/rust-lang/compiler-builtins/tree/master)
+//!   crate to provide the implementations. Keep in mind that these will usually perform worse than a
+//!   native `libm`.
+//!
+//! [^1]: See [rust-lang/rfcs#2505](https://github.com/rust-lang/rfcs/issues/2505)
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]

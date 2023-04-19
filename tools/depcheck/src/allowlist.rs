@@ -71,9 +71,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_compactdecimal",
 ];
 
-/// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["libm", "num-traits"];
-
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
 pub const EXTRA_RYU_DEPS: &[&str] = &["ryu"];
@@ -122,6 +119,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ndarray",
     "num-complex",
     "num-integer",
+    "num-traits",
     "rawpointer",
     "regex-syntax",
     "rust-format",

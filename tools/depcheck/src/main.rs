@@ -135,7 +135,6 @@ fn main() {
     let basic: BTreeSet<_> = basic_runtime.union(&basic_build).copied().collect();
     let serde: BTreeSet<_> = EXTRA_SERDE_DEPS.iter().copied().collect();
     let experimental: BTreeSet<_> = EXTRA_EXPERIMENTAL_DEPS.iter().copied().collect();
-    let lstm: BTreeSet<_> = EXTRA_LSTM_DEPS.iter().copied().collect();
     let ryu: BTreeSet<_> = EXTRA_RYU_DEPS.iter().copied().collect();
     let capi_runtime: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
     let capi_build: BTreeSet<_> = EXTRA_CAPI_BUILD_DEPS.iter().copied().collect();
@@ -177,15 +176,15 @@ fn main() {
         "icu",
         "normal",
         "--features serde,experimental,icu_segmenter/lstm",
-        &[&basic, &serde, &experimental, &lstm],
-        "`EXTRA_LSTM_DEPS`",
+        &[&basic, &serde, &experimental],
+        "`EXTRA_EXPERIMENTAL_DEPS`",
     );
     test_dep_list(
         "icu_segmenter",
         "normal",
         "--features lstm",
-        &[&basic, &lstm],
-        "`EXTRA_LSTM_DEPS`",
+        &[&basic],
+        "`BASIC_RUNTIME_DEPS",
     );
     test_dep_list(
         "fixed_decimal",
@@ -200,7 +199,7 @@ fn main() {
         "normal,no-proc-macro",
         "",
         // capi should NOT pull in serde or capi-build when the proc macro is disabled
-        &[&basic, &experimental, &lstm, &ryu, &capi_runtime],
+        &[&basic, &experimental, &ryu, &capi_runtime],
         "`EXTRA_CAPI_DEPS`",
     );
 
@@ -208,7 +207,7 @@ fn main() {
         "icu_capi",
         "normal",
         "",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi],
+        &[&basic, &serde, &experimental, &ryu, &capi],
         "`EXTRA_CAPI_BUILD_DEPS`",
     );
 
@@ -216,37 +215,28 @@ fn main() {
         "icu_capi",
         "normal",
         "--features buffer_provider",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &blob],
+        &[&basic, &serde, &experimental, &ryu, &capi, &blob],
         "`EXTRA_BLOB_DEPS`",
     );
     test_dep_list(
         "icu_capi",
         "normal",
         "--features provider_fs",
-        &[
-            &basic,
-            &serde,
-            &experimental,
-            &lstm,
-            &ryu,
-            &capi,
-            &blob,
-            &fs,
-        ],
+        &[&basic, &serde, &experimental, &ryu, &capi, &blob, &fs],
         "`EXTRA_FS_DEPS`",
     );
     test_dep_list(
         "icu_capi",
         "normal",
         "--features provider_test",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &test],
+        &[&basic, &serde, &experimental, &ryu, &capi, &test],
         "`EXTRA_TEST_DEPS`",
     );
     test_dep_list(
         "icu_capi",
         "normal",
         "--features logging",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &logging],
+        &[&basic, &serde, &experimental, &ryu, &capi, &logging],
         "`EXTRA_CAPI_LOGGING_DEPS`",
     );
 
@@ -258,7 +248,6 @@ fn main() {
             &basic,
             &serde,
             &experimental,
-            &lstm,
             &blob,
             &fs,
             &zip,

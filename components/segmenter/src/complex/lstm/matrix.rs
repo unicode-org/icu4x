@@ -8,20 +8,28 @@ use core::ops::Range;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
-// Polyfill float operations with libm in case we're no_std.
-#[allow(unused_imports)]
-use num_traits::Float;
-
-/// `tanh` computes the tanh function for a scalar value.
-#[inline]
-fn tanh(x: f32) -> f32 {
-    x.tanh()
+// This will be used in #[no_std] as f32::exp/f32::tanh are not in core.
+trait CoreFloat {
+    fn exp(self) -> Self;
+    fn tanh(self) -> Self;
 }
 
-/// `sigmoid` computes the sigmoid function for a scalar value.
-#[inline]
-fn sigmoid(x: f32) -> f32 {
-    1.0 / (1.0 + (-x).exp())
+impl CoreFloat for f32 {
+    fn exp(self) -> Self {
+        #[link(name = "m")]
+        extern "C" {
+            fn expf(val: f32) -> f32;
+        }
+        unsafe { expf(self) }
+    }
+
+    fn tanh(self) -> Self {
+        #[link(name = "m")]
+        extern "C" {
+            fn tanhf(val: f32) -> f32;
+        }
+        unsafe { tanhf(self) }
+    }
 }
 
 /// A `D`-dimensional, heap-allocated matrix.
@@ -217,13 +225,13 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
 
     pub(super) fn sigmoid_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
-            *x = sigmoid(*x);
+            *x = 1.0 / (1.0 + (-*x).exp());
         }
     }
 
     pub(super) fn tanh_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
-            *x = tanh(*x);
+            *x = x.tanh();
         }
     }
 
@@ -262,7 +270,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
             // Safety: The lengths are all the same (checked above)
             unsafe {
                 *self.data.get_unchecked_mut(idx) =
-                    o.get_unchecked(idx) * tanh(*c.get_unchecked(idx));
+                    o.get_unchecked(idx) * c.get_unchecked(idx).tanh();
             }
         }
     }
