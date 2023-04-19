@@ -75,7 +75,10 @@ impl<const D: usize> MatrixOwned<D> {
 
     /// A mutable version of [`Self::submatrix`].
     #[inline]
-    pub(super) fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
+    pub(super) fn submatrix_mut<const M: usize>(
+        &mut self,
+        index: usize,
+    ) -> Option<MatrixBorrowedMut<M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);

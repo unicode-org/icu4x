@@ -13,6 +13,7 @@ mod language;
 use language::*;
 #[cfg(feature = "lstm")]
 mod lstm;
+#[cfg(feature = "lstm")]
 use lstm::*;
 
 #[cfg(not(feature = "lstm"))]
