@@ -207,6 +207,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         Some(())
     }
 
+    #[allow(dead_code)] // maybe needed for more complicated bies calculations
     /// Mutates this matrix by applying a softmax transformation.
     pub(super) fn softmax_transform(&mut self) {
         let sm = self.data.iter().map(|v| v.exp()).sum::<f32>();
