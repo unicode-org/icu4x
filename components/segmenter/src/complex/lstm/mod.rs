@@ -16,7 +16,7 @@ use matrix::*;
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
-pub struct LstmSegmenterIterator<'s> {
+struct LstmSegmenterIterator<'s> {
     input: &'s str,
     bies_str: Box<[Bies]>,
     pos: usize,
@@ -39,7 +39,7 @@ impl Iterator for LstmSegmenterIterator<'_> {
     }
 }
 
-pub struct LstmSegmenterIteratorUtf16 {
+struct LstmSegmenterIteratorUtf16 {
     bies_str: Box<[Bies]>,
     pos: usize,
 }
@@ -58,7 +58,7 @@ impl Iterator for LstmSegmenterIteratorUtf16 {
     }
 }
 
-pub(crate) struct LstmSegmenter<'l> {
+pub(super) struct LstmSegmenter<'l> {
     dic: ZeroMapBorrowed<'l, UnvalidatedStr, u16>,
     embedding: MatrixZero<'l, 2>,
     fw_w: MatrixZero<'l, 3>,
@@ -74,7 +74,7 @@ pub(crate) struct LstmSegmenter<'l> {
 
 impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
-    pub fn new(
+    pub(super) fn new(
         lstm: &'l DataPayload<LstmDataV1Marker>,
         grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
     ) -> Self {
@@ -95,7 +95,7 @@ impl<'l> LstmSegmenter<'l> {
     }
 
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(&self, input: &'s str) -> LstmSegmenterIterator<'s> {
+    pub(super) fn segment_str<'s>(&self, input: &'s str) -> impl Iterator<Item = usize> + 's {
         let lstm_output = self.produce_bies(input);
         LstmSegmenterIterator {
             input,
@@ -106,7 +106,7 @@ impl<'l> LstmSegmenter<'l> {
     }
 
     /// Create an LSTM based break iterator for a UTF-16 string.
-    pub fn segment_utf16(&self, input: &[u16]) -> LstmSegmenterIteratorUtf16 {
+    pub(super) fn segment_utf16(&self, input: &[u16]) -> impl Iterator<Item = usize> {
         let input: String = decode_utf16(input.iter().copied())
             .map(|r| r.unwrap_or(REPLACEMENT_CHARACTER))
             .collect();
@@ -267,7 +267,7 @@ impl<'l> LstmSegmenter<'l> {
 
 // TODO(#421): Use common BIES normalizer code
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Bies {
+enum Bies {
     B,
     I,
     E,
@@ -320,21 +320,21 @@ mod tests {
     /// Each test case has two attributs: `unseg` which denots the unsegmented line, and `true_bies` which indicates the Bies
     /// sequence representing the true segmentation.
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct TestCase {
-        pub unseg: String,
-        pub expected_bies: String,
-        pub true_bies: String,
+    struct TestCase {
+        unseg: String,
+        expected_bies: String,
+        true_bies: String,
     }
 
     /// `TestTextData` is a struct to store a vector of `TestCase` that represents a test text.
     #[derive(PartialEq, Debug, Deserialize)]
-    pub struct TestTextData {
-        pub testcases: Vec<TestCase>,
+    struct TestTextData {
+        testcases: Vec<TestCase>,
     }
 
     #[derive(Debug)]
-    pub struct TestText {
-        pub data: TestTextData,
+    struct TestText {
+        data: TestTextData,
     }
 
     fn load_test_text(filename: &str) -> TestTextData {

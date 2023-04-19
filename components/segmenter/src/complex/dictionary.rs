@@ -10,7 +10,7 @@ use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
 
 /// A trait for dictionary based iterator
-pub trait DictionaryType<'l, 's> {
+trait DictionaryType<'l, 's> {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
 
@@ -21,7 +21,7 @@ pub trait DictionaryType<'l, 's> {
     fn char_len(c: Self::CharType) -> usize;
 }
 
-pub struct DictionaryBreakIterator<
+struct DictionaryBreakIterator<
     'l,
     's,
     Y: DictionaryType<'l, 's> + ?Sized,
@@ -137,13 +137,13 @@ impl<'l, 's> DictionaryType<'l, 's> for char {
     }
 }
 
-pub(crate) struct DictionarySegmenter<'l> {
+pub(super) struct DictionarySegmenter<'l> {
     dict: &'l UCharDictionaryBreakDataV1<'l>,
     grapheme: &'l RuleBreakDataV1<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
-    pub fn new(
+    pub(super) fn new(
         dict: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
         grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
     ) -> Self {
@@ -155,12 +155,12 @@ impl<'l> DictionarySegmenter<'l> {
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(
-        &'s self,
-        input: &'s str,
-    ) -> DictionaryBreakIterator<'l, 's, char, GraphemeClusterBreakIteratorUtf8> {
+    pub(super) fn segment_str(
+        &'l self,
+        input: &'l str,
+    ) -> impl Iterator<Item = usize> + 'l {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_str(input, self.grapheme);
-        DictionaryBreakIterator {
+        DictionaryBreakIterator::<char, GraphemeClusterBreakIteratorUtf8> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: input.char_indices(),
             len: input.len(),
@@ -169,12 +169,12 @@ impl<'l> DictionarySegmenter<'l> {
     }
 
     /// Create a dictionary based break iterator for a UTF-16 string.
-    pub fn segment_utf16<'s>(
-        &'s self,
-        input: &'s [u16],
-    ) -> DictionaryBreakIterator<'l, 's, u32, GraphemeClusterBreakIteratorUtf16> {
+    pub(super) fn segment_utf16(
+        &'l self,
+        input: &'l [u16],
+    ) -> impl Iterator<Item = usize> +'l {
         let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, self.grapheme);
-        DictionaryBreakIterator {
+        DictionaryBreakIterator::<u32, GraphemeClusterBreakIteratorUtf16> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: Utf16Indices::new(input),
             len: input.len(),

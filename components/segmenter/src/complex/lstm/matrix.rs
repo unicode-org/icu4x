@@ -14,13 +14,13 @@ use num_traits::Float;
 
 /// `tanh` computes the tanh function for a scalar value.
 #[inline]
-pub fn tanh(x: f32) -> f32 {
+fn tanh(x: f32) -> f32 {
     x.tanh()
 }
 
 /// `sigmoid` computes the sigmoid function for a scalar value.
 #[inline]
-pub fn sigmoid(x: f32) -> f32 {
+fn sigmoid(x: f32) -> f32 {
     1.0 / (1.0 + (-x).exp())
 }
 
@@ -30,20 +30,20 @@ pub fn sigmoid(x: f32) -> f32 {
 /// submatrices. For example, indexing into a matrix of size 5x4x3 returns a
 /// matrix of size 4x3. For more information, see [`MatrixOwned::submatrix`].
 #[derive(Debug, Clone)]
-pub struct MatrixOwned<const D: usize> {
+pub(super) struct MatrixOwned<const D: usize> {
     data: Vec<f32>,
     dims: [usize; D],
 }
 
 impl<const D: usize> MatrixOwned<D> {
-    pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
+    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: &self.data,
             dims: self.dims,
         }
     }
 
-    pub fn new_zero(dims: [usize; D]) -> Self {
+    pub(super) fn new_zero(dims: [usize; D]) -> Self {
         let total_len = dims.iter().product::<usize>();
         MatrixOwned {
             data: vec![0.0; total_len],
@@ -58,7 +58,7 @@ impl<const D: usize> MatrixOwned<D> {
     ///
     /// The type parameter `M` should be `D - 1`.
     #[inline]
-    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
+    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
@@ -66,7 +66,7 @@ impl<const D: usize> MatrixOwned<D> {
         Some(MatrixBorrowed { data, dims })
     }
 
-    pub fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
+    pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
         MatrixBorrowedMut {
             data: &mut self.data,
             dims: self.dims,
@@ -75,7 +75,7 @@ impl<const D: usize> MatrixOwned<D> {
 
     /// A mutable version of [`Self::submatrix`].
     #[inline]
-    pub fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
+    pub(super) fn submatrix_mut<const M: usize>(&mut self, index: usize) -> Option<MatrixBorrowedMut<M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
@@ -86,26 +86,26 @@ impl<const D: usize> MatrixOwned<D> {
 
 /// A `D`-dimensional, borrowed matrix.
 #[derive(Debug, Clone, Copy)]
-pub struct MatrixBorrowed<'a, const D: usize> {
+pub(super) struct MatrixBorrowed<'a, const D: usize> {
     data: &'a [f32],
     dims: [usize; D],
 }
 
 impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     #[cfg(debug_assertions)]
-    pub fn debug_assert_dims(&self, dims: [usize; D]) {
+    pub(super) fn debug_assert_dims(&self, dims: [usize; D]) {
         debug_assert_eq!(dims, self.dims);
         let expected_len = dims.iter().product::<usize>();
         debug_assert_eq!(expected_len, self.data.len());
     }
 
-    pub fn as_slice(&self) -> &'a [f32] {
+    pub(super) fn as_slice(&self) -> &'a [f32] {
         self.data
     }
 
     /// See [`MatrixOwned::submatrix`].
     #[inline]
-    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
+    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'a, M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.submatrix_range(index);
@@ -129,21 +129,21 @@ macro_rules! impl_basic_dim {
     ($t1:path, $t2:path, $t3:path) => {
         impl<'a> $t1 {
             #[allow(dead_code)]
-            pub fn dim(&self) -> usize {
+            pub(super) fn dim(&self) -> usize {
                 let [dim] = self.dims;
                 dim
             }
         }
         impl<'a> $t2 {
             #[allow(dead_code)]
-            pub fn dim(&self) -> (usize, usize) {
+            pub(super) fn dim(&self) -> (usize, usize) {
                 let [d0, d1] = self.dims;
                 (d0, d1)
             }
         }
         impl<'a> $t3 {
             #[allow(dead_code)]
-            pub fn dim(&self) -> (usize, usize, usize) {
+            pub(super) fn dim(&self) -> (usize, usize, usize) {
                 let [d0, d1, d2] = self.dims;
                 (d0, d1, d2)
             }
@@ -165,24 +165,24 @@ impl_basic_dim!(
 impl_basic_dim!(MatrixZero<'a, 1>, MatrixZero<'a, 2>, MatrixZero<'a, 3>);
 
 /// A `D`-dimensional, mutably borrowed matrix.
-pub struct MatrixBorrowedMut<'a, const D: usize> {
-    pub(crate) data: &'a mut [f32],
-    pub(crate) dims: [usize; D],
+pub(super) struct MatrixBorrowedMut<'a, const D: usize> {
+    pub(super) data: &'a mut [f32],
+    pub(super) dims: [usize; D],
 }
 
 impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
-    pub fn as_borrowed(&self) -> MatrixBorrowed<D> {
+    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<D> {
         MatrixBorrowed {
             data: self.data,
             dims: self.dims,
         }
     }
 
-    pub fn as_mut_slice(&mut self) -> &mut [f32] {
+    pub(super) fn as_mut_slice(&mut self) -> &mut [f32] {
         self.data
     }
 
-    pub fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
+    pub(super) fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
         let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
         let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
         if let (Some(_), Some(_)) = (
@@ -195,7 +195,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 
     #[must_use]
-    pub fn add(&mut self, other: MatrixZero<'_, D>) -> Option<()> {
+    pub(super) fn add(&mut self, other: MatrixZero<'_, D>) -> Option<()> {
         debug_assert_eq!(self.dims, other.dims);
         // TODO: Vectorize?
         for i in 0..self.data.len() {
@@ -205,26 +205,26 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
     }
 
     /// Mutates this matrix by applying a softmax transformation.
-    pub fn softmax_transform(&mut self) {
+    pub(super) fn softmax_transform(&mut self) {
         let sm = self.data.iter().map(|v| v.exp()).sum::<f32>();
         self.data.iter_mut().for_each(|v| {
             *v = v.exp() / sm;
         });
     }
 
-    pub fn sigmoid_transform(&mut self) {
+    pub(super) fn sigmoid_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
             *x = sigmoid(*x);
         }
     }
 
-    pub fn tanh_transform(&mut self) {
+    pub(super) fn tanh_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
             *x = tanh(*x);
         }
     }
 
-    pub fn convolve(
+    pub(super) fn convolve(
         &mut self,
         i: MatrixBorrowed<'_, D>,
         c: MatrixBorrowed<'_, D>,
@@ -247,7 +247,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         }
     }
 
-    pub fn mul_tanh(&mut self, o: MatrixBorrowed<'_, D>, c: MatrixBorrowed<'_, D>) {
+    pub(super) fn mul_tanh(&mut self, o: MatrixBorrowed<'_, D>, c: MatrixBorrowed<'_, D>) {
         let o = o.as_slice();
         let c = c.as_slice();
         let len = self.data.len();
@@ -267,7 +267,7 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
 
 impl<'a> MatrixBorrowed<'a, 1> {
     #[allow(dead_code)] // could be useful
-    pub fn dot_1d(&self, other: MatrixZero<1>) -> f32 {
+    pub(super) fn dot_1d(&self, other: MatrixZero<1>) -> f32 {
         debug_assert_eq!(self.dims, other.dims);
         unrolled_dot_1(self.data, other.data)
     }
@@ -278,7 +278,7 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
     ///
     /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
     /// this is the opposite of standard practice.
-    pub fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<2>) {
+    pub(super) fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<2>) {
         let m = a.dim();
         let n = self.as_borrowed().dim();
         debug_assert_eq!(
@@ -312,7 +312,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
-    pub fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
+    pub(super) fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
         debug_assert_eq!(
@@ -352,7 +352,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
-    pub fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
+    pub(super) fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
         debug_assert_eq!(
@@ -392,7 +392,7 @@ impl<'a> MatrixBorrowedMut<'a, 2> {
 
 /// A `D`-dimensional matrix borrowed from a [`ZeroSlice`].
 #[derive(Debug, Clone, Copy)]
-pub struct MatrixZero<'a, const D: usize> {
+pub(super) struct MatrixZero<'a, const D: usize> {
     data: &'a ZeroSlice<f32>,
     dims: [usize; D],
 }
@@ -426,19 +426,19 @@ impl<'a> From<&'a crate::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
 
 impl<'a, const D: usize> MatrixZero<'a, D> {
     #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
-    pub fn to_owned(&self) -> MatrixOwned<D> {
+    pub(super) fn to_owned(&self) -> MatrixOwned<D> {
         MatrixOwned {
             data: self.data.iter().collect(),
             dims: self.dims,
         }
     }
 
-    pub fn as_slice(&self) -> &ZeroSlice<f32> {
+    pub(super) fn as_slice(&self) -> &ZeroSlice<f32> {
         self.data
     }
 
     #[cfg(debug_assertions)]
-    pub fn debug_assert_dims(&self, dims: [usize; D]) {
+    pub(super) fn debug_assert_dims(&self, dims: [usize; D]) {
         debug_assert_eq!(dims, self.dims);
         let expected_len = dims.iter().product::<usize>();
         debug_assert_eq!(expected_len, self.data.len());
@@ -446,7 +446,7 @@ impl<'a, const D: usize> MatrixZero<'a, D> {
 
     /// See [`MatrixOwned::submatrix`].
     #[inline]
-    pub fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixZero<'a, M>> {
+    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixZero<'a, M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.submatrix_range(index);

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #[derive(PartialEq, Debug, Copy, Clone)]
-pub enum Language {
+pub(super) enum Language {
     Burmese,
     ChineseOrJapanese,
     Khmer,
@@ -43,12 +43,12 @@ fn get_language(codepoint: u32) -> Language {
 
 /// This struct is an iterator that returns the string per language from the
 /// given string.
-pub struct LanguageIterator<'s> {
+pub(super) struct LanguageIterator<'s> {
     rest: &'s str,
 }
 
 impl<'s> LanguageIterator<'s> {
-    pub fn new(input: &'s str) -> Self {
+    pub(super) fn new(input: &'s str) -> Self {
         Self { rest: input }
     }
 }
@@ -70,12 +70,12 @@ impl<'s> Iterator for LanguageIterator<'s> {
     }
 }
 
-pub struct LanguageIteratorUtf16<'s> {
+pub(super) struct LanguageIteratorUtf16<'s> {
     rest: &'s [u16],
 }
 
 impl<'s> LanguageIteratorUtf16<'s> {
-    pub fn new(input: &'s [u16]) -> Self {
+    pub(super) fn new(input: &'s [u16]) -> Self {
         Self { rest: input }
     }
 }
