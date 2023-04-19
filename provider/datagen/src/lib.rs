@@ -320,7 +320,7 @@ impl Default for BakedOptions {
 pub enum Out {
     /// Output to a file system tree
     ///
-    /// Only available with the `fs` Cargo feature
+    /// **Enabled with the `fs` Cargo feature.**
     #[cfg(feature = "fs")]
     Fs {
         /// The root path.
