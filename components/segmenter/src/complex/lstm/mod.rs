@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::grapheme::GraphemeClusterSegmenter;
-use crate::math_helper::{MatrixBorrowedMut, MatrixOwned, MatrixZero};
 use crate::provider::*;
 use alloc::boxed::Box;
 use alloc::string::String;
@@ -11,6 +10,9 @@ use alloc::vec::Vec;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 use icu_provider::DataPayload;
 use zerovec::{maps::ZeroMapBorrowed, ule::UnvalidatedStr};
+
+mod matrix;
+use matrix::*;
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
@@ -79,15 +81,15 @@ impl<'l> LstmSegmenter<'l> {
         let LstmDataV1::Float32(lstm) = lstm.get();
         Self {
             dic: lstm.dic.as_borrowed(),
-            embedding: lstm.embedding.as_matrix_zero(),
-            fw_w: lstm.fw_w.as_matrix_zero(),
-            fw_u: lstm.fw_u.as_matrix_zero(),
-            fw_b: lstm.fw_b.as_matrix_zero(),
-            bw_w: lstm.bw_w.as_matrix_zero(),
-            bw_u: lstm.bw_u.as_matrix_zero(),
-            bw_b: lstm.bw_b.as_matrix_zero(),
-            time_w: lstm.time_w.as_matrix_zero(),
-            time_b: lstm.time_b.as_matrix_zero(),
+            embedding: MatrixZero::from(&lstm.embedding),
+            fw_w: MatrixZero::from(&lstm.fw_w),
+            fw_u: MatrixZero::from(&lstm.fw_u),
+            fw_b: MatrixZero::from(&lstm.fw_b),
+            bw_w: MatrixZero::from(&lstm.bw_w),
+            bw_u: MatrixZero::from(&lstm.bw_u),
+            bw_b: MatrixZero::from(&lstm.bw_b),
+            time_w: MatrixZero::from(&lstm.time_w),
+            time_b: MatrixZero::from(&lstm.time_b),
             grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme.get()),
         }
     }

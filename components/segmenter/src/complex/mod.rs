@@ -2,14 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "lstm")]
-use crate::lstm::LstmSegmenter;
-use crate::dictionary::DictionarySegmenter;
-use crate::language::*;
 use crate::provider::*;
 use alloc::vec::Vec;
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
+
+mod dictionary;
+use dictionary::*;
+mod language;
+use language::*;
+#[cfg(feature = "lstm")]
+mod lstm;
+use lstm::*;
 
 #[cfg(not(feature = "lstm"))]
 type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1Marker>, core::convert::Infallible>;

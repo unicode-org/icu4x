@@ -186,11 +186,8 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(test)]
 #[cfg(feature = "serde")]
 mod tests {
-    use crate::{
-        dictionary::DictionarySegmenter, provider::DictionaryForWordOnlyAutoV1Marker,
-        LineSegmenter, WordSegmenter,
-    };
-    use icu_provider::prelude::*;
+    use super::*;
+    use crate::{provider::DictionaryForWordOnlyAutoV1Marker, LineSegmenter, WordSegmenter};
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_provider_fs::FsDataProvider;
     use std::path::PathBuf;

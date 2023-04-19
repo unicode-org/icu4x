@@ -397,11 +397,34 @@ pub struct MatrixZero<'a, const D: usize> {
     dims: [usize; D],
 }
 
-impl<'a, const D: usize> MatrixZero<'a, D> {
-    pub fn from_parts_unchecked(data: &'a ZeroSlice<f32>, dims: [usize; D]) -> Self {
-        Self { data, dims }
+impl<'a> From<&'a crate::provider::LstmMatrix1<'a>> for MatrixZero<'a, 1> {
+    fn from(other: &'a crate::provider::LstmMatrix1<'a>) -> Self {
+        Self {
+            data: &other.data,
+            dims: other.dims.map(|x| x as usize),
+        }
     }
+}
 
+impl<'a> From<&'a crate::provider::LstmMatrix2<'a>> for MatrixZero<'a, 2> {
+    fn from(other: &'a crate::provider::LstmMatrix2<'a>) -> Self {
+        Self {
+            data: &other.data,
+            dims: other.dims.map(|x| x as usize),
+        }
+    }
+}
+
+impl<'a> From<&'a crate::provider::LstmMatrix3<'a>> for MatrixZero<'a, 3> {
+    fn from(other: &'a crate::provider::LstmMatrix3<'a>) -> Self {
+        Self {
+            data: &other.data,
+            dims: other.dims.map(|x| x as usize),
+        }
+    }
+}
+
+impl<'a, const D: usize> MatrixZero<'a, D> {
     #[allow(clippy::wrong_self_convention)] // same convention as slice::to_vec
     pub fn to_owned(&self) -> MatrixOwned<D> {
         MatrixOwned {
