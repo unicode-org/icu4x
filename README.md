@@ -12,7 +12,7 @@ The design goals of `ICU4X` are:
 * Availability and ease of use in multiple programming languages
 * Written by internationalization experts to encourage best practices
 
-***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://groups.google.com/u/1/a/unicode.org/g/icu4x-announce).  *Note: After subscribing, check your spam folder for a confirmation.*
+***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://groups.google.com/a/unicode.org/g/icu4x-announcee).  *Note: After subscribing, check your spam folder for a confirmation.*
 
 ## Documentation
 
