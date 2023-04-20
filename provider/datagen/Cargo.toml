@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.1"
+version = "1.2.2"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -51,7 +51,7 @@ icu_timezone = { version = "1.2.0", path = "../../components/timezone", features
 icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
 icu_provider_adapters = { version = "1.2.0", path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "1.2.0", path = "../blob", features = ["export"] }
-icu_provider_fs = { version = "1.2.0", path = "../fs", features = ["export"] }
+icu_provider_fs = { version = "1.2.0", path = "../fs", features = ["export"], optional = true }
 
 # Other
 cached-path = { version = ">=0.5, <0.7", optional = true }
@@ -106,6 +106,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:cached-path"]
+fs = ["dep:icu_provider_fs"]
 
 [[bin]]
 name = "icu4x-datagen"
