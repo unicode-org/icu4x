@@ -48,7 +48,7 @@ icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", featur
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", features = ["datagen"] }
 
 # ICU provider infrastructure
-icu_provider = { version = "1.2.0", path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider = { version = "1.2.0", path = "../core", features = ["datagen", "log_error_context"]}
 icu_provider_adapters = { version = "1.2.0", path = "../adapters", features = ["datagen"] }
 icu_provider_blob = { version = "1.2.0", path = "../blob", features = ["export"] }
 icu_provider_fs = { version = "1.2.0", path = "../fs", features = ["export"], optional = true }
