@@ -77,7 +77,11 @@ impl Variants {
     /// for the caller to use [`binary_search`](slice::binary_search) instead of [`sort`](slice::sort)
     /// and [`dedup`](Vec::dedup()).
     pub fn from_vec_unchecked(input: Vec<Variant>) -> Self {
-        Self(ShortSlice::from(input))
+        Self(input.into())
+    }
+
+    pub(crate) fn from_short_slice_unchecked(input: ShortSlice<Variant>) -> Self {
+        Self(input)
     }
 
     /// Empties the [`Variants`] list.
@@ -119,6 +123,6 @@ impl Deref for Variants {
     type Target = [Variant];
 
     fn deref(&self) -> &[Variant] {
-        self.0.as_slice()
+        self.0.deref()
     }
 }
