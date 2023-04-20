@@ -69,7 +69,7 @@ ndarray = { version = "0.15.5", default-features = false }
 proc-macro2 = "1.0"
 quote = "1.0.9"
 rayon = "1.5"
-rust-format = { version = "0.3.4", features = ["token_stream"] }
+rust-format = { version = "0.3.4", features = ["token_stream", "pretty_please"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = { version = "4.1.2", default-features = false }

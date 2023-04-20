@@ -97,7 +97,7 @@ impl BakedDataExporter {
 
         let mut formatted = if self.pretty {
             use rust_format::*;
-            RustFmt::from_config(
+            PrettyPlease::from_config(
                 Config::new_str()
                     // We deal with line encoding later
                     .option("newline_style", "unix")
