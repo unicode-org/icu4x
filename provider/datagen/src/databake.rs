@@ -96,33 +96,15 @@ impl BakedDataExporter {
             .with_extension(if is_expr { "rs.data" } else { "rs" });
 
         let mut formatted = if self.pretty {
-            use rust_format::*;
-            PrettyPlease::from_config(
-                Config::new_str()
-                    // We deal with line encoding later
-                    .option("newline_style", "unix")
-                    .option("normalize_doc_attributes", "true")
-                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for the root mod.rs
-                    .option(
-                        "max_width",
-                        if relative_path.as_ref().as_os_str().to_str() == Some("mod") {
-                            "150"
-                        } else {
-                            "100"
-                        },
-                    ),
-            )
-            .format_tokens(if is_expr {
-                // Rustfmt cannot format Rust expressions, only full files. We need to wrap expressions in a main function
+            let data = if is_expr {
                 quote!(fn main() { #data })
             } else {
                 data
-            })
-            .map_err(|e| {
-                DataError::custom("Formatting error")
-                    .with_display_context(&e)
-                    .with_path_context(&path)
-            })?
+            };
+            prettyplease::unparse(
+                &syn::parse2(data)
+                    .map_err(|e| DataError::custom("syn parsing").with_display_context(&e))?,
+            )
         } else {
             data.to_string()
         };
@@ -132,7 +114,7 @@ impl BakedDataExporter {
                 .replace("icu_", "icu::")
                 .replace("icu::provider", "icu_provider");
         }
-
+        
         let formatted = if self.pretty && is_expr {
             formatted = formatted.replace("\n    ", "\n");
             formatted
@@ -143,6 +125,7 @@ impl BakedDataExporter {
         } else {
             &formatted
         };
+
         std::fs::create_dir_all(path.parent().unwrap())?;
         let mut file = crlify::BufWriterWithLineEndingFix::new(
             File::create(&path).map_err(|e| DataError::from(e).with_path_context(&path))?,
