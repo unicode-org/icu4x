@@ -390,6 +390,7 @@ impl DataExporter for BakedDataExporter {
             data_impls.insert(data.marker.clone(),
                 quote! {
                     #feature
+                    #[clippy::msrv = "1.61"]
                     impl DataProvider<#marker> for $provider {
                         fn load(
                             &self,
@@ -483,9 +484,11 @@ impl DataExporter for BakedDataExporter {
             PathBuf::from("mod"),
             quote! {
                 #(
+                    #[clippy::msrv = "1.61"]
                     mod #mods;
                 )*
 
+                #[clippy::msrv = "1.61"]
                 use ::icu_provider::prelude::*;
 
                 /// Implement [`DataProvider<M>`] on the given struct using the data
@@ -522,6 +525,7 @@ impl DataExporter for BakedDataExporter {
                 #[allow(unused_macros)]
                 macro_rules! impl_any_provider {
                     ($provider:path) => {
+                        #[clippy::msrv = "1.61"]
                         impl AnyProvider for $provider {
                             fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                                 #any_code
@@ -530,6 +534,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
 
+                #[clippy::msrv = "1.61"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },
