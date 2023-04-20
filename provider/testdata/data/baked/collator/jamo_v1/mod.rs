@@ -1,6 +1,5 @@
 // @generated
 #![cfg(feature = "icu_collator")]
-#![allow(clippy::octal_escapes)]
 type DataStruct =
     <::icu_collator::provider::CollationJamoV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
