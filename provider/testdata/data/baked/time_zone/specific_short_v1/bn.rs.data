@@ -5,7 +5,9 @@
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"indi") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"st") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0IST") },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0IST")
+            },
         )
     },
     overrides: unsafe {
@@ -14,7 +16,9 @@
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"st") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC")
+            },
         )
     },
 }

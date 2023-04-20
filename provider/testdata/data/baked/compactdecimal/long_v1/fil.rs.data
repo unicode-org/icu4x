@@ -9,10 +9,14 @@
                 )
             },
             unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x01\x05\x01\x05\x01\x05")
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x01\x05\x01\x05\x01\x05\x01\x05",
+                )
             },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x08\0\0\0\0\0\x07\0\x11\0\x1A\0&\0/\0;\0E\0\x03\0 libo\x03\0 na libo\x06\0 milyon\x06\0 na milyon\t\0 bilyon\t\0 na bilyon\x0C\0 trilyon\x0C\0 na trilyon")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x08\0\0\0\0\0\x07\0\x11\0\x1A\0&\0/\0;\0E\0\x03\0 libo\x03\0 na libo\x06\0 milyon\x06\0 na milyon\t\0 bilyon\t\0 na bilyon\x0C\0 trilyon\x0C\0 na trilyon",
+                )
             },
         )
     },

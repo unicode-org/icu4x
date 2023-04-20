@@ -8,11 +8,17 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" และ ", 11u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " และ ",
+            11u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" และ ", 11u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " และ ",
+            11u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
@@ -24,7 +30,10 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" และ ", 11u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " และ ",
+            11u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {

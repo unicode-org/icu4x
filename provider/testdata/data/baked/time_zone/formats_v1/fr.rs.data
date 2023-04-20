@@ -11,7 +11,9 @@
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x15\0{0} (heure d\xE2\x80\x99\xC3\xA9t\xC3\xA9){0} (heure standard)")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x15\0{0} (heure d\xE2\x80\x99\xC3\xA9t\xC3\xA9){0} (heure standard)",
+                )
             },
         )
     },

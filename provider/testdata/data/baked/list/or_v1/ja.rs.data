@@ -8,27 +8,17 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("、または", 12u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "、または",
+            12u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("または", 9u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("、", 3u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("、", 3u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("、または", 12u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("または", 9u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "または",
+            9u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
@@ -40,11 +30,39 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("、または", 12u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "、または",
+            12u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("または", 9u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "または",
+            9u8,
+        ),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts("、", 3u8),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts("、", 3u8),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "、または",
+            12u8,
+        ),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "または",
+            9u8,
+        ),
         special_case: None,
     },
 ])

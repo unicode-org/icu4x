@@ -4,7 +4,9 @@
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x06\0\x0C\0\xE5\x85\x88\xE9\x80\xB1\xE4\xBB\x8A\xE9\x80\xB1\xE6\x9D\xA5\xE9\x80\xB1")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x06\0\x0C\0\xE5\x85\x88\xE9\x80\xB1\xE4\xBB\x8A\xE9\x80\xB1\xE6\x9D\xA5\xE9\x80\xB1",
+                )
             },
         )
     },

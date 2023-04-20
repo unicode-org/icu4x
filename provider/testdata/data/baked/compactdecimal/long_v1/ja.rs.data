@@ -10,7 +10,9 @@
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x04\0\0\0\0\0\x05\0\n\0\x0F\0\x04\0\xE4\xB8\x87\x08\0\xE5\x84\x84\x0C\0\xE5\x85\x86\x10\0\xE4\xBA\xAC")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x04\0\0\0\0\0\x05\0\n\0\x0F\0\x04\0\xE4\xB8\x87\x08\0\xE5\x84\x84\x0C\0\xE5\x85\x86\x10\0\xE4\xBA\xAC",
+                )
             },
         )
     },

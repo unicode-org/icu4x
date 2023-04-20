@@ -13,14 +13,18 @@
     past: ::icu_relativetime::provider::PluralRulesCategoryMapping {
         zero: None,
         one: Some(::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" সেকেন\u{9cd}ড আগে"),
+            pattern: alloc::borrow::Cow::Borrowed(
+                " সেকেন\u{9cd}ড আগে",
+            ),
             index: 0u8,
         }),
         two: None,
         few: None,
         many: None,
         other: ::icu_relativetime::provider::SingularSubPattern {
-            pattern: alloc::borrow::Cow::Borrowed(" সেকেন\u{9cd}ড আগে"),
+            pattern: alloc::borrow::Cow::Borrowed(
+                " সেকেন\u{9cd}ড আগে",
+            ),
             index: 0u8,
         },
     },

@@ -8,27 +8,17 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" หร\u{e37}อ ", 14u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " หร\u{e37}อ ",
+            14u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" หร\u{e37}อ ", 14u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" หร\u{e37}อ ", 14u8),
-        special_case: None,
-    },
-    ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("หร\u{e37}อ", 12u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " หร\u{e37}อ ",
+            14u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
@@ -40,11 +30,39 @@
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts(" หร\u{e37}อ ", 14u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " หร\u{e37}อ ",
+            14u8,
+        ),
         special_case: None,
     },
     ::icu_list::provider::ConditionalListJoinerPattern {
-        default: ::icu_list::provider::ListJoinerPattern::from_parts("หร\u{e37}อ", 12u8),
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "หร\u{e37}อ",
+            12u8,
+        ),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(", ", 2u8),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            " หร\u{e37}อ ",
+            14u8,
+        ),
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: ::icu_list::provider::ListJoinerPattern::from_parts(
+            "หร\u{e37}อ",
+            12u8,
+        ),
         special_case: None,
     },
 ])

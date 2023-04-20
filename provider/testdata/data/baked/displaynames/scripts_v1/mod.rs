@@ -1,15 +1,47 @@
 // @generated
 #![cfg(feature = "icu_displaynames")]
 #![allow(clippy::octal_escapes)]
-type DataStruct = < :: icu_displaynames :: provider :: ScriptDisplayNamesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = <::icu_displaynames::provider::ScriptDisplayNamesV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 18usize] = [
-        "ar", "ar-EG", "bn", "ccp", "en", "en-001", "en-ZA", "es", "es-AR", "fil", "fr", "ja",
-        "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr",
+        "ar",
+        "ar-EG",
+        "bn",
+        "ccp",
+        "en",
+        "en-001",
+        "en-ZA",
+        "es",
+        "es-AR",
+        "fil",
+        "fr",
+        "ja",
+        "ru",
+        "sr",
+        "sr-Cyrl",
+        "sr-Latn",
+        "th",
+        "tr",
     ];
     static DATA: [&DataStruct; 18usize] = [
-        &AR, &AR, &BN, &CCP, &EN, &EN, &EN, &ES, &ES_AR, &FIL, &FR, &JA, &RU, &SR, &SR, &SR_LATN,
-        &TH, &TR,
+        &AR,
+        &AR,
+        &BN,
+        &CCP,
+        &EN,
+        &EN,
+        &EN,
+        &ES,
+        &ES_AR,
+        &FIL,
+        &FR,
+        &JA,
+        &RU,
+        &SR,
+        &SR,
+        &SR_LATN,
+        &TH,
+        &TR,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()

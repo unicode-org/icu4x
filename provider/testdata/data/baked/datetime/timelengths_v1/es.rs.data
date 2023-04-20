@@ -2,13 +2,17 @@
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01\0\0 \x80\xA3\x01")
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01\0\0 \x80\xA3\x01",
+                )
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
         long: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01\0\0 \x80\xA3\x01")
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80q\x01\0\0:\x80\x80\x02\0\0:\x80\x90\x02\0 /\x80`\x01\0\0 \x80\xA3\x01",
+                )
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Seconds,
         },
@@ -56,7 +60,9 @@
         },
         short: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(b"\x80r\x01\0\0:\x80\x80\x02")
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80r\x01\0\0:\x80\x80\x02",
+                )
             },
             time_granularity: ::icu_datetime::pattern::TimeGranularity::Minutes,
         },

@@ -52,10 +52,16 @@
             abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}",
+                ),
                 alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}",
+                ),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}",
+                ),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
             ]),
             narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
@@ -67,29 +73,45 @@
                 alloc::borrow::Cow::Borrowed("𑄥\u{1112a}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
-            ])),
+            short: Some(
+                ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                    alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
+                    alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
+                    alloc::borrow::Cow::Borrowed(
+                        "𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}",
+                    ),
+                    alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}"),
+                    alloc::borrow::Cow::Borrowed(
+                        "𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}",
+                    ),
+                    alloc::borrow::Cow::Borrowed(
+                        "𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}",
+                    ),
+                    alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
+                ]),
+            ),
             wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}𑄝𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}𑄝𑄢\u{11134}"),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄢\u{11127}𑄝\u{11128}𑄝𑄢\u{11134}",
+                ),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄥\u{11127}𑄟\u{11134}𑄝𑄢\u{11134}",
+                ),
                 alloc::borrow::Cow::Borrowed(
                     "𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}𑄝𑄢\u{11134}",
                 ),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}𑄝𑄢\u{11134}"),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄝\u{1112a}𑄖\u{11134}𑄝𑄢\u{11134}",
+                ),
                 alloc::borrow::Cow::Borrowed(
                     "𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}𑄝𑄢\u{11134}",
                 ),
                 alloc::borrow::Cow::Borrowed(
                     "𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}𑄝𑄢\u{11134}",
                 ),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}𑄝𑄢\u{11134}"),
+                alloc::borrow::Cow::Borrowed(
+                    "𑄥\u{11127}𑄚\u{11128}𑄝𑄢\u{11134}",
+                ),
             ]),
         },
         stand_alone: None,
@@ -98,7 +120,11 @@
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xF0\x91\x84\xA5\xF0\x91\x84\xA3\xF0\x91\x84\xB4",
@@ -109,7 +135,11 @@
         abbr: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xF0\x91\x84\xA5\xF0\x91\x84\xA3\xF0\x91\x84\xB4",
@@ -120,7 +150,11 @@
         narrow: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xF0\x91\x84\xA5\xF0\x91\x84\xA3\xF0\x91\x84\xB4",

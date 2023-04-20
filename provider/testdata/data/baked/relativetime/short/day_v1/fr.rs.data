@@ -2,9 +2,13 @@
     relatives: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFE\xFF\0\x01\x02") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x05\0\0\0\0\0\n\0\x0E\0\x1B\0!\0avant-hierhieraujourd\xE2\x80\x99huidemainapr\xC3\xA8s-demain")
+                ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFE\xFF\0\x01\x02")
+            },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x05\0\0\0\0\0\n\0\x0E\0\x1B\0!\0avant-hierhieraujourd\xE2\x80\x99huidemainapr\xC3\xA8s-demain",
+                )
             },
         )
     },

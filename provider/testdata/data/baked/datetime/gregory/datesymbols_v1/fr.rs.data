@@ -67,15 +67,17 @@
                 alloc::borrow::Cow::Borrowed("V"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("di"),
-                alloc::borrow::Cow::Borrowed("lu"),
-                alloc::borrow::Cow::Borrowed("ma"),
-                alloc::borrow::Cow::Borrowed("me"),
-                alloc::borrow::Cow::Borrowed("je"),
-                alloc::borrow::Cow::Borrowed("ve"),
-                alloc::borrow::Cow::Borrowed("sa"),
-            ])),
+            short: Some(
+                ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                    alloc::borrow::Cow::Borrowed("di"),
+                    alloc::borrow::Cow::Borrowed("lu"),
+                    alloc::borrow::Cow::Borrowed("ma"),
+                    alloc::borrow::Cow::Borrowed("me"),
+                    alloc::borrow::Cow::Borrowed("je"),
+                    alloc::borrow::Cow::Borrowed("ve"),
+                    alloc::borrow::Cow::Borrowed("sa"),
+                ]),
+            ),
             wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("dimanche"),
                 alloc::borrow::Cow::Borrowed("lundi"),
@@ -93,10 +95,14 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
-                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x13\0avant J\xC3\xA9sus-Christapr\xC3\xA8s J\xC3\xA9sus-Christ")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x13\0avant J\xC3\xA9sus-Christapr\xC3\xA8s J\xC3\xA9sus-Christ",
+                    )
                 },
             )
         },
@@ -104,7 +110,9 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
@@ -117,7 +125,9 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(

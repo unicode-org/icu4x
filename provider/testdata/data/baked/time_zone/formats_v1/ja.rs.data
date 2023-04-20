@@ -11,7 +11,9 @@
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"daylightstandard") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x0C\0{0}\xE5\xA4\x8F\xE6\x99\x82\xE9\x96\x93{0}\xE6\xA8\x99\xE6\xBA\x96\xE6\x99\x82")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x02\0\0\0\0\0\x0C\0{0}\xE5\xA4\x8F\xE6\x99\x82\xE9\x96\x93{0}\xE6\xA8\x99\xE6\xBA\x96\xE6\x99\x82",
+                )
             },
         )
     },

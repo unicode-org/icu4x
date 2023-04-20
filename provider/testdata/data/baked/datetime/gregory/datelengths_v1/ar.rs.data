@@ -33,35 +33,34 @@
             time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations:
-        ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-            full: ::icu_datetime::pattern::runtime::GenericPattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(
-                        b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
-                    )
-                },
-            },
-            long: ::icu_datetime::pattern::runtime::GenericPattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(
-                        b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
-                    )
-                },
-            },
-            medium: ::icu_datetime::pattern::runtime::GenericPattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(
-                        b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
-                    )
-                },
-            },
-            short: ::icu_datetime::pattern::runtime::GenericPattern {
-                items: unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(
-                        b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
-                    )
-                },
+    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu_datetime::pattern::runtime::GenericPattern {
+            items: unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
+                )
             },
         },
+        long: ::icu_datetime::pattern::runtime::GenericPattern {
+            items: unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
+                )
+            },
+        },
+        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+            items: unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
+                )
+            },
+        },
+        short: ::icu_datetime::pattern::runtime::GenericPattern {
+            items: unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(
+                    b"\x80\0\x01\0\x06\x0C\0\0 \x80\0\0",
+                )
+            },
+        },
+    },
 }

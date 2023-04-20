@@ -1,7 +1,7 @@
 // @generated
 #![cfg(feature = "icu_compactdecimal")]
 #![allow(clippy::octal_escapes)]
-type DataStruct = < :: icu_compactdecimal :: provider :: LongCompactDecimalFormatDataV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = <::icu_compactdecimal::provider::LongCompactDecimalFormatDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 24usize] = [
         "ar",
@@ -30,8 +30,30 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "und",
     ];
     static DATA: [&DataStruct; 24usize] = [
-        &AR, &AR, &AR, &AR, &BN, &BN, &CCP, &CCP, &EN, &EN, &EN, &ES, &ES_AR, &FIL, &FR, &JA, &RU,
-        &SR, &SR, &SR_LATN, &TH, &TH, &TR, &CCP,
+        &AR,
+        &AR,
+        &AR,
+        &AR,
+        &BN,
+        &BN,
+        &CCP,
+        &CCP,
+        &EN,
+        &EN,
+        &EN,
+        &ES,
+        &ES_AR,
+        &FIL,
+        &FR,
+        &JA,
+        &RU,
+        &SR,
+        &SR,
+        &SR_LATN,
+        &TH,
+        &TH,
+        &TR,
+        &CCP,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()

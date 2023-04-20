@@ -4,7 +4,9 @@
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\xFF\0\x01") },
             unsafe {
-                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x03\0\0\0\0\0\x0F\0\x1A\0pro\xC5\xA1log mesecaovog mesecaslede\xC4\x87eg meseca")
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x03\0\0\0\0\0\x0F\0\x1A\0pro\xC5\xA1log mesecaovog mesecaslede\xC4\x87eg meseca",
+                )
             },
         )
     },

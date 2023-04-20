@@ -3,7 +3,9 @@
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"argearwe") },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0") },
+            unsafe {
+                ::zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0")
+            },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"dtstdtst") },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(
@@ -18,7 +20,9 @@
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"st") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC")
+            },
         )
     },
 }

@@ -3,14 +3,18 @@
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"gulf") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0GST") },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0GST")
+            },
         )
     },
     overrides: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(b"utc\0\0\0\0\0") },
-            unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC") },
+            unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0UTC")
+            },
         )
     },
 }

@@ -1,8 +1,7 @@
 // @generated
 #![cfg(feature = "icu_collator")]
 #![allow(clippy::octal_escapes)]
-type DataStruct =
-    <::icu_collator::provider::CollationMetadataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+type DataStruct = <::icu_collator::provider::CollationMetadataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
     static KEYS: [&str; 17usize] = [
         "ar",
@@ -24,7 +23,23 @@ pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> 
         "und-u-co-eor",
     ];
     static DATA: [&DataStruct; 17usize] = [
-        &AR, &AR, &AR, &AR, &ES, &ES, &ES, &AR, &AR, &RU, &AR, &AR, &TH, &ES, &UND, &UND, &UND,
+        &AR,
+        &AR,
+        &AR,
+        &AR,
+        &ES,
+        &ES,
+        &ES,
+        &AR,
+        &AR,
+        &RU,
+        &AR,
+        &AR,
+        &TH,
+        &ES,
+        &UND,
+        &UND,
+        &UND,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()

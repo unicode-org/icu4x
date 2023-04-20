@@ -67,15 +67,17 @@
                 alloc::borrow::Cow::Borrowed("п"),
                 alloc::borrow::Cow::Borrowed("с"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("не"),
-                alloc::borrow::Cow::Borrowed("по"),
-                alloc::borrow::Cow::Borrowed("ут"),
-                alloc::borrow::Cow::Borrowed("ср"),
-                alloc::borrow::Cow::Borrowed("че"),
-                alloc::borrow::Cow::Borrowed("пе"),
-                alloc::borrow::Cow::Borrowed("су"),
-            ])),
+            short: Some(
+                ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                    alloc::borrow::Cow::Borrowed("не"),
+                    alloc::borrow::Cow::Borrowed("по"),
+                    alloc::borrow::Cow::Borrowed("ут"),
+                    alloc::borrow::Cow::Borrowed("ср"),
+                    alloc::borrow::Cow::Borrowed("че"),
+                    alloc::borrow::Cow::Borrowed("пе"),
+                    alloc::borrow::Cow::Borrowed("су"),
+                ]),
+            ),
             wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("недеља"),
                 alloc::borrow::Cow::Borrowed("понедељак"),
@@ -93,10 +95,14 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
-                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0\x16\0\xD0\xBF\xD1\x80\xD0\xB5 \xD0\xBD\xD0\xBE\xD0\xB2\xD0\xB5 \xD0\xB5\xD1\x80\xD0\xB5\xD0\xBD\xD0\xBE\xD0\xB2\xD0\xB5 \xD0\xB5\xD1\x80\xD0\xB5")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x16\0\xD0\xBF\xD1\x80\xD0\xB5 \xD0\xBD\xD0\xBE\xD0\xB2\xD0\xB5 \xD0\xB5\xD1\x80\xD0\xB5\xD0\xBD\xD0\xBE\xD0\xB2\xD0\xB5 \xD0\xB5\xD1\x80\xD0\xB5",
+                    )
                 },
             )
         },
@@ -104,7 +110,9 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
@@ -117,7 +125,9 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x02\0\0\0\0\0\x03\0bcece",
+                    )
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(

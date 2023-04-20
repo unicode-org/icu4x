@@ -10,7 +10,9 @@
                 alloc::borrow::Cow::Borrowed("ভ\u{9be}দ\u{9cd}র"),
                 alloc::borrow::Cow::Borrowed("আশ\u{9cd}বিন"),
                 alloc::borrow::Cow::Borrowed("ক\u{9be}র\u{9cd}তিক"),
-                alloc::borrow::Cow::Borrowed("অগ\u{9cd}রহ\u{9be}য\u{9bc}ণ"),
+                alloc::borrow::Cow::Borrowed(
+                    "অগ\u{9cd}রহ\u{9be}য\u{9bc}ণ",
+                ),
                 alloc::borrow::Cow::Borrowed("পৌষ"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}ঘ"),
                 alloc::borrow::Cow::Borrowed("ফ\u{9be}ল\u{9cd}গ\u{9c1}ন"),
@@ -39,7 +41,9 @@
                 alloc::borrow::Cow::Borrowed("ভ\u{9be}দ\u{9cd}র"),
                 alloc::borrow::Cow::Borrowed("আশ\u{9cd}বিন"),
                 alloc::borrow::Cow::Borrowed("ক\u{9be}র\u{9cd}তিক"),
-                alloc::borrow::Cow::Borrowed("অগ\u{9cd}রহ\u{9be}য\u{9bc}ণ"),
+                alloc::borrow::Cow::Borrowed(
+                    "অগ\u{9cd}রহ\u{9be}য\u{9bc}ণ",
+                ),
                 alloc::borrow::Cow::Borrowed("পৌষ"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}ঘ"),
                 alloc::borrow::Cow::Borrowed("ফ\u{9be}ল\u{9cd}গ\u{9c1}ন"),
@@ -67,21 +71,25 @@
                 alloc::borrow::Cow::Borrowed("শ\u{9c1}"),
                 alloc::borrow::Cow::Borrowed("শ"),
             ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("রঃ"),
-                alloc::borrow::Cow::Borrowed("সোঃ"),
-                alloc::borrow::Cow::Borrowed("মঃ"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"),
-                alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"),
-                alloc::borrow::Cow::Borrowed("শনি"),
-            ])),
+            short: Some(
+                ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
+                    alloc::borrow::Cow::Borrowed("রঃ"),
+                    alloc::borrow::Cow::Borrowed("সোঃ"),
+                    alloc::borrow::Cow::Borrowed("মঃ"),
+                    alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"),
+                    alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"),
+                    alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"),
+                    alloc::borrow::Cow::Borrowed("শনি"),
+                ]),
+            ),
             wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("রবিব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("সোমব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("ব\u{9c1}ধব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতিব\u{9be}র"),
+                alloc::borrow::Cow::Borrowed(
+                    "ব\u{9c3}হস\u{9cd}পতিব\u{9be}র",
+                ),
                 alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}রব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("শনিব\u{9be}র"),
             ]),
@@ -92,7 +100,11 @@
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB2",
@@ -103,7 +115,11 @@
         abbr: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB2",
@@ -114,7 +130,11 @@
         narrow: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
-                unsafe { ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0saka") },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x01\0\0\0\0\0saka",
+                    )
+                },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(
                         b"\x01\0\0\0\0\0\xE0\xA6\xB8\xE0\xA6\xBE\xE0\xA6\xB2",

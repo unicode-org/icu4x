@@ -1,1 +1,3 @@
-::icu_collator::provider::CollationMetadataV1 { bits: 33u32 }
+::icu_collator::provider::CollationMetadataV1 {
+    bits: 33u32,
+}
