@@ -202,7 +202,7 @@ pub(crate) fn complex_language_segment_utf16(
         match payloads.select(lang) {
             Some(Ok(dict)) => {
                 result.extend(
-                    DictionarySegmenter::new(dict, &payloads.grapheme)
+                    DictionarySegmenter::new(dict.get(), payloads.grapheme.get())
                         .segment_utf16(slice)
                         .map(|n| offset + n),
                 );
@@ -210,7 +210,7 @@ pub(crate) fn complex_language_segment_utf16(
             #[cfg(feature = "lstm")]
             Some(Err(lstm)) => {
                 result.extend(
-                    LstmSegmenter::new(lstm, &payloads.grapheme)
+                    LstmSegmenter::new(lstm.get(), payloads.grapheme.get())
                         .segment_utf16(slice)
                         .map(|n| offset + n),
                 );
@@ -234,7 +234,7 @@ pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &s
         match payloads.select(lang) {
             Some(Ok(dict)) => {
                 result.extend(
-                    DictionarySegmenter::new(dict, &payloads.grapheme)
+                    DictionarySegmenter::new(dict.get(), payloads.grapheme.get())
                         .segment_str(slice)
                         .map(|n| offset + n),
                 );
@@ -242,7 +242,7 @@ pub(crate) fn complex_language_segment_str(payloads: &ComplexPayloads, input: &s
             #[cfg(feature = "lstm")]
             Some(Err(lstm)) => {
                 result.extend(
-                    LstmSegmenter::new(lstm, &payloads.grapheme)
+                    LstmSegmenter::new(lstm.get(), payloads.grapheme.get())
                         .segment_str(slice)
                         .map(|n| offset + n),
                 );
