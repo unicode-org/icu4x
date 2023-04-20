@@ -96,7 +96,7 @@ repodata = { path = "../../provider/repodata" }
 dhat = "0.3.0"
 
 [features]
-default = ["bin", "use_wasm", "networking", "fs"]
+default = ["bin", "use_wasm", "networking", "provider_fs"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
@@ -106,7 +106,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:cached-path"]
-fs = ["dep:icu_provider_fs"]
+provider_fs = ["dep:icu_provider_fs"]
 
 [[bin]]
 name = "icu4x-datagen"

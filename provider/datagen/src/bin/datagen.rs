@@ -13,7 +13,7 @@ mod cli {
 
     #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
     pub(crate) enum Format {
-        #[cfg_attr(feature = "fs", value(hide = true))]
+        #[cfg_attr(feature = "provider_fs", value(hide = true))]
         Dir,
         Blob,
         Mod,
@@ -85,7 +85,7 @@ struct Cli {
 
     #[arg(short, long, value_enum, default_value_t = cli::Syntax::Json)]
     #[arg(help = "--format=dir only: serde serialization format.")]
-    #[cfg_attr(feature = "fs", arg(hide = true))]
+    #[cfg_attr(feature = "provider_fs", arg(hide = true))]
     syntax: cli::Syntax,
 
     #[arg(short, long)]
@@ -335,9 +335,9 @@ fn main() -> eyre::Result<()> {
             if v == cli::Format::DeprecatedDefault {
                 log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
             }
-            #[cfg(not(feature = "fs"))]
+            #[cfg(not(feature = "provider_fs"))]
             eyre::bail!("--format=dir only available with the `fs` Cargo feature");
-            #[cfg(feature = "fs")]
+            #[cfg(feature = "provider_fs")]
             icu_datagen::Out::Fs {
                 output_path: matches
                     .output

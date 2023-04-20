@@ -97,7 +97,7 @@ impl CldrLocaleSubset {
 }
 
 /// [Out::Fs] serialization formats.
-#[cfg(feature = "fs")]
+#[cfg(feature = "provider_fs")]
 pub mod syntax {
     #[doc(no_inline)]
     pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
@@ -123,7 +123,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
-#[cfg(feature = "fs")]
+#[cfg(feature = "provider_fs")]
 use icu_provider_fs::export::serializers::AbstractSerializer;
 use prelude::*;
 use rayon::prelude::*;
@@ -319,7 +319,7 @@ pub enum Out {
     /// Output to a file system tree
     ///
     /// **Enabled with the `fs` Cargo feature.**
-    #[cfg(feature = "fs")]
+    #[cfg(feature = "provider_fs")]
     Fs {
         /// The root path.
         output_path: PathBuf,
@@ -353,7 +353,7 @@ pub enum Out {
 impl core::fmt::Debug for Out {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            #[cfg(feature = "fs")]
+            #[cfg(feature = "provider_fs")]
             Self::Fs {
                 output_path,
                 serializer,
@@ -413,7 +413,7 @@ pub fn datagen(
         .into_iter()
         .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
             Ok(match out {
-                #[cfg(feature = "fs")]
+                #[cfg(feature = "provider_fs")]
                 Out::Fs {
                     output_path,
                     serializer,
