@@ -336,7 +336,7 @@ fn main() -> eyre::Result<()> {
                 log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
             }
             #[cfg(not(feature = "provider_fs"))]
-            eyre::bail!("--format=dir only available with the `fs` Cargo feature");
+            eyre::bail!("--format=dir only available with the `provider_fs` Cargo feature");
             #[cfg(feature = "provider_fs")]
             icu_datagen::Out::Fs {
                 output_path: matches
