@@ -252,6 +252,12 @@ pub mod prelude {
     pub use zerofrom;
 }
 
+// Additional crate re-exports for compatibility
+#[doc(hidden)]
+pub use yoke;
+#[doc(hidden)]
+pub use zerofrom;
+
 // For macros
 #[doc(hidden)]
 pub mod _internal {
