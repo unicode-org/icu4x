@@ -126,11 +126,9 @@
 extern crate alloc;
 
 mod complex;
-mod dictionary;
 mod error;
 mod indices;
 mod iterator_helpers;
-mod language;
 mod rule_segmenter;
 
 mod grapheme;
@@ -143,11 +141,6 @@ pub mod provider;
 // icu_datagen uses symbols, but we don't want to expose this implementation detail to the users.
 #[doc(hidden)]
 pub mod symbols;
-
-#[cfg(feature = "lstm")]
-mod lstm;
-#[cfg(feature = "lstm")]
-mod math_helper;
 
 // Main Segmenter and BreakIterator public types
 pub use crate::grapheme::GraphemeClusterBreakIterator;
