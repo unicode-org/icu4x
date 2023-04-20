@@ -109,10 +109,12 @@ pub mod syntax {
 
 /// A prelude for using the datagen API
 pub mod prelude {
+    #[cfg(feature = "provider_fs")]
+    pub use crate::syntax;
     #[doc(hidden)]
     pub use crate::CldrLocaleSubset;
     #[doc(no_inline)]
-    pub use crate::{syntax, BakedOptions, CollationHanDatabase, CoverageLevel, Out, SourceData};
+    pub use crate::{BakedOptions, CollationHanDatabase, CoverageLevel, Out, SourceData};
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
     #[doc(no_inline)]
