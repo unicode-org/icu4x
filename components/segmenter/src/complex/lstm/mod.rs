@@ -163,6 +163,8 @@ impl<'l> LstmSegmenter<'l> {
                     let mut i = 0;
                     let mut buf = [0; 41];
 
+                    #[allow(clippy::unwrap_used)]
+                    // debug_asserting whether my assumption is correct
                     decode_utf16(grapheme_cluster.iter().copied()).for_each(|c| {
                         debug_assert!(i < 37);
                         i += c
@@ -171,6 +173,8 @@ impl<'l> LstmSegmenter<'l> {
                             .len()
                     });
 
+                    #[allow(clippy::unwrap_used)]
+                    // debug_asserting whether my assumption is correct
                     self.dic
                         .get_copied(UnvalidatedStr::from_bytes(&buf[..i]))
                         .unwrap_or_else(|| self.dic.len() as u16)
@@ -406,7 +410,10 @@ mod tests {
             println!("Estimated bies : {lstm_output}");
             println!("True bies      : {}", test_case.true_bies);
             println!("****************************************************");
-            assert_eq!(test_case.expected_bies.replace(['b','i','s'], "?"), lstm_output);
+            assert_eq!(
+                test_case.expected_bies.replace(['b', 'i', 's'], "?"),
+                lstm_output
+            );
         }
     }
 }
