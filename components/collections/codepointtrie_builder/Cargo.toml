@@ -44,20 +44,18 @@ lazy_static = "1.4.0"
 toml = "0.5"
 
 [dependencies.wasmer]
-version = "2.2.1"
+version = "3.1.1"
 default-features = false
 optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
     # By default, use the Singlepass compiler for faster startup time
-    "default-singlepass",
-    # By default, use the Universal engine for in-memory compiled code
-    "default-universal"
+    "singlepass",
 ]
 
 [dependencies.wasmer-wasi]
-version = "2.2.1"
+version = "3.1.1"
 default-features = false
 optional = true
 features = [
