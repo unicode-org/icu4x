@@ -124,7 +124,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "num-integer",
     "rawpointer",
     "regex-syntax",
-    "rust-format",
     "ryu",
     "serde-aux",
     "serde_json",

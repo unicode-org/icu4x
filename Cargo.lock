@@ -1763,7 +1763,6 @@ dependencies = [
  "quote",
  "rayon",
  "repodata",
- "rust-format",
  "serde",
  "serde-aux",
  "serde_json",
