@@ -36,9 +36,6 @@ rustflags = []
 [gn.package.syn."1.0.109"]
 rustflags = ["--cfg=syn_disable_nightly_tests"]
 
-[gn.package.num-traits."0.2.15"]
-rustflags = ["--cfg=has_i128"]
-
 [gn.package.libm."0.2.6"]
 rustflags = []
 
