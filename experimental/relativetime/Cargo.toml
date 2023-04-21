@@ -9,7 +9,6 @@ description = "Relative time formatting"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
 license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
