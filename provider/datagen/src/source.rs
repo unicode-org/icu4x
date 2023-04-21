@@ -329,9 +329,7 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes)
-                .map_err(std::io::Error::from)
-                .map_err(DataError::from)
+            serde_json::from_slice(bytes).map_err(DataError::from)
         })
     }
 

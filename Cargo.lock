@@ -1740,7 +1740,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.2.2"
+version = "1.2.3"
 dependencies = [
  "cached-path",
  "clap 4.0.32",
@@ -1782,7 +1782,6 @@ dependencies = [
  "quote",
  "rayon",
  "repodata",
- "rust-format",
  "serde",
  "serde-aux",
  "serde_json",
