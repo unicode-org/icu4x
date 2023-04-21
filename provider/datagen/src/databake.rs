@@ -112,7 +112,7 @@ impl BakedDataExporter {
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()?;
-            let rustfmt_stdin = rustfmt.stdin.as_mut().unwrap();
+            let mut rustfmt_stdin = rustfmt.stdin.take().unwrap();
             if is_expr {
                 write!(rustfmt_stdin, "fn main () {{ {data} }}")?
             } else {
