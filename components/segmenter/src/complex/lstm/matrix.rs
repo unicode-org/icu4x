@@ -216,9 +216,9 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
         for v in self.data.iter_mut() {
             *v = v.exp();
         }
-        let sm = self.data.iter().sum::<f32>();
+        let sm = 1.0 / self.data.iter().sum::<f32>();
         for v in self.data.iter_mut() {
-            *v /= sm;
+            *v *= sm;
         }
     }
 
