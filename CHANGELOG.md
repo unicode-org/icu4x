@@ -1,16 +1,19 @@
 # Changelog
 
-## icu4x 1.2.1 (Apr 17, 2023)
+## icu4x 1.2.x (Apr 17, 2023)
 
 Note: A subset of crates received patch releases in the 1.2 stream.
 
-- `icu_capi`
+- `icu_capi` 1.2.1
   - Fixed [#3344](https://github.com/unicode-org/icu4x/pull/3344), `buffer_provider` feature accidentally pulling in extra crates
-- `icu_datagen`
+- `icu_datagen` 1.2.1
   - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
-- `icu_locid_transform`
+- `icu_datagen` 1.2.3
+  - Fixed [#3356](https://github.com/unicode-org/icu4x/pull/3356), removing octal workarounds in baked data
+  - Fixed [#3369](https://github.com/unicode-org/icu4x/pull/3369), making datagen call `rustfmt` directly instead of using the `rust-format` dependency
+- `icu_locid_transform` 1.2.1
   - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
-- `icu_segmenter`
+- `icu_segmenter` 1.2.1
   - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
 
 ## icu4x 1.2 (Apr 13, 2023)
