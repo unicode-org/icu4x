@@ -2054,7 +2054,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "criterion",
