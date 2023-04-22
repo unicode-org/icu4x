@@ -177,7 +177,7 @@ rust_library("icu-v1_2_0") {
   deps += [ ":icu_calendar-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
-  deps += [ ":icu_datetime-v1_2_0" ]
+  deps += [ ":icu_datetime-v1_2_1" ]
   deps += [ ":icu_decimal-v1_2_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
@@ -239,7 +239,7 @@ rust_library("icu_capi-v1_2_1") {
   deps += [ ":icu_calendar-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
-  deps += [ ":icu_datetime-v1_2_0" ]
+  deps += [ ":icu_datetime-v1_2_1" ]
   deps += [ ":icu_decimal-v1_2_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
@@ -337,10 +337,10 @@ rust_library("icu_collections-v1_2_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_datetime-v1_2_0") {
+rust_library("icu_datetime-v1_2_1") {
   crate_name = "icu_datetime"
   crate_root = "//components/datetime/src/lib.rs"
-  output_name = "icu_datetime-30f748f42eae6a87"
+  output_name = "icu_datetime-cf91c73a3ee7499c"
 
   deps = []
   deps += [ ":displaydoc-v0_2_3($host_toolchain)" ]
@@ -362,8 +362,8 @@ rust_library("icu_datetime-v1_2_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=30f748f42eae6a87",
-    "-Cextra-filename=-30f748f42eae6a87",
+    "-Cmetadata=cf91c73a3ee7499c",
+    "-Cextra-filename=-cf91c73a3ee7499c",
   ]
 
   visibility = [ ":*" ]
@@ -656,7 +656,7 @@ rust_library("icu_testdata-v1_2_0") {
   deps += [ ":icu_calendar-v1_2_0" ]
   deps += [ ":icu_collator-v1_2_0" ]
   deps += [ ":icu_collections-v1_2_0" ]
-  deps += [ ":icu_datetime-v1_2_0" ]
+  deps += [ ":icu_datetime-v1_2_1" ]
   deps += [ ":icu_decimal-v1_2_0" ]
   deps += [ ":icu_list-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
