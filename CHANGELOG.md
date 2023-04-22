@@ -15,6 +15,8 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
 - `icu_segmenter` 1.2.1
   - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
+- `icu_provider` 1.2.1
+  - Do not autoenable `postcard/use-std` ([#3376](https://github.com/unicode-org/icu4x/pull/3376))
 
 ## icu4x 1.2 (Apr 13, 2023)
 
