@@ -12,8 +12,8 @@ ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2023-01-01"
 $(ALL_HEADERS):
 
 GCC := gcc
-CLANG := clang-14
-LLD := lld-14
+CLANG := clang-15
+LLD := lld-15
 
 ../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features buffer_provider,icu_capi/default_components
