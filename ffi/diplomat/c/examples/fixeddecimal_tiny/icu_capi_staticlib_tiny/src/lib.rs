@@ -9,17 +9,11 @@ extern crate icu_capi;
 
 extern crate dlmalloc;
 
-use core::alloc::Layout;
 use core::panic::PanicInfo;
 use dlmalloc::GlobalDlmalloc;
 
 #[global_allocator]
 static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
-
-#[alloc_error_handler]
-fn alloc_error(_layout: Layout) -> ! {
-    loop {}
-}
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {

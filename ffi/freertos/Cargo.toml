@@ -35,7 +35,6 @@ path = "src/lib.rs"
 icu_capi = { version = "1.2.0", path = "../diplomat", default-features = false }
 
 [target.'cfg(target_os = "none")'.dependencies]
-cortex-m = "0.7.3"
 freertos-rust = "0.1.2"
 
 [features]

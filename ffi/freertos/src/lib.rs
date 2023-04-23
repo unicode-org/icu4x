@@ -17,7 +17,6 @@
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
-#![cfg_attr(target_os = "none", feature(alloc_error_handler))]
 
 // Necessary to for symbols to be linked in
 extern crate icu_capi;
@@ -26,20 +25,11 @@ extern crate icu_capi;
 #[cfg(target_os = "none")]
 mod stuff {
     extern crate alloc;
-
-    use alloc::alloc::Layout;
     use core::panic::PanicInfo;
-    use cortex_m::asm;
     use freertos_rust::FreeRtosAllocator;
 
     #[global_allocator]
     static GLOBAL: FreeRtosAllocator = FreeRtosAllocator;
-
-    #[alloc_error_handler]
-    fn alloc_error(_layout: Layout) -> ! {
-        asm::bkpt();
-        loop {}
-    }
 
     #[cfg(target_os = "none")]
     #[panic_handler]
