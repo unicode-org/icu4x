@@ -628,7 +628,7 @@ rust_library("icu_segmenter-v1_2_1") {
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
-  deps += [ ":num-traits-v0_2_15" ]
+  deps += [ ":libm-v0_2_6" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerovec-v0_9_4" ]
 
@@ -752,7 +752,6 @@ rust_library("libm-v0_2_6") {
     "--edition=2018",
     "-Cmetadata=6b5214f2031c6f9e",
     "-Cextra-filename=-6b5214f2031c6f9e",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -815,28 +814,6 @@ rust_library("memchr-v2_5_0") {
     "--edition=2018",
     "-Cmetadata=7487f9414aaf0c2b",
     "-Cextra-filename=-7487f9414aaf0c2b",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("num-traits-v0_2_15") {
-  crate_name = "num_traits"
-  crate_root = "//ffi/gn/vendor/num-traits/src/lib.rs"
-  output_name = "num_traits-64c0e09f0f13aa66"
-
-  deps = []
-  deps += [ ":libm-v0_2_6" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2015",
-    "-Cmetadata=64c0e09f0f13aa66",
-    "-Cextra-filename=-64c0e09f0f13aa66",
-    "--cfg=feature=\"libm\"",
-    "--cfg=has_i128",
   ]
 
   visibility = [ ":*" ]
