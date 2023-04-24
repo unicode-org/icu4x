@@ -21,6 +21,10 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Do not autoenable `postcard/use-std` ([#3376](https://github.com/unicode-org/icu4x/pull/3376))
 - `icu_datetime` 1.2.1
   - Remove superfluous `JapaneseEraV1` provider bounds on `TypedZonedDateTimeFormatter` [#3379](https://github.com/unicode-org/icu4x/pull/3379)
+- `icu_datagen` 1.2.4
+  - Remove dependency on `clap`'s `"cargo"` feature to better support non-Cargo users (#3388)
+
+
 ## icu4x 1.2 (Apr 13, 2023)
 
 - General
