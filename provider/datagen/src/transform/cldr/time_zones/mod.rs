@@ -84,13 +84,13 @@ macro_rules! impl_data_provider {
                         Ok(vec![Default::default()])
                     } else {
 
-                    Ok(self
+                    Ok(self.source.options.locales.filter_by_langid_equality(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
-                        .collect())
+                        .collect()))
 }
                 }
             }

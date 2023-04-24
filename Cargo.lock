@@ -1759,8 +1759,6 @@ dependencies = [
  "lazy_static",
  "log",
  "ndarray",
- "proc-macro2",
- "quote",
  "rayon",
  "repodata",
  "serde",

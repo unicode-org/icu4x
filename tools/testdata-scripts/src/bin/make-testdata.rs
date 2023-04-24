@@ -12,6 +12,8 @@ use std::path::Path;
 include!("../../locales.rs.data");
 
 fn main() {
+    #![allow(deprecated)] // want to keep old datagen code path covered
+
     simple_logger::SimpleLogger::new()
         .env()
         .with_level(log::LevelFilter::Info)

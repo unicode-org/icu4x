@@ -284,15 +284,13 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let provider = DatagenProvider {
-            source: SourceData::repo().with_collations(
-                cas.include_collations
-                    .iter()
-                    .copied()
-                    .map(String::from)
-                    .collect(),
-            ),
-        };
+        let mut provider = DatagenProvider::for_test();
+        provider.source.options.collations = cas
+            .include_collations
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
         let mut resolved_locales: Vec<String> =
             IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
                 .unwrap()

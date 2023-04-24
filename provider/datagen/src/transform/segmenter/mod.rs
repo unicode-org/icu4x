@@ -10,7 +10,8 @@
 
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::{langid, locale};
+use icu_locid::langid;
+use icu_locid::locale;
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
     SentenceBreak, WordBreak,
@@ -592,11 +593,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.trie_type() {
-                crate::source::IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::source::IcuTrieType::Small => {
-                    icu_collections::codepointtrie::TrieType::Small
-                }
+            trie_type: match self.source.options.trie_type {
+                crate::options::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::options::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();
@@ -801,8 +800,14 @@ impl DataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider 
 }
 
 impl IterableDataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
+    // TODO: Do we actually want to filter these by the user-selected locales? The keys
+    // are more like script selectors...
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![locale!("ja").into()])
+        Ok(self
+            .source
+            .options
+            .locales
+            .filter_by_langid_equality(vec![locale!("ja").into()]))
     }
 }
 
@@ -821,12 +826,14 @@ impl DataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvi
 
 impl IterableDataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
+        // TODO: Do we actually want to filter these by the user-selected locales? The keys
+        // are more like script selectors...
+        Ok(self.source.options.locales.filter_by_langid_equality(vec![
             locale!("th").into(),
             locale!("km").into(),
             locale!("lo").into(),
             locale!("my").into(),
-        ])
+        ]))
     }
 }
 

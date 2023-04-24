@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
@@ -25,22 +26,21 @@ pub struct SourceData {
     icuexport_paths: Option<Arc<SerdeCache>>,
     segmenter_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
-    trie_type: IcuTrieType,
-    collation_han_database: CollationHanDatabase,
-    collations: Vec<String>,
+    // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
+    pub(crate) options: Options,
 }
 
+#[cfg(feature = "networking")]
+/// The default [`SourceData`] downloads the latest supported data.
+///
+/// Requires `networking` Cargo feature.
 impl Default for SourceData {
     fn default() -> Self {
-        Self {
-            cldr_paths: None,
-            icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
-            trie_type: IcuTrieType::Small,
-            collation_han_database: CollationHanDatabase::Implicit,
-            collations: vec![],
-        }
+        Self::offline()
+            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+            .unwrap()
+            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+            .unwrap()
     }
 }
 
@@ -51,35 +51,32 @@ impl SourceData {
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-73-1";
 
-    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
-    ///
-    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
-    ///
-    /// Requires `networking` Cargo feature.
+    #[doc(hidden)]
     #[cfg(feature = "networking")]
+    #[deprecated(since = "1.3.0", note = "use SourceData::default()")]
     pub fn latest_tested() -> Self {
         Self::default()
-            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-            .unwrap()
-            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-            .unwrap()
     }
 
-    #[cfg(test)]
-    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn repo() -> Self {
-        Self::default()
-            .with_cldr(repodata::paths::cldr(), Default::default())
-            .unwrap()
-            .with_icuexport(repodata::paths::icuexport())
-            .unwrap()
+    /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
+    ///
+    /// Using this to generate keys that require the data will result in errors
+    /// ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
+    /// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)). Make sure to set
+    /// local data sources using [`SourceData::with_cldr`] / [`SourceData::with_icuexport`].
+    pub fn offline() -> Self {
+        Self {
+            cldr_paths: None,
+            icuexport_paths: None,
+            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
+            options: Default::default(),
+        }
     }
 
-    /// Adds CLDR data to this `DataSource`. The root should point to a local
+    /// Adds CLDR data to this `SourceData`. The root should point to a local
     /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    ///
-    /// The `_locale_subset` variable is ignored.
     pub fn with_cldr(
         self,
         root: PathBuf,
@@ -92,7 +89,7 @@ impl SourceData {
         })
     }
 
-    /// Adds ICU export data to this `DataSource`. The path should point to a local
+    /// Adds ICU export data to this `SourceData`. The path should point to a local
     /// `icuexportdata_uprops_full.zip` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
@@ -102,7 +99,7 @@ impl SourceData {
         })
     }
 
-    /// Adds CLDR data to this `DataSource`. The data will be downloaded from GitHub
+    /// Adds CLDR data to this `SourceData`. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
@@ -123,7 +120,7 @@ impl SourceData {
         })
     }
 
-    /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
+    /// Adds ICU export data to this `SourceData`. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
@@ -150,7 +147,7 @@ impl SourceData {
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     #[cfg(feature = "networking")]
-    /// Deprecated
+    #[doc(hidden)]
     pub fn with_cldr_latest(
         self,
         _use_default_here: crate::CldrLocaleSubset,
@@ -163,34 +160,45 @@ impl SourceData {
         note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
     )]
     #[cfg(feature = "networking")]
-    /// Deprecated
+    #[doc(hidden)]
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
     }
 
-    /// Set this to use tries optimized for speed instead of data size
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_fast_tries(self) -> Self {
         Self {
-            trie_type: IcuTrieType::Fast,
+            options: Options {
+                trie_type: crate::options::TrieType::Fast,
+                ..self.options
+            },
             ..self
         }
     }
 
-    /// Set the [`CollationHanDatabase`] version.
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
-            collation_han_database,
+            options: Options {
+                collation_han_database,
+                ..self.options
+            },
             ..self
         }
     }
 
-    /// Set the list of BCP-47 collation IDs to include beyond the default set.
-    ///
-    /// If a list was already set, this function overwrites the previous list.
-    ///
-    /// The special string `"search*"` causes all search collation tables to be included.
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self { collations, ..self }
+        Self {
+            options: Options {
+                collations: collations.into_iter().collect(),
+                ..self.options
+            },
+            ..self
+        }
     }
 
     /// Paths to CLDR source data.
@@ -216,18 +224,6 @@ impl SourceData {
         Ok(&self.segmenter_lstm_paths)
     }
 
-    pub(crate) fn trie_type(&self) -> IcuTrieType {
-        self.trie_type
-    }
-
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
-    }
-
-    pub(crate) fn collations(&self) -> &[String] {
-        &self.collations
-    }
-
     /// List the locales for the given CLDR coverage levels
     pub fn locales(
         &self,
@@ -237,42 +233,8 @@ impl SourceData {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum IcuTrieType {
-    Fast,
-    Small,
-}
-
-impl std::fmt::Display for IcuTrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            IcuTrieType::Fast => write!(f, "fast"),
-            IcuTrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    Implicit,
-    /// Unihan
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
+#[doc(hidden)]
+pub use crate::options::CollationHanDatabase;
 
 pub(crate) struct SerdeCache {
     root: AbstractFs,
@@ -474,12 +436,12 @@ impl AbstractFs {
         self.init()?;
         match self {
             Self::Fs(root) => {
-                log::trace!("Reading: {}/{}", root.display(), path);
+                log::debug!("Reading: {}/{}", root.display(), path);
                 std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
-                log::trace!("Reading: <zip>/{}", path);
+                log::debug!("Reading: <zip>/{}", path);
                 let mut buf = Vec::new();
                 zip.write()
                     .expect("poison")

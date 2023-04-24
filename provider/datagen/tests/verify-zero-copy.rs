@@ -9,15 +9,11 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 // Something is broken wrt Windows and this test on CI. Disable for now.
 #[cfg(not(target_os = "windows"))]
 pub mod test {
-    use icu_provider::datagen::IterableDynamicDataProvider;
-    use icu_provider_adapters::filter::Filterable;
-
-    use icu_provider::prelude::*;
-
     use icu_datagen::{all_keys_with_experimental, DatagenProvider, SourceData};
+    use icu_provider::datagen::IterableDynamicDataProvider;
+    use icu_provider::prelude::*;
     use std::cmp;
     use std::collections::BTreeSet;
-    use std::mem::ManuallyDrop;
 
     // Types in this list cannot be zero-copy deserialized.
     //
@@ -43,21 +39,25 @@ pub mod test {
 
     #[test]
     fn test_zero_copy() {
-        // manually drop to avoid dhat from printing stats at the end
-        let _profiler = ManuallyDrop::new(dhat::Profiler::new_heap());
-
-        let selected_locales = icu_testdata::locales();
+        // don't drop to avoid dhat from printing stats at the end
+        core::mem::forget(dhat::Profiler::new_heap());
 
         // Actual data is only needed to determine included locales.
-        let locale_provider = DatagenProvider {
-            source: SourceData::default()
+        let locale_provider = DatagenProvider::try_new(
+            {
+                use icu_datagen::options::*;
+                let mut options = Options::default();
+                options.locales =
+                    LocaleInclude::Explicit(icu_testdata::locales().into_iter().collect());
+                options
+            },
+            SourceData::offline()
                 .with_cldr(repodata::paths::cldr(), Default::default())
                 .unwrap()
                 .with_icuexport(repodata::paths::icuexport())
                 .unwrap(),
-        }
-        .filterable("icu4x-datagen locales")
-        .filter_by_langid_allowlist_strict(&selected_locales);
+        )
+        .unwrap();
 
         let postcard_provider = icu_testdata::buffer_no_fallback();
 
@@ -70,24 +70,26 @@ pub mod test {
             let mut max_total_violation = 0;
             let mut max_net_violation = 0;
 
-            for locale in
-                IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_locales_for_key(
-                    &locale_provider, key,
-                ).unwrap()
-            {
-                let payload = postcard_provider.load_buffer(
-                    key,
-                    DataRequest {
-                        locale: &locale,
-                        metadata: Default::default(),
-                    },
-                ).unwrap().take_payload().unwrap();
+            for locale in locale_provider.supported_locales_for_key(key).unwrap() {
+                let payload = postcard_provider
+                    .load_buffer(
+                        key,
+                        DataRequest {
+                            locale: &locale,
+                            metadata: Default::default(),
+                        },
+                    )
+                    .unwrap()
+                    .take_payload()
+                    .unwrap();
 
                 let stats_before = dhat::HeapStats::get();
 
                 // We need to generate the stats before the deserialized struct gets dropped, in order
                 // to distinguish between a temporary and permanent allocation.
-                let stats_after = icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get).unwrap();
+                let stats_after =
+                    icu_datagen::deserialize_and_discard(key, payload, dhat::HeapStats::get)
+                        .unwrap();
 
                 let vio_total = stats_after.total_bytes - stats_before.total_bytes;
                 let vio_net = stats_after.curr_bytes - stats_before.curr_bytes;
