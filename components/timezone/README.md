@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_timezone [![crates.io](https://img.shields.io/crates/v/icu_timezone)](https://crates.io/crates/icu_timezone)
 
 Types for resolving and manipulating time zones.

@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # zerovec-derive [![crates.io](https://img.shields.io/crates/v/zerovec-derive)](https://crates.io/crates/zerovec-derive)
 
 Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate

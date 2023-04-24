@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # deduplicating_array [![crates.io](https://img.shields.io/crates/v/deduplicating_array)](https://crates.io/crates/deduplicating_array)
 
 A serde serialization strategy that uses `PartialEq` to reduce serialized size.

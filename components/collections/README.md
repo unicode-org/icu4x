@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_collections [![crates.io](https://img.shields.io/crates/v/icu_collections)](https://crates.io/crates/icu_collections)
 
 Efficient collections for Unicode data.

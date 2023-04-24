@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # tutorial_buffer [![crates.io](https://img.shields.io/crates/v/tutorial_buffer)](https://crates.io/crates/tutorial_buffer)
 
 This is a demo project using blob data.

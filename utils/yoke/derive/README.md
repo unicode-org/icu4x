@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # yoke-derive [![crates.io](https://img.shields.io/crates/v/yoke-derive)](https://crates.io/crates/yoke-derive)
 
 Custom derives for `Yokeable` from the `yoke` crate.

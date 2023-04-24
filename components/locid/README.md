@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_locid [![crates.io](https://img.shields.io/crates/v/icu_locid)](https://crates.io/crates/icu_locid)
 
 Parsing, manipulating, and serializing Unicode Language and Locale Identifiers.

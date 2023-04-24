@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_casemapping [![crates.io](https://img.shields.io/crates/v/icu_casemapping)](https://crates.io/crates/icu_casemapping)
 
 🚧 \[Experimental\] Case mapping for Unicode characters and strings.

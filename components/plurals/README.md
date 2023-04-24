@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_plurals [![crates.io](https://img.shields.io/crates/v/icu_plurals)](https://crates.io/crates/icu_plurals)
 
 Determine the plural category appropriate for a given number in a given language.

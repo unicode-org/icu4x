@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # zerovec [![crates.io](https://img.shields.io/crates/v/zerovec)](https://crates.io/crates/zerovec)
 
 Zero-copy vector abstractions for arbitrary types, backed by byte slices.

@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # zerofrom [![crates.io](https://img.shields.io/crates/v/zerofrom)](https://crates.io/crates/zerofrom)
 
 This crate provides [`ZeroFrom`], a trait for converting types in a zero-copy way.

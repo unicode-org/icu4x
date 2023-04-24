@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # tutorial_testdata [![crates.io](https://img.shields.io/crates/v/tutorial_testdata)](https://crates.io/crates/tutorial_testdata)
 
 This is a demo project using test data.

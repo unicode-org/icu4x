@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_provider_macros [![crates.io](https://img.shields.io/crates/v/icu_provider_macros)](https://crates.io/crates/icu_provider_macros)
 
 Proc macros for the ICU4X data provider.

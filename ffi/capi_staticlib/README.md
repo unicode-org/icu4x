@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_capi_staticlib [![crates.io](https://img.shields.io/crates/v/icu_capi_staticlib)](https://crates.io/crates/icu_capi_staticlib)
 
 This exists as a separate crate to work around

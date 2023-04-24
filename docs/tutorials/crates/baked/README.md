@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # tutorial_baked [![crates.io](https://img.shields.io/crates/v/tutorial_baked)](https://crates.io/crates/tutorial_baked)
 
 This is a demo project using baked data.

@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # databake-derive [![crates.io](https://img.shields.io/crates/v/databake-derive)](https://crates.io/crates/databake-derive)
 
 Custom derives for `Bake`

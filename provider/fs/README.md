@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_provider_fs [![crates.io](https://img.shields.io/crates/v/icu_provider_fs)](https://crates.io/crates/icu_provider_fs)
 
 `icu_fs_data_provider` is one of the [`ICU4X`] components.

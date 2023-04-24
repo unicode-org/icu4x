@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # litemap [![crates.io](https://img.shields.io/crates/v/litemap)](https://crates.io/crates/litemap)
 
 ## `litemap`

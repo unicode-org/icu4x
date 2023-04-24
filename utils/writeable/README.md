@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # writeable [![crates.io](https://img.shields.io/crates/v/writeable)](https://crates.io/crates/writeable)
 
 `writeable` is a utility crate of the [`ICU4X`] project.

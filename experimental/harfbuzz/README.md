@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu_harfbuzz [![crates.io](https://img.shields.io/crates/v/icu_harfbuzz)](https://crates.io/crates/icu_harfbuzz)
 
 Using ICU4X as the Unicode Database back end for HarfBuzz.

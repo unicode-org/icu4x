@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # icu [![crates.io](https://img.shields.io/crates/v/icu)](https://crates.io/crates/icu)
 
 `icu` is the main meta-crate of the `ICU4X` project.

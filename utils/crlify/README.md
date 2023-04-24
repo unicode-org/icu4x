@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # crlify [![crates.io](https://img.shields.io/crates/v/crlify)](https://crates.io/crates/crlify)
 
 [`BufWriterWithLineEndingFix`].

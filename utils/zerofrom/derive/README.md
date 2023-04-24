@@ -1,3 +1,5 @@
+<!--- DO NOT EDIT: This file is generated from crate-level Rustdoc (lib.rs) -->
+
 # zerofrom-derive [![crates.io](https://img.shields.io/crates/v/zerofrom-derive)](https://crates.io/crates/zerofrom-derive)
 
 Custom derives for `ZeroFrom` from the `zerofrom` crate.
