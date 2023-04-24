@@ -283,13 +283,15 @@ impl<'data> CaseMapV1<'data> {
                     return sink.write_str(mapped_string);
                 }
             }
+
+            if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
+                return sink.write_char(c);
+            }
+
             if data.is_relevant_to(kind) {
                 if let Some(simple) = exception.get_simple_case_slot_for(c) {
                     return sink.write_char(simple);
                 }
-            }
-            if kind == MappingKind::Fold && exception.bits.no_simple_case_folding() {
-                return sink.write_char(c);
             }
 
             if let Some(slot_char) = exception.slot_char_for_kind(kind) {
