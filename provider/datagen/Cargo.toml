@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.4"
+version = "1.2.5"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
