@@ -375,7 +375,7 @@ impl AbstractFs {
     }
 
     fn new_segmenter() -> Self {
-        const SEGMENTER: &[(&'static str, &'static [u8])] = &[
+        const SEGMENTER: &[(&str, &[u8])] = &[
             (
                 "grapheme.toml",
                 include_bytes!("../data/segmenter/grapheme.toml"),
@@ -412,7 +412,7 @@ impl AbstractFs {
     }
 
     fn new_lstm() -> Self {
-        const LSTM: &[(&'static str, &'static [u8])] = &[
+        const LSTM: &[(&str, &[u8])] = &[
             (
                 "lstm_km.json",
                 include_bytes!("../data/segmenter/lstm/lstm_km.json"),
