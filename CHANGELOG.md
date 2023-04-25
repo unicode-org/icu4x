@@ -16,8 +16,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
 - `icu_datagen` 1.2.4
   - Remove dependency on `clap`'s `"cargo"` feature to better support non-Cargo users (#3388)
 - `icu_datagen` 1.2.5
-  - Remove runtime dependency on hardcoded compile-time segmenter data paths (#3391)
-
+  - Remove runtime dependency on segmenter data pulled from the cargo cache (#3391)
 - `icu_locid_transform` 1.2.1
   - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
 - `icu_segmenter` 1.2.1
