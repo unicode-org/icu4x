@@ -1863,6 +1863,7 @@ dependencies = [
  "cortex-m",
  "freertos-rust",
  "icu_capi",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
