@@ -7,7 +7,7 @@ pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
 use std::io::Cursor;
 use std::io::Read;
@@ -32,17 +32,11 @@ pub struct SourceData {
 
 impl Default for SourceData {
     fn default() -> Self {
-        let segmenter_path =
-            PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/data/segmenter"));
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(&segmenter_path).expect("valid dir"),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
-            )),
+            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: vec![],
@@ -354,6 +348,7 @@ impl SerdeCache {
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
+    Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
 impl Debug for AbstractFs {
@@ -379,6 +374,65 @@ impl AbstractFs {
         }
     }
 
+    fn new_segmenter() -> Self {
+        const SEGMENTER: &[(&'static str, &'static [u8])] = &[
+            (
+                "grapheme.toml",
+                include_bytes!("../data/segmenter/grapheme.toml"),
+            ),
+            ("word.toml", include_bytes!("../data/segmenter/word.toml")),
+            ("line.toml", include_bytes!("../data/segmenter/line.toml")),
+            (
+                "sentence.toml",
+                include_bytes!("../data/segmenter/sentence.toml"),
+            ),
+            (
+                "dictionary_cj.toml",
+                include_bytes!("../data/segmenter/dictionary_cj.toml"),
+            ),
+            (
+                "dictionary_km.toml",
+                include_bytes!("../data/segmenter/dictionary_km.toml"),
+            ),
+            (
+                "dictionary_lo.toml",
+                include_bytes!("../data/segmenter/dictionary_lo.toml"),
+            ),
+            (
+                "dictionary_my.toml",
+                include_bytes!("../data/segmenter/dictionary_my.toml"),
+            ),
+            (
+                "dictionary_th.toml",
+                include_bytes!("../data/segmenter/dictionary_th.toml"),
+            ),
+        ];
+
+        Self::Memory(SEGMENTER.iter().copied().collect())
+    }
+
+    fn new_lstm() -> Self {
+        const LSTM: &[(&'static str, &'static [u8])] = &[
+            (
+                "lstm_km.json",
+                include_bytes!("../data/segmenter/lstm/lstm_km.json"),
+            ),
+            (
+                "lstm_lo.json",
+                include_bytes!("../data/segmenter/lstm/lstm_lo.json"),
+            ),
+            (
+                "lstm_my.json",
+                include_bytes!("../data/segmenter/lstm/lstm_my.json"),
+            ),
+            (
+                "lstm_th.json",
+                include_bytes!("../data/segmenter/lstm/lstm_th.json"),
+            ),
+        ];
+
+        Self::Memory(LSTM.iter().copied().collect())
+    }
     #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
@@ -441,6 +495,9 @@ impl AbstractFs {
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
+            Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
+                DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
+            }),
         }
     }
 
@@ -464,6 +521,12 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            Self::Memory(map) => map
+                .keys()
+                .copied()
+                .map(String::from)
+                .collect::<HashSet<_>>()
+                .into_iter(),
         })
     }
 
@@ -479,6 +542,7 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_names()
                 .any(|p| p == path),
+            Self::Memory(map) => map.contains_key(path),
         })
     }
 }
