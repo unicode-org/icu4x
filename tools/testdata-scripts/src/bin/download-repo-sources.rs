@@ -132,5 +132,23 @@ fn main() -> eyre::Result<()> {
         output_path.join("icuexport"),
     )?;
 
+    for file in [
+        "burmesedict.toml",
+        "cjdict.toml",
+        "khmerdict.toml",
+        "laodict.toml",
+        "thaidict.toml",
+    ] {
+        std::fs::copy(
+            output_path
+                .join("icuexport/segmenter/dictionary")
+                .join(file),
+            output_path
+                .join("../../datagen/data/segmenter/dictionary")
+                .join(file),
+        )
+        .unwrap();
+    }
+
     Ok(())
 }
