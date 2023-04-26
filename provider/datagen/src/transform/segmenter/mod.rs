@@ -233,14 +233,15 @@ impl crate::DatagenProvider {
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self
             .source
-            .segmenter()?
+            .builtin()
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
-                "{}.toml",
+                "segmenter/rules/{}.toml",
                 key.path()
                     .split(&['/', '@'])
                     .nth(1)
                     .expect("DataKey format should be valid!")
-            ))?;
+            ))
+            .unwrap();
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
@@ -752,35 +753,35 @@ struct SegmenterDictionaryData {
 }
 
 impl crate::DatagenProvider {
-    fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
-        if locale.get_langid() == langid!("km") {
-            Some("dictionary_km.toml")
-        } else if locale.get_langid() == langid!("ja") {
-            Some("dictionary_cj.toml")
-        } else if locale.get_langid() == langid!("lo") {
-            Some("dictionary_lo.toml")
-        } else if locale.get_langid() == langid!("my") {
-            Some("dictionary_my.toml")
-        } else if locale.get_langid() == langid!("th") {
-            Some("dictionary_th.toml")
-        } else {
-            None
-        }
-    }
-}
-
-impl crate::DatagenProvider {
     fn load_dictionary_data(
         &self,
         req: DataRequest,
     ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let toml_data = self
+        let filename = if req.locale.get_langid() == langid!("km") {
+            "segmenter/dictionary/khmerdict.toml"
+        } else if req.locale.get_langid() == langid!("ja") {
+            "segmenter/dictionary/cjdict.toml"
+        } else if req.locale.get_langid() == langid!("lo") {
+            "segmenter/dictionary/laodict.toml"
+        } else if req.locale.get_langid() == langid!("my") {
+            "segmenter/dictionary/burmesedict.toml"
+        } else if req.locale.get_langid() == langid!("th") {
+            "segmenter/dictionary/thaidict.toml"
+        } else {
+            Err(DataErrorKind::MissingLocale.into_error())?
+        };
+
+        let toml_data: &SegmenterDictionaryData = self
             .source
-            .segmenter()?
-            .read_and_parse_toml::<SegmenterDictionaryData>(
-                Self::get_toml_filename(req.locale)
-                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
-            )?;
+            .icuexport()
+            .and_then(|e| e.read_and_parse_toml(filename))
+            .or_else(|e| {
+                self.source
+                    .builtin()
+                    .read_and_parse_toml(filename)
+                    .map_err(|_| e)
+            })?;
+
         Ok(UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
         })

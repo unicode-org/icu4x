@@ -23,7 +23,7 @@ use zip::ZipArchive;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
+    builtin_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
@@ -35,7 +35,7 @@ impl Default for SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
+            builtin_paths: Arc::new(SerdeCache::new(AbstractFs::new_builtin())),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
@@ -207,11 +207,12 @@ impl SourceData {
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to segmenter data.
-    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_paths)
+    /// Path to built-in data.
+    pub(crate) fn builtin(&self) -> &SerdeCache {
+        &self.builtin_paths
     }
 
+    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
@@ -374,37 +375,43 @@ impl AbstractFs {
         }
     }
 
-    fn new_segmenter() -> Self {
+    fn new_builtin() -> Self {
         const SEGMENTER: &[(&str, &[u8])] = &[
             (
-                "grapheme.toml",
-                include_bytes!("../data/segmenter/grapheme.toml"),
-            ),
-            ("word.toml", include_bytes!("../data/segmenter/word.toml")),
-            ("line.toml", include_bytes!("../data/segmenter/line.toml")),
-            (
-                "sentence.toml",
-                include_bytes!("../data/segmenter/sentence.toml"),
+                "segmenter/rules/grapheme.toml",
+                include_bytes!("../data/segmenter/rules/grapheme.toml"),
             ),
             (
-                "dictionary_cj.toml",
-                include_bytes!("../data/segmenter/dictionary_cj.toml"),
+                "segmenter/rules/word.toml",
+                include_bytes!("../data/segmenter/rules/word.toml"),
             ),
             (
-                "dictionary_km.toml",
-                include_bytes!("../data/segmenter/dictionary_km.toml"),
+                "segmenter/rules/line.toml",
+                include_bytes!("../data/segmenter/rules/line.toml"),
             ),
             (
-                "dictionary_lo.toml",
-                include_bytes!("../data/segmenter/dictionary_lo.toml"),
+                "segmenter/rules/sentence.toml",
+                include_bytes!("../data/segmenter/rules/sentence.toml"),
             ),
             (
-                "dictionary_my.toml",
-                include_bytes!("../data/segmenter/dictionary_my.toml"),
+                "segmenter/dictionary/cjdict.toml",
+                include_bytes!("../data/segmenter/dictionary/cjdict.toml"),
             ),
             (
-                "dictionary_th.toml",
-                include_bytes!("../data/segmenter/dictionary_th.toml"),
+                "segmenter/dictionary/khmerdict.toml",
+                include_bytes!("../data/segmenter/dictionary/khmerdict.toml"),
+            ),
+            (
+                "segmenter/dictionary/laodict.toml",
+                include_bytes!("../data/segmenter/dictionary/laodict.toml"),
+            ),
+            (
+                "segmenter/dictionary/burmesedict.toml",
+                include_bytes!("../data/segmenter/dictionary/burmesedict.toml"),
+            ),
+            (
+                "segmenter/dictionary/thaidict.toml",
+                include_bytes!("../data/segmenter/dictionary/thaidict.toml"),
             ),
         ];
 
@@ -414,20 +421,35 @@ impl AbstractFs {
     fn new_lstm() -> Self {
         const LSTM: &[(&str, &[u8])] = &[
             (
-                "lstm_km.json",
-                include_bytes!("../data/segmenter/lstm/lstm_km.json"),
+                "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                include_bytes!(
+                    "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                ),
             ),
             (
-                "lstm_lo.json",
-                include_bytes!("../data/segmenter/lstm/lstm_lo.json"),
+                "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
+                include_bytes!(
+                    "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                ),
             ),
             (
-                "lstm_my.json",
-                include_bytes!("../data/segmenter/lstm/lstm_my.json"),
+                "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                include_bytes!(
+                    "../data/lstm/Models/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                ),
             ),
             (
-                "lstm_th.json",
-                include_bytes!("../data/segmenter/lstm/lstm_th.json"),
+                "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
+                include_bytes!(
+                    "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                ),
+            ),
+            #[cfg(test)]
+            (
+                "Models/Thai_graphclust_exclusive_model4_heavy/weights.json",
+                include_bytes!(
+                    "../data/lstm/Models/Thai_graphclust_exclusive_model4_heavy/weights.json"
+                ),
             ),
         ];
 
