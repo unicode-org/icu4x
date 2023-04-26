@@ -376,85 +376,95 @@ impl AbstractFs {
     }
 
     fn new_builtin() -> Self {
-        const SEGMENTER: &[(&str, &[u8])] = &[
-            (
-                "segmenter/rules/grapheme.toml",
-                include_bytes!("../data/segmenter/rules/grapheme.toml"),
-            ),
-            (
-                "segmenter/rules/word.toml",
-                include_bytes!("../data/segmenter/rules/word.toml"),
-            ),
-            (
-                "segmenter/rules/line.toml",
-                include_bytes!("../data/segmenter/rules/line.toml"),
-            ),
-            (
-                "segmenter/rules/sentence.toml",
-                include_bytes!("../data/segmenter/rules/sentence.toml"),
-            ),
-            (
-                "segmenter/dictionary/cjdict.toml",
-                include_bytes!("../data/segmenter/dictionary/cjdict.toml"),
-            ),
-            (
-                "segmenter/dictionary/khmerdict.toml",
-                include_bytes!("../data/segmenter/dictionary/khmerdict.toml"),
-            ),
-            (
-                "segmenter/dictionary/laodict.toml",
-                include_bytes!("../data/segmenter/dictionary/laodict.toml"),
-            ),
-            (
-                "segmenter/dictionary/burmesedict.toml",
-                include_bytes!("../data/segmenter/dictionary/burmesedict.toml"),
-            ),
-            (
-                "segmenter/dictionary/thaidict.toml",
-                include_bytes!("../data/segmenter/dictionary/thaidict.toml"),
-            ),
-        ];
-
-        Self::Memory(SEGMENTER.iter().copied().collect())
+        Self::Memory(
+            [
+                (
+                    "segmenter/rules/grapheme.toml",
+                    include_bytes!("../data/segmenter/rules/grapheme.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/word.toml",
+                    include_bytes!("../data/segmenter/rules/word.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/line.toml",
+                    include_bytes!("../data/segmenter/rules/line.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/sentence.toml",
+                    include_bytes!("../data/segmenter/rules/sentence.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/cjdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/khmerdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/laodict.toml",
+                    include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/burmesedict.toml",
+                    include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/thaidict.toml",
+                    include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
 
     fn new_lstm() -> Self {
-        const LSTM: &[(&str, &[u8])] = &[
-            (
-                "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
-                include_bytes!(
-                    "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+        Self::Memory(
+            [
+                (
+                    "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
                 ),
-            ),
-            (
-                "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
-                include_bytes!(
-                    "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                (
+                    "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
                 ),
-            ),
-            (
-                "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
-                include_bytes!(
+                (
+                    "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
                     "../data/lstm/Models/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                )
+                    .as_slice(),
                 ),
-            ),
-            (
-                "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
-                include_bytes!(
-                    "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                (
+                    "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
                 ),
-            ),
-            #[cfg(test)]
-            (
-                "Models/Thai_graphclust_exclusive_model4_heavy/weights.json",
-                include_bytes!(
-                    "../data/lstm/Models/Thai_graphclust_exclusive_model4_heavy/weights.json"
+                #[cfg(test)]
+                (
+                    "Models/Thai_graphclust_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Thai_graphclust_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
                 ),
-            ),
-        ];
-
-        Self::Memory(LSTM.iter().copied().collect())
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
+
     #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
