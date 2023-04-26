@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use std::env;
 
 /// Returns whether the Rust compiler needs an `#[alloc_error_handler]`
@@ -13,7 +17,7 @@ fn needs_alloc_error_handler() -> Option<bool> {
     }
     let commit_date = version.commit_date?;
 
-    let year = commit_date.split("-").next()?.parse::<u32>().ok()?;
+    let year = commit_date.split('-').next()?.parse::<u32>().ok()?;
 
     // alloc_error_handler became defaulted to the panic handler
     // in December 2022. Since it still works until April 2023,
