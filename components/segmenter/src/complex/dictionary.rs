@@ -7,7 +7,6 @@ use crate::indices::Utf16Indices;
 use crate::provider::*;
 use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
-use icu_provider::prelude::*;
 
 /// A trait for dictionary based iterator
 trait DictionaryType<'l, 's> {
@@ -144,14 +143,11 @@ pub(super) struct DictionarySegmenter<'l> {
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
-        dict: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
-        grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
+        dict: &'l UCharDictionaryBreakDataV1<'l>,
+        grapheme: &'l RuleBreakDataV1<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
-        Self {
-            dict: dict.get(),
-            grapheme: grapheme.get(),
-        }
+        Self { dict, grapheme }
     }
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
@@ -181,7 +177,8 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(feature = "serde")]
 mod tests {
     use super::*;
-    use crate::{provider::DictionaryForWordOnlyAutoV1Marker, LineSegmenter, WordSegmenter};
+    use crate::{LineSegmenter, WordSegmenter};
+    use icu_provider::prelude::*;
     use icu_provider_adapters::fork::ForkByKeyProvider;
     use icu_provider_fs::FsDataProvider;
     use std::path::PathBuf;
@@ -211,19 +208,16 @@ mod tests {
     #[test]
     fn cj_dictionary_test() {
         let provider = get_segmenter_testdata_provider();
-        let dict_payload: DataPayload<crate::provider::UCharDictionaryBreakDataV1Marker> =
-            DataProvider::<DictionaryForWordOnlyAutoV1Marker>::load(
-                &icu_testdata::buffer().as_deserializing(),
-                DataRequest {
-                    locale: &icu_locid::locale!("ja").into(),
-                    metadata: Default::default(),
-                },
-            )
+        let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = provider
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &icu_locid::locale!("ja").into(),
+                metadata: Default::default(),
+            })
             .unwrap()
             .take_payload()
-            .unwrap()
-            .cast();
-        let grph_payload: DataPayload<crate::provider::GraphemeClusterBreakDataV1Marker> = provider
+            .unwrap();
+        let grph_payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .as_deserializing()
             .load(DataRequest {
                 locale: &icu_locid::locale!("ja").into(),
@@ -234,7 +228,7 @@ mod tests {
             .unwrap();
         let word_segmenter =
             WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
-        let dict_segmenter = DictionarySegmenter::new(&dict_payload, &grph_payload);
+        let dict_segmenter = DictionarySegmenter::new(dict_payload.get(), grph_payload.get());
 
         // Match case
         let s = "龟山岛龟山岛";

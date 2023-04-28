@@ -785,7 +785,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -795,7 +795,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -1721,7 +1721,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.2.3"
+version = "1.2.5"
 dependencies = [
  "cached-path",
  "clap 4.0.32",
@@ -1777,7 +1777,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -1858,11 +1858,12 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "cortex-m",
  "freertos-rust",
  "icu_capi",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
@@ -2054,7 +2055,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -2114,7 +2115,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "itertools",
- "num-traits",
+ "libm",
  "serde",
  "serde_json",
  "utf8_iter",
