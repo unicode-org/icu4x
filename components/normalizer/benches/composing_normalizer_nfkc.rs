@@ -117,7 +117,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
         let nfd = &nfd_normalizer.normalize(raw_content);
         let nfkc = &nfkc_normalizer.normalize(raw_content);
         let nfkd = &nfkd_normalizer.normalize(raw_content);
-        return BenchDataContent {
+        BenchDataContent {
             file_name: file_name.to_owned(),
             nfc: nfc.to_owned(),
             nfd: nfd.to_owned(),
@@ -127,7 +127,7 @@ fn normalizer_bench_data() -> [BenchDataContent; 15] {
             nfd_u16: as_utf16(nfd),
             nfkc_u16: as_utf16(nfkc),
             nfkd_u16: as_utf16(nfkd),
-        };
+        }
     })
 }
 
