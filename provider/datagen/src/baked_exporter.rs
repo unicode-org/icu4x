@@ -14,6 +14,7 @@
 //! use icu_datagen::baked_exporter::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
+//! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
 //! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();

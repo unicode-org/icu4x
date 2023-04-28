@@ -16,7 +16,7 @@
 //! use icu_provider_fs::FsDataProvider;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
-//! # std::fs::remove_dir_all(&demo_path).unwrap();
+//! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
 //! let mut options = ExporterOptions::default();
