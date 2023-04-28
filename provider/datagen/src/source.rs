@@ -453,9 +453,9 @@ impl AbstractFs {
                 ),
                 #[cfg(test)]
                 (
-                    "Models/Thai_graphclust_exclusive_model4_heavy/weights.json",
+                    "Models/Thai_graphclust_model4_heavy/weights.json",
                     include_bytes!(
-                        "../data/lstm/Models/Thai_graphclust_exclusive_model4_heavy/weights.json"
+                        "../data/lstm/Models/Thai_graphclust_model4_heavy/weights.json"
                     )
                     .as_slice(),
                 ),

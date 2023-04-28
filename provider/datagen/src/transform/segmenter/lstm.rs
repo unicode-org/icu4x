@@ -242,7 +242,7 @@ mod tests {
             .segmenter_lstm()
             .unwrap()
             .read_and_parse_json::<RawLstmData>(
-                "Models/Thai_graphclust_exclusive_model4_heavy/weights.json",
+                "Models/Thai_graphclust_model4_heavy/weights.json",
             )
             .unwrap();
         let provider = ForkByKeyProvider::new(
