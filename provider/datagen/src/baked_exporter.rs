@@ -26,8 +26,7 @@
 //!         exporter
 //!     ).unwrap();
 //! #
-//! # std::fs::remove_dir_all(&demo_path)
-//! #   .expect("Should clean up test directory");
+//! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
 //!
 //! The resulting module structure can now be used like this:
