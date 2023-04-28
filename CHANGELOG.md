@@ -8,6 +8,9 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   - Fixed [#3356](https://github.com/unicode-org/icu4x/pull/3356), adding `allow` for clippy false-positives
 - `icu_capi` 1.2.1
   - Fixed [#3344](https://github.com/unicode-org/icu4x/pull/3344), `buffer_provider` feature accidentally pulling in extra crates
+- `icu_capi` 1.2.1
+  - Use `intptr_t` instead of `ssize_t` for portability )[diplomat #326](https://github.com/rust-diplomat/diplomat/issues/326))
+
 - `icu_datagen` 1.2.1
   - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
 - `icu_datagen` 1.2.3
