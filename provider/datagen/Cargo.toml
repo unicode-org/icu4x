@@ -120,5 +120,5 @@ name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
 
 [package.metadata.cargo-all-features]
-# Disable check-all-features, as the bin feature is purely additive.
+# We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]

@@ -33,6 +33,8 @@ all-features = true
 denylist = ["bench", "logging", "cpp_default", "wasm_default"]
 # This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 2
+skip_feature_sets = [[]]
+
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]

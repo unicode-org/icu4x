@@ -10,20 +10,20 @@ use std::path::PathBuf;
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct Config {
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub keys: KeyInclude,
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub locales: LocaleInclude,
     pub cldr: PathOrTag,
     pub icu_export: PathOrTag,
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub trie_type: TrieType,
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub collation_han_database: CollationHanDatabase,
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub collations: HashSet<String>,
     pub export: Export,
-    #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+    #[serde(default, skip_serializing_if = "is_default")]
     pub overwrite: bool,
 }
 
@@ -84,7 +84,7 @@ pub enum Export {
     Fs {
         output_path: PathBuf,
         syntax: FsSyntax,
-        #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+        #[serde(default, skip_serializing_if = "is_default")]
         fingerprint: bool,
     },
     #[cfg(feature = "provider_blob")]
@@ -92,11 +92,11 @@ pub enum Export {
     #[cfg(feature = "provider_baked")]
     Baked {
         output_path: PathBuf,
-        #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+        #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
-        #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+        #[serde(default, skip_serializing_if = "is_default")]
         insert_feature_gates: bool,
-        #[serde(default = "Default::default", skip_serializing_if = "is_default")]
+        #[serde(default, skip_serializing_if = "is_default")]
         use_separate_crates: bool,
     },
 }

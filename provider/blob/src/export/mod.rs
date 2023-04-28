@@ -7,14 +7,14 @@
 //! This module can be used as a target for the `icu_datagen` crate.
 //!
 //! # Examples
-//! 
+//!
 //! use icu_datagen::prelude::*;
 //! use icu_provider::hello_world::*;
 //! use icu_provider_blob::export::*;
 //! use icu_provider_blob::BlobDataProvider;
 //!
 //! let mut buffer: Vec<u8> = Vec::new();
-//! 
+//!
 //! // Set up the exporter
 //! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
 //!

@@ -25,7 +25,7 @@ fn main() {
         "/../../provider/testdata/data/"
     ));
 
-    let source = SourceData::default()
+    let source = SourceData::offline()
         .with_cldr(repodata::paths::cldr(), Default::default())
         .unwrap()
         .with_icuexport(repodata::paths::icuexport())

@@ -11,11 +11,13 @@
 //! ```
 //! use icu_datagen::prelude::*;
 //! use icu_provider::hello_world::*;
+//! use icu_provider::prelude::*;
 //! use icu_provider_fs::export::*;
 //! use icu_provider_fs::FsDataProvider;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
-//! 
+//! # std::fs::remove_dir_all(&demo_path).unwrap();
+//!
 //! // Set up the exporter
 //! let mut options = ExporterOptions::default();
 //! options.root = demo_path.clone();
@@ -32,12 +34,16 @@
 //!
 //! // Create a filesystem provider reading from the demo directory
 //! let provider = FsDataProvider::try_new(demo_path.clone())
-//!     .expect("Should successfully read from filesystem")
-//!     .as_deserializing();
+//!     .expect("Should successfully read from filesystem");
+//! 
+//! let provider = provider.as_deserializing();
 //!
 //! // Read the key from the filesystem
 //! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .load(Default::default())
+//!     .load(DataRequest {
+//!         locale: &langid!("en").into(),
+//!         metadata: Default::default(),
+//!     })
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();

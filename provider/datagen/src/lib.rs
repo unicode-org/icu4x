@@ -556,7 +556,11 @@ fn test_keys() {
 #[test]
 fn test_keys_from_file() {
     assert_eq!(
-        keys_from_file(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/work_log+keys.txt")).unwrap(),
+        keys_from_file(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/work_log+keys.txt"
+        ))
+        .unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
@@ -574,7 +578,11 @@ fn test_keys_from_bin() {
     // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
-        keys_from_bin(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/work_log.wasm")).unwrap(),
+        keys_from_bin(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/work_log.wasm"
+        ))
+        .unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
