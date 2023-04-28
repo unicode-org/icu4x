@@ -35,7 +35,7 @@
 //! // Create a filesystem provider reading from the demo directory
 //! let provider = FsDataProvider::try_new(demo_path.clone())
 //!     .expect("Should successfully read from filesystem");
-//! 
+//!
 //! let provider = provider.as_deserializing();
 //!
 //! // Read the key from the filesystem
