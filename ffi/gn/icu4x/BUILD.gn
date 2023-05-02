@@ -1057,12 +1057,10 @@ rust_library("syn-v1_0_109") {
     "--cfg=feature=\"clone-impls\"",
     "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
-    "--cfg=feature=\"extra-traits\"",
     "--cfg=feature=\"parsing\"",
     "--cfg=feature=\"printing\"",
     "--cfg=feature=\"proc-macro\"",
     "--cfg=feature=\"quote\"",
-    "--cfg=feature=\"visit\"",
     "--cfg=syn_disable_nightly_tests",
   ]
 
@@ -1097,31 +1095,6 @@ rust_library("syn-v2_0_15") {
     "--cfg=feature=\"proc-macro\"",
     "--cfg=feature=\"quote\"",
     "--cfg=feature=\"visit\"",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_library("synstructure-v0_12_6") {
-  crate_name = "synstructure"
-  crate_root = "//ffi/gn/vendor/synstructure-0.12.6/src/lib.rs"
-  output_name = "synstructure-b30be16cba2970c4"
-
-  deps = []
-  deps += [ ":proc-macro2-v1_0_56" ]
-  deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v1_0_109" ]
-  deps += [ ":unicode-xid-v0_2_4" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2018",
-    "-Cmetadata=b30be16cba2970c4",
-    "-Cextra-filename=-b30be16cba2970c4",
-    "--cfg=feature=\"default\"",
-    "--cfg=feature=\"proc-macro\"",
   ]
 
   visibility = [ ":*" ]
@@ -1440,7 +1413,7 @@ rust_proc_macro("zerovec-derive-v0_9_4") {
   deps += [ ":proc-macro2-v1_0_56" ]
   deps += [ ":quote-v1_0_26" ]
   deps += [ ":syn-v2_0_15" ]
-  deps += [ ":synstructure-v0_12_6" ]
+  deps += [ ":synstructure-v0_13_0" ]
 
   rustenv = []
 
