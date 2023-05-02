@@ -25,7 +25,3 @@ pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
     e.key = None;
     e == MISSING_ICUEXPORT_ERROR
 }
-
-pub(crate) fn data_error_from_toml(other: toml::de::Error) -> DataError {
-    DataError::custom("Toml deserialize").with_display_context(&other)
-}

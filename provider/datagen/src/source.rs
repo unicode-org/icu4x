@@ -286,7 +286,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes).map_err(DataError::from)
+            serde_json::from_slice(bytes)
+                .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))
         })
     }
 
@@ -295,7 +296,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            toml::from_slice(bytes).map_err(crate::error::data_error_from_toml)
+            toml::from_slice(bytes)
+                .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
         })
     }
 
