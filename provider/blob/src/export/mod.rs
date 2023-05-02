@@ -8,35 +8,53 @@
 //!
 //! # Examples
 //!
+//! ```
 //! use icu_datagen::prelude::*;
-//! use icu_provider::hello_world::*;
 //! use icu_provider_blob::export::*;
-//! use icu_provider_blob::BlobDataProvider;
 //!
-//! let mut buffer: Vec<u8> = Vec::new();
+//! let mut blob: Vec<u8> = Vec::new();
 //!
 //! // Set up the exporter
-//! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut buffer));
+//! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 //!
 //! // Export something
 //! DatagenProvider::default()
 //!     .export(
-//!         [HelloWorldV1Marker::KEY].into_iter().collect(),
+//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
 //!         exporter
 //!     ).unwrap();
 //!
-//! // Create a filesystem provider reading from the demo directory
+//! // communicate the blob to the client application (network, disk, etc.)
+//! ```
+//!
+//! The resulting blob can now be used like this:
+//!
+//! ```
+//! use icu_locid::langid;
+//! use icu_provider::hello_world::*;
+//! use icu_provider::prelude::*;
+//! use icu_provider_blob::BlobDataProvider;
+//!
+//! // obtain the data blob
+//! # let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/hello_world.postcard")).unwrap();
+//!
+//! // Create a provider reading from the blob
 //! let provider =
-//!     BlobDataProvider::try_new_from_blob(buffer.into_boxed_slice())
-//!         .expect("Should successfully read from buffer")
-//!         .as_deserializing();
+//!     BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
+//!         .expect("Should successfully read from blob");
 //!
 //! // Read the key from the blob
 //! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .load(Default::default())
+//!     .as_deserializing()
+//!     .load(DataRequest {
+//!         locale: &langid!("en").into(),
+//!         metadata: Default::default(),
+//!     })
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
+//!
+//! assert_eq!(response.get().message, "Hello World");
 //! ```
 
 mod blob_exporter;

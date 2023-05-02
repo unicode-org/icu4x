@@ -10,10 +10,7 @@
 //!
 //! ```
 //! use icu_datagen::prelude::*;
-//! use icu_provider::hello_world::*;
-//! use icu_provider::prelude::*;
 //! use icu_provider_fs::export::*;
-//! use icu_provider_fs::FsDataProvider;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_json_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
@@ -28,18 +25,29 @@
 //! // Export something
 //! DatagenProvider::default()
 //!     .export(
-//!         [HelloWorldV1Marker::KEY].into_iter().collect(),
+//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
 //!         exporter
 //!     ).unwrap();
+//! #
+//! # let _ = std::fs::remove_dir_all(&demo_path);
+//! ```
 //!
+//! The resulting files can now be used like this:
+//!
+//! ```
+//! use icu_locid::langid;
+//! use icu_provider::hello_world::*;
+//! use icu_provider::prelude::*;
+//! use icu_provider_fs::FsDataProvider;
+//!
+//! # let demo_path = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/json"));
 //! // Create a filesystem provider reading from the demo directory
-//! let provider = FsDataProvider::try_new(demo_path.clone())
+//! let provider = FsDataProvider::try_new(&demo_path)
 //!     .expect("Should successfully read from filesystem");
-//!
-//! let provider = provider.as_deserializing();
 //!
 //! // Read the key from the filesystem
 //! let response: DataPayload<HelloWorldV1Marker> = provider
+//!     .as_deserializing()
 //!     .load(DataRequest {
 //!         locale: &langid!("en").into(),
 //!         metadata: Default::default(),
@@ -47,8 +55,8 @@
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
-//! #
-//! # let _ = std::fs::remove_dir_all(&demo_path);
+//!
+//! assert_eq!(response.get().message, "Hello World");
 //! ```
 
 #![allow(

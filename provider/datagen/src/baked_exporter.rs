@@ -10,7 +10,6 @@
 //!
 //! ```
 //! use icu_datagen::prelude::*;
-//! use icu_provider::hello_world::*;
 //! use icu_datagen::baked_exporter::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
@@ -22,7 +21,7 @@
 //! // Export something
 //! DatagenProvider::default()
 //!     .export(
-//!         [HelloWorldV1Marker::KEY].into_iter().collect(),
+//!         [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect(),
 //!         exporter
 //!     ).unwrap();
 //! #
@@ -31,21 +30,44 @@
 //!
 //! The resulting module structure can now be used like this:
 //!
-//! ```compile_fail
+//! ```
+//! use icu_locid::langid;
 //! use icu_provider::prelude::*;
+//! use icu_provider::hello_world::*;
 //!
-//! struct MyDataProvider;
+//! pub struct MyDataProvider;
 //!
 //! mod baked {
-//!   include!("/path/to/mod/")
-//!   impl_data_provider!(MyDataProvider);
+//!     # macro_rules! include {
+//!     #   ($path:literal) => {}
+//!     # }
+//!     # macro_rules! impl_data_provider {
+//!     #   ($p:path) => {
+//!     #     use icu_provider::prelude::*;
+//!     #     use icu_provider::hello_world::*;
+//!     #     impl DataProvider<HelloWorldV1Marker> for $p {
+//!     #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//!     #         HelloWorldProvider.load(req)
+//!     #       }
+//!     #     }
+//!     #   }
+//!     # }
+//!     include!("/path/to/mod/");
+//!     impl_data_provider!(super::MyDataProvider);
 //! }
 //!
-//! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .load(Default::default())
+//! # fn main() {
+//! let response: DataPayload<HelloWorldV1Marker> = MyDataProvider
+//!     .load(DataRequest {
+//!         locale: &langid!("en").into(),
+//!         metadata: Default::default(),
+//!     })
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
+//!
+//! assert_eq!(response.get().message, "Hello World");
+//! # }
 //! ```
 
 use databake::*;
