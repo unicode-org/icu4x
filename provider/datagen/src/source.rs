@@ -24,7 +24,7 @@ use zip::ZipArchive;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
+    builtin_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
@@ -68,7 +68,7 @@ impl SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
+            builtin_paths: Arc::new(SerdeCache::new(AbstractFs::new_builtin())),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
             options: Default::default(),
         }
@@ -215,11 +215,12 @@ impl SourceData {
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to segmenter data.
-    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_paths)
+    /// Path to built-in data.
+    pub(crate) fn builtin(&self) -> &SerdeCache {
+        &self.builtin_paths
     }
 
+    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
@@ -336,65 +337,94 @@ impl AbstractFs {
         }
     }
 
-    fn new_segmenter() -> Self {
-        const SEGMENTER: &[(&str, &[u8])] = &[
-            (
-                "grapheme.toml",
-                include_bytes!("../data/segmenter/grapheme.toml"),
-            ),
-            ("word.toml", include_bytes!("../data/segmenter/word.toml")),
-            ("line.toml", include_bytes!("../data/segmenter/line.toml")),
-            (
-                "sentence.toml",
-                include_bytes!("../data/segmenter/sentence.toml"),
-            ),
-            (
-                "dictionary_cj.toml",
-                include_bytes!("../data/segmenter/dictionary_cj.toml"),
-            ),
-            (
-                "dictionary_km.toml",
-                include_bytes!("../data/segmenter/dictionary_km.toml"),
-            ),
-            (
-                "dictionary_lo.toml",
-                include_bytes!("../data/segmenter/dictionary_lo.toml"),
-            ),
-            (
-                "dictionary_my.toml",
-                include_bytes!("../data/segmenter/dictionary_my.toml"),
-            ),
-            (
-                "dictionary_th.toml",
-                include_bytes!("../data/segmenter/dictionary_th.toml"),
-            ),
-        ];
-
-        Self::Memory(SEGMENTER.iter().copied().collect())
+    fn new_builtin() -> Self {
+        Self::Memory(
+            [
+                (
+                    "segmenter/rules/grapheme.toml",
+                    include_bytes!("../data/segmenter/rules/grapheme.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/word.toml",
+                    include_bytes!("../data/segmenter/rules/word.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/line.toml",
+                    include_bytes!("../data/segmenter/rules/line.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/sentence.toml",
+                    include_bytes!("../data/segmenter/rules/sentence.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/cjdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/khmerdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/laodict.toml",
+                    include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/burmesedict.toml",
+                    include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/thaidict.toml",
+                    include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
 
     fn new_lstm() -> Self {
-        const LSTM: &[(&str, &[u8])] = &[
-            (
-                "lstm_km.json",
-                include_bytes!("../data/segmenter/lstm/lstm_km.json"),
-            ),
-            (
-                "lstm_lo.json",
-                include_bytes!("../data/segmenter/lstm/lstm_lo.json"),
-            ),
-            (
-                "lstm_my.json",
-                include_bytes!("../data/segmenter/lstm/lstm_my.json"),
-            ),
-            (
-                "lstm_th.json",
-                include_bytes!("../data/segmenter/lstm/lstm_th.json"),
-            ),
-        ];
-
-        Self::Memory(LSTM.iter().copied().collect())
+        Self::Memory(
+            [
+                (
+                    "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                    "../data/lstm/Models/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                #[cfg(test)]
+                (
+                    "Models/Thai_graphclust_model4_heavy/weights.json",
+                    include_bytes!("../data/lstm/Models/Thai_graphclust_model4_heavy/weights.json")
+                        .as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
+
     #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))

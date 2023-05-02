@@ -8,7 +8,6 @@ use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
-use icu_provider::DataPayload;
 use zerovec::{maps::ZeroMapBorrowed, ule::UnvalidatedStr};
 
 mod matrix;
@@ -74,11 +73,8 @@ pub(super) struct LstmSegmenter<'l> {
 
 impl<'l> LstmSegmenter<'l> {
     /// Returns `Err` if grapheme data is required but not present
-    pub(super) fn new(
-        lstm: &'l DataPayload<LstmDataV1Marker>,
-        grapheme: &'l DataPayload<GraphemeClusterBreakDataV1Marker>,
-    ) -> Self {
-        let LstmDataV1::Float32(lstm) = lstm.get();
+    pub(super) fn new(lstm: &'l LstmDataV1<'l>, grapheme: &'l RuleBreakDataV1<'l>) -> Self {
+        let LstmDataV1::Float32(lstm) = lstm;
         Self {
             dic: lstm.dic.as_borrowed(),
             embedding: MatrixZero::from(&lstm.embedding),
@@ -90,7 +86,7 @@ impl<'l> LstmSegmenter<'l> {
             bw_b: MatrixZero::from(&lstm.bw_b),
             time_w: MatrixZero::from(&lstm.time_w),
             time_b: MatrixZero::from(&lstm.time_b),
-            grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme.get()),
+            grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme),
         }
     }
 
@@ -309,7 +305,6 @@ impl Bies {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::provider::{LstmDataV1Marker, LstmForWordLineAutoV1Marker};
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use serde::Deserialize;
@@ -345,25 +340,22 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataPayload<LstmDataV1Marker> =
-            DataProvider::<LstmForWordLineAutoV1Marker>::load(
-                &icu_testdata::buffer().as_deserializing(),
-                DataRequest {
-                    locale: &locale!("th").into(),
-                    metadata: Default::default(),
-                },
-            )
+        let lstm: DataPayload<LstmForWordLineAutoV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(DataRequest {
+                locale: &locale!("th").into(),
+                metadata: Default::default(),
+            })
             .unwrap()
             .take_payload()
-            .unwrap()
-            .cast();
+            .unwrap();
         let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
             .as_deserializing()
             .load(Default::default())
             .unwrap()
             .take_payload()
             .unwrap();
-        let lstm = LstmSegmenter::new(&lstm, &grapheme);
+        let lstm = LstmSegmenter::new(lstm.get(), grapheme.get());
 
         // Importing the test data
         let test_text_data = load_test_text(&format!(
