@@ -1,6 +1,5 @@
 // @generated
 #![cfg(feature = "icu_datetime_experimental")]
-#![allow(clippy::octal_escapes)]
 type DataStruct = &'static [(
     &'static [::icu_datetime::fields::Field],
     ::icu_datetime::pattern::runtime::PatternPlurals<'static>,

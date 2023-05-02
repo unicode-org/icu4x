@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::{JapaneseErasV1Marker, WeekDataV1Marker};
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -147,7 +147,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options_experimental(
@@ -232,7 +231,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options(

@@ -5,7 +5,7 @@
 use crate::fields::FieldLength;
 use core::{cmp::Ordering, convert::TryFrom};
 use displaydoc::Display;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
 /// An error relating to the field symbol for a date pattern field.

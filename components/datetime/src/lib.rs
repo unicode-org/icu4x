@@ -166,5 +166,5 @@ pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DateTimeError as Error;

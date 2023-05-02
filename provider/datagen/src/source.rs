@@ -7,11 +7,10 @@ pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
 use std::io::Cursor;
 use std::io::Read;
-use std::ops::Deref;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -33,17 +32,11 @@ pub struct SourceData {
 
 impl Default for SourceData {
     fn default() -> Self {
-        let segmenter_path =
-            PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/data/segmenter"));
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(&segmenter_path).expect("valid dir"),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
-            )),
+            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: vec![],
@@ -61,6 +54,9 @@ impl SourceData {
     /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
     ///
     /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn latest_tested() -> Self {
         Self::default()
             .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
@@ -110,6 +106,9 @@ impl SourceData {
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(
         self,
         tag: &str,
@@ -128,6 +127,9 @@ impl SourceData {
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
             tag = "icu4x/2022-08-17/71.x";
@@ -147,6 +149,7 @@ impl SourceData {
         since = "1.1.0",
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
+    #[cfg(feature = "networking")]
     /// Deprecated
     pub fn with_cldr_latest(
         self,
@@ -159,6 +162,7 @@ impl SourceData {
         since = "1.1.0",
         note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
     )]
+    #[cfg(feature = "networking")]
     /// Deprecated
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
@@ -237,15 +241,6 @@ impl SourceData {
 pub(crate) enum IcuTrieType {
     Fast,
     Small,
-}
-
-impl IcuTrieType {
-    pub(crate) fn to_internal(self) -> icu_collections::codepointtrie::TrieType {
-        match self {
-            IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-            IcuTrieType::Small => icu_collections::codepointtrie::TrieType::Small,
-        }
-    }
 }
 
 impl std::fmt::Display for IcuTrieType {
@@ -353,6 +348,7 @@ impl SerdeCache {
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
+    Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
 impl Debug for AbstractFs {
@@ -378,48 +374,100 @@ impl AbstractFs {
         }
     }
 
+    fn new_segmenter() -> Self {
+        const SEGMENTER: &[(&str, &[u8])] = &[
+            (
+                "grapheme.toml",
+                include_bytes!("../data/segmenter/grapheme.toml"),
+            ),
+            ("word.toml", include_bytes!("../data/segmenter/word.toml")),
+            ("line.toml", include_bytes!("../data/segmenter/line.toml")),
+            (
+                "sentence.toml",
+                include_bytes!("../data/segmenter/sentence.toml"),
+            ),
+            (
+                "dictionary_cj.toml",
+                include_bytes!("../data/segmenter/dictionary_cj.toml"),
+            ),
+            (
+                "dictionary_km.toml",
+                include_bytes!("../data/segmenter/dictionary_km.toml"),
+            ),
+            (
+                "dictionary_lo.toml",
+                include_bytes!("../data/segmenter/dictionary_lo.toml"),
+            ),
+            (
+                "dictionary_my.toml",
+                include_bytes!("../data/segmenter/dictionary_my.toml"),
+            ),
+            (
+                "dictionary_th.toml",
+                include_bytes!("../data/segmenter/dictionary_th.toml"),
+            ),
+        ];
+
+        Self::Memory(SEGMENTER.iter().copied().collect())
+    }
+
+    fn new_lstm() -> Self {
+        const LSTM: &[(&str, &[u8])] = &[
+            (
+                "lstm_km.json",
+                include_bytes!("../data/segmenter/lstm/lstm_km.json"),
+            ),
+            (
+                "lstm_lo.json",
+                include_bytes!("../data/segmenter/lstm/lstm_lo.json"),
+            ),
+            (
+                "lstm_my.json",
+                include_bytes!("../data/segmenter/lstm/lstm_my.json"),
+            ),
+            (
+                "lstm_th.json",
+                include_bytes!("../data/segmenter/lstm/lstm_th.json"),
+            ),
+        ];
+
+        Self::Memory(LSTM.iter().copied().collect())
+    }
+    #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
     }
 
     fn init(&self) -> Result<(), DataError> {
-        match self {
-            Self::Zip(lock) => {
-                if lock.read().expect("poison").is_ok() {
-                    return Ok(());
-                }
-                let mut lock = lock.write().expect("poison");
-                let resource = if let Err(resource) = lock.deref() {
-                    resource
-                } else {
-                    return Ok(());
-                };
-
-                let root: PathBuf = {
-                    #[cfg(not(feature = "networking"))]
-                    unreachable!("AbstractFs URL mode only possible when using CLDR/ICU tags, which cannot be set without the `networking` feature");
-
-                    #[cfg(feature = "networking")]
-                    {
-                        lazy_static::lazy_static! {
-                            static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
-                                .freshness_lifetime(u64::MAX)
-                                .progress_bar(None)
-                                .build()
-                                .unwrap();
-                        }
-
-                        CACHE
-                            .cached_path(resource)
-                            .map_err(|e| DataError::custom("Download").with_display_context(&e))?
-                    }
-                };
-                *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
-                Ok(())
+        #[cfg(feature = "networking")]
+        if let Self::Zip(lock) = self {
+            if lock.read().expect("poison").is_ok() {
+                return Ok(());
             }
-            _ => Ok(()),
+            let mut lock = lock.write().expect("poison");
+            let resource = if let Err(resource) = &*lock {
+                resource
+            } else {
+                return Ok(());
+            };
+
+            let root = {
+                lazy_static::lazy_static! {
+                    static ref CACHE: cached_path::Cache = cached_path::CacheBuilder::new()
+                        .freshness_lifetime(u64::MAX)
+                        .progress_bar(None)
+                        .build()
+                        .unwrap();
+                }
+
+                CACHE
+                    .cached_path(resource)
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+            };
+            *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
+                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
         }
+        Ok(())
     }
 
     fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
@@ -447,6 +495,9 @@ impl AbstractFs {
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
+            Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
+                DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
+            }),
         }
     }
 
@@ -470,6 +521,12 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            Self::Memory(map) => map
+                .keys()
+                .copied()
+                .map(String::from)
+                .collect::<HashSet<_>>()
+                .into_iter(),
         })
     }
 
@@ -485,6 +542,7 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_names()
                 .any(|p| p == path),
+            Self::Memory(map) => map.contains_key(path),
         })
     }
 }

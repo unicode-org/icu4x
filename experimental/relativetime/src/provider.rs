@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom, DataError, DataMarker};
+use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 /// Relative time format V1 data struct.

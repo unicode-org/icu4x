@@ -1,5 +1,35 @@
 # Changelog
 
+## icu4x 1.2.x (Apr 17, 2023)
+
+Note: A subset of crates received patch releases in the 1.2 stream.
+
+- `databake`: 0.1.5
+  - Fixed [#3356](https://github.com/unicode-org/icu4x/pull/3356), adding `allow` for clippy false-positives
+- `icu_capi` 1.2.1
+  - Fixed [#3344](https://github.com/unicode-org/icu4x/pull/3344), `buffer_provider` feature accidentally pulling in extra crates
+- `icu_capi` 1.2.2
+  - Use `intptr_t` instead of `ssize_t` for portability ([diplomat #326](https://github.com/rust-diplomat/diplomat/issues/326))
+
+- `icu_datagen` 1.2.1
+  - Fixed [#3339](https://github.com/unicode-org/icu4x/pull/3339), incorrect Cargo features
+- `icu_datagen` 1.2.3
+  - Fixed [#3355](https://github.com/unicode-org/icu4x/pull/3355), adding MSRV annotations to generated code
+  - Fixed [#3369](https://github.com/unicode-org/icu4x/pull/3369), making datagen call `rustfmt` directly instead of using the `rust-format` dependency
+- `icu_datagen` 1.2.4
+  - Remove dependency on `clap`'s `"cargo"` feature to better support non-Cargo users (#3388)
+- `icu_datagen` 1.2.5
+  - Remove runtime dependency on segmenter data pulled from the cargo cache (#3391)
+- `icu_locid_transform` 1.2.1
+  - Fixed [#3332](https://github.com/unicode-org/icu4x/issues/3332), missing `+?Sized` bound
+- `icu_segmenter` 1.2.1
+  - Fixed [#3341](https://github.com/unicode-org/icu4x/pull/3341), incorrect results on some strings with mixed scripts
+- `icu_provider` 1.2.1
+  - Do not autoenable `postcard/use-std` ([#3376](https://github.com/unicode-org/icu4x/pull/3376))
+- `icu_datetime` 1.2.1
+  - Remove superfluous `JapaneseEraV1` provider bounds on `TypedZonedDateTimeFormatter` [#3379](https://github.com/unicode-org/icu4x/pull/3379)
+
+
 ## icu4x 1.2 (Apr 13, 2023)
 
 - General
@@ -69,7 +99,6 @@
     - Fix SB10 rule (#3126)
     - Polished docs and examples
   - `icu_timezone`: No other changes
-  - (verify that no components were missed)
  - Utils:
   - `crlify`: No change (still at 1.0.1)
   - `databake`: 1.1.3 -> 1.1.4
@@ -115,7 +144,6 @@
      - Add LangaugeDisplayNames with support for variants (#3058, #3113)
      - Add stronger typing (#3190)
    - `icu_harfbuzz`: New experimental port: Harfbuzz integration for ICU4X (v0.1.0)
-   - `ixdtf`: 0.0.0 -> 0.0.1
    - `icu_relativetime`: 0.1.0 -> 0.1.1
 
 

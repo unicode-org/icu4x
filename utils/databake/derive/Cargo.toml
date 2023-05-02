@@ -5,7 +5,7 @@
 [package]
 name = "databake-derive"
 description = "Custom derive for the databake crate"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"

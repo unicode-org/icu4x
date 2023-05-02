@@ -259,7 +259,7 @@ pub enum CodePointInversionListAndStringListError {
     StringListNotSorted(String, String),
 }
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CodePointInversionListAndStringListError as Error;
 
 #[cfg(test)]

@@ -34,6 +34,7 @@ use core::ops::Deref;
 
 pub use other::Subtag;
 
+use crate::helpers::ShortSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 
@@ -58,7 +59,7 @@ use crate::parser::SubtagIterator;
 /// [`Private Use Extensions`]: https://unicode.org/reports/tr35/#pu_extensions
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/#Unicode_locale_identifier
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Private(Vec<Subtag>);
+pub struct Private(ShortSlice<Subtag>);
 
 impl Private {
     /// Returns a new empty list of private-use extensions. Same as [`default()`](Default::default()), but is `const`.
@@ -72,7 +73,7 @@ impl Private {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(Vec::new())
+        Self(ShortSlice::new())
     }
 
     /// A constructor which takes a pre-sorted list of [`Subtag`].
@@ -89,7 +90,7 @@ impl Private {
     /// assert_eq!(&private.to_string(), "x-foo-bar");
     /// ```
     pub fn from_vec_unchecked(input: Vec<Subtag>) -> Self {
-        Self(input)
+        Self(input.into())
     }
 
     /// Empties the [`Private`] list.
@@ -116,9 +117,9 @@ impl Private {
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let keys = iter
             .map(Subtag::try_from_bytes)
-            .collect::<Result<Vec<_>, _>>()?;
+            .collect::<Result<ShortSlice<_>, _>>()?;
 
-        Ok(Self::from_vec_unchecked(keys))
+        Ok(Self(keys))
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

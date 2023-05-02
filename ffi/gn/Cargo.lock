@@ -46,12 +46,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64cb94155d965e3d37ffbbe7cc5b82c3dd79dd33bd48e536f73d2cfb8d85506f"
 
 [[package]]
-name = "autocfg"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
-
-[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -108,9 +102,9 @@ checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
 
 [[package]]
 name = "diplomat"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33e9eae368e4141b5f1c594afe819c85bad0aec8fd1f4cc9ac1888837a957491"
+checksum = "131a7c8474cb3648784b28b131021017bf0e8a0acb2e7fe4432ac5a72b81d734"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -120,15 +114,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e401cc0e98682b1a24220a4f3185bb5ddd8ccb2cd861d09fe23455b401e3cce"
+checksum = "7be78da2d794f65e463740e6f1a6b1e7a3973d62f40fd02d05cc71adbee7ea5a"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ba145991e24046639916a3199216e29493659398fc2f25673f48aee29b122b2"
+checksum = "b7c69d55d3abfc5b4f487e4410df7971626d999d84b25de6ad0ffd5c278f58a1"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -220,7 +214,7 @@ checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
 
 [[package]]
 name = "icu"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_collator",
@@ -240,7 +234,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -252,7 +246,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi"
-version = "1.1.0"
+version = "1.2.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -262,7 +256,6 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_displaynames",
  "icu_list",
  "icu_locid",
  "icu_locid_transform",
@@ -291,7 +284,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -307,7 +300,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -317,7 +310,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -336,7 +329,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -346,19 +339,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_displaynames"
-version = "0.9.0"
-dependencies = [
- "icu_collections",
- "icu_locid",
- "icu_provider",
- "tinystr",
- "zerovec",
-]
-
-[[package]]
 name = "icu_list"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_provider",
@@ -368,7 +350,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -379,7 +361,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -390,7 +372,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -405,7 +387,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -416,7 +398,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -428,7 +410,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -442,7 +424,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -453,7 +435,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -462,20 +444,20 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.8.0"
+version = "1.2.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "num-traits",
+ "libm",
  "utf8_iter",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_collator",
@@ -497,7 +479,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_calendar",
@@ -575,16 +557,6 @@ name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
-
-[[package]]
-name = "num-traits"
-version = "0.2.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
-dependencies = [
- "autocfg",
- "libm",
-]
 
 [[package]]
 name = "pretty_assertions"

@@ -10,7 +10,7 @@ use icu_decimal::{
     FixedDecimalFormatter,
 };
 use icu_plurals::PluralRules;
-use icu_provider::{DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::prelude::*;
 use zerovec::maps::ZeroMap2dCursor;
 
 use crate::{

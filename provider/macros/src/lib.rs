@@ -260,7 +260,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     }
 
     result.extend(quote!(
-        #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+        #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
         #input
     ));
 

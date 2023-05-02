@@ -20,7 +20,7 @@ Each component should use `DataProvider` only to construct the instance of each 
 
 ```rust
 use displaydoc::Display;
-use icu_provider::{DataPayload, DataProvider, DataRequest, DataError};
+use icu_provider::prelude::*;
 use icu::locid::Locale;
 use icu::decimal::provider::{DecimalSymbolsV1Marker, DecimalSymbolsV1};
 

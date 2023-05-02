@@ -52,7 +52,7 @@ dependencies = [
 
 [[package]]
 name = "crlify"
-version = "1.0.1"
+version = "1.0.2"
 
 [[package]]
 name = "crossbeam-channel"
@@ -195,7 +195,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_casemapping",
@@ -230,7 +230,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -244,7 +244,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
@@ -258,7 +258,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie_builder"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "icu_collections",
  "lazy_static",
@@ -267,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -285,7 +285,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -297,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -312,7 +312,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "crlify",
  "databake",
@@ -361,7 +361,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -383,7 +383,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -396,7 +396,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "databake",
  "icu_collections",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "deduplicating_array",
@@ -422,7 +422,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -435,7 +435,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -448,7 +448,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -465,7 +465,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -478,7 +478,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -491,7 +491,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "databake",
@@ -512,7 +512,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -525,7 +525,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_provider",
  "log",
@@ -538,7 +538,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "crlify",
@@ -554,7 +554,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -563,7 +563,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -578,7 +578,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.8.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -593,7 +593,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",

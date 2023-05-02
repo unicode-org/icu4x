@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{crate_version, ArgGroup, Parser};
+use clap::{ArgGroup, Parser};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
@@ -60,8 +60,9 @@ mod cli {
     }
 }
 #[derive(Parser)]
-#[command(name = "icu4x-datagen", author, version)]
-#[command(about = concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()), long_about = None)]
+#[command(name = "icu4x-datagen")]
+#[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
+#[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 #[command(group(
             ArgGroup::new("key_mode")
                 .required(true)

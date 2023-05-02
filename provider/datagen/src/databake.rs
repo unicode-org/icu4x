@@ -96,33 +96,39 @@ impl BakedDataExporter {
             .with_extension(if is_expr { "rs.data" } else { "rs" });
 
         let mut formatted = if self.pretty {
-            use rust_format::*;
-            RustFmt::from_config(
-                Config::new_str()
-                    // We deal with line encoding later
-                    .option("newline_style", "unix")
-                    .option("normalize_doc_attributes", "true")
-                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for the root mod.rs
-                    .option(
-                        "max_width",
-                        if relative_path.as_ref().as_os_str().to_str() == Some("mod") {
-                            "150"
-                        } else {
-                            "100"
-                        },
-                    ),
-            )
-            .format_tokens(if is_expr {
-                // Rustfmt cannot format Rust expressions, only full files. We need to wrap expressions in a main function
-                quote!(fn main() { #data })
+            use std::process::{Command, Stdio};
+            let mw = if relative_path.as_ref().as_os_str().to_str() == Some("mod") {
+                "max_width=150"
             } else {
-                data
-            })
-            .map_err(|e| {
-                DataError::custom("Formatting error")
-                    .with_display_context(&e)
-                    .with_path_context(&path)
-            })?
+                "max_width=100"
+            };
+            let mut rustfmt = Command::new("rustfmt")
+                .arg("--config")
+                .arg("newline_style=unix")
+                .arg("--config")
+                .arg("normalize_doc_attributes=true")
+                .arg("--config")
+                .arg(mw)
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .spawn()?;
+            let mut rustfmt_stdin = rustfmt.stdin.take().unwrap();
+            if is_expr {
+                write!(rustfmt_stdin, "fn main () {{ {data} }}")?
+            } else {
+                write!(rustfmt_stdin, "{data}")?
+            };
+
+            drop(rustfmt_stdin); // EOF
+
+            let output = rustfmt.wait_with_output()?;
+            if !output.status.success() {
+                let stderr = String::from_utf8(output.stderr)
+                    .map_err(|_| DataError::custom("rustfmt output not utf-8"))?;
+                return Err(DataError::custom("rustfmt failed").with_display_context(&stderr));
+            }
+            String::from_utf8(output.stdout)
+                .map_err(|_| DataError::custom("rustfmt output not utf-8"))?
         } else {
             data.to_string()
         };
@@ -352,8 +358,6 @@ impl DataExporter for BakedDataExporter {
             quote! {
                 #feature
 
-                #![allow(clippy::octal_escapes)] // https://github.com/dtolnay/proc-macro2/issues/363
-
                 type DataStruct = #struct_type;
 
                 #lookup
@@ -390,6 +394,7 @@ impl DataExporter for BakedDataExporter {
             data_impls.insert(data.marker.clone(),
                 quote! {
                     #feature
+                    #[clippy::msrv = "1.61"]
                     impl DataProvider<#marker> for $provider {
                         fn load(
                             &self,
@@ -483,9 +488,11 @@ impl DataExporter for BakedDataExporter {
             PathBuf::from("mod"),
             quote! {
                 #(
+                    #[clippy::msrv = "1.61"]
                     mod #mods;
                 )*
 
+                #[clippy::msrv = "1.61"]
                 use ::icu_provider::prelude::*;
 
                 /// Implement [`DataProvider<M>`] on the given struct using the data
@@ -522,6 +529,7 @@ impl DataExporter for BakedDataExporter {
                 #[allow(unused_macros)]
                 macro_rules! impl_any_provider {
                     ($provider:path) => {
+                        #[clippy::msrv = "1.61"]
                         impl AnyProvider for $provider {
                             fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                                 #any_code
@@ -530,6 +538,7 @@ impl DataExporter for BakedDataExporter {
                     }
                 }
 
+                #[clippy::msrv = "1.61"]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

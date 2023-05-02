@@ -149,7 +149,7 @@ checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
 
 [[package]]
 name = "bies"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
  "itertools",
@@ -467,9 +467,9 @@ dependencies = [
 
 [[package]]
 name = "colored"
-version = "1.9.3"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4ffc801dacf156c5854b9df4f425a626539c3a6ef7893cc0c5084a23f0b6c59"
+checksum = "b3616f750b84d8f0de8a58bda93e08e2a81ad3f523089b05f1dffecab48c6cbd"
 dependencies = [
  "atty",
  "lazy_static",
@@ -650,7 +650,7 @@ checksum = "6548a0ad5d2549e111e1f6a11a6c2e2d00ce6a3dafe22948d67c2b443f775e52"
 
 [[package]]
 name = "crlify"
-version = "1.0.1"
+version = "1.0.2"
 
 [[package]]
 name = "crossbeam-channel"
@@ -785,7 +785,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -795,7 +795,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -848,9 +848,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33e9eae368e4141b5f1c594afe819c85bad0aec8fd1f4cc9ac1888837a957491"
+checksum = "131a7c8474cb3648784b28b131021017bf0e8a0acb2e7fe4432ac5a72b81d734"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -860,15 +860,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e401cc0e98682b1a24220a4f3185bb5ddd8ccb2cd861d09fe23455b401e3cce"
+checksum = "7be78da2d794f65e463740e6f1a6b1e7a3973d62f40fd02d05cc71adbee7ea5a"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ba145991e24046639916a3199216e29493659398fc2f25673f48aee29b122b2"
+checksum = "b7c69d55d3abfc5b4f487e4410df7971626d999d84b25de6ad0ffd5c278f58a1"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -1514,7 +1514,7 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_calendar",
  "icu_casemapping",
@@ -1565,7 +1565,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1577,14 +1577,14 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_capi"
-version = "1.1.0"
+version = "1.2.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1611,14 +1611,14 @@ dependencies = [
  "log",
  "serde",
  "simple_logger",
- "tinystr 0.7.1",
+ "tinystr",
  "unicode-bidi",
  "writeable",
 ]
 
 [[package]]
 name = "icu_capi_cdylib"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_capi",
  "icu_provider",
@@ -1626,7 +1626,7 @@ dependencies = [
 
 [[package]]
 name = "icu_capi_staticlib"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_capi",
  "icu_provider",
@@ -1634,7 +1634,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemapping"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1648,7 +1648,7 @@ dependencies = [
 
 [[package]]
 name = "icu_codepointtrie_builder"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "icu",
  "icu_collections",
@@ -1661,7 +1661,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1684,7 +1684,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1704,7 +1704,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1721,7 +1721,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datagen"
-version = "1.1.2"
+version = "1.2.5"
 dependencies = [
  "cached-path",
  "clap 4.0.32",
@@ -1763,13 +1763,12 @@ dependencies = [
  "quote",
  "rayon",
  "repodata",
- "rust-format",
  "serde",
  "serde-aux",
  "serde_json",
  "simple_logger",
  "syn 1.0.109",
- "tinystr 0.7.1",
+ "tinystr",
  "toml",
  "writeable",
  "zerovec",
@@ -1778,7 +1777,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -1800,14 +1799,14 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_decimal"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1833,7 +1832,7 @@ version = "0.1.0"
 
 [[package]]
 name = "icu_displaynames"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "databake",
  "icu_collections",
@@ -1841,7 +1840,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr 0.7.1",
+ "tinystr",
  "zerovec",
 ]
 
@@ -1859,16 +1858,17 @@ dependencies = [
 
 [[package]]
 name = "icu_freertos"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "cortex-m",
  "freertos-rust",
  "icu_capi",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
 name = "icu_harfbuzz"
-version = "0.7.0"
+version = "0.1.0"
 dependencies = [
  "displaydoc",
  "harfbuzz",
@@ -1877,12 +1877,12 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "tinystr 0.7.1",
+ "tinystr",
 ]
 
 [[package]]
 name = "icu_list"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "deduplicating_array",
@@ -1900,7 +1900,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1912,14 +1912,14 @@ dependencies = [
  "postcard",
  "serde",
  "serde_json",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1930,14 +1930,14 @@ dependencies = [
  "icu_testdata",
  "serde",
  "serde_json",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_normalizer"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1969,7 +1969,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1987,7 +1987,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1996,14 +1996,14 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr 0.7.1",
+ "tinystr",
  "unicode-bidi",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_provider"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "bincode",
  "databake",
@@ -2025,7 +2025,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -2033,7 +2033,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "serde",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "yoke",
  "zerovec",
@@ -2041,7 +2041,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -2055,7 +2055,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "1.1.0"
+version = "1.2.1"
 dependencies = [
  "bincode",
  "criterion",
@@ -2074,7 +2074,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "icu",
  "icu_provider",
@@ -2085,7 +2085,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2102,7 +2102,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "0.8.0"
+version = "1.2.1"
 dependencies = [
  "criterion",
  "databake",
@@ -2115,7 +2115,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_testdata",
  "itertools",
- "num-traits",
+ "libm",
  "serde",
  "serde_json",
  "utf8_iter",
@@ -2124,7 +2124,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.1.2"
+version = "1.2.0"
 dependencies = [
  "criterion",
  "icu",
@@ -2173,7 +2173,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2183,7 +2183,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr 0.7.1",
+ "tinystr",
  "zerovec",
 ]
 
@@ -2287,7 +2287,7 @@ checksum = "453ad9f582a441959e5f0d088b02ce04cfe8d51a8eaf077f12ac6d3e94164ca6"
 
 [[package]]
 name = "ixdtf"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "criterion",
  "icu_testdata",
@@ -3409,15 +3409,15 @@ checksum = "f27f6278552951f1f2b8cf9da965d10969b2efdea95a6ec47987ab46edfe263a"
 
 [[package]]
 name = "simple_logger"
-version = "1.16.0"
+version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45b60258a35dc3cb8a16890b8fd6723349bfa458d7960e25e633f1b1c19d7b5e"
+checksum = "e78beb34673091ccf96a8816fce8bfd30d1292c7621ca2bcb5f2ba0fae4f558d"
 dependencies = [
  "atty",
  "colored",
  "log",
  "time 0.3.17",
- "winapi",
+ "windows-sys 0.42.0",
 ]
 
 [[package]]
@@ -3776,17 +3776,6 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.4.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "954af207a9e273b644c2c0d29d79d7cba9c22a66e633535d0d0d3712d7e50563"
-dependencies = [
- "serde",
- "tinystr-macros",
- "tinystr-raw",
-]
-
-[[package]]
-name = "tinystr"
 version = "0.7.1"
 dependencies = [
  "bincode",
@@ -3797,24 +3786,8 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "tinystr 0.4.12",
  "zerovec",
 ]
-
-[[package]]
-name = "tinystr-macros"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f65be51117c325c2b58eec529be7a0857d11527a9029973b58810a4c63e77a6"
-dependencies = [
- "tinystr-raw",
-]
-
-[[package]]
-name = "tinystr-raw"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10f87ef8b0485e4efff5cac95608adc3251e412fef6039ecd56c5618c8003895"
 
 [[package]]
 name = "tinytemplate"
@@ -3953,7 +3926,7 @@ dependencies = [
  "lru",
  "serde",
  "serde-aux",
- "tinystr 0.7.1",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",

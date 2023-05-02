@@ -5,7 +5,7 @@
 //! Marker types and traits for DataProvider.
 
 use crate::key::DataKey;
-use crate::yoke::Yokeable;
+use yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
@@ -32,12 +32,10 @@ use crate::yoke::Yokeable;
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::yoke::*;
-/// use icu_provider::zerofrom::*;
 /// use std::borrow::Cow;
 /// use std::rc::Rc;
 ///
-/// #[derive(Yokeable, ZeroFrom)]
+/// #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
 /// struct MyDataStruct<'data> {
 ///     message: Cow<'data, str>,
 /// }

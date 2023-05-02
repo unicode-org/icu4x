@@ -5,12 +5,12 @@
 [package]
 name = "icu_displaynames"
 description = "API to enable the translation of Language and Region display names"
-version = "0.9.0"
+version = "0.10.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
@@ -29,9 +29,9 @@ independent = true
 all-features = true
 
 [dependencies]
-icu_collections = { version = "1.1.0", path = "../../components/collections" }
-icu_locid = { version = "1.1.0", path = "../../components/locid" }
-icu_provider = { version = "1.1.0", path = "../../provider/core", features = ["macros"] }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
 
