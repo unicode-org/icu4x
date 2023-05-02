@@ -203,7 +203,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
         let lstm_data = self
             .source
             .segmenter_lstm()?
-            .read_and_parse_json::<RawLstmData>(&format!("Models/{model}/weights.json"))
+            .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
         let data = lstm_data.try_convert()?;
