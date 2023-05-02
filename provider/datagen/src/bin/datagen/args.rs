@@ -97,7 +97,7 @@ pub struct Cli {
     #[arg(
         help = "Download CLDR JSON data from this GitHub tag (https://github.com/unicode-org/cldr-json/tags)\n\
                     Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                    Ignored if '--cldr-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
+                    Ignored if '--cldr-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                     Note that some keys do not support versions before 41.0.0."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
@@ -114,7 +114,7 @@ pub struct Cli {
     #[arg(
         help = "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
-                  Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` feature (enabled by default).\n\
+                  Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
@@ -302,7 +302,7 @@ impl Cli {
             #[cfg(feature = "networking")]
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--cldr-root flag is mandatory unless datagen is built with the `\"networking\"` feature"),
+            _ => eyre::bail!("--cldr-root flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
         })
     }
 
@@ -314,7 +314,7 @@ impl Cli {
             #[cfg(feature = "networking")]
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--icuexport-root flag is mandatory unless datagen is built with the `\"networking\"` feature"),
+            _ => eyre::bail!("--icuexport-root flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
         })
     }
 
