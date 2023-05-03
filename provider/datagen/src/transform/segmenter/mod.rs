@@ -801,8 +801,7 @@ impl DataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider 
 }
 
 impl IterableDataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
-    // TODO: Do we actually want to filter these by the user-selected locales? The keys
-    // are more like script selectors...
+    // TODO(#3408): Do we actually want to filter these by the user-selected locales?
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source

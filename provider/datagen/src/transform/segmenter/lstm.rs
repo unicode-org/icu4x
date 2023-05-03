@@ -217,6 +217,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        // TODO(#3408): Do we actually want to filter these by the user-selected locales?
         Ok(self.source.options.locales.filter_by_langid_equality(vec![
             langid!("km").into(),
             langid!("lo").into(),
