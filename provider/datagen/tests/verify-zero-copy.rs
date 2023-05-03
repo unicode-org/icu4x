@@ -55,6 +55,8 @@ pub mod test {
                 .with_cldr(repodata::paths::cldr(), Default::default())
                 .unwrap()
                 .with_icuexport(repodata::paths::icuexport())
+                .unwrap()
+                .with_segmenter_lstm(repodata::paths::lstm())
                 .unwrap(),
         )
         .unwrap();
