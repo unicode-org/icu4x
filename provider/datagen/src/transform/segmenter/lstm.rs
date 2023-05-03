@@ -203,7 +203,7 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
         let lstm_data = self
             .source
             .segmenter_lstm()?
-            .read_and_parse_json::<RawLstmData>(&format!("Models/{model}/weights.json"))
+            .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
 
         let data = lstm_data.try_convert()?;
@@ -241,7 +241,7 @@ mod tests {
             .source
             .segmenter_lstm()
             .unwrap()
-            .read_and_parse_json::<RawLstmData>("Models/Thai_graphclust_model4_heavy/weights.json")
+            .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")
             .unwrap();
         let provider = ForkByKeyProvider::new(
             AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
