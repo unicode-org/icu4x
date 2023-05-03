@@ -80,12 +80,12 @@ impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV
             names: names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             short_names: short_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
         })
     }
@@ -112,7 +112,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&region!("AE").into_tinystr().raw())
+                .get(&region!("AE").into_tinystr().to_unvalidated())
                 .unwrap(),
             "United Arab Emirates"
         );
@@ -134,7 +134,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&region!("BA").into_tinystr().raw())
+                .get(&region!("BA").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Bosnia"
         );

@@ -139,22 +139,22 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
             names: names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             short_names: short_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             long_names: long_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             menu_names: menu_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
         }
     }
@@ -234,7 +234,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&language!("aa").into_tinystr().raw())
+                .get(&language!("aa").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Afar"
         );
@@ -256,7 +256,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&language!("az").into_tinystr().raw())
+                .get(&language!("az").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Azeri"
         );
@@ -278,7 +278,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .long_names
-                .get(&language!("zh").into_tinystr().raw())
+                .get(&language!("zh").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Mandarin Chinese"
         );
@@ -300,7 +300,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .menu_names
-                .get(&language!("zh").into_tinystr().raw())
+                .get(&language!("zh").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Chinese, Mandarin"
         );

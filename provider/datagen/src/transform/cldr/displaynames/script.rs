@@ -82,12 +82,12 @@ impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV
             names: names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             short_names: short_names
                 .into_iter()
                 .filter(|&(k, v)| k != v)
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
         })
     }
@@ -114,7 +114,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&script!("Cans").into_tinystr().raw())
+                .get(&script!("Cans").into_tinystr().to_unvalidated())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -136,7 +136,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&script!("Cans").into_tinystr().raw())
+                .get(&script!("Cans").into_tinystr().to_unvalidated())
                 .unwrap(),
             "UCAS"
         );

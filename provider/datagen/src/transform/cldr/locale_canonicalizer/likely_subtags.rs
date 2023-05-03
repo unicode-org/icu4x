@@ -245,19 +245,28 @@ fn transform<'x>(
     LikelySubtagsV1 {
         language_script: language_script
             .into_iter()
-            .map(|((k1, k2), v)| ((k1.raw(), k2.raw()), v))
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
             .collect(),
         language_region: language_region
             .into_iter()
-            .map(|((k1, k2), v)| ((k1.raw(), k2.raw()), v))
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
             .collect(),
-        language: language.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+        language: language
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
         script_region: script_region
             .into_iter()
-            .map(|((k1, k2), v)| ((k1.raw(), k2.raw()), v))
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
             .collect(),
-        script: script.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
-        region: region.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+        script: script
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
+        region: region
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
         und: und.unwrap_or((
             icu_locid::subtags_language!("und"),
             icu_locid::subtags_script!("Zzzz"),
@@ -287,7 +296,7 @@ fn test_basic() {
     let entry = result_common
         .get()
         .script
-        .get_copied(&script!("Hant").into_tinystr().raw())
+        .get_copied(&script!("Hant").into_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("zh"));
     assert_eq!(entry.1, region!("TW"));
@@ -295,7 +304,7 @@ fn test_basic() {
     let entry = result_extended
         .get()
         .script
-        .get_copied(&script!("Glag").into_tinystr().raw())
+        .get_copied(&script!("Glag").into_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));

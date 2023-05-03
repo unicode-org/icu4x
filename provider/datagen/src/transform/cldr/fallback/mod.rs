@@ -134,10 +134,10 @@ fn transform<'x>(
         let script = maximized.script.expect("maximized");
         let region = maximized.region.expect("maximized");
         if script != DEFAULT_SCRIPT {
-            l2s.insert(language.into_tinystr().raw(), script);
+            l2s.insert(language.into_tinystr().to_unvalidated(), script);
         }
         if region != DEFAULT_REGION {
-            l2r.insert(language.into_tinystr().raw(), region);
+            l2r.insert(language.into_tinystr().to_unvalidated(), region);
         }
     }
 
@@ -149,13 +149,13 @@ fn transform<'x>(
         if minimized.script.is_some() {
             assert!(minimized.region.is_none(), "{minimized:?}");
             let region_for_lang = l2r
-                .get(&language.into_tinystr().raw())
+                .get(&language.into_tinystr().to_unvalidated())
                 .copied()
                 .unwrap_or(DEFAULT_REGION);
             if region != region_for_lang {
                 ls2r.insert(
-                    &language.into_tinystr().raw(),
-                    &script.into_tinystr().raw(),
+                    &language.into_tinystr().to_unvalidated(),
+                    &script.into_tinystr().to_unvalidated(),
                     &region,
                 );
             }
@@ -163,13 +163,13 @@ fn transform<'x>(
         }
         if minimized.region.is_some() {
             let script_for_lang = l2s
-                .get(&language.into_tinystr().raw())
+                .get(&language.into_tinystr().to_unvalidated())
                 .copied()
                 .unwrap_or(DEFAULT_SCRIPT);
             if script != script_for_lang {
                 lr2s.insert(
-                    &language.into_tinystr().raw(),
-                    &region.into_tinystr().raw(),
+                    &language.into_tinystr().to_unvalidated(),
+                    &region.into_tinystr().to_unvalidated(),
                     &script,
                 );
             }
@@ -228,13 +228,13 @@ fn test_basic() {
         likely_subtags
             .get()
             .l2s
-            .get_copied(&language!("zh").into_tinystr().raw()),
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(script!("Hans"))
     );
     assert_eq!(
         likely_subtags.get().lr2s.get_copied_2d(
-            &language!("zh").into_tinystr().raw(),
-            &region!("TW").into_tinystr().raw()
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &region!("TW").into_tinystr().to_unvalidated()
         ),
         Some(script!("Hant"))
     );
@@ -242,13 +242,13 @@ fn test_basic() {
         likely_subtags
             .get()
             .l2r
-            .get_copied(&language!("zh").into_tinystr().raw()),
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(region!("CN"))
     );
     assert_eq!(
         likely_subtags.get().ls2r.get_copied_2d(
-            &language!("zh").into_tinystr().raw(),
-            &script!("Hant").into_tinystr().raw()
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &script!("Hant").into_tinystr().to_unvalidated()
         ),
         Some(region!("TW"))
     );

@@ -15,7 +15,7 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
-    pub fn raw(self) -> UnvalidatedTinyAsciiStr<N> {
+    pub fn to_unvalidated(self) -> UnvalidatedTinyAsciiStr<N> {
         UnvalidatedTinyAsciiStr(*self.all_bytes())
     }
 }
@@ -45,7 +45,7 @@ macro_rules! deserialize {
                 D: serde::Deserializer<'de>,
             {
                 if deserializer.is_human_readable() {
-                    Ok(TinyAsciiStr::deserialize(deserializer)?.raw())
+                    Ok(TinyAsciiStr::deserialize(deserializer)?.to_unvalidated())
                 } else {
                     Ok(Self(<[u8; $size]>::deserialize(deserializer)?))
                 }

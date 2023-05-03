@@ -211,32 +211,47 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 
         Self {
             language_variants: language_variants.as_slice().into(),
-            sgn_region: sgn_region.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+            sgn_region: sgn_region
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
             language_len2: language_len2
                 .into_iter()
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             language_len3: language_len3
                 .into_iter()
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
             language: language.as_slice().into(),
 
-            script: script.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+            script: script
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
 
             region_alpha: region_alpha
                 .into_iter()
-                .map(|(k, v)| (k.raw(), v))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
-            region_num: region_num.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+            region_num: region_num
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
             complex_region: complex_region
                 .into_iter()
-                .map(|(k, v)| (k.raw(), ZeroSlice::from_boxed_slice(v)))
+                .map(|(k, v)| (k.to_unvalidated(), ZeroSlice::from_boxed_slice(v)))
                 .collect(),
 
-            variant: variant.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+            variant: variant
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
 
-            subdivision: subdivision.into_iter().map(|(k, v)| (k.raw(), v)).collect(),
+            subdivision: subdivision
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
         }
     }
 }
@@ -287,7 +302,7 @@ fn test_basic() {
     assert_eq!(
         data.get()
             .language_len2
-            .get(&language!("iw").into_tinystr().resize().raw())
+            .get(&language!("iw").into_tinystr().resize().to_unvalidated())
             .unwrap(),
         "he"
     );
@@ -295,13 +310,13 @@ fn test_basic() {
     assert!(data
         .get()
         .language_len3
-        .get(&language!("iw").into_tinystr().raw())
+        .get(&language!("iw").into_tinystr().to_unvalidated())
         .is_none());
 
     assert_eq!(
         data.get().script.iter().next().unwrap(),
         (
-            &script!("Qaai").into_tinystr().raw(),
+            &script!("Qaai").into_tinystr().to_unvalidated(),
             &icu_locid::subtags_script!("Zinh")
         )
     );
@@ -309,7 +324,7 @@ fn test_basic() {
     assert_eq!(
         data.get()
             .region_num
-            .get(&region!("768").into_tinystr().raw())
+            .get(&region!("768").into_tinystr().to_unvalidated())
             .unwrap(),
         &icu_locid::subtags_region!("TG")
     );
