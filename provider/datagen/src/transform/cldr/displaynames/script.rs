@@ -5,10 +5,11 @@
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_displaynames::provider::*;
+use icu_locid::{subtags::Script, ParserError};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use tinystr::{TinyAsciiStr, TinyStrError};
+use std::str::FromStr;
 
 impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
@@ -62,7 +63,7 @@ const ALT_SUBSTRING: &str = "-alt-";
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV1<'static> {
-    type Error = TinyStrError;
+    type Error = ParserError;
 
     fn try_from(other: &cldr_serde::script_displaynames::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
@@ -70,16 +71,24 @@ impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.scripts.iter() {
                 if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    short_names.insert(TinyAsciiStr::from_str(script)?, entry.1.as_ref());
+                    short_names.insert(Script::from_str(script)?.into_tinystr(), entry.1.as_str());
                 } else if !entry.0.contains(ALT_SUBSTRING) {
-                    names.insert(TinyAsciiStr::from_str(entry.0)?, entry.1.as_ref());
+                    names.insert(Script::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
                 }
             }
         }
         Ok(Self {
             // Old CLDR versions may contain trivial entries, so filter
-            names: names.into_iter().filter(|&(k, v)| k != v).collect(),
-            short_names: short_names.into_iter().filter(|&(k, v)| k != v).collect(),
+            names: names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.raw(), v))
+                .collect(),
+            short_names: short_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.raw(), v))
+                .collect(),
         })
     }
 }
@@ -87,7 +96,7 @@ impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
+    use icu_locid::{locale, subtags_script as script};
 
     #[test]
     fn test_basic_script_display_names() {
@@ -105,7 +114,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .names
-                .get(&TinyAsciiStr::from_str("Cans").unwrap())
+                .get(&script!("Cans").into_tinystr().raw())
                 .unwrap(),
             "Unified Canadian Aboriginal Syllabics"
         );
@@ -127,7 +136,7 @@ mod tests {
         assert_eq!(
             data.get()
                 .short_names
-                .get(&TinyAsciiStr::from_str("Cans").unwrap())
+                .get(&script!("Cans").into_tinystr().raw())
                 .unwrap(),
             "UCAS"
         );

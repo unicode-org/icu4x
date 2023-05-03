@@ -75,10 +75,10 @@ impl RegionDisplayNames {
     pub fn of(&self, region: Region) -> Option<&str> {
         let data = self.region_data.get();
         match self.options.style {
-            Some(Style::Short) => data.short_names.get(&region.into()),
+            Some(Style::Short) => data.short_names.get(&region.into_tinystr().raw()),
             _ => None,
         }
-        .or_else(|| data.names.get(&region.into()))
+        .or_else(|| data.names.get(&region.into_tinystr().raw()))
         // TODO: Respect options.fallback
     }
 }
@@ -149,10 +149,10 @@ impl ScriptDisplayNames {
     pub fn of(&self, script: Script) -> Option<&str> {
         let data = self.script_data.get();
         match self.options.style {
-            Some(Style::Short) => data.short_names.get(&script.into()),
+            Some(Style::Short) => data.short_names.get(&script.into_tinystr().raw()),
             _ => None,
         }
-        .or_else(|| data.names.get(&script.into()))
+        .or_else(|| data.names.get(&script.into_tinystr().raw()))
         // TODO: Respect options.fallback
     }
 }
@@ -222,12 +222,12 @@ impl LanguageDisplayNames {
     pub fn of(&self, language: Language) -> Option<&str> {
         let data = self.language_data.get();
         match self.options.style {
-            Some(Style::Short) => data.short_names.get(&language.into()),
-            Some(Style::Long) => data.long_names.get(&language.into()),
-            Some(Style::Menu) => data.menu_names.get(&language.into()),
+            Some(Style::Short) => data.short_names.get(&language.into_tinystr().raw()),
+            Some(Style::Long) => data.long_names.get(&language.into_tinystr().raw()),
+            Some(Style::Menu) => data.menu_names.get(&language.into_tinystr().raw()),
             _ => None,
         }
-        .or_else(|| data.names.get(&language.into()))
+        .or_else(|| data.names.get(&language.into_tinystr().raw()))
         // TODO: Respect options.fallback
     }
 }
@@ -356,32 +356,41 @@ impl LocaleDisplayNamesFormatter {
                 .language_data
                 .get()
                 .short_names
-                .get(&locale.id.language.into()),
+                .get(&locale.id.language.into_tinystr().raw()),
             Some(Style::Long) => self
                 .language_data
                 .get()
                 .long_names
-                .get(&locale.id.language.into()),
+                .get(&locale.id.language.into_tinystr().raw()),
             Some(Style::Menu) => self
                 .language_data
                 .get()
                 .menu_names
-                .get(&locale.id.language.into()),
+                .get(&locale.id.language.into_tinystr().raw()),
             _ => None,
         }
         .or_else(|| {
             self.language_data
                 .get()
                 .names
-                .get(&locale.id.language.into())
+                .get(&locale.id.language.into_tinystr().raw())
         });
 
         if let Some(region) = locale.id.region {
             let regiondisplay = match self.options.style {
-                Some(Style::Short) => self.region_data.get().short_names.get(&region.into()),
+                Some(Style::Short) => self
+                    .region_data
+                    .get()
+                    .short_names
+                    .get(&region.into_tinystr().raw()),
                 _ => None,
             }
-            .or_else(|| self.region_data.get().names.get(&region.into()));
+            .or_else(|| {
+                self.region_data
+                    .get()
+                    .names
+                    .get(&region.into_tinystr().raw())
+            });
             // TODO: Use data patterns
             Cow::Owned(alloc::format!(
                 "{} ({})",

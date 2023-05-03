@@ -22,13 +22,18 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 locale.set_region(
                     self.likely_subtags
                         .ls2r
-                        .get_2d(&language.into(), &script.into())
+                        .get_2d(&language.into_tinystr().raw(), &script.into_tinystr().raw())
                         .copied(),
                 );
             }
             // 1b. If that fails, try language only
             if locale.region().is_none() {
-                locale.set_region(self.likely_subtags.l2r.get(&language.into()).copied());
+                locale.set_region(
+                    self.likely_subtags
+                        .l2r
+                        .get(&language.into_tinystr().raw())
+                        .copied(),
+                );
             }
         }
         // 2. Remove the script if it is implied by the other subtags
@@ -36,14 +41,14 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             let default_script = self
                 .likely_subtags
                 .l2s
-                .get_copied(&language.into())
+                .get_copied(&language.into_tinystr().raw())
                 .unwrap_or(DEFAULT_SCRIPT);
             if let Some(region) = locale.region() {
                 if script
                     == self
                         .likely_subtags
                         .lr2s
-                        .get_copied_2d(&language.into(), &region.into())
+                        .get_copied_2d(&language.into_tinystr().raw(), &region.into_tinystr().raw())
                         .unwrap_or(default_script)
                 {
                     locale.set_script(None);
@@ -122,7 +127,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
                 if let Some(script) = self
                     .likely_subtags
                     .lr2s
-                    .get_copied_2d(&language.into(), &region.into())
+                    .get_copied_2d(&language.into_tinystr().raw(), &region.into_tinystr().raw())
                 {
                     locale.set_script(Some(script));
                     self.restore_extensions_variants(locale);
