@@ -127,6 +127,7 @@ args = [
     "--locales=full",
     "--format=dir",
     "--syntax=postcard",
+    "--icuexport-root=provider/repodata/data/icuexport",
     "--out=components/segmenter/tests/testdata/provider",
     "--overwrite",
 ]
