@@ -5,16 +5,27 @@
 use crate::TinyAsciiStr;
 use crate::TinyStrError;
 
+/// A fixed-length bytes array that is expected to be an ASCII string but does not enforce that invariant.
+///
+/// Use this type instead of `TinyAsciiStr` if you don't need to enforce ASCII during deserialization. For
+/// example, strings that are keys of a map don't need to ever be reified as `TinyAsciiStr`s.
+///
+/// The main advantage of this type over `[u8; N]` is that it serializes as a string in
+/// human-readable formats like JSON.
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Clone, Copy)]
 pub struct UnvalidatedTinyAsciiStr<const N: usize>(pub(crate) [u8; N]);
 
 impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
+    #[inline]
+    // Converts into a [`TinyAsciiStr`]. Fails if the bytes are not valid ASCII.
     pub fn try_into_tinystr(&self) -> Result<TinyAsciiStr<N>, TinyStrError> {
         TinyAsciiStr::try_from_raw(self.0)
     }
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
+    #[inline]
+    // Converts into a [`UnvalidatedTinyAsciiStr`]
     pub fn to_unvalidated(self) -> UnvalidatedTinyAsciiStr<N> {
         UnvalidatedTinyAsciiStr(*self.all_bytes())
     }
