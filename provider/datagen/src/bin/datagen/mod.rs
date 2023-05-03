@@ -64,6 +64,17 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => source_data.with_icuexport_for_tag(&tag)?,
     };
 
+    source_data = match config.segmenter_lstm {
+        config::PathOrTag::Path(path) if path.as_os_str() == "builtin" => source_data,
+        config::PathOrTag::Path(path) => source_data.with_icuexport(path)?,
+        #[cfg(feature = "networking")]
+        config::PathOrTag::Latest => {
+            source_data.with_segmenter_lstm_for_tag(SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG)?
+        }
+        #[cfg(feature = "networking")]
+        config::PathOrTag::Tag(tag) => source_data.with_segmenter_lstm_for_tag(&tag)?,
+    };
+
     let provider = DatagenProvider::try_new(options, source_data)?;
 
     let keys = match config.keys {

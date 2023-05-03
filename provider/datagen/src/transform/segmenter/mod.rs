@@ -772,9 +772,14 @@ impl crate::DatagenProvider {
 
         let toml_data: &SegmenterDictionaryData = self
             .source
-            .builtin()
-            .read_and_parse_toml(filename)
-            .expect("built-in file present and readable");
+            .icuexport()
+            .and_then(|e| e.read_and_parse_toml(filename))
+            .or_else(|e| {
+                self.source
+                    .builtin()
+                    .read_and_parse_toml(filename)
+                    .map_err(|_| e)
+            })?;
 
         Ok(UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),

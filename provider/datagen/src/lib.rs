@@ -35,7 +35,7 @@
 //! The command line interface can be installed through Cargo.
 //!
 //! ```bash
-//! $ cargo install icu4x-datagen
+//! $ cargo install icu_datagen
 //! ```
 //!
 //! Once the tool is installed, you can invoke it like this:
@@ -147,7 +147,8 @@ impl DatagenProvider {
                 // `tools/testdata-scripts/globs.rs.data`.
                 source: SourceData::offline()
                     .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
-                    .with_icuexport(repodata::paths::icuexport()).unwrap(),
+                    .with_icuexport(repodata::paths::icuexport()).unwrap()
+                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap(),
             };
         }
         TEST_PROVIDER.clone()

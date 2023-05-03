@@ -112,7 +112,7 @@ pub struct Cli {
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
-        help = "Download Unicode Properties data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
+        help = "Download ICU data from this GitHub tag (https://github.com/unicode-org/icu/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--icuexport-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default).\n\
                   Note that some keys do not support versions before release-71-1."
@@ -121,11 +121,28 @@ pub struct Cli {
     icuexport_tag: String,
 
     #[arg(long, value_name = "PATH")]
+    #[cfg_attr(not(feature = "networking"), arg(default_value = "builtin"))]
     #[arg(
-        help = "Path to a local icuexportdata_uprops_full directory (see https://github.com/unicode-org/icu/releases).\n\
+        help = "Path to a local icuexport directory (see https://github.com/unicode-org/icu/releases).\n\
                   Note that some keys do not support versions before release-71-1."
     )]
     icuexport_root: Option<PathBuf>,
+
+    #[arg(long, value_name = "TAG")]
+    #[arg(
+        help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
+                  Use 'latest' for the latest version verified to work with this version of the binary.\n\
+                  Ignored if '--segmenter-lstm-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
+    )]
+    #[cfg_attr(not(feature = "networking"), arg(hide = true))]
+    #[cfg_attr(feature = "networking", arg(default_value = "latest"))]
+    segmenter_lstm_tag: String,
+
+    #[arg(long, value_name = "PATH")]
+    #[arg(
+        help = "Path to a local segmentation LSTM directory (see https://github.com/unicode-org/lstm_word_segmentation/releases)."
+    )]
+    segmenter_lstm_root: Option<PathBuf>,
 
     #[arg(long, value_enum, default_value_t = TrieType::Small)]
     #[arg(
@@ -214,8 +231,17 @@ impl Cli {
         Ok(config::Config {
             keys: self.make_keys()?,
             locales: self.make_locales()?,
-            cldr: self.make_cldr()?,
-            icu_export: self.make_icu_export()?,
+            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+            icu_export: self.make_path(
+                &self.icuexport_root,
+                &self.icuexport_tag,
+                "icuexport-root",
+            )?,
+            segmenter_lstm: self.make_path(
+                &self.segmenter_lstm_root,
+                &self.segmenter_lstm_tag,
+                "segmenter-lstm",
+            )?,
             trie_type: match self.trie_type {
                 TrieType::Fast => config::TrieType::Fast,
                 TrieType::Small => config::TrieType::Small,
@@ -294,27 +320,20 @@ impl Cli {
         })
     }
 
-    fn make_cldr(&self) -> eyre::Result<config::PathOrTag> {
-        Ok(match (&self.cldr_root, self.cldr_tag.as_str()) {
+    fn make_path(
+        &self,
+        root: &Option<PathBuf>,
+        tag: &str,
+        root_arg: &'static str,
+    ) -> eyre::Result<config::PathOrTag> {
+        Ok(match (root, tag) {
             (Some(path), _) => config::PathOrTag::Path(path.clone()),
             #[cfg(feature = "networking")]
             (_, "latest") => config::PathOrTag::Latest,
             #[cfg(feature = "networking")]
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--cldr-root flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
-        })
-    }
-
-    fn make_icu_export(&self) -> eyre::Result<config::PathOrTag> {
-        Ok(match (&self.icuexport_root, self.icuexport_tag.as_str()) {
-            (Some(path), _) => config::PathOrTag::Path(path.clone()),
-            #[cfg(feature = "networking")]
-            (_, "latest") => config::PathOrTag::Latest,
-            #[cfg(feature = "networking")]
-            (_, tag) => config::PathOrTag::Tag(String::from(tag)),
-            #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--icuexport-root flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
+            _ => eyre::bail!("--{root_arg} flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
         })
     }
 

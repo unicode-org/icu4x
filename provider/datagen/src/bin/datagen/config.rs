@@ -16,6 +16,7 @@ pub struct Config {
     pub locales: LocaleInclude,
     pub cldr: PathOrTag,
     pub icu_export: PathOrTag,
+    pub segmenter_lstm: PathOrTag,
     #[serde(default, skip_serializing_if = "is_default")]
     pub trie_type: TrieType,
     #[serde(default, skip_serializing_if = "is_default")]

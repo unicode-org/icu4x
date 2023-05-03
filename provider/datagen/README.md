@@ -32,7 +32,7 @@ fn main() {
 The command line interface can be installed through Cargo.
 
 ```bash
-$ cargo install icu4x-datagen
+$ cargo install icu_datagen
 ```
 
 Once the tool is installed, you can invoke it like this:

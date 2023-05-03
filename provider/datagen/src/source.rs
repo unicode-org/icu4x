@@ -41,6 +41,8 @@ impl Default for SourceData {
             .unwrap()
             .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
             .unwrap()
+            .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+            .unwrap()
     }
 }
 
@@ -49,7 +51,10 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-73-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
+
+    /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
+    pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     #[doc(hidden)]
     #[cfg(feature = "networking")]
@@ -99,6 +104,16 @@ impl SourceData {
         })
     }
 
+    /// Adds segmenter LSTM data to this `SourceData`. The path should point to a local
+    /// `models.zip` directory or ZIP file (see [GitHub releases](
+    /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
+    pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
+        Ok(Self {
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new(root)?)),
+            ..self
+        })
+    }
+
     /// Adds CLDR data to this `SourceData`. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
@@ -137,6 +152,22 @@ impl SourceData {
                     "https://github.com/unicode-org/icu/releases/download/{tag}/icuexportdata_{}.zip",
                     tag.replace('/', "-")
                 ),
+            )))),
+            ..self
+        })
+    }
+
+    /// Adds segmenter LSTM data to this `SourceData`. The data will be downloaded from GitHub
+    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
+    ///
+    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
+    pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Result<Self, DataError> {
+        Ok(Self {
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
+                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
             )))),
             ..self
         })
@@ -388,38 +419,32 @@ impl AbstractFs {
         Self::Memory(
             [
                 (
-                    "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
                     include_bytes!(
-                        "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                        "../data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
                     )
                     .as_slice(),
                 ),
                 (
-                    "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
                     include_bytes!(
-                        "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                        "../data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
                     )
                     .as_slice(),
                 ),
                 (
-                    "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
                     include_bytes!(
-                    "../data/lstm/Models/Burmese_codepoints_exclusive_model4_heavy/weights.json"
-                )
-                    .as_slice(),
-                ),
-                (
-                    "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
-                    include_bytes!(
-                        "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                        "../data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
                     )
                     .as_slice(),
                 ),
-                #[cfg(test)]
                 (
-                    "Models/Thai_graphclust_model4_heavy/weights.json",
-                    include_bytes!("../data/lstm/Models/Thai_graphclust_model4_heavy/weights.json")
-                        .as_slice(),
+                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
                 ),
             ]
             .into_iter()

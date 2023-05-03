@@ -132,5 +132,41 @@ fn main() -> eyre::Result<()> {
         output_path.join("icuexport"),
     )?;
 
+    for file in [
+        "burmesedict.toml",
+        "cjdict.toml",
+        "khmerdict.toml",
+        "laodict.toml",
+        "thaidict.toml",
+    ] {
+        std::fs::copy(
+            output_path
+                .join("icuexport/segmenter/dictionary")
+                .join(file),
+            output_path
+                .join("../../datagen/data/segmenter/dictionary")
+                .join(file),
+        )
+        .unwrap();
+    }
+
+    extract(
+        cached
+            .cached_path(&format!(
+                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
+                SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+            ))
+            .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
+        LSTM_GLOB.iter().copied().map(String::from).collect(),
+        output_path.join("lstm"),
+    )?;
+
+    for path in &LSTM_GLOB[..4] {
+        std::fs::copy(
+            output_path.join("lstm").join(path),
+            output_path.join("../../datagen/data/lstm").join(path),
+        )?;
+    }
+
     Ok(())
 }
