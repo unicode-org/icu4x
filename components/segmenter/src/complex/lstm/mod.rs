@@ -155,24 +155,19 @@ impl<'l> LstmSegmenter<'l> {
                         return self.dic.len() as u16;
                     };
 
-                    // The maximum UTF-8 size of a grapheme cluster seems to be 41 bytes
-                    let mut i = 0;
-                    let mut buf = [0; 41];
-
-                    #[allow(clippy::unwrap_used)]
-                    // debug_asserting whether my assumption is correct
-                    decode_utf16(grapheme_cluster.iter().copied()).for_each(|c| {
-                        debug_assert!(i < 37);
-                        i += c
-                            .unwrap_or(REPLACEMENT_CHARACTER)
-                            .encode_utf8(&mut buf[i..])
-                            .len()
-                    });
-
-                    #[allow(clippy::unwrap_used)]
-                    // debug_asserting whether my assumption is correct
                     self.dic
-                        .get_copied(UnvalidatedStr::from_bytes(&buf[..i]))
+                        .get_copied_by(|key| {
+                            key.as_bytes().iter().copied().cmp(
+                                decode_utf16(grapheme_cluster.iter().copied()).flat_map(|c| {
+                                    let mut buf = [0; 4];
+                                    let len = c
+                                        .unwrap_or(REPLACEMENT_CHARACTER)
+                                        .encode_utf8(&mut buf)
+                                        .len();
+                                    buf.into_iter().take(len)
+                                }),
+                            )
+                        })
                         .unwrap_or_else(|| self.dic.len() as u16)
                 })
                 .collect()
