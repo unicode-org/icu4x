@@ -110,7 +110,7 @@ impl SourceData {
     }
 
     /// Adds segmenter LSTM data to this `DataSource`. The path should point to a local
-    /// `lstm_word_segmentation.zip` directory or ZIP file (see [GitHub releases](
+    /// `models.zip` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
     pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {

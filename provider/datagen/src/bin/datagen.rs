@@ -144,7 +144,7 @@ struct Cli {
 
     #[arg(long, value_name = "PATH")]
     #[arg(
-        help = "Path to a local segmentation LSMT directory (see https://github.com/unicode-org/lstm_word_segmentation/releases)."
+        help = "Path to a local segmentation LSTM directory (see https://github.com/unicode-org/lstm_word_segmentation/releases)."
     )]
     segmenter_lstm_root: Option<PathBuf>,
 
