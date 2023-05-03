@@ -34,7 +34,7 @@ mod segmenter;
 #[clippy::msrv = "1.61"]
 mod time_zone;
 #[clippy::msrv = "1.61"]
-use ::icu_provider::prelude::*;
+use icu_provider::prelude::*;
 /// Implement [`DataProvider<M>`] on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.

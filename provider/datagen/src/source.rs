@@ -7,7 +7,7 @@ pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
 use std::io::Cursor;
 use std::io::Read;
@@ -23,7 +23,7 @@ use zip::ZipArchive;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
+    builtin_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
@@ -32,17 +32,11 @@ pub struct SourceData {
 
 impl Default for SourceData {
     fn default() -> Self {
-        let segmenter_path =
-            PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/data/segmenter"));
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(&segmenter_path).expect("valid dir"),
-            )),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(
-                AbstractFs::new(segmenter_path.join("lstm")).expect("valid dir"),
-            )),
+            builtin_paths: Arc::new(SerdeCache::new(AbstractFs::new_builtin())),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
             collations: vec![],
@@ -213,11 +207,12 @@ impl SourceData {
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to segmenter data.
-    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_paths)
+    /// Path to built-in data.
+    pub(crate) fn builtin(&self) -> &SerdeCache {
+        &self.builtin_paths
     }
 
+    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
@@ -329,9 +324,7 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes)
-                .map_err(std::io::Error::from)
-                .map_err(DataError::from)
+            serde_json::from_slice(bytes).map_err(DataError::from)
         })
     }
 
@@ -356,6 +349,7 @@ impl SerdeCache {
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<Result<ZipArchive<Cursor<Vec<u8>>>, String>>),
+    Memory(BTreeMap<&'static str, &'static [u8]>),
 }
 
 impl Debug for AbstractFs {
@@ -379,6 +373,94 @@ impl AbstractFs {
                 DataError::custom("Zip").with_display_context(&e)
             })?))))
         }
+    }
+
+    fn new_builtin() -> Self {
+        Self::Memory(
+            [
+                (
+                    "segmenter/rules/grapheme.toml",
+                    include_bytes!("../data/segmenter/rules/grapheme.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/word.toml",
+                    include_bytes!("../data/segmenter/rules/word.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/line.toml",
+                    include_bytes!("../data/segmenter/rules/line.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/sentence.toml",
+                    include_bytes!("../data/segmenter/rules/sentence.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/cjdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/khmerdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/laodict.toml",
+                    include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/burmesedict.toml",
+                    include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/thaidict.toml",
+                    include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
+    }
+
+    fn new_lstm() -> Self {
+        Self::Memory(
+            [
+                (
+                    "Models/Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                    "../data/lstm/Models/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                )
+                    .as_slice(),
+                ),
+                (
+                    "Models/Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Models/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                #[cfg(test)]
+                (
+                    "Models/Thai_graphclust_model4_heavy/weights.json",
+                    include_bytes!("../data/lstm/Models/Thai_graphclust_model4_heavy/weights.json")
+                        .as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
 
     #[cfg(feature = "networking")]
@@ -443,6 +525,9 @@ impl AbstractFs {
                     .read_to_end(&mut buf)?;
                 Ok(buf)
             }
+            Self::Memory(map) => map.get(path).copied().map(Vec::from).ok_or_else(|| {
+                DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
+            }),
         }
     }
 
@@ -466,6 +551,12 @@ impl AbstractFs {
                 .map(String::from)
                 .collect::<HashSet<_>>()
                 .into_iter(),
+            Self::Memory(map) => map
+                .keys()
+                .copied()
+                .map(String::from)
+                .collect::<HashSet<_>>()
+                .into_iter(),
         })
     }
 
@@ -481,6 +572,7 @@ impl AbstractFs {
                 .unwrap() // init called
                 .file_names()
                 .any(|p| p == path),
+            Self::Memory(map) => map.contains_key(path),
         })
     }
 }

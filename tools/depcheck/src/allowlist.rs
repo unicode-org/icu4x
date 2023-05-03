@@ -72,7 +72,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["libm", "num-traits"];
+pub const EXTRA_LSTM_DEPS: &[&str] = &["libm"];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
@@ -122,9 +122,9 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ndarray",
     "num-complex",
     "num-integer",
+    "num-traits",
     "rawpointer",
     "regex-syntax",
-    "rust-format",
     "ryu",
     "serde-aux",
     "serde_json",

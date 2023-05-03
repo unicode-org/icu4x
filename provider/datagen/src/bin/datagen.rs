@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use clap::{crate_version, ArgGroup, Parser};
+use clap::{ArgGroup, Parser};
 use eyre::WrapErr;
 use icu_datagen::prelude::*;
 use simple_logger::SimpleLogger;
@@ -13,7 +13,6 @@ mod cli {
 
     #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
     pub(crate) enum Format {
-        #[cfg_attr(feature = "fs", value(hide = true))]
         Dir,
         Blob,
         Mod,
@@ -61,8 +60,9 @@ mod cli {
     }
 }
 #[derive(Parser)]
-#[command(name = "icu4x-datagen", author, version)]
-#[command(about = concat!("Learn more at: https://docs.rs/icu_datagen/", crate_version!()), long_about = None)]
+#[command(name = "icu4x-datagen")]
+#[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
+#[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 #[command(group(
             ArgGroup::new("key_mode")
                 .required(true)
@@ -85,7 +85,6 @@ struct Cli {
 
     #[arg(short, long, value_enum, default_value_t = cli::Syntax::Json)]
     #[arg(help = "--format=dir only: serde serialization format.")]
-    #[cfg_attr(feature = "fs", arg(hide = true))]
     syntax: cli::Syntax,
 
     #[arg(short, long)]
@@ -335,9 +334,6 @@ fn main() -> eyre::Result<()> {
             if v == cli::Format::DeprecatedDefault {
                 log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
             }
-            #[cfg(not(feature = "fs"))]
-            eyre::bail!("--format=dir only available with the `fs` Cargo feature");
-            #[cfg(feature = "fs")]
             icu_datagen::Out::Fs {
                 output_path: matches
                     .output
