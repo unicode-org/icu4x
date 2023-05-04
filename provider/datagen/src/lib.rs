@@ -104,6 +104,11 @@ use std::collections::HashSet;
 use std::path::Path;
 
 /// [`DataProvider`] backed by [`SourceData`]
+///
+/// If `source` does not contain a specific data source, `DataProvider::load` will
+/// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
+/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
+/// required for that key.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "networking", derive(Default))]
 #[cfg_attr(not(doc), allow(clippy::exhaustive_structs))]

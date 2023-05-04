@@ -64,11 +64,6 @@ impl SourceData {
     }
 
     /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
-    ///
-    /// Using this to generate keys that require the data will result in errors
-    /// ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
-    /// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)). Make sure to set
-    /// local data sources using [`SourceData::with_cldr`] / [`SourceData::with_icuexport`].
     pub fn offline() -> Self {
         Self {
             cldr_paths: None,
@@ -80,7 +75,7 @@ impl SourceData {
     }
 
     /// Adds CLDR data to this `SourceData`. The root should point to a local
-    /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
+    /// `cldr-{tag}-json-full.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     pub fn with_cldr(
         self,
@@ -95,7 +90,7 @@ impl SourceData {
     }
 
     /// Adds ICU export data to this `SourceData`. The path should point to a local
-    /// `icuexportdata_uprops_full.zip` directory or ZIP file (see [GitHub releases](
+    /// `icuexportdata_{tag}.zip` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
