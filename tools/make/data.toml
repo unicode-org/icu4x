@@ -75,30 +75,6 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-legacy]
-description = "Build the data for the legacy icu_testdata crate"
-category = "ICU4X Data"
-command = "cargo"
-args = [
-    "run",
-    "--bin=make-testdata-legacy",
-    "--release",
-    "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
-]
-
-[tasks.testdata-legacy-test]
-description = "Verify the data for the legacy icu_testdata crate"
-category = "ICU4X Data"
-script_runner = "@duckscript"
-script = """
-    cd provider/testdata
-    set_env CARGO_TARGET_DIR "../../target"
-    exec --fail-on-error cargo check-all-features
-    exec --fail-on-error cargo test --all-features --all-targets
-    set_env RUSTDOCFLAGS -Dwarnings
-    exec --fail-on-error cargo doc --all-features --no-deps
-"""
-
 [tasks.bakeddata]
 description = "Builds full baked data"
 category = "ICU4X Data"

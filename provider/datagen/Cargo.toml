@@ -108,11 +108,10 @@ icu_singlenumberformatter = { path = "../../experimental/singlenumberformatter",
 icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
 
 [features]
-default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
+default = ["bin", "use_wasm", "networking", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
 baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
-legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries

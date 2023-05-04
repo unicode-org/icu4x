@@ -1263,6 +1263,8 @@ mod tests {
 
     use crate as icu_transliterate;
     include!("../../tests/data/baked/mod.rs");
+    struct BakedDataProvider;
+    impl_data_provider!(BakedDataProvider);
 
     #[test]
     fn test_empty_matches() {

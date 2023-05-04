@@ -9,12 +9,7 @@ use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fmt::Write;
 use std::fs;
-#[allow(deprecated)]
-// We're using SipHash, which is deprecated, but we want a stable hasher
-// (we're fine with it not being cryptographically secure since we're just using it to track diffs)
-use std::hash::{Hasher, SipHasher};
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
 
 /// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
@@ -42,12 +37,6 @@ pub struct Options {
     pub root: PathBuf,
     /// Option for initializing the output directory.
     pub overwrite: OverwriteOption,
-    #[deprecated(
-        since = "1.3.0",
-        note = "this feature was mainly intended for internal use and will be removed in a future version"
-    )]
-    /// Whether to create a fingerprint file with hashes
-    pub fingerprint: bool,
 }
 
 #[doc(hidden)]
@@ -55,11 +44,9 @@ pub type ExporterOptions = Options;
 
 impl Default for Options {
     fn default() -> Self {
-        #[allow(deprecated)] // obviously
         Self {
             root: PathBuf::from("icu4x_data"),
             overwrite: Default::default(),
-            fingerprint: false,
         }
     }
 }
@@ -80,7 +67,6 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     serializer: Box<dyn AbstractSerializer + Sync>,
-    fingerprints: Option<Mutex<Vec<String>>>,
 }
 
 impl FilesystemExporter {
@@ -94,16 +80,10 @@ impl FilesystemExporter {
         serializer: Box<dyn AbstractSerializer + Sync>,
         options: Options,
     ) -> Result<Self, DataError> {
-        #[allow(deprecated)] // obviously
         let result = FilesystemExporter {
             root: options.root,
             manifest: Manifest::for_format(serializer.get_buffer_format())?,
             serializer,
-            fingerprints: if options.fingerprint {
-                Some(Mutex::new(vec![]))
-            } else {
-                None
-            },
         };
 
         match options.overwrite {
@@ -142,37 +122,18 @@ impl DataExporter for FilesystemExporter {
         fs::create_dir_all(parent_dir)
             .map_err(|e| DataError::from(e).with_path_context(&parent_dir))?;
 
-        let mut file = HashingFile {
-            file: if self.serializer.is_text_format() {
-                Box::new(crlify::BufWriterWithLineEndingFix::new(
-                    fs::File::create(&path_buf)
-                        .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
-                ))
-            } else {
-                Box::new(std::io::BufWriter::new(
-                    fs::File::create(&path_buf)
-                        .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
-                ))
-            },
-            hash_size: if self.fingerprints.is_some() {
-                #[allow(deprecated)]
-                Some((SipHasher::new(), 0))
-            } else {
-                None
-            },
-        };
+        let file = fs::File::create(&path_buf)
+            .map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
 
-        self.serializer
-            .serialize(obj, &mut file)
-            .map_err(|e| e.with_path_context(&path_buf))?;
-        if let Some((hash, size)) = file.hash_size {
-            self.fingerprints
-                .as_ref()
-                .expect("present iff file.1 is present")
-                .lock()
-                .expect("poison")
-                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finish()));
+        if self.serializer.is_text_format() {
+            self.serializer
+                .serialize(obj, &mut crlify::BufWriterWithLineEndingFix::new(file))
+        } else {
+            self.serializer
+                .serialize(obj, &mut std::io::BufWriter::new(file))
         }
+        .map_err(|e| e.with_path_context(&path_buf))?;
+
         Ok(())
     }
 
@@ -188,42 +149,5 @@ impl DataExporter for FilesystemExporter {
         }
 
         Ok(())
-    }
-
-    fn close(&mut self) -> Result<(), DataError> {
-        if let Some(fingerprints) = self.fingerprints.as_mut() {
-            let fingerprints = fingerprints.get_mut().expect("poison");
-            fingerprints.sort();
-            let path = self.root.join("fingerprints.csv");
-            let mut file = crlify::BufWriterWithLineEndingFix::new(
-                std::fs::File::create(&path)
-                    .map_err(|e| DataError::from(e).with_path_context(&path))?,
-            );
-            for line in fingerprints {
-                use std::io::Write;
-                writeln!(file, "{line}")?;
-            }
-        }
-        Ok(())
-    }
-}
-
-struct HashingFile {
-    file: Box<dyn std::io::Write>,
-    #[allow(deprecated)]
-    hash_size: Option<(SipHasher, usize)>,
-}
-
-impl std::io::Write for HashingFile {
-    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some((hash, size)) = self.hash_size.as_mut() {
-            hash.write(buf);
-            *size += buf.len();
-        }
-        self.file.write(buf)
-    }
-
-    fn flush(&mut self) -> std::io::Result<()> {
-        self.file.flush()
     }
 }

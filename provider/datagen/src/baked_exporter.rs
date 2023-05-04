@@ -133,8 +133,6 @@ pub struct Options {
     /// This is required when you are not using the `icu` crate, *and* you're building custom data providers;
     /// data for `compiled_data` constructors uses `icu` names.
     pub use_separate_crates: bool,
-    #[doc(hidden)] // deprecated, used by legacy testdata
-    pub insert_feature_gates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
 }
@@ -144,7 +142,6 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             pretty: false,
-            insert_feature_gates: false,
             use_separate_crates: false,
             overwrite: false,
         }
@@ -157,7 +154,6 @@ pub struct BakedExporter {
     // Input arguments
     mod_directory: PathBuf,
     pretty: bool,
-    insert_feature_gates: bool,
     use_separate_crates: bool,
     // Temporary storage for put_payload: key -> (bake -> {locale})
     data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<String>>>>,
@@ -172,7 +168,6 @@ impl std::fmt::Debug for BakedExporter {
         f.debug_struct("BakedExporter")
             .field("mod_directory", &self.mod_directory)
             .field("pretty", &self.pretty)
-            .field("insert_feature_gates", &self.insert_feature_gates)
             .field("use_separate_crates", &self.use_separate_crates)
             // skip formatting intermediate data
             .finish()
@@ -184,7 +179,6 @@ impl BakedExporter {
     pub fn new(mod_directory: PathBuf, options: Options) -> Result<Self, DataError> {
         let Options {
             pretty,
-            insert_feature_gates,
             use_separate_crates,
             overwrite,
         } = options;
@@ -202,7 +196,6 @@ impl BakedExporter {
             mod_directory,
             pretty,
             use_separate_crates,
-            insert_feature_gates: insert_feature_gates && use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
@@ -594,28 +587,6 @@ impl BakedExporter {
 
         let data = move_out!(self.impl_data).into_inner().expect("poison");
 
-        let features = data
-            .iter()
-            .map(|(key, marker)| {
-                if !self.insert_feature_gates {
-                    quote!()
-                } else if *key
-                    == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                    // neo keys are also experimental
-                    || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
-                {
-                    quote! { #[cfg(feature = "icu_datetime_experimental")] }
-                } else if *key == icu_plurals::provider::PluralRangesV1Marker::KEY {
-                    quote! { #[cfg(feature = "icu_plurals_experimental")] }
-                } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
-                    quote!()
-                } else {
-                    let feature = marker.split(" :: ").next().unwrap();
-                    quote! { #[cfg(feature = #feature)] }
-                }
-            })
-            .collect::<Vec<_>>();
-
         let markers = data
             .values()
             .map(|marker| marker.parse::<TokenStream>().unwrap())
@@ -692,7 +663,6 @@ impl BakedExporter {
                     ($provider:ty) => {
                         make_provider!($provider);
                         #(
-                            #features
                             #macro_idents ! ($provider);
                         )*
                     };
@@ -708,7 +678,6 @@ impl BakedExporter {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
                                     #(
-                                        #features
                                         h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
                                             icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*
@@ -718,20 +687,6 @@ impl BakedExporter {
                         }
                     }
                 }
-
-                // For backwards compatibility
-                #maybe_msrv
-                pub struct BakedDataProvider;
-                impl_data_provider!(BakedDataProvider);
-            },
-        )?;
-
-        // For backwards compatibility
-        self.write_to_file(
-            PathBuf::from("any.rs"),
-            quote! {
-                // This assumes that `mod.rs` is already included.
-                impl_any_provider!(BakedDataProvider);
             },
         )?;
 

@@ -9,6 +9,8 @@ use icu_locid::Locale;
 use icu_transliterate::Transliterator;
 
 include!("../tests/data/baked/mod.rs");
+struct BakedDataProvider;
+impl_data_provider!(BakedDataProvider);
 
 struct BenchDataContent {
     pub num: usize,

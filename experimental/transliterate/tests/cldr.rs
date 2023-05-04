@@ -9,6 +9,8 @@ use icu_transliterate::Transliterator;
 use std::path::PathBuf;
 
 include!("data/baked/mod.rs");
+struct BakedDataProvider;
+impl_data_provider!(BakedDataProvider);
 
 #[test]
 fn test_all_cldr() {

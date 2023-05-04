@@ -102,10 +102,6 @@ can be disabled to reduce dependencies:
   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
 * `bin`
   * required by the CLI and enabled by default to make `cargo install` work
-* `legacy_api`
-  * enables the deprecated pre-1.3 API
-  * enabled by default for semver stability
-  * will be removed in 2.0.
 
 Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
 affect the behaviour of [`all_keys`]:

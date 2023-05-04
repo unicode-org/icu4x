@@ -4,8 +4,7 @@
 
 use clap::{ArgAction, Parser};
 use eyre::WrapErr;
-use icu_datagen::DatagenProvider;
-use icu_locid::*;
+use icu_datagen::prelude::*;
 use icu_provider::DataError;
 use simple_logger::SimpleLogger;
 use std::fs::{self, File};

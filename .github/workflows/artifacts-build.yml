@@ -515,73 +515,9 @@ jobs:
           git checkout empty
           gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
-  # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
-  bench-datasize:
-    # This is too expensive to run on every push, so only run it on main.
-    # When running on a PR, comment this out and set the BASELINE variable below to the baseline commit.
-    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
-    concurrency:
-      # Allow one run at a time to include the previous run's results
-      group: bench-datasize
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    # GCP Boilerplate for jobs in main repository
-    - id: gcp-auth
-      name: "Authenticate to Google Cloud with Workload Identity Provider"
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
-        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
-    - name: "Set up Google Cloud SDK"
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Install rustfmt
-      run: |
-        rustup component add rustfmt
-
-    - name: Setup output data directory
-      run: |
-        mkdir -p benchmarks/datasize
-
-    - name: Generate testdata
-      run: |
-        cargo run --bin make-testdata-legacy --manifest-path tools/testdata-scripts/Cargo.toml
-
-    - name: Measure size of selected data package provider/testdata/data/testdata.postcard
-      run: |
-        cargo run --package icu_benchmark_binsize  -- provider/testdata/data/testdata.postcard file | tee benchmarks/datasize/output.txt
-
-    - name:  Download previous benchmark data
-      run: |
-        mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize/* benchmarks/datasize
-
-    - name: Store benchmark result & create dashboard
-      # Use gregtatum special feature to process ndjson-formatted benchmark data
-      uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
-      with:
-        tool: 'ndjson'
-        output-file-path: benchmarks/datasize/output.txt
-        benchmark-data-dir-path: ./benchmarks/datasize
-        # Tentative setting, optimized value to be determined
-        alert-threshold: '100%'
-        fail-on-alert: false
-        # comment-on-alert: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        gh-pages-branch: empty
-        # alert-comment-cc-users: '@gnrunge,@sffc,@zbraniecki,@echeran'
-
-    - name: Upload new benchmark data
-      if: success() || failure()
-      run: |
-          git checkout empty
-          gsutil -m cp -r benchmarks/datasize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
-
   gh-pages:
     name: "Deploy to GitHub Pages"
-    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-binsize] 
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![allow(dead_code)]
+
 use elsa::sync::FrozenMap;
 use icu_provider::prelude::*;
 use std::any::Any;
@@ -208,7 +210,6 @@ impl AbstractFs {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
         let vec = self.read_to_buf(path)?;
         let s = String::from_utf8(vec)

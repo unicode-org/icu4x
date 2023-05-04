@@ -566,7 +566,7 @@ fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
     SINGLETON
         .get_or_init(|| {
             let mut provider = DatagenProvider::new_custom();
-            provider.source.icuexport_paths =
+            provider.icuexport_paths =
                 Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
                     [
                         (

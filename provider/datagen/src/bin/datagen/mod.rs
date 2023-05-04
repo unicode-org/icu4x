@@ -120,11 +120,7 @@ fn main() -> eyre::Result<()> {
     };
 
     match config.export {
-        config::Export::FileSystem {
-            path,
-            syntax,
-            fingerprint,
-        } => {
+        config::Export::FileSystem { path, syntax } => {
             #[cfg(not(feature = "fs_exporter"))]
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature");
             #[cfg(feature = "fs_exporter")]
@@ -142,10 +138,6 @@ fn main() -> eyre::Result<()> {
                         options.root = path;
                         if config.overwrite {
                             options.overwrite = OverwriteOption::RemoveAndReplace
-                        }
-                        #[allow(deprecated)] // obviously
-                        {
-                            options.fingerprint = fingerprint;
                         }
                         options
                     },
@@ -180,7 +172,6 @@ fn main() -> eyre::Result<()> {
         config::Export::Baked {
             path,
             pretty,
-            insert_feature_gates,
             use_separate_crates,
         } => {
             #[cfg(not(feature = "baked_exporter"))]
@@ -194,7 +185,6 @@ fn main() -> eyre::Result<()> {
                 let exporter = BakedExporter::new(path, {
                     let mut options = Options::default();
                     options.pretty = pretty;
-                    options.insert_feature_gates = insert_feature_gates;
                     options.use_separate_crates = use_separate_crates;
                     options.overwrite = config.overwrite;
                     options

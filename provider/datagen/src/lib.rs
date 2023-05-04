@@ -103,10 +103,6 @@
 //!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
 //! * `bin`
 //!   * required by the CLI and enabled by default to make `cargo install` work
-//! * `legacy_api`
-//!   * enables the deprecated pre-1.3 API
-//!   * enabled by default for semver stability
-//!   * will be removed in 2.0.
 //!
 //! Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
 //! affect the behaviour of [`all_keys`]:
@@ -146,7 +142,6 @@ pub use driver::DatagenDriver;
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;
-#[allow(deprecated)] // ugh
 pub use registry::*;
 
 #[cfg(feature = "baked_exporter")]
@@ -166,12 +161,6 @@ pub mod prelude {
     pub use icu_locid::{langid, LanguageIdentifier};
     #[doc(no_inline)]
     pub use icu_provider::{datagen::DataExporter, DataKey, KeyedDataMarker};
-
-    // SEMVER GRAVEYARD
-    #[cfg(feature = "legacy_api")]
-    #[allow(deprecated)]
-    #[doc(hidden)]
-    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out, SourceData};
 }
 
 use icu_provider::prelude::*;
@@ -353,48 +342,6 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     strings.iter().filter_map(crate::key).collect()
 }
 
-/// Parses a file of human-readable key identifiers and returns a
-/// list of [`DataKey`]s.
-///
-/// Unknown key names are ignored.
-//  Supports the hello world key
-/// # Example
-///
-/// #### keys.txt
-/// ```text
-/// list/and@1
-/// list/or@1
-/// ```
-/// #### build.rs
-/// ```no_run
-/// # use icu_provider::KeyedDataMarker;
-/// # use std::fs::File;
-/// # fn main() -> std::io::Result<()> {
-/// assert_eq!(
-///     icu_datagen::keys_from_file("keys.txt")?,
-///     vec![
-///         icu::list::provider::AndListV1Marker::KEY,
-///         icu::list::provider::OrListV1Marker::KEY,
-///     ],
-/// );
-/// # Ok(())
-/// # }
-/// ```
-#[deprecated(since = "1.3.0", note = "use Rust code")]
-#[cfg(feature = "legacy_api")]
-pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    let file = std::fs::File::open(path.as_ref())?;
-    keys_from_file_inner(&file)
-}
-
-#[cfg(feature = "legacy_api")]
-fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<DataKey>> {
-    use std::io::{BufRead, BufReader};
-    BufReader::new(source)
-        .lines()
-        .filter_map(|k| k.map(crate::key).transpose())
-        .collect()
-}
 /// Parses a compiled binary and returns a list of [`DataKey`]s that it uses *at runtime*.
 ///
 /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
@@ -454,212 +401,6 @@ fn keys_from_bin_inner(bytes: &[u8]) -> Vec<DataKey> {
     result
 }
 
-#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
-#[allow(deprecated)]
-#[cfg(feature = "legacy_api")]
-pub use provider::SourceData;
-
-/// The output format for [`datagen`].
-///
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
-#[non_exhaustive]
-#[cfg(feature = "legacy_api")]
-pub enum Out {
-    /// Output to a file system tree
-    Fs {
-        /// The root path.
-        output_path: std::path::PathBuf,
-        /// The serialization format. See [syntax].
-        serializer: Box<dyn icu_provider_fs::export::serializers::AbstractSerializer + Sync>,
-        /// Whether to overwrite existing data.
-        overwrite: bool,
-        /// Whether to create a fingerprint file with SHA2 hashes
-        fingerprint: bool,
-    },
-    /// Output as a postcard blob to the given sink.
-    ///
-    /// This supports only version 1 of the blob format. Please use [`DatagenDriver`] with
-    /// [`BlobExporter`] to export to blob format version 2.
-    ///
-    /// [`BlobExporter`]: crate::blob_exporter::BlobExporter
-    Blob(Box<dyn std::io::Write + Sync>),
-    /// Output a module with baked data at the given location.
-    Baked {
-        /// The directory of the generated module.
-        mod_directory: std::path::PathBuf,
-        /// Additional options to configure the generated module.
-        options: BakedOptions,
-    },
-    /// Old deprecated configuration for databake.
-    #[doc(hidden)]
-    #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
-    Module {
-        mod_directory: std::path::PathBuf,
-        pretty: bool,
-        use_separate_crates: bool,
-        insert_feature_gates: bool,
-    },
-}
-
-#[allow(deprecated)]
-#[cfg(feature = "legacy_api")]
-impl core::fmt::Debug for Out {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Fs {
-                output_path,
-                serializer,
-                overwrite,
-                fingerprint,
-            } => f
-                .debug_struct("Fs")
-                .field("output_path", output_path)
-                .field("serializer", serializer)
-                .field("overwrite", overwrite)
-                .field("fingerprint", fingerprint)
-                .finish(),
-            Self::Blob(_) => f.debug_tuple("Blob").field(&"[...]").finish(),
-            Self::Baked {
-                mod_directory,
-                options,
-            } => f
-                .debug_struct("Baked")
-                .field("mod_directory", mod_directory)
-                .field("options", options)
-                .finish(),
-            #[allow(deprecated)]
-            Self::Module {
-                mod_directory,
-                pretty,
-                use_separate_crates,
-                insert_feature_gates,
-            } => f
-                .debug_struct("Module")
-                .field("mod_directory", mod_directory)
-                .field("pretty", pretty)
-                .field("insert_feature_gates", insert_feature_gates)
-                .field("use_separate_crates", use_separate_crates)
-                .finish(),
-        }
-    }
-}
-
-#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
-#[cfg(feature = "legacy_api")]
-#[allow(deprecated)]
-/// Runs data generation
-///
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-///
-/// The argument are used as follows:
-/// * `locales`: If this is present, only locales that are either `und` or
-///   contained (strictly, i.e. `en` != `en-US`) in the slice will be generated.
-///   Otherwise, all locales supported by the source data will be generated.
-/// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
-/// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
-///   requested key requires them, otherwise an error satisfying [`is_missing_cldr_error`]
-///   or [`is_missing_icuexport_error`] will be returned.
-/// * `out`: The output format and location. See the documentation on [`Out`]
-pub fn datagen(
-    locales: Option<&[icu_locid::LanguageIdentifier]>,
-    keys: &[DataKey],
-    source: &SourceData,
-    outs: Vec<Out>,
-) -> Result<(), DataError> {
-    let exporter = DatagenDriver::new()
-        .with_keys(keys.iter().cloned())
-        .with_fallback_mode(FallbackMode::Hybrid)
-        .with_additional_collations(source.collations.clone());
-    match locales {
-        Some(locales) => exporter
-            .with_locales(
-                locales
-                    .iter()
-                    .cloned()
-                    .chain([icu_locid::LanguageIdentifier::UND]),
-            )
-            .with_segmenter_models({
-                let mut models = vec![];
-                for locale in locales {
-                    let locale = locale.into();
-                    if let Some(model) =
-                        transform::segmenter::lstm::data_locale_to_model_name(&locale)
-                    {
-                        models.push(model.into());
-                    }
-                    if let Some(model) =
-                        transform::segmenter::dictionary::data_locale_to_model_name(&locale)
-                    {
-                        models.push(model.into());
-                    }
-                }
-                models
-            }),
-        _ => exporter.with_all_locales(),
-    }
-    .export(
-        &DatagenProvider {
-            source: source.clone(),
-        },
-        icu_provider::datagen::MultiExporter::new(
-            outs.into_iter()
-                .map(
-                    |out| -> Result<Box<dyn icu_provider::datagen::DataExporter>, DataError> {
-                        Ok(match out {
-                            Out::Fs {
-                                output_path,
-                                serializer,
-                                overwrite,
-                                fingerprint,
-                            } => {
-                                let mut options = fs_exporter::Options::default();
-                                options.root = output_path;
-                                if overwrite {
-                                    options.overwrite =
-                                        fs_exporter::OverwriteOption::RemoveAndReplace
-                                }
-                                options.fingerprint = fingerprint;
-                                Box::new(fs_exporter::FilesystemExporter::try_new(
-                                    serializer, options,
-                                )?)
-                            }
-                            Out::Blob(write) => {
-                                // Note: no blob v2 support in legacy API
-                                Box::new(blob_exporter::BlobExporter::new_with_sink(write))
-                            }
-                            Out::Baked {
-                                mod_directory,
-                                options,
-                            } => Box::new(baked_exporter::BakedExporter::new(
-                                mod_directory,
-                                options,
-                            )?),
-                            #[allow(deprecated)]
-                            Out::Module {
-                                mod_directory,
-                                pretty,
-                                insert_feature_gates,
-                                use_separate_crates,
-                            } => Box::new(baked_exporter::BakedExporter::new(
-                                mod_directory,
-                                baked_exporter::Options {
-                                    pretty,
-                                    insert_feature_gates,
-                                    use_separate_crates,
-                                    // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
-                                    // 1.1.2 made it an option in Options.
-                                    overwrite: false,
-                                },
-                            )?),
-                        })
-                    },
-                )
-                .collect::<Result<_, _>>()?,
-        ),
-    )
-}
-
 #[test]
 fn test_keys() {
     assert_eq!(
@@ -673,26 +414,6 @@ fn test_keys() {
             icu_list::provider::AndListV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
-        ]
-    );
-}
-
-#[test]
-#[cfg(feature = "legacy_api")]
-fn test_keys_from_file() {
-    #![allow(deprecated)]
-
-    const BYTES: &[u8] = include_bytes!("../tests/data/tutorial_buffer+keys.txt");
-
-    assert_eq!(
-        keys_from_file_inner(BYTES).unwrap(),
-        vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_calendar::provider::WeekDataV1Marker::KEY,
-            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
-            icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
 }
@@ -715,73 +436,4 @@ fn test_keys_from_bin() {
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
-}
-
-// SEMVER GRAVEYARD
-
-#[cfg(feature = "legacy_api")]
-#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
-/// Identifies errors that are due to missing CLDR data.
-///
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-pub fn is_missing_cldr_error(e: DataError) -> bool {
-    DatagenProvider::is_missing_cldr_error(e)
-}
-
-#[cfg(feature = "legacy_api")]
-#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
-/// Identifies errors that are due to missing ICU export data.
-///
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-pub fn is_missing_icuexport_error(e: DataError) -> bool {
-    DatagenProvider::is_missing_icuexport_error(e)
-}
-
-#[cfg(feature = "legacy_api")]
-/// [`Out::Fs`] serialization formats.
-///
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-#[deprecated(since = "1.3.0", note = "use `fs_exporter::serializers`")]
-pub mod syntax {
-    #[doc(no_inline)]
-    pub use crate::fs_exporter::serializers::Bincode;
-    #[doc(no_inline)]
-    pub use crate::fs_exporter::serializers::Json;
-    #[doc(no_inline)]
-    pub use crate::fs_exporter::serializers::Postcard;
-}
-
-#[cfg(feature = "legacy_api")]
-#[doc(hidden)]
-pub use baked_exporter::Options as BakedOptions;
-
-#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
-#[doc(hidden)]
-#[derive(Debug)]
-#[cfg(feature = "legacy_api")]
-pub enum CldrLocaleSubset {
-    Ignored,
-}
-
-#[cfg(feature = "legacy_api")]
-impl Default for CldrLocaleSubset {
-    fn default() -> Self {
-        Self::Ignored
-    }
-}
-
-#[cfg(feature = "legacy_api")]
-impl CldrLocaleSubset {
-    #[allow(non_upper_case_globals)]
-    pub const Full: Self = Self::Ignored;
-    #[allow(non_upper_case_globals)]
-    pub const Modern: Self = Self::Ignored;
-}
-
-#[cfg(feature = "legacy_api")]
-/// ✨ *Enabled with the `legacy_api` Cargo feature.*
-impl AnyProvider for DatagenProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.as_any_provider().load_any(key, req)
-    }
 }

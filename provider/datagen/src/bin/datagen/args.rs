@@ -15,7 +15,6 @@ enum Format {
     Blob,
     Blob2,
     Mod,
-    DeprecatedDefault,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
@@ -77,7 +76,7 @@ pub struct Cli {
     #[arg(help = "Requests verbose output")]
     pub verbose: bool,
 
-    #[arg(long, value_enum, default_value_t = Format::DeprecatedDefault, hide_default_value = true)]
+    #[arg(long, value_enum)]
     #[arg(
         help = "Select the output format: a directory tree of files, a single blob, or a Rust module."
     )]
@@ -94,12 +93,6 @@ pub struct Cli {
     #[arg(short, long)]
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
-
-    #[arg(long, hide = true)]
-    #[arg(
-        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
-    )]
-    fingerprint: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
     #[arg(
@@ -168,34 +161,16 @@ pub struct Cli {
     )]
     include_collations: Vec<CollationTable>,
 
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated, use --locales full or --locales modern")]
-    cldr_locale_subset: bool,
-
     #[arg(long, short, num_args = 1..)]
     #[arg(
         help = "Include these resource keys in the output. Accepts multiple arguments.\n\
-                  Set to 'all' for all keys, 'experimental-all' to include experimental keys,\n\
-                  or 'none' for no keys."
+                  Set to 'all' for all keys, or 'none' for no keys."
     )]
     keys: Vec<String>,
-
-    #[arg(long, value_name = "KEY_FILE")]
-    #[arg(
-        help = "Path to text file with resource keys to include, one per line. Empty lines \
-                  and lines starting with '#' are ignored.\n
-                  Requires the `legacy_api` Cargo feature."
-    )]
-    #[cfg(feature = "legacy_api")]
-    key_file: Option<PathBuf>,
 
     #[arg(long, value_name = "BINARY")]
     #[arg(help = "Analyzes the binary and only includes keys that are used by the binary.")]
     keys_for_bin: Option<PathBuf>,
-
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated: alias for --keys all")]
-    all_keys: bool,
 
     #[arg(long, short, num_args = 0.., default_value = "recommended")]
     #[arg(
@@ -204,10 +179,6 @@ pub struct Cli {
                   or 'recommended' for the recommended set of locales."
     )]
     locales: Vec<String>,
-
-    #[arg(long, hide = true)]
-    #[arg(help = "Deprecated: alias for --locales full")]
-    all_locales: bool,
 
     #[arg(long = "out", short, value_name = "PATH")]
     #[arg(
@@ -285,18 +256,10 @@ impl Cli {
     }
 
     fn make_keys(&self) -> eyre::Result<config::KeyInclude> {
-        Ok(if self.all_keys {
-            config::KeyInclude::All
-        } else if !self.keys.is_empty() {
+        Ok(if !self.keys.is_empty() {
             match self.keys.as_slice() {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
-                [x] if x == "experimental-all" => {
-                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
-                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
-                    log::warn!("building with experimental features includes experimental keys");
-                    config::KeyInclude::All
-                }
                 keys => config::KeyInclude::Explicit(
                     keys.iter()
                         .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
@@ -306,17 +269,6 @@ impl Cli {
         } else if let Some(bin_path) = &self.keys_for_bin {
             config::KeyInclude::ForBinary(bin_path.clone())
         } else {
-            #[cfg(feature = "legacy_api")]
-            if let Some(key_file_path) = &self.key_file {
-                log::warn!("The --key-file argument is deprecated. Use a config.json.");
-                #[allow(deprecated)]
-                return Ok(config::KeyInclude::Explicit(
-                    icu_datagen::keys_from_file(key_file_path)
-                        .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                        .into_iter()
-                        .collect(),
-                ));
-            }
             eyre::bail!("Without a config, --keys or --keys-from-bin are required.")
         })
     }
@@ -326,7 +278,7 @@ impl Cli {
             config::LocaleInclude::None
         } else if self.locales.as_slice() == ["recommended"] {
             config::LocaleInclude::Recommended
-        } else if self.locales.as_slice() == ["full"] || self.all_locales {
+        } else if self.locales.as_slice() == ["full"] {
             config::LocaleInclude::All
         } else if let Some(locale_subsets) = self
             .locales
@@ -385,47 +337,36 @@ impl Cli {
 
     fn make_exporter(&self) -> eyre::Result<config::Export> {
         match self.format {
-            v @ (Format::Dir | Format::DeprecatedDefault) => {
-                if v == Format::DeprecatedDefault {
-                    log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
-                }
-                Ok(config::Export::FileSystem {
-                    path: if let Some(root) = self.output.as_ref() {
-                        root.clone()
-                    } else {
-                        PathBuf::from("icu4x_data")
-                    },
-                    syntax: match self.syntax {
-                        Syntax::Bincode => config::FsSyntax::Bincode,
-                        Syntax::Postcard => config::FsSyntax::Postcard,
-                        Syntax::Json if self.pretty => config::FsSyntax::JsonPretty,
-                        Syntax::Json => config::FsSyntax::Json,
-                    },
-                    fingerprint: self.fingerprint,
-                })
-            }
-            Format::Blob => Ok(config::Export::Blob {
-                path: if let Some(path) = &self.output {
-                    path.clone()
-                } else {
-                    PathBuf::from("/stdout")
+            Format::Dir => Ok(config::Export::FileSystem {
+                path: self
+                    .output
+                    .clone()
+                    .unwrap_or_else(|| PathBuf::from("icu4x_data")),
+                syntax: match self.syntax {
+                    Syntax::Bincode => config::FsSyntax::Bincode,
+                    Syntax::Postcard => config::FsSyntax::Postcard,
+                    Syntax::Json if self.pretty => config::FsSyntax::JsonPretty,
+                    Syntax::Json => config::FsSyntax::Json,
                 },
+            }),
+            Format::Blob => Ok(config::Export::Blob {
+                path: self
+                    .output
+                    .clone()
+                    .unwrap_or_else(|| PathBuf::from("/stdout")),
             }),
             Format::Blob2 => Ok(config::Export::Blob2 {
-                path: if let Some(path) = &self.output {
-                    path.clone()
-                } else {
-                    PathBuf::from("/stdout")
-                },
+                path: self
+                    .output
+                    .clone()
+                    .unwrap_or_else(|| PathBuf::from("/stdout")),
             }),
             Format::Mod => Ok(config::Export::Baked {
-                path: if let Some(mod_directory) = self.output.as_ref() {
-                    mod_directory.clone()
-                } else {
-                    PathBuf::from("icu4x_data")
-                },
+                path: self
+                    .output
+                    .clone()
+                    .unwrap_or_else(|| PathBuf::from("icu4x_data")),
                 pretty: self.pretty,
-                insert_feature_gates: self.insert_feature_gates,
                 use_separate_crates: self.use_separate_crates,
             }),
         }

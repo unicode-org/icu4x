@@ -45,24 +45,14 @@ impl crate::DatagenProvider {
         let model = data_locale_to_model_name(req.locale)
             .ok_or(DataErrorKind::MissingLocale.into_error())?;
 
-        let filename = format!("segmenter/dictionary/{model}.toml");
-
         let toml_data = self
-            .icuexport()
-            .and_then(|e| e.read_and_parse_toml::<SegmenterDictionaryData>(&filename));
-
-        #[cfg(feature = "legacy_api")]
-        #[allow(deprecated)]
-        let toml_data = toml_data.or_else(|e| {
-            self.source
-                .icuexport_dictionary_fallback
-                .as_ref()
-                .ok_or(e)?
-                .read_and_parse_toml(&filename)
-        });
+            .icuexport()?
+            .read_and_parse_toml::<SegmenterDictionaryData>(&format!(
+                "segmenter/dictionary/{model}.toml"
+            ))?;
 
         Ok(UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::alloc_from_slice(&toml_data?.trie_data),
+            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
         })
     }
 }
