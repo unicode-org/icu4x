@@ -10,7 +10,6 @@ use icu_locid_transform::provider::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::{BTreeMap, HashSet};
-use tinystr::TinyAsciiStr;
 
 impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
@@ -175,10 +174,10 @@ fn transform<'x>(
 ) -> LikelySubtagsV1<'static> {
     let mut language_script = BTreeMap::new();
     let mut language_region = BTreeMap::new();
-    let mut language = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut language = BTreeMap::new();
     let mut script_region = BTreeMap::new();
-    let mut script = BTreeMap::<TinyAsciiStr<4>, _>::new();
-    let mut region = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut script = BTreeMap::new();
+    let mut region = BTreeMap::new();
     let mut und = None;
 
     for entry in it {
@@ -218,22 +217,22 @@ fn transform<'x>(
         if !entry.0.language.is_empty() {
             let lang = entry.0.language;
             if let Some(script) = entry.0.script {
-                with_diff!((Language::UND, None, Some(region)) => language_script.insert((lang.into(), script.into()), region));
+                with_diff!((Language::UND, None, Some(region)) => language_script.insert((lang.into_tinystr(), script.into_tinystr()), region));
             } else if let Some(region) = entry.0.region {
-                with_diff!((Language::UND, Some(script), None) => language_region.insert((lang.into(), region.into()), script));
+                with_diff!((Language::UND, Some(script), None) => language_region.insert((lang.into_tinystr(), region.into_tinystr()), script));
             } else {
-                with_diff!((Language::UND, Some(script), Some(region)) => language.insert(lang.into(), (script, region)));
+                with_diff!((Language::UND, Some(script), Some(region)) => language.insert(lang.into_tinystr(), (script, region)));
             }
         } else if let Some(scr) = entry.0.script {
             if let Some(region) = entry.0.region {
-                with_diff!((language, None, None) => script_region.insert((scr.into(), region.into()), language));
+                with_diff!((language, None, None) => script_region.insert((scr.into_tinystr(), region.into_tinystr()), language));
             } else {
-                with_diff!((language, None, Some(region)) => script.insert(scr.into(), (language, region)));
+                with_diff!((language, None, Some(region)) => script.insert(scr.into_tinystr(), (language, region)));
             }
         } else if let Some(reg) = entry.0.region {
             // Some of the target regions here are not equal to the source, such as und-002 -> en-Latn-NG.
             // However in the `maximize` method we do not replace tags, so we don't need to store the region.
-            with_diff!((language, Some(script), _) => region.insert(reg.into(), (language, script)));
+            with_diff!((language, Some(script), _) => region.insert(reg.into_tinystr(), (language, script)));
         } else {
             und = Some((
                 entry.1.language,
@@ -244,12 +243,30 @@ fn transform<'x>(
     }
 
     LikelySubtagsV1 {
-        language_script: language_script.into_iter().collect(),
-        language_region: language_region.into_iter().collect(),
-        language: language.into_iter().collect(),
-        script_region: script_region.into_iter().collect(),
-        script: script.into_iter().collect(),
-        region: region.into_iter().collect(),
+        language_script: language_script
+            .into_iter()
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+            .collect(),
+        language_region: language_region
+            .into_iter()
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+            .collect(),
+        language: language
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
+        script_region: script_region
+            .into_iter()
+            .map(|((k1, k2), v)| ((k1.to_unvalidated(), k2.to_unvalidated()), v))
+            .collect(),
+        script: script
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
+        region: region
+            .into_iter()
+            .map(|(k, v)| (k.to_unvalidated(), v))
+            .collect(),
         und: und.unwrap_or((
             icu_locid::subtags_language!("und"),
             icu_locid::subtags_script!("Zzzz"),
@@ -279,7 +296,7 @@ fn test_basic() {
     let entry = result_common
         .get()
         .script
-        .get_copied(&script!("Hant").into())
+        .get_copied(&script!("Hant").into_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("zh"));
     assert_eq!(entry.1, region!("TW"));
@@ -287,7 +304,7 @@ fn test_basic() {
     let entry = result_extended
         .get()
         .script
-        .get_copied(&script!("Glag").into())
+        .get_copied(&script!("Glag").into_tinystr().to_unvalidated())
         .unwrap();
     assert_eq!(entry.0, language!("cu"));
     assert_eq!(entry.1, region!("BG"));

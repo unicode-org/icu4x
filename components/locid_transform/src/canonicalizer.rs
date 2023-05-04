@@ -172,9 +172,12 @@ fn uts35_check_language_rules(
     if !locale.id.language.is_empty() {
         let lang: TinyAsciiStr<3> = locale.id.language.into();
         let replacement = if lang.len() == 2 {
-            alias_data.get().language_len2.get(&lang.resize())
+            alias_data
+                .get()
+                .language_len2
+                .get(&lang.resize().to_unvalidated())
         } else {
-            alias_data.get().language_len3.get(&lang)
+            alias_data.get().language_len3.get(&lang.to_unvalidated())
         };
 
         if let Some(replacement) = replacement {
@@ -366,7 +369,12 @@ impl LocaleCanonicalizer {
                 // If the region is specified, check sgn-region rules first
                 if let Some(region) = locale.id.region {
                     if locale.id.language == language!("sgn") {
-                        if let Some(&sgn_lang) = self.aliases.get().sgn_region.get(&region.into()) {
+                        if let Some(&sgn_lang) = self
+                            .aliases
+                            .get()
+                            .sgn_region
+                            .get(&region.into_tinystr().to_unvalidated())
+                        {
                             uts35_replacement::<core::iter::Empty<&str>>(
                                 locale,
                                 true,
@@ -388,7 +396,12 @@ impl LocaleCanonicalizer {
             }
 
             if let Some(script) = locale.id.script {
-                if let Some(&replacement) = self.aliases.get().script.get(&script.into()) {
+                if let Some(&replacement) = self
+                    .aliases
+                    .get()
+                    .script
+                    .get(&script.into_tinystr().to_unvalidated())
+                {
                     locale.id.script = Some(replacement);
                     result = TransformResult::Modified;
                     continue;
@@ -397,10 +410,15 @@ impl LocaleCanonicalizer {
 
             if let Some(region) = locale.id.region {
                 let replacement = if region.is_alphabetic() {
-                    let region: TinyAsciiStr<3> = region.into();
-                    self.aliases.get().region_alpha.get(&region.resize())
+                    self.aliases
+                        .get()
+                        .region_alpha
+                        .get(&region.into_tinystr().resize().to_unvalidated())
                 } else {
-                    self.aliases.get().region_num.get(&region.into())
+                    self.aliases
+                        .get()
+                        .region_num
+                        .get(&region.into_tinystr().to_unvalidated())
                 };
                 if let Some(&replacement) = replacement {
                     locale.id.region = Some(replacement);
@@ -408,7 +426,12 @@ impl LocaleCanonicalizer {
                     continue;
                 }
 
-                if let Some(regions) = self.aliases.get().complex_region.get(&region.into()) {
+                if let Some(regions) = self
+                    .aliases
+                    .get()
+                    .complex_region
+                    .get(&region.into_tinystr().to_unvalidated())
+                {
                     // Skip if regions are empty
                     if let Some(default_region) = regions.get(0) {
                         let mut maximized = LanguageIdentifier {
@@ -438,7 +461,12 @@ impl LocaleCanonicalizer {
                 let mut modified = Vec::new();
                 let mut unmodified = Vec::new();
                 for &variant in locale.id.variants.iter() {
-                    if let Some(&updated) = self.aliases.get().variant.get(&variant.into()) {
+                    if let Some(&updated) = self
+                        .aliases
+                        .get()
+                        .variant
+                        .get(&variant.into_tinystr().to_unvalidated())
+                    {
                         modified.push(updated);
                     } else {
                         unmodified.push(variant);
@@ -486,8 +514,11 @@ impl LocaleCanonicalizer {
         for key in &[key!("rg"), key!("sd")] {
             if let Some(value) = locale.extensions.unicode.keywords.get_mut(key) {
                 if let &[only_value] = value.as_tinystr_slice() {
-                    if let Some(modified_value) =
-                        self.aliases.get().subdivision.get(&only_value.resize())
+                    if let Some(modified_value) = self
+                        .aliases
+                        .get()
+                        .subdivision
+                        .get(&only_value.resize().to_unvalidated())
                     {
                         if let Ok(modified_value) = modified_value.parse() {
                             *value = modified_value;

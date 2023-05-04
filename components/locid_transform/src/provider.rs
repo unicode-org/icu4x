@@ -18,18 +18,19 @@
 use alloc::borrow::Cow;
 use icu_locid::subtags::{Language, Region, Script, Variant};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
+use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
 use zerovec::{VarZeroVec, ZeroMap, ZeroSlice};
 
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just
 // become inaccessible).
-type UnvalidatedLanguage = TinyAsciiStr<3>;
-type UnvalidatedScript = TinyAsciiStr<4>;
-type UnvalidatedRegion = TinyAsciiStr<3>;
-type UnvalidatedVariant = TinyAsciiStr<8>;
-type UnvalidatedSubdivision = TinyAsciiStr<7>;
+type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
+type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
+type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
+type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
+type UnvalidatedSubdivision = UnvalidatedTinyAsciiStr<7>;
+type SemivalidatedSubdivision = TinyAsciiStr<7>;
 
 // LanguageIdentifier doesn't have an AsULE implementation, so we have
 // to store strs and parse when needed.
@@ -101,7 +102,7 @@ pub struct AliasesV1<'data> {
     pub sgn_region: ZeroMap<'data, UnvalidatedRegion, Language>,
     /// `[language{2}] -> [langid]`
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub language_len2: ZeroMap<'data, TinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
+    pub language_len2: ZeroMap<'data, UnvalidatedTinyAsciiStr<2>, UnvalidatedLanguageIdentifier>,
     /// `[language{3}] -> [langid]`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub language_len3: ZeroMap<'data, UnvalidatedLanguage, UnvalidatedLanguageIdentifier>,
@@ -116,7 +117,7 @@ pub struct AliasesV1<'data> {
 
     /// `[region{2}] -> [region]`
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub region_alpha: ZeroMap<'data, TinyAsciiStr<2>, Region>,
+    pub region_alpha: ZeroMap<'data, UnvalidatedTinyAsciiStr<2>, Region>,
     /// `[region{3}] -> [region]`
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub region_num: ZeroMap<'data, UnvalidatedRegion, Region>,
@@ -131,7 +132,7 @@ pub struct AliasesV1<'data> {
 
     /// `[value{7}] -> [value{7}]`
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
+    pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, SemivalidatedSubdivision>,
 }
 
 #[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]

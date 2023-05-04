@@ -69,7 +69,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
         // a special case, but we retain the catchall language category in case new or
         // customized CLDR data is used.
         let mut language_variants = Vec::new();
-        let mut sgn_region = BTreeMap::<TinyAsciiStr<3>, _>::new();
+        let mut sgn_region = BTreeMap::new();
         let mut language_len2 = BTreeMap::new();
         let mut language_len3 = BTreeMap::new();
         let mut language = Vec::new();
@@ -112,7 +112,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
-                            let lang: TinyAsciiStr<3> = langid.language.into();
+                            let lang = langid.language.into_tinystr();
                             if lang.len() == 2 {
                                 language_len2.insert(lang.resize(), to.replacement.as_str());
                             } else {
@@ -127,7 +127,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
                                 && replacement.region.is_none()
                                 && replacement.variants.is_empty() =>
                         {
-                            sgn_region.insert(region.into(), replacement.language);
+                            sgn_region.insert(region.into_tinystr(), replacement.language);
                         }
                         _ => language.push((langid, replacement)),
                     }
@@ -211,23 +211,47 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 
         Self {
             language_variants: language_variants.as_slice().into(),
-            sgn_region: sgn_region.into_iter().collect(),
-            language_len2: language_len2.into_iter().collect(),
-            language_len3: language_len3.into_iter().collect(),
+            sgn_region: sgn_region
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            language_len2: language_len2
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            language_len3: language_len3
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
             language: language.as_slice().into(),
 
-            script: script.into_iter().collect(),
-
-            region_alpha: region_alpha.into_iter().collect(),
-            region_num: region_num.into_iter().collect(),
-            complex_region: complex_region
+            script: script
                 .into_iter()
-                .map(|(k, v)| (k, ZeroSlice::from_boxed_slice(v)))
+                .map(|(k, v)| (k.to_unvalidated(), v))
                 .collect(),
 
-            variant: variant.into_iter().collect(),
+            region_alpha: region_alpha
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            region_num: region_num
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            complex_region: complex_region
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), ZeroSlice::from_boxed_slice(v)))
+                .collect(),
 
-            subdivision: subdivision.into_iter().collect(),
+            variant: variant
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+
+            subdivision: subdivision
+                .into_iter()
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
         }
     }
 }
@@ -247,7 +271,9 @@ fn test_appendix_c_cmp() {
 
 #[test]
 fn test_basic() {
-    use tinystr::tinystr;
+    use icu_locid::{
+        subtags_language as language, subtags_region as region, subtags_script as script,
+    };
 
     let provider = crate::DatagenProvider::for_test();
     let data: DataPayload<AliasesV1Marker> = provider
@@ -274,19 +300,32 @@ fn test_basic() {
     // Spot check a few expected results. There are more extensive tests in the
     // locale canonicalizer itself.
     assert_eq!(
-        data.get().language_len2.get(&tinystr!(2, "iw")).unwrap(),
+        data.get()
+            .language_len2
+            .get(&language!("iw").into_tinystr().resize().to_unvalidated())
+            .unwrap(),
         "he"
     );
 
-    assert!(data.get().language_len3.get(&tinystr!(3, "iw")).is_none());
+    assert!(data
+        .get()
+        .language_len3
+        .get(&language!("iw").into_tinystr().to_unvalidated())
+        .is_none());
 
     assert_eq!(
         data.get().script.iter().next().unwrap(),
-        (&tinystr!(4, "Qaai"), &icu_locid::subtags_script!("Zinh"))
+        (
+            &script!("Qaai").into_tinystr().to_unvalidated(),
+            &icu_locid::subtags_script!("Zinh")
+        )
     );
 
     assert_eq!(
-        data.get().region_num.get(&tinystr!(3, "768")).unwrap(),
+        data.get()
+            .region_num
+            .get(&region!("768").into_tinystr().to_unvalidated())
+            .unwrap(),
         &icu_locid::subtags_region!("TG")
     );
 }
