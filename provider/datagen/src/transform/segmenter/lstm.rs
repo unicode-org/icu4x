@@ -235,7 +235,6 @@ mod tests {
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let provider = crate::DatagenProvider::for_test();
         let raw_data = provider
             .source
@@ -249,12 +248,16 @@ mod tests {
             ),
             provider,
         );
+
         let segmenter = LineSegmenter::try_new_lstm_with_any_provider(&provider).unwrap();
+
+        const TEST_STR: &str = "ภาษาไทยภาษาไทย";
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
-        assert_eq!(
-            breaks,
-            [0, 6, 12, 21, 27, 33, TEST_STR.len()],
-            "Thai test with grapheme model"
-        );
+        assert_eq!(breaks, [0, 6, 12, 21, 27, 33, TEST_STR.len()],);
+
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [0, 2, 4, 7, 9, 11, utf16.len()],);
     }
 }
