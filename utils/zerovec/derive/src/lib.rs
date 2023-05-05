@@ -14,14 +14,14 @@ mod utils;
 mod varule;
 
 /// Full docs for this proc macro can be found on the [`zerovec`](docs.rs/zerovec) crate.
-#[proc_macro_derive(ULE)]
+#[proc_macro_derive(ULE, attributes(ule))]
 pub fn ule_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(ule::derive_impl(&input))
 }
 
 /// Full docs for this proc macro can be found on the [`zerovec`](docs.rs/zerovec) crate.
-#[proc_macro_derive(VarULE)]
+#[proc_macro_derive(VarULE, attributes(varule))]
 pub fn varule_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     TokenStream::from(varule::derive_impl(&input, None))

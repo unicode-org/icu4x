@@ -8,7 +8,9 @@ use proc_macro::TokenStream;
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Type, WherePredicate};
+use syn::{
+    parse_macro_input, parse_quote, DeriveInput, Ident, Lifetime, Path, Type, WherePredicate,
+};
 use synstructure::Structure;
 
 mod visitor;
@@ -91,7 +93,11 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             .to_compile_error();
         }
         let name = &input.ident;
+        let attr_path: Path = syn::parse_str("yoke").unwrap();
         let manual_covariance = input.attrs.iter().any(|a| {
+            if a.path != attr_path {
+                return false;
+            }
             if let Ok(i) = a.parse_args::<Ident>() {
                 if i == "prove_covariance_manually" {
                     return true;

@@ -9,7 +9,10 @@ use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Error, Field, Fields, Ident, Index, Result, Token};
+use syn::{
+    parenthesized, parse2, Attribute, Error, Field, Fields, Ident, Index, Lit, Meta, MetaNameValue,
+    Path, Result, Token,
+};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
@@ -277,4 +280,44 @@ pub fn extract_attributes_common(
     }
 
     Ok(attrs)
+}
+
+pub(crate) fn find_validate_with_path(
+    attrs: &[Attribute],
+    attr_path: &Path,
+) -> Result<Option<Path>> {
+    let mut validate_with: Option<Path> = None;
+    let validate_with_path: Path = syn::parse_str("validate_with").unwrap();
+    for attr in attrs.iter() {
+        if &attr.path != attr_path {
+            continue;
+        }
+        match attr.parse_args::<Meta>() {
+            Ok(Meta::NameValue(MetaNameValue {
+                path,
+                lit: Lit::Str(lit_str),
+                ..
+            })) if path == validate_with_path => {
+                if validate_with.is_some() {
+                    return Err(Error::new(attr.span(), "multiple varule are not allowed"));
+                }
+                validate_with = match syn::parse_str(&lit_str.value()) {
+                    Ok(p) => Some(p),
+                    Err(_) => {
+                        return Err(Error::new(
+                            attr.span(),
+                            "varule value must be a path to a function",
+                        ));
+                    }
+                }
+            }
+            _ => {
+                return Err(Error::new(
+                    attr.span(),
+                    "varule takes a single name value, validate_with = \"fn_path\"",
+                ));
+            }
+        }
+    }
+    Ok(validate_with)
 }

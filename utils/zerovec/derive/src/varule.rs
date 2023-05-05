@@ -7,7 +7,7 @@ use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{Data, DeriveInput, Error, Ident};
+use syn::{Data, DeriveInput, Error, Ident, Path};
 
 /// Implementation for derive(VarULE). `custom_varule_validator` validates the last field bytes `last_field_bytes`
 /// if specified, if not, the VarULE implementation will be used.
@@ -86,6 +86,19 @@ pub fn derive_impl(
         quote!(<#unsized_field as zerovec::ule::VarULE>::validate_byte_slice(last_field_bytes)?;)
     };
 
+    let attr_path: Path = syn::parse_str("varule").unwrap();
+    let validate_with = match utils::find_validate_with_path(&input.attrs, &attr_path) {
+        Ok(Some(fn_path)) => {
+            quote! {
+                #fn_path(unsafe { Self::from_byte_slice_unchecked(bytes) })?;
+            }
+        }
+        Ok(None) => {
+            quote! {}
+        }
+        Err(e) => return e.to_compile_error(),
+    };
+
     // Safety (based on the safety checklist on the ULE trait):
     //  1. #name does not include any uninitialized or padding bytes
     //     (achieved by enforcing #[repr(transparent)] or #[repr(packed)] on a struct of only ULE types)
@@ -111,6 +124,7 @@ pub fn derive_impl(
                 #[allow(clippy::indexing_slicing)] // TODO explain
                 let last_field_bytes = &bytes[#remaining_offset..];
                 #last_field_validator
+                #validate_with
                 Ok(())
             }
             #[inline]
