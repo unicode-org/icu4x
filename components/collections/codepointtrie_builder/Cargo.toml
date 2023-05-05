@@ -30,7 +30,7 @@ independent = true
 [features]
 # Use the wasm builder
 default = ["wasm"]
-wasm = ["wasmer", "wasmer-wasi"]
+wasm = ["wasmer", "wasmer-wasix"]
 # Use the ICU4C builder
 # needs the ICU4C_LIB_PATH variable set and pointing to an ICU4C lib folder
 # containing dylibs. If you want to use staticlibs, set ICU4C_LINK_STATICALLY.
@@ -44,7 +44,7 @@ lazy_static = "1.4.0"
 toml = "0.5"
 
 [dependencies.wasmer]
-version = "3.1.1"
+version = "3.3.0"
 default-features = false
 optional = true
 features = [
@@ -54,15 +54,14 @@ features = [
     "singlepass",
 ]
 
-[dependencies.wasmer-wasi]
-version = "3.1.1"
+[dependencies.wasmer-wasix]
+version = "0.4.0"
 default-features = false
 optional = true
 features = [
     # We are running on the local system (as opposed to JavaScript)
     "sys",
-    # We don't need real filesystem access, so use mem-fs
-    "mem-fs"
+    "sys-thread"
 ]
 
 [dev-dependencies]
