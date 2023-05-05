@@ -127,6 +127,7 @@ use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
+use std::iter;
 use std::path::{Path, PathBuf};
 
 /// [`DataProvider`] backed by [`SourceData`]
@@ -256,30 +257,34 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let mut result = Vec::new();
-    let mut i = 0;
-    let mut last_start = None;
-    while i < file.len() {
-        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-            i += icu_provider::leading_tag!().len();
-            last_start = Some(i);
-        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
-            && last_start.is_some()
-        {
-            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
-                .ok()
-                .and_then(crate::key)
-            {
-                result.push(key);
-            }
-            i += icu_provider::trailing_tag!().len();
-            last_start = None;
-        } else {
-            i += 1;
-        }
+    let mut file = file.as_slice();
+
+    const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
+    const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
+
+    /// Given a needle like "abc" and a haystack like "123abc456", return ("123", "456")
+    fn split_at_tag<'a>(haystack: &'a [u8], needle: &[u8]) -> Option<(&'a [u8], &'a [u8])> {
+        memchr::memmem::find(haystack, needle)
+            .map(|idx| (&haystack[..idx], &haystack[idx + needle.len()..]))
     }
+
+    // An iterator of all of the tags we can find in `file`, delimited by
+    // LEADING_TAG and TRAILING_TAG
+    let tag_stream = iter::from_fn(move || {
+        let (_, suffix) = split_at_tag(file, LEADING_TAG)?;
+        let (tag, suffix) = split_at_tag(suffix, TRAILING_TAG)?;
+        file = suffix;
+        Some(tag)
+    });
+
+    let mut result: Vec<DataKey> = tag_stream
+        .filter_map(|tag| std::str::from_utf8(tag).ok())
+        .filter_map(crate::key)
+        .collect();
+
     result.sort();
     result.dedup();
+
     Ok(result)
 }
 
