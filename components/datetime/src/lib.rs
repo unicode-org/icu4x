@@ -168,3 +168,63 @@ pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
 #[doc(no_inline)]
 pub use DateTimeError as Error;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::mem::size_of;
+    use icu_calendar::provider::WeekDataV1Marker;
+    use icu_calendar::Gregorian;
+    use icu_decimal::FixedDecimalFormatter;
+    use icu_plurals::PluralRules;
+    use icu_provider::prelude::*;
+    use icu_timezone::CustomTimeZone;
+    use provider::calendar::patterns::GenericPatternV1Marker;
+    use provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+    use provider::calendar::ErasedDateSymbolsV1Marker;
+    use provider::calendar::TimeSymbolsV1Marker;
+    use provider::time_zones::ExemplarCitiesV1Marker;
+    use provider::time_zones::MetazoneGenericNamesLongV1Marker;
+    use provider::time_zones::MetazoneGenericNamesShortV1Marker;
+    use provider::time_zones::MetazoneSpecificNamesLongV1Marker;
+    use provider::time_zones::MetazoneSpecificNamesShortV1Marker;
+    use provider::time_zones::TimeZoneFormatsV1Marker;
+    use time_zone::TimeZoneDataPayloads;
+    use time_zone::TimeZoneFormatter;
+    use time_zone::TimeZoneFormatterUnit;
+
+    #[test]
+    fn check_sizes() {
+        assert_eq!(5784, size_of::<DateFormatter>());
+        assert_eq!(6784, size_of::<DateTimeFormatter>());
+        assert_eq!(7896, size_of::<ZonedDateTimeFormatter>());
+        assert_eq!(1496, size_of::<TimeFormatter>());
+        assert_eq!(1112, size_of::<TimeZoneFormatter>());
+        assert_eq!(5744, size_of::<TypedDateFormatter::<Gregorian>>());
+        assert_eq!(6744, size_of::<TypedDateTimeFormatter::<Gregorian>>());
+
+        assert_eq!(80, size_of::<DateTimeError>());
+        assert_eq!(176, size_of::<FormattedDateTime>());
+        assert_eq!(16, size_of::<FormattedTimeZone::<CustomTimeZone>>());
+        assert_eq!(160, size_of::<FormattedZonedDateTime>());
+        assert_eq!(13, size_of::<DateTimeFormatterOptions>());
+
+        type DP<M> = DataPayload<M>;
+        assert_eq!(208, size_of::<DP::<PatternPluralsFromPatternsV1Marker>>());
+        assert_eq!(1032, size_of::<DP::<TimeSymbolsV1Marker>>());
+        assert_eq!(32, size_of::<DP::<GenericPatternV1Marker>>());
+        assert_eq!(208, size_of::<DP::<PatternPluralsFromPatternsV1Marker>>());
+        assert_eq!(5064, size_of::<DP::<ErasedDateSymbolsV1Marker>>());
+        assert_eq!(16, size_of::<DP::<WeekDataV1Marker>>());
+        assert_eq!(288, size_of::<DP::<TimeZoneFormatsV1Marker>>());
+        assert_eq!(64, size_of::<DP::<ExemplarCitiesV1Marker>>());
+        assert_eq!(120, size_of::<DP::<MetazoneGenericNamesLongV1Marker>>());
+        assert_eq!(120, size_of::<DP::<MetazoneGenericNamesShortV1Marker>>());
+        assert_eq!(216, size_of::<DP::<MetazoneSpecificNamesLongV1Marker>>());
+        assert_eq!(216, size_of::<DP::<MetazoneSpecificNamesShortV1Marker>>());
+        assert_eq!(168, size_of::<PluralRules>());
+        assert_eq!(256, size_of::<FixedDecimalFormatter>());
+        assert_eq!(1024, size_of::<TimeZoneDataPayloads>());
+        assert_eq!(3, size_of::<TimeZoneFormatterUnit>());
+    }
+}
