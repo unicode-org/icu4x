@@ -24,7 +24,6 @@ use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_locid::extensions_unicode_value as value;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
@@ -91,35 +90,8 @@ impl Collator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + ?Sized,
     {
-        let locale = {
-            // Remove irrelevant extensions, i.e. everything but -u-co-.
-            //
-            // TODO: Revisit at least the default mapping here
-            // once the provider can perform fallback into more
-            // general locale. Once the provider can fall back to
-            // the default, the code here that omits the explicit
-            // variant if it matches the default should become
-            // unnecessary.
-            let original_locale = locale;
-            let mut filtered_locale = alloc::borrow::Cow::Borrowed(locale);
-
-            let key = icu_locid::extensions_unicode_key!("co");
-            if let Some(variant) = original_locale.get_unicode_ext(&key) {
-                let zh = filtered_locale.language() == icu_locid::subtags_language!("zh");
-                let sv = filtered_locale.language() == icu_locid::subtags_language!("sv");
-                // Omit the explicit collation variant if it is the default.
-                // "standard" is the default for all languages except zh and sv.
-                if !((!zh && !sv && variant == value!("standard"))
-                    || (zh && variant == value!("pinyin"))
-                    || (sv && variant == value!("reformed")))
-                {
-                    filtered_locale.to_mut().set_unicode_ext(key, variant);
-                }
-            }
-            filtered_locale
-        };
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
