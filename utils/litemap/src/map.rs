@@ -579,11 +579,11 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
     ///     ("a", 11),
     ///     ("b", 22),
     /// ]);
-    /// const len: usize = map.const_len();
+    /// static len: usize = map.const_len();
     /// assert_eq!(len, 2);
     /// ```
     pub const fn const_len(&self) -> usize {
@@ -597,8 +597,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[]);
-    /// const is_empty: bool = map.const_is_empty();
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[]);
+    /// static is_empty: bool = map.const_is_empty();
     /// assert!(is_empty);
     /// ```
     pub const fn const_is_empty(&self) -> bool {
@@ -616,11 +616,11 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
     ///     ("a", 11),
     ///     ("b", 22),
     /// ]);
-    /// const t: &(&str, usize) = map.const_get_indexed_or_panic(0);
+    /// static t: &(&str, usize) = map.const_get_indexed_or_panic(0);
     /// assert_eq!(t.0, "a");
     /// assert_eq!(t.1, 11);
     /// ```
@@ -662,7 +662,7 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
     ///     ("abc", 11),
     ///     ("bcd", 22),
     ///     ("cde", 33),
@@ -670,10 +670,10 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     ///     ("efg", 55),
     /// ]);
     ///
-    /// const d: Option<(usize, &usize)> = map.const_get_with_index("def");
+    /// static d: Option<(usize, &usize)> = map.const_get_with_index("def");
     /// assert_eq!(d, Some((3, &44)));
     ///
-    /// const n: Option<(usize, &usize)> = map.const_get_with_index("dng");
+    /// static n: Option<(usize, &usize)> = map.const_get_with_index("dng");
     /// assert_eq!(n, None);
     /// ```
     pub const fn const_get_with_index(&self, key: &str) -> Option<(usize, &'a V)> {
@@ -702,7 +702,7 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// const map: LiteMap<&[u8], usize, &[(&[u8], usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    /// static map: LiteMap<&[u8], usize, &[(&[u8], usize)]> = LiteMap::from_sorted_store_unchecked(&[
     ///     (b"abc", 11),
     ///     (b"bcd", 22),
     ///     (b"cde", 33),
@@ -710,10 +710,10 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     ///     (b"efg", 55),
     /// ]);
     ///
-    /// const d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
+    /// static d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
     /// assert_eq!(d, Some((3, &44)));
     ///
-    /// const n: Option<(usize, &usize)> = map.const_get_with_index(b"dng");
+    /// static n: Option<(usize, &usize)> = map.const_get_with_index(b"dng");
     /// assert_eq!(n, None);
     /// ```
     pub const fn const_get_with_index(&self, key: &[u8]) -> Option<(usize, &'a V)> {
