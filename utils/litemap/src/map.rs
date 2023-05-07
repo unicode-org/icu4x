@@ -586,6 +586,7 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// static len: usize = map.const_len();
     /// assert_eq!(len, 2);
     /// ```
+    #[inline]
     pub const fn const_len(&self) -> usize {
         self.values.len()
     }
@@ -601,6 +602,7 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// static is_empty: bool = map.const_is_empty();
     /// assert!(is_empty);
     /// ```
+    #[inline]
     pub const fn const_is_empty(&self) -> bool {
         self.values.is_empty()
     }
@@ -625,6 +627,7 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// assert_eq!(t.1, 11);
     /// ```
     #[inline]
+    #[allow(clippy::indexing_slicing)] // documented
     pub const fn const_get_indexed_or_panic(&self, index: usize) -> &'a (K, V) {
         &self.values[index]
     }
@@ -639,6 +642,7 @@ const fn const_cmp_bytes(a: &[u8], b: &[u8]) -> Ordering {
         (b.len(), Ordering::Greater)
     };
     let mut i = 0;
+    #[allow(clippy::indexing_slicing)] // indexes in range by above checks
     while i < max {
         if a[i] == b[i] {
             i += 1;
@@ -649,7 +653,7 @@ const fn const_cmp_bytes(a: &[u8], b: &[u8]) -> Ordering {
             return Ordering::Greater;
         }
     }
-    return default;
+    default
 }
 
 impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
@@ -681,6 +685,7 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
         let mut j = self.const_len();
         while i < j {
             let mid = (i + j) / 2;
+            #[allow(clippy::indexing_slicing)] // in range
             let x = &self.values[mid];
             match const_cmp_bytes(key.as_bytes(), x.0.as_bytes()) {
                 Ordering::Equal => return Some((mid, &x.1)),
@@ -688,7 +693,7 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
                 Ordering::Less => j = mid,
             };
         }
-        return None;
+        None
     }
 }
 
@@ -721,6 +726,7 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
         let mut j = self.const_len();
         while i < j {
             let mid = (i + j) / 2;
+            #[allow(clippy::indexing_slicing)] // in range
             let x = &self.values[mid];
             match const_cmp_bytes(key, x.0) {
                 Ordering::Equal => return Some((mid, &x.1)),
@@ -728,7 +734,7 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
                 Ordering::Less => j = mid,
             };
         }
-        return None;
+        None
     }
 }
 
@@ -743,6 +749,7 @@ macro_rules! impl_const_get_with_index_for_integer {
                 let mut j = self.const_len();
                 while i < j {
                     let mid = (i + j) / 2;
+                    #[allow(clippy::indexing_slicing)] // in range
                     let x = &self.values[mid];
                     if key == x.0 {
                         return Some((mid, &x.1));
