@@ -574,6 +574,8 @@ where
 impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// Const version of [`LiteMap::len()`] for a slice store.
     ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -593,6 +595,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
 
     /// Const version of [`LiteMap::is_empty()`] for a slice store.
     ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -608,6 +612,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     }
 
     /// Const version of [`LiteMap::get_indexed()`] for a slice store.
+    ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
     ///
     /// # Panics
     ///
@@ -661,6 +667,8 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     ///
     /// Also returns the index of the value.
     ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -702,6 +710,8 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     ///
     /// Also returns the index of the value.
     ///
+    /// Note: This function will no longer be needed if const trait behavior is stabilized.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -742,6 +752,8 @@ macro_rules! impl_const_get_with_index_for_integer {
     ($integer:ty) => {
         impl<'a, V> LiteMap<$integer, V, &'a [($integer, V)]> {
             /// Const function to get the value associated with an integer key, if it exists.
+            ///
+            /// Note: This function will no longer be needed if const trait behavior is stabilized.
             ///
             /// Also returns the index of the value.
             pub const fn const_get_with_index(&self, key: $integer) -> Option<(usize, &'a V)> {
