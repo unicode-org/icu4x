@@ -571,9 +571,209 @@ where
     }
 }
 
+impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
+    /// Const version of [`LiteMap::len()`] for a slice store.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("a", 11),
+    ///     ("b", 22),
+    /// ]);
+    /// const len: usize = map.const_len();
+    /// assert_eq!(len, 2);
+    /// ```
+    pub const fn const_len(&self) -> usize {
+        self.values.len()
+    }
+
+    /// Const version of [`LiteMap::is_empty()`] for a slice store.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[]);
+    /// const is_empty: bool = map.const_is_empty();
+    /// assert!(is_empty);
+    /// ```
+    pub const fn const_is_empty(&self) -> bool {
+        self.values.is_empty()
+    }
+
+    /// Const version of [`LiteMap::get_indexed()`] for a slice store.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the index is out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("a", 11),
+    ///     ("b", 22),
+    /// ]);
+    /// const t: &(&str, usize) = map.const_get_indexed_or_panic(0);
+    /// assert_eq!(t.0, "a");
+    /// assert_eq!(t.1, 11);
+    /// ```
+    #[inline]
+    pub const fn const_get_indexed_or_panic(&self, index: usize) -> &'a (K, V) {
+        &self.values[index]
+    }
+}
+
+const fn const_cmp_bytes(a: &[u8], b: &[u8]) -> Ordering {
+    let (max, default) = if a.len() == b.len() {
+        (a.len(), Ordering::Equal)
+    } else if a.len() < b.len() {
+        (a.len(), Ordering::Less)
+    } else {
+        (b.len(), Ordering::Greater)
+    };
+    let mut i = 0;
+    while i < max {
+        if a[i] == b[i] {
+            i += 1;
+            continue;
+        } else if a[i] < b[i] {
+            return Ordering::Less;
+        } else {
+            return Ordering::Greater;
+        }
+    }
+    return default;
+}
+
+impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
+    /// Const function to get the value associated with a `&str` key, if it exists.
+    ///
+    /// Also returns the index of the value.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// const map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     ("abc", 11),
+    ///     ("bcd", 22),
+    ///     ("cde", 33),
+    ///     ("def", 44),
+    ///     ("efg", 55),
+    /// ]);
+    ///
+    /// const d: Option<(usize, &usize)> = map.const_get_with_index("def");
+    /// assert_eq!(d, Some((3, &44)));
+    ///
+    /// const n: Option<(usize, &usize)> = map.const_get_with_index("dng");
+    /// assert_eq!(n, None);
+    /// ```
+    pub const fn const_get_with_index(&self, key: &str) -> Option<(usize, &'a V)> {
+        let mut i = 0;
+        let mut j = self.const_len();
+        while i < j {
+            let mid = (i + j) / 2;
+            let x = &self.values[mid];
+            match const_cmp_bytes(key.as_bytes(), x.0.as_bytes()) {
+                Ordering::Equal => return Some((mid, &x.1)),
+                Ordering::Greater => i = mid + 1,
+                Ordering::Less => j = mid,
+            };
+        }
+        return None;
+    }
+}
+
+impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
+    /// Const function to get the value associated with a `&[u8]` key, if it exists.
+    ///
+    /// Also returns the index of the value.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// const map: LiteMap<&[u8], usize, &[(&[u8], usize)]> = LiteMap::from_sorted_store_unchecked(&[
+    ///     (b"abc", 11),
+    ///     (b"bcd", 22),
+    ///     (b"cde", 33),
+    ///     (b"def", 44),
+    ///     (b"efg", 55),
+    /// ]);
+    ///
+    /// const d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
+    /// assert_eq!(d, Some((3, &44)));
+    ///
+    /// const n: Option<(usize, &usize)> = map.const_get_with_index(b"dng");
+    /// assert_eq!(n, None);
+    /// ```
+    pub const fn const_get_with_index(&self, key: &[u8]) -> Option<(usize, &'a V)> {
+        let mut i = 0;
+        let mut j = self.const_len();
+        while i < j {
+            let mid = (i + j) / 2;
+            let x = &self.values[mid];
+            match const_cmp_bytes(key, x.0) {
+                Ordering::Equal => return Some((mid, &x.1)),
+                Ordering::Greater => i = mid + 1,
+                Ordering::Less => j = mid,
+            };
+        }
+        return None;
+    }
+}
+
+macro_rules! impl_const_get_with_index_for_integer {
+    ($integer:ty) => {
+        impl<'a, V> LiteMap<$integer, V, &'a [($integer, V)]> {
+            /// Const function to get the value associated with an integer key, if it exists.
+            ///
+            /// Also returns the index of the value.
+            pub const fn const_get_with_index(&self, key: $integer) -> Option<(usize, &'a V)> {
+                let mut i = 0;
+                let mut j = self.const_len();
+                while i < j {
+                    let mid = (i + j) / 2;
+                    let x = &self.values[mid];
+                    if key == x.0 {
+                        return Some((mid, &x.1));
+                    } else if key > x.0 {
+                        i = mid + 1;
+                    } else {
+                        j = mid;
+                    }
+                }
+                return None;
+            }
+        }
+    };
+}
+
+impl_const_get_with_index_for_integer!(u8);
+impl_const_get_with_index_for_integer!(u16);
+impl_const_get_with_index_for_integer!(u32);
+impl_const_get_with_index_for_integer!(u64);
+impl_const_get_with_index_for_integer!(u128);
+impl_const_get_with_index_for_integer!(usize);
+impl_const_get_with_index_for_integer!(i8);
+impl_const_get_with_index_for_integer!(i16);
+impl_const_get_with_index_for_integer!(i32);
+impl_const_get_with_index_for_integer!(i64);
+impl_const_get_with_index_for_integer!(i128);
+impl_const_get_with_index_for_integer!(isize);
+
 #[cfg(test)]
 mod test {
-    use crate::LiteMap;
+    use super::*;
 
     #[test]
     fn from_iterator() {
@@ -654,5 +854,17 @@ mod test {
             .ok_or(())
             .expect("Insert with conflict");
         assert_eq!(map.len(), 5);
+    }
+
+    #[test]
+    fn test_const_cmp_bytes() {
+        let strs = &["a", "aa", "abc", "abde", "bcd", "bcde"];
+        for i in 0..strs.len() {
+            for j in 0..strs.len() {
+                let a = strs[i].as_bytes();
+                let b = strs[j].as_bytes();
+                assert_eq!(a.cmp(b), const_cmp_bytes(a, b));
+            }
+        }
     }
 }
