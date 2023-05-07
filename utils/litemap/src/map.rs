@@ -91,6 +91,40 @@ where
     pub fn get_indexed(&self, index: usize) -> Option<(&K, &V)> {
         self.values.lm_get(index)
     }
+
+    /// Get the lowest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///
+    /// assert_eq!(map.first(), Some((&1, &"uno")));
+    /// ```
+    #[inline]
+    pub fn first(&self) -> Option<(&K, &V)> {
+        self.values.lm_get(0).map(|(k, v)| (k, v))
+    }
+
+    /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<i32, &str, Vec<_>> =
+    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    ///
+    /// assert_eq!(map.last(), Some((&3, &"tres")));
+    /// ```
+    #[inline]
+    pub fn last(&self) -> Option<(&K, &V)> {
+        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
+    }
 }
 
 impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
@@ -144,40 +178,6 @@ where
         Q: Ord,
     {
         self.find_index(key).is_ok()
-    }
-
-    /// Get the lowest-rank key/value pair from the `LiteMap`, if it exists.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
-    ///
-    /// assert_eq!(map.first(), Some((&1, &"uno")));
-    /// ```
-    #[inline]
-    pub fn first(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(0).map(|(k, v)| (k, v))
-    }
-
-    /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use litemap::LiteMap;
-    ///
-    /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
-    ///
-    /// assert_eq!(map.last(), Some((&3, &"tres")));
-    /// ```
-    #[inline]
-    pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
     }
 
     /// Obtain the index for a given key, or if the key is not found, the index
