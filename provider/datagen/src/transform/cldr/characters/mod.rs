@@ -12,6 +12,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
+#[derive(Debug)]
 struct AnnotatedResource<'a, M: DataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
     PhantomData<M>,
