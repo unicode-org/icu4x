@@ -66,7 +66,7 @@ macro_rules! implement {
         }
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
-            // TODO: Do we actually want to filter these by the user-selected locales?
+            // TODO(#3408): Do we actually want to filter these by the user-selected locales?
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self.source.options.locales.filter_by_langid_equality(vec![$(locale!($locale).into()),*]))
             }
