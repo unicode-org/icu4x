@@ -7,7 +7,7 @@ use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::TrieType;
 use icu_collections::codepointtrie::TrieValue;
 use lazy_static::lazy_static;
-use wasmer::{Instance, Module, Store};
+use wasmer::{Array, Instance, Module, Store, WasmPtr};
 use wasmer_wasi::{Pipe, WasiState};
 
 const WASM_BYTES: &[u8] = include_bytes!("../list_to_ucptrie.wasm");
@@ -32,8 +32,13 @@ where
         .to_owned(),
         format!("{}", std::mem::size_of::<T::ULE>() * 8),
     ];
+
+    let trie_type_str = match builder.trie_type {
+        TrieType::Fast => "fast".as_bytes(),
+        TrieType::Small => "small".as_bytes(),
+    };
+
     let mut wasi_env = WasiState::new("list_to_ucptrie")
-        .stdin(Box::new(Pipe::new()))
         .stdout(Box::new(Pipe::new()))
         .args(args)
         .finalize()
@@ -43,37 +48,58 @@ where
     let import_object = wasi_env.import_object(&MODULE).expect("walid wasm file");
     let instance = Instance::new(&MODULE, &import_object).expect("valid wasm file");
 
-    // To write to the stdin, we need a mutable reference to the pipe
-    //
-    // We access WasiState in a nested scope to ensure we're not holding
-    // the mutex after we need it.
-    {
-        let mut state = wasi_env.state();
-        let wasi_stdin = state
-            .fs
-            .stdin_mut()
-            .expect("valid pipe")
-            .as_mut()
-            .expect("valid pipe");
-        // Write each value to the pipe
-        let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
-        writeln!(wasi_stdin, "{}", values.len()).expect("valid pipe");
+    let memory = instance.exports.get_memory("memory").expect("memory");
 
-        for value in values {
-            let num: u32 = (*value).into();
-            writeln!(wasi_stdin, "{num}").expect("valid pipe");
-        }
+    let malloc = instance
+        .exports
+        .get_native_function::<i32, WasmPtr<u8, Array>>("malloc")
+        .expect("malloc is exported");
+    let trie_type_ptr: WasmPtr<u8, Array> = malloc
+        .call(trie_type_str.len() as i32)
+        .expect("Unable to allocate array for trie_type_str");
+    let trie_type_values = trie_type_ptr
+        .deref(&memory, 0, trie_type_str.len() as u32)
+        .expect("Unable to deref trie_type_ptr");
+    for (i, b) in trie_type_str.iter().enumerate() {
+        trie_type_values[i].set(*b);
     }
 
-    // Call the `_start` function to run the tool
-    let start = instance
+    let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
+    let malloc = instance
         .exports
-        .get_function("_start")
-        .expect("function exists");
-    let exit_result = start.call(&[]);
+        .get_native_function::<i32, WasmPtr<u32, Array>>("malloc")
+        .expect("malloc is exported");
+    let values_base_ptr: WasmPtr<u32, Array> = malloc
+        .call((values.len() * 4) as i32)
+        .expect("Unable to allocate memory for values");
+    let deref_base_ptr = values_base_ptr
+        .deref(&memory, 0, values.len() as u32)
+        .expect("Unable to deref values base ptr");
+    for (i, value) in values.iter().enumerate() {
+        deref_base_ptr[i].set((*value).into());
+    }
 
-    if let Err(e) = exit_result {
-        panic!("list_to_ucptrie failed in C++: args were: {args:?}: {e}");
+    let construct_ucptrie = instance
+        .exports
+        .get_native_function::<(i32, i32, i32, i32, i32, i32), i32>("construct_ucptrie")
+        .expect("'construct_ucptrie' is exported");
+
+    let exit_result = construct_ucptrie.call(
+        builder.default_value.into() as i32,
+        builder.error_value.into() as i32,
+        trie_type_ptr
+            .offset()
+            .try_into()
+            .expect("trie_type_ptr is valid"),
+        // size_of::<T::ULE>() * 8 fits in i32
+        (std::mem::size_of::<T::ULE>() * 8).try_into().unwrap(),
+        values_base_ptr.offset().try_into().expect("values base ptr is valid"),
+        values.len() as i32,
+    );
+
+    match exit_result {
+        Ok(0) => {}
+        e => panic!("list_to_ucptrie failed in C++; args were {args:?}: {e:?}"),
     }
 
     // To read from the stdout/stderr, we again need a mutable reference to the pipe
