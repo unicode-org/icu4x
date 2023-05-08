@@ -123,6 +123,7 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
+use memchr::memmem;
 use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
@@ -256,30 +257,29 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let mut result = Vec::new();
-    let mut i = 0;
-    let mut last_start = None;
-    while i < file.len() {
-        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-            i += icu_provider::leading_tag!().len();
-            last_start = Some(i);
-        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
-            && last_start.is_some()
-        {
-            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
-                .ok()
-                .and_then(crate::key)
-            {
-                result.push(key);
-            }
-            i += icu_provider::trailing_tag!().len();
-            last_start = None;
-        } else {
-            i += 1;
-        }
-    }
+    let file = file.as_slice();
+
+    const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
+    const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
+
+    let trailing_tag = memmem::Finder::new(TRAILING_TAG);
+
+    let mut result: Vec<DataKey> = memmem::find_iter(file, LEADING_TAG)
+        .map(|tag_position| tag_position + LEADING_TAG.len())
+        .map(|key_start| &file[key_start..])
+        .filter_map(move |key_fragment| {
+            trailing_tag
+                .find(key_fragment)
+                .map(|end| &key_fragment[..end])
+        })
+        .map(std::str::from_utf8)
+        .filter_map(Result::ok)
+        .filter_map(crate::key)
+        .collect();
+
     result.sort();
     result.dedup();
+
     Ok(result)
 }
 

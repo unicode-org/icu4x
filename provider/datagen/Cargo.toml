@@ -78,6 +78,7 @@ toml = "0.5"
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
 zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
+memchr = "2.5.0"
 
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["derive"] }
