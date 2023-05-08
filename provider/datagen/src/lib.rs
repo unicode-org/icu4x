@@ -123,6 +123,7 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::empty::EmptyDataProvider;
 use icu_provider_adapters::filter::Filterable;
 use icu_provider_fs::export::serializers::AbstractSerializer;
+use memchr::memmem;
 use prelude::*;
 use rayon::prelude::*;
 use std::collections::HashSet;
@@ -259,20 +260,27 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
     let mut file = file.as_slice();
 
-    const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
-    const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
+    let leading_tag = memmem::Finder::new(icu_provider::leading_tag!().as_bytes());
+    let trailing_tag = memmem::Finder::new(icu_provider::trailing_tag!().as_bytes());
 
-    /// Given a needle like "abc" and a haystack like "123abc456", return ("123", "456")
-    fn split_at_tag<'a>(haystack: &'a [u8], needle: &[u8]) -> Option<(&'a [u8], &'a [u8])> {
-        memchr::memmem::find(haystack, needle)
-            .map(|idx| (&haystack[..idx], &haystack[idx + needle.len()..]))
+    /// Given a needle like "abc" and a haystack like "123abc456", return
+    /// ("123", "456")
+    fn split_at_tag<'a>(
+        haystack: &'a [u8],
+        needle: &memmem::Finder<'_>,
+    ) -> Option<(&'a [u8], &'a [u8])> {
+        let needle_len = needle.needle().len();
+
+        needle
+            .find(haystack)
+            .map(|idx| (&haystack[..idx], &haystack[idx + needle_len..]))
     }
 
     // An iterator of all of the tags we can find in `file`, delimited by
-    // LEADING_TAG and TRAILING_TAG
+    // leading_tag and trailing_tag
     let tag_stream = iter::from_fn(move || {
-        let (_, suffix) = split_at_tag(file, LEADING_TAG)?;
-        let (tag, suffix) = split_at_tag(suffix, TRAILING_TAG)?;
+        let (_, suffix) = split_at_tag(file, &leading_tag)?;
+        let (tag, suffix) = split_at_tag(suffix, &trailing_tag)?;
         file = suffix;
         Some(tag)
     });
