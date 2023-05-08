@@ -274,6 +274,14 @@ impl<'a, const D: usize> MatrixBorrowedMut<'a, D> {
             }
         }
     }
+
+    #[inline]
+    pub(super) fn reshape<const M: usize>(&mut self, dims: [usize; M]) -> MatrixBorrowedMut<'_, M> {
+        MatrixBorrowedMut {
+            data: self.data,
+            dims,
+        }
+    }
 }
 
 impl<'a> MatrixBorrowed<'a, 1> {
@@ -312,6 +320,40 @@ impl<'a> MatrixBorrowedMut<'a, 1> {
             if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
             {
                 *dest += unrolled_dot_1(a.data, b_sub.data);
+            } else {
+                debug_assert!(false, "unreachable: dims checked above");
+            }
+        }
+    }
+
+    /// Calculate the dot product of a and b, adding the result to self.
+    ///
+    /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
+    /// this is the opposite of standard practice.
+    pub(super) fn add_dot_2d_1(&mut self, a: MatrixZero<1>, b: MatrixZero<2>) {
+        let m = a.dim();
+        let n = self.as_borrowed().dim();
+        debug_assert_eq!(
+            m,
+            b.dim().1,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        debug_assert_eq!(
+            n,
+            b.dim().0,
+            "dims: {:?}/{:?}/{:?}",
+            self.as_borrowed().dim(),
+            a.dim(),
+            b.dim()
+        );
+        let lhs = a.as_slice();
+        for i in 0..n {
+            if let (Some(dest), Some(b_sub)) = (self.as_mut_slice().get_mut(i), b.submatrix::<1>(i))
+            {
+                *dest += unrolled_dot_2(lhs, b_sub.data);
             } else {
                 debug_assert!(false, "unreachable: dims checked above");
             }
@@ -474,6 +516,14 @@ impl<'a, const D: usize> MatrixZero<'a, D> {
         let sub_dims: [usize; M] = self.dims[1..].try_into().unwrap();
         let n = sub_dims.iter().product::<usize>();
         (n * index..n * (index + 1), sub_dims)
+    }
+
+    #[inline]
+    pub(super) fn reshape<const M: usize>(self, dims: [usize; M]) -> MatrixZero<'a, M> {
+        MatrixZero {
+            data: self.data,
+            dims,
+        }
     }
 }
 
