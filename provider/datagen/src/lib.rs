@@ -272,7 +272,8 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
                 .find(key_fragment)
                 .map(|end| &key_fragment[..end])
         })
-        .filter_map(|key| std::str::from_utf8(key).ok())
+        .map(std::str::from_utf8)
+        .filter_map(Result::ok)
         .filter_map(crate::key)
         .collect();
 
