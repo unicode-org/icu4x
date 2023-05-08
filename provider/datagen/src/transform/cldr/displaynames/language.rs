@@ -9,7 +9,6 @@ use icu_locid::subtags::Language;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
 impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
@@ -122,27 +121,43 @@ impl From<&cldr_serde::language_displaynames::Resource> for LanguageDisplayNames
             for entry in lang_data_entry.1.localedisplaynames.languages.iter() {
                 if let Some(lang) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
                     if let Ok(lang) = lang.parse::<Language>() {
-                        short_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                        short_names.insert(lang.into_tinystr(), entry.1.as_ref());
                     }
                 } else if let Some(lang) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
                     if let Ok(lang) = lang.parse::<Language>() {
-                        long_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                        long_names.insert(lang.into_tinystr(), entry.1.as_ref());
                     }
                 } else if let Some(lang) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
                     if let Ok(lang) = lang.parse::<Language>() {
-                        menu_names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                        menu_names.insert(lang.into_tinystr(), entry.1.as_ref());
                     }
                 } else if let Ok(lang) = entry.0.parse::<Language>() {
-                    names.insert(TinyAsciiStr::from(lang), entry.1.as_ref());
+                    names.insert(lang.into_tinystr(), entry.1.as_ref());
                 }
             }
         }
         Self {
             // Old CLDR versions may contain trivial entries, so filter
-            names: names.into_iter().filter(|&(k, v)| k != v).collect(),
-            short_names: short_names.into_iter().filter(|&(k, v)| k != v).collect(),
-            long_names: long_names.into_iter().filter(|&(k, v)| k != v).collect(),
-            menu_names: menu_names.into_iter().filter(|&(k, v)| k != v).collect(),
+            names: names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            short_names: short_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            long_names: long_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            menu_names: menu_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
         }
     }
 }
@@ -219,7 +234,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().names.get(&language!("aa").into()).unwrap(),
+            data.get()
+                .names
+                .get(&language!("aa").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Afar"
         );
     }
@@ -238,7 +256,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().short_names.get(&language!("az").into()).unwrap(),
+            data.get()
+                .short_names
+                .get(&language!("az").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Azeri"
         );
     }
@@ -257,7 +278,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().long_names.get(&language!("zh").into()).unwrap(),
+            data.get()
+                .long_names
+                .get(&language!("zh").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Mandarin Chinese"
         );
     }
@@ -276,7 +300,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().menu_names.get(&language!("zh").into()).unwrap(),
+            data.get()
+                .menu_names
+                .get(&language!("zh").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Chinese, Mandarin"
         );
     }

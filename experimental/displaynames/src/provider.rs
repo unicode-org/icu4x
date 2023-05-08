@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
+use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
@@ -18,9 +18,9 @@ use zerovec::ZeroMap;
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just
 // become inaccessible).
-type UnvalidatedRegion = TinyAsciiStr<3>;
-type UnvalidatedLanguage = TinyAsciiStr<3>;
-type UnvalidatedScript = TinyAsciiStr<4>;
+type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
+type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
+type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
 type UnvalidatedLocale = UnvalidatedStr;
 
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]

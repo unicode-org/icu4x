@@ -15,7 +15,6 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
 use std::collections::BTreeMap;
-use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr};
 
@@ -118,9 +117,9 @@ impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::Datage
 fn transform<'x>(
     it: impl Iterator<Item = (&'x LanguageIdentifier, &'x LanguageIdentifier)> + 'x,
 ) -> LocaleFallbackLikelySubtagsV1<'static> {
-    let mut l2s = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut l2s = BTreeMap::new();
     let mut lr2s = ZeroMap2d::new();
-    let mut l2r = BTreeMap::<TinyAsciiStr<3>, _>::new();
+    let mut l2r = BTreeMap::new();
     let mut ls2r = ZeroMap2d::new();
 
     let (part0, part1) = it
@@ -135,10 +134,10 @@ fn transform<'x>(
         let script = maximized.script.expect("maximized");
         let region = maximized.region.expect("maximized");
         if script != DEFAULT_SCRIPT {
-            l2s.insert(language.into(), script);
+            l2s.insert(language.into_tinystr().to_unvalidated(), script);
         }
         if region != DEFAULT_REGION {
-            l2r.insert(language.into(), region);
+            l2r.insert(language.into_tinystr().to_unvalidated(), region);
         }
     }
 
@@ -149,16 +148,30 @@ fn transform<'x>(
         let region = maximized.region.expect("maximized");
         if minimized.script.is_some() {
             assert!(minimized.region.is_none(), "{minimized:?}");
-            let region_for_lang = l2r.get(&language.into()).copied().unwrap_or(DEFAULT_REGION);
+            let region_for_lang = l2r
+                .get(&language.into_tinystr().to_unvalidated())
+                .copied()
+                .unwrap_or(DEFAULT_REGION);
             if region != region_for_lang {
-                ls2r.insert(&language.into(), &script.into(), &region);
+                ls2r.insert(
+                    &language.into_tinystr().to_unvalidated(),
+                    &script.into_tinystr().to_unvalidated(),
+                    &region,
+                );
             }
             continue;
         }
         if minimized.region.is_some() {
-            let script_for_lang = l2s.get(&language.into()).copied().unwrap_or(DEFAULT_SCRIPT);
+            let script_for_lang = l2s
+                .get(&language.into_tinystr().to_unvalidated())
+                .copied()
+                .unwrap_or(DEFAULT_SCRIPT);
             if script != script_for_lang {
-                lr2s.insert(&language.into(), &region.into(), &script);
+                lr2s.insert(
+                    &language.into_tinystr().to_unvalidated(),
+                    &region.into_tinystr().to_unvalidated(),
+                    &script,
+                );
             }
             continue;
         }
@@ -212,25 +225,31 @@ fn test_basic() {
         .unwrap();
 
     assert_eq!(
-        likely_subtags.get().l2s.get_copied(&language!("zh").into()),
+        likely_subtags
+            .get()
+            .l2s
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(script!("Hans"))
     );
     assert_eq!(
-        likely_subtags
-            .get()
-            .lr2s
-            .get_copied_2d(&language!("zh").into(), &region!("TW").into()),
+        likely_subtags.get().lr2s.get_copied_2d(
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &region!("TW").into_tinystr().to_unvalidated()
+        ),
         Some(script!("Hant"))
     );
     assert_eq!(
-        likely_subtags.get().l2r.get_copied(&language!("zh").into()),
+        likely_subtags
+            .get()
+            .l2r
+            .get_copied(&language!("zh").into_tinystr().to_unvalidated()),
         Some(region!("CN"))
     );
     assert_eq!(
-        likely_subtags
-            .get()
-            .ls2r
-            .get_copied_2d(&language!("zh").into(), &script!("Hant").into()),
+        likely_subtags.get().ls2r.get_copied_2d(
+            &language!("zh").into_tinystr().to_unvalidated(),
+            &script!("Hant").into_tinystr().to_unvalidated()
+        ),
         Some(region!("TW"))
     );
 

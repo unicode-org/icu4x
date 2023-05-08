@@ -1758,6 +1758,7 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
+ "memchr",
  "ndarray",
  "rayon",
  "repodata",
