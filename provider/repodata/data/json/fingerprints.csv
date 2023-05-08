@@ -1539,8 +1539,8 @@ relativetime/short/year@1, sr-Latn, 640B, 7e4fd5f603ae3073
 relativetime/short/year@1, th, 494B, 31e8c26a002004b8
 relativetime/short/year@1, tr, 548B, da4a4d996cb48710
 relativetime/short/year@1, und, 425B, 7a604578bc7e4265
-segmenter/dictionary/w_auto@1, ja, 10320776B, 86284c168777fcf1
-segmenter/dictionary/wl_ext@1, th, 1078278B, 56b1112fa508e4b6
+segmenter/dictionary/w_auto@1, ja, 10339429B, 9a826afb1bdef0f1
+segmenter/dictionary/wl_ext@1, th, 1078279B, d814552fc6a8dfcb
 segmenter/grapheme@1, und, 66905B, 445a7c30c1bbfd6d
 segmenter/line@1, und, 154400B, 36dc3e278178555e
 segmenter/lstm/wl_auto@1, th, 361075B, c0c627d25a7d72bf

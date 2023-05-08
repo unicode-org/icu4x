@@ -12,7 +12,7 @@
 use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{subtags_region as region, subtags_script as script};
-use tinystr::TinyAsciiStr;
+use tinystr::UnvalidatedTinyAsciiStr;
 
 use icu_provider::prelude::*;
 
@@ -20,13 +20,12 @@ use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 use zerovec::ZeroMap2d;
 
-// We use raw TinyAsciiStrs for map keys, as we then don't have to
-// validate them as subtags on deserialization. Map lookup can be
-// done even if they are not valid tags (an invalid key will just
-// become inaccessible).
-type UnvalidatedLanguage = TinyAsciiStr<3>;
-type UnvalidatedScript = TinyAsciiStr<4>;
-type UnvalidatedRegion = TinyAsciiStr<3>;
+// We use UnvalidatedTinyAsciiStrs for map keys, as we then don't have to
+// validate them on deserialization. Map lookup can be done even if they
+// are not valid tags or strings (an invalid key will just become inaccessible).
+type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
+type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
+type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
 
 /// Locale fallback rules derived from likely subtags data.
 #[icu_provider::data_struct(LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1")]
