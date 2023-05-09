@@ -227,9 +227,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
     lazy_static::lazy_static! {
         static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
                     .into_iter()
-                    .chain(std::iter::once(
-                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
-                    ))
+                    .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
                     .map(|k| (k.path().get(), k))
                     .collect();
     }
@@ -452,7 +450,7 @@ pub fn datagen(
                     LocaleInclude::Explicit(
                         ls.iter()
                             .cloned()
-                            .chain(core::iter::once(icu_locid::LanguageIdentifier::UND))
+                            .chain([icu_locid::LanguageIdentifier::UND])
                             .collect(),
                     )
                 })

@@ -97,7 +97,7 @@ impl crate::DatagenProvider {
                             );
                             data_locale
                         })
-                        .chain(core::iter::once(last))
+                        .chain([last])
                 })
                 .collect(),
         ))
