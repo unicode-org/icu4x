@@ -92,10 +92,21 @@ pub mod versions {
     /// # Examples
     ///
     /// ```
-    /// assert_eq!("release-73-1", icu_testdata::versions::icu_tag());
+    /// assert_eq!("icu4x/2023-05-02/73.x", icu_testdata::versions::icu_tag());
     /// ```
     pub fn icu_tag() -> alloc::string::String {
         alloc::string::String::from(super::metadata::ICUEXPORT_TAG)
+    }
+
+    /// Gets the segmenter LSTM tag used as the test data source
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// assert_eq!("v0.1.0", icu_testdata::versions::segmenter_lstm_tag());
+    /// ```
+    pub fn segmenter_lstm_tag() -> alloc::string::String {
+        alloc::string::String::from(super::metadata::SEGMENTER_LSTM_TAG)
     }
 }
 

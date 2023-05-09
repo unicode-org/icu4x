@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
@@ -23,24 +24,25 @@ use zip::ZipArchive;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_paths: Arc<SerdeCache>,
+    builtin_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
-    trie_type: IcuTrieType,
-    collation_han_database: CollationHanDatabase,
-    collations: Vec<String>,
+    // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
+    pub(crate) options: Options,
 }
 
+#[cfg(feature = "networking")]
+/// The default [`SourceData`] downloads the latest supported data.
+///
+/// Requires `networking` Cargo feature.
 impl Default for SourceData {
     fn default() -> Self {
-        Self {
-            cldr_paths: None,
-            icuexport_paths: None,
-            segmenter_paths: Arc::new(SerdeCache::new(AbstractFs::new_segmenter())),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
-            trie_type: IcuTrieType::Small,
-            collation_han_database: CollationHanDatabase::Implicit,
-            collations: vec![],
-        }
+        Self::offline()
+            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
+            .unwrap()
+            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
+            .unwrap()
+            .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+            .unwrap()
     }
 }
 
@@ -49,37 +51,32 @@ impl SourceData {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.0.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-73-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
 
-    /// The latest `SourceData` that has been verified to work with this version of `icu_datagen`.
-    ///
-    /// See [`SourceData::LATEST_TESTED_CLDR_TAG`] and [`SourceData::LATEST_TESTED_ICUEXPORT_TAG`].
-    ///
-    /// Requires `networking` Cargo feature.
+    /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
+    pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
+
+    #[doc(hidden)]
     #[cfg(feature = "networking")]
+    #[deprecated(since = "1.3.0", note = "use SourceData::default()")]
     pub fn latest_tested() -> Self {
         Self::default()
-            .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG, Default::default())
-            .unwrap()
-            .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-            .unwrap()
     }
 
-    #[cfg(test)]
-    // This is equivalent to `latest_tested` for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn repo() -> Self {
-        Self::default()
-            .with_cldr(repodata::paths::cldr(), Default::default())
-            .unwrap()
-            .with_icuexport(repodata::paths::icuexport())
-            .unwrap()
+    /// Creates a `SourceData` that does not have CLDR or ICU export sources set.
+    pub fn offline() -> Self {
+        Self {
+            cldr_paths: None,
+            icuexport_paths: None,
+            builtin_paths: Arc::new(SerdeCache::new(AbstractFs::new_builtin())),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
+            options: Default::default(),
+        }
     }
 
-    /// Adds CLDR data to this `DataSource`. The root should point to a local
-    /// `cldr-{version}-json-{full, modern}.zip` directory or ZIP file (see
+    /// Adds CLDR data to this `SourceData`. The root should point to a local
+    /// `cldr-{tag}-json-full.zip` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
-    ///
-    /// The `_locale_subset` variable is ignored.
     pub fn with_cldr(
         self,
         root: PathBuf,
@@ -92,8 +89,8 @@ impl SourceData {
         })
     }
 
-    /// Adds ICU export data to this `DataSource`. The path should point to a local
-    /// `icuexportdata_uprops_full.zip` directory or ZIP file (see [GitHub releases](
+    /// Adds ICU export data to this `SourceData`. The path should point to a local
+    /// `icuexportdata_{tag}.zip` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
@@ -102,7 +99,17 @@ impl SourceData {
         })
     }
 
-    /// Adds CLDR data to this `DataSource`. The data will be downloaded from GitHub
+    /// Adds segmenter LSTM data to this `SourceData`. The path should point to a local
+    /// `models.zip` directory or ZIP file (see [GitHub releases](
+    /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
+    pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
+        Ok(Self {
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new(root)?)),
+            ..self
+        })
+    }
+
+    /// Adds CLDR data to this `SourceData`. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
@@ -123,7 +130,7 @@ impl SourceData {
         })
     }
 
-    /// Adds ICU export data to this `DataSource`. The data will be downloaded from GitHub
+    /// Adds ICU export data to this `SourceData`. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
@@ -145,12 +152,28 @@ impl SourceData {
         })
     }
 
+    /// Adds segmenter LSTM data to this `SourceData`. The data will be downloaded from GitHub
+    /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
+    ///
+    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    ///
+    /// Requires `networking` Cargo feature.
+    #[cfg(feature = "networking")]
+    pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Result<Self, DataError> {
+        Ok(Self {
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_from_url(format!(
+                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{tag}/models.zip"
+            )))),
+            ..self
+        })
+    }
+
     #[deprecated(
         since = "1.1.0",
         note = "Use `with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG)`"
     )]
     #[cfg(feature = "networking")]
-    /// Deprecated
+    #[doc(hidden)]
     pub fn with_cldr_latest(
         self,
         _use_default_here: crate::CldrLocaleSubset,
@@ -163,34 +186,45 @@ impl SourceData {
         note = "Use `with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)`"
     )]
     #[cfg(feature = "networking")]
-    /// Deprecated
+    #[doc(hidden)]
     pub fn with_icuexport_latest(self) -> Result<Self, DataError> {
         self.with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
     }
 
-    /// Set this to use tries optimized for speed instead of data size
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_fast_tries(self) -> Self {
         Self {
-            trie_type: IcuTrieType::Fast,
+            options: Options {
+                trie_type: crate::options::TrieType::Fast,
+                ..self.options
+            },
             ..self
         }
     }
 
-    /// Set the [`CollationHanDatabase`] version.
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
         Self {
-            collation_han_database,
+            options: Options {
+                collation_han_database,
+                ..self.options
+            },
             ..self
         }
     }
 
-    /// Set the list of BCP-47 collation IDs to include beyond the default set.
-    ///
-    /// If a list was already set, this function overwrites the previous list.
-    ///
-    /// The special string `"search*"` causes all search collation tables to be included.
+    #[deprecated(note = "use crate::Options", since = "1.3.0")]
+    #[doc(hidden)]
     pub fn with_collations(self, collations: Vec<String>) -> Self {
-        Self { collations, ..self }
+        Self {
+            options: Options {
+                collations: collations.into_iter().collect(),
+                ..self.options
+            },
+            ..self
+        }
     }
 
     /// Paths to CLDR source data.
@@ -207,25 +241,14 @@ impl SourceData {
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to segmenter data.
-    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
-        Ok(&self.segmenter_paths)
+    /// Path to built-in data.
+    pub(crate) fn builtin(&self) -> &SerdeCache {
+        &self.builtin_paths
     }
 
+    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
-    }
-
-    pub(crate) fn trie_type(&self) -> IcuTrieType {
-        self.trie_type
-    }
-
-    pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
-    }
-
-    pub(crate) fn collations(&self) -> &[String] {
-        &self.collations
     }
 
     /// List the locales for the given CLDR coverage levels
@@ -237,42 +260,8 @@ impl SourceData {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-pub(crate) enum IcuTrieType {
-    Fast,
-    Small,
-}
-
-impl std::fmt::Display for IcuTrieType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            IcuTrieType::Fast => write!(f, "fast"),
-            IcuTrieType::Small => write!(f, "small"),
-        }
-    }
-}
-
-/// Specifies the collation Han database to use.
-///
-/// Unihan is more precise but significantly increases data size. See
-/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
-#[derive(Clone, Copy, Debug)]
-#[non_exhaustive]
-pub enum CollationHanDatabase {
-    /// Implicit
-    Implicit,
-    /// Unihan
-    Unihan,
-}
-
-impl std::fmt::Display for CollationHanDatabase {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
-        }
-    }
-}
+#[doc(hidden)]
+pub use crate::options::CollationHanDatabase;
 
 pub(crate) struct SerdeCache {
     root: AbstractFs,
@@ -323,7 +312,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            serde_json::from_slice(bytes).map_err(DataError::from)
+            serde_json::from_slice(bytes)
+                .map_err(|e| DataError::custom("JSON deserialize").with_display_context(&e))
         })
     }
 
@@ -332,7 +322,8 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            toml::from_slice(bytes).map_err(crate::error::data_error_from_toml)
+            toml::from_slice(bytes)
+                .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
         })
     }
 
@@ -374,65 +365,88 @@ impl AbstractFs {
         }
     }
 
-    fn new_segmenter() -> Self {
-        const SEGMENTER: &[(&str, &[u8])] = &[
-            (
-                "grapheme.toml",
-                include_bytes!("../data/segmenter/grapheme.toml"),
-            ),
-            ("word.toml", include_bytes!("../data/segmenter/word.toml")),
-            ("line.toml", include_bytes!("../data/segmenter/line.toml")),
-            (
-                "sentence.toml",
-                include_bytes!("../data/segmenter/sentence.toml"),
-            ),
-            (
-                "dictionary_cj.toml",
-                include_bytes!("../data/segmenter/dictionary_cj.toml"),
-            ),
-            (
-                "dictionary_km.toml",
-                include_bytes!("../data/segmenter/dictionary_km.toml"),
-            ),
-            (
-                "dictionary_lo.toml",
-                include_bytes!("../data/segmenter/dictionary_lo.toml"),
-            ),
-            (
-                "dictionary_my.toml",
-                include_bytes!("../data/segmenter/dictionary_my.toml"),
-            ),
-            (
-                "dictionary_th.toml",
-                include_bytes!("../data/segmenter/dictionary_th.toml"),
-            ),
-        ];
-
-        Self::Memory(SEGMENTER.iter().copied().collect())
+    fn new_builtin() -> Self {
+        Self::Memory(
+            [
+                (
+                    "segmenter/rules/grapheme.toml",
+                    include_bytes!("../data/segmenter/rules/grapheme.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/word.toml",
+                    include_bytes!("../data/segmenter/rules/word.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/line.toml",
+                    include_bytes!("../data/segmenter/rules/line.toml").as_slice(),
+                ),
+                (
+                    "segmenter/rules/sentence.toml",
+                    include_bytes!("../data/segmenter/rules/sentence.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/cjdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/khmerdict.toml",
+                    include_bytes!("../data/segmenter/dictionary/khmerdict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/laodict.toml",
+                    include_bytes!("../data/segmenter/dictionary/laodict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/burmesedict.toml",
+                    include_bytes!("../data/segmenter/dictionary/burmesedict.toml").as_slice(),
+                ),
+                (
+                    "segmenter/dictionary/thaidict.toml",
+                    include_bytes!("../data/segmenter/dictionary/thaidict.toml").as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
 
     fn new_lstm() -> Self {
-        const LSTM: &[(&str, &[u8])] = &[
-            (
-                "lstm_km.json",
-                include_bytes!("../data/segmenter/lstm/lstm_km.json"),
-            ),
-            (
-                "lstm_lo.json",
-                include_bytes!("../data/segmenter/lstm/lstm_lo.json"),
-            ),
-            (
-                "lstm_my.json",
-                include_bytes!("../data/segmenter/lstm/lstm_my.json"),
-            ),
-            (
-                "lstm_th.json",
-                include_bytes!("../data/segmenter/lstm/lstm_th.json"),
-            ),
-        ];
-
-        Self::Memory(LSTM.iter().copied().collect())
+        Self::Memory(
+            [
+                (
+                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        )
     }
+
     #[cfg(feature = "networking")]
     fn new_from_url(path: String) -> Self {
         Self::Zip(RwLock::new(Err(path)))
@@ -474,12 +488,12 @@ impl AbstractFs {
         self.init()?;
         match self {
             Self::Fs(root) => {
-                log::trace!("Reading: {}/{}", root.display(), path);
+                log::debug!("Reading: {}/{}", root.display(), path);
                 std::fs::read(root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
-                log::trace!("Reading: <zip>/{}", path);
+                log::debug!("Reading: <zip>/{}", path);
                 let mut buf = Vec::new();
                 zip.write()
                     .expect("poison")

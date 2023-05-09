@@ -1755,9 +1755,8 @@ dependencies = [
  "itertools",
  "lazy_static",
  "log",
+ "memchr",
  "ndarray",
- "proc-macro2",
- "quote",
  "rayon",
  "repodata",
  "serde",
@@ -2040,6 +2039,7 @@ dependencies = [
 name = "icu_provider_blob"
 version = "1.2.0"
 dependencies = [
+ "icu_datagen",
  "icu_locid",
  "icu_provider",
  "log",
@@ -2059,6 +2059,7 @@ dependencies = [
  "crlify",
  "displaydoc",
  "icu_benchmark_macros",
+ "icu_datagen",
  "icu_locid",
  "icu_provider",
  "log",

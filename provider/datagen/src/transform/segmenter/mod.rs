@@ -4,13 +4,8 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-// Some code gated on icu_codepointtrie_builder features
-#![allow(dead_code)]
-#![allow(unused_imports)]
-
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_locid::{langid, locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
     SentenceBreak, WordBreak,
@@ -22,6 +17,7 @@ use icu_segmenter::symbols::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
+mod dictionary;
 mod lstm;
 
 // state machine name define by builtin name
@@ -81,166 +77,23 @@ struct SegmenterRuleTable {
     rules: Vec<SegmenterState>,
 }
 
-fn set_break_state(
-    break_state_table: &mut [i8],
-    property_length: usize,
-    left_index: usize,
-    right_index: usize,
-    break_state: i8,
-) {
-    let index = left_index * property_length + right_index;
-    if break_state_table[index] == UNKNOWN_RULE || break_state_table[index] == NOT_MATCH_RULE {
-        break_state_table[index] = break_state;
-    }
-}
-
-fn get_index_from_name(properties_names: &[String], s: &str) -> Option<usize> {
-    properties_names.iter().position(|n| n.eq(s))
-}
-
-fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
-    match name {
-        "ALetter" => WordBreak::ALetter,
-        "CR" => WordBreak::CR,
-        "Double_Quote" => WordBreak::DoubleQuote,
-        "Extend" => WordBreak::Extend,
-        "ExtendNumLet" => WordBreak::ExtendNumLet,
-        "Format" => WordBreak::Format,
-        "Katakana" => WordBreak::Katakana,
-        "Hebrew_Letter" => WordBreak::HebrewLetter,
-        "LF" => WordBreak::LF,
-        "MidLetter" => WordBreak::MidLetter,
-        "MidNum" => WordBreak::MidNum,
-        "MidNumLet" => WordBreak::MidNumLet,
-        "Newline" => WordBreak::Newline,
-        "Numeric" => WordBreak::Numeric,
-        "Regional_Indicator" => WordBreak::RegionalIndicator,
-        "Single_Quote" => WordBreak::SingleQuote,
-        "WSegSpace" => WordBreak::WSegSpace,
-        "ZWJ" => WordBreak::ZWJ,
-        _ => {
-            panic!("Invalid property name")
-        }
-    }
-}
-
-fn get_grapheme_segmenter_value_from_name(name: &str) -> GraphemeClusterBreak {
-    match name {
-        "Control" => GraphemeClusterBreak::Control,
-        "CR" => GraphemeClusterBreak::CR,
-        "Extend" => GraphemeClusterBreak::Extend,
-        "L" => GraphemeClusterBreak::L,
-        "LF" => GraphemeClusterBreak::LF,
-        "LV" => GraphemeClusterBreak::LV,
-        "LVT" => GraphemeClusterBreak::LVT,
-        "Prepend" => GraphemeClusterBreak::Prepend,
-        "Regional_Indicator" => GraphemeClusterBreak::RegionalIndicator,
-        "SpacingMark" => GraphemeClusterBreak::SpacingMark,
-        "T" => GraphemeClusterBreak::T,
-        "V" => GraphemeClusterBreak::V,
-        "ZWJ" => GraphemeClusterBreak::ZWJ,
-        _ => {
-            panic!("Invalid property name")
-        }
-    }
-}
-
-fn get_sentence_segmenter_value_from_name(name: &str) -> SentenceBreak {
-    match name {
-        "ATerm" => SentenceBreak::ATerm,
-        "Close" => SentenceBreak::Close,
-        "CR" => SentenceBreak::CR,
-        "Extend" => SentenceBreak::Extend,
-        "Format" => SentenceBreak::Format,
-        "LF" => SentenceBreak::LF,
-        "Lower" => SentenceBreak::Lower,
-        "Numeric" => SentenceBreak::Numeric,
-        "OLetter" => SentenceBreak::OLetter,
-        "SContinue" => SentenceBreak::SContinue,
-        "Sep" => SentenceBreak::Sep,
-        "Sp" => SentenceBreak::Sp,
-        "STerm" => SentenceBreak::STerm,
-        "Upper" => SentenceBreak::Upper,
-        _ => {
-            panic!("Invalid property name")
-        }
-    }
-}
-
-fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
-    match name {
-        "AI" => LineBreak::Ambiguous,
-        "AL" => LineBreak::Alphabetic,
-        "B2" => LineBreak::BreakBoth,
-        "BA" => LineBreak::BreakAfter,
-        "BB" => LineBreak::BreakBefore,
-        "BK" => LineBreak::MandatoryBreak,
-        "CB" => LineBreak::ContingentBreak,
-        "CJ" => LineBreak::ConditionalJapaneseStarter,
-        "CL" => LineBreak::ClosePunctuation,
-        "CM" => LineBreak::CombiningMark,
-        "CP" => LineBreak::CloseParenthesis,
-        "CR" => LineBreak::CarriageReturn,
-        "EB" => LineBreak::EBase,
-        "EM" => LineBreak::EModifier,
-        "EX" => LineBreak::Exclamation,
-        "GL" => LineBreak::Glue,
-        "H2" => LineBreak::H2,
-        "H3" => LineBreak::H3,
-        "HL" => LineBreak::HebrewLetter,
-        "HY" => LineBreak::Hyphen,
-        "ID" => LineBreak::Ideographic,
-        "IN" => LineBreak::Inseparable,
-        "IS" => LineBreak::InfixNumeric,
-        "JL" => LineBreak::JL,
-        "JT" => LineBreak::JT,
-        "JV" => LineBreak::JV,
-        "LF" => LineBreak::LineFeed,
-        "NL" => LineBreak::NextLine,
-        "NS" => LineBreak::Nonstarter,
-        "NU" => LineBreak::Numeric,
-        "OP" => LineBreak::OpenPunctuation,
-        "PO" => LineBreak::PostfixNumeric,
-        "PR" => LineBreak::PrefixNumeric,
-        "QU" => LineBreak::Quotation,
-        "RI" => LineBreak::RegionalIndicator,
-        "SA" => LineBreak::ComplexContext,
-        "SG" => LineBreak::Surrogate,
-        "SP" => LineBreak::Space,
-        "SY" => LineBreak::BreakSymbols,
-        "WJ" => LineBreak::WordJoiner,
-        "XX" => LineBreak::Unknown,
-        "ZW" => LineBreak::ZWSpace,
-        "ZWJ" => LineBreak::ZWJ,
-        _ => {
-            panic!("Invalid property name: {name}")
-        }
-    }
-}
-
-fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
-    matches!(
-        eaw.get32(codepoint),
-        EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
-    )
-}
-
+#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl crate::DatagenProvider {
-    #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn generate_rule_break_data(
         &self,
         key: DataKey,
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self
             .source
-            .segmenter()?
+            .builtin()
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
-                "{}.toml",
+                "segmenter/rules/{}.toml",
                 key.path()
                     .split(&['/', '@'])
                     .nth(1)
                     .expect("DataKey format should be valid!")
-            ))?;
+            ))
+            .unwrap();
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
@@ -265,6 +118,155 @@ impl crate::DatagenProvider {
 
         let data = sets::load_extended_pictographic(self).expect("The data should be valid!");
         let extended_pictographic = data.as_borrowed();
+
+        fn set_break_state(
+            break_state_table: &mut [i8],
+            property_length: usize,
+            left_index: usize,
+            right_index: usize,
+            break_state: i8,
+        ) {
+            let index = left_index * property_length + right_index;
+            if break_state_table[index] == UNKNOWN_RULE
+                || break_state_table[index] == NOT_MATCH_RULE
+            {
+                break_state_table[index] = break_state;
+            }
+        }
+
+        fn get_index_from_name(properties_names: &[String], s: &str) -> Option<usize> {
+            properties_names.iter().position(|n| n.eq(s))
+        }
+
+        fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
+            match name {
+                "ALetter" => WordBreak::ALetter,
+                "CR" => WordBreak::CR,
+                "Double_Quote" => WordBreak::DoubleQuote,
+                "Extend" => WordBreak::Extend,
+                "ExtendNumLet" => WordBreak::ExtendNumLet,
+                "Format" => WordBreak::Format,
+                "Katakana" => WordBreak::Katakana,
+                "Hebrew_Letter" => WordBreak::HebrewLetter,
+                "LF" => WordBreak::LF,
+                "MidLetter" => WordBreak::MidLetter,
+                "MidNum" => WordBreak::MidNum,
+                "MidNumLet" => WordBreak::MidNumLet,
+                "Newline" => WordBreak::Newline,
+                "Numeric" => WordBreak::Numeric,
+                "Regional_Indicator" => WordBreak::RegionalIndicator,
+                "Single_Quote" => WordBreak::SingleQuote,
+                "WSegSpace" => WordBreak::WSegSpace,
+                "ZWJ" => WordBreak::ZWJ,
+                _ => {
+                    panic!("Invalid property name")
+                }
+            }
+        }
+
+        fn get_grapheme_segmenter_value_from_name(name: &str) -> GraphemeClusterBreak {
+            match name {
+                "Control" => GraphemeClusterBreak::Control,
+                "CR" => GraphemeClusterBreak::CR,
+                "Extend" => GraphemeClusterBreak::Extend,
+                "L" => GraphemeClusterBreak::L,
+                "LF" => GraphemeClusterBreak::LF,
+                "LV" => GraphemeClusterBreak::LV,
+                "LVT" => GraphemeClusterBreak::LVT,
+                "Prepend" => GraphemeClusterBreak::Prepend,
+                "Regional_Indicator" => GraphemeClusterBreak::RegionalIndicator,
+                "SpacingMark" => GraphemeClusterBreak::SpacingMark,
+                "T" => GraphemeClusterBreak::T,
+                "V" => GraphemeClusterBreak::V,
+                "ZWJ" => GraphemeClusterBreak::ZWJ,
+                _ => {
+                    panic!("Invalid property name")
+                }
+            }
+        }
+
+        fn get_sentence_segmenter_value_from_name(name: &str) -> SentenceBreak {
+            match name {
+                "ATerm" => SentenceBreak::ATerm,
+                "Close" => SentenceBreak::Close,
+                "CR" => SentenceBreak::CR,
+                "Extend" => SentenceBreak::Extend,
+                "Format" => SentenceBreak::Format,
+                "LF" => SentenceBreak::LF,
+                "Lower" => SentenceBreak::Lower,
+                "Numeric" => SentenceBreak::Numeric,
+                "OLetter" => SentenceBreak::OLetter,
+                "SContinue" => SentenceBreak::SContinue,
+                "Sep" => SentenceBreak::Sep,
+                "Sp" => SentenceBreak::Sp,
+                "STerm" => SentenceBreak::STerm,
+                "Upper" => SentenceBreak::Upper,
+                _ => {
+                    panic!("Invalid property name")
+                }
+            }
+        }
+
+        fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
+            match name {
+                "AI" => LineBreak::Ambiguous,
+                "AL" => LineBreak::Alphabetic,
+                "B2" => LineBreak::BreakBoth,
+                "BA" => LineBreak::BreakAfter,
+                "BB" => LineBreak::BreakBefore,
+                "BK" => LineBreak::MandatoryBreak,
+                "CB" => LineBreak::ContingentBreak,
+                "CJ" => LineBreak::ConditionalJapaneseStarter,
+                "CL" => LineBreak::ClosePunctuation,
+                "CM" => LineBreak::CombiningMark,
+                "CP" => LineBreak::CloseParenthesis,
+                "CR" => LineBreak::CarriageReturn,
+                "EB" => LineBreak::EBase,
+                "EM" => LineBreak::EModifier,
+                "EX" => LineBreak::Exclamation,
+                "GL" => LineBreak::Glue,
+                "H2" => LineBreak::H2,
+                "H3" => LineBreak::H3,
+                "HL" => LineBreak::HebrewLetter,
+                "HY" => LineBreak::Hyphen,
+                "ID" => LineBreak::Ideographic,
+                "IN" => LineBreak::Inseparable,
+                "IS" => LineBreak::InfixNumeric,
+                "JL" => LineBreak::JL,
+                "JT" => LineBreak::JT,
+                "JV" => LineBreak::JV,
+                "LF" => LineBreak::LineFeed,
+                "NL" => LineBreak::NextLine,
+                "NS" => LineBreak::Nonstarter,
+                "NU" => LineBreak::Numeric,
+                "OP" => LineBreak::OpenPunctuation,
+                "PO" => LineBreak::PostfixNumeric,
+                "PR" => LineBreak::PrefixNumeric,
+                "QU" => LineBreak::Quotation,
+                "RI" => LineBreak::RegionalIndicator,
+                "SA" => LineBreak::ComplexContext,
+                "SG" => LineBreak::Surrogate,
+                "SP" => LineBreak::Space,
+                "SY" => LineBreak::BreakSymbols,
+                "WJ" => LineBreak::WordJoiner,
+                "XX" => LineBreak::Unknown,
+                "ZW" => LineBreak::ZWSpace,
+                "ZWJ" => LineBreak::ZWJ,
+                _ => {
+                    panic!("Invalid property name: {name}")
+                }
+            }
+        }
+
+        fn is_cjk_fullwidth(
+            eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>,
+            codepoint: u32,
+        ) -> bool {
+            matches!(
+                eaw.get32(codepoint),
+                EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
+            )
+        }
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
         // summarized in the following list. See details in the property txt in
@@ -592,11 +594,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.trie_type() {
-                crate::source::IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::source::IcuTrieType::Small => {
-                    icu_collections::codepointtrie::TrieType::Small
-                }
+            trie_type: match self.source.options.trie_type {
+                crate::options::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::options::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();
@@ -648,187 +648,37 @@ impl crate::DatagenProvider {
     }
 }
 
-impl DataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/line@1",
-        )
-        .with_req(LineBreakDataV1Marker::KEY, _req));
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        return Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(
-                self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?,
-            )),
-        });
-    }
-}
+macro_rules! implement {
+    ($marker:ident) => {
+        impl DataProvider<$marker> for crate::DatagenProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
+                return Err(DataError::custom(
+                    "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
+                )
+                .with_req($marker::KEY, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                return Ok(DataResponse {
+                    metadata: DataResponseMetadata::default(),
+                    payload: Some(DataPayload::from_owned(
+                        self.generate_rule_break_data($marker::KEY).map_err(|e| e.with_req($marker::KEY, req))?,
+                    )),
+                });
+            }
+        }
 
-impl DataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        _req: DataRequest,
-    ) -> Result<DataResponse<GraphemeClusterBreakDataV1Marker>, DataError> {
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/grapheme@1",
-        )
-        .with_req(GraphemeClusterBreakDataV1Marker::KEY, _req));
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        return Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(
-                self.generate_rule_break_data(GraphemeClusterBreakDataV1Marker::KEY)?,
-            )),
-        });
-    }
-}
-
-impl DataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/word@1",
-        )
-        .with_req(WordBreakDataV1Marker::KEY, _req));
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        return Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(
-                self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?,
-            )),
-        });
-    }
-}
-
-impl DataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        _req: DataRequest,
-    ) -> Result<DataResponse<SentenceBreakDataV1Marker>, DataError> {
-        #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-        return Err(DataError::custom(
-            "icu_datagen must be built with use_icu4c or use_wasm to build segmenter/sentence@1",
-        )
-        .with_req(SentenceBreakDataV1Marker::KEY, _req));
-        #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-        return Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(
-                self.generate_rule_break_data(SentenceBreakDataV1Marker::KEY)?,
-            )),
-        });
-    }
-}
-
-impl IterableDataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-impl IterableDataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-impl IterableDataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![Default::default()])
-    }
-}
-
-#[derive(serde::Deserialize, Debug)]
-struct SegmenterDictionaryData {
-    trie_data: Vec<u16>,
-}
-
-impl crate::DatagenProvider {
-    fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
-        if locale.get_langid() == langid!("km") {
-            Some("dictionary_km.toml")
-        } else if locale.get_langid() == langid!("ja") {
-            Some("dictionary_cj.toml")
-        } else if locale.get_langid() == langid!("lo") {
-            Some("dictionary_lo.toml")
-        } else if locale.get_langid() == langid!("my") {
-            Some("dictionary_my.toml")
-        } else if locale.get_langid() == langid!("th") {
-            Some("dictionary_th.toml")
-        } else {
-            None
+        impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                Ok(vec![Default::default()])
+            }
         }
     }
 }
 
-impl crate::DatagenProvider {
-    fn load_dictionary_data(
-        &self,
-        req: DataRequest,
-    ) -> Result<UCharDictionaryBreakDataV1<'static>, DataError> {
-        let toml_data = self
-            .source
-            .segmenter()?
-            .read_and_parse_toml::<SegmenterDictionaryData>(
-                Self::get_toml_filename(req.locale)
-                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
-            )?;
-        Ok(UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
-        })
-    }
-}
-
-impl DataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<DictionaryForWordOnlyAutoV1Marker>, DataError> {
-        let data = self.load_dictionary_data(req)?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data)),
-        })
-    }
-}
-
-impl IterableDataProvider<DictionaryForWordOnlyAutoV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![locale!("ja").into()])
-    }
-}
-
-impl DataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<DictionaryForWordLineExtendedV1Marker>, DataError> {
-        let data = self.load_dictionary_data(req)?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(data)),
-        })
-    }
-}
-
-impl IterableDataProvider<DictionaryForWordLineExtendedV1Marker> for crate::DatagenProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            locale!("th").into(),
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-        ])
-    }
-}
+implement!(LineBreakDataV1Marker);
+implement!(GraphemeClusterBreakDataV1Marker);
+implement!(WordBreakDataV1Marker);
+implement!(SentenceBreakDataV1Marker);
 
 #[cfg(test)]
 mod tests {

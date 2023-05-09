@@ -61,6 +61,11 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/root_emoji_meta.toml",
     "collation/implicithan/root_eor_data.toml",
     "collation/implicithan/root_eor_meta.toml",
+    "segmenter/dictionary/burmesedict.toml",
+    "segmenter/dictionary/cjdict.toml",
+    "segmenter/dictionary/khmerdict.toml",
+    "segmenter/dictionary/laodict.toml",
+    "segmenter/dictionary/thaidict.toml",
     "norm/small/compositions.toml",
     "norm/small/decompositionex.toml",
     "norm/small/nfd.toml",
@@ -192,4 +197,13 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "collation/implicithan/zh_zhuyin_data.toml",
     "collation/implicithan/zh_zhuyin_meta.toml",
     "collation/implicithan/zh_zhuyin_reord.toml",
+];
+
+const LSTM_GLOB: &[&str] = &[
+    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+    "Lao_codepoints_exclusive_model4_heavy/weights.json",
+    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+    // For testing
+    "Thai_graphclust_model4_heavy/weights.json",
 ];

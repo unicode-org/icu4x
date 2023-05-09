@@ -63,6 +63,7 @@ macro_rules! registry {
             ]
         );
 
+        #[cfg(feature = "provider_baked")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
             use databake::Bake;
             // This is a bit naughty, we need the marker's type, but we're actually
