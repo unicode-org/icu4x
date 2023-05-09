@@ -38,6 +38,7 @@ log = { version = "0.4", optional = true }
 
 [dev-dependencies]
 icu_locid = { path = "../../components/locid", features = ["serde"] }
+icu_datagen = { path = "../datagen" }
 
 [features]
 std = ["icu_provider/std"]

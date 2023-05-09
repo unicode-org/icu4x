@@ -8,17 +8,23 @@ use icu_provider::DataError;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-/// Specifies a variant of CLDR JSON
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize)]
+/// A language's CLDR coverage level.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 #[non_exhaustive]
 pub enum CoverageLevel {
     /// Locales listed as modern coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the highest level of coverage.
     #[serde(rename = "modern")]
     Modern,
     /// Locales listed as moderate coverage targets by the CLDR subcomittee.
+    ///
+    /// This is a medium level of coverage.
     #[serde(rename = "moderate")]
     Moderate,
     /// Locales listed as basic coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the lowest level of coverage.
     #[serde(rename = "basic")]
     Basic,
 }
