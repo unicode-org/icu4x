@@ -65,9 +65,7 @@ fn main() {
         Some(LOCALES),
         &icu_datagen::all_keys_with_experimental()
             .into_iter()
-            .chain(core::iter::once(
-                icu_provider::hello_world::HelloWorldV1Marker::KEY,
-            ))
+            .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
             .collect::<Vec<_>>(),
         &source,
         vec![json_out, blob_out, mod_out, postcard_out],
