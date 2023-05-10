@@ -123,6 +123,10 @@ pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
     alloc::vec::Vec::from(metadata::LOCALES)
 }
 
+#[cfg(feature = "std")]
+#[deprecated]
+pub mod paths;
+
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
