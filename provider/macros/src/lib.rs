@@ -149,7 +149,7 @@ impl Parse for DataStructArg {
 
         if path.is_ident("marker") {
             let content;
-            let _paren = parenthesized!(content in input);
+            let paren = parenthesized!(content in input);
             let mut marker_name: Option<Path> = None;
             let mut key_lit: Option<LitStr> = None;
             let mut fallback_by: Option<LitStr> = None;
@@ -168,22 +168,27 @@ impl Parse for DataStructArg {
                                 &mut fallback_by,
                                 value,
                                 "fallback_by",
-                                input.span(),
+                                paren.span.join(),
                             )?;
                         } else if name == "extension_key" {
                             at_most_one_option(
                                 &mut extension_key,
                                 value,
                                 "extension_key",
-                                input.span(),
+                                paren.span.join(),
                             )?;
                         } else if name == "fallback_supplement" {
                             at_most_one_option(
                                 &mut fallback_supplement,
                                 value,
                                 "fallback_supplement",
-                                input.span(),
+                                paren.span.join(),
                             )?;
+                        } else {
+                            return Err(parse::Error::new(
+                                name.span(),
+                                format!("unknown option {name} in marker()"),
+                            ));
                         }
                     }
                     DataStructMarkerArg::Lit(lit) => {
@@ -239,7 +244,7 @@ impl Parse for DataStructMarkerArg {
             if lookahead.peek(Token![=]) {
                 let _tok: Token![=] = input.parse()?;
                 let ident = path.get_ident().ok_or_else(|| {
-                    parse::Error::new(input.span(), "Expected identifier before `=`, found path")
+                    parse::Error::new(path.span(), "Expected identifier before `=`, found path")
                 })?;
                 Ok(DataStructMarkerArg::NameValue(
                     ident.clone(),
