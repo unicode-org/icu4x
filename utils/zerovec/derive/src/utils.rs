@@ -9,19 +9,16 @@ use proc_macro2::TokenStream as TokenStream2;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parenthesized, parse2, Attribute, Error, Field, Fields, Ident, Index, Result, Token};
+use syn::{Attribute, Error, Field, Fields, Ident, Index, Result, Token};
 
 // Check that there are repr attributes satisfying the given predicate
 pub fn has_valid_repr(attrs: &[Attribute], predicate: impl Fn(&Ident) -> bool + Copy) -> bool {
-    attrs
-        .iter()
-        .filter(|a| a.path.get_ident().map(|a| a == "repr").unwrap_or(false))
-        .any(|a| {
-            parse2::<IdentListAttribute>(a.tokens.clone())
-                .ok()
-                .and_then(|s| s.idents.iter().find(|s| predicate(s)).map(|_| ()))
-                .is_some()
-        })
+    attrs.iter().filter(|a| a.path().is_ident("repr")).any(|a| {
+        a.parse_args::<IdentListAttribute>()
+            .ok()
+            .and_then(|s| s.idents.iter().find(|s| predicate(s)).map(|_| ()))
+            .is_some()
+    })
 }
 
 // An attribute that is a list of idents
@@ -31,10 +28,8 @@ struct IdentListAttribute {
 
 impl Parse for IdentListAttribute {
     fn parse(input: ParseStream) -> Result<Self> {
-        let content;
-        let _paren = parenthesized!(content in input);
         Ok(IdentListAttribute {
-            idents: content.parse_terminated(Ident::parse)?,
+            idents: input.parse_terminated(Ident::parse, Token![,])?,
         })
     }
 }
@@ -164,16 +159,16 @@ pub fn extract_parenthetical_zerovec_attrs(
     let mut error = None;
     attrs.retain(|a| {
         // skip the "zerovec" part
-        let second_segment = a.path.segments.iter().nth(1);
+        let second_segment = a.path().segments.iter().nth(1);
 
         if let Some(second) = second_segment {
             if second.ident == name {
-                let list = match parse2::<IdentListAttribute>(a.tokens.clone()) {
+                let list = match a.parse_args::<IdentListAttribute>() {
                     Ok(l) => l,
                     Err(_) => {
                         error = Some(Error::new(
                             a.span(),
-                            "#[zerovec::name(..)] takes in a comma separated list of identifiers",
+                            format!("#[zerovec::{name}(..)] takes in a comma separated list of identifiers"),
                         ));
                         return false;
                     }
@@ -196,7 +191,7 @@ pub fn extract_parenthetical_zerovec_attrs(
 pub fn extract_zerovec_attributes(attrs: &mut Vec<Attribute>) -> Vec<Attribute> {
     let mut ret = vec![];
     attrs.retain(|a| {
-        if a.path.segments.len() == 2 && a.path.segments[0].ident == "zerovec" {
+        if a.path().segments.len() == 2 && a.path().segments[0].ident == "zerovec" {
             ret.push(a.clone());
             return false;
         }
