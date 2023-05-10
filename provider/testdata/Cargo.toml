@@ -5,9 +5,9 @@
 [package]
 name = "icu_testdata"
 description = "Pre-built test data for ICU4X"
-version = "1.0.0"
+version = "1.2.0"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -24,58 +24,45 @@ include = [
     # Exception: We want to be able to run tests, so
     # we include the test data
     "data/**/*",
+    "!data/postcard/**/*",
 ]
 
 [package.metadata.docs.rs]
 all-features = true
 
-[package.metadata.cargo-all-features]
-skip_optional_dependencies = true
-denylist = ["internal_all_features_hack"]
-extra_features = [
-    "icu_datetime",
-    "icu_list",
-]
-
 [dependencies]
-icu_provider = { version = "1.0.0", path = "../core" }
-icu_provider_adapters = { version = "1.0.0", path = "../adapters" }
+icu_provider = { version = "1.2.0", path = "../core" }
+icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
 
-# serde feature
-icu_provider_blob = { version = "1.0.0", path = "../blob", optional = true }
-lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
-
-# metadata feature
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-toml = { version = "0.5", optional = true, default-features = false }
+# buffer feature
+icu_provider_blob = { version = "1.2.0", path = "../blob", optional = true }
 
 # databake deps
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
-icu_collections = { version = "1.0.0", path = "../../components/collections" }
-litemap = { version = "0.6", path = "../../utils/litemap", default-features = false }
-tinystr = { version = "0.7", path = "../../utils/tinystr" }
-zerovec = { version = "0.9", path = "../../utils/zerovec" }
+icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 
 # databake options
-icu_calendar = { version = "1.0.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemapping = { version = "0.7.0", path = "../../experimental/casemapping", default-features = false, optional = true }
-icu_collator = { version = "1.0.0", path = "../../components/collator", default-features = false, optional = true }
-icu_compactdecimal = { version = "0.1.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
-icu_datetime = { version = "1.0.0", path = "../../components/datetime", default-features = false, optional = true }
-icu_decimal = { version = "1.0.0", path = "../../components/decimal", default-features = false, optional = true }
-icu_displaynames = { version = "0.7.0", path = "../../experimental/displaynames", default-features = false, optional = true }
-icu_list = { version = "1.0.0", path = "../../components/list", default-features = false, optional = true }
-icu_locid_transform = { version = "1.0.0", path = "../../components/locid_transform", default-features = false, optional = true }
-icu_normalizer = { version = "1.0.0", path = "../../components/normalizer", default-features = false, optional = true }
-icu_plurals = { version = "1.0.0", path = "../../components/plurals", default-features = false, optional = true }
-icu_properties = { version = "1.0.0", path = "../../components/properties", default-features = false, optional = true }
+icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
+icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
+icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, optional = true }
+icu_decimal = { version = "1.2.0", path = "../../components/decimal", default-features = false, optional = true }
+icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
+icu_list = { version = "1.2.0", path = "../../components/list", default-features = false, optional = true }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", default-features = false, optional = true }
+icu_normalizer = { version = "1.2.0", path = "../../components/normalizer", default-features = false, optional = true }
+icu_plurals = { version = "1.2.0", path = "../../components/plurals", default-features = false, optional = true }
+icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_segmenter = { version = "0.7.0", path = "../../experimental/segmenter", default-features = false, optional = true }
-icu_timezone = { version = "1.0.0", path = "../../components/timezone", default-features = false, optional = true }
+icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, optional = true }
+icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu" }
-criterion = "0.3"
+icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
+criterion = "0.4"
 
 [features]
 default = [
@@ -88,24 +75,22 @@ default = [
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
+    "icu_segmenter",
     "icu_timezone",
 ]
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
-buffer = ["icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "lazy_static"]
+buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde"]
 std = []
-# Enables programmatic access to the sources.toml file
-# If you want this to be made public stable, file an issue on the ICU4X repository.
-metadata = [
-    "icu_locid/serde",
-    "toml",
-    "serde",
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+denylist = ["internal_all_features_hack"]
+extra_features = [
+    "icu_datetime",
+    "icu_list",
 ]
-# Deactivates baked in case it doesn't build
-internal_ignore_baked = []
-# Excludes `internal_ignore_baked` from `--all-features` 
-internal_all_features_hack = []
 
 [[bench]]
 name = "providers"

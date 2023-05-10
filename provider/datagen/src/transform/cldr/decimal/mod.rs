@@ -9,9 +9,7 @@ use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-#[cfg(feature = "experimental")]
 mod compact;
-#[cfg(feature = "experimental")]
 mod compact_decimal_pattern;
 mod decimal_pattern;
 mod symbols;
@@ -80,27 +78,28 @@ impl crate::DatagenProvider {
     }
 
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .numbers()
-            .list_langs()?
-            .flat_map(|langid| {
-                let last = DataLocale::from(&langid);
-                self.get_supported_numsys_for_langid_without_default(&langid)
-                    .expect("All languages from list_langs should be present")
-                    .into_iter()
-                    .map(move |nsname| {
-                        let mut data_locale = DataLocale::from(&langid);
-                        data_locale.set_unicode_ext(
-                            key!("nu"),
-                            Value::try_from_single_subtag(nsname.as_bytes())
-                                .expect("CLDR should have valid numbering system names"),
-                        );
-                        data_locale
-                    })
-                    .chain(core::iter::once(last))
-            })
-            .collect())
+        Ok(self.source.options.locales.filter_by_langid_equality(
+            self.source
+                .cldr()?
+                .numbers()
+                .list_langs()?
+                .flat_map(|langid| {
+                    let last = DataLocale::from(&langid);
+                    self.get_supported_numsys_for_langid_without_default(&langid)
+                        .expect("All languages from list_langs should be present")
+                        .into_iter()
+                        .map(move |nsname| {
+                            let mut data_locale = DataLocale::from(&langid);
+                            data_locale.set_unicode_ext(
+                                key!("nu"),
+                                Value::try_from_single_subtag(nsname.as_bytes())
+                                    .expect("CLDR should have valid numbering system names"),
+                            );
+                            data_locale
+                        })
+                        .chain(core::iter::once(last))
+                })
+                .collect(),
+        ))
     }
 }

@@ -17,7 +17,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -328,5 +328,5 @@ pub use options::MaxVariable;
 pub use options::Numeric;
 pub use options::Strength;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use CollatorError as Error;

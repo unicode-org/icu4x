@@ -115,21 +115,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 224u8, 166u8, 150u8, 224u8,
-                        167u8, 141u8, 224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8,
-                        184u8, 224u8, 167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8,
-                        224u8, 167u8, 130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8,
-                        166u8, 172u8, 224u8, 166u8, 150u8, 224u8, 167u8, 141u8, 224u8, 166u8,
-                        176u8, 224u8, 167u8, 128u8, 224u8, 166u8, 183u8, 224u8, 167u8, 141u8,
-                        224u8, 166u8, 159u8, 224u8, 166u8, 190u8, 224u8, 166u8, 172u8, 224u8,
-                        167u8, 141u8, 224u8, 166u8, 166u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0$\0\xE0\xA6\x96\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xAA\xE0\xA7\x82\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\xAC\xE0\xA6\x96\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA7\x80\xE0\xA6\xB7\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAC\xE0\xA7\x8D\xE0\xA6\xA6")
                 },
             )
         },
@@ -137,20 +126,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 224u8, 166u8, 150u8, 224u8,
-                        167u8, 141u8, 224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8,
-                        184u8, 224u8, 167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8,
-                        224u8, 167u8, 130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8,
-                        166u8, 172u8, 224u8, 166u8, 150u8, 224u8, 167u8, 131u8, 224u8, 166u8,
-                        183u8, 224u8, 167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 190u8,
-                        224u8, 166u8, 172u8, 224u8, 167u8, 141u8, 224u8, 166u8, 166u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0$\0\xE0\xA6\x96\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xAA\xE0\xA7\x82\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\xAC\xE0\xA6\x96\xE0\xA7\x83\xE0\xA6\xB7\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAC\xE0\xA7\x8D\xE0\xA6\xA6")
                 },
             )
         },
@@ -158,20 +137,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x03\0bcece")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 36u8, 0u8, 224u8, 166u8, 150u8, 224u8,
-                        167u8, 141u8, 224u8, 166u8, 176u8, 224u8, 166u8, 191u8, 224u8, 166u8,
-                        184u8, 224u8, 167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 170u8,
-                        224u8, 167u8, 130u8, 224u8, 166u8, 176u8, 224u8, 167u8, 141u8, 224u8,
-                        166u8, 172u8, 224u8, 166u8, 150u8, 224u8, 167u8, 131u8, 224u8, 166u8,
-                        183u8, 224u8, 167u8, 141u8, 224u8, 166u8, 159u8, 224u8, 166u8, 190u8,
-                        224u8, 166u8, 172u8, 224u8, 167u8, 141u8, 224u8, 166u8, 166u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x02\0\0\0\0\0$\0\xE0\xA6\x96\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xAA\xE0\xA7\x82\xE0\xA6\xB0\xE0\xA7\x8D\xE0\xA6\xAC\xE0\xA6\x96\xE0\xA7\x83\xE0\xA6\xB7\xE0\xA7\x8D\xE0\xA6\x9F\xE0\xA6\xBE\xE0\xA6\xAC\xE0\xA7\x8D\xE0\xA6\xA6")
                 },
             )
         },

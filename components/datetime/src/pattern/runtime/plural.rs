@@ -10,7 +10,7 @@ use crate::{
 };
 use either::Either;
 use icu_plurals::{PluralCategory, PluralRules};
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -209,8 +209,7 @@ impl<'data> PatternPlurals<'data> {
                 // Potentially change to log::warn! in #2648
                 debug_assert!(
                     false,
-                    "expect_pattern called with bad data (falling back to `other` pattern): {}",
-                    msg
+                    "expect_pattern called with bad data (falling back to `other` pattern): {msg}"
                 );
                 patterns.other
             }

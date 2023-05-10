@@ -4,6 +4,7 @@
 
 // This way we can copy-paste Yokeable impls
 #![allow(clippy::forget_copy)]
+#![allow(clippy::forget_non_drop)]
 
 use crate::flexzerovec::FlexZeroVec;
 use crate::map::ZeroMapBorrowed;
@@ -310,11 +311,12 @@ mod test {
     }
 
     #[test]
+    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_ZeroVec() {
         test_bake!(
             DeriveTest_ZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_ZeroVec {
-                _data: unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
+                _data: crate::ZeroVec::new(),
             },
             zerovec,
         );
@@ -333,7 +335,7 @@ mod test {
         test_bake!(
             DeriveTest_ZeroSlice<'static>,
             crate::yoke_impls::test::DeriveTest_ZeroSlice {
-                _data: unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
+                _data: crate::ZeroSlice::new_empty(),
             },
             zerovec,
         );
@@ -348,13 +350,13 @@ mod test {
     }
 
     #[test]
+    #[ignore] // https://github.com/rust-lang/rust/issues/98906
     fn bake_FlexZeroVec() {
         test_bake!(
             DeriveTest_FlexZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_FlexZeroVec {
-                _data: unsafe {
-                    crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[1u8]).as_flexzerovec()
-                },
+                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x01") }
+                    .as_flexzerovec(),
             },
             zerovec,
         );
@@ -373,7 +375,7 @@ mod test {
         test_bake!(
             DeriveTest_FlexZeroSlice<'static>,
             crate::yoke_impls::test::DeriveTest_FlexZeroSlice {
-                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[1u8]) },
+                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(b"\x01\0") },
             },
             zerovec,
         );
@@ -392,7 +394,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroVec<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroVec {
-                _data: unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                _data: crate::VarZeroVec::new(),
             },
             zerovec,
         );
@@ -411,7 +413,7 @@ mod test {
         test_bake!(
             DeriveTest_VarZeroSlice<'static>,
             crate::yoke_impls::test::DeriveTest_VarZeroSlice {
-                _data: unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) }
+                _data: crate::VarZeroSlice::new_empty()
             },
             zerovec,
         );
@@ -434,8 +436,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
-                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                        crate::VarZeroVec::new(),
+                        crate::VarZeroVec::new(),
                     )
                 },
             },
@@ -460,8 +462,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::maps::ZeroMapBorrowed::from_parts_unchecked(
-                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
-                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
+                        crate::VarZeroSlice::new_empty(),
+                        crate::VarZeroSlice::new_empty(),
                     )
                 },
             },
@@ -486,8 +488,8 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap::from_parts_unchecked(
-                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
-                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                        crate::VarZeroVec::new(),
+                        crate::VarZeroVec::new(),
                     )
                 },
             },
@@ -512,10 +514,10 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::ZeroMap2d::from_parts_unchecked(
-                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
-                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
-                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
-                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                        crate::ZeroVec::new(),
+                        crate::ZeroVec::new(),
+                        crate::ZeroVec::new(),
+                        crate::VarZeroVec::new(),
                     )
                 },
             },
@@ -540,10 +542,10 @@ mod test {
                 _data: unsafe {
                     #[allow(unused_unsafe)]
                     crate::maps::ZeroMap2dBorrowed::from_parts_unchecked(
-                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
-                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
-                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
-                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
+                        crate::ZeroSlice::new_empty(),
+                        crate::ZeroSlice::new_empty(),
+                        crate::ZeroSlice::new_empty(),
+                        crate::VarZeroSlice::new_empty(),
                     )
                 },
             },

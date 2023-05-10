@@ -56,7 +56,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -77,9 +77,15 @@ pub use locale::Locale;
 pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
 
+#[doc(no_inline)]
+pub use ParserError as Error;
+
 pub mod extensions;
 pub mod subtags;
 pub mod zerovec;
 
 #[cfg(feature = "serde")]
 mod serde;
+
+#[cfg(feature = "databake")]
+mod databake;

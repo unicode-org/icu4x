@@ -6,13 +6,13 @@ use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
 use crate::request::DataLocale;
-use crate::yoke::trait_hack::YokeTraitHack;
-use crate::yoke::*;
 use alloc::boxed::Box;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
 use core::ops::Deref;
+use yoke::trait_hack::YokeTraitHack;
+use yoke::*;
 
 #[cfg(not(feature = "sync"))]
 use alloc::rc::Rc as SelectedRc;
@@ -79,14 +79,14 @@ where
 }
 
 /// The type of the "cart" that is used by `DataPayload`.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
 pub struct Cart(SelectedRc<Box<[u8]>>);
 
 impl Deref for Cart {
     type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
-        &*self.0
+        &self.0
     }
 }
 // Safe because both Rc and Arc are StableDeref, and our impl delegates.
@@ -95,13 +95,13 @@ unsafe impl stable_deref_trait::StableDeref for Cart {}
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
-    /// Creates a Yoke<Y, Option<Cart>> from owned bytes by applying f.
+    /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
     pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(&*b))
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
             // Safe because the cart is only wrapped
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
@@ -631,5 +631,5 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
 }

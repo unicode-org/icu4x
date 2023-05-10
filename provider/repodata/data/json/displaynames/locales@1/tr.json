@@ -1,0 +1,35 @@
+{
+  "names": {
+    "ar-001": "Modern Standart Arapça",
+    "az-Arab": "Güney Azerice",
+    "de-AT": "Avusturya Almancası",
+    "de-CH": "İsviçre Yüksek Almancası",
+    "en-AU": "Avustralya İngilizcesi",
+    "en-CA": "Kanada İngilizcesi",
+    "en-GB": "İngiliz İngilizcesi",
+    "en-US": "Amerikan İngilizcesi",
+    "es-419": "Latin Amerika İspanyolcası",
+    "es-ES": "Avrupa İspanyolcası",
+    "es-MX": "Meksika İspanyolcası",
+    "fa-AF": "Darice",
+    "fr-CA": "Kanada Fransızcası",
+    "fr-CH": "İsviçre Fransızcası",
+    "nds-NL": "Aşağı Saksonca",
+    "nl-BE": "Flamanca",
+    "pt-BR": "Brezilya Portekizcesi",
+    "pt-PT": "Avrupa Portekizcesi",
+    "ro-MD": "Moldovaca",
+    "sw-CD": "Kongo Svahili",
+    "zh-Hans": "Basitleştirilmiş Çince",
+    "zh-Hant": "Geleneksel Çince"
+  },
+  "short_names": {
+    "en-GB": "Birleşik Krallık İngilizcesi",
+    "en-US": "ABD İngilizcesi"
+  },
+  "long_names": {
+    "zh-Hans": "Basitleştirilmiş Çince (Mandarin)",
+    "zh-Hant": "Geleneksel Çince (Mandarin)"
+  },
+  "menu_names": {}
+}

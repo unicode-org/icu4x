@@ -42,6 +42,7 @@ use icu_provider::prelude::*;
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to the raw canonical composition operation e.g. for use in a
 /// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
 pub struct CanonicalComposition {
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
 }
@@ -118,6 +119,7 @@ pub enum Decomposed {
 /// However, this API is provided for callers such as HarfBuzz that specifically
 /// want access to non-recursive canonical decomposition e.g. for use in a
 /// glyph-availability-guided custom normalizer.
+#[derive(Debug)]
 pub struct CanonicalDecomposition {
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
@@ -372,6 +374,7 @@ impl CanonicalDecomposition {
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
 /// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
+#[derive(Debug)]
 pub struct CanonicalCombiningClassMap {
     /// The data trie
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,

@@ -8,7 +8,7 @@ use core::{
     fmt, num,
     str::FromStr,
 };
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::{
     ule::{tuple::Tuple2ULE, AsULE, ZeroVecError, ULE},
     {VarZeroVec, ZeroVec},
@@ -16,7 +16,7 @@ use zerovec::{
 
 #[derive(yoke::Yokeable, zerofrom::ZeroFrom, Clone, PartialEq, Debug)]
 #[cfg_attr(
-    feature = "databake",
+    feature = "datagen",
     derive(databake::Bake),
     databake(path = icu_plurals::rules::runtime::ast),
 )]
@@ -407,7 +407,7 @@ mod serde {
         {
             Rule::from_str(rule_string).map_err(|err| {
                 de::Error::invalid_value(
-                    de::Unexpected::Other(&format!("{}", err)),
+                    de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule string",
                 )
             })
@@ -419,7 +419,7 @@ mod serde {
         {
             let rule = VarZeroVec::parse_byte_slice(rule_bytes).map_err(|err| {
                 de::Error::invalid_value(
-                    de::Unexpected::Other(&format!("{}", err)),
+                    de::Unexpected::Other(&format!("{err}")),
                     &"a valid UTS 35 rule byte slice",
                 )
             })?;

@@ -129,7 +129,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -149,7 +149,7 @@ pub mod provider;
 pub(crate) mod raw;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
-#[cfg(feature = "experimental_skeleton_matching")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod skeleton;
 pub mod time_zone;
 mod zoned_datetime;
@@ -166,5 +166,5 @@ pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DateTimeError as Error;

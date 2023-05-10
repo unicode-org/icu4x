@@ -19,6 +19,7 @@ fn check(attr: Vec<TokenStream2>, item: TokenStream2, expected: TokenStream2) {
 }
 
 #[test]
+#[rustfmt::skip] // inserts a comma
 fn test_basic() {
     // #[data_struct]
     check(
@@ -27,7 +28,7 @@ fn test_basic() {
             pub struct FooV1;
         ),
         quote!(
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
         ),
     );
@@ -47,7 +48,7 @@ fn test_data_marker() {
             impl icu_provider::DataMarker for FooV1Marker {
                 type Yokeable = FooV1;
             }
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
         ),
     );
@@ -76,7 +77,7 @@ fn test_keyed_data_marker() {
                         None
                     ));
             }
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1;
         ),
     );
@@ -128,7 +129,7 @@ fn test_multi_named_keyed_data_marker() {
                         None
                     ));
             }
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
         ),
     );
@@ -159,7 +160,7 @@ fn test_databake() {
                         None
                     ));
             }
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             #[databake(path = test::path)]
             pub struct FooV1;
         ),
@@ -203,7 +204,7 @@ fn test_attributes() {
                         Some(icu_provider::FallbackSupplement::Collation)
                     ));
             }
-            #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+            #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
         ),
     );

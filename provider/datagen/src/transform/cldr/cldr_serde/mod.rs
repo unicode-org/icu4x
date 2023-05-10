@@ -9,6 +9,7 @@
 
 pub mod aliases;
 pub mod ca;
+pub mod coverage_levels;
 pub mod date_fields;
 pub mod exemplar_chars;
 pub mod japanese;
@@ -20,5 +21,6 @@ pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
 pub mod region_displaynames;
+pub mod script_displaynames;
 pub mod time_zones;
 pub mod week_data;

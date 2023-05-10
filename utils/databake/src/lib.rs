@@ -43,7 +43,8 @@
 //! # Testing
 //! The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
 //!
-//! ```no_run https://github.com/rust-lang/rust/issues/98906
+//! ```no_run
+//! # // https://github.com/rust-lang/rust/issues/98906
 //! # use databake::*;
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
@@ -52,7 +53,6 @@
 //! #   string: &'static str,
 //! #   slice: &'static [bool],
 //! # }
-//! #
 //! # #[derive(Bake)]
 //! # #[databake(path = my_crate)]
 //! # struct AnotherOne(MyStruct, char);
@@ -179,7 +179,7 @@ macro_rules! test_bake {
         )?
         assert_eq!(bake, expected_bake);
 
-        #[allow(unused_variable)]
+        #[allow(unused_variables)]
         let _env = env.into_iter().collect::<std::collections::HashSet<_>>();
         $(
             assert!(_env.contains(stringify!($krate)), "Crate {:?} was not added to the CrateEnv", stringify!($krate));

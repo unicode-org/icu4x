@@ -76,6 +76,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
 /// assert_eq!(adapter.bidi_class('ع'), DataSourceBidiClass::AL);
 /// ```
+#[derive(Debug)]
 pub struct BidiClassAdapter<'a> {
     data: CodePointMapDataBorrowed<'a, BidiClass>,
 }

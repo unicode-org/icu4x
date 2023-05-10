@@ -27,3 +27,5 @@ pub use error::RelativeTimeError;
 pub use format::FormattedRelativeTime;
 pub use options::RelativeTimeFormatterOptions;
 pub use relativetime::RelativeTimeFormatter;
+#[doc(no_inline)]
+pub use RelativeTimeError as Error;

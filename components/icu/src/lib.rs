@@ -101,11 +101,11 @@
 //!
 //! [`DataProvider`]: icu_provider::DataProvider
 //! [`DataPayload`]: icu_provider::DataPayload
-//! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-//! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-//! [`icu_testdata`]: ../icu_testdata/index.html
-//! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-//! [`icu_datagen`]: ../icu_datagen/index.html
+//! [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
+//! [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
+//! [`icu_testdata`]: https://docs.rs/icu_testdata/latest/icu_testdata/
+//! [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
+//! [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
@@ -120,10 +120,14 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
+
+#[cfg(doc)]
+// Needed for intra-doc link to work, since icu_provider is otherwise never mentioned in this crate
+extern crate icu_provider;
 
 #[doc(inline)]
 pub use icu_calendar as calendar;
@@ -162,7 +166,6 @@ pub use icu_properties as properties;
 #[doc(inline)]
 pub use icu_collections as collections;
 
-#[cfg(feature = "icu_segmenter")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
 
@@ -176,3 +179,7 @@ pub use icu_displaynames as displaynames;
 #[cfg(feature = "icu_relativetime")]
 #[doc(inline)]
 pub use icu_relativetime as relativetime;
+
+#[cfg(feature = "icu_compactdecimal")]
+#[doc(inline)]
+pub use icu_compactdecimal as compactdecimal;

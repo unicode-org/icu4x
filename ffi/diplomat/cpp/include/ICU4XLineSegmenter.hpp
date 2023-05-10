@@ -31,29 +31,63 @@ struct ICU4XLineSegmenterDeleter {
 /**
  * An ICU4X line-break segmenter, capable of finding breakpoints in strings.
  * 
- * See the [Rust documentation for `LineSegmenter`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html) for more information.
+ * See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
  */
 class ICU4XLineSegmenter {
  public:
 
   /**
-   * Construct a [`ICU4XLineSegmenter`] with default options.
+   * Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
+   * available payload data for Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_auto_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_unstable) for more information.
    */
-  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto(const ICU4XDataProvider& provider);
 
   /**
-   * Construct a [`ICU4XLineSegmenter`] with custom options.
+   * Construct a [`ICU4XLineSegmenter`] with default options and LSTM payload data for
+   * Burmese, Khmer, Lao, and Thai.
    * 
-   * See the [Rust documentation for `try_new_with_options_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.try_new_with_options_unstable) for more information.
+   * See the [Rust documentation for `try_new_lstm_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_unstable) for more information.
    */
-  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm(const ICU4XDataProvider& provider);
+
+  /**
+   * Construct a [`ICU4XLineSegmenter`] with default options and dictionary payload data for
+   * Burmese, Khmer, Lao, and Thai..
+   * 
+   * See the [Rust documentation for `try_new_dictionary_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary(const ICU4XDataProvider& provider);
+
+  /**
+   * Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
+   * available payload data for Burmese, Khmer, Lao, and Thai.
+   * 
+   * See the [Rust documentation for `try_new_auto_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_auto_with_options_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+
+  /**
+   * Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
+   * Burmese, Khmer, Lao, and Thai.
+   * 
+   * See the [Rust documentation for `try_new_lstm_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_lstm_with_options_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
+
+  /**
+   * Construct a [`ICU4XLineSegmenter`] with custom options and dictionary payload data for
+   * Burmese, Khmer, Lao, and Thai.
+   * 
+   * See the [Rust documentation for `try_new_dictionary_with_options_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.try_new_dictionary_with_options_unstable) for more information.
+   */
+  static diplomat::result<ICU4XLineSegmenter, ICU4XError> create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options);
 
   /**
    * Segments a (potentially ill-formed) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
@@ -62,7 +96,7 @@ class ICU4XLineSegmenter {
   /**
    * Segments a UTF-16 string.
    * 
-   * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
@@ -71,7 +105,7 @@ class ICU4XLineSegmenter {
   /**
    * Segments a Latin-1 string.
    * 
-   * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
@@ -92,8 +126,8 @@ class ICU4XLineSegmenter {
 #include "ICU4XLineBreakIteratorUtf16.hpp"
 #include "ICU4XLineBreakIteratorLatin1.hpp"
 
-inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create(provider.AsFFI());
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_auto(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto(provider.AsFFI());
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
@@ -102,9 +136,51 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_lstm(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm(provider.AsFFI());
+  diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_dictionary(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary(provider.AsFFI());
+  diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_auto_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
   ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .line_break_rule = static_cast<capi::ICU4XLineBreakRule>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_lstm_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+  ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
+  diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::create_dictionary_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options) {
+  ICU4XLineBreakOptionsV1 diplomat_wrapped_struct_options = options;
+  auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));

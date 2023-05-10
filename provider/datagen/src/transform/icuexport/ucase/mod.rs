@@ -5,8 +5,6 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-#![cfg(feature = "experimental")]
-
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_collections::codepointtrie::toml::CodePointDataSlice;
@@ -23,7 +21,7 @@ impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
             .icuexport()?
             .read_and_parse_toml::<ucase_serde::Main>(&format!(
                 "ucase/{}/ucase.toml",
-                self.source.trie_type()
+                self.source.options.trie_type
             ))?
             .ucase;
 

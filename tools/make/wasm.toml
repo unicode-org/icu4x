@@ -1,0 +1,216 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# This is a cargo-make file included in the toplevel Makefile.toml
+
+[tasks.wasm-dir]
+description = "Make the WASM package directory"
+category = "ICU4X WASM"
+command = "mkdir"
+args = ["-p", "wasmpkg"]
+
+[tasks.wasm-wasm-examples]
+description = "Copy the WASM files from examples into wasmpkg"
+category = "ICU4X WASM"
+dependencies = ["wasm-dir", "install-nightly", "install-wasm"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+# Re-run the build command only to generate the JSON output (--message-format=json)
+set_env RUSTFLAGS "-C panic=abort -C opt-level=s"
+output = exec --fail-on-error cargo +${ICU4X_NIGHTLY_TOOLCHAIN} wasm-build-release --message-format=json --examples --workspace --features serde --exclude icu_datagen --exclude icu_capi
+
+# Parse the JSON messages from --message-format=json line by line
+trimmed_stdout = trim ${output.stdout}
+json_messages = split ${trimmed_stdout} "\n"
+for json_message in ${json_messages}
+    json_obj = json_parse ${json_message}
+
+    # The following two JSON keys determine whether this is an example artifact
+    is_compiler_artifact = eq ${json_obj.reason} "compiler-artifact"
+    is_example = eq ${json_obj.target.kind[0]} "example"
+    if ${is_compiler_artifact} and ${is_example}
+        # Copy the wasm file to the output directory
+        filename = basename ${json_obj.executable}
+        # Some examples may not be real "example"s
+        # and won't produce executables. We should filter them out.
+        empty = is_empty ${filename}
+        if not ${empty}
+            out_path = concat wasmpkg/ ${filename}
+            cp ${json_obj.executable} ${out_path}
+        end
+    end
+end
+'''
+
+[tasks.wasm-wat]
+description = "Create WebAssembly Text files from the WASM files"
+category = "ICU4X WASM"
+dependencies = ["wasm-wasm-examples"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm2wat = which wasm2wat
+assert ${wasm2wat} "Could not find 'wasm2wat' in path.\n*** Please run 'npm install -g wabt' ***"
+
+mkdir wasmpkg/wat
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/wat/ ${basename} ".wat"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        output = exec ${wasm2wat} ${src_path} -o ${out_path}
+        stdout = trim ${output.stdout}
+        stderr = trim ${output.stderr}
+        if ${stdout} or ${stderr} or ${output.code}
+            echo ${stdout}\n${stderr}\nexit code: ${output.code}
+            assert_fail "wasm2wat printed warnings (shown above)"
+        end
+    end
+end
+'''
+
+[tasks.wasm-dcmp]
+description = "Create WebAssembly decompiled code files from the WASM files"
+category = "ICU4X WASM"
+dependencies = ["wasm-wasm-examples"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm-decompile = which wasm-decompile
+assert ${wasm-decompile} "Could not find 'wasm-decompile' in path.\n*** Please run 'npm install -g wabt' ***"
+
+mkdir wasmpkg/wasm-decompile
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/wasm-decompile/ ${basename} ".dcmp"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        output = exec ${wasm-decompile} ${src_path} -o ${out_path}
+        stdout = trim ${output.stdout}
+        stderr = trim ${output.stderr}
+        if ${stdout} or ${stderr} or ${output.code}
+            echo ${stdout}\n${stderr}\nexit code: ${output.code}
+            assert_fail "wasm-decompile printed warnings (shown above)"
+        end
+    end
+end
+'''
+
+[tasks.wasm-opt]
+description = "Create optimized WASM files from the WASM files"
+category = "ICU4X WASM"
+dependencies = ["wasm-wasm-examples"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+wasm-opt = which wasm-opt
+assert ${wasm-opt} "Could not find 'wasm-opt' in path.\n*** Please run 'npm install -g wasm-opt' ***"
+
+mkdir wasmpkg/wasm-opt
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/wasm-opt/ ${basename} "+opt.wasm"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        output = exec ${wasm-opt} -Os ${src_path} -o ${out_path}
+        stdout = trim ${output.stdout}
+        stderr = trim ${output.stderr}
+        if ${stdout} or ${stderr} or ${output.code}
+            echo ${stdout}\n${stderr}\nexit code: ${output.code}
+            assert_fail "wasm-opt printed warnings (shown above)"
+        end
+    end
+end
+'''
+
+[tasks.wasm-twiggy-dominators]
+description = "Create Twiggy Dominator files from the WASM files"
+category = "ICU4X WASM"
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+twiggy = which twiggy
+assert ${twiggy} "Could not find 'twiggy' in path.\n*** Please run 'cargo install twiggy' ***"
+
+mkdir wasmpkg/twiggy
+
+handle = glob_array wasmpkg/*.wasm
+for src_path in ${handle}
+    path_no_extension = substring ${src_path} -5
+    basename = substring ${path_no_extension} 8
+    out_path = concat wasmpkg/twiggy/ ${basename} "+twiggy.txt"
+
+    out_exists = is_path_exists ${out_path}
+    up_to_date = set false
+    if ${out_exists}
+        src_time = get_last_modified_time ${src_path}
+        out_time = get_last_modified_time ${out_path}
+        up_to_date = less_than ${src_time} ${out_time}
+    end
+
+    if not ${up_to_date}
+        echo Writing ${out_path}
+        exec --fail-on-error ${twiggy} dominators ${src_path} -o ${out_path}
+    end
+end
+'''
+dependencies = ["wasm-wasm-examples"]
+
+[tasks.wasm-examples]
+description = "All-in-one command to build release-mode WASM examples to wasmpkg"
+category = "ICU4X WASM"
+dependencies = [
+    "wasm-wat",
+    "wasm-dcmp",
+    "wasm-opt",
+    "wasm-twiggy-dominators",
+]
+
+[tasks.wasm-clean]
+description = "Clean up WASM build artifacts"
+category = "ICU4X WASM"
+command = "rm"
+args = ["-rf", "wasmpkg"]

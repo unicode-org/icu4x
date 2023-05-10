@@ -85,7 +85,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -93,6 +93,7 @@
 extern crate alloc;
 
 mod error;
+mod lazy_automaton;
 mod list_formatter;
 mod patterns;
 
@@ -102,7 +103,7 @@ pub use list_formatter::*;
 
 pub use error::ListError;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use ListError as Error;
 
 /// Represents the style of a list. See the

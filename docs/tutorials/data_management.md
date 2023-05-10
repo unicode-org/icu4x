@@ -15,7 +15,7 @@ Data generation is done using the `icu_datagen` crate, which pulls in data from 
 First we will need to install the binary:
 
 ```console
-$ cargo install icu_datagen --features bin
+$ cargo install icu_datagen
 ```
 
 Get a coffee, this might take a while ☕.
@@ -29,6 +29,22 @@ $ icu4x-datagen --keys all --locales full --format blob --out my_data_blob.postc
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components in all locales. The file is several megabytes large; we will optimize it later in the tutorial!
 
 `icu4x-datagen` has many options, some of which we'll discover below. The default options should work for most purposes, but check out `icu4x-datagen --help` to learn more about fine-tuning your data.
+
+## Should you check in data to your repository?
+
+You can check in the generated data to your version control system, or you can add it to a build script. There are pros and cons of both approaches.
+
+You should check in the generated data if:
+
+1. You want fully reproducible, deterministic builds
+2. You want to reduce build-time dependencies
+
+You should generate it automatically at build time if:
+
+1. You want to automatically download the latest CLDR/Unicode data
+2. It is difficult to add large files to your VCS
+
+If you check in the generated data, it is recommended that you configure a job in continuous integration that verifies that the data in your repository reflects the latest CLDR/Unicode releases; otherwise, your app may drift out of date.
 
 # 3. Using the generated data
 
@@ -234,4 +250,6 @@ fn main() {
 
 We have learned how to generate data and load it into our programs, optimize data size, and gotten to know the different data providers that are part of `ICU4X`.
 
-You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://icu4x.unicode.org/doc/icu_datagen/).
+For a deeper dive into configuring your data providers in code, see [data_provider.md].
+
+You can learn more about datagen, including the Rust API which we have not used in this tutorial, by reading [the docs](https://docs.rs/icu_datagen/latest/).

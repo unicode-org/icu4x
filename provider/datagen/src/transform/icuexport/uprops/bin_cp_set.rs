@@ -9,7 +9,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 // get the source data for a Unicode binary property that only defines values for code points
-fn get_binary_prop_for_code_point_set<'a>(
+pub(crate) fn get_binary_prop_for_code_point_set<'a>(
     source: &'a SourceData,
     key: &str,
 ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
@@ -17,8 +17,7 @@ fn get_binary_prop_for_code_point_set<'a>(
         .icuexport()?
         .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
             "uprops/{}/{}.toml",
-            source.trie_type(),
-            key
+            source.options.trie_type, key
         ))?
         .binary_property
         .get(0)

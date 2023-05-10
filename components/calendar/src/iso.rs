@@ -46,7 +46,7 @@ const EPOCH: i32 = 1;
 ///
 /// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
-/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_calendar
+/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_8601#Dates
 ///
 /// # Era codes
 ///
@@ -674,18 +674,16 @@ mod test {
         // Reminder: ISO year 0 is Gregorian year 1 BCE.
         // Year 0 is a leap year due to the 400-year rule.
         fn check(fixed: i32, year: i32, month: u8, day: u8) {
-            assert_eq!(Iso::iso_year_from_fixed(fixed), year, "fixed: {}", fixed);
+            assert_eq!(Iso::iso_year_from_fixed(fixed), year, "fixed: {fixed}");
             assert_eq!(
                 Iso::iso_from_fixed(fixed),
                 Date::try_new_iso_date(year, month, day).unwrap(),
-                "fixed: {}",
-                fixed
+                "fixed: {fixed}"
             );
             assert_eq!(
                 Iso::fixed_from_iso_integers(year, month, day),
                 Some(fixed),
-                "fixed: {}",
-                fixed
+                "fixed: {fixed}"
             );
         }
         check(-1828, -5, 12, 30);

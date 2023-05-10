@@ -4,7 +4,7 @@
 
 //! Determine the plural category appropriate for a given number in a given language.
 //!
-//! This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+//! This module is published as its own crate ([`icu_plurals`](https://docs.rs/icu_plurals/latest/icu_plurals/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! For example in English, when constructing a message
@@ -72,7 +72,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -93,7 +93,7 @@ use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use rules::runtime::test_rule;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use PluralsError as Error;
 
 /// A type of a plural rule which can be associated with the [`PluralRules`] struct.
@@ -285,6 +285,7 @@ impl PluralCategory {
 /// [`ICU4X`]: ../icu/index.html
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
+#[derive(Debug)]
 pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
 
 impl PluralRules {

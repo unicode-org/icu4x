@@ -252,6 +252,12 @@ where
         self.values.get(index)
     }
 
+    /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
+    pub fn get_copied_by(&self, predicate: impl FnMut(&K) -> Ordering) -> Option<V> {
+        let index = self.keys.zvl_binary_search_by(predicate).ok()?;
+        self.values.get(index)
+    }
+
     /// Similar to [`Self::iter()`] except it returns a direct copy of the values instead of references
     /// to `V::ULE`, in cases when `V` is fixed-size
     pub fn iter_copied_values<'b>(
@@ -277,8 +283,8 @@ where
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
     #[allow(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
     pub fn iter_copied<'b: 'a>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
-        let keys = &*self.keys;
-        let values = &*self.values;
+        let keys = &self.keys;
+        let values = &self.values;
         let len = self.keys.zvl_len();
         (0..len).map(move |idx| {
             (

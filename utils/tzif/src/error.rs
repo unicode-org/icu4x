@@ -36,9 +36,9 @@ impl From<combine::error::UnexpectedParse> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::Io(err) => write!(f, "{}", err),
-            Error::Read(err) => write!(f, "{}", err),
-            Error::Parse(err) => write!(f, "{}", err),
+            Error::Io(err) => write!(f, "{err}"),
+            Error::Read(err) => write!(f, "{err}"),
+            Error::Parse(err) => write!(f, "{err}"),
         }
     }
 }

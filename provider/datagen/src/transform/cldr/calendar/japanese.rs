@@ -12,8 +12,6 @@ use std::env;
 use std::str::FromStr;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
-use zerovec::ule::AsULE;
-use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
@@ -25,18 +23,11 @@ impl crate::DatagenProvider {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
-        let era_names: &cldr_serde::ca::Resource = self
+        let era_name_map = &self
             .source
             .cldr()?
             .dates("japanese")
-            .read_and_parse(&langid!("en"), "ca-japanese.json")?;
-        let era_dates: &cldr_serde::japanese::Resource = self
-            .source
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/calendarData.json")?;
-
-        let era_name_map = &era_names
+            .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
             .main
             .0
             .get(&langid!("en"))
@@ -51,39 +42,49 @@ impl crate::DatagenProvider {
             ))?
             .eras
             .abbr;
-        let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
 
-        let mut ret = JapaneseErasV1 {
-            dates_to_eras: ZeroVec::new(),
-        };
+        let era_dates_map = &self
+            .source
+            .cldr()?
+            .core()
+            .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")?
+            .supplemental
+            .calendar_data
+            .japanese
+            .eras;
 
-        for (era_id, era_name) in era_name_map.iter() {
+        let mut dates_to_eras = BTreeMap::new();
+
+        for (era_id, date) in era_dates_map.iter() {
             // These don't exist but may in the future
             if era_id.contains("variant") {
                 continue;
             }
-            let date = &era_dates_map
-                .get(era_id)
-                .ok_or_else(|| {
-                    DataError::custom("calendarData.json is missing data for a japanese era")
-                        .with_display_context(&format!("era index {}", era_id))
-                })?
-                .start;
 
-            let start_date = EraStartDate::from_str(date).map_err(|_| {
-                DataError::custom("calendarData.json contains unparseable data for a japanese era")
-                    .with_display_context(&format!("era index {}", era_id))
-            })?;
+            if era_id == "-1" || era_id == "-2" {
+                // These eras are handled in code
+                continue;
+            }
 
-            let code = era_to_code(era_name, start_date.year)
-                .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
+            let start_date =
+                EraStartDate::from_str(date.start.as_ref().unwrap()).map_err(|_| {
+                    DataError::custom(
+                        "calendarData.json contains unparseable data for a japanese era",
+                    )
+                    .with_display_context(&format!("era index {era_id}"))
+                })?;
+
             if start_date.year >= 1868 || japanext {
-                ret.dates_to_eras
-                    .with_mut(|v| v.push((start_date, code).to_unaligned()));
+                let code = era_to_code(era_name_map.get(era_id).unwrap(), start_date.year)
+                    .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
+
+                dates_to_eras.insert(start_date, code);
             }
         }
 
-        ret.dates_to_eras.to_mut_slice().sort_unstable();
+        let ret = JapaneseErasV1 {
+            dates_to_eras: dates_to_eras.into_iter().collect(),
+        };
 
         // Integrity check
         //
@@ -155,31 +156,27 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     let name = original
         .split(' ')
         .next()
-        .ok_or_else(|| format!("Era name {} doesn't contain any text", original))?;
+        .expect("split iterator is non-empty");
     let name = name
-        .replace(&['ō', 'Ō'], "o")
-        .replace(&['ū', 'Ū'], "u")
-        .replace(&['-', '\'', '’'], "")
+        .replace(['ō', 'Ō'], "o")
+        .replace(['ū', 'Ū'], "u")
+        .replace(['-', '\'', '’'], "")
         .to_lowercase();
     if !name.is_ascii() {
         return Err(format!(
-            "Era name {} (parsed from {}) contains non-ascii characters",
-            name, original
+            "Era name {name} (parsed from {original}) contains non-ascii characters"
         ));
     }
 
     let code = if year >= 1868 {
         name
     } else {
-        format!("{}-{}", name, year)
+        format!("{name}-{year}")
     };
 
     // In case of future or past eras that do not fit, we may need to introduce a truncation scheme
     let code = code.parse().map_err(|e| {
-        format!(
-            "Era code {} (parsed from {}) does not fit into a TinyStr16: {}",
-            code, original, e
-        )
+        format!("Era code {code} (parsed from {original}) does not fit into a TinyStr16: {e}")
     })?;
     Ok(code)
 }
@@ -206,7 +203,7 @@ pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
         .map(|(i, (_, value))| (i.to_string(), value))
         .collect();
     // Splice in details about gregorian eras for pre-meiji dates
-    map.insert("bce".to_string(), tinystr!(16, "bce"));
-    map.insert("ce".to_string(), tinystr!(16, "ce"));
+    map.insert("-2".to_string(), tinystr!(16, "bce"));
+    map.insert("-1".to_string(), tinystr!(16, "ce"));
     map
 }

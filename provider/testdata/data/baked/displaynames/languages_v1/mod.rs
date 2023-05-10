@@ -2,13 +2,13 @@
 #![cfg(feature = "icu_displaynames")]
 type DataStruct = < :: icu_displaynames :: provider :: LanguageDisplayNamesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub fn lookup(locale: &icu_provider::DataLocale) -> Option<&'static DataStruct> {
-    static KEYS: [&str; 19usize] = [
+    static KEYS: [&str; 18usize] = [
         "ar", "ar-EG", "bn", "ccp", "en", "en-001", "en-ZA", "es", "es-AR", "fil", "fr", "ja",
-        "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr", "und",
+        "ru", "sr", "sr-Cyrl", "sr-Latn", "th", "tr",
     ];
-    static DATA: [&DataStruct; 19usize] = [
+    static DATA: [&DataStruct; 18usize] = [
         &AR, &AR_EG, &BN, &CCP, &EN, &EN_001, &EN_001, &ES, &ES_AR, &FIL, &FR, &JA, &RU, &SR, &SR,
-        &SR_LATN, &TH, &TR, &UND,
+        &SR_LATN, &TH, &TR,
     ];
     KEYS.binary_search_by(|k| locale.strict_cmp(k.as_bytes()).reverse())
         .ok()
@@ -30,4 +30,3 @@ static SR_LATN: DataStruct = include!("sr-Latn.rs.data");
 static SR: DataStruct = include!("sr.rs.data");
 static TH: DataStruct = include!("th.rs.data");
 static TR: DataStruct = include!("tr.rs.data");
-static UND: DataStruct = include!("und.rs.data");

@@ -70,6 +70,7 @@ use core::fmt;
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();
 /// ```
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum AnyCalendar {
     /// A [`Gregorian`] calendar
@@ -201,28 +202,28 @@ impl Calendar for AnyCalendar {
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         match (self, date) {
-            (&Self::Gregorian(ref c), &mut AnyDateInner::Gregorian(ref mut d)) => {
+            (Self::Gregorian(c), &mut AnyDateInner::Gregorian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Buddhist(ref c), &mut AnyDateInner::Buddhist(ref mut d)) => {
+            (Self::Buddhist(c), &mut AnyDateInner::Buddhist(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Japanese(ref c), &mut AnyDateInner::Japanese(ref mut d)) => {
+            (Self::Japanese(c), &mut AnyDateInner::Japanese(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::JapaneseExtended(ref c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
+            (Self::JapaneseExtended(c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Ethiopian(ref c), &mut AnyDateInner::Ethiopian(ref mut d)) => {
+            (Self::Ethiopian(c), &mut AnyDateInner::Ethiopian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Indian(ref c), &mut AnyDateInner::Indian(ref mut d)) => {
+            (Self::Indian(c), &mut AnyDateInner::Indian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Coptic(ref c), &mut AnyDateInner::Coptic(ref mut d)) => {
+            (Self::Coptic(c), &mut AnyDateInner::Coptic(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Iso(ref c), &mut AnyDateInner::Iso(ref mut d)) => {
+            (Self::Iso(c), &mut AnyDateInner::Iso(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             // This is only reached from misuse of from_raw, a semi-internal api
@@ -245,67 +246,62 @@ impl Calendar for AnyCalendar {
     ) -> DateDuration<Self> {
         match (self, calendar2, date1, date2) {
             (
-                &Self::Gregorian(ref c1),
-                &Self::Gregorian(ref c2),
-                &AnyDateInner::Gregorian(ref d1),
-                &AnyDateInner::Gregorian(ref d2),
+                Self::Gregorian(c1),
+                Self::Gregorian(c2),
+                AnyDateInner::Gregorian(d1),
+                AnyDateInner::Gregorian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Buddhist(ref c1),
-                &Self::Buddhist(ref c2),
-                &AnyDateInner::Buddhist(ref d1),
-                &AnyDateInner::Buddhist(ref d2),
+                Self::Buddhist(c1),
+                Self::Buddhist(c2),
+                AnyDateInner::Buddhist(d1),
+                AnyDateInner::Buddhist(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Japanese(ref c1),
-                &Self::Japanese(ref c2),
-                &AnyDateInner::Japanese(ref d1),
-                &AnyDateInner::Japanese(ref d2),
+                Self::Japanese(c1),
+                Self::Japanese(c2),
+                AnyDateInner::Japanese(d1),
+                AnyDateInner::Japanese(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::JapaneseExtended(ref c1),
-                &Self::JapaneseExtended(ref c2),
-                &AnyDateInner::JapaneseExtended(ref d1),
-                &AnyDateInner::JapaneseExtended(ref d2),
+                Self::JapaneseExtended(c1),
+                Self::JapaneseExtended(c2),
+                AnyDateInner::JapaneseExtended(d1),
+                AnyDateInner::JapaneseExtended(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Ethiopian(ref c1),
-                &Self::Ethiopian(ref c2),
-                &AnyDateInner::Ethiopian(ref d1),
-                &AnyDateInner::Ethiopian(ref d2),
+                Self::Ethiopian(c1),
+                Self::Ethiopian(c2),
+                AnyDateInner::Ethiopian(d1),
+                AnyDateInner::Ethiopian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Indian(ref c1),
-                &Self::Indian(ref c2),
-                &AnyDateInner::Indian(ref d1),
-                &AnyDateInner::Indian(ref d2),
+                Self::Indian(c1),
+                Self::Indian(c2),
+                AnyDateInner::Indian(d1),
+                AnyDateInner::Indian(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Coptic(ref c1),
-                &Self::Coptic(ref c2),
-                &AnyDateInner::Coptic(ref d1),
-                &AnyDateInner::Coptic(ref d2),
+                Self::Coptic(c1),
+                Self::Coptic(c2),
+                AnyDateInner::Coptic(d1),
+                AnyDateInner::Coptic(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
-            (
-                &Self::Iso(ref c1),
-                &Self::Iso(ref c2),
-                &AnyDateInner::Iso(ref d1),
-                &AnyDateInner::Iso(ref d2),
-            ) => c1
+            (Self::Iso(c1), Self::Iso(c2), AnyDateInner::Iso(d1), AnyDateInner::Iso(d2)) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             _ => {

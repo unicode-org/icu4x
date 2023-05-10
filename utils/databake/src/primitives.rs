@@ -35,6 +35,15 @@ where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        if core::mem::size_of::<Self>() == core::mem::size_of::<&[u8]>()
+            && core::any::type_name::<Self>() == core::any::type_name::<&[u8]>()
+        {
+            // Safety: `&T` and `&[u8]` have the same size. Note that `self: &&T`, so this copies
+            // `&T`, not `T` itself.
+            // There are no types smaller than `u8`, so there won't be an alignment or allocation-length
+            // issue even if T is not actually `[u8]`.
+            return byte_string(unsafe { core::mem::transmute_copy(self) });
+        }
         let t = <T as Bake>::bake(*self, ctx);
         quote! {
             &#t
@@ -50,16 +59,43 @@ fn r#ref() {
     );
 }
 
-impl<'a, T> Bake for [T]
+impl<T> Bake for [T]
 where
     T: Bake,
 {
     fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        if core::mem::size_of::<T>() == core::mem::size_of::<u8>()
+            && core::any::type_name::<T>() == core::any::type_name::<u8>()
+        {
+            // Safety: self.as_ptr()'s allocation is at least self.len() bytes long,
+            // initialised, and well-alligned.
+            return byte_string(unsafe {
+                core::slice::from_raw_parts(self.as_ptr() as *const u8, self.len())
+            });
+        }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
             [#(#data,)*]
         }
     }
+}
+
+fn byte_string(bytes: &[u8]) -> TokenStream {
+    let byte_string = syn::LitByteStr::new(bytes, proc_macro2::Span::call_site());
+    // Before clippy 1.70 there's a bug (https://github.com/rust-lang/rust-clippy/pull/10603) where a byte
+    // string like b"\0\\01" would incorrectly trigger this lint. This was due to it swallowing the slash's
+    // escape slash when trying to match the first "\0" with another digit, and then seeing b"\01".
+    // This workaround is conservative as it doesn't actually check for swallowing, only whether an escaped
+    // slash appears before 0[0-7].
+    let suppress_octal_false_positive = if bytes
+        .windows(3)
+        .any(|b| matches!(b, &[b'\\', b'0', b'0'..=b'7']))
+    {
+        quote!(#[allow(clippy::octal_escapes)])
+    } else {
+        quote!()
+    };
+    quote!(#suppress_octal_false_positive #byte_string)
 }
 
 #[test]
@@ -72,7 +108,7 @@ fn slice() {
     );
 }
 
-impl<'a, T, const N: usize> Bake for [T; N]
+impl<T, const N: usize> Bake for [T; N]
 where
     T: Bake,
 {

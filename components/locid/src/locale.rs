@@ -87,35 +87,24 @@ pub struct Locale {
 
 #[test]
 fn test_sizes() {
-    // Remove when we upgrade to a compiler where the new sizes are default
-    let forced_nightly = std::env::var("ICU4X_BUILDING_WITH_FORCED_NIGHTLY").is_ok();
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
     assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
-    assert_eq!(core::mem::size_of::<subtags::Variants>(), 32);
-    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 48);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 16);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 32);
 
-    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 72);
-    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 48);
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 56);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 32);
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
-    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(
-        core::mem::size_of::<extensions::unicode::Keywords>(),
-        if forced_nightly { 40 } else { 48 }
-    );
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(
-        core::mem::size_of::<extensions::Extensions>(),
-        if forced_nightly { 184 } else { 192 }
-    );
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 16);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 136);
 
-    assert_eq!(
-        core::mem::size_of::<Locale>(),
-        if forced_nightly { 232 } else { 240 }
-    );
+    assert_eq!(core::mem::size_of::<Locale>(), 168);
 }
 
 impl Locale {
@@ -323,7 +312,7 @@ impl Locale {
                 }
             }
         }
-        iter.next() == None
+        iter.next().is_none()
     }
 
     #[doc(hidden)]

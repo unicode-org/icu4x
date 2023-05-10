@@ -93,25 +93,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
-                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
-                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
-                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
-                        97u8, 105u8, 115u8, 104u8, 111u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x05\0\x0B\0\x10\0\x15\0\x1A\0bceceheiseimeijireiwashowataisho")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 15u8, 0u8, 33u8, 0u8, 39u8, 0u8, 44u8,
-                        0u8, 49u8, 0u8, 55u8, 0u8, 97u8, 110u8, 116u8, 101u8, 115u8, 32u8,
-                        100u8, 101u8, 32u8, 67u8, 114u8, 105u8, 115u8, 116u8, 111u8, 100u8,
-                        101u8, 115u8, 112u8, 117u8, 195u8, 169u8, 115u8, 32u8, 100u8, 101u8,
-                        32u8, 67u8, 114u8, 105u8, 115u8, 116u8, 111u8, 72u8, 101u8, 105u8,
-                        115u8, 101u8, 105u8, 77u8, 101u8, 105u8, 106u8, 105u8, 82u8, 101u8,
-                        105u8, 119u8, 97u8, 83u8, 104u8, 197u8, 141u8, 119u8, 97u8, 84u8, 97u8,
-                        105u8, 115u8, 104u8, 197u8, 141u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x0F\0!\0'\0,\x001\x007\0antes de Cristodespu\xC3\xA9s de CristoHeiseiMeijiReiwaSh\xC5\x8DwaTaish\xC5\x8D")
                 },
             )
         },
@@ -119,23 +104,10 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
-                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
-                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
-                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
-                        97u8, 105u8, 115u8, 104u8, 111u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x05\0\x0B\0\x10\0\x15\0\x1A\0bceceheiseimeijireiwashowataisho")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 16u8, 0u8, 21u8,
-                        0u8, 26u8, 0u8, 32u8, 0u8, 97u8, 46u8, 32u8, 67u8, 46u8, 100u8, 46u8,
-                        32u8, 67u8, 46u8, 72u8, 101u8, 105u8, 115u8, 101u8, 105u8, 77u8, 101u8,
-                        105u8, 106u8, 105u8, 82u8, 101u8, 105u8, 119u8, 97u8, 83u8, 104u8,
-                        197u8, 141u8, 119u8, 97u8, 84u8, 97u8, 105u8, 115u8, 104u8, 197u8,
-                        141u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x05\0\n\0\x10\0\x15\0\x1A\0 \0a. C.d. C.HeiseiMeijiReiwaSh\xC5\x8DwaTaish\xC5\x8D")
                 },
             )
         },
@@ -143,20 +115,12 @@
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 5u8, 0u8, 11u8, 0u8, 16u8, 0u8,
-                        21u8, 0u8, 26u8, 0u8, 98u8, 99u8, 101u8, 99u8, 101u8, 104u8, 101u8,
-                        105u8, 115u8, 101u8, 105u8, 109u8, 101u8, 105u8, 106u8, 105u8, 114u8,
-                        101u8, 105u8, 119u8, 97u8, 115u8, 104u8, 111u8, 119u8, 97u8, 116u8,
-                        97u8, 105u8, 115u8, 104u8, 111u8,
-                    ])
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x05\0\x0B\0\x10\0\x15\0\x1A\0bceceheiseimeijireiwashowataisho")
                 },
                 unsafe {
-                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 10u8, 0u8, 11u8, 0u8, 12u8,
-                        0u8, 13u8, 0u8, 14u8, 0u8, 97u8, 46u8, 32u8, 67u8, 46u8, 100u8, 46u8,
-                        32u8, 67u8, 46u8, 72u8, 77u8, 82u8, 83u8, 84u8,
-                    ])
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x07\0\0\0\0\0\x05\0\n\0\x0B\0\x0C\0\r\0\x0E\0a. C.d. C.HMRST",
+                    )
                 },
             )
         },

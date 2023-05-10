@@ -99,11 +99,11 @@ There are additional features that, when enabled on specific crates, enable func
 
 [`DataProvider`]: icu_provider::DataProvider
 [`DataPayload`]: icu_provider::DataPayload
-[`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
-[`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
-[`icu_testdata`]: ../icu_testdata/index.html
-[`icu_provider_adapters`]: ../icu_provider_adapters/index.html
-[`icu_datagen`]: ../icu_datagen/index.html
+[`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
+[`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
+[`icu_testdata`]: https://docs.rs/icu_testdata/latest/icu_testdata/
+[`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
+[`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [`Locale`]: crate::locid::Locale
 [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 

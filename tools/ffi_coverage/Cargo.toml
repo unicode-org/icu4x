@@ -1,0 +1,18 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_ffi_coverage"
+publish = false
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+diplomat_core = { version = "0.5.2" }
+elsa = "1"
+lazy_static ="1"
+rustdoc-types = "0.14"
+serde_json = "1"
+syn-inline-mod = "0.4.0"
+

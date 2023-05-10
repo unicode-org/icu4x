@@ -209,7 +209,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             };
             format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
         } else {
-            format!("Marker type for [`{}`]", name)
+            format!("Marker type for [`{name}`]")
         };
 
         result.extend(quote!(
@@ -260,7 +260,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     }
 
     result.extend(quote!(
-        #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
+        #[derive(icu_provider::prelude::yoke::Yokeable, icu_provider::prelude::zerofrom::ZeroFrom)]
         #input
     ));
 

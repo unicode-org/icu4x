@@ -90,7 +90,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -106,7 +106,7 @@ pub mod provider;
 pub use error::DecimalError;
 pub use format::FormattedFixedDecimal;
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use DecimalError as Error;
 
 use alloc::string::String;
@@ -125,6 +125,7 @@ use writeable::Writeable;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
+#[derive(Debug)]
 pub struct FixedDecimalFormatter {
     options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,

@@ -101,6 +101,9 @@ pub struct DataError {
 
     /// Additional context, if available.
     pub str_context: Option<&'static str>,
+
+    /// Whether this error was created in silent mode to not log.
+    pub silent: bool,
 }
 
 impl fmt::Display for DataError {
@@ -110,10 +113,10 @@ impl fmt::Display for DataError {
             write!(f, ": {}", self.kind)?;
         }
         if let Some(key) = self.key {
-            write!(f, " (key: {})", key)?;
+            write!(f, " (key: {key})")?;
         }
         if let Some(str_context) = self.str_context {
-            write!(f, ": {}", str_context)?;
+            write!(f, ": {str_context}")?;
         }
         Ok(())
     }
@@ -129,6 +132,7 @@ impl DataErrorKind {
             kind: self,
             key: None,
             str_context: None,
+            silent: false,
         }
     }
 
@@ -165,6 +169,7 @@ impl DataError {
             kind: DataErrorKind::Custom,
             key: None,
             str_context: Some(str_context),
+            silent: false,
         }
     }
 
@@ -175,6 +180,7 @@ impl DataError {
             kind: self.kind,
             key: Some(key),
             str_context: self.str_context,
+            silent: self.silent,
         }
     }
 
@@ -185,6 +191,7 @@ impl DataError {
             kind: self.kind,
             key: self.key,
             str_context: Some(context),
+            silent: self.silent,
         }
     }
 
@@ -199,10 +206,13 @@ impl DataError {
     /// If the "log_error_context" Cargo feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_req(self, key: DataKey, req: DataRequest) -> Self {
+    pub fn with_req(mut self, key: DataKey, req: DataRequest) -> Self {
+        if req.metadata.silent {
+            self.silent = true;
+        }
         // Don't write out a log for MissingDataKey since there is no context to add
         #[cfg(feature = "log_error_context")]
-        if self.kind != DataErrorKind::MissingDataKey {
+        if !self.silent && self.kind != DataErrorKind::MissingDataKey {
             log::warn!("{} (key: {}, request: {})", self, key, req);
         }
         self.with_key(key)
@@ -216,7 +226,9 @@ impl DataError {
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
         #[cfg(feature = "log_error_context")]
-        log::warn!("{} (path: {:?})", self, path.as_ref());
+        if !self.silent {
+            log::warn!("{} (path: {:?})", self, path.as_ref());
+        }
         self
     }
 
@@ -228,7 +240,9 @@ impl DataError {
     #[inline]
     pub fn with_display_context<D: fmt::Display + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
-        log::warn!("{}: {}", self, context);
+        if !self.silent {
+            log::warn!("{}: {}", self, context);
+        }
         self
     }
 
@@ -240,7 +254,9 @@ impl DataError {
     #[inline]
     pub fn with_debug_context<D: fmt::Debug + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
-        log::warn!("{}: {:?}", self, context);
+        if !self.silent {
+            log::warn!("{}: {:?}", self, context);
+        }
         self
     }
 
@@ -250,6 +266,7 @@ impl DataError {
             kind: DataErrorKind::MismatchedType(core::any::type_name::<T>()),
             key: None,
             str_context: None,
+            silent: false,
         }
     }
 }

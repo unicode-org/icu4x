@@ -19,7 +19,7 @@ use zerovec::ule::AsULE;
 
 #[cfg(feature = "serde")]
 /// A visitor struct for serde custom deserialization of a [LocalTimeRecordV1].
-pub struct LocalTimeRecordVisitor;
+struct LocalTimeRecordVisitor;
 
 #[cfg(feature = "serde")]
 impl<'de> serde::de::Visitor<'de> for LocalTimeRecordVisitor {
@@ -72,7 +72,7 @@ impl<'de> Deserialize<'de> for LocalTimeRecordV1 {
 
 #[cfg(feature = "serde")]
 /// A visitor struct for serde custom deserialization of a [TransitionDateVisitor].
-pub struct TransitionDateVisitor;
+struct TransitionDateVisitor;
 
 #[cfg(feature = "serde")]
 impl<'de> serde::de::Visitor<'de> for TransitionDateVisitor {

@@ -22,21 +22,15 @@ pub mod ffi {
 
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
+        ///
+        /// This will run the complete locale parsing algorithm. If code size and
+        /// performance are critical and the locale is of a known shape (such as
+        /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
         #[diplomat::rust_link(icu::locid::Locale::try_from_bytes, FnInStruct)]
         #[diplomat::rust_link(icu::locid::Locale::from_str, FnInStruct, hidden)]
         pub fn create_from_string(name: &str) -> Result<Box<ICU4XLocale>, ICU4XError> {
             let name = name.as_bytes(); // #2520
             Ok(Box::new(ICU4XLocale(Locale::try_from_bytes(name)?)))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the English language.
-        pub fn create_en() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("en")))
-        }
-
-        /// Construct an [`ICU4XLocale`] for the Bangla language.
-        pub fn create_bn() -> Box<ICU4XLocale> {
-            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
         }
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
@@ -190,11 +184,29 @@ pub mod ffi {
             let other = other.as_bytes(); // #2520
             self.0.strict_cmp(other).into()
         }
+
+        /// Construct an [`ICU4XLocale`] for the English language.
+        ///
+        /// This convenience constructor is intended for testing only
+        /// and requires the `provider_test` feature.
+        #[cfg(feature = "provider_test")]
+        pub fn create_en() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid::locale!("en")))
+        }
+
+        /// Construct an [`ICU4XLocale`] for the Bangla language.
+        ///
+        /// This convenience constructor is intended for testing only
+        /// and requires the `provider_test` feature.
+        #[cfg(feature = "provider_test")]
+        pub fn create_bn() -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(icu_locid::locale!("bn")))
+        }
     }
 }
 
 impl ffi::ICU4XLocale {
-    pub fn to_datalocale(&self) -> icu_provider::prelude::DataLocale {
+    pub fn to_datalocale(&self) -> icu_provider::DataLocale {
         (&self.0).into()
     }
 }

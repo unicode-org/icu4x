@@ -6,7 +6,6 @@ use crate::transform::cldr::cldr_serde::time_zones as cldr_time_zones;
 use crate::transform::cldr::time_zones::compute_bcp47_tzids_hashmap;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-#[cfg(feature = "experimental")]
 use icu_timezone::provider::tzif::{
     TimeZoneHistoricTransitionsV1, TimeZoneHistoricTransitionsV1Marker, TimeZoneTransitionRuleV1,
     TimeZoneTransitionRulesV1, TimeZoneTransitionRulesV1Marker,

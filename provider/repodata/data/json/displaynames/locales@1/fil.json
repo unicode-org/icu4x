@@ -1,0 +1,30 @@
+{
+  "names": {
+    "ar-001": "Modernong Karaniwang Arabic",
+    "de-CH": "Swiss High German",
+    "en-GB": "Ingles na British",
+    "en-US": "Ingles na American",
+    "es-419": "Latin American na Espanyol",
+    "es-ES": "European Spanish",
+    "es-MX": "Mexican na Espanyol",
+    "fa-AF": "Dari",
+    "fr-CH": "Swiss na French",
+    "nds-NL": "Low Saxon",
+    "nl-BE": "Flemish",
+    "pt-BR": "Portuges ng Brasil",
+    "pt-PT": "European Portuguese",
+    "ro-MD": "Moldavian",
+    "sw-CD": "Congo Swahili",
+    "zh-Hans": "Pinasimpleng Chinese",
+    "zh-Hant": "Tradisyonal na Chinese"
+  },
+  "short_names": {
+    "en-GB": "Ingles sa UK",
+    "en-US": "Ingles sa US"
+  },
+  "long_names": {
+    "zh-Hans": "Pinasimpleng Mandarin Chinese",
+    "zh-Hant": "Tradisyonal na Mandarin Chinese"
+  },
+  "menu_names": {}
+}

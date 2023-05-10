@@ -4,10 +4,7 @@
 
 pub mod cldr;
 pub mod icuexport;
-#[cfg(feature = "experimental")]
 pub mod segmenter;
-
-#[cfg(feature = "experimental")]
 pub mod tzif;
 
 use icu_provider::datagen::*;
@@ -22,6 +19,10 @@ impl DataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        HelloWorldProvider.supported_locales()
+        Ok(self
+            .source
+            .options
+            .locales
+            .filter_by_langid_equality(HelloWorldProvider.supported_locales()?))
     }
 }

@@ -32,7 +32,7 @@ use core::mem::{self, MaybeUninit};
 pub struct OptionULE<U>(bool, MaybeUninit<U>);
 
 impl<U: Copy> OptionULE<U> {
-    /// Obtain this as an Option<T>
+    /// Obtain this as an `Option<T>`
     pub fn get(self) -> Option<U> {
         if self.0 {
             unsafe {
@@ -44,13 +44,19 @@ impl<U: Copy> OptionULE<U> {
         }
     }
 
-    /// Construct an OptionULE<U> from an equivalent Option<T>
+    /// Construct an `OptionULE<U>` from an equivalent `Option<T>`
     pub fn new(opt: Option<U>) -> Self {
         if let Some(inner) = opt {
             Self(true, MaybeUninit::new(inner))
         } else {
             Self(false, MaybeUninit::zeroed())
         }
+    }
+}
+
+impl<U: Copy + core::fmt::Debug> core::fmt::Debug for OptionULE<U> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.get().fmt(f)
     }
 }
 
@@ -149,6 +155,12 @@ impl<U: VarULE + ?Sized> OptionVarULE<U> {
         } else {
             None
         }
+    }
+}
+
+impl<U: VarULE + ?Sized + core::fmt::Debug> core::fmt::Debug for OptionVarULE<U> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.as_ref().fmt(f)
     }
 }
 

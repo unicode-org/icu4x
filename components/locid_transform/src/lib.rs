@@ -84,7 +84,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -110,5 +110,5 @@ pub enum TransformResult {
     Unmodified,
 }
 
-#[doc(inline)]
+#[doc(no_inline)]
 pub use LocaleTransformError as Error;

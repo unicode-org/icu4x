@@ -4,9 +4,9 @@
 
 use crate::dynutil::UpcastDataPayload;
 use crate::prelude::*;
-use crate::yoke::*;
 use alloc::boxed::Box;
 use databake::{Bake, CrateEnv, TokenStream};
+use yoke::*;
 
 trait ExportableYoke {
     fn bake_yoke(&self, env: &CrateEnv) -> TokenStream;
@@ -43,6 +43,14 @@ pub struct ExportBox {
     payload: Box<dyn ExportableYoke + Sync>,
 }
 
+impl core::fmt::Debug for ExportBox {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("ExportBox")
+            .field("payload", &"<payload>")
+            .finish()
+    }
+}
+
 impl<M> UpcastDataPayload<M> for ExportMarker
 where
     M: DataMarker,
@@ -76,7 +84,7 @@ impl DataPayload<ExportMarker> {
     /// export
     ///     .serialize(&mut serde_json::Serializer::new(&mut buffer))
     ///     .expect("Serialization should succeed");
-    /// assert_eq!("{\"message\":\"(und) Hello World\"}".as_bytes(), buffer);
+    /// assert_eq!(r#"{"message":"(und) Hello World"}"#.as_bytes(), buffer);
     /// ```
     pub fn serialize<S>(&self, serializer: S) -> Result<(), DataError>
     where
@@ -130,6 +138,7 @@ impl DataPayload<ExportMarker> {
 
 /// Marker type for [`ExportBox`].
 #[allow(clippy::exhaustive_structs)] // marker type
+#[derive(Debug)]
 pub struct ExportMarker {}
 
 impl DataMarker for ExportMarker {

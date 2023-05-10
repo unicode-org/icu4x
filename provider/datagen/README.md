@@ -5,38 +5,34 @@
 Data files can be generated either programmatically (i.e. in `build.rs`), or through a
 command-line utility.
 
+
+Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+
 ## Examples
 
 ### `build.rs`
 
 ```rust
 use icu_datagen::prelude::*;
+use icu_provider_blob::export::*;
 use std::fs::File;
 
 fn main() {
-    icu_datagen::datagen(
-        Some(&[langid!("de"), langid!("en-AU")]),
-        &[icu::list::provider::AndListV1Marker::KEY],
-        &SourceData::default(),
-        vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-    )
-    .unwrap();
+    DatagenProvider::default()
+        .export(
+            [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+            BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
+        )
+        .unwrap();
 }
 ```
 
 ### Command line
 
-The command line interface can be installed with the `bin` Cargo feature.
+The command line interface can be installed through Cargo.
 
 ```bash
-$ cargo install icu_datagen --features bin
-```
-
-If you need to export keys for experimental components,
-enable the `experimental` Cargo feature:
-
-```bash
-$ cargo install icu_datagen --features bin,experimental
+$ cargo install icu_datagen
 ```
 
 Once the tool is installed, you can invoke it like this:

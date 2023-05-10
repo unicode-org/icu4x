@@ -104,7 +104,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
+        missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -151,6 +151,5 @@ pub use error::CalendarError;
 pub use gregorian::Gregorian;
 pub use iso::Iso;
 
-/// Re-export of [`CalendarError`].
 #[doc(no_inline)]
 pub use CalendarError as Error;

@@ -9,8 +9,12 @@ use core::fmt::{self, Write};
 use icu_provider::prelude::*;
 use writeable::*;
 
+#[cfg(doc)]
+extern crate writeable;
+
 /// A formatter that renders sequences of items in an i18n-friendly way. See the
 /// [crate-level documentation](crate) for more details.
+#[derive(Debug)]
 pub struct ListFormatter {
     data: DataPayload<ErasedListV1Marker>,
     length: ListLength,
@@ -151,6 +155,7 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
+#[derive(Debug)]
 pub struct FormattedList<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
     formatter: &'a ListFormatter,
     values: I,

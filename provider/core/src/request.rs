@@ -37,7 +37,10 @@ impl fmt::Display for DataRequest<'_> {
 /// for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct DataRequestMetadata;
+pub struct DataRequestMetadata {
+    /// Silent requests do not log errors. This can be used for exploratory querying, such as fallbacks.
+    pub silent: bool,
+}
 
 /// The main locale type used by the ICU4X data provider.
 ///
@@ -120,7 +123,7 @@ impl<'a> Default for &'a DataLocale {
 
 impl fmt::Debug for DataLocale {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "DataLocale{{{}}}", self)
+        write!(f, "DataLocale{{{self}}}")
     }
 }
 

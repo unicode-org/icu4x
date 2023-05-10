@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::helpers::ShortVec;
+use crate::helpers::ShortSlice;
 use crate::parser::{ParserError, SubtagIterator};
-use alloc::vec::Vec;
 use core::ops::RangeInclusive;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
@@ -35,7 +34,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(value!("true").to_string(), "");
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
-pub struct Value(ShortVec<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
+pub struct Value(ShortSlice<TinyAsciiStr<{ *VALUE_LENGTH.end() }>>);
 
 const VALUE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_VALUE: TinyAsciiStr<8> = tinystr::tinystr!(8, "true");
@@ -52,7 +51,7 @@ impl Value {
     /// Value::try_from_bytes(b"buddhist").expect("Parsing failed.");
     /// ```
     pub fn try_from_bytes(input: &[u8]) -> Result<Self, ParserError> {
-        let mut v = ShortVec::new();
+        let mut v = ShortSlice::new();
 
         if !input.is_empty() {
             for subtag in SubtagIterator::new(input) {
@@ -85,7 +84,7 @@ impl Value {
 
     #[doc(hidden)]
     pub fn as_tinystr_slice(&self) -> &[TinyAsciiStr<8>] {
-        self.0.as_slice()
+        &self.0
     }
 
     #[doc(hidden)]
@@ -96,17 +95,17 @@ impl Value {
     #[doc(hidden)]
     pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
         match subtag {
-            None => Self(ShortVec::new()),
+            None => Self(ShortSlice::new()),
             Some(val) => {
                 debug_assert!(val.is_ascii_alphanumeric());
                 debug_assert!(!matches!(val, TRUE_VALUE));
-                Self(ShortVec::new_single(val))
+                Self(ShortSlice::new_single(val))
             }
         }
     }
 
-    pub(crate) fn from_vec_unchecked(input: Vec<TinyAsciiStr<8>>) -> Self {
-        Self(input.into())
+    pub(crate) fn from_short_slice_unchecked(input: ShortSlice<TinyAsciiStr<8>>) -> Self {
+        Self(input)
     }
 
     #[doc(hidden)]
@@ -140,7 +139,7 @@ impl Value {
     where
         F: FnMut(&str) -> Result<(), E>,
     {
-        self.0.as_slice().iter().map(|t| t.as_str()).try_for_each(f)
+        self.0.iter().map(TinyAsciiStr::as_str).try_for_each(f)
     }
 }
 

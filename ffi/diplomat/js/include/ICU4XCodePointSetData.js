@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { CodePointRangeIterator } from "./CodePointRangeIterator.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
 const ICU4XCodePointSetData_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -22,6 +23,14 @@ export class ICU4XCodePointSetData {
 
   contains32(arg_cp) {
     return wasm.ICU4XCodePointSetData_contains32(this.underlying, arg_cp);
+  }
+
+  iter_ranges() {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointSetData_iter_ranges(this.underlying), true, [this]);
+  }
+
+  iter_ranges_complemented() {
+    return new CodePointRangeIterator(wasm.ICU4XCodePointSetData_iter_ranges_complemented(this.underlying), true, [this]);
   }
 
   static load_for_general_category_group(arg_provider, arg_group) {
@@ -1144,5 +1153,25 @@ export class ICU4XCodePointSetData {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
+  }
+
+  static load_for_ecma262(arg_provider, arg_property_name) {
+    const buf_arg_property_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_property_name);
+    const diplomat_out = (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XCodePointSetData_load_for_ecma262(diplomat_receive_buffer, arg_provider.underlying, buf_arg_property_name.ptr, buf_arg_property_name.size);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+    buf_arg_property_name.free();
+    return diplomat_out;
   }
 }

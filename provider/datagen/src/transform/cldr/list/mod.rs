@@ -65,7 +65,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             // Replace " y " with " e " before /i/ sounds.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
             patterns
-                .make_conditional("{0} y {1}", &*I_SOUND, "{0} e {1}")
+                .make_conditional("{0} y {1}", &I_SOUND, "{0} e {1}")
                 .expect("valid pattern");
         } else if M::KEY == OrListV1Marker::KEY {
             lazy_static! {
@@ -78,7 +78,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             // Replace " o " with " u " before /o/ sound.
             // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
             patterns
-                .make_conditional("{0} o {1}", &*O_SOUND, "{0} u {1}")
+                .make_conditional("{0} o {1}", &O_SOUND, "{0} u {1}")
                 .expect("valid pattern");
         }
     }
@@ -128,13 +128,14 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.source
+                        .cldr()?
+                        .misc()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
     };

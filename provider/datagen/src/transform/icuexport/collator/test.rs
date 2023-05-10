@@ -27,7 +27,7 @@ fn check_expectations(locale: &DataLocale, options: CollatorOptions, cases: &[Te
             right,
             expectation,
         } = cas;
-        assert_eq!(collator.compare(left, right), *expectation, "{:?}", cas);
+        assert_eq!(collator.compare(left, right), *expectation, "{cas:?}");
     }
 }
 
@@ -284,15 +284,13 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let provider = DatagenProvider {
-            source: SourceData::for_test().with_collations(
-                cas.include_collations
-                    .iter()
-                    .copied()
-                    .map(String::from)
-                    .collect(),
-            ),
-        };
+        let mut provider = DatagenProvider::for_test();
+        provider.source.options.collations = cas
+            .include_collations
+            .iter()
+            .copied()
+            .map(String::from)
+            .collect();
         let mut resolved_locales: Vec<String> =
             IterableDataProvider::<CollationDataV1Marker>::supported_locales(&provider)
                 .unwrap()
@@ -304,6 +302,6 @@ fn test_collation_filtering() {
         let mut expected_locales: Vec<String> =
             cas.expected.iter().copied().map(String::from).collect();
         expected_locales.sort();
-        assert_eq!(resolved_locales, expected_locales, "{:?}", cas);
+        assert_eq!(resolved_locales, expected_locales, "{cas:?}");
     }
 }

@@ -153,6 +153,7 @@ type Result<E, R> = std::result::Result<Option<E>, InterpolatorError<R>>;
 /// [`HashMap`]: std::collections::HashMap
 /// [`Parser`]: crate::parser::Parser
 /// [`IntoIterVec`]: crate::pattern::IntoIterVec
+#[derive(Debug)]
 pub struct Interpolator<'i, 'p, R, E>
 where
     R: ReplacementProvider<'i, E>,
@@ -259,11 +260,11 @@ where
                 }
             }
             match self.tokens.get(self.token_idx) {
-                Some(&PatternToken::Literal { ref content, .. }) => {
+                Some(PatternToken::Literal { content, .. }) => {
                     self.token_idx += 1;
                     return Ok(Some(InterpolatedKind::Literal(content)));
                 }
-                Some(&PatternToken::Placeholder(ref p)) => {
+                Some(PatternToken::Placeholder(p)) => {
                     self.token_idx += 1;
                     self.current_replacement = self.replacements.take_replacement(p);
                     if self.current_replacement.is_none() {

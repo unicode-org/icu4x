@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "experimental")]
-
 use crate::transform::cldr::cldr_serde;
 use core::convert::TryFrom;
 use icu_displaynames::provider::*;
+use icu_locid::subtags::Region;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
-use tinystr::TinyStrError;
-use zerovec::ZeroMap;
+use std::collections::BTreeMap;
+use std::str::FromStr;
 
 impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn load(
@@ -39,60 +37,65 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .displaynames()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
+        Ok(self.source.options.locales.filter_by_langid_equality(
+            self.source
+                .cldr()?
+                .displaynames()
+                .list_langs()?
+                .filter(|langid| {
+                    // The directory might exist without territories.json
+                    self.source
+                        .cldr()
+                        .unwrap()
+                        .displaynames()
+                        .file_exists(langid, "territories.json")
+                        .unwrap_or_default()
+                })
+                .map(DataLocale::from)
+                .collect(),
+        ))
     }
 }
 
 /// Substring used to denote alternative region names data variants for a given region. For example: "BA-alt-short", "TL-alt-variant".
 const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
-const SHORT_SUBSTRING: &str = "-short";
+const SHORT_SUBSTRING: &str = "-alt-short";
 
 impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV1<'static> {
-    type Error = TinyStrError;
+    type Error = icu_locid::ParserError;
     fn try_from(other: &cldr_serde::region_displaynames::Resource) -> Result<Self, Self::Error> {
-        let mut names = ZeroMap::new();
-        let mut short_names = ZeroMap::new();
-        for lang_data_entry in other.main.0.iter() {
-            for entry in lang_data_entry.1.localedisplaynames.regions.iter() {
-                let mut region = String::from(entry.0);
-                if !region.contains(ALT_SUBSTRING) {
-                    match <TinyAsciiStr<3>>::from_str(&region) {
-                        Ok(key) => {
-                            names.insert(&key, entry.1.as_ref());
-                        }
-                        Err(err) => {
-                            return Err(err);
-                        }
-                    }
-                } else if region.contains(SHORT_SUBSTRING) {
-                    region.truncate(region.find('-').unwrap());
-                    match <TinyAsciiStr<3>>::from_str(&region) {
-                        Ok(key) => {
-                            short_names.insert(&key, entry.1.as_ref());
-                        }
-                        Err(err) => {
-                            return Err(err);
-                        }
-                    }
+        let mut names = BTreeMap::new();
+        let mut short_names = BTreeMap::new();
+        for (_, lang_display_names) in other.main.0.iter() {
+            for (region, value) in lang_display_names.localedisplaynames.regions.iter() {
+                if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+                    short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+                } else if !region.contains(ALT_SUBSTRING) {
+                    names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
                 }
             }
         }
-        Ok(Self { names, short_names })
+        Ok(Self {
+            // Old CLDR versions may contain trivial entries, so filter
+            names: names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+            short_names: short_names
+                .into_iter()
+                .filter(|&(k, v)| k != v)
+                .map(|(k, v)| (k.to_unvalidated(), v))
+                .collect(),
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::locale;
-    use tinystr::tinystr;
+    use icu_locid::{locale, subtags_region as region};
 
     #[test]
     fn test_basic() {
@@ -108,7 +111,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().names.get(&tinystr!(3, "AE")).unwrap(),
+            data.get()
+                .names
+                .get(&region!("AE").into_tinystr().to_unvalidated())
+                .unwrap(),
             "United Arab Emirates"
         );
     }
@@ -127,7 +133,10 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            data.get().short_names.get(&tinystr!(3, "BA")).unwrap(),
+            data.get()
+                .short_names
+                .get(&region!("BA").into_tinystr().to_unvalidated())
+                .unwrap(),
             "Bosnia"
         );
     }
