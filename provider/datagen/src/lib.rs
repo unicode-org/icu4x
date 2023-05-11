@@ -155,7 +155,7 @@ impl DatagenProvider {
                     .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
                     .with_icuexport(repodata::paths::icuexport()).unwrap()
                     .with_segmenter_lstm(repodata::paths::lstm()).unwrap()
-                    .with_tzif(repodata::paths::tzif_root()),
+                    .with_tzif(repodata::paths::tzif()).unwrap(),
             };
         }
         TEST_PROVIDER.clone()

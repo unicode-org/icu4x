@@ -25,7 +25,7 @@ pub mod paths {
         data_root().join("icuexport")
     }
 
-    pub fn tzif_root() -> PathBuf {
+    pub fn tzif() -> PathBuf {
         data_root().join("tzif")
     }
 

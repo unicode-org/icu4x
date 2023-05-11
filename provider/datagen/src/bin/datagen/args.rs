@@ -241,7 +241,7 @@ impl Cli {
                 &self.icuexport_tag,
                 "icuexport-root",
             )?,
-            tzif: config::PathOrTag::Path(self.tzif_root.unwrap()),
+            tzif: config::PathOrTag::Path(self.tzif_root.clone().unwrap()),
             segmenter_lstm: self.make_path(
                 &self.segmenter_lstm_root,
                 &self.segmenter_lstm_tag,

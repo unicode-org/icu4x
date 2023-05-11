@@ -30,7 +30,7 @@ fn main() {
         .unwrap()
         .with_icuexport(repodata::paths::icuexport())
         .unwrap()
-        .with_tzif(repodata::paths::tzif_root())
+        .with_tzif(repodata::paths::tzif())
         .unwrap()
         .with_segmenter_lstm(repodata::paths::lstm())
         .unwrap();

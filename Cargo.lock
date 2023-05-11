@@ -2186,6 +2186,7 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
+ "serde_json",
  "tinystr",
  "zerovec",
 ]
