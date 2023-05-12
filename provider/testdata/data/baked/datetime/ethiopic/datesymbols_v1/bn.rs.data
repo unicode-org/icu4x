@@ -40,42 +40,20 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("রবি"),
-                alloc::borrow::Cow::Borrowed("সোম"),
-                alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c1}ধ"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতি"),
-                alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}র"),
-                alloc::borrow::Cow::Borrowed("শনি"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("র"),
-                alloc::borrow::Cow::Borrowed("সো"),
-                alloc::borrow::Cow::Borrowed("ম"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c1}"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}"),
-                alloc::borrow::Cow::Borrowed("শ\u{9c1}"),
-                alloc::borrow::Cow::Borrowed("শ"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("রঃ"),
-                alloc::borrow::Cow::Borrowed("সোঃ"),
-                alloc::borrow::Cow::Borrowed("মঃ"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c1}ঃ"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}ঃ"),
-                alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"),
-                alloc::borrow::Cow::Borrowed("শনি"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("রবিব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("সোমব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c1}ধব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("ব\u{9c3}হস\u{9cd}পতিব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}রব\u{9be}র"),
-                alloc::borrow::Cow::Borrowed("শনিব\u{9be}র"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\t\0\x12\0!\0*\0B\0Q\0\xE0\xA6\xB0\xE0\xA6\xAC\xE0\xA6\xBF\xE0\xA6\xB8\xE0\xA7\x8B\xE0\xA6\xAE\xE0\xA6\xAE\xE0\xA6\x99\xE0\xA7\x8D\xE0\xA6\x97\xE0\xA6\xB2\xE0\xA6\xAC\xE0\xA7\x81\xE0\xA6\xA7\xE0\xA6\xAC\xE0\xA7\x83\xE0\xA6\xB9\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\xAA\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xB6\xE0\xA7\x81\xE0\xA6\x95\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA6\xB6\xE0\xA6\xA8\xE0\xA6\xBF")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\t\0\x0C\0\x12\0\x18\0\x1E\0\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA7\x8B\xE0\xA6\xAE\xE0\xA6\xAC\xE0\xA7\x81\xE0\xA6\xAC\xE0\xA7\x83\xE0\xA6\xB6\xE0\xA7\x81\xE0\xA6\xB6")
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x06\0\x0F\0\x15\0\x1E\0'\x000\0\xE0\xA6\xB0\xE0\xA6\x83\xE0\xA6\xB8\xE0\xA7\x8B\xE0\xA6\x83\xE0\xA6\xAE\xE0\xA6\x83\xE0\xA6\xAC\xE0\xA7\x81\xE0\xA6\x83\xE0\xA6\xAC\xE0\xA7\x83\xE0\xA6\x83\xE0\xA6\xB6\xE0\xA7\x81\xE0\xA6\x83\xE0\xA6\xB6\xE0\xA6\xA8\xE0\xA6\xBF")
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x12\0$\0<\0N\0o\0\x87\0\xE0\xA6\xB0\xE0\xA6\xAC\xE0\xA6\xBF\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB8\xE0\xA7\x8B\xE0\xA6\xAE\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xAE\xE0\xA6\x99\xE0\xA7\x8D\xE0\xA6\x97\xE0\xA6\xB2\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xAC\xE0\xA7\x81\xE0\xA6\xA7\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xAC\xE0\xA7\x83\xE0\xA6\xB9\xE0\xA6\xB8\xE0\xA7\x8D\xE0\xA6\xAA\xE0\xA6\xA4\xE0\xA6\xBF\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB6\xE0\xA7\x81\xE0\xA6\x95\xE0\xA7\x8D\xE0\xA6\xB0\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0\xE0\xA6\xB6\xE0\xA6\xA8\xE0\xA6\xBF\xE0\xA6\xAC\xE0\xA6\xBE\xE0\xA6\xB0")
+            }),
         },
         stand_alone: None,
     },

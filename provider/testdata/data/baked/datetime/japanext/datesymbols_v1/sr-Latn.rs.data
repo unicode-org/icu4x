@@ -49,42 +49,22 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("ned"),
-                alloc::borrow::Cow::Borrowed("pon"),
-                alloc::borrow::Cow::Borrowed("uto"),
-                alloc::borrow::Cow::Borrowed("sre"),
-                alloc::borrow::Cow::Borrowed("čet"),
-                alloc::borrow::Cow::Borrowed("pet"),
-                alloc::borrow::Cow::Borrowed("sub"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("n"),
-                alloc::borrow::Cow::Borrowed("p"),
-                alloc::borrow::Cow::Borrowed("u"),
-                alloc::borrow::Cow::Borrowed("s"),
-                alloc::borrow::Cow::Borrowed("č"),
-                alloc::borrow::Cow::Borrowed("p"),
-                alloc::borrow::Cow::Borrowed("s"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("ne"),
-                alloc::borrow::Cow::Borrowed("po"),
-                alloc::borrow::Cow::Borrowed("ut"),
-                alloc::borrow::Cow::Borrowed("sr"),
-                alloc::borrow::Cow::Borrowed("če"),
-                alloc::borrow::Cow::Borrowed("pe"),
-                alloc::borrow::Cow::Borrowed("su"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("nedelja"),
-                alloc::borrow::Cow::Borrowed("ponedeljak"),
-                alloc::borrow::Cow::Borrowed("utorak"),
-                alloc::borrow::Cow::Borrowed("sreda"),
-                alloc::borrow::Cow::Borrowed("četvrtak"),
-                alloc::borrow::Cow::Borrowed("petak"),
-                alloc::borrow::Cow::Borrowed("subota"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x10\0\x13\0nedponutosre\xC4\x8Detpetsub")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x07\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x06\0\x07\0npus\xC4\x8Dps",
+                )
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\x0B\0\r\0nepoutsr\xC4\x8Depesu")
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x07\0\x11\0\x17\0\x1C\0%\0*\0nedeljaponedeljakutoraksreda\xC4\x8Detvrtakpetaksubota")
+            }),
         },
         stand_alone: None,
     },

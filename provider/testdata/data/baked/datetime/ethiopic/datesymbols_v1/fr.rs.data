@@ -40,42 +40,24 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("dim."),
-                alloc::borrow::Cow::Borrowed("lun."),
-                alloc::borrow::Cow::Borrowed("mar."),
-                alloc::borrow::Cow::Borrowed("mer."),
-                alloc::borrow::Cow::Borrowed("jeu."),
-                alloc::borrow::Cow::Borrowed("ven."),
-                alloc::borrow::Cow::Borrowed("sam."),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("D"),
-                alloc::borrow::Cow::Borrowed("L"),
-                alloc::borrow::Cow::Borrowed("M"),
-                alloc::borrow::Cow::Borrowed("M"),
-                alloc::borrow::Cow::Borrowed("J"),
-                alloc::borrow::Cow::Borrowed("V"),
-                alloc::borrow::Cow::Borrowed("S"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("di"),
-                alloc::borrow::Cow::Borrowed("lu"),
-                alloc::borrow::Cow::Borrowed("ma"),
-                alloc::borrow::Cow::Borrowed("me"),
-                alloc::borrow::Cow::Borrowed("je"),
-                alloc::borrow::Cow::Borrowed("ve"),
-                alloc::borrow::Cow::Borrowed("sa"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("dimanche"),
-                alloc::borrow::Cow::Borrowed("lundi"),
-                alloc::borrow::Cow::Borrowed("mardi"),
-                alloc::borrow::Cow::Borrowed("mercredi"),
-                alloc::borrow::Cow::Borrowed("jeudi"),
-                alloc::borrow::Cow::Borrowed("vendredi"),
-                alloc::borrow::Cow::Borrowed("samedi"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x04\0\x08\0\x0C\0\x10\0\x14\0\x18\0dim.lun.mar.mer.jeu.ven.sam.")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x07\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0\x05\0\x06\0DLMMJVS",
+                )
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x07\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0dilumamejevesa",
+                    )
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x08\0\r\0\x12\0\x1A\0\x1F\0'\0dimanchelundimardimercredijeudivendredisamedi")
+            }),
         },
         stand_alone: None,
     },

@@ -49,42 +49,20 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("الأحد"),
-                alloc::borrow::Cow::Borrowed("الاثنين"),
-                alloc::borrow::Cow::Borrowed("الثلاثاء"),
-                alloc::borrow::Cow::Borrowed("الأربعاء"),
-                alloc::borrow::Cow::Borrowed("الخميس"),
-                alloc::borrow::Cow::Borrowed("الجمعة"),
-                alloc::borrow::Cow::Borrowed("السبت"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("ح"),
-                alloc::borrow::Cow::Borrowed("ن"),
-                alloc::borrow::Cow::Borrowed("ث"),
-                alloc::borrow::Cow::Borrowed("ر"),
-                alloc::borrow::Cow::Borrowed("خ"),
-                alloc::borrow::Cow::Borrowed("ج"),
-                alloc::borrow::Cow::Borrowed("س"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("أحد"),
-                alloc::borrow::Cow::Borrowed("إثنين"),
-                alloc::borrow::Cow::Borrowed("ثلاثاء"),
-                alloc::borrow::Cow::Borrowed("أربعاء"),
-                alloc::borrow::Cow::Borrowed("خميس"),
-                alloc::borrow::Cow::Borrowed("جمعة"),
-                alloc::borrow::Cow::Borrowed("سبت"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("الأحد"),
-                alloc::borrow::Cow::Borrowed("الاثنين"),
-                alloc::borrow::Cow::Borrowed("الثلاثاء"),
-                alloc::borrow::Cow::Borrowed("الأربعاء"),
-                alloc::borrow::Cow::Borrowed("الخميس"),
-                alloc::borrow::Cow::Borrowed("الجمعة"),
-                alloc::borrow::Cow::Borrowed("السبت"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\n\0\x18\0(\08\0D\0P\0\xD8\xA7\xD9\x84\xD8\xA3\xD8\xAD\xD8\xAF\xD8\xA7\xD9\x84\xD8\xA7\xD8\xAB\xD9\x86\xD9\x8A\xD9\x86\xD8\xA7\xD9\x84\xD8\xAB\xD9\x84\xD8\xA7\xD8\xAB\xD8\xA7\xD8\xA1\xD8\xA7\xD9\x84\xD8\xA3\xD8\xB1\xD8\xA8\xD8\xB9\xD8\xA7\xD8\xA1\xD8\xA7\xD9\x84\xD8\xAE\xD9\x85\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x84\xD8\xAC\xD9\x85\xD8\xB9\xD8\xA9\xD8\xA7\xD9\x84\xD8\xB3\xD8\xA8\xD8\xAA")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x02\0\x04\0\x06\0\x08\0\n\0\x0C\0\xD8\xAD\xD9\x86\xD8\xAB\xD8\xB1\xD8\xAE\xD8\xAC\xD8\xB3")
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x06\0\x10\0\x1C\0(\x000\08\0\xD8\xA3\xD8\xAD\xD8\xAF\xD8\xA5\xD8\xAB\xD9\x86\xD9\x8A\xD9\x86\xD8\xAB\xD9\x84\xD8\xA7\xD8\xAB\xD8\xA7\xD8\xA1\xD8\xA3\xD8\xB1\xD8\xA8\xD8\xB9\xD8\xA7\xD8\xA1\xD8\xAE\xD9\x85\xD9\x8A\xD8\xB3\xD8\xAC\xD9\x85\xD8\xB9\xD8\xA9\xD8\xB3\xD8\xA8\xD8\xAA")
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\n\0\x18\0(\08\0D\0P\0\xD8\xA7\xD9\x84\xD8\xA3\xD8\xAD\xD8\xAF\xD8\xA7\xD9\x84\xD8\xA7\xD8\xAB\xD9\x86\xD9\x8A\xD9\x86\xD8\xA7\xD9\x84\xD8\xAB\xD9\x84\xD8\xA7\xD8\xAB\xD8\xA7\xD8\xA1\xD8\xA7\xD9\x84\xD8\xA3\xD8\xB1\xD8\xA8\xD8\xB9\xD8\xA7\xD8\xA1\xD8\xA7\xD9\x84\xD8\xAE\xD9\x85\xD9\x8A\xD8\xB3\xD8\xA7\xD9\x84\xD8\xAC\xD9\x85\xD8\xB9\xD8\xA9\xD8\xA7\xD9\x84\xD8\xB3\xD8\xA8\xD8\xAA")
+            }),
         },
         stand_alone: None,
     },

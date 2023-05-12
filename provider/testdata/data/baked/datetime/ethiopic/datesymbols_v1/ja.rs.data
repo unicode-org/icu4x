@@ -40,42 +40,20 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("日"),
-                alloc::borrow::Cow::Borrowed("月"),
-                alloc::borrow::Cow::Borrowed("火"),
-                alloc::borrow::Cow::Borrowed("水"),
-                alloc::borrow::Cow::Borrowed("木"),
-                alloc::borrow::Cow::Borrowed("金"),
-                alloc::borrow::Cow::Borrowed("土"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("日"),
-                alloc::borrow::Cow::Borrowed("月"),
-                alloc::borrow::Cow::Borrowed("火"),
-                alloc::borrow::Cow::Borrowed("水"),
-                alloc::borrow::Cow::Borrowed("木"),
-                alloc::borrow::Cow::Borrowed("金"),
-                alloc::borrow::Cow::Borrowed("土"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("日"),
-                alloc::borrow::Cow::Borrowed("月"),
-                alloc::borrow::Cow::Borrowed("火"),
-                alloc::borrow::Cow::Borrowed("水"),
-                alloc::borrow::Cow::Borrowed("木"),
-                alloc::borrow::Cow::Borrowed("金"),
-                alloc::borrow::Cow::Borrowed("土"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("日曜日"),
-                alloc::borrow::Cow::Borrowed("月曜日"),
-                alloc::borrow::Cow::Borrowed("火曜日"),
-                alloc::borrow::Cow::Borrowed("水曜日"),
-                alloc::borrow::Cow::Borrowed("木曜日"),
-                alloc::borrow::Cow::Borrowed("金曜日"),
-                alloc::borrow::Cow::Borrowed("土曜日"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\xE6\x97\xA5\xE6\x9C\x88\xE7\x81\xAB\xE6\xB0\xB4\xE6\x9C\xA8\xE9\x87\x91\xE5\x9C\x9F")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\xE6\x97\xA5\xE6\x9C\x88\xE7\x81\xAB\xE6\xB0\xB4\xE6\x9C\xA8\xE9\x87\x91\xE5\x9C\x9F")
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x12\0\xE6\x97\xA5\xE6\x9C\x88\xE7\x81\xAB\xE6\xB0\xB4\xE6\x9C\xA8\xE9\x87\x91\xE5\x9C\x9F")
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\t\0\x12\0\x1B\0$\0-\x006\0\xE6\x97\xA5\xE6\x9B\x9C\xE6\x97\xA5\xE6\x9C\x88\xE6\x9B\x9C\xE6\x97\xA5\xE7\x81\xAB\xE6\x9B\x9C\xE6\x97\xA5\xE6\xB0\xB4\xE6\x9B\x9C\xE6\x97\xA5\xE6\x9C\xA8\xE6\x9B\x9C\xE6\x97\xA5\xE9\x87\x91\xE6\x9B\x9C\xE6\x97\xA5\xE5\x9C\x9F\xE6\x9B\x9C\xE6\x97\xA5")
+            }),
         },
         stand_alone: None,
     },

@@ -40,42 +40,24 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("Paz"),
-                alloc::borrow::Cow::Borrowed("Pzt"),
-                alloc::borrow::Cow::Borrowed("Sal"),
-                alloc::borrow::Cow::Borrowed("Çar"),
-                alloc::borrow::Cow::Borrowed("Per"),
-                alloc::borrow::Cow::Borrowed("Cum"),
-                alloc::borrow::Cow::Borrowed("Cmt"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("P"),
-                alloc::borrow::Cow::Borrowed("P"),
-                alloc::borrow::Cow::Borrowed("S"),
-                alloc::borrow::Cow::Borrowed("Ç"),
-                alloc::borrow::Cow::Borrowed("P"),
-                alloc::borrow::Cow::Borrowed("C"),
-                alloc::borrow::Cow::Borrowed("C"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("Pa"),
-                alloc::borrow::Cow::Borrowed("Pt"),
-                alloc::borrow::Cow::Borrowed("Sa"),
-                alloc::borrow::Cow::Borrowed("Ça"),
-                alloc::borrow::Cow::Borrowed("Pe"),
-                alloc::borrow::Cow::Borrowed("Cu"),
-                alloc::borrow::Cow::Borrowed("Ct"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("Pazar"),
-                alloc::borrow::Cow::Borrowed("Pazartesi"),
-                alloc::borrow::Cow::Borrowed("Salı"),
-                alloc::borrow::Cow::Borrowed("Çarşamba"),
-                alloc::borrow::Cow::Borrowed("Perşembe"),
-                alloc::borrow::Cow::Borrowed("Cuma"),
-                alloc::borrow::Cow::Borrowed("Cumartesi"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x03\0\x06\0\t\0\r\0\x10\0\x13\0PazPztSal\xC3\x87arPerCumCmt")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                ::zerovec::VarZeroVec::from_bytes_unchecked(
+                    b"\x07\0\0\0\0\0\x01\0\x02\0\x03\0\x05\0\x06\0\x07\0PPS\xC3\x87PCC",
+                )
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(
+                        b"\x07\0\0\0\0\0\x02\0\x04\0\x06\0\t\0\x0B\0\r\0PaPtSa\xC3\x87aPeCuCt",
+                    )
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x05\0\x0E\0\x13\0\x1D\0&\0*\0PazarPazartesiSal\xC4\xB1\xC3\x87ar\xC5\x9FambaPer\xC5\x9FembeCumaCumartesi")
+            }),
         },
         stand_alone: None,
     },

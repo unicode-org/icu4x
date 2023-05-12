@@ -108,48 +108,20 @@
     },
     weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
         format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
-            ]),
-            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}"),
-                alloc::borrow::Cow::Borrowed("𑄟\u{11127}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{11133}𑄢\u{11128}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{1112a}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}"),
-            ]),
-            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
-            ])),
-            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
-                alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}𑄝𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}𑄝𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed(
-                    "𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}𑄝𑄢\u{11134}",
-                ),
-                alloc::borrow::Cow::Borrowed("𑄝\u{1112a}𑄖\u{11134}𑄝𑄢\u{11134}"),
-                alloc::borrow::Cow::Borrowed(
-                    "𑄝\u{11133}𑄢\u{11128}𑄥\u{1112a}𑄛\u{11134}𑄝𑄢\u{11134}",
-                ),
-                alloc::borrow::Cow::Borrowed(
-                    "𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}𑄝𑄢\u{11134}",
-                ),
-                alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}𑄝𑄢\u{11134}"),
-            ]),
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x10\0 \0<\0L\0l\0\x8C\0\xF0\x91\x84\xA2\xF0\x91\x84\xA7\xF0\x91\x84\x9D\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9F\xF0\x91\x84\xB4\xF0\x91\x84\x9F\xF0\x91\x84\xA7\xF0\x91\x84\x81\xF0\x91\x84\x89\xF0\x91\x84\xA7\xF0\x91\x84\xA3\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xAA\xF0\x91\x84\x96\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xB3\xF0\x91\x84\xA2\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x9B\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x87\xF0\x91\x84\xB4\xF0\x91\x84\x87\xF0\x91\x84\xAE\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9A\xF0\x91\x84\xA8")
+            }),
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x08\0\x10\0\x18\0 \x000\08\0\xF0\x91\x84\xA2\xF0\x91\x84\xA7\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9F\xF0\x91\x84\xA7\xF0\x91\x84\x9D\xF0\x91\x84\xAA\xF0\x91\x84\x9D\xF0\x91\x84\xB3\xF0\x91\x84\xA2\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\xA5\xF0\x91\x84\xA7")
+            }),
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1(
+                unsafe {
+                    :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x10\0 \0<\0L\0l\0\x8C\0\xF0\x91\x84\xA2\xF0\x91\x84\xA7\xF0\x91\x84\x9D\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9F\xF0\x91\x84\xB4\xF0\x91\x84\x9F\xF0\x91\x84\xA7\xF0\x91\x84\x81\xF0\x91\x84\x89\xF0\x91\x84\xA7\xF0\x91\x84\xA3\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xAA\xF0\x91\x84\x96\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xB3\xF0\x91\x84\xA2\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x9B\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x87\xF0\x91\x84\xB4\xF0\x91\x84\x87\xF0\x91\x84\xAE\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9A\xF0\x91\x84\xA8")
+                },
+            )),
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1(unsafe {
+                :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x07\0\0\0\0\0\x1C\08\0`\0|\0\xA8\0\xD4\0\xF0\x91\x84\xA2\xF0\x91\x84\xA7\xF0\x91\x84\x9D\xF0\x91\x84\xA8\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9F\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\x9F\xF0\x91\x84\xA7\xF0\x91\x84\x81\xF0\x91\x84\x89\xF0\x91\x84\xA7\xF0\x91\x84\xA3\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xAA\xF0\x91\x84\x96\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xB3\xF0\x91\x84\xA2\xF0\x91\x84\xA8\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x9B\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xAA\xF0\x91\x84\x87\xF0\x91\x84\xB4\xF0\x91\x84\x87\xF0\x91\x84\xAE\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4\xF0\x91\x84\xA5\xF0\x91\x84\xA7\xF0\x91\x84\x9A\xF0\x91\x84\xA8\xF0\x91\x84\x9D\xF0\x91\x84\xA2\xF0\x91\x84\xB4")
+            }),
         },
         stand_alone: None,
     },
