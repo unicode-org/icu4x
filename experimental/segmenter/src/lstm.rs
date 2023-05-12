@@ -156,6 +156,9 @@ impl<'l> LstmSegmenter<'l> {
             u: MatrixZero<'a, 3>,
             b: MatrixZero<'a, 2>,
         ) {
+            // Also potentially useful: vfmaq_f32
+            use core::arch::aarch64::{float32x4_t, vmlaq_f32, vmulq_f32};
+
             let hunits = h_tm1.dim();
             #[cfg(debug_assertions)]
             {
@@ -222,10 +225,17 @@ impl<'l> LstmSegmenter<'l> {
                 let ub = *c_tm1.as_borrowed().as_slice().get(jb).unwrap();
                 let uc = *c_tm1.as_borrowed().as_slice().get(jc).unwrap();
                 let ud = *c_tm1.as_borrowed().as_slice().get(jd).unwrap();
-                let va = math_helper::fma(pa, ca, fa * ua);
-                let vb = math_helper::fma(pb, cb, fb * ub);
-                let vc = math_helper::fma(pc, cc, fc * uc);
-                let vd = math_helper::fma(pd, cd, fd * ud);
+                let p = unsafe { core::mem::transmute::<[f32; 4], float32x4_t>([pa, pb, pc, pd]) };
+                let c = unsafe { core::mem::transmute::<[f32; 4], float32x4_t>([ca, cb, cc, cd]) };
+                let f = unsafe { core::mem::transmute::<[f32; 4], float32x4_t>([fa, fb, fc, fd]) };
+                let u = unsafe { core::mem::transmute::<[f32; 4], float32x4_t>([ua, ub, uc, ud]) };
+                let s = unsafe { vmulq_f32(p, c) };
+                let v = unsafe { vmlaq_f32(s, f, u) };
+                let [va, vb, vc, vd] = unsafe { core::mem::transmute::<float32x4_t, [f32; 4]>(v) };
+                // let va = math_helper::fma(pa, ca, fa * ua);
+                // let vb = math_helper::fma(pb, cb, fb * ub);
+                // let vc = math_helper::fma(pc, cc, fc * uc);
+                // let vd = math_helper::fma(pd, cd, fd * ud);
                 *c_tm1.as_mut_slice().get_mut(ja).unwrap() = va;
                 *c_tm1.as_mut_slice().get_mut(jb).unwrap() = vb;
                 *c_tm1.as_mut_slice().get_mut(jc).unwrap() = vc;
