@@ -12,7 +12,6 @@ edition = "2021"
 readme = "README.md"
 license = "Unicode-DFS-2016"
 repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 categories = ["date-and-time", "parser-implementations"]
 

@@ -10,7 +10,6 @@ rust-version = "1.61.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
 license = "Unicode-DFS-2016"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
