@@ -105,11 +105,11 @@ macro_rules! symbols_from {
     ([$name: ident, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
         impl cldr_serde::ca::$name::Symbols {
             fn get(&self, _ctx: &$ctx) -> $name2::SymbolsV1<'static> {
-                $name2::SymbolsV1([
-                    $(
-                        Cow::Owned(self.$element.clone()),
-                    )*
-                ])
+                $name2::SymbolsV1(
+                    [$(
+                        self.$element.as_str(),
+                    )*][..].into()
+                )
             }
         }
         symbols_from!([$name, $name2], $ctx);

@@ -340,7 +340,6 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                         return symbols
                             .0
                             .get(idx)
-                            .map(|x| &**x)
                             .ok_or(DateTimeError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
@@ -361,7 +360,6 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         symbols
             .0
             .get(idx)
-            .map(|x| &**x)
             .ok_or(DateTimeError::MissingWeekdaySymbol(idx))
     }
 

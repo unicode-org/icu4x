@@ -9,7 +9,7 @@ use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
-use zerovec::ZeroMap;
+use zerovec::{VarZeroVec, ZeroMap};
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
@@ -329,11 +329,10 @@ symbols!(
         #[cfg_attr(
             feature = "serde",
             serde(
-                borrow,
-                deserialize_with = "icu_provider::serde::borrow_de_utils::array_of_cow"
+                borrow
             )
         )]
-        pub [Cow<'data, str>; 7],
+        pub VarZeroVec<'data, str>
     );
 );
 
@@ -399,7 +398,7 @@ mod test {
             Cow::Borrowed("Friday"),
             Cow::Borrowed("Saturday"),
             Cow::Borrowed("Sunday"),
-        ]);
+        ][..].into());
 
         bincode::serialize(&DateSymbolsV1 {
             months: months::ContextsV1 {
@@ -471,11 +470,7 @@ mod test {
         let bytes = serialize_date();
         let de = bincode::deserialize::<DateSymbolsV1>(&bytes).unwrap();
 
-        assert!(matches!(de.weekdays.format.narrow.0[2], Cow::Borrowed(_)));
-        assert!(matches!(
-            de.weekdays.format.short.as_ref().unwrap().0[4],
-            Cow::Borrowed(_)
-        ));
+        assert!(matches!(de.weekdays.format.narrow.0, VarZeroVec::Borrowed(_)));
     }
 
     #[test]
