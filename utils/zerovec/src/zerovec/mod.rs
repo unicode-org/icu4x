@@ -566,14 +566,17 @@ where
     /// use zerovec::ZeroVec;
     ///
     /// let mut zv = ZeroVec::<u8>::new_borrowed(&[0, 1, 2, 3]);
+    /// assert!(!zv.is_owned());
     /// assert_eq!(zv.owned_capacity(), None);
     ///
     /// // Convert to owned without appending anything
     /// zv.with_mut(|v| ());
+    /// assert!(zv.is_owned());
     /// assert_eq!(zv.owned_capacity(), Some(4.try_into().unwrap()));
     ///
     /// // Double the size by appending
     /// zv.with_mut(|v| v.push(0));
+    /// assert!(zv.is_owned());
     /// assert_eq!(zv.owned_capacity(), Some(8.try_into().unwrap()));
     /// ```
     #[inline]
