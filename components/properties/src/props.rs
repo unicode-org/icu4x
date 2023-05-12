@@ -112,7 +112,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapper<T> {
         M: DataMarker<Yokeable = PropertyValueNameToEnumMapV1<'static>>,
     {
         Self {
-            map: data.map_project(|m, _| m),
+            map: data.cast(),
             markers: PhantomData,
         }
     }
@@ -329,7 +329,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapper<T> {
         M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
     {
         Self {
-            map: data.map_project(|m, _| m),
+            map: data.cast(),
             markers: PhantomData,
         }
     }
@@ -437,7 +437,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapper<T> {
         M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
     {
         Self {
-            map: data.map_project(|m, _| m),
+            map: data.cast(),
             markers: PhantomData,
         }
     }
@@ -531,7 +531,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4Mapper<T> {
         M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
     {
         Self {
-            map: data.map_project(|m, _| m),
+            map: data.cast(),
             markers: PhantomData,
         }
     }
