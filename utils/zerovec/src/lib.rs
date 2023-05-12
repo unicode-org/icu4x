@@ -300,6 +300,32 @@ pub mod vecs {
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::mem::size_of;
+
+    #[test]
+    fn check_sizes() {
+        assert_eq!(24, size_of::<ZeroVec<u8>>());
+        assert_eq!(24, size_of::<ZeroVec<u32>>());
+        assert_eq!(32, size_of::<VarZeroVec<[u8]>>());
+        assert_eq!(32, size_of::<VarZeroVec<str>>());
+        assert_eq!(48, size_of::<ZeroMap<u32, u32>>());
+        assert_eq!(56, size_of::<ZeroMap<u32, str>>());
+        assert_eq!(56, size_of::<ZeroMap<str, u32>>());
+        assert_eq!(64, size_of::<ZeroMap<str, str>>());
+        assert_eq!(120, size_of::<ZeroMap2d<str, str, str>>());
+        assert_eq!(32, size_of::<vecs::FlexZeroVec>());
+
+        assert_eq!(32, size_of::<Option<ZeroVec<u8>>>());
+        assert_eq!(32, size_of::<Option<VarZeroVec<str>>>());
+        assert_eq!(64, size_of::<Option<ZeroMap<str, str>>>());
+        assert_eq!(120, size_of::<Option<ZeroMap2d<str, str, str>>>());
+        assert_eq!(32, size_of::<Option<vecs::FlexZeroVec>>());
+    }
+}
+
 // Proc macro reexports
 //
 // These exist so that our docs can use intra-doc links.
