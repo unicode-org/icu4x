@@ -195,13 +195,13 @@ mod tests {
 
     #[test]
     fn check_sizes() {
-        assert_eq!(5784, size_of::<DateFormatter>());
-        assert_eq!(6784, size_of::<DateTimeFormatter>());
-        assert_eq!(7896, size_of::<ZonedDateTimeFormatter>());
+        assert_eq!(4248, size_of::<DateFormatter>());
+        assert_eq!(5248, size_of::<DateTimeFormatter>());
+        assert_eq!(6360, size_of::<ZonedDateTimeFormatter>());
         assert_eq!(1496, size_of::<TimeFormatter>());
         assert_eq!(1112, size_of::<TimeZoneFormatter>());
-        assert_eq!(5744, size_of::<TypedDateFormatter::<Gregorian>>());
-        assert_eq!(6744, size_of::<TypedDateTimeFormatter::<Gregorian>>());
+        assert_eq!(4208, size_of::<TypedDateFormatter::<Gregorian>>());
+        assert_eq!(5208, size_of::<TypedDateTimeFormatter::<Gregorian>>());
 
         assert_eq!(80, size_of::<DateTimeError>());
         assert_eq!(176, size_of::<FormattedDateTime>());
@@ -214,7 +214,7 @@ mod tests {
         assert_eq!(1032, size_of::<DP::<TimeSymbolsV1Marker>>());
         assert_eq!(32, size_of::<DP::<GenericPatternV1Marker>>());
         assert_eq!(208, size_of::<DP::<PatternPluralsFromPatternsV1Marker>>());
-        assert_eq!(5064, size_of::<DP::<ErasedDateSymbolsV1Marker>>());
+        assert_eq!(3528, size_of::<DP::<ErasedDateSymbolsV1Marker>>());
         assert_eq!(16, size_of::<DP::<WeekDataV1Marker>>());
         assert_eq!(288, size_of::<DP::<TimeZoneFormatsV1Marker>>());
         assert_eq!(64, size_of::<DP::<ExemplarCitiesV1Marker>>());
