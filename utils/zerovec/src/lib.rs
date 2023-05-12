@@ -316,7 +316,7 @@ mod tests {
         assert_eq!(56, size_of::<ZeroMap<str, u32>>());
         assert_eq!(64, size_of::<ZeroMap<str, str>>());
         assert_eq!(120, size_of::<ZeroMap2d<str, str, str>>());
-        assert_eq!(24, size_of::<vecs::FlexZeroVec>());
+        assert_eq!(32, size_of::<vecs::FlexZeroVec>());
 
         assert_eq!(32, size_of::<Option<ZeroVec<u8>>>());
         assert_eq!(32, size_of::<Option<VarZeroVec<str>>>());
