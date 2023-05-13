@@ -194,6 +194,7 @@ mod tests {
     use time_zone::TimeZoneFormatterUnit;
 
     /// Checks that the size of the type is one of the given sizes.
+    /// The size might differ across Rust versions or channels.
     macro_rules! check_size_of {
         ($sizes:pat, $type:path) => {
             assert!(
