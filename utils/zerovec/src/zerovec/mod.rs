@@ -20,6 +20,7 @@ use core::fmt;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
+use core::num::NonZeroUsize;
 use core::ops::Deref;
 
 /// A zero-copy, byte-aligned vector for fixed-width types.
@@ -553,6 +554,34 @@ where
             let ule_slice = unsafe { self.vector.as_arbitrary_slice() };
             Some(ZeroSlice::from_ule_slice(ule_slice))
         }
+    }
+
+    /// If the ZeroVec is owned, returns the capacity of the vector.
+    ///
+    /// Otherwise, if the ZeroVec is borrowed, returns `None`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ZeroVec;
+    ///
+    /// let mut zv = ZeroVec::<u8>::new_borrowed(&[0, 1, 2, 3]);
+    /// assert!(!zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), None);
+    ///
+    /// // Convert to owned without appending anything
+    /// zv.with_mut(|v| ());
+    /// assert!(zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), Some(4.try_into().unwrap()));
+    ///
+    /// // Double the size by appending
+    /// zv.with_mut(|v| v.push(0));
+    /// assert!(zv.is_owned());
+    /// assert_eq!(zv.owned_capacity(), Some(8.try_into().unwrap()));
+    /// ```
+    #[inline]
+    pub fn owned_capacity(&self) -> Option<NonZeroUsize> {
+        NonZeroUsize::try_from(self.vector.capacity).ok()
     }
 }
 
