@@ -81,19 +81,9 @@ struct SegmenterRuleTable {
 impl crate::DatagenProvider {
     fn generate_rule_break_data(
         &self,
-        key: DataKey,
-    ) -> Result<RuleBreakDataV1<'static>, DataError> {
-        let segmenter = self
-            .source
-            .builtin()
-            .read_and_parse_toml::<SegmenterRuleTable>(&format!(
-                "segmenter/rules/{}.toml",
-                key.path()
-                    .split(&['/', '@'])
-                    .nth(1)
-                    .expect("DataKey format should be valid!")
-            ))
-            .unwrap();
+        rule: &str,
+    ) -> RuleBreakDataV1<'static> {
+        let segmenter: SegmenterRuleTable = toml::from_str(rule).expect("The data should be valid!");
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
@@ -635,7 +625,7 @@ impl crate::DatagenProvider {
             }
         }
 
-        Ok(RuleBreakDataV1 {
+        RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
             break_state_table: RuleBreakStateTable(ZeroVec::new_owned(break_state_table)),
             rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
@@ -644,24 +634,24 @@ impl crate::DatagenProvider {
             sot_property: (property_length - 2) as u8,
             eot_property: (property_length - 1) as u8,
             complex_property: complex_property as u8,
-        })
+        }
     }
 }
 
 macro_rules! implement {
-    ($marker:ident) => {
+    ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+            fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
                 return Err(DataError::custom(
                     "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
                 )
-                .with_req($marker::KEY, req));
+                .with_req($marker::KEY, _req));
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data($marker::KEY).map_err(|e| e.with_req($marker::KEY, req))?,
+                        self.generate_rule_break_data(include_str!(concat!("../../../data/segmenter/rules/", $rules))),
                     )),
                 });
             }
@@ -675,10 +665,10 @@ macro_rules! implement {
     }
 }
 
-implement!(LineBreakDataV1Marker);
-implement!(GraphemeClusterBreakDataV1Marker);
-implement!(WordBreakDataV1Marker);
-implement!(SentenceBreakDataV1Marker);
+implement!(LineBreakDataV1Marker, "line.toml");
+implement!(GraphemeClusterBreakDataV1Marker, "grapheme.toml");
+implement!(WordBreakDataV1Marker, "word.toml");
+implement!(SentenceBreakDataV1Marker, "sentence.toml");
 
 #[cfg(test)]
 mod tests {
