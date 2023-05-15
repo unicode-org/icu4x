@@ -4,6 +4,7 @@
 
 // This way we can copy-paste Yokeable impls
 #![allow(unknown_lints)] // forget_copy
+#![allow(renamed_and_removed_lints)] // forget_copy
 #![allow(forget_copy)]
 #![allow(clippy::forget_copy)]
 #![allow(clippy::forget_non_drop)]
