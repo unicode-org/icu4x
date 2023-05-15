@@ -79,11 +79,9 @@ struct SegmenterRuleTable {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl crate::DatagenProvider {
-    fn generate_rule_break_data(
-        &self,
-        rule: &str,
-    ) -> RuleBreakDataV1<'static> {
-        let segmenter: SegmenterRuleTable = toml::from_str(rule).expect("The data should be valid!");
+    fn generate_rule_break_data(&self, rules: &str) -> RuleBreakDataV1<'static> {
+        let segmenter: SegmenterRuleTable =
+            toml::from_str(rules).expect("The data should be valid!");
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();

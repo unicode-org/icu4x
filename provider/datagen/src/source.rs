@@ -68,7 +68,9 @@ impl SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            icuexport_fallback_paths: Arc::new(SerdeCache::new(AbstractFs::new_icuexport_fallback())),
+            icuexport_fallback_paths: Arc::new(SerdeCache::new(
+                AbstractFs::new_icuexport_fallback(),
+            )),
             segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
             options: Default::default(),
         }
@@ -227,26 +229,22 @@ impl SourceData {
         }
     }
 
-    /// Paths to CLDR source data.
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
             .as_deref()
             .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
-    /// Path to Unicode Properties source data.
     pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
         self.icuexport_paths
             .as_deref()
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to built-in data.
     pub(crate) fn icuexport_fallback(&self) -> &SerdeCache {
         &self.icuexport_fallback_paths
     }
 
-    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
