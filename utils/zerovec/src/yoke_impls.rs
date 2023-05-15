@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // This way we can copy-paste Yokeable impls
+#![allow(forget_copy)]
 #![allow(clippy::forget_copy)]
 #![allow(clippy::forget_non_drop)]
 
