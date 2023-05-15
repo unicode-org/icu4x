@@ -193,38 +193,50 @@ mod tests {
     use time_zone::TimeZoneFormatter;
     use time_zone::TimeZoneFormatterUnit;
 
+    /// Checks that the size of the type is one of the given sizes.
+    /// The size might differ across Rust versions or channels.
+    macro_rules! check_size_of {
+        ($sizes:pat, $type:path) => {
+            assert!(
+                matches!(size_of::<$type>(), $sizes),
+                concat!(stringify!($type), " is of size {}"),
+                size_of::<$type>()
+            );
+        };
+    }
+
     #[test]
     fn check_sizes() {
-        assert_eq!(5784, size_of::<DateFormatter>());
-        assert_eq!(6784, size_of::<DateTimeFormatter>());
-        assert_eq!(7896, size_of::<ZonedDateTimeFormatter>());
-        assert_eq!(1496, size_of::<TimeFormatter>());
-        assert_eq!(1112, size_of::<TimeZoneFormatter>());
-        assert_eq!(5744, size_of::<TypedDateFormatter::<Gregorian>>());
-        assert_eq!(6744, size_of::<TypedDateTimeFormatter::<Gregorian>>());
+        check_size_of!(5784 | 4576, DateFormatter);
+        check_size_of!(6784 | 5448, DateTimeFormatter);
+        check_size_of!(7896 | 6464, ZonedDateTimeFormatter);
+        check_size_of!(1496 | 1320, TimeFormatter);
+        check_size_of!(1112 | 1016, TimeZoneFormatter);
+        check_size_of!(5744 | 4536, TypedDateFormatter::<Gregorian>);
+        check_size_of!(6744 | 5408, TypedDateTimeFormatter::<Gregorian>);
 
-        assert_eq!(80, size_of::<DateTimeError>());
-        assert_eq!(176, size_of::<FormattedDateTime>());
-        assert_eq!(16, size_of::<FormattedTimeZone::<CustomTimeZone>>());
-        assert_eq!(160, size_of::<FormattedZonedDateTime>());
-        assert_eq!(13, size_of::<DateTimeFormatterOptions>());
+        check_size_of!(80, DateTimeError);
+        check_size_of!(176, FormattedDateTime);
+        check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
+        check_size_of!(160, FormattedZonedDateTime);
+        check_size_of!(13, DateTimeFormatterOptions);
 
         type DP<M> = DataPayload<M>;
-        assert_eq!(208, size_of::<DP::<PatternPluralsFromPatternsV1Marker>>());
-        assert_eq!(1032, size_of::<DP::<TimeSymbolsV1Marker>>());
-        assert_eq!(32, size_of::<DP::<GenericPatternV1Marker>>());
-        assert_eq!(208, size_of::<DP::<PatternPluralsFromPatternsV1Marker>>());
-        assert_eq!(5064, size_of::<DP::<ErasedDateSymbolsV1Marker>>());
-        assert_eq!(16, size_of::<DP::<WeekDataV1Marker>>());
-        assert_eq!(288, size_of::<DP::<TimeZoneFormatsV1Marker>>());
-        assert_eq!(64, size_of::<DP::<ExemplarCitiesV1Marker>>());
-        assert_eq!(120, size_of::<DP::<MetazoneGenericNamesLongV1Marker>>());
-        assert_eq!(120, size_of::<DP::<MetazoneGenericNamesShortV1Marker>>());
-        assert_eq!(216, size_of::<DP::<MetazoneSpecificNamesLongV1Marker>>());
-        assert_eq!(216, size_of::<DP::<MetazoneSpecificNamesShortV1Marker>>());
-        assert_eq!(168, size_of::<PluralRules>());
-        assert_eq!(256, size_of::<FixedDecimalFormatter>());
-        assert_eq!(1024, size_of::<TimeZoneDataPayloads>());
-        assert_eq!(3, size_of::<TimeZoneFormatterUnit>());
+        check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
+        check_size_of!(1032 | 904, DP::<TimeSymbolsV1Marker>);
+        check_size_of!(32, DP::<GenericPatternV1Marker>);
+        check_size_of!(208, DP::<PatternPluralsFromPatternsV1Marker>);
+        check_size_of!(5064 | 3904, DP::<ErasedDateSymbolsV1Marker>);
+        check_size_of!(16, DP::<WeekDataV1Marker>);
+        check_size_of!(288 | 224, DP::<TimeZoneFormatsV1Marker>);
+        check_size_of!(64 | 56, DP::<ExemplarCitiesV1Marker>);
+        check_size_of!(120 | 104, DP::<MetazoneGenericNamesLongV1Marker>);
+        check_size_of!(120 | 104, DP::<MetazoneGenericNamesShortV1Marker>);
+        check_size_of!(216 | 200, DP::<MetazoneSpecificNamesLongV1Marker>);
+        check_size_of!(216 | 200, DP::<MetazoneSpecificNamesShortV1Marker>);
+        check_size_of!(168, PluralRules);
+        check_size_of!(256 | 208, FixedDecimalFormatter);
+        check_size_of!(1024 | 928, TimeZoneDataPayloads);
+        check_size_of!(3, TimeZoneFormatterUnit);
     }
 }

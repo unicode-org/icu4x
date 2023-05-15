@@ -305,24 +305,36 @@ mod tests {
     use super::*;
     use core::mem::size_of;
 
+    /// Checks that the size of the type is one of the given sizes.
+    /// The size might differ across Rust versions or channels.
+    macro_rules! check_size_of {
+        ($sizes:pat, $type:path) => {
+            assert!(
+                matches!(size_of::<$type>(), $sizes),
+                concat!(stringify!($type), " is of size {}"),
+                size_of::<$type>()
+            );
+        };
+    }
+
     #[test]
     fn check_sizes() {
-        assert_eq!(24, size_of::<ZeroVec<u8>>());
-        assert_eq!(24, size_of::<ZeroVec<u32>>());
-        assert_eq!(32, size_of::<VarZeroVec<[u8]>>());
-        assert_eq!(32, size_of::<VarZeroVec<str>>());
-        assert_eq!(48, size_of::<ZeroMap<u32, u32>>());
-        assert_eq!(56, size_of::<ZeroMap<u32, str>>());
-        assert_eq!(56, size_of::<ZeroMap<str, u32>>());
-        assert_eq!(64, size_of::<ZeroMap<str, str>>());
-        assert_eq!(120, size_of::<ZeroMap2d<str, str, str>>());
-        assert_eq!(32, size_of::<vecs::FlexZeroVec>());
+        check_size_of!(24, ZeroVec<u8>);
+        check_size_of!(24, ZeroVec<u32>);
+        check_size_of!(32 | 24, VarZeroVec<[u8]>);
+        check_size_of!(32 | 24, VarZeroVec<str>);
+        check_size_of!(48, ZeroMap<u32, u32>);
+        check_size_of!(56 | 48, ZeroMap<u32, str>);
+        check_size_of!(56 | 48, ZeroMap<str, u32>);
+        check_size_of!(64 | 48, ZeroMap<str, str>);
+        check_size_of!(120 | 96, ZeroMap2d<str, str, str>);
+        check_size_of!(32 | 24, vecs::FlexZeroVec);
 
-        assert_eq!(32, size_of::<Option<ZeroVec<u8>>>());
-        assert_eq!(32, size_of::<Option<VarZeroVec<str>>>());
-        assert_eq!(64, size_of::<Option<ZeroMap<str, str>>>());
-        assert_eq!(120, size_of::<Option<ZeroMap2d<str, str, str>>>());
-        assert_eq!(32, size_of::<Option<vecs::FlexZeroVec>>());
+        check_size_of!(32, Option<ZeroVec<u8>>);
+        check_size_of!(32, Option<VarZeroVec<str>>);
+        check_size_of!(64 | 56, Option<ZeroMap<str, str>>);
+        check_size_of!(120 | 104, Option<ZeroMap2d<str, str, str>>);
+        check_size_of!(32, Option<vecs::FlexZeroVec>);
     }
 }
 
