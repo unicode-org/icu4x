@@ -53,6 +53,10 @@ impl CldrCache {
         CldrDirLang(&self.0, "cldr-localenames".to_owned())
     }
 
+    pub fn segments(&self) -> CldrDirLang<'_> {
+        CldrDirLang(&self.0, "cldr-segments".to_owned())
+    }
+
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             &self.0,
@@ -121,7 +125,11 @@ impl<'a> CldrDirLang<'a> {
             .list("")?
             .find(|dir| dir.starts_with(self.1.as_str()))
             .unwrap_or_else(|| format!("{}-full", self.1));
-        dir.push_str("/main");
+        dir.push_str(if self.1 == "cldr-segments" {
+            "/segments"
+        } else {
+            "/main"
+        });
         Ok(dir)
     }
 

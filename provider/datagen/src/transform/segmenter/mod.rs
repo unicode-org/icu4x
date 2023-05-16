@@ -79,9 +79,12 @@ struct SegmenterRuleTable {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl crate::DatagenProvider {
-    fn generate_rule_break_data(&self, rules: &str) -> RuleBreakDataV1<'static> {
-        let segmenter: SegmenterRuleTable =
-            toml::from_str(rules).expect("The data should be valid!");
+    fn generate_rule_break_data(
+        &self,
+        segmenter: SegmenterRuleTable,
+        _cldr: &crate::transform::cldr::cldr_serde::segment::Segmentation,
+    ) -> RuleBreakDataV1<'static> {
+        // TODO: Use CLDR data
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
@@ -637,21 +640,39 @@ impl crate::DatagenProvider {
 }
 
 macro_rules! implement {
-    ($marker:ident, $rules:literal) => {
+    ($marker:ident, $rules:literal, $cldr_field:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
-                return Err(DataError::custom(
-                    "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
-                )
-                .with_req($marker::KEY, _req));
+                {
+                    Err(DataError::custom(
+                        "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
+                    )
+                    .with_req($marker::KEY, _req))
+                }
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-                return Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data(include_str!(concat!("../../../data/segmenter/rules/", $rules))),
-                    )),
-                });
+                {
+                    let cldr = &self.source
+                        .cldr()
+                        .unwrap()
+                        .segments()
+                        .read_and_parse::<crate::transform::cldr::cldr_serde::segment::Resource>(
+                            &Default::default(),
+                            "suppressions.json",
+                        )
+                        .unwrap()
+                        .segments
+                        .segmentations
+                        .$cldr_field;
+
+                    let hardcoded =
+                        toml::from_str(include_str!(concat!("../../../data/segmenter/rules/", $rules))).expect("The data should be valid!");
+
+                    Ok(DataResponse {
+                        metadata: DataResponseMetadata::default(),
+                        payload: Some(DataPayload::from_owned(self.generate_rule_break_data(hardcoded, cldr))),
+                    })
+                }
             }
         }
 
@@ -663,10 +684,14 @@ macro_rules! implement {
     }
 }
 
-implement!(LineBreakDataV1Marker, "line.toml");
-implement!(GraphemeClusterBreakDataV1Marker, "grapheme.toml");
-implement!(WordBreakDataV1Marker, "word.toml");
-implement!(SentenceBreakDataV1Marker, "sentence.toml");
+implement!(LineBreakDataV1Marker, "line.toml", line_break);
+implement!(
+    GraphemeClusterBreakDataV1Marker,
+    "grapheme.toml",
+    grapheme_cluster_break
+);
+implement!(WordBreakDataV1Marker, "word.toml", word_break);
+implement!(SentenceBreakDataV1Marker, "sentence.toml", sentence_break);
 
 #[cfg(test)]
 mod tests {
