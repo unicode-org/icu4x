@@ -37,22 +37,23 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .displaynames()
-            .list_langs()?
-            .filter(|langid| {
-                // The directory might exist without scripts.json
-                self.source
-                    .cldr()
-                    .unwrap()
-                    .displaynames()
-                    .file_exists(langid, "scripts.json")
-                    .unwrap_or_default()
-            })
-            .map(DataLocale::from)
-            .collect())
+        Ok(self.source.options.locales.filter_by_langid_equality(
+            self.source
+                .cldr()?
+                .displaynames()
+                .list_langs()?
+                .filter(|langid| {
+                    // The directory might exist without scripts.json
+                    self.source
+                        .cldr()
+                        .unwrap()
+                        .displaynames()
+                        .file_exists(langid, "scripts.json")
+                        .unwrap_or_default()
+                })
+                .map(DataLocale::from)
+                .collect(),
+        ))
     }
 }
 

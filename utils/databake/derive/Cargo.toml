@@ -6,6 +6,7 @@
 name = "databake-derive"
 description = "Custom derive for the databake crate"
 version = "0.1.5"
+rust-version = "1.61.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -33,8 +34,8 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
-syn = { version = "1.0.73", features = ["derive", "fold"] }
-synstructure = "0.12.4"
+syn = { version = "2", features = ["derive", "fold"] }
+synstructure = "0.13"
 
 [dev-dependencies]
 databake = { path = "..", features = ["derive"]}

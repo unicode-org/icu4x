@@ -27,14 +27,11 @@ rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_
 [gn.package.quote."1.0.26"]
 rustflags = []
 
-[gn.package.serde."1.0.156"]
+[gn.package.serde."1.0.160"]
 rustflags = []
 
-[gn.package.serde_derive."1.0.156"]
+[gn.package.serde_derive."1.0.160"]
 rustflags = []
-
-[gn.package.syn."1.0.109"]
-rustflags = ["--cfg=syn_disable_nightly_tests"]
 
 [gn.package.libm."0.2.6"]
 rustflags = []

@@ -119,8 +119,6 @@ impl DataExporter for FilesystemExporter {
         locale: &DataLocale,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Writing: {}/{}", key, locale);
-
         let mut path_buf = self.root.clone();
         path_buf.push(&*key.write_to_string());
         path_buf.push(&*locale.write_to_string());

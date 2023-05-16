@@ -17,16 +17,16 @@
 //!
 //! ```no_run
 //! use icu_datagen::prelude::*;
+//! use icu_provider_blob::export::*;
 //! use std::fs::File;
 //!
 //! fn main() {
-//!     icu_datagen::datagen(
-//!         Some(&[langid!("de"), langid!("en-AU")]),
-//!         &[icu::list::provider::AndListV1Marker::KEY],
-//!         &SourceData::default(),
-//!         vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-//!     )
-//!     .unwrap();
+//!     DatagenProvider::default()
+//!         .export(
+//!             [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+//!             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
+//!         )
+//!         .unwrap();
 //! }
 //! ```
 //!
@@ -64,7 +64,6 @@
 )]
 #![warn(missing_docs)]
 
-mod databake;
 mod error;
 mod registry;
 mod source;
@@ -73,86 +72,144 @@ mod testutil;
 mod transform;
 
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
-pub use registry::*;
-pub use source::{CollationHanDatabase, CoverageLevel, SourceData};
+pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard};
+pub use source::SourceData;
 
-#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
-#[doc(hidden)]
-#[derive(Debug)]
-pub enum CldrLocaleSubset {
-    Ignored,
-}
-
-impl Default for CldrLocaleSubset {
-    fn default() -> Self {
-        Self::Ignored
-    }
-}
-
-impl CldrLocaleSubset {
-    #[allow(non_upper_case_globals)]
-    pub const Full: Self = Self::Ignored;
-    #[allow(non_upper_case_globals)]
-    pub const Modern: Self = Self::Ignored;
-}
-
-/// [Out::Fs] serialization formats.
-pub mod syntax {
-    #[doc(no_inline)]
-    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
-    #[doc(no_inline)]
-    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
-    #[doc(no_inline)]
-    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
-}
+#[cfg(feature = "provider_baked")]
+pub mod baked_exporter;
+pub mod options;
 
 /// A prelude for using the datagen API
 pub mod prelude {
-    #[doc(hidden)]
-    pub use crate::CldrLocaleSubset;
     #[doc(no_inline)]
-    pub use crate::{syntax, BakedOptions, CollationHanDatabase, CoverageLevel, Out, SourceData};
+    pub use crate::{options, DatagenProvider, SourceData};
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
     #[doc(no_inline)]
-    pub use icu_provider::KeyedDataMarker;
+    pub use icu_provider::{datagen::DataExporter, DataKey, KeyedDataMarker};
+
+    // SEMVER GRAVEYARD
+    #[cfg(feature = "legacy_api")]
+    #[doc(hidden)]
+    pub use crate::options::{CollationHanDatabase, CoverageLevel};
+    #[cfg(feature = "legacy_api")]
+    #[allow(deprecated)]
+    #[doc(hidden)]
+    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
 
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_provider_adapters::empty::EmptyDataProvider;
-use icu_provider_adapters::filter::Filterable;
-use icu_provider_fs::export::serializers::AbstractSerializer;
-use prelude::*;
-use rayon::prelude::*;
+use memchr::memmem;
 use std::collections::HashSet;
-use std::io::{BufRead, BufReader};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// [`DataProvider`] backed by [`SourceData`]
-#[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
+///
+/// If `source` does not contain a specific data source, `DataProvider::load` will
+/// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
+/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
+/// required for that key.
 #[derive(Debug, Clone)]
+#[cfg_attr(feature = "networking", derive(Default))]
+#[cfg_attr(not(doc), allow(clippy::exhaustive_structs))]
+#[cfg_attr(doc, non_exhaustive)]
 pub struct DatagenProvider {
-    /// The underlying raw data
+    #[doc(hidden)]
     pub source: SourceData,
 }
 
-#[cfg(test)]
 impl DatagenProvider {
-    /// Create a `DatagenProvider` that uses test data.
+    /// Creates a new data provider with the given `source` and `options`.
+    ///
+    /// Fails if `options` is using CLDR locale sets and `source` does not contain CLDR data.
+    pub fn try_new(options: options::Options, mut source: SourceData) -> Result<Self, DataError> {
+        if source.options != Default::default() {
+            log::warn!("Trie type, collation database, or collations set on SourceData. These will be ignored in favor of options.");
+        }
+
+        source.options = options;
+
+        source.options.locales = match core::mem::take(&mut source.options.locales) {
+            options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
+            options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
+                source
+                    .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
+                    .into_iter()
+                    .collect(),
+            ),
+            s => s,
+        };
+
+        Ok(Self { source })
+    }
+
+    #[cfg(test)]
     pub fn for_test() -> Self {
+        // Singleton so that all instantiations share the same cache.
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                source: SourceData::repo(),
+                // This is equivalent to `latest_tested` for the files defined in
+                // `tools/testdata-scripts/globs.rs.data`.
+                source: SourceData::offline()
+                    .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
+                    .with_icuexport(repodata::paths::icuexport()).unwrap()
+                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap(),
             };
         }
         TEST_PROVIDER.clone()
     }
-}
 
-impl AnyProvider for DatagenProvider {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.as_any_provider().load_any(key, req)
+    /// Exports data for the set of keys to the given exporter.
+    ///
+    /// See
+    /// [`BlobExporter`](icu_provider_blob::export),
+    /// [`FileSystemExporter`](icu_provider_fs::export),
+    /// and [`BakedExporter`](crate::baked_exporter).
+    pub fn export(
+        &self,
+        keys: HashSet<DataKey>,
+        mut exporter: impl DataExporter,
+    ) -> Result<(), DataError> {
+        if keys.is_empty() {
+            log::warn!("No keys selected");
+        }
+
+        // Avoid multiple monomorphizations
+        fn internal(
+            provider: &DatagenProvider,
+            keys: HashSet<DataKey>,
+            exporter: &mut dyn DataExporter,
+        ) -> Result<(), DataError> {
+            use rayon::prelude::*;
+
+            keys.into_par_iter().try_for_each(|key| {
+                provider
+                    .supported_locales_for_key(key)
+                    .map_err(|e| e.with_key(key))?
+                    .into_par_iter()
+                    .try_for_each(|locale| {
+                        let req = DataRequest {
+                            locale: &locale,
+                            metadata: Default::default(),
+                        };
+                        let payload = provider
+                            .load_data(key, req)
+                            .and_then(DataResponse::take_payload)
+                            .map_err(|e| e.with_req(key, req))?;
+                        log::trace!("Writing payload: {key}/{locale}");
+                        exporter
+                            .put_payload(key, &locale, &payload)
+                            .map_err(|e| e.with_req(key, req))
+                    })?;
+
+                log::info!("Writing key: {key}");
+                exporter.flush(key).map_err(|e| e.with_key(key))
+            })?;
+
+            exporter.close()
+        }
+        internal(self, keys, &mut exporter)
     }
 }
 
@@ -170,9 +227,7 @@ pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
     lazy_static::lazy_static! {
         static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
                     .into_iter()
-                    .chain(std::iter::once(
-                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
-                    ))
+                    .chain([icu_provider::hello_world::HelloWorldV1Marker::KEY])
                     .map(|k| (k.path().get(), k))
                     .collect();
     }
@@ -227,6 +282,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # }
 /// ```
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
+    use std::io::{BufRead, BufReader};
     BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
         .filter_map(|k| k.map(crate::key).transpose())
@@ -256,70 +312,48 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
-    let mut result = Vec::new();
-    let mut i = 0;
-    let mut last_start = None;
-    while i < file.len() {
-        if file[i..].starts_with(icu_provider::leading_tag!().as_bytes()) {
-            i += icu_provider::leading_tag!().len();
-            last_start = Some(i);
-        } else if file[i..].starts_with(icu_provider::trailing_tag!().as_bytes())
-            && last_start.is_some()
-        {
-            if let Some(key) = std::str::from_utf8(&file[last_start.unwrap()..i])
-                .ok()
-                .and_then(crate::key)
-            {
-                result.push(key);
-            }
-            i += icu_provider::trailing_tag!().len();
-            last_start = None;
-        } else {
-            i += 1;
-        }
-    }
+    let file = file.as_slice();
+
+    const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
+    const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
+
+    let trailing_tag = memmem::Finder::new(TRAILING_TAG);
+
+    let mut result: Vec<DataKey> = memmem::find_iter(file, LEADING_TAG)
+        .map(|tag_position| tag_position + LEADING_TAG.len())
+        .map(|key_start| &file[key_start..])
+        .filter_map(move |key_fragment| {
+            trailing_tag
+                .find(key_fragment)
+                .map(|end| &key_fragment[..end])
+        })
+        .map(std::str::from_utf8)
+        .filter_map(Result::ok)
+        .filter_map(crate::key)
+        .collect();
+
     result.sort();
     result.dedup();
+
     Ok(result)
 }
 
-/// Options for configuring the output of databake.
-#[non_exhaustive]
-#[derive(Debug)]
-pub struct BakedOptions {
-    /// Whether to run `rustfmt` on the generated files.
-    pub pretty: bool,
-    /// Whether to gate each key on its crate name. This allows using the module
-    /// even if some keys are not required and their dependencies are not included.
-    /// Requires use_separate_crates.
-    pub insert_feature_gates: bool,
-    /// Whether to use separate crates to name types instead of the `icu` metacrate
-    pub use_separate_crates: bool,
-    /// Whether to overwrite existing data. By default, errors if it is present.
-    pub overwrite: bool,
-}
-
-#[allow(clippy::derivable_impls)] // want to be explicit about bool defaults
-impl Default for BakedOptions {
-    fn default() -> Self {
-        Self {
-            pretty: false,
-            insert_feature_gates: false,
-            use_separate_crates: false,
-            overwrite: false,
-        }
-    }
-}
-
+/// Requires `legacy_api` Cargo feature
+///
 /// The output format.
+#[deprecated(
+    since = "1.3.0",
+    note = "use `DatagenProvider::export` with self-constructed `DataExporter`s"
+)]
 #[non_exhaustive]
+#[cfg(feature = "legacy_api")]
 pub enum Out {
     /// Output to a file system tree
     Fs {
         /// The root path.
-        output_path: PathBuf,
+        output_path: std::path::PathBuf,
         /// The serialization format. See [syntax].
-        serializer: Box<dyn AbstractSerializer + Sync>,
+        serializer: Box<dyn icu_provider_fs::export::serializers::AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
         /// Whether to create a fingerprint file with SHA2 hashes
@@ -330,7 +364,7 @@ pub enum Out {
     /// Output a module with baked data at the given location.
     Baked {
         /// The directory of the generated module.
-        mod_directory: PathBuf,
+        mod_directory: std::path::PathBuf,
         /// Additional options to configure the generated module.
         options: BakedOptions,
     },
@@ -338,13 +372,15 @@ pub enum Out {
     #[doc(hidden)]
     #[deprecated(since = "1.1.2", note = "please use `Out::Baked` instead")]
     Module {
-        mod_directory: PathBuf,
+        mod_directory: std::path::PathBuf,
         pretty: bool,
         insert_feature_gates: bool,
         use_separate_crates: bool,
     },
 }
 
+#[allow(deprecated)]
+#[cfg(feature = "legacy_api")]
 impl core::fmt::Debug for Out {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -386,7 +422,10 @@ impl core::fmt::Debug for Out {
     }
 }
 
-/// Runs ICU4X datagen.
+#[deprecated(since = "1.3.0", note = "use `DatagenProvider::export`")]
+#[cfg(feature = "legacy_api")]
+#[allow(deprecated)]
+/// Requires `legacy_api` Cargo feature
 ///
 /// The argument are used as follows:
 /// * `locales`: If this is present, only locales that are either `und` or
@@ -398,108 +437,107 @@ impl core::fmt::Debug for Out {
 ///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
-    locales: Option<&[LanguageIdentifier]>,
+    locales: Option<&[icu_locid::LanguageIdentifier]>,
     keys: &[DataKey],
     source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
-    let exporters = outs
-        .into_iter()
-        .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
-            Ok(match out {
-                Out::Fs {
-                    output_path,
-                    serializer,
-                    overwrite,
-                    fingerprint,
-                } => {
-                    let mut options = icu_provider_fs::export::ExporterOptions::default();
-                    options.root = output_path;
-                    if overwrite {
-                        options.overwrite =
-                            icu_provider_fs::export::OverwriteOption::RemoveAndReplace
-                    }
-                    options.fingerprint = fingerprint;
-                    Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
-                        serializer, options,
-                    )?)
-                }
-                Out::Blob(write) => Box::new(
-                    icu_provider_blob::export::BlobExporter::new_with_sink(write),
-                ),
-                Out::Baked {
-                    mod_directory,
-                    options,
-                } => Box::new(databake::BakedDataExporter::new(mod_directory, options)?),
-                #[allow(deprecated)]
-                Out::Module {
-                    mod_directory,
-                    pretty,
-                    insert_feature_gates,
-                    use_separate_crates,
-                } => Box::new(databake::BakedDataExporter::new(
-                    mod_directory,
-                    BakedOptions {
-                        pretty,
-                        insert_feature_gates,
-                        use_separate_crates,
-                        // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
-                        // 1.1.2 made it an option in Out::Baked.
-                        overwrite: false,
-                    },
-                )?),
-            })
-        })
-        .collect::<Result<Vec<_>, DataError>>()?;
+    use options::*;
+    let provider = DatagenProvider::try_new(
+        Options {
+            locales: locales
+                .map(|ls| {
+                    LocaleInclude::Explicit(
+                        ls.iter()
+                            .cloned()
+                            .chain([icu_locid::LanguageIdentifier::UND])
+                            .collect(),
+                    )
+                })
+                .unwrap_or(options::LocaleInclude::All),
+            ..source.options.clone()
+        },
+        {
+            let mut source = source.clone();
+            source.options = Default::default();
+            source
+        },
+    )?;
 
-    let provider: Box<dyn ExportableProvider> = match locales {
-        Some(&[]) => Box::<EmptyDataProvider>::default(),
-        Some(locales) => Box::new(
-            DatagenProvider {
-                source: source.clone(),
-            }
-            .filterable("icu4x-datagen locales")
-            .filter_by_langid(move |lid| lid.language.is_empty() || locales.contains(lid)),
-        ),
-        None => Box::new(DatagenProvider {
-            source: source.clone(),
-        }),
-    };
+    struct MultiExporter(Vec<Box<dyn DataExporter>>);
 
-    let keys: HashSet<_> = keys.iter().collect();
-
-    keys.into_par_iter().try_for_each(|&key| {
-        let locales = provider
-            .supported_locales_for_key(key)
-            .map_err(|e| e.with_key(key))?;
-        let res = locales.into_par_iter().try_for_each(|locale| {
-            let req = DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            };
-            let payload = provider
-                .load_data(key, req)
-                .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, req))?;
-            exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &locale, &payload)
-                    .map_err(|e| e.with_req(key, req))
-            })
-        });
-
-        log::info!("Writing key: {}", key);
-        for e in &exporters {
-            e.flush(key).map_err(|e| e.with_key(key))?;
+    impl DataExporter for MultiExporter {
+        fn put_payload(
+            &self,
+            key: DataKey,
+            locale: &DataLocale,
+            payload: &DataPayload<ExportMarker>,
+        ) -> Result<(), DataError> {
+            self.0
+                .iter()
+                .try_for_each(|e| e.put_payload(key, locale, payload))
         }
 
-        res
-    })?;
+        fn flush(&self, key: DataKey) -> Result<(), DataError> {
+            self.0.iter().try_for_each(|e| e.flush(key))
+        }
 
-    for mut e in exporters {
-        e.close()?;
+        fn close(&mut self) -> Result<(), DataError> {
+            self.0.iter_mut().try_for_each(|e| e.close())
+        }
     }
 
-    Ok(())
+    provider.export(
+        keys.iter().cloned().collect(),
+        MultiExporter(
+            outs.into_iter()
+                .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
+                    use baked_exporter::*;
+                    use icu_provider_blob::export::*;
+                    use icu_provider_fs::export::*;
+
+                    Ok(match out {
+                        Out::Fs {
+                            output_path,
+                            serializer,
+                            overwrite,
+                            fingerprint,
+                        } => {
+                            let mut options = ExporterOptions::default();
+                            options.root = output_path;
+                            if overwrite {
+                                options.overwrite = OverwriteOption::RemoveAndReplace
+                            }
+                            options.fingerprint = fingerprint;
+                            Box::new(FilesystemExporter::try_new(serializer, options)?)
+                        }
+                        Out::Blob(write) => Box::new(BlobExporter::new_with_sink(write)),
+                        Out::Baked {
+                            mod_directory,
+                            options,
+                        } => Box::new(BakedExporter::new(mod_directory, options)?),
+                        #[allow(deprecated)]
+                        Out::Module {
+                            mod_directory,
+                            pretty,
+                            insert_feature_gates,
+                            use_separate_crates,
+                        } => Box::new(BakedExporter::new(
+                            mod_directory,
+                            Options {
+                                pretty,
+                                insert_feature_gates,
+                                use_separate_crates,
+                                // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                                // 1.1.2 made it an option in Options.
+                                overwrite: false,
+                            },
+                        )?),
+                    })
+                })
+                .collect::<Result<_, _>>()?,
+        ),
+    )
 }
 
 #[test]
@@ -522,9 +560,10 @@ fn test_keys() {
 #[test]
 fn test_keys_from_file() {
     assert_eq!(
-        keys_from_file(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log+keys.txt")
-        )
+        keys_from_file(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/work_log+keys.txt"
+        ))
         .unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
@@ -543,8 +582,11 @@ fn test_keys_from_bin() {
     // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
-        keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
-            .unwrap(),
+        keys_from_bin(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/work_log.wasm"
+        ))
+        .unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
@@ -555,4 +597,48 @@ fn test_keys_from_bin() {
             icu_plurals::provider::OrdinalV1Marker::KEY,
         ]
     );
+}
+
+// SEMVER GRAVEYARD
+
+#[cfg(feature = "legacy_api")]
+#[doc(hidden)]
+pub use source::{CollationHanDatabase, CoverageLevel};
+
+#[cfg(feature = "legacy_api")]
+#[doc(hidden)]
+pub use baked_exporter::Options as BakedOptions;
+
+#[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
+#[doc(hidden)]
+#[derive(Debug)]
+pub enum CldrLocaleSubset {
+    Ignored,
+}
+
+impl Default for CldrLocaleSubset {
+    fn default() -> Self {
+        Self::Ignored
+    }
+}
+
+impl CldrLocaleSubset {
+    #[allow(non_upper_case_globals)]
+    pub const Full: Self = Self::Ignored;
+    #[allow(non_upper_case_globals)]
+    pub const Modern: Self = Self::Ignored;
+}
+
+#[cfg(feature = "legacy_api")]
+#[doc(hidden)]
+pub mod syntax {
+    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
+    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
+    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
+}
+
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
+    }
 }

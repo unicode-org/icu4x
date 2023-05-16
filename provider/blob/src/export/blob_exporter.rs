@@ -57,7 +57,6 @@ impl DataExporter for BlobExporter<'_> {
         locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Adding: {}/{}", key, locale);
         let mut serializer = postcard::Serializer {
             output: AllocVec::new(),
         };

@@ -14,16 +14,16 @@ Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/d
 
 ```rust
 use icu_datagen::prelude::*;
+use icu_provider_blob::export::*;
 use std::fs::File;
 
 fn main() {
-    icu_datagen::datagen(
-        Some(&[langid!("de"), langid!("en-AU")]),
-        &[icu::list::provider::AndListV1Marker::KEY],
-        &SourceData::default(),
-        vec![Out::Blob(Box::new(File::create("data.postcard").unwrap()))],
-    )
-    .unwrap();
+    DatagenProvider::default()
+        .export(
+            [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+            BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
+        )
+        .unwrap();
 }
 ```
 
