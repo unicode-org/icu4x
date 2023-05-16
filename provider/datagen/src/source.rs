@@ -6,7 +6,7 @@ use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
@@ -358,7 +358,9 @@ impl AbstractFs {
                 std::fs::read(&root)?,
             ))
             .map_err(|e| {
-                DataError::custom("Zip").with_display_context(&e)
+                DataError::custom("Invalid ZIP file")
+                    .with_display_context(&e)
+                    .with_path_context(&root)
             })?))))
         }
     }
@@ -460,8 +462,13 @@ impl AbstractFs {
                     .cached_path(resource)
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?
             };
-            *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
+            *lock = Ok(
+                ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+                    DataError::custom("Invalid ZIP file")
+                        .with_display_context(&e)
+                        .with_path_context(&root)
+                })?,
+            );
         }
         Ok(())
     }
@@ -484,7 +491,8 @@ impl AbstractFs {
                     .unwrap() // init called
                     .by_name(path)
                     .map_err(|e| {
-                        DataError::custom("Zip")
+                        DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                            .into_error()
                             .with_display_context(&e)
                             .with_display_context(path)
                     })?
