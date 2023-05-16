@@ -76,9 +76,7 @@ impl CodePointSetData {
     where
         M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
-        Self {
-            data: data.map_project(|m, _| m),
-        }
+        Self { data: data.cast() }
     }
 
     /// Construct a new owned [`CodePointInversionList`]
@@ -247,9 +245,7 @@ impl UnicodeSetData {
     where
         M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {
-        Self {
-            data: data.map_project(|m, _| m),
-        }
+        Self { data: data.cast() }
     }
 
     /// Construct a new owned [`CodePointInversionListAndStringList`]

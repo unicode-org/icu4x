@@ -12,6 +12,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 
+#[derive(Debug)]
 struct AnnotatedResource<'a, M: DataMarker>(
     &'a cldr_serde::exemplar_chars::Resource,
     PhantomData<M>,
@@ -47,13 +48,14 @@ macro_rules! exemplar_chars_impls {
 
         impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .list_langs()?
-                    .map(DataLocale::from)
-                    .collect())
+                Ok(self.source.options.locales.filter_by_langid_equality(
+                    self.source
+                        .cldr()?
+                        .misc()
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect(),
+                ))
             }
         }
 

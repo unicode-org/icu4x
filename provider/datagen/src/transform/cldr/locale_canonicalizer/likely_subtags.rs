@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::transform::cldr::{cldr_serde, source::CoverageLevel};
 use crate::SourceData;
-use crate::{transform::cldr::cldr_serde, CoverageLevel};
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::*;

@@ -8,11 +8,11 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{
-    parse_quote, AttributeArgs, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident,
-    Lifetime, PathArguments, Type,
+    parse_quote, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident, Lifetime,
+    PathArguments, Type,
 };
 
-pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
+pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.const_params().next().is_some()
         || input.generics.lifetimes().count() > 1
@@ -43,16 +43,6 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     }
 
     let lt = lt.map(|l| &l.lifetime);
-
-    if attr.len() != 1 {
-        return Error::new(
-            input.span(),
-            "#[make_ule] takes one argument for the name of the ULE type it produces",
-        )
-        .to_compile_error();
-    }
-    let arg = &attr[0];
-    let ule_name: Ident = parse_quote!(#arg);
 
     let name = &input.ident;
 
