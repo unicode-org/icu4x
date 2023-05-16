@@ -5,7 +5,7 @@
 [package]
 name = "icu_person_names_formatter"
 description = "API for formatting person names according to language-dependent conventions"
-version = "1.1.0"
+version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
