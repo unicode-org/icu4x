@@ -6,7 +6,7 @@ use crate::options::Options;
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::CoverageLevel;
 use elsa::sync::FrozenMap;
-use icu_provider::DataError;
+use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::{BTreeMap, HashSet};
 use std::fmt::Debug;
@@ -24,7 +24,7 @@ use zip::ZipArchive;
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
-    builtin_paths: Arc<SerdeCache>,
+    icuexport_fallback_paths: Arc<SerdeCache>,
     segmenter_lstm_paths: Arc<SerdeCache>,
     // TODO: move this out when we decide we can break the exhaustiveness of DatagenProvider
     pub(crate) options: Options,
@@ -68,8 +68,10 @@ impl SourceData {
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            builtin_paths: Arc::new(SerdeCache::new(AbstractFs::new_builtin())),
-            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm())),
+            icuexport_fallback_paths: Arc::new(SerdeCache::new(
+                AbstractFs::new_icuexport_fallback(),
+            )),
+            segmenter_lstm_paths: Arc::new(SerdeCache::new(AbstractFs::new_lstm_fallback())),
             options: Default::default(),
         }
     }
@@ -227,26 +229,22 @@ impl SourceData {
         }
     }
 
-    /// Paths to CLDR source data.
     pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
         self.cldr_paths
             .as_deref()
             .ok_or(crate::error::MISSING_CLDR_ERROR)
     }
 
-    /// Path to Unicode Properties source data.
     pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
         self.icuexport_paths
             .as_deref()
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
-    /// Path to built-in data.
-    pub(crate) fn builtin(&self) -> &SerdeCache {
-        &self.builtin_paths
+    pub(crate) fn icuexport_fallback(&self) -> &SerdeCache {
+        &self.icuexport_fallback_paths
     }
 
-    /// Path to segmenter LSTM data
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
@@ -360,30 +358,16 @@ impl AbstractFs {
                 std::fs::read(&root)?,
             ))
             .map_err(|e| {
-                DataError::custom("Zip").with_display_context(&e)
+                DataError::custom("Invalid ZIP file")
+                    .with_display_context(&e)
+                    .with_path_context(&root)
             })?))))
         }
     }
 
-    fn new_builtin() -> Self {
+    fn new_icuexport_fallback() -> Self {
         Self::Memory(
             [
-                (
-                    "segmenter/rules/grapheme.toml",
-                    include_bytes!("../data/segmenter/rules/grapheme.toml").as_slice(),
-                ),
-                (
-                    "segmenter/rules/word.toml",
-                    include_bytes!("../data/segmenter/rules/word.toml").as_slice(),
-                ),
-                (
-                    "segmenter/rules/line.toml",
-                    include_bytes!("../data/segmenter/rules/line.toml").as_slice(),
-                ),
-                (
-                    "segmenter/rules/sentence.toml",
-                    include_bytes!("../data/segmenter/rules/sentence.toml").as_slice(),
-                ),
                 (
                     "segmenter/dictionary/cjdict.toml",
                     include_bytes!("../data/segmenter/dictionary/cjdict.toml").as_slice(),
@@ -410,7 +394,7 @@ impl AbstractFs {
         )
     }
 
-    fn new_lstm() -> Self {
+    fn new_lstm_fallback() -> Self {
         Self::Memory(
             [
                 (
@@ -478,8 +462,13 @@ impl AbstractFs {
                     .cached_path(resource)
                     .map_err(|e| DataError::custom("Download").with_display_context(&e))?
             };
-            *lock = Ok(ZipArchive::new(Cursor::new(std::fs::read(root)?))
-                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?);
+            *lock = Ok(
+                ZipArchive::new(Cursor::new(std::fs::read(&root)?)).map_err(|e| {
+                    DataError::custom("Invalid ZIP file")
+                        .with_display_context(&e)
+                        .with_path_context(&root)
+                })?,
+            );
         }
         Ok(())
     }
@@ -502,7 +491,8 @@ impl AbstractFs {
                     .unwrap() // init called
                     .by_name(path)
                     .map_err(|e| {
-                        DataError::custom("Zip")
+                        DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                            .into_error()
                             .with_display_context(&e)
                             .with_display_context(path)
                     })?

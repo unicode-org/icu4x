@@ -39,7 +39,7 @@ impl crate::DatagenProvider {
             .and_then(|e| e.read_and_parse_toml(filename))
             .or_else(|e| {
                 self.source
-                    .builtin()
+                    .icuexport_fallback()
                     .read_and_parse_toml(filename)
                     .map_err(|_| e)
             })?;

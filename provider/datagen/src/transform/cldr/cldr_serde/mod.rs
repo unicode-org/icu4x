@@ -23,4 +23,5 @@ pub mod plurals;
 pub mod region_displaynames;
 pub mod script_displaynames;
 pub mod time_zones;
+pub mod variant_displaynames;
 pub mod week_data;
