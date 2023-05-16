@@ -57,7 +57,7 @@ impl FieldModifier {
 
     /// Returns true if field modifier has the fields.
     fn has(&self, field_modifier: &FieldModifier) -> bool {
-        return self.bits() & field_modifier.bits() == field_modifier.bits();
+        self.bits() & field_modifier.bits() == field_modifier.bits()
     }
 }
 

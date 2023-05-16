@@ -40,7 +40,7 @@ pub fn new_person_name(
             "Trying to build an invalid DefaultPersonName !",
         ));
     }
-    return Ok(Box::new(result));
+    Ok(Box::new(result))
 }
 
 impl PersonName for DefaultPersonName {
@@ -69,11 +69,9 @@ pub struct DefaultPersonNamesFormatter<'data> {
 impl PersonNamesFormatter for DefaultPersonNamesFormatter<'_> {
     fn format(&self, _person_name: &dyn PersonName) -> Result<String, PersonNamesFormatterError> {
         let pattern_size = self.config.person_names_patterns.len();
-        Err(PersonNamesFormatterError::ParseError(String::from(
-            format!(
-                "Unimplemented but formatter have {} patterns configured.",
-                pattern_size
-            ),
+        Err(PersonNamesFormatterError::ParseError(format!(
+            "Unimplemented but formatter have {} patterns configured.",
+            pattern_size
         )))
     }
 }
