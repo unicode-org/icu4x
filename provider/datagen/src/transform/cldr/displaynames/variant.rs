@@ -18,7 +18,7 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<VariantDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::variant_displaynames::Resource = self
+        let data: &cldr_serde::displaynames::variant::Resource = self
             .source
             .cldr()?
             .displaynames()
@@ -57,10 +57,10 @@ impl IterableDataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvide
     }
 }
 
-impl TryFrom<&cldr_serde::variant_displaynames::Resource> for VariantDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::variant::Resource> for VariantDisplayNamesV1<'static> {
     type Error = ParserError;
 
-    fn try_from(other: &cldr_serde::variant_displaynames::Resource) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::displaynames::variant::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         for lang_data_entry in other.main.0.iter() {
             for entry in lang_data_entry.1.localedisplaynames.variants.iter() {
