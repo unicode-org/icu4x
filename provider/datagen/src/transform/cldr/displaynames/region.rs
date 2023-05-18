@@ -18,11 +18,11 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::region_displaynames::Resource =
-            self.source
-                .cldr()?
-                .displaynames()
-                .read_and_parse(&langid, "territories.json")?;
+        let data: &cldr_serde::displaynames::region::Resource = self
+            .source
+            .cldr()?
+            .displaynames()
+            .read_and_parse(&langid, "territories.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -62,9 +62,9 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short region display names data variants for a given region. For example: "BA-alt-short".
 const SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::region_displaynames::Resource> for RegionDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNamesV1<'static> {
     type Error = icu_locid::ParserError;
-    fn try_from(other: &cldr_serde::region_displaynames::Resource) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
         for (_, lang_display_names) in other.main.0.iter() {
