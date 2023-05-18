@@ -2,28 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::mem::{discriminant, Discriminant};
-
 use bitmask_enum::bitmask;
-
-use icu_locid::Locale;
 
 ///
 /// Error handling for the person name formatter.
 ///
 pub enum PersonNamesFormatterError {
     ParseError(String),
-}
-
-/// Public trait for the person name formatter.
-///
-/// A PersonNameFormatter is expected to only handle a single target locale.
-pub trait PersonNamesFormatter {
-    ///
-    /// Format the provided person name into the (optional target locale)
-    ///
-    /// Returns the formatted string when successful, an error otherwise.
-    fn format(&self, person_name: &dyn PersonName) -> Result<String, PersonNamesFormatterError>;
 }
 
 /// Field Modifiers.
@@ -111,53 +96,4 @@ pub enum PreferredOrder {
     Default,
     GivenFirst,
     SurnameFirst,
-}
-
-/// Person name trait.
-pub trait PersonName {
-    /// Returns the locale of the name-- that is, the language or country of origin for the person being named.
-    /// An implementing class is allowed to return None here to indicate the name's locale is unknown.
-    fn name_locale(&self) -> Option<&Locale> {
-        None
-    }
-
-    /// Returns the preferred field order for the name.
-    ///
-    /// PersonName objects should generally return NONE, allowing the PersonNameFormatter to deduce the proper field order based on the locales of the name
-    /// and the formatter. But this can be used to force a particular field order, generally in cases
-    /// where the deduction logic in PersonNameFormatter would guess wrong.
-    fn preferred_order(&self) -> Option<&PreferredOrder> {
-        None
-    }
-
-    /// Returns the data associated with the name field.
-    fn get(&self, field: &NameField) -> Option<&str>;
-
-    /// Returns all the provided field from the underlying implementation.
-    fn all_provided_fields(&self) -> Vec<&NameField>;
-}
-
-impl dyn PersonName {
-    /// Validate that the provided fields are valid.
-    pub fn is_valid(&self) -> bool {
-        self.all_provided_fields()
-            .into_iter()
-            .all(|field| field.is_valid())
-            && (self.has_name_field(discriminant(&NameField::Given(None)))
-                || self.has_name_field(discriminant(&NameField::Surname(None))))
-    }
-
-    /// Returns true if person have the name field, regardless of the modifier.
-    pub fn has_name_field(&self, lookup_name_field: Discriminant<NameField>) -> bool {
-        self.all_provided_fields()
-            .into_iter()
-            .any(|field| discriminant(field) == lookup_name_field)
-    }
-
-    /// Returns true if person have the name field matching the type and modifier.
-    pub fn has_name_field_with_modifier(&self, lookup_name_field: &NameField) -> bool {
-        self.all_provided_fields()
-            .into_iter()
-            .any(|field| field == lookup_name_field)
-    }
 }

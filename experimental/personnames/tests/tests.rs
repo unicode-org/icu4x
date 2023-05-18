@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::BTreeMap;
+use std::collections::btree_map::BTreeMap;
 use std::mem::discriminant;
 
 use icu_locid::locale;
@@ -18,7 +18,7 @@ fn test_person_name_structure() -> Result<(), String> {
         String::from("Hide"),
     );
 
-    let person_name = icu_person_names_formatter::new_person_name(
+    let person_name = icu_person_names_formatter::PersonName::try_new_unstable(
         person_data,
         Some(locale!("en")),
         Some(PreferredOrder::GivenFirst),
@@ -54,7 +54,8 @@ fn test_person_name_should_have_given_or_surname() -> Result<(), String> {
     let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
     person_data.insert(NameField::Title(None), String::from("Dr"));
 
-    let person_name = icu_person_names_formatter::new_person_name(person_data, None, None);
+    let person_name =
+        icu_person_names_formatter::PersonName::try_new_unstable(person_data, None, None);
     assert!(person_name.is_err());
     Ok(())
 }

@@ -25,7 +25,6 @@ use zerovec::VarZeroVec;
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-///
 #[icu_provider::data_struct(
     PersonNamesFormattingDefinitionV1Marker = "person_names/person_names@1"
 )]
