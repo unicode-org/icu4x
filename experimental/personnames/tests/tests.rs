@@ -7,8 +7,6 @@ use std::mem::discriminant;
 
 use icu_locid::locale;
 use icu_person_names_formatter::api::{FieldModifier, NameField, PreferredOrder};
-use icu_person_names_formatter::provider::PersonNamesFormattingDefinitionV1;
-use zerovec::VarZeroVec;
 
 #[test]
 fn test_person_name_structure() -> Result<(), String> {
