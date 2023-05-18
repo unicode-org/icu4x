@@ -6,11 +6,12 @@ use alloc::collections::btree_map::BTreeMap;
 use std::mem::{discriminant, Discriminant};
 
 use icu_locid::Locale;
+use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
 
 use crate::api::NameField;
 use crate::api::PersonNamesFormatterError;
 use crate::api::PreferredOrder;
-use crate::provider::PersonNamesFormattingDefinitionV1;
+use crate::provider::PersonNamesFormattingDefinitionV1Marker;
 
 ///
 /// Default internal structure for person name.
@@ -83,21 +84,40 @@ impl PersonName {
     }
 }
 
+/// Placeholder for person name formatter options.
+pub struct PersonNamesFormatterOptions;
+
 /// Immutable structure loaded with formatter configs
-pub struct PersonNamesFormatter<'data> {
-    config: PersonNamesFormattingDefinitionV1<'data>,
+pub struct PersonNamesFormatter {
+    data_payload: DataPayload<PersonNamesFormattingDefinitionV1Marker>,
+    options: PersonNamesFormatterOptions,
 }
 
-impl PersonNamesFormatter<'_> {
-    pub fn try_new_unstable(config: PersonNamesFormattingDefinitionV1) -> PersonNamesFormatter {
-        PersonNamesFormatter { config }
+impl PersonNamesFormatter {
+    pub fn try_new_unstable<D: DataProvider<PersonNamesFormattingDefinitionV1Marker>>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: PersonNamesFormatterOptions,
+    ) -> Result<PersonNamesFormatter, DataError>
+    where
+        D: DataProvider<PersonNamesFormattingDefinitionV1Marker>,
+    {
+        let data_payload = data_provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self {
+            data_payload,
+            options,
+        })
     }
 
     pub fn format(&self, _person_name: PersonName) -> Result<String, PersonNamesFormatterError> {
-        let pattern_size = self.config.person_names_patterns.len();
-        Err(PersonNamesFormatterError::ParseError(format!(
-            "Unimplemented but formatter have {} patterns configured.",
-            pattern_size
+        Err(PersonNamesFormatterError::ParseError(String::from(
+            "Unimplemented Person name formatter ",
         )))
     }
 }
