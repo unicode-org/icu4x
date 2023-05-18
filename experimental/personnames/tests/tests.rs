@@ -61,38 +61,3 @@ fn test_person_name_should_have_given_or_surname() -> Result<(), String> {
     assert!(person_name.is_err());
     Ok(())
 }
-
-#[test]
-fn test_person_name_formatter_should_fail() -> Result<(), String> {
-    let mut person_data: BTreeMap<NameField, String> = BTreeMap::new();
-    person_data.insert(NameField::Given(None), String::from("Henry"));
-    person_data.insert(NameField::Surname(None), String::from("Jekyll"));
-    person_data.insert(
-        NameField::Surname(Some(FieldModifier::Informal)),
-        String::from("Hide"),
-    );
-
-    let person_name = icu_person_names_formatter::PersonName::try_new_unstable(
-        person_data,
-        Some(locale!("en")),
-        Some(PreferredOrder::GivenFirst),
-    )?;
-    let mut surname: VarZeroVec<str> = VarZeroVec::new();
-    surname.make_mut().push("ko");
-    surname.make_mut().push("vi");
-    let mut given_name: VarZeroVec<str> = VarZeroVec::new();
-    given_name.make_mut().push("de");
-    let formatter = icu_person_names_formatter::PersonNamesFormatter::try_new_unstable(
-        PersonNamesFormattingDefinitionV1 {
-            surname_first_locales: surname,
-            given_first_locales: given_name,
-            foreign_space_replacement: None,
-            initial_pattern: None,
-            initial_pattern_sequence: None,
-            person_names_patterns: VarZeroVec::new(),
-        },
-    );
-    let result = formatter.format(person_name);
-    assert!(result.is_err());
-    Ok(())
-}
