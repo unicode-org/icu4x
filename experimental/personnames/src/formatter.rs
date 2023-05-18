@@ -21,9 +21,6 @@ pub struct PersonName {
     preferred_order: Option<PreferredOrder>,
 }
 
-///
-///
-///
 impl PersonName {
     /// Validate that the provided fields are valid.
     pub fn is_valid(&self) -> bool {
@@ -92,6 +89,10 @@ pub struct PersonNamesFormatter<'data> {
 }
 
 impl PersonNamesFormatter<'_> {
+    pub fn try_new_unstable(config: PersonNamesFormattingDefinitionV1) -> PersonNamesFormatter {
+        PersonNamesFormatter { config }
+    }
+
     pub fn format(&self, _person_name: PersonName) -> Result<String, PersonNamesFormatterError> {
         let pattern_size = self.config.person_names_patterns.len();
         Err(PersonNamesFormatterError::ParseError(format!(

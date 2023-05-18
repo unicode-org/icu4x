@@ -184,6 +184,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
+name = "bitmask-enum"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd9e32d7420c85055e8107e5b2463c4eeefeaac18b52359fe9f9c08a18f342b2"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "block-buffer"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -881,6 +891,12 @@ name = "discard"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "212d0f5754cb6769937f4501cc0e67f4f4483c8d2c3e1e922ee9edbe4ab4c7c0"
+
+[[package]]
+name = "discriminant"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "473bff546170059ffa8114a0d559f5411344d878c6bc83a783939d36252c54cb"
 
 [[package]]
 name = "displaydoc"
@@ -1961,6 +1977,19 @@ dependencies = [
  "displaydoc",
  "iai",
  "writeable",
+]
+
+[[package]]
+name = "icu_person_names_formatter"
+version = "0.1.0"
+dependencies = [
+ "bitmask-enum",
+ "discriminant",
+ "icu_locid",
+ "icu_provider",
+ "yoke",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
