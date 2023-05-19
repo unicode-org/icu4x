@@ -16,7 +16,7 @@ use core::num::{NonZeroI8, NonZeroU8};
 pub struct RawBytesULE<const N: usize>(pub [u8; N]);
 
 macro_rules! impl_byte_slice_size {
-    ($unsigned:ty, $size:literal) => {
+    ($size:literal) => {
         impl From<[u8; $size]> for RawBytesULE<$size> {
             #[inline]
             fn from(le_bytes: [u8; $size]) -> Self {
@@ -58,7 +58,11 @@ macro_rules! impl_byte_slice_size {
                 // Safe because Self is transparent over [u8; $size]
                 unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
             }
-
+        }
+    };
+    ($unsigned:ty, $size:literal) => {
+        impl_byte_slice_size!($size);
+        impl RawBytesULE<$size> {
             /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
             /// [AsULE::from_unaligned()] on the appropriately sized type.
             #[inline]
@@ -133,6 +137,8 @@ macro_rules! impl_byte_slice_type {
         unsafe impl EqULE for $type {}
     };
 }
+
+impl_byte_slice_size!(3);
 
 impl_byte_slice_size!(u16, 2);
 impl_byte_slice_size!(u32, 4);

@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::VarULE;
+use super::{AsULE, RawBytesULE, VarULE};
+use crate::ule::EqULE;
 use crate::{map::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroVecError};
 use alloc::boxed::Box;
+use core::cmp::Ordering;
 use core::fmt;
 use core::ops::Deref;
 
@@ -206,6 +208,209 @@ where
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
             Ok(UnvalidatedStr::from_bytes(bytes))
+        }
+    }
+}
+
+/// A u8 array of little-endian data that is expected to be a Unicode scalar value, but is not
+/// validated as such.
+///
+/// Use this type instead of `char` when you want to deal with data that is expected to be valid
+/// Unicode scalar values, but you want control over when or if you validate that assumption.
+///
+/// # Examples
+///
+/// ```
+/// use zerovec::ule::{RawBytesULE, UnvalidatedChar, ULE};
+/// use zerovec::{ZeroSlice, ZeroVec};
+///
+/// // data known to be little-endian three-byte chunks of valid Unicode scalar values
+/// let data = [0x68, 0x00, 0x00, 0x69, 0x00, 0x00, 0x4B, 0xF4, 0x01];
+/// // ground truth expectation
+/// let real = ['h', 'i', '👋'];
+///
+/// let chars: &ZeroSlice<UnvalidatedChar> = ZeroSlice::parse_byte_slice(&data).expect("invalid data length");
+/// let parsed: Vec<_> = chars.iter().map(|c| unsafe { c.as_char_unchecked() }).collect();
+/// assert_eq!(&parsed, &real);
+///
+/// let real_chars: ZeroVec<_> = real.iter().copied().map(UnvalidatedChar::from_char).collect();
+/// let serialized_data = chars.as_bytes();
+/// assert_eq!(serialized_data, &data);
+/// ```
+#[repr(transparent)]
+#[derive(PartialEq, Eq, Clone, Copy, Hash)]
+pub struct UnvalidatedChar([u8; 3]);
+
+impl UnvalidatedChar {
+    /// Create a [`UnvalidatedChar`] from a `char`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::UnvalidatedChar;
+    ///
+    /// let a = UnvalidatedChar::from_char('a');
+    /// assert_eq!(a.try_as_char().unwrap(), 'a');
+    /// ```
+    #[inline]
+    pub const fn from_char(c: char) -> Self {
+        let [u0, u1, u2, _u3] = (c as u32).to_le_bytes();
+        Self([u0, u1, u2])
+    }
+
+    /// Attempt to convert a [`UnvalidatedChar`] to a `char`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::{AsULE, UnvalidatedChar};
+    ///
+    /// let a = UnvalidatedChar::from_char('a');
+    /// assert_eq!(a.try_as_char(), Ok('a'));
+    ///
+    /// let b = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF, 0xFF].into());
+    /// assert!(matches!(b.try_as_char(), Err(_)));
+    /// ```
+    #[inline]
+    pub fn try_as_char(self) -> Result<char, core::char::CharTryFromError> {
+        let [u0, u1, u2] = self.0;
+        char::try_from(u32::from_le_bytes([u0, u1, u2, 0]))
+    }
+
+    /// Convert a [`UnvalidatedChar`] to a `char', returning [`char::REPLACEMENT_CHARACTER`]
+    /// if the `UnvalidatedChar` does not represent a valid Unicode scalar value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::{AsULE, UnvalidatedChar};
+    ///
+    /// let a = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF, 0xFF].into());
+    /// assert_eq!(a.as_char_lossy(), char::REPLACEMENT_CHARACTER);
+    /// ```
+    #[inline]
+    pub fn as_char_lossy(self) -> char {
+        self.try_as_char().unwrap_or(char::REPLACEMENT_CHARACTER)
+    }
+
+    /// Convert a [`UnvalidatedChar`] to a `char` without checking that it is
+    /// a valid Unicode scalar value.
+    ///
+    /// # Safety
+    ///
+    /// The `UnvalidatedChar` must be a valid Unicode scalar value in little-endian order.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerovec::ule::UnvalidatedChar;
+    ///
+    /// let a = UnvalidatedChar::from_char('a');
+    /// assert_eq!(unsafe { a.as_char_unchecked() }, 'a');
+    /// ```
+    #[inline]
+    pub unsafe fn as_char_unchecked(self) -> char {
+        let [u0, u1, u2] = self.0;
+        char::from_u32_unchecked(u32::from_le_bytes([u0, u1, u2, 0]))
+    }
+}
+
+impl AsULE for UnvalidatedChar {
+    type ULE = RawBytesULE<3>;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        RawBytesULE(self.0)
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(unaligned.0)
+    }
+}
+
+// TODO: As EqULE is being phased out, do we even need to add it?
+// Safety: UnvalidatedChar is always the little-endian representation of a char,
+// which corresponds to its AsULE::ULE type
+unsafe impl EqULE for UnvalidatedChar {}
+
+impl fmt::Debug for UnvalidatedChar {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Debug as a char if possible
+        match self.try_as_char() {
+            Ok(c) => fmt::Debug::fmt(&c, f),
+            Err(_) => fmt::Debug::fmt(&self.0, f),
+        }
+    }
+}
+
+impl PartialOrd for UnvalidatedChar {
+    // custom implementation to be consistent with char's Ord on BE platforms
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match (self.try_as_char(), other.try_as_char()) {
+            (Ok(c1), Ok(c2)) => Some(c1.cmp(&c2)),
+            _ => None,
+        }
+    }
+}
+
+// TODO: Do we need Ord? If so, how should we order invalid chars?
+
+impl From<char> for UnvalidatedChar {
+    #[inline]
+    fn from(value: char) -> Self {
+        Self::from_char(value)
+    }
+}
+
+impl TryInto<char> for UnvalidatedChar {
+    type Error = core::char::CharTryFromError;
+
+    #[inline]
+    fn try_into(self) -> Result<char, Self::Error> {
+        self.try_as_char()
+    }
+}
+
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+#[cfg(feature = "serde")]
+impl serde::Serialize for UnvalidatedChar {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::Error;
+        let c = self
+            .try_as_char()
+            .map_err(|_| S::Error::custom("invalid Unicode scalar value in UnvalidatedChar"))?;
+        if serializer.is_human_readable() {
+            serializer.serialize_char(c)
+        } else {
+            serializer.serialize_bytes(self.to_unaligned().as_bytes())
+        }
+    }
+}
+
+/// This impl requires enabling the optional `serde` Cargo feature of the `zerovec` crate
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnvalidatedChar {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        if deserializer.is_human_readable() {
+            let c = <char>::deserialize(deserializer)?;
+            Ok(UnvalidatedChar::from_char(c))
+        } else {
+            let bytes = <&[u8]>::deserialize(deserializer)?;
+            if bytes.len() != 3 {
+                return Err(D::Error::custom("expected 3 bytes for UnvalidatedChar"));
+            }
+            // Won't panic because the length is checked above
+            #[allow(clippy::indexing_slicing)]
+            let (u0, u1, u2) = (bytes[0], bytes[1], bytes[2]);
+            Ok(UnvalidatedChar([u0, u1, u2]))
         }
     }
 }
