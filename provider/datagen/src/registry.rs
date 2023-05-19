@@ -15,6 +15,7 @@ use icu_displaynames::provider::*;
 use icu_list::provider::*;
 use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
+use icu_personnames::provider::*;
 use icu_plurals::provider::*;
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_properties::provider::*;
@@ -308,6 +309,7 @@ registry!(
         NarrowYearRelativeTimeFormatDataV1Marker,
         LongCompactDecimalFormatDataV1Marker,
         ShortCompactDecimalFormatDataV1Marker,
+        PersonNamesFormattingDefinitionV1Marker,
     }
 );
 

@@ -10,9 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-
 use bitmask_enum::bitmask;
-
+use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 /// This is the equivalent of
@@ -25,45 +24,51 @@ use zerovec::VarZeroVec;
 /// e.g. : initialPattern has no upper bound, DTD allows for the element to be specified any number
 /// of times, while in this implementation we are restraining it to the 2 documented types
 /// (`initial`, `initialSequence`).
-#[icu_provider::data_struct(
-    PersonNamesFormattingDefinitionV1Marker = "person_names/person_names@1"
-)]
-#[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(Serialize))]
+#[icu_provider::data_struct(PersonNamesFormattingDefinitionV1Marker = "personnames/personnames@1")]
+#[derive(PartialEq, Clone)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake), databake(path = icu_personnames::provider),)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PersonNamesFormattingDefinitionV1<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub surname_first_locales: VarZeroVec<'data, str>,
+
     /// <nameOrderLocales order="givenFirst">und en</nameOrderLocales>
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub given_first_locales: VarZeroVec<'data, str>,
+
     /// foreignSpaceReplacement element.
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub foreign_space_replacement: Option<Cow<'data, str>>,
 
     /// Equivalent of initialPattern tag + initial
     /// ```xml
     /// <initialPattern type="initial">{0}.</initialPattern>
     /// ```
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub initial_pattern: Option<Cow<'data, str>>,
 
-    ///
     /// Equivalent of initialPattern tag + initialSequence
     /// ```xml
     /// <initialPattern type="initialSequence">{0} {1}</initialPattern>
     /// ```
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub initial_pattern_sequence: Option<Cow<'data, str>>,
-    ///
+
     /// Equivalent of PersonNames
     /// ```xml
     /// <personName>...</personName>
     /// ```
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub person_names_patterns: VarZeroVec<'data, PersonNamesFormattingDataVARULE>,
 }
 
-///
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}
 /// see https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
 #[bitmask(u16)]
 #[zerovec::make_ule(PersonNamesFormattingAttributesULE)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum PersonNamesFormattingAttributes {
     // Order
     GivenFirst,
@@ -82,16 +87,18 @@ pub enum PersonNamesFormattingAttributes {
     Informal,
 }
 
-///
 /// PersonName Formatting data.
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
 #[zerovec::make_varule(PersonNamesFormattingDataVARULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
+#[zerovec::derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct PersonNamesFormattingData<'data> {
     /// Attributes
     /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
     pub attributes: PersonNamesFormattingAttributes,
     /// https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, str>,
 }

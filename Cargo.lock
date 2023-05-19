@@ -1758,6 +1758,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1980,13 +1981,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_person_names_formatter"
+name = "icu_personnames"
 version = "0.1.0"
 dependencies = [
  "bitmask-enum",
+ "databake",
  "discriminant",
+ "icu_collections",
  "icu_locid",
  "icu_provider",
+ "icu_testdata",
+ "serde",
+ "tinystr",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -2167,6 +2173,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
