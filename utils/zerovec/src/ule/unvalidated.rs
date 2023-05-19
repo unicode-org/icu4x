@@ -414,3 +414,39 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedChar {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::ZeroVec;
+
+    #[test]
+    fn test_representation() {
+        let chars = ['w', 'ω', '文', '𑄃', '🙃'];
+
+        // backed by [UnvalidatedChar]
+        let uvchars: Vec<_> = chars
+            .iter()
+            .copied()
+            .map(UnvalidatedChar::from_char)
+            .collect();
+        // backed by [RawBytesULE<3>]
+        let zvec: ZeroVec<_> = uvchars.clone().into_iter().collect();
+
+        let ule_bytes = zvec.as_bytes();
+        let uvbytes;
+        unsafe {
+            let ptr = &uvchars[..] as *const _ as *const u8;
+            uvbytes = core::slice::from_raw_parts(ptr, ule_bytes.len());
+        }
+
+        // UnvalidatedChar is defined as little-endian, so this must be true on all platforms
+        // also asserts that to_unaligned/from_unaligned are no-ops
+        assert_eq!(uvbytes, ule_bytes);
+
+        assert_eq!(
+            &[119, 0, 0, 201, 3, 0, 135, 101, 0, 3, 17, 1, 67, 246, 1],
+            ule_bytes
+        );
+    }
+}
