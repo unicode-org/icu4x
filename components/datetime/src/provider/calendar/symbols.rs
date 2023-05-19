@@ -9,7 +9,7 @@ use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr4};
-use zerovec::ZeroMap;
+use zerovec::{ule::UnvalidatedStr, ZeroMap};
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 ///
@@ -111,17 +111,17 @@ pub struct Eras<'data> {
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub names: ZeroMap<'data, str, str>,
+    pub names: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era abbreviations.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub abbr: ZeroMap<'data, str, str>,
+    pub abbr: ZeroMap<'data, UnvalidatedStr, str>,
     /// Symbol data for era narrow forms.
     ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub narrow: ZeroMap<'data, str, str>,
+    pub narrow: ZeroMap<'data, UnvalidatedStr, str>,
 }
 
 // Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
