@@ -33,9 +33,9 @@ where
         format!("{}", std::mem::size_of::<T::ULE>() * 8),
     ];
 
-    let trie_type_str = match builder.trie_type {
-        TrieType::Fast => "fast".as_bytes(),
-        TrieType::Small => "small".as_bytes(),
+    let trie_type_int = match builder.trie_type {
+        TrieType::Small => 0,
+        TrieType::Fast => 1,
     };
 
     let mut wasi_env = WasiState::new("list_to_ucptrie")
@@ -49,20 +49,6 @@ where
     let instance = Instance::new(&MODULE, &import_object).expect("valid wasm file");
 
     let memory = instance.exports.get_memory("memory").expect("memory");
-
-    let malloc = instance
-        .exports
-        .get_native_function::<i32, WasmPtr<u8, Array>>("malloc")
-        .expect("malloc is exported");
-    let trie_type_ptr: WasmPtr<u8, Array> = malloc
-        .call(trie_type_str.len() as i32)
-        .expect("Unable to allocate array for trie_type_str");
-    let trie_type_values = trie_type_ptr
-        .deref(&memory, 0, trie_type_str.len() as u32)
-        .expect("Unable to deref trie_type_ptr");
-    for (i, b) in trie_type_str.iter().enumerate() {
-        trie_type_values[i].set(*b);
-    }
 
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
     let malloc = instance
@@ -87,13 +73,15 @@ where
     let exit_result = construct_ucptrie.call(
         builder.default_value.into() as i32,
         builder.error_value.into() as i32,
-        trie_type_ptr
+        trie_type_int as i32,
+        // size_of::<T::ULE>() * 8 fits in i32
+        (std::mem::size_of::<T::ULE>() * 8)
+            .try_into()
+            .expect("width always fits in i32"),
+        values_base_ptr
             .offset()
             .try_into()
-            .expect("trie_type_ptr is valid"),
-        // size_of::<T::ULE>() * 8 fits in i32
-        (std::mem::size_of::<T::ULE>() * 8).try_into().unwrap(),
-        values_base_ptr.offset().try_into().expect("values base ptr is valid"),
+            .expect("values base ptr is valid"),
         values.len() as i32,
     );
 

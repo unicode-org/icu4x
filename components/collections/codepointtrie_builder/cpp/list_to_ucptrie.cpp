@@ -22,16 +22,17 @@ constexpr char TRIE_SMALL[] = "small";
 constexpr char TRIE_FAST[] = "fast";
 extern "C" {
 int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
-                      const char* trieTypeStr, const int32_t valueWidthInt,
+                      const int32_t trieTypeInt, const int32_t valueWidthInt,
                       const uint32_t* values, const uint32_t n) {
   UCPTrieType trieType;
-  if (strcmp(trieTypeStr, TRIE_SMALL) == 0) {
+  if (trieTypeInt == 0) {
     trieType = UCPTRIE_TYPE_SMALL;
-  } else if (strcmp(trieTypeStr, TRIE_FAST) == 0) {
+  } else if (trieTypeInt == 1) {
     trieType = UCPTRIE_TYPE_FAST;
   } else {
-    fprintf(stderr, "Expected 'small' or 'fast' for 3rd argument. Got %s",
-            trieTypeStr);
+    fprintf(stderr,
+            "Expected '0' for small or '1' for fast as 3rd argument. Got %d",
+            trieTypeInt);
     return 1;
   }
 
