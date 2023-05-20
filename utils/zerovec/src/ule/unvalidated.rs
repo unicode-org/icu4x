@@ -268,7 +268,7 @@ impl UnvalidatedChar {
     /// let a = UnvalidatedChar::from_char('a');
     /// assert_eq!(a.try_as_char(), Ok('a'));
     ///
-    /// let b = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF, 0xFF].into());
+    /// let b = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF].into());
     /// assert!(matches!(b.try_as_char(), Err(_)));
     /// ```
     #[inline]
@@ -285,7 +285,7 @@ impl UnvalidatedChar {
     /// ```
     /// use zerovec::ule::{AsULE, UnvalidatedChar};
     ///
-    /// let a = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF, 0xFF].into());
+    /// let a = UnvalidatedChar::from_unaligned([0xFF, 0xFF, 0xFF].into());
     /// assert_eq!(a.as_char_lossy(), char::REPLACEMENT_CHARACTER);
     /// ```
     #[inline]
