@@ -59,9 +59,11 @@ where
         .call((values.len() * 4) as i32)
         .expect("Unable to allocate memory for values");
     let deref_base_ptr = values_base_ptr
-        .deref(&memory, 0, values.len() as u32)
+        .deref(memory, 0, values.len() as u32)
         .expect("Unable to deref values base ptr");
     for (i, value) in values.iter().enumerate() {
+        #[allow(clippy::indexing_slicing)]
+        // i is within allocated space
         deref_base_ptr[i].set((*value).into());
     }
 
@@ -73,7 +75,7 @@ where
     let exit_result = construct_ucptrie.call(
         builder.default_value.into() as i32,
         builder.error_value.into() as i32,
-        trie_type_int as i32,
+        trie_type_int,
         // size_of::<T::ULE>() * 8 fits in i32
         (std::mem::size_of::<T::ULE>() * 8)
             .try_into()
