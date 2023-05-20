@@ -75,18 +75,6 @@ int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
   }
 
   // Note: writesrc.h appears to only print LF, not CRLF
-  printf(
-      "# This file is part of ICU4X. For terms of use, please see the "
-      "file\n");
-  printf("# called LICENSE at the top level of the ICU4X source tree\n");
-  printf(
-      "# (online at: "
-      "https://github.com/unicode-org/icu4x/blob/main/LICENSE ).\n");
-  printf("\n");
-  printf(
-      "# This file is auto-generated. Instructions: "
-      "tools/list_to_ucptrie/README.md\n");
-  printf("\n");
   usrc_writeUCPTrie(stdout, "<unused>", utrie.getAlias(),
                     UPRV_TARGET_SYNTAX_TOML);
   return 0;
