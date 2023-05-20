@@ -50,7 +50,7 @@ int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
 
   icu::ErrorCode status;
 
-  icu::LocalUMutableCPTriePointer builder(
+  icu::LocalUMutableCPTriePointer builder = icu::LocalUMutableCPTriePointer(
       umutablecptrie_open(defaultValue, errorValue, status));
   if (status.isFailure()) {
     fprintf(stderr, "LocalUMutableCPTriePointer builder failed: %s",
@@ -65,8 +65,9 @@ int construct_ucptrie(const int32_t defaultValue, const int32_t errorValue,
       return 1;
     }
   }
-  icu::LocalUCPTriePointer utrie(umutablecptrie_buildImmutable(
-      builder.getAlias(), trieType, valueWidth, status));
+  icu::LocalUCPTriePointer utrie =
+      icu::LocalUCPTriePointer(umutablecptrie_buildImmutable(
+          builder.getAlias(), trieType, valueWidth, status));
   if (status.isFailure()) {
     fprintf(stderr,
             "LocalUCPTriePointer umutablecptrie_buildImmutable failed: %s",
