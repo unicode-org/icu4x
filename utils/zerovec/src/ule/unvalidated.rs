@@ -329,7 +329,6 @@ impl AsULE for UnvalidatedChar {
     }
 }
 
-// TODO: As EqULE is being phased out, do we even need to add it?
 // Safety: UnvalidatedChar is always the little-endian representation of a char,
 // which corresponds to its AsULE::ULE type
 unsafe impl EqULE for UnvalidatedChar {}
@@ -353,8 +352,6 @@ impl PartialOrd for UnvalidatedChar {
         }
     }
 }
-
-// TODO: Do we need Ord? If so, how should we order invalid chars?
 
 impl From<char> for UnvalidatedChar {
     #[inline]
