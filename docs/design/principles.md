@@ -38,12 +38,17 @@ All ICU4X code must conform to the [style guide](../process/style_guide.md), inc
 
 *What:* Locale data should be customizable at a fine-grained level at runtime by individual applications.
 
-*Why:* Applications have a variety of reasons to customize data relative to the global data store, including:
+*Why:* Applications have a variety of reasons to customize their locale data, including:
 
 1. User-specific settings may override items such as datetime or decimal separators
 2. Policies may require displaying certain words or phrases according to a style guide that differs from CLDR
 3. Patching data can sometimes fill in certain behavior/functionality unavailable in older ICU4X versions
-4. Application-specific needs cannot always go into the main data store
+4. Stability of testing
+
+Changes to data often need to happen at runtime because:
+
+1. Application-specific overrides are independent of the central data (from the operating system, for example)
+2. The data might be dynamically generated, such as application/user preferences
 
 ICU4C/ICU4J exposes certain pieces of data through user-facing APIs such as DateFormatSymbols. ICU4X departs from this approach (making the data resources modifiable when being loaded) to solve the following problems:
 
