@@ -36,10 +36,10 @@ where
     let memory = instance.exports.get_memory("memory").expect("memory");
     let malloc = instance
         .exports
-        .get_native_function::<i32, WasmPtr<u32, Array>>("malloc")
+        .get_native_function::<u32, WasmPtr<u32, Array>>("malloc")
         .expect("malloc is exported");
     let values_base_ptr: WasmPtr<u32, Array> = malloc
-        .call((values.len() * 4) as i32)
+        .call((values.len() * 4) as u32)
         .expect("Unable to allocate memory for values");
     let deref_base_ptr = values_base_ptr
         .deref(memory, 0, values.len() as u32)
