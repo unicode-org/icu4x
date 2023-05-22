@@ -113,8 +113,8 @@ where
     let built = unsafe {
         umutablecptrie_buildImmutable(
             builder,
-            cpt_builder.get_trie_type(),
-            cpt_builder.get_width(),
+            cpt_builder.get_c_trie_type(),
+            cpt_builder.get_c_width(),
             &mut error,
         )
     };
