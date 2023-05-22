@@ -25,7 +25,6 @@ include = [
 all-features = true
 
 [dependencies]
-discriminant = "0.1.0"
 icu_collections = { path = "../../components/collections"}
 icu_locid = { path = "../../components/locid" }
 icu_provider = { path = "../../provider/core", features = ["macros"] }
