@@ -52,7 +52,9 @@ where
 
     let construct_ucptrie = instance
         .exports
-        .get_native_function::<(u32, u32, u32, u32, WasmPtr<u32, Array>, u32), i32>("construct_ucptrie")
+        .get_native_function::<(u32, u32, u32, u32, WasmPtr<u32, Array>, u32), i32>(
+            "construct_ucptrie",
+        )
         .expect("'construct_ucptrie' is exported");
 
     let exit_result = construct_ucptrie.call(

@@ -89,5 +89,3 @@ int construct_ucptrie(const uint32_t defaultValue, const uint32_t errorValue,
   return 0;
 }
 }
-
-int main() { return 0; }
