@@ -15,53 +15,51 @@ use core::num::{NonZeroI8, NonZeroU8};
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct RawBytesULE<const N: usize>(pub [u8; N]);
 
-macro_rules! impl_byte_slice_size {
-    ($size:literal) => {
-        impl From<[u8; $size]> for RawBytesULE<$size> {
-            #[inline]
-            fn from(le_bytes: [u8; $size]) -> Self {
-                Self(le_bytes)
-            }
-        }
-        impl RawBytesULE<$size> {
-            #[inline]
-            pub fn as_bytes(&self) -> &[u8] {
-                &self.0
-            }
-        }
-        // Safety (based on the safety checklist on the ULE trait):
-        //  1. RawBytesULE does not include any uninitialized or padding bytes.
-        //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-        //  2. RawBytesULE is aligned to 1 byte.
-        //     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
-        //  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
-        //  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
-        //  5. The other ULE methods use the default impl.
-        //  6. RawBytesULE byte equality is semantic equality
-        unsafe impl ULE for RawBytesULE<$size> {
-            #[inline]
-            fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-                if bytes.len() % $size == 0 {
-                    // Safe because Self is transparent over [u8; $size]
-                    Ok(())
-                } else {
-                    Err(ZeroVecError::length::<Self>(bytes.len()))
-                }
-            }
-        }
+impl<const N: usize> RawBytesULE<N> {
+    #[inline]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.0
+    }
 
-        impl RawBytesULE<$size> {
-            #[inline]
-            pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
-                let data = bytes.as_mut_ptr();
-                let len = bytes.len() / $size;
-                // Safe because Self is transparent over [u8; $size]
-                unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
-            }
+    #[inline]
+    pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
+        let data = bytes.as_mut_ptr();
+        let len = bytes.len() / N;
+        // Safe because Self is transparent over [u8; $size]
+        unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
+    }
+}
+
+// Safety (based on the safety checklist on the ULE trait):
+//  1. RawBytesULE does not include any uninitialized or padding bytes.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  2. RawBytesULE is aligned to 1 byte.
+//     (achieved by `#[repr(transparent)]` on a type that satisfies this invariant)
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes.
+//  5. The other ULE methods use the default impl.
+//  6. RawBytesULE byte equality is semantic equality
+unsafe impl<const N: usize> ULE for RawBytesULE<N> {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        if bytes.len() % N == 0 {
+            // Safe because Self is transparent over [u8; $size]
+            Ok(())
+        } else {
+            Err(ZeroVecError::length::<Self>(bytes.len()))
         }
-    };
+    }
+}
+
+impl<const N: usize> From<[u8; N]> for RawBytesULE<N> {
+    #[inline]
+    fn from(le_bytes: [u8; N]) -> Self {
+        Self(le_bytes)
+    }
+}
+
+macro_rules! impl_byte_slice_size {
     ($unsigned:ty, $size:literal) => {
-        impl_byte_slice_size!($size);
         impl RawBytesULE<$size> {
             /// Gets this RawBytesULE as an unsigned int. This is equivalent to calling
             /// [AsULE::from_unaligned()] on the appropriately sized type.
@@ -137,8 +135,6 @@ macro_rules! impl_byte_slice_type {
         unsafe impl EqULE for $type {}
     };
 }
-
-impl_byte_slice_size!(3);
 
 impl_byte_slice_size!(u16, 2);
 impl_byte_slice_size!(u32, 4);
