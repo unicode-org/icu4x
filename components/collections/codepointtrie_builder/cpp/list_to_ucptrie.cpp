@@ -8,9 +8,6 @@
 #include "unicode/umutablecptrie.h"
 #include "writesrc.h"
 
-constexpr uint32_t TRIE_FAST = 0;
-constexpr uint32_t TRIE_SMALL = 1;
-
 extern "C" {
 /**
  * Construct a UCPTrie and write it to STDOUT in TOML.
@@ -28,33 +25,8 @@ int construct_ucptrie(const uint32_t defaultValue, const uint32_t errorValue,
                       const uint32_t trieTypeUint,
                       const uint32_t valueWidthUint, const uint32_t* values,
                       const uint32_t n) {
-  UCPTrieType trieType;
-  if (trieTypeUint == TRIE_FAST) {
-    trieType = UCPTRIE_TYPE_FAST;
-  } else if (trieTypeUint == TRIE_SMALL) {
-    trieType = UCPTRIE_TYPE_SMALL;
-  } else {
-    fprintf(stderr,
-            "Expected '0' for 'fast' or '1' for 'small' as the 3rd argument. "
-            "Got %d",
-            trieTypeUint);
-    return 1;
-  }
-
-  UCPTrieValueWidth valueWidth;
-  if (valueWidthUint == 0) {
-    valueWidth = UCPTRIE_VALUE_BITS_16;
-  } else if (valueWidthUint == 1) {
-    valueWidth = UCPTRIE_VALUE_BITS_32;
-  } else if (valueWidthUint == 2) {
-    valueWidth = UCPTRIE_VALUE_BITS_8;
-  } else {
-    fprintf(stderr,
-            "Expected '0' for 16 bits, '1' for 32 bits, or '2' for 8 bits as "
-            "the 4th argument. Got %d",
-            valueWidthUint);
-    return 1;
-  }
+  UCPTrieType trieType = static_cast<UCPTrieType>(trieTypeUint);
+  UCPTrieValueWidth valueWidth = static_cast<UCPTrieValueWidth>(valueWidthUint);
 
   icu::ErrorCode status;
 
