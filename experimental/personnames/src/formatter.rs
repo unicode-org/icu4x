@@ -36,10 +36,10 @@ impl PersonNamesFormatter {
         })
     }
 
-    pub fn format<P: PersonName>(
-        &self,
-        _person_name: &P,
-    ) -> Result<String, PersonNamesFormatterError> {
+    pub fn format_to_string<N>(&self, _person_name: N) -> Result<String, PersonNamesFormatterError>
+    where
+        N: PersonName,
+    {
         Err(PersonNamesFormatterError::ParseError(String::from(
             "Unimplemented Person name formatter",
         )))
