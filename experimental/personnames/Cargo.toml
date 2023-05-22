@@ -32,10 +32,9 @@ icu_locid = { path = "../../components/locid" }
 icu_provider = { path = "../../provider/core", features = ["macros"] }
 yoke = { path = "../../utils/yoke" }
 zerofrom = { path = "../../utils/zerofrom" }
-zerovec = { path = "../../utils/zerovec" }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "derive"] }
 databake = { path = "../../utils/databake", features = ["derive"], optional = true}
-tinystr = { path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 
 [dev-dependencies]
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_personnames"] }
@@ -43,7 +42,7 @@ icu_testdata = { path = "../../provider/testdata", default-features = false, fea
 
 [features]
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "tinystr/serde", "icu_provider/serde"]
+serde = ["zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 
 [[test]]

@@ -1,4 +1,4 @@
-# icu_person_names_formatter [![crates.io](https://img.shields.io/crates/v/icu_person_names_formatter)](https://crates.io/crates/icu_person_names_formatter)
+# icu_personnames [![crates.io](https://img.shields.io/crates/v/icu_personnames)](https://crates.io/crates/icu_personnames)
 
 
 

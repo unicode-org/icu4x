@@ -1992,7 +1992,6 @@ dependencies = [
  "icu_provider",
  "icu_testdata",
  "serde",
- "tinystr",
  "yoke",
  "zerofrom",
  "zerovec",
