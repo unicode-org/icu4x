@@ -25,7 +25,7 @@ impl<const N: usize> RawBytesULE<N> {
     pub fn from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self] {
         let data = bytes.as_mut_ptr();
         let len = bytes.len() / N;
-        // Safe because Self is transparent over [u8; $size]
+        // Safe because Self is transparent over [u8; N]
         unsafe { core::slice::from_raw_parts_mut(data as *mut Self, len) }
     }
 }
@@ -43,7 +43,7 @@ unsafe impl<const N: usize> ULE for RawBytesULE<N> {
     #[inline]
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         if bytes.len() % N == 0 {
-            // Safe because Self is transparent over [u8; $size]
+            // Safe because Self is transparent over [u8; N]
             Ok(())
         } else {
             Err(ZeroVecError::length::<Self>(bytes.len()))
