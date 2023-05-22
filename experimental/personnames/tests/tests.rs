@@ -6,11 +6,13 @@ use std::collections::btree_map::BTreeMap;
 use std::mem::discriminant;
 
 use icu_locid::locale;
-use icu_personnames::api::{
-    FieldModifier, NameField, PersonName, PersonNamesFormatterError, PreferredOrder,
-};
+use icu_personnames::api::FieldModifier;
+use icu_personnames::api::FieldModifierMask;
+use icu_personnames::api::NameField;
+use icu_personnames::api::PersonName;
+use icu_personnames::api::PersonNamesFormatterError;
+use icu_personnames::api::PreferredOrder;
 use icu_personnames::provided_struct::DefaultPersonName;
-use icu_personnames::PersonNamesFormatter;
 
 #[test]
 fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatterError> {
@@ -18,7 +20,7 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
     person_data.insert(NameField::Given(None), String::from("Henry"));
     person_data.insert(NameField::Surname(None), String::from("Jekyll"));
     person_data.insert(
-        NameField::Surname(Some(FieldModifier::Informal)),
+        NameField::Surname(Some(FieldModifier::Informal as FieldModifierMask)),
         String::from("Hide"),
     );
 
@@ -42,13 +44,13 @@ fn test_field_modifier_person_name_structure() -> Result<(), PersonNamesFormatte
     assert!(person_name.has_name_field_with_modifier(&NameField::Given(None)));
     assert!(!person_name.has_name_field_with_modifier(&NameField::Surname2(None)));
     assert!(!person_name
-        .has_name_field_with_modifier(&NameField::Surname(Some(FieldModifier::AllCaps))));
+        .has_name_field_with_modifier(&NameField::Surname(Some(FieldModifier::AllCaps as FieldModifierMask))));
 
     // get
     assert_eq!(person_name.get(&NameField::Given(None)), Some("Henry"));
     assert_eq!(person_name.get(&NameField::Surname(None)), Some("Jekyll"));
     assert_eq!(
-        person_name.get(&NameField::Surname(Some(FieldModifier::Informal))),
+        person_name.get(&NameField::Surname(Some(FieldModifier::Informal as FieldModifierMask))),
         Some("Hide")
     );
     Ok(())

@@ -4,8 +4,6 @@
 
 use std::mem::{discriminant, Discriminant};
 
-use bitmask_enum::bitmask;
-
 use icu_locid::Locale;
 
 /// Trait for providing person name data.
@@ -66,7 +64,7 @@ pub enum PersonNamesFormatterError {
 /// Field Modifiers.
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers
-#[bitmask(u32)]
+#[repr(u32)]
 pub enum FieldModifier {
     Informal,
     Prefix,
@@ -77,20 +75,21 @@ pub enum FieldModifier {
     Monogram,
 }
 
+/// Field Modifiers Mask. (must be the same as FieldModifier repr)
+pub type FieldModifierMask = u32;
+
 /// List all incompatible combination of field modifier.
-const MUTUALLY_EXCLUSIVE_FIELD_MODIFIERS: [&FieldModifier; 3] = [
-    &FieldModifier::Prefix.or(FieldModifier::Core),
-    &FieldModifier::AllCaps.or(FieldModifier::InitialCap),
-    &FieldModifier::Initial.or(FieldModifier::Monogram),
+const MUTUALLY_EXCLUSIVE_FIELD_MODIFIERS: [FieldModifierMask; 3] = [
+    FieldModifier::Prefix as FieldModifierMask | FieldModifier::Core as FieldModifierMask,
+    FieldModifier::AllCaps as FieldModifierMask | FieldModifier::InitialCap as FieldModifierMask,
+    FieldModifier::Initial as FieldModifierMask | FieldModifier::Monogram as FieldModifierMask,
 ];
 
-impl FieldModifier {
-    /// Returns true if the field modifier is valid.
-    pub fn is_valid(&self) -> bool {
-        MUTUALLY_EXCLUSIVE_FIELD_MODIFIERS
-            .into_iter()
-            .all(|field| !self.contains(*field))
-    }
+/// Returns true if the field modifier is valid.
+pub fn field_modifier_is_valid(mask: FieldModifierMask) -> bool {
+    MUTUALLY_EXCLUSIVE_FIELD_MODIFIERS
+        .into_iter()
+        .all(|field| mask & field != field)
 }
 
 /// Name Fields defined by Unicode specifications.
@@ -98,13 +97,13 @@ impl FieldModifier {
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#fields
 #[derive(Ord, Eq, PartialEq, PartialOrd)]
 pub enum NameField {
-    Title(Option<FieldModifier>),
-    Given(Option<FieldModifier>),
-    Given2(Option<FieldModifier>),
-    Surname(Option<FieldModifier>),
-    Surname2(Option<FieldModifier>),
-    Generation(Option<FieldModifier>),
-    Credentials(Option<FieldModifier>),
+    Title(Option<FieldModifierMask>),
+    Given(Option<FieldModifierMask>),
+    Given2(Option<FieldModifierMask>),
+    Surname(Option<FieldModifierMask>),
+    Surname2(Option<FieldModifierMask>),
+    Generation(Option<FieldModifierMask>),
+    Credentials(Option<FieldModifierMask>),
 }
 
 /// NameField helper functions.
@@ -112,7 +111,7 @@ impl NameField {
     ///
     /// Returns the field modifier of the NameField.
     ///
-    pub fn get_field_modifier(&self) -> Option<&FieldModifier> {
+    pub fn get_field_modifier(&self) -> Option<&FieldModifierMask> {
         match self {
             NameField::Title(field_modifier) => field_modifier,
             NameField::Given(field_modifier) => field_modifier,
@@ -130,7 +129,7 @@ impl NameField {
     pub fn is_valid(&self) -> bool {
         match self.get_field_modifier() {
             None => true,
-            Some(field_modifier) => field_modifier.is_valid(),
+            Some(&field_modifier) => field_modifier_is_valid(field_modifier),
         }
     }
 }

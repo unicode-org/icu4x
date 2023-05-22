@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use bitmask_enum::bitmask;
+
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -26,8 +26,14 @@ use zerovec::VarZeroVec;
 /// (`initial`, `initialSequence`).
 #[icu_provider::data_struct(PersonNamesFormattingDefinitionV1Marker = "personnames/personnames@1")]
 #[derive(PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake), databake(path = icu_personnames::provider),)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_personnames::provider))
+]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize)
+)]
 pub struct PersonNamesFormattingDefinitionV1<'data> {
     /// <nameOrderLocales order="surnameFirst">ko vi yue zh</nameOrderLocales>
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -66,9 +72,7 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}
 /// see https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-#[bitmask(u16)]
-#[zerovec::make_ule(PersonNamesFormattingAttributesULE)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[repr(u32)]
 pub enum PersonNamesFormattingAttributes {
     // Order
     GivenFirst,
@@ -87,17 +91,27 @@ pub enum PersonNamesFormattingAttributes {
     Informal,
 }
 
+type PersonNamesFormattingAttributesMask = u32;
+
 /// PersonName Formatting data.
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
 #[zerovec::make_varule(PersonNamesFormattingDataVARULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
-#[zerovec::derive(Serialize, Deserialize)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_personnames::provider),
+    zerovec::derive(Serialize))
+]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
 pub struct PersonNamesFormattingData<'data> {
     /// Attributes
     /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
-    pub attributes: PersonNamesFormattingAttributes,
+    pub attributes: PersonNamesFormattingAttributesMask,
     /// https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, str>,
